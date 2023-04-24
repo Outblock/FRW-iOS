@@ -39,7 +39,7 @@ struct BrowserAuthzView: View {
                 
                 VStack {
                     
-                    if let title = template.data.messages.title.i18N.enUS {
+                    if let title = template.data.messages?.title?.i18N?.enUS {
                         Text(title)
                             .font(.LL.body)
                             .fontWeight(.bold)
@@ -48,7 +48,7 @@ struct BrowserAuthzView: View {
                             
                     }
                     
-                    if let description = template.data.messages.messagesDescription.i18N.enUS {
+                    if let description = template.data.messages?.messagesDescription?.i18N?.enUS {
                         Text(description)
                             .font(.LL.footnote)
                             .foregroundColor(.LL.Neutrals.note)

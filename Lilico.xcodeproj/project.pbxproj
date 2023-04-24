@@ -625,6 +625,7 @@
 		15C58C632868A4EE00BD4FC6 /* Inter.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 158C9CA22787F6EA0062E0C6 /* Inter.ttf */; };
 		15C58C652868A4EE00BD4FC6 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E9E21DC282A68CB00E1BACD /* Colors.xcassets */; };
 		15C58C662868A4EE00BD4FC6 /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 158C9CA52787F7490062E0C6 /* Montserrat-Bold.ttf */; };
+		15C628AB29F6A53200ED6A93 /* LocalEnv in Resources */ = {isa = PBXBuildFile; fileRef = 6ABFE59329A708C400AA1688 /* LocalEnv */; };
 		15CB4DF428CA15B10069ABB4 /* BuyProvderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CB4DF328CA15B10069ABB4 /* BuyProvderView.swift */; };
 		15CB4DF528CA15B10069ABB4 /* BuyProvderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CB4DF328CA15B10069ABB4 /* BuyProvderView.swift */; };
 		15CB4DF928CA29650069ABB4 /* PayAsSignerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CB4DF828CA29650069ABB4 /* PayAsSignerModel.swift */; };
@@ -5109,6 +5110,7 @@
 				15DE214328C52FA4008AFE17 /* QRScan.json in Resources */,
 				15C58C602868A4EE00BD4FC6 /* Montserrat-SemiBold.ttf in Resources */,
 				1575A72828B26B9600ADC513 /* dat.gui.min.js in Resources */,
+				15C628AB29F6A53200ED6A93 /* LocalEnv in Resources */,
 				1565FB6328B14F140086A652 /* Chat.json in Resources */,
 				6A37AD9428BDAA310047E5F7 /* GoogleService-Info.plist in Resources */,
 				15C58C612868A4EE00BD4FC6 /* Montserrat-Italic.ttf in Resources */,
@@ -7125,7 +7127,7 @@
 			repositoryURL = "https://github.com/onevcat/Kingfisher";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 7.1.2;
+				minimumVersion = 7.6.2;
 			};
 		};
 		158832C82894262B00142B35 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */ = {

@@ -26,7 +26,7 @@ struct FlowTransactionTemplate: Codable, Equatable {
 // MARK: - DataClass
 struct FlowTransactionTemplateData: Codable {
     let type, interface: String
-    let messages: Messages
+    let messages: Messages?
     let cadence: String
 //    let arguments: Arguments
 }
@@ -34,7 +34,7 @@ struct FlowTransactionTemplateData: Codable {
 
 // MARK: - Description
 struct Description: Codable {
-    let i18N: I18N
+    let i18N: I18N?
 
     enum CodingKeys: String, CodingKey {
         case i18N = "i18n"
@@ -43,7 +43,7 @@ struct Description: Codable {
 
 // MARK: - I18N
 struct I18N: Codable {
-    let enUS: String
+    let enUS: String?
 
     enum CodingKeys: String, CodingKey {
         case enUS = "en-US"
@@ -53,7 +53,8 @@ struct I18N: Codable {
 
 // MARK: - DataMessages
 struct Messages: Codable {
-    let title, messagesDescription: Description
+    let title: Description?
+    let messagesDescription: Description?
 
     enum CodingKeys: String, CodingKey {
         case title
