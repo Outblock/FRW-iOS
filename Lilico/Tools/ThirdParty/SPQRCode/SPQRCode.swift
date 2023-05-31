@@ -21,6 +21,7 @@
 
 import Foundation
 import UIKit
+import AVKit
 
 public class SPQRCode {
     
@@ -30,6 +31,11 @@ public class SPQRCode {
         click: SPQRCodeCallback? = nil,
         on controller: UIViewController
     ) {
+        if deviceIsValid() == false {
+            HUD.error(title: "camera_is_invalid".localized)
+            return
+        }
+        
         let qrController = SPQRCameraController()
         if let detect = detect {
             qrController.detectQRCodeData = detect
@@ -38,5 +44,17 @@ public class SPQRCode {
         qrController.clickQRCodeData = click
         qrController.modalPresentationStyle = .formSheet
         controller.present(qrController)
+    }
+    
+    private class func deviceIsValid() -> Bool {
+        guard let device = AVCaptureDevice.default(for: AVMediaType.video) else {
+            return false
+        }
+        
+        guard let input = try? AVCaptureDeviceInput(device: device) else {
+            return false
+        }
+        
+        return true
     }
 }

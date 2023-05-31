@@ -529,3 +529,5 @@
 
 "scan" = "Scan";
 "storage" = "Storage";
+
+"camera_is_invalid" = "Camera is invalid";
