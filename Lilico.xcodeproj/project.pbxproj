@@ -1422,6 +1422,13 @@
 			remoteGlobalIDString = 6A0C6E1A29542DFC005F0EF6;
 			remoteInfo = LilicoDevWidgetsExtension;
 		};
+		6A6A84FE2A26F6A0002D7FD6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15EC9DE6274FD1FC00F70CD9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 15C58A7E2868A4EE00BD4FC6;
+			remoteInfo = Lilico;
+		};
 		6A9DFBD029519D9A00E10EAC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 15EC9DE6274FD1FC00F70CD9 /* Project object */;
@@ -4758,6 +4765,7 @@
 			);
 			dependencies = (
 				15C58CD02868ABF700BD4FC6 /* PBXTargetDependency */,
+				6A6A84FF2A26F6A0002D7FD6 /* PBXTargetDependency */,
 			);
 			name = LilicoTests;
 			packageProductDependencies = (
@@ -6479,6 +6487,11 @@
 			isa = PBXTargetDependency;
 			target = 6A0C6E1A29542DFC005F0EF6 /* LilicoDevWidgetsExtension */;
 			targetProxy = 6A0C6E2629542DFE005F0EF6 /* PBXContainerItemProxy */;
+		};
+		6A6A84FF2A26F6A0002D7FD6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 15C58A7E2868A4EE00BD4FC6 /* Lilico */;
+			targetProxy = 6A6A84FE2A26F6A0002D7FD6 /* PBXContainerItemProxy */;
 		};
 		6A9DFBD129519D9A00E10EAC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
