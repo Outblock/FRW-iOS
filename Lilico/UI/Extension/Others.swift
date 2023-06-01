@@ -20,3 +20,9 @@ extension Decimal {
         return NSDecimalNumber(decimal:self).doubleValue
     }
 }
+
+extension CaseIterable {
+    static var count: Int {
+        return Self.allCases.count
+    }
+}

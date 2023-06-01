@@ -48,6 +48,30 @@ final class Coordinator {
     }
     
     func showRootView() {
+        if LocalUserDefaults.shared.onBoardingShown {
+            showNormalView()
+        } else {
+            showOnBoardingView()
+        }
+    }
+}
+
+extension Coordinator {
+    private func refreshColorScheme() {
+        self.window.overrideUserInterfaceStyle = ThemeManager.shared.getUIKitStyle()
+    }
+    
+    private func showOnBoardingView() {
+#if !DEBUG
+        LocalUserDefaults.shared.onBoardingShown = true
+#endif
+        
+        let view = OnBoardingView()
+        let hostingView = UIHostingController(rootView: view)
+        window.rootViewController = hostingView
+    }
+    
+    private func showNormalView() {
         let rootView = SideContainerView()
         let hostingView = UIHostingController(rootView: rootView)
         let navi = RouterNavigationController(rootViewController: hostingView)
@@ -58,12 +82,6 @@ final class Coordinator {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             TransactionUIHandler.shared.refreshPanelHolder()
         }
-    }
-}
-
-extension Coordinator {
-    private func refreshColorScheme() {
-        self.window.overrideUserInterfaceStyle = ThemeManager.shared.getUIKitStyle()
     }
 }
 
