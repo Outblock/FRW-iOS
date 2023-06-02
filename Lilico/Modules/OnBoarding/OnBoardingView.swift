@@ -122,20 +122,20 @@ extension OnBoardingView {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: .infinity)
-                .padding(.bottom, 40)
+            
+            Spacer()
             
             Text(type.title)
                 .font(.montserrat(size: 36, weight: .semibold))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)
-                .padding(.bottom, 20)
             
-            Text(type.desc)
-                .font(.inter(size: 14, weight: .medium))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .multilineTextAlignment(.leading)
+//            Text(type.desc)
+//                .font(.inter(size: 14, weight: .medium))
+//                .foregroundColor(.white)
+//                .frame(maxWidth: .infinity, alignment: .leading)
+//                .multilineTextAlignment(.leading)
             
             Spacer()
         }

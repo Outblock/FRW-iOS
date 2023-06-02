@@ -46,10 +46,6 @@ extension OnBoardingViewModel {
         var title: String {
             return "onboarding_title_\(self.rawValue)".localized
         }
-        
-        var desc: String {
-            return "onboarding_desc_\(self.rawValue)".localized
-        }
     }
 }
 
