@@ -95,3 +95,4 @@ iOSInjectionProject/
 /Lilico/App/Env/LocalEnv
 /Lilico/App/Env/Prod/GoogleOAuth2.plist
 /Lilico/App/Env/Prod/GoogleService-Info.plist
+.translized.yml
