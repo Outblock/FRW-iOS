@@ -83,7 +83,7 @@ class OnBoardingViewModel: ObservableObject {
     }
     
     func onStartBtnAction() {
-        
+        Router.coordinator.showRootView()
     }
     
     func onPageIndexChangeAction(_ newIndex: Int) {

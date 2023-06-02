@@ -62,9 +62,7 @@ extension Coordinator {
     }
     
     private func showOnBoardingView() {
-#if !DEBUG
         LocalUserDefaults.shared.onBoardingShown = true
-#endif
         
         let view = OnBoardingView()
         let hostingView = UIHostingController(rootView: view)
