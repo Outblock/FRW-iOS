@@ -6,6 +6,7 @@
 //
 
 import Firebase
+import FirebaseAnalytics
 import Foundation
 import GoogleSignIn
 import Resolver
@@ -35,11 +36,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         let _ = LocalEnvManager.shared
         
         FirebaseApp.configure()
+        
         Analytics.setAnalyticsCollectionEnabled(true)
         Analytics.logEvent("ios_app_launch", parameters: [:])
-        
+#if !DEBUG
         Translized.shared.setup(projectId: LocalEnvManager.shared.translizedProjectID, otaToken: LocalEnvManager.shared.translizedOTAToken)
         Translized.shared.swizzleMainBundle()
+#endif
+        
         
         appConfig()
         commonConfig()
@@ -181,8 +185,10 @@ extension AppDelegate {
 
 extension AppDelegate {
     func applicationDidBecomeActive(_ application: UIApplication) {
+#if !DEBUG
         Translized.shared.checkForUpdates { (updated, error) in
             debugPrint("Translized updated: \(updated), error: \(error)")
         }
+#endif
     }
 }

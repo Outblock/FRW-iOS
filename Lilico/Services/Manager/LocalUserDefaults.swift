@@ -32,6 +32,7 @@ extension LocalUserDefaults {
         case currentCurrencyRate
         case stakingGuideDisplayed
         case nftCount
+        case onBoardingShown
     }
 
     enum FlowNetworkType: String, CaseIterable {
@@ -222,6 +223,8 @@ class LocalUserDefaults: ObservableObject {
             NotificationCenter.default.post(name: .nftCountChanged, object: nil)
         }
     }
+    
+    @AppStorage(Keys.onBoardingShown.rawValue) var onBoardingShown: Bool = false
 }
 
 extension LocalUserDefaults {

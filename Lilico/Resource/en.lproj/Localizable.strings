@@ -1,15 +1,5 @@
-/* 
-  AppString.strings
-  Lilico
-
-  Created by Hao Fu on 6/1/22.
-  
-*/
-
 "selectLanguage" = "Select language";
 "languagesList" = "Languages list";
-
-// Success & Error
 "no_private_key" = "Private key is missing";
 "empty_wallet_key" = "Empty Wallet Key";
 "fetch_nft_error" = "Fetch NFT Error";
@@ -45,8 +35,6 @@
 "add_token_timeout" = "Add token timeout";
 "fetch_chart_data_failed" = "Fetch chart data failed";
 "below_minimum_error" = "Insufficient balance, on Flow the balance can't less than 0.001 FLOW";
-
-// NFT
 "x_collections" = "%d Collectibles";
 "share" = "Share";
 "explore" = "Explore";
@@ -71,9 +59,9 @@
 "collection_list" = "Collection list";
 "add_collection" = "Add Collection";
 "confirmation" = "Confirmation";
-"enable_collection"="Enable Collection";
-"nft_collection_add_failed"="Failed";
-"nft_collection_add_pending"="Pending";
+"enable_collection" = "Enable Collection";
+"nft_collection_add_failed" = "Failed";
+"nft_collection_add_pending" = "Pending";
 "search_NFT_collection" = "Search NFT Collection";
 "seg_list" = "List";
 "seg_grid" = "Grid";
@@ -82,8 +70,6 @@
 "send_nft" = "Send NFT";
 "send_nft_success" = "Send NFT successfully";
 "send_nft_failed" = "Send NFT failed";
-
-// Account
 "create_a" = "Create a";
 "pin" = "PIN";
 "no_one_unlock_desc" = "So no one else but you can unlock your wallet.";
@@ -157,13 +143,9 @@
 "sign_in_with" = "Sign in With";
 "phrase_you_created_desc" = "This is a 12 word phrase you were given when you created your previous wallet.";
 "enter_rp_placeholder" = "Enter your Recovery Phrase (12 words)";
-
-// Auth Error
 "bionic_not_support" = "Not support biometric authentication";
 "no_bionic_enrolled" = "No biometry enrolled, Please register in the system settings first";
 "bionic_too_many_failed" = "Too many failed attempts";
-
-// Profile
 "switch_network" = "Switch Network";
 "watch_address" = "Watch Collectible Address";
 "other_address" = "Other Address";
@@ -184,8 +166,6 @@
 "about" = "About";
 "switch_account" = "Switch Account";
 "btn_sync" = "Sync";
-
-// Profile Edit
 "edit_account" = "Edit Account";
 "edit_avatar" = "Edit Avatar";
 "edit_nickname" = "Edit Nickname";
@@ -194,12 +174,8 @@
 "private_on_desc" = "You can not be searched";
 "visible" = "Visible";
 "unvisible" = "Unvisible";
-
-// Avatar Edit
 "done" = "Done";
 "current_avatar" = "Current Avatar";
-
-// Security
 "disable_pin_code" = "Disable PIN Code";
 "enable_pin_code" = "Enable PIN Code";
 "private_key" = "Private Key";
@@ -209,8 +185,6 @@
 "enable_pin_code_failed" = "Enable PIN Code failed";
 "lock_on_exit" = "Lock on exit";
 "verify_failed" = "Verification failed";
-
-// Address Book
 "edit_contact" = "Edit contact";
 "add_contact" = "Add contact";
 "save" = "Save";
@@ -225,14 +199,10 @@
 "delete" = "Delete";
 "address_book_request_failed" = "Request failed, please try again later";
 "edit" = "Edit";
-
-// Theme
 "theme" = "Theme";
 "light" = "Light";
 "dark" = "Dark";
 "auto" = "Auto";
-
-// Wallet
 "create_btn_desc" = "Don't have \nan account?";
 "create_btn_text" = "CREATE";
 "import_btn_desc" = "Already have \nan account?";
@@ -280,7 +250,6 @@
 "max" = "Max";
 "insufficient_balance" = "Insufficient Balance";
 "amount_balance" = "Amount Balance";
-"confirmation" = "Confirmation";
 "amount_confirmation" = "Amount Confirmation";
 "format_error" = "Format Error";
 "sending" = "Sending...";
@@ -318,58 +287,39 @@
 "reset_warning_text" = "Please enter the correct text";
 "reset_warning_alert_title" = "Warning";
 "rest_warning_alert_desc" = "Are you sure you want to reset your wallet? If you do not backup your wallet info, you will lose all virtual assets after reset.";
-
-
 "restore_with_x_failed" = "Restore with %@ failed";
 "no_x_backup" = "No backup found in %@";
 "google_drive" = "Google Drive";
 "icloud_drive" = "iCloud Drive";
 "decrypt_failed" = "Decrypt Failed";
-
 "backup_to_x_failed" = "Backup to %@ failed";
 "backup_to_x_succeeded" = "Backup to %@ succeeded";
-
 "cancel" = "Cancel";
 "saved" = "Saved";
 "error" = "Error";
-
 "action_handle" = "Catch";
 "action_cancel" = "Cancel";
-"qr_code_data_text_prefix" = "";
-"qr_code_data_url_prefix" = "";
-"qr_code_data_eth_wallet_prefix" = "";
-"qr_code_data_flow_wallet_prefix" = "";
 "qr_code_data_wallet_connect_prefix" = "Wallet Connect";
-
 "choose_provider" = "Choose Provider";
-
-// Wallet Connect
 "approve_failed" = "Approve failed";
 "reject_failed" = "Reject failed";
 "approved" = "Approved";
 "rejected" = "Rejected";
 "pending_request" = "Pending Request";
 "connected_site" = "Connected Site";
-
-// Other
 "pull_up_load_more" = "Pull up to load more";
 "release_load_more" = "Release to start loading";
 "loading_more" = "Loading...";
-"no_more_data" = "- The End -";
 "restore_account_title" = "Found an old account";
 "restore_account_msg" = "It seems that you have logged in to the app before. Do you want to try to restore login?";
 "restore_account_failed" = "Restore account failed";
 "retry" = "Retry";
-
-// Transaction
 "pending_transaction" = "Pending Transaction";
 "transaction_failed" = "Transaction process failed";
 "transaction_success" = "Transaction process successd";
 "process_pending_text" = "Pending";
 "process_success_text" = "Success";
 "process_failed_text" = "Failed";
-
-// Browser
 "browser_search_failed" = "Search failed. Please try again.";
 "browser_not_login" = "You are not logged in.";
 "browser_connecting_to" = "Connecting to";
@@ -387,12 +337,8 @@
 "browser_bookmark_added" = "Bookmark added";
 "browser_bookmark_deleted" = "Bookmark deleted";
 "browser_bookmark_view" = "View";
-
-// Hold to send
 "hold_to_send" = "Hold to Send";
 "hold_to_sign" = "Hold to Sign";
-
-// Domain
 "free_domain" = "Free Domain";
 "things_you_should_known" = "Things You Should Know";
 "domain_tips1" = "Free lilico domain help you find each other easier on chain.";
@@ -405,8 +351,6 @@
 "claim_free_domain_substring2" = "FREE";
 "claim_free_domain_substring3" = " Lilico domain!";
 "domain_title2" = "Lilico Domain";
-
-// Inbox
 "inbox" = "Inbox";
 "inbox_token_x" = "Token (%d)";
 "inbox_nft_x" = "NFT (%d)";
@@ -416,8 +360,6 @@
 "inbox_no_items" = "No Items";
 "inbox_request_failed" = "Inbox request failed";
 "inbox_claim_failed" = "Claim failed";
-
-// Swap
 "swap_title" = "Swap (beta)";
 "swap_max" = "Max";
 "swap_select" = "Select";
@@ -428,10 +370,8 @@
 "swap_price_impact" = "Price Impact";
 "swap_estimated_fees" = "Estimated Fees";
 "swap_confirm" = "Confirm";
-
 "contact_us" = "Contact us";
 "unknown" = "unknown";
-// Stake
 "stake_reward_title" = "Staked Flow";
 "stake_daily_reward" = "Daily Reward";
 "stake_mothly_reward" = "Mothly Reward";
@@ -442,7 +382,7 @@
 "staking_empty_list" = "Empty Staking List";
 "staking_claim" = "Claim";
 "staking_claim_rewards" = "Claiming Rewards";
-"staking_reStake" = "ReStake";
+"staking_reStake" = "ReSatke";
 "staking_reStake_rewards" = "Restaking Rewards";
 "staking_amount" = "Staking Amount";
 "staking_rewards" = "Rewards";
@@ -456,11 +396,9 @@
 "stake_guide_text_2" = "Stake Your Flow";
 "stake_guide_btn_text" = "Let's Staking";
 "stake_on_lilico_only" = "On Lilico Only";
-
 "stake_guide_desc_1_1" = "Earn up to ";
 "stake_guide_desc_1_2" = "9%";
 "stake_guide_desc_1_3" = " per year.";
-
 "stake_guide_desc_2_1" = "When you stake ";
 "stake_guide_desc_2_2" = "Flow";
 "stake_guide_desc_2_3" = " you receive";
@@ -469,16 +407,13 @@
 "stake_guide_desc_2_6" = "The amount of Flow will be";
 "stake_guide_desc_2_7" = " locked";
 "stake_guide_desc_2_8" = ".";
-
 "stake_guide_desc_3_1" = "You start earning from ";
 "stake_guide_desc_3_2" = "next epoch";
 "stake_guide_desc_3_3" = ".";
-
 "stake_guide_desc_4_1" = "Rewards are automatically credited to your\n";
 "stake_guide_desc_4_2" = "deposit";
 "stake_guide_desc_4_3" = "every week";
 "stake_guide_desc_4_4" = ".";
-
 "stake_amount" = "Stake Amount";
 "unstake_amount" = "Unstake Amount";
 "stake_amount_flow" = "Amount Flow";
@@ -493,21 +428,18 @@
 "stake_unstaked_amount" = "Unstaked Amount";
 "stake_unstaking_amount" = "Unstaking Amount";
 "stake_committed_amount" = "Committed Amount";
-
 "stake_commited" = "Commit To Stake";
 "stake_request_unstake_in_progress" = "Request To UnStake";
 "stake_unstake_in_progress" = "UnStaking";
 "stake_progress_desc" = "Will be processed at the next epoch";
 "stake_committed" = "Committed";
 "stake_in_progress" = "In progress";
-
 "stake_requested_to_unstake_amount" = "Requested To Unstake Amount";
 "stake_insufficient_balance" = "Insufficient balance";
 "stake_apr" = "APR";
 "stake_unstake" = "Unstake";
 "stake_confirm_title" = "Confirm Your Stake";
 "unstake_confirm_title" = "Confirm Your Unstake";
-
 "staking_disabled" = "Staking is disabled";
 "staking_provider" = "Provider";
 "staking_provider_section_title" = "STAKING PROVIDER";
@@ -515,19 +447,20 @@
 "staking_confirm" = "Confirm";
 "hold_to_stake" = "Hold to stake";
 "hold_to_unstake" = "Hold to unstake";
-
 "staking_not_enabled" = "Staking is under maintenance, please try again later.";
 "setup_stake" = "Set Up Stake";
 "staking_collection_upgrade" = "Staking Collection Upgrade";
 "setup_stake_desc" = "If you have existing nodes and delegations, they are safe, and will be migrated to your new Staking Collection during the transaction.";
 "staking_setup_failed" = "Set Up Stake failed";
-
 "enable_sandbox_failed" = "Enable Sandbox failed";
-
 "widget_name" = "Lilico Widget";
 "widget_desc" = "Show your favorite nft.";
-
 "scan" = "Scan";
 "storage" = "Storage";
-
-"camera_is_invalid" = "Camera is invalid";
+"sdk_test" = "SDKTesT";
+"skip" = "Skip";
+"start" = "Start";
+"onboarding_title_nft" = "Playground\nfor NFTs";
+"onboarding_title_token" = "Gather\nall your tokens";
+"onboarding_title_domain" = "Claim\nfree Lilico domain";
+"onboarding_title_site" = "Explore\nyour favourite site";

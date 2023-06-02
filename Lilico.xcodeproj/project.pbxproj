@@ -1081,6 +1081,12 @@
 		6A382E28289CED9800163564 /* ProfileSecureViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A382E26289CED9800163564 /* ProfileSecureViewViewModel.swift */; };
 		6A3AD5C9291D4F9B00C30D57 /* StakingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3AD5C8291D4F9B00C30D57 /* StakingListView.swift */; };
 		6A3AD5CA291D4F9B00C30D57 /* StakingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3AD5C8291D4F9B00C30D57 /* StakingListView.swift */; };
+		6A3FFA7F2A283A5C00CB2B2C /* OnBoardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3FFA7E2A283A5C00CB2B2C /* OnBoardingView.swift */; };
+		6A3FFA802A283A5C00CB2B2C /* OnBoardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3FFA7E2A283A5C00CB2B2C /* OnBoardingView.swift */; };
+		6A3FFA822A2842A400CB2B2C /* OnBoardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3FFA812A2842A400CB2B2C /* OnBoardingViewModel.swift */; };
+		6A3FFA832A2842A400CB2B2C /* OnBoardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3FFA812A2842A400CB2B2C /* OnBoardingViewModel.swift */; };
+		6A3FFA852A28A91F00CB2B2C /* AnimationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3FFA842A28A91F00CB2B2C /* AnimationModifier.swift */; };
+		6A3FFA862A28A91F00CB2B2C /* AnimationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3FFA842A28A91F00CB2B2C /* AnimationModifier.swift */; };
 		6A4009122875615A00A77070 /* WalletReceiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4009112875615A00A77070 /* WalletReceiveView.swift */; };
 		6A4009132875615A00A77070 /* WalletReceiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4009112875615A00A77070 /* WalletReceiveView.swift */; };
 		6A4009152875699D00A77070 /* WalletReceiveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4009142875699D00A77070 /* WalletReceiveViewModel.swift */; };
@@ -1921,6 +1927,9 @@
 		6A11596D288E7134005EF797 /* RouteMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteMap.swift; sourceTree = "<group>"; };
 		6A115970288E72CC005EF797 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		6A12173729659F5E00BA0C3B /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
+		6A1559902A29C7BC0083747E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		6A1559922A29C7D10083747E /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		6A1559942A29CB860083747E /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_CN; path = zh_CN.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6A15C1FE286D914000C2EBA2 /* TokenDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenDetailView.swift; sourceTree = "<group>"; };
 		6A164F3D2840A1380026B31E /* TabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		6A164F3E2840A1380026B31E /* TabBarItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarItemView.swift; sourceTree = "<group>"; };
@@ -1973,6 +1982,9 @@
 		6A382E23289BDAFF00163564 /* SecurityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityManager.swift; sourceTree = "<group>"; };
 		6A382E26289CED9800163564 /* ProfileSecureViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSecureViewViewModel.swift; sourceTree = "<group>"; };
 		6A3AD5C8291D4F9B00C30D57 /* StakingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StakingListView.swift; sourceTree = "<group>"; };
+		6A3FFA7E2A283A5C00CB2B2C /* OnBoardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingView.swift; sourceTree = "<group>"; };
+		6A3FFA812A2842A400CB2B2C /* OnBoardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingViewModel.swift; sourceTree = "<group>"; };
+		6A3FFA842A28A91F00CB2B2C /* AnimationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationModifier.swift; sourceTree = "<group>"; };
 		6A4009112875615A00A77070 /* WalletReceiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletReceiveView.swift; sourceTree = "<group>"; };
 		6A4009142875699D00A77070 /* WalletReceiveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletReceiveViewModel.swift; sourceTree = "<group>"; };
 		6A41005B28E2F4DC002946CE /* SwapConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapConfirmView.swift; sourceTree = "<group>"; };
@@ -2392,6 +2404,7 @@
 		153C440427520811006D1E8D /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				6A3FFA7D2A283A3D00CB2B2C /* OnBoarding */,
 				6A3AD5C7291D4F8800C30D57 /* Staking */,
 				6A7D9DC328DD940700333954 /* Swap */,
 				6A6C410228D8497E00074DE9 /* Inbox */,
@@ -2421,6 +2434,7 @@
 				15DC21F12781F7D9000B187A /* Keyboard.swift */,
 				15D874DB28C5C3740072C6EA /* DragGestureViewModifier.swift */,
 				154866F228D0FE8900D012B8 /* ViewCondition.swift */,
+				6A3FFA842A28A91F00CB2B2C /* AnimationModifier.swift */,
 			);
 			path = Modifier;
 			sourceTree = "<group>";
@@ -4221,6 +4235,15 @@
 			path = Staking;
 			sourceTree = "<group>";
 		};
+		6A3FFA7D2A283A3D00CB2B2C /* OnBoarding */ = {
+			isa = PBXGroup;
+			children = (
+				6A3FFA7E2A283A5C00CB2B2C /* OnBoardingView.swift */,
+				6A3FFA812A2842A400CB2B2C /* OnBoardingViewModel.swift */,
+			);
+			path = OnBoarding;
+			sourceTree = "<group>";
+		};
 		6A4009102875614700A77070 /* Receive */ = {
 			isa = PBXGroup;
 			children = (
@@ -4992,8 +5015,9 @@
 			knownRegions = (
 				en,
 				Base,
-				"zh-Hans",
 				ja,
+				ru,
+				zh_CN,
 			);
 			mainGroup = 15EC9DE5274FD1FC00F70CD9;
 			packageReferences = (
@@ -5278,6 +5302,7 @@
 				15ADAE2B28F51EBB0014B722 /* SymmetricEncryption.swift in Sources */,
 				15DC20DD27819C56000B187A /* VPrimaryButton.swift in Sources */,
 				15DC21AD27819C56000B187A /* VBaseTextFieldModel.swift in Sources */,
+				6A3FFA802A283A5C00CB2B2C /* OnBoardingView.swift in Sources */,
 				6AE69EA528C0BCD4004D4709 /* UIViewController.swift in Sources */,
 				6A8D2A38283C7C790041100E /* AddressBookView.swift in Sources */,
 				15DC214327819C56000B187A /* VTabNavigationView.swift in Sources */,
@@ -5633,6 +5658,7 @@
 				6A6BD9DD287D5066009FA262 /* ProgressHUD.swift in Sources */,
 				6A06CB0728AA25F400C81BE1 /* NFTUIKitListDataSource.swift in Sources */,
 				6AAD4E6A28BC6E9900AEAB1F /* TransactionModels.swift in Sources */,
+				6A3FFA832A2842A400CB2B2C /* OnBoardingViewModel.swift in Sources */,
 				159DEC9328C67DB900493E9F /* NFTDetailPageViewModel.swift in Sources */,
 				6A164F422840A1380026B31E /* TabBar.swift in Sources */,
 				6AE084242851D481003BEEF0 /* Logger.swift in Sources */,
@@ -5648,6 +5674,7 @@
 				6A06CB1128AA54A600C81BE1 /* NFTUIKitGridStyleHandler.swift in Sources */,
 				6AC476ED28F40E50008503E6 /* BrowserBookmarkView.swift in Sources */,
 				6A8FA4B4285B192900EE5BE3 /* ScrollView+SnappableModifier.swift in Sources */,
+				6A3FFA862A28A91F00CB2B2C /* AnimationModifier.swift in Sources */,
 				15DC214F27819C56000B187A /* VNavigationViewNavigationBar.swift in Sources */,
 				6A164F602845F1CB0026B31E /* IndexBarBackground.swift in Sources */,
 				6AE1817A28C5A457009ADDDB /* FCLScripts.swift in Sources */,
@@ -5875,6 +5902,7 @@
 				15ADAE2A28F51EBB0014B722 /* SymmetricEncryption.swift in Sources */,
 				15C58ABA2868A4EE00BD4FC6 /* VPrimaryButton.swift in Sources */,
 				15C58ABB2868A4EE00BD4FC6 /* VBaseTextFieldModel.swift in Sources */,
+				6A3FFA7F2A283A5C00CB2B2C /* OnBoardingView.swift in Sources */,
 				6AE69EA428C0BCD4004D4709 /* UIViewController.swift in Sources */,
 				15C58ABC2868A4EE00BD4FC6 /* AddressBookView.swift in Sources */,
 				15C58ABD2868A4EE00BD4FC6 /* VTabNavigationView.swift in Sources */,
@@ -6230,6 +6258,7 @@
 				6A06CB0628AA25F400C81BE1 /* NFTUIKitListDataSource.swift in Sources */,
 				6AAD4E6928BC6E9900AEAB1F /* TransactionModels.swift in Sources */,
 				159DEC9228C67DB900493E9F /* NFTDetailPageViewModel.swift in Sources */,
+				6A3FFA822A2842A400CB2B2C /* OnBoardingViewModel.swift in Sources */,
 				15C58BA52868A4EE00BD4FC6 /* TabBar.swift in Sources */,
 				15C58BA62868A4EE00BD4FC6 /* Logger.swift in Sources */,
 				6A382E24289BDAFF00163564 /* SecurityManager.swift in Sources */,
@@ -6245,6 +6274,7 @@
 				15C58BAD2868A4EE00BD4FC6 /* ScrollView+SnappableModifier.swift in Sources */,
 				6AC476EC28F40E50008503E6 /* BrowserBookmarkView.swift in Sources */,
 				15C58BAE2868A4EE00BD4FC6 /* VNavigationViewNavigationBar.swift in Sources */,
+				6A3FFA852A28A91F00CB2B2C /* AnimationModifier.swift in Sources */,
 				15C58BAF2868A4EE00BD4FC6 /* IndexBarBackground.swift in Sources */,
 				6AE1817928C5A457009ADDDB /* FCLScripts.swift in Sources */,
 				15C58BB02868A4EE00BD4FC6 /* PinStackView.swift in Sources */,
@@ -6505,6 +6535,9 @@
 			isa = PBXVariantGroup;
 			children = (
 				15B1F63A2786B89800847BB5 /* en */,
+				6A1559902A29C7BC0083747E /* ru */,
+				6A1559922A29C7D10083747E /* ja */,
+				6A1559942A29CB860083747E /* zh_CN */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -7456,7 +7489,7 @@
 			repositoryURL = "https://github.com/fermoya/SwiftUIPager.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				minimumVersion = 2.5.0;
 			};
 		};
 		6A29114028CB2A87003295BD /* XCRemoteSwiftPackageReference "JXSegmentedView" */ = {
