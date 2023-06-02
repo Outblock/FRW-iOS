@@ -21,9 +21,7 @@ struct OnBoardingView: View {
         .backgroundFill {
             ZStack {
                 ForEach(enumerating: OnBoardingViewModel.PageType.allCases, id: \.self) { index, type in
-                    Image(type.bgImageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
+                    LinearGradient(colors: type.bgColors, startPoint: .top, endPoint: .bottom)
                         .opacity(vm.currentPageIndex >= index ? 1 : 0)
                 }
             }
@@ -48,7 +46,7 @@ extension OnBoardingView {
         } label: {
             Text("skip".localized)
                 .font(.inter(size: 14, weight: .medium))
-                .foregroundColor(vm.currentPageType == .domain ? .white : Color(hex: "#333333"))
+                .foregroundColor(vm.currentPageType.needLightContent ? .white : Color(hex: "#333333"))
                 .padding(.horizontal, 12)
                 .frame(height: 24)
                 .background(Color.white.opacity(0.24))

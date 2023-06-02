@@ -16,21 +16,27 @@ extension OnBoardingViewModel {
         case domain
         case site
         
-        var testColor: Color {
+        /// Basically only used in the text color of skip button
+        var needLightContent: Bool {
             switch self {
-            case .nft:
-                return .systemRed
-            case .token:
-                return .systemBlue
             case .domain:
-                return .systemYellow
-            case .site:
-                return .systemPink
+                return true
+            default:
+                return false
             }
         }
         
-        var bgImageName: String {
-            return "onboarding-bg-\(self.rawValue)"
+        var bgColors: [Color] {
+            switch self {
+            case .nft:
+                return [Color(hex: "#d7d7e5"), Color(hex: "#695ddb")]
+            case .token:
+                return [Color(hex: "#bcdefa"), Color(hex: "#306ad6")]
+            case .domain:
+                return [Color(hex: "#606060"), Color.black]
+            case .site:
+                return [Color(hex: "#fde782"), Color(hex: "#20c477")]
+            }
         }
         
         var imageName: String {
