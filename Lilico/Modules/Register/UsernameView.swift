@@ -11,6 +11,7 @@ import SwiftUIX
 extension UsernameView {
     struct ViewState {
         var status: LL.TextField.Status = .normal
+        var isRegisting: Bool = false
     }
     
     enum Action {
@@ -38,6 +39,14 @@ struct UsernameView: RouteableView {
     }
     
     @State var text: String = ""
+    
+    var buttonState: VPrimaryButtonState {
+        if viewModel.state.isRegisting {
+            return .loading
+        }
+        
+        return highlight == .success ? .enabled : .disabled
+    }
     
     var highlight: VTextFieldHighlight {
         switch viewModel.state.status {
@@ -99,10 +108,11 @@ struct UsernameView: RouteableView {
             }, onClear: .clearAndCustom {
                 viewModel.trigger(.onEditingChanged(text))
             })
+            .disabled(viewModel.state.isRegisting)
             .padding(.bottom, 10)
             
             VPrimaryButton(model: ButtonStyle.primary,
-                           state: highlight == .success ? .enabled : .disabled,
+                           state: buttonState,
                            action: {
                 viewModel.trigger(.next)
             }, title: "next".localized)
