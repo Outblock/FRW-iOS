@@ -68,6 +68,8 @@ class ManualBackupViewModel: ViewModel {
     func trigger(_ input: ManualBackupView.Action) {
         switch input {
         case .backupSuccess:
+            LocalUserDefaults.shared.backupType = .manual
+            
             Router.popToRoot()
             SPConfetti.startAnimating(.fullWidthToDown,
                                       particles: [.triangle, .arc, .polygon, .heart, .star],

@@ -336,7 +336,7 @@ extension ProfileView.ActionSectionView.Row {
         switch self {
         case .backup(let vm):
             switch vm.state.backupFetchingState {
-            case .manually:
+            case .manually, .none:
                 return .desc
             case .fetching:
                 return .progress
@@ -350,8 +350,15 @@ extension ProfileView.ActionSectionView.Row {
 
     var desc: String {
         switch self {
-        case .backup:
-            return "manually".localized
+        case .backup(let vm):
+            switch vm.state.backupFetchingState {
+            case .manually:
+                return "manually".localized
+            case .none:
+                return ""
+            default:
+                return ""
+            }
         case .security:
             return ""
         }

@@ -20,12 +20,15 @@ protocol BackupTarget {
 
 extension BackupManager {
     enum BackupType: Int {
+        case none = -1
         case icloud = 0
         case googleDrive
         case manual
         
         var descLocalizedString: String {
             switch self {
+            case .none:
+                return ""
             case .icloud:
                 return "icloud_drive".localized
             case .googleDrive:
@@ -56,6 +59,7 @@ extension BackupManager {
     }
 }
 
+// MARK: - Public
 extension BackupManager {
     func uploadMnemonic(to type: BackupManager.BackupType, password: String) async throws {
         switch type {
@@ -66,8 +70,6 @@ extension BackupManager {
         default:
             break
         }
-        
-        LocalUserDefaults.shared.backupType = type
     }
     
     func getCloudDriveItems(from type: BackupManager.BackupType) async throws -> [BackupManager.DriveItem] {

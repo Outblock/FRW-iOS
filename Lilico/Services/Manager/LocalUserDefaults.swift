@@ -172,7 +172,7 @@ class LocalUserDefaults: ObservableObject {
     
     @AppStorage(Keys.recentSendByToken.rawValue) var recentToken: String?
     
-    @AppStorage(Keys.backupType.rawValue) var backupType: BackupManager.BackupType = .manual {
+    @AppStorage(Keys.backupType.rawValue) var backupType: BackupManager.BackupType = .none {
         didSet {
             NotificationCenter.default.post(name: .backupTypeDidChanged, object: nil)
         }
@@ -230,7 +230,7 @@ class LocalUserDefaults: ObservableObject {
 extension LocalUserDefaults {
     @objc private func willReset() {
         self.recentToken = nil
-        self.backupType = .manual
+        self.backupType = .none
         self.flowNetwork = .mainnet
     }
 }

@@ -21,8 +21,8 @@ extension RouteMap {
     enum RestoreLogin {
         case root
         case restoreManual
-        case chooseAccount([BackupManager.DriveItem])
-        case enterRestorePwd(BackupManager.DriveItem)
+        case chooseAccount([BackupManager.DriveItem], BackupManager.BackupType)
+        case enterRestorePwd(BackupManager.DriveItem, BackupManager.BackupType)
     }
 }
 
@@ -33,10 +33,10 @@ extension RouteMap.RestoreLogin: RouterTarget {
             navi.push(content: RestoreWalletView())
         case .restoreManual:
             navi.push(content: InputMnemonicView())
-        case .chooseAccount(let items):
-            navi.push(content: ChooseAccountView(driveItems: items))
-        case .enterRestorePwd(let item):
-            navi.push(content: EnterRestorePasswordView(driveItem: item))
+        case .chooseAccount(let items, let backupType):
+            navi.push(content: ChooseAccountView(driveItems: items, backupType: backupType))
+        case .enterRestorePwd(let item, let backupType):
+            navi.push(content: EnterRestorePasswordView(driveItem: item, backupType: backupType))
         }
     }
 }
@@ -47,7 +47,6 @@ extension RouteMap {
     enum Register {
         case root(String?)
         case username(String?)
-        case tynk(String, String?)
     }
 }
 
@@ -58,8 +57,6 @@ extension RouteMap.Register: RouterTarget {
             navi.push(content: TermsAndPolicy(mnemonic: mnemonic))
         case .username(let mnemonic):
             navi.push(content: UsernameView(mnemonic: mnemonic))
-        case .tynk(let username, let mnemonic):
-            navi.push(content: TYNKView(username: username, mnemonic: mnemonic))
         }
     }
 }
@@ -68,7 +65,8 @@ extension RouteMap.Register: RouterTarget {
 
 extension RouteMap {
     enum Backup {
-        case rootWithMnemonic
+        case backupRoot
+        case chooseBackupMethod
         case backupToCloud(BackupManager.BackupType)
         case backupManual
     }
@@ -77,7 +75,9 @@ extension RouteMap {
 extension RouteMap.Backup: RouterTarget {
     func onPresent(navi: UINavigationController) {
         switch self {
-        case .rootWithMnemonic:
+        case .backupRoot:
+            navi.push(content: TYNKView())
+        case .chooseBackupMethod:
             guard let rootVC = navi.viewControllers.first else {
                 return
             }

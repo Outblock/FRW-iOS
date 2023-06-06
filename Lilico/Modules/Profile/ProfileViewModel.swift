@@ -11,6 +11,7 @@ import SwiftUI
 
 extension ProfileView {
     enum BackupFetchingState {
+        case none
         case manually
         case fetching
         case failed
@@ -64,14 +65,20 @@ extension ProfileView {
         
         private func refreshBackupState() {
             if !UserManager.shared.isLoggedIn {
-                state.backupFetchingState = .manually
+                state.backupFetchingState = .none
                 return
             }
             
             let backupType = LocalUserDefaults.shared.backupType
-            if backupType == .manual {
+            switch backupType {
+            case .manual:
                 state.backupFetchingState = .manually
                 return
+            case .none:
+                state.backupFetchingState = .none
+                return
+            default:
+                break
             }
             
             state.backupFetchingState = .fetching

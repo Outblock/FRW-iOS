@@ -55,6 +55,7 @@ class UsernameViewModel: ViewModel {
                 HUD.success(title: "create_user_success".localized)
                 
                 DispatchQueue.main.async {
+                    self.changeBackupTypeIfNeeded()
                     self.state.isRegisting = false
                     Router.popToRoot()
                 }
@@ -65,6 +66,15 @@ class UsernameViewModel: ViewModel {
                 }
             }
         }
+    }
+    
+    /// if mnemonic is not nil, means this is a custom mnemonic login, should change the backup type to manual
+    private func changeBackupTypeIfNeeded() {
+        guard mnemonic != nil else {
+            return
+        }
+        
+        LocalUserDefaults.shared.backupType = .manual
     }
 
     func localCheckUserName(_ username: String) -> Bool {

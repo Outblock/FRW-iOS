@@ -22,8 +22,8 @@ extension ChooseAccountView {
 struct ChooseAccountView: RouteableView {
     @StateObject var vm: ChooseAccountViewModel
     
-    init(driveItems: [BackupManager.DriveItem]) {
-        _vm = StateObject(wrappedValue: ChooseAccountViewModel(driveItems: driveItems))
+    init(driveItems: [BackupManager.DriveItem], backupType: BackupManager.BackupType) {
+        _vm = StateObject(wrappedValue: ChooseAccountViewModel(driveItems: driveItems, backupType: backupType))
     }
     
     var body: some View {
@@ -97,8 +97,8 @@ struct ChooseAccountView: RouteableView {
     }
 }
 
-struct ChooseAccountView_Previews: PreviewProvider {
-    static var previews: some View {
-        ChooseAccountView(driveItems: [])
-    }
-}
+//struct ChooseAccountView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ChooseAccountView(driveItems: [])
+//    }
+//}

@@ -32,7 +32,7 @@ extension RestoreWalletViewModel {
                     return
                 }
                 
-                Router.route(to: RouteMap.RestoreLogin.chooseAccount(items))
+                Router.route(to: RouteMap.RestoreLogin.chooseAccount(items, type))
             } catch BackupError.fileIsNotExistOnCloud {
                 HUD.dismissLoading()
                 HUD.error(title: "no_x_backup".localized(type.descLocalizedString))

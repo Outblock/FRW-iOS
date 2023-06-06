@@ -8,32 +8,15 @@
 import SwiftUI
 import SwiftUIX
 
-extension TYNKView {
-    struct ViewState {
-        var isLoading = false
-    }
-
-    enum Action {
-        case createWallet
-    }
-}
-
 struct TYNKView: RouteableView {
-    @StateObject var viewModel: TYNKViewModel
+    @StateObject var viewModel = TYNKViewModel()
     @State var stateList: [Bool] = [false, false, false]
     
     var title: String {
         return ""
     }
-    
-    init(username: String, mnemonic: String?) {
-        _viewModel = StateObject(wrappedValue: TYNKViewModel(username: username, mnemonic: mnemonic))
-    }
 
     var buttonState: VPrimaryButtonState {
-        if viewModel.state.isLoading {
-            return .loading
-        }
         return stateList.contains(false) ? .disabled : .enabled
     }
 
@@ -77,19 +60,13 @@ struct TYNKView: RouteableView {
             VPrimaryButton(model: ButtonStyle.primary,
                            state: buttonState,
                            action: {
-                               viewModel.trigger(.createWallet)
-                           }, title: buttonState == .loading ? "almost_there".localized : "next".localized)
-                .padding(.bottom)
+                viewModel.chooseBackupMethodAction()
+            }, title: buttonState == .loading ? "almost_there".localized : "next".localized)
+            .padding(.bottom)
         }
         .padding(.horizontal, 28)
         .background(Color.LL.background, ignoresSafeAreaEdges: .all)
         .applyRouteable(self)
-    }
-}
-
-struct TYNKView_Previews: PreviewProvider {
-    static var previews: some View {
-        TYNKView(username: "123", mnemonic: nil)
     }
 }
 

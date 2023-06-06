@@ -31,8 +31,8 @@ struct EnterRestorePasswordView: RouteableView {
         return model
     }()
     
-    init(driveItem: BackupManager.DriveItem) {
-        _vm = StateObject(wrappedValue: EnterRestorePasswordViewModel(driveItem: driveItem))
+    init(driveItem: BackupManager.DriveItem, backupType: BackupManager.BackupType) {
+        _vm = StateObject(wrappedValue: EnterRestorePasswordViewModel(driveItem: driveItem, backupType: backupType))
     }
     
     var body: some View {

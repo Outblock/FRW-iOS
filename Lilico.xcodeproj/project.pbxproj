@@ -1368,6 +1368,8 @@
 		6AE8821F288EB67A00ADF36E /* RouterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE8821D288EB67A00ADF36E /* RouterExtensions.swift */; };
 		6AE8E22829479B5E00BE395F /* StakingDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE8E22729479B5D00BE395F /* StakingDetailViewModel.swift */; };
 		6AE8E22929479B5E00BE395F /* StakingDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE8E22729479B5D00BE395F /* StakingDetailViewModel.swift */; };
+		6AE95D512A2EDB25009F9AA4 /* BackupTipsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE95D502A2EDB25009F9AA4 /* BackupTipsView.swift */; };
+		6AE95D522A2EDB25009F9AA4 /* BackupTipsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE95D502A2EDB25009F9AA4 /* BackupTipsView.swift */; };
 		6AEA374028A49DBE004545D4 /* MJRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = 6AEA373F28A49DBE004545D4 /* MJRefresh */; };
 		6AEA374328A4AD20004545D4 /* NFTUIKitListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEA374228A4AD20004545D4 /* NFTUIKitListViewController.swift */; };
 		6AEA374428A4AD20004545D4 /* NFTUIKitListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEA374228A4AD20004545D4 /* NFTUIKitListViewController.swift */; };
@@ -2137,6 +2139,7 @@
 		6AE8821A288E9FE900ADF36E /* RouteableUIHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteableUIHostingController.swift; sourceTree = "<group>"; };
 		6AE8821D288EB67A00ADF36E /* RouterExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterExtensions.swift; sourceTree = "<group>"; };
 		6AE8E22729479B5D00BE395F /* StakingDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StakingDetailViewModel.swift; sourceTree = "<group>"; };
+		6AE95D502A2EDB25009F9AA4 /* BackupTipsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupTipsView.swift; sourceTree = "<group>"; };
 		6AEA374228A4AD20004545D4 /* NFTUIKitListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTUIKitListViewController.swift; sourceTree = "<group>"; };
 		6AEA374528A4AD7F004545D4 /* NFTUIKitCollectionItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTUIKitCollectionItemCell.swift; sourceTree = "<group>"; };
 		6AEA374928A4DE10004545D4 /* NFTUIKitCollectionHContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTUIKitCollectionHContainerView.swift; sourceTree = "<group>"; };
@@ -2832,6 +2835,7 @@
 				158CE87C27829E68006A8394 /* RecoveryPhraseView.swift */,
 				15D9282E27843D4900382226 /* ManualBackupView.swift */,
 				15B1F62B2786ABE400847BB5 /* BackupPasswordView.swift */,
+				6AE95D502A2EDB25009F9AA4 /* BackupTipsView.swift */,
 			);
 			path = Backup;
 			sourceTree = "<group>";
@@ -5297,6 +5301,7 @@
 				6A4009132875615A00A77070 /* WalletReceiveView.swift in Sources */,
 				158C9CA027871E030062E0C6 /* ConfirmPinCodeView.swift in Sources */,
 				4EE8E4992835EAF500DFEF59 /* NFTFavoriteView.swift in Sources */,
+				6AE95D522A2EDB25009F9AA4 /* BackupTipsView.swift in Sources */,
 				6A164F742845F1CB0026B31E /* EnvironmentValues+IndexBarInsets.swift in Sources */,
 				15DC20CD27819C56000B187A /* VNavigationLink.swift in Sources */,
 				15ADAE2B28F51EBB0014B722 /* SymmetricEncryption.swift in Sources */,
@@ -5897,6 +5902,7 @@
 				6A4009122875615A00A77070 /* WalletReceiveView.swift in Sources */,
 				15C58AB62868A4EE00BD4FC6 /* ConfirmPinCodeView.swift in Sources */,
 				15C58AB72868A4EE00BD4FC6 /* NFTFavoriteView.swift in Sources */,
+				6AE95D512A2EDB25009F9AA4 /* BackupTipsView.swift in Sources */,
 				15C58AB82868A4EE00BD4FC6 /* EnvironmentValues+IndexBarInsets.swift in Sources */,
 				15C58AB92868A4EE00BD4FC6 /* VNavigationLink.swift in Sources */,
 				15ADAE2A28F51EBB0014B722 /* SymmetricEncryption.swift in Sources */,
