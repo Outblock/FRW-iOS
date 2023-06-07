@@ -175,9 +175,15 @@ class StakingManager: ObservableObject {
 
 extension StakingManager {
     private func updateApy() {
+        let refAddress = WalletManager.shared.getPrimaryWalletAddress() ?? "0"
+        
         Task {
             do {
                 let apy = try await FlowNetwork.getStakingApyByWeek()
+                if WalletManager.shared.getPrimaryWalletAddress() != refAddress {
+                    return
+                }
+                
                 DispatchQueue.main.async {
                     self.apy = apy
                     self.saveCache()
@@ -189,9 +195,15 @@ extension StakingManager {
     }
     
     private func queryStakingInfo() {
+        let refAddress = WalletManager.shared.getPrimaryWalletAddress() ?? "0"
+        
         Task {
             do {
                 if let response = try await FlowNetwork.queryStakeInfo() {
+                    if WalletManager.shared.getPrimaryWalletAddress() != refAddress {
+                        return
+                    }
+                    
                     DispatchQueue.main.async {
                         debugPrint("StakingManager -> queryStakingInfo success")
                         self.nodeInfos = response
@@ -207,7 +219,13 @@ extension StakingManager {
     }
     
     func refreshDelegatorInfo() async throws {
+        let refAddress = WalletManager.shared.getPrimaryWalletAddress() ?? "0"
+        
         if let response = try await FlowNetwork.getDelegatorInfo(), !response.isEmpty {
+            if WalletManager.shared.getPrimaryWalletAddress() != refAddress {
+                return
+            }
+            
             debugPrint("StakingManager -> refreshDelegatorInfo success, \(response)")
             DispatchQueue.main.sync {
                 self.delegatorIds = response
@@ -218,9 +236,15 @@ extension StakingManager {
     }
     
     private func updateSetupStatus() {
+        let refAddress = WalletManager.shared.getPrimaryWalletAddress() ?? "0"
+        
         Task {
             do {
                 let isSetup = try await FlowNetwork.accountStakingIsSetup()
+                if WalletManager.shared.getPrimaryWalletAddress() != refAddress {
+                    return
+                }
+                
                 DispatchQueue.main.async {
                     self.isSetup = isSetup
                     self.saveCache()
