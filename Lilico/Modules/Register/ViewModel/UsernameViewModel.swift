@@ -29,8 +29,8 @@ class UsernameViewModel: ViewModel {
     func trigger(_ input: UsernameView.Action) {
         switch input {
         case .next:
+            registerAction()
             UIApplication.shared.endEditing()
-            Router.route(to: RouteMap.Register.tynk(currentText, mnemonic))
         case let .onEditingChanged(text):
             currentText = text
             if localCheckUserName(text) {
@@ -44,6 +44,37 @@ class UsernameViewModel: ViewModel {
                 }
             }
         }
+    }
+    
+    private func registerAction() {
+        state.isRegisting = true
+        
+        Task {
+            do {
+                try await UserManager.shared.register(currentText, mnemonic: mnemonic)
+                HUD.success(title: "create_user_success".localized)
+                
+                DispatchQueue.main.async {
+                    self.changeBackupTypeIfNeeded()
+                    self.state.isRegisting = false
+                    Router.popToRoot()
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.state.isRegisting = false
+                    HUD.error(title: "create_user_failed".localized)
+                }
+            }
+        }
+    }
+    
+    /// if mnemonic is not nil, means this is a custom mnemonic login, should change the backup type to manual
+    private func changeBackupTypeIfNeeded() {
+        guard mnemonic != nil else {
+            return
+        }
+        
+        LocalUserDefaults.shared.backupType = .manual
     }
 
     func localCheckUserName(_ username: String) -> Bool {

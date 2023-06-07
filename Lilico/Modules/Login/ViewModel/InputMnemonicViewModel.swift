@@ -59,6 +59,10 @@ class InputMnemonicViewModel: ViewModel {
             do {
                 try await UserManager.shared.restoreLogin(withMnemonic: mnemonic)
                 
+                DispatchQueue.main.async {
+                    LocalUserDefaults.shared.backupType = .manual
+                }
+                
                 HUD.dismissLoading()
                 HUD.success(title: "login_success".localized)
                 Router.popToRoot()

@@ -36,8 +36,10 @@ class BackupPasswordViewModel: ObservableObject {
                 HUD.dismissLoading()
                 
                 DispatchQueue.main.async {
+                    LocalUserDefaults.shared.backupType = self.backupType
+                    
                     if let navi = Router.topNavigationController(),
-                        let existVC = navi.viewControllers.first { $0.navigationItem.title == "backup".localized } {
+                       let _ = navi.viewControllers.first(where: { $0.navigationItem.title == "backup".localized }) {
                         Router.route(to: RouteMap.Profile.backupChange)
                     } else {
                         Router.popToRoot()

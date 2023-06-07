@@ -38,8 +38,10 @@ class ProfileBackupViewModel: ObservableObject {
         }
         
         let backupCloudBlock: ((BackupManager.BackupType) -> Void) = { type in
-            HUD.dismissLoading()
-            Router.route(to: RouteMap.Backup.backupToCloud(type))
+            DispatchQueue.main.async {
+                HUD.dismissLoading()
+                Router.route(to: RouteMap.Backup.backupToCloud(type))
+            }
         }
         
         HUD.loading("loading".localized)

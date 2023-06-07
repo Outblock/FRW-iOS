@@ -154,6 +154,11 @@ struct WalletView: View {
             guestView.visibility(um.isLoggedIn ? .gone : .visible)
             normalView.visibility(um.isLoggedIn ? .visible : .gone)
         }
+        .halfSheet(showSheet: $vm.backupTipsPresent) {
+            BackupTipsView(closeAction: {
+                vm.backupTipsPresent = false
+            })
+        }
         .navigationBarHidden(true)
     }
 

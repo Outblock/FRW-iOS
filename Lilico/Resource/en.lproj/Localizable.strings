@@ -464,3 +464,5 @@
 "onboarding_title_token" = "Gather\nall your tokens";
 "onboarding_title_domain" = "Claim\nfree Lilico domain";
 "onboarding_title_site" = "Explore\nyour favourite site";
+"backup_tips_desc" = "Backup Recovery Phrase is important in protect your prize property.";
+"not_now" = "Not Now";

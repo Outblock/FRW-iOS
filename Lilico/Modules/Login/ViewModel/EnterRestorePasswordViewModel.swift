@@ -10,9 +10,11 @@ import SwiftUI
 
 class EnterRestorePasswordViewModel: ObservableObject {
     private let item: BackupManager.DriveItem
+    private let backupType: BackupManager.BackupType
     
-    init(driveItem: BackupManager.DriveItem) {
+    init(driveItem: BackupManager.DriveItem, backupType: BackupManager.BackupType) {
         self.item = driveItem
+        self.backupType = backupType
     }
     
     func restoreAction(password: String) {
@@ -32,6 +34,10 @@ class EnterRestorePasswordViewModel: ObservableObject {
         Task {
             do {
                 try await UserManager.shared.restoreLogin(withMnemonic: mnemonic)
+                
+                DispatchQueue.main.async {
+                    LocalUserDefaults.shared.backupType = self.backupType
+                }
                 
                 HUD.dismissLoading()
                 HUD.success(title: "login_success".localized)

@@ -53,9 +53,13 @@ class WalletViewModel: ObservableObject {
     @Published var walletState: WalletState = .noAddress
     @Published var transactionCount: Int = LocalUserDefaults.shared.transactionCount
     @Published var pendingRequestCount: Int = 0
+    @Published var backupTipsPresent: Bool = false
     
     private var lastRefreshTS: TimeInterval = 0
     private let autoRefreshInterval: TimeInterval = 30
+    
+    /// If the current account is not backed up, each time start app, backup tips will be displayed.
+    private var backupTipsShown: Bool = false
 
     private var cancelSets = Set<AnyCancellable>()
 
@@ -129,6 +133,7 @@ class WalletViewModel: ObservableObject {
         
         NotificationCenter.default.addObserver(self, selector: #selector(transactionCountDidChanged), name: .transactionCountDidChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didReset), name: .didResetWallet, object: nil)
     }
 
     private func refreshHiddenFlag() {
@@ -160,6 +165,7 @@ class WalletViewModel: ObservableObject {
         coinItems = list
         
         refreshTotalBalance()
+        showBackupTipsIfNeeded()
     }
     
     private func refreshTotalBalance() {
@@ -170,6 +176,35 @@ class WalletViewModel: ObservableObject {
         }
         
         balance = total
+    }
+    
+    private func showBackupTipsIfNeeded() {
+        if !UserManager.shared.isLoggedIn {
+            return
+        }
+        
+        if LocalUserDefaults.shared.backupType != .none {
+            return
+        }
+        
+        if WalletManager.shared.coinBalances.isEmpty {
+            return
+        }
+        
+        if backupTipsShown {
+            return
+        }
+        
+        if backupTipsPresent {
+            return
+        }
+        
+        if balance < 0.01 {
+            return
+        }
+        
+        backupTipsPresent = true
+        backupTipsShown = true
     }
     
     private func reloadTransactionCount() {
@@ -201,6 +236,10 @@ class WalletViewModel: ObservableObject {
     @objc private func willReset() {
         LocalUserDefaults.shared.transactionCount = 0
         LocalUserDefaults.shared.walletHidden = false
+    }
+    
+    @objc private func didReset() {
+        backupTipsShown = false
     }
 }
 
