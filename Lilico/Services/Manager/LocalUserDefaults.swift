@@ -15,8 +15,9 @@ var currentNetwork: LocalUserDefaults.FlowNetworkType {
 
 extension LocalUserDefaults {
     enum Keys: String {
+        case activatedUID
         case flowNetwork
-        case userInfo
+        case legacyUserInfo = "userInfo"
         case walletHidden
         case quoteMarket
         case coinSummary
@@ -33,6 +34,7 @@ extension LocalUserDefaults {
         case stakingGuideDisplayed
         case nftCount
         case onBoardingShown
+        case multiAccountUpgradeFlag
     }
 
     enum FlowNetworkType: String, CaseIterable {
@@ -123,17 +125,19 @@ class LocalUserDefaults: ObservableObject {
             }
         }
     #endif
+    
+    @AppStorage(Keys.activatedUID.rawValue) var activatedUID: String?
 
-    var userInfo: UserInfo? {
+    var legacyUserInfo: UserInfo? {
         set {
             if let value = newValue, let data = try? LilicoAPI.jsonEncoder.encode(value) {
-                UserDefaults.standard.set(data, forKey: Keys.userInfo.rawValue)
+                UserDefaults.standard.set(data, forKey: Keys.legacyUserInfo.rawValue)
             } else {
-                UserDefaults.standard.removeObject(forKey: Keys.userInfo.rawValue)
+                UserDefaults.standard.removeObject(forKey: Keys.legacyUserInfo.rawValue)
             }
         }
         get {
-            if let data = UserDefaults.standard.data(forKey: Keys.userInfo.rawValue), let info = try? LilicoAPI.jsonDecoder.decode(UserInfo.self, from: data) {
+            if let data = UserDefaults.standard.data(forKey: Keys.legacyUserInfo.rawValue), let info = try? LilicoAPI.jsonDecoder.decode(UserInfo.self, from: data) {
                 return info
             } else {
                 return nil
@@ -225,6 +229,7 @@ class LocalUserDefaults: ObservableObject {
     }
     
     @AppStorage(Keys.onBoardingShown.rawValue) var onBoardingShown: Bool = false
+    @AppStorage(Keys.multiAccountUpgradeFlag.rawValue) var multiAccountUpgradeFlag: Bool = false
 }
 
 extension LocalUserDefaults {

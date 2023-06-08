@@ -8,38 +8,39 @@
 import Firebase
 import FirebaseAuth
 import Foundation
+import Combine
 
 class UserManager: ObservableObject {
     static let shared = UserManager()
 
-    @Published var userInfo: UserInfo? = LocalUserDefaults.shared.userInfo {
-        didSet {
-            refreshFlags()
-            uploadUserNameIfNeeded()
-        }
-    }
-
-    @Published var isLoggedIn: Bool = false {
-        didSet {
-            debugPrint("UserManager -> isLoggedIn: \(isLoggedIn)")
-        }
-    }
-
+    @Published var userInfo: UserInfo?
+    @Published var isLoggedIn: Bool = false
     @Published var isAnonymous: Bool = true
     @Published var isMeowDomainEnabled: Bool = false
+    
+    private var cancelSets = Set<AnyCancellable>()
+    private var initUserInfoUpdated = false
 
     init() {
         checkIfHasOldAccount()
         
-        refreshFlags()
-        uploadUserNameIfNeeded()
+        MultiAccountStorage.shared.$userInfo
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { newUserInfo in
+                self.userInfo = newUserInfo
+                self.refreshFlags()
+                self.uploadUserNameIfNeeded()
+                
+                if !self.initUserInfoUpdated {
+                    self.initUserInfoUpdated = true
+                    Task {
+                        try? await self.fetchUserInfo()
+                    }
+                }
+            }.store(in: &cancelSets)
+        
         loginAnonymousIfNeeded()
-
-        if isLoggedIn {
-            Task {
-                try? await fetchUserInfo()
-            }
-        }
     }
     
     private func checkIfHasOldAccount() {
@@ -58,27 +59,22 @@ class UserManager: ObservableObject {
 
 extension UserManager {
     func reset() {
-        debugPrint("UserManager: reset start")
+        log.info("reset start")
         
         NotificationCenter.default.post(name: .willResetWallet)
         
         do {
             try Auth.auth().signOut()
-            debugPrint("UserManager: firebase signOut success")
-            
-            self.userInfo = nil
-            LocalUserDefaults.shared.userInfo = nil
-            debugPrint("UserManager: user info cache clear success")
-            
+            MultiAccountStorage.shared.reset()
             loginAnonymousIfNeeded()
             
             NotificationCenter.default.post(name: .didResetWallet)
             
             Router.popToRoot()
             
-            debugPrint("UserManager: reset finished")
+            log.debug("reset finished")
         } catch {
-            debugPrint("UserManager: reset failed: \(error)")
+            log.error("reset failed", context: error)
         }
     }
 }
@@ -190,6 +186,10 @@ extension UserManager {
     }
 
     private func fetchUserInfo() async throws {
+        if !isLoggedIn {
+            return
+        }
+        
         let response: UserInfoResponse = try await Network.request(LilicoAPI.User.userInfo)
         let info = UserInfo(avatar: response.avatar, nickname: response.nickname, username: response.username, private: response.private, address: nil)
 
@@ -197,10 +197,12 @@ extension UserManager {
             throw LLError.fetchUserInfoFailed
         }
 
-        LocalUserDefaults.shared.userInfo = info
         DispatchQueue.main.async {
-            self.userInfo = info
-            self.fetchMeowDomainStatus()
+            MultiAccountStorage.shared.applyUserInfo(info)
+            
+            DispatchQueue.main.async {
+                self.fetchMeowDomainStatus()
+            }
         }
     }
     
@@ -301,8 +303,7 @@ extension UserManager {
         }
 
         let newUserInfo = UserInfo(avatar: current.avatar, nickname: name, username: current.username, private: current.private, address: nil)
-        LocalUserDefaults.shared.userInfo = newUserInfo
-        userInfo = newUserInfo
+        MultiAccountStorage.shared.applyUserInfo(newUserInfo)
     }
 
     func updatePrivate(_ isPrivate: Bool) {
@@ -311,8 +312,7 @@ extension UserManager {
         }
 
         let newUserInfo = UserInfo(avatar: current.avatar, nickname: current.nickname, username: current.username, private: isPrivate ? 2 : 1, address: nil)
-        LocalUserDefaults.shared.userInfo = newUserInfo
-        userInfo = newUserInfo
+        MultiAccountStorage.shared.applyUserInfo(newUserInfo)
     }
 
     func updateAvatar(_ avatar: String) {
@@ -321,7 +321,6 @@ extension UserManager {
         }
 
         let newUserInfo = UserInfo(avatar: avatar, nickname: current.nickname, username: current.username, private: current.private, address: nil)
-        LocalUserDefaults.shared.userInfo = newUserInfo
-        userInfo = newUserInfo
+        MultiAccountStorage.shared.applyUserInfo(newUserInfo)
     }
 }
