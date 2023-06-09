@@ -131,7 +131,7 @@ extension BackupManager {
             return list
         }
         
-        guard let uid = UserManager.shared.getUid(), !uid.isEmpty else {
+        guard let uid = UserManager.shared.getUID(), !uid.isEmpty else {
             throw BackupError.missingUid
         }
         

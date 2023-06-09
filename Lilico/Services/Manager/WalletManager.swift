@@ -43,26 +43,31 @@ class WalletManager: ObservableObject {
         .label("Lilico app backup")
         .synchronizable(true)
         .accessibility(.whenUnlocked)
-    private let backupKeychain = Keychain(server: "https://lilico.app", protocolType: .https)
 
     private var walletInfoRetryTimer: Timer?
     private var cancellableSet = Set<AnyCancellable>()
 
     init() {
-        if UserManager.shared.isLoggedIn {
-            restoreMnemonicForCurrentUser()
-        }
+        MultiAccountStorage.shared.$activatedUID
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { newActivatedUID in
+                guard let newActivatedUID = newActivatedUID else {
+                    return
+                }
+                
+                if !self.restoreMnemonicFromKeychain(uid: newActivatedUID) {
+                    HUD.error(title: "no_private_key".localized)
+                    return
+                }
+                
+                self.reloadWalletInfo()
+            }.store(in: &cancellableSet)
         
         loadCacheData()
-
-        UserManager.shared.$isLoggedIn.sink { [weak self] newLoginStatus in
-            debugPrint("WalletManager -> $isLoggedIn is changed: \(newLoginStatus)")
-            DispatchQueue.main.async {
-                self?.reloadWalletInfo()
-            }
-        }.store(in: &cancellableSet)
         
         NotificationCenter.default.addObserver(self, selector: #selector(reset), name: .willResetWallet, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(willSwitchAccount), name: .willSwitchAccount, object: nil)
     }
     
     private func loadCacheData() {
@@ -94,6 +99,14 @@ class WalletManager: ObservableObject {
 // MARK: - Reset
 
 extension WalletManager {
+    @objc private func willSwitchAccount() {
+        self.hdWallet = nil
+        self.walletInfo = nil
+        self.supportedCoins = nil
+        self.activatedCoins = []
+        self.coinBalances = [:]
+    }
+    
     @objc private func reset() {
         debugPrint("WalletManager: reset start")
         
@@ -116,12 +129,11 @@ extension WalletManager {
     }
     
     private func removeCurrentMnemonicDataFromKeyChain() throws {
-        guard let uid = UserManager.shared.getUid() else {
+        guard let uid = UserManager.shared.getUID() else {
             return
         }
         
         try mainKeychain.remove(getMnemonicStoreKey(uid: uid))
-        try backupKeychain.remove(uid)
     }
 }
 
@@ -186,14 +198,6 @@ extension WalletManager {
     }
 }
 
-// MARK: - Setter
-
-extension WalletManager {
-    func setSecurePassword(_ pwd: String, uid: String) throws {
-        try set(toBackupKeychain: pwd, forKey: uid)
-    }
-}
-
 // MARK: - Server Wallet
 
 extension WalletManager {
@@ -230,17 +234,21 @@ extension WalletManager {
     }
 
     func reloadWalletInfo() {
-        debugPrint("WalletManager -> reloadWalletInfo")
+        log.debug("reloadWalletInfo")
         stopWalletInfoRetryTimer()
 
         if !UserManager.shared.isLoggedIn {
-            debugPrint("WalletManager -> can't reload because isLoggedIn is false")
+            log.warning("can't reload because isLoggedIn is false")
             return
         }
+        
+        guard let uid = UserManager.shared.getUID() else { return }
 
         Task {
             do {
                 let response: UserWalletResponse = try await Network.request(LilicoAPI.User.userWallet)
+                
+                if UserManager.shared.getUID() != uid { return }
                 
                 DispatchQueue.main.async {
                     self.walletInfo = response
@@ -250,6 +258,8 @@ extension WalletManager {
                     StakingManager.shared.refresh()
                 }
             } catch {
+                if UserManager.shared.getUID() != uid { return }
+                
                 DispatchQueue.main.async {
                     debugPrint(error)
                     self.startWalletInfoRetryTimer()
@@ -335,7 +345,7 @@ extension WalletManager {
     }
     
     private func restoreMnemonicForCurrentUser() {
-        if !UserManager.shared.isAnonymous, let uid = UserManager.shared.getUid() {
+        if !UserManager.shared.isAnonymous, let uid = UserManager.shared.getUID() {
             if !restoreMnemonicFromKeychain(uid: uid) {
                 HUD.error(title: "no_private_key".localized)
             }
@@ -494,14 +504,6 @@ extension WalletManager {
                 }
             }
         }
-    }
-    
-    private func set(toBackupKeychain value: String, forKey key: String) throws {
-        try backupKeychain.set(value, key: key)
-    }
-
-    private func getString(fromBackupKeychain key: String) -> String? {
-        return try? backupKeychain.get(key)
     }
 
     // MARK: -

@@ -23,32 +23,38 @@ class DBManager {
     init() {
         prepare()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
+        MultiAccountStorage.shared.$activatedUID
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { newUID in
+                guard newUID != nil else { return }
+                self.closeDB()
+                self.prepare()
+            }.store(in: &cancelSets)
         
-        UserManager.shared.$isLoggedIn.sink { [weak self] isLoggedIn in
-            if isLoggedIn {
-                DispatchQueue.main.async {
-                    self?.prepare()
-                }
-            }
-        }.store(in: &cancelSets)
+        NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
+    }
+    
+    private func closeDB() {
+        self.db?.close()
+        self.db = nil
     }
     
     @objc private func willReset() {
-        self.db?.close()
-        self.db = nil
+        closeDB()
     }
 }
     
 // MARK: - init
 extension DBManager {
     var dbURL: URL {
-        let uid = UserManager.shared.getUid() ?? "0"
+        let uid = UserManager.shared.getUID() ?? "0"
         return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("app_database/\(uid)/database.db")
     }
     
     private func prepare() {
-        guard UserManager.shared.getUid() != nil else {
+        guard UserManager.shared.getUID() != nil else {
             return
         }
         

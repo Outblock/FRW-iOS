@@ -31,16 +31,32 @@ class UserManager: ObservableObject {
                 self.userInfo = newUserInfo
                 self.refreshFlags()
                 self.uploadUserNameIfNeeded()
-                
-                if !self.initUserInfoUpdated {
-                    self.initUserInfoUpdated = true
-                    Task {
-                        try? await self.fetchUserInfo()
-                    }
-                }
+                self.initRefreshUserInfo()
             }.store(in: &cancelSets)
         
         loginAnonymousIfNeeded()
+    }
+    
+    private func initRefreshUserInfo() {
+        if !self.initUserInfoUpdated {
+            self.initUserInfoUpdated = true
+            if !isLoggedIn {
+                return
+            }
+            
+            Task {
+                do {
+                    let info = try await self.fetchUserInfo()
+                    DispatchQueue.main.async {
+                        MultiAccountStorage.shared.applyUserInfo(info)
+                    }
+                    
+                    self.fetchMeowDomainStatus(info.username)
+                } catch {
+                    log.error("init refresh user info failed", context: error)
+                }
+            }
+        }
     }
     
     private func checkIfHasOldAccount() {
@@ -113,7 +129,7 @@ extension UserManager {
         
         HUD.loading()
         
-        guard let uid = getUid(), let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid) else {
+        guard let uid = getFirebaseUID(), let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid) else {
             HUD.dismissLoading()
             HUD.error(title: "restore_account_failed".localized)
             return
@@ -170,14 +186,20 @@ extension UserManager {
 extension UserManager {
     private func finishLogin(mnemonic: String, customToken: String) async throws {
         try await firebaseLogin(customToken: customToken)
-        try await fetchUserInfo()
+        let info = try await fetchUserInfo()
+        fetchMeowDomainStatus(info.username)
         uploadUserNameIfNeeded()
 
-        guard let uid = UserManager.shared.getUid() else {
+        guard let uid = getFirebaseUID() else {
             throw LLError.fetchUserInfoFailed
         }
 
         try WalletManager.shared.storeAndActiveMnemonicToKeychain(mnemonic, uid: uid)
+        
+        DispatchQueue.main.async {
+            MultiAccountStorage.shared.applyActivatedUID(uid)
+            MultiAccountStorage.shared.applyUserInfo(info)
+        }
     }
 
     private func firebaseLogin(customToken: String) async throws {
@@ -185,41 +207,31 @@ extension UserManager {
         debugPrint("Logged in -> \(result.user.uid)")
     }
 
-    private func fetchUserInfo() async throws {
-        if !isLoggedIn {
-            return
-        }
-        
+    private func fetchUserInfo() async throws -> UserInfo {
         let response: UserInfoResponse = try await Network.request(LilicoAPI.User.userInfo)
         let info = UserInfo(avatar: response.avatar, nickname: response.nickname, username: response.username, private: response.private, address: nil)
 
         if info.username.isEmpty {
             throw LLError.fetchUserInfoFailed
         }
-
-        DispatchQueue.main.async {
-            MultiAccountStorage.shared.applyUserInfo(info)
-            
-            DispatchQueue.main.async {
-                self.fetchMeowDomainStatus()
-            }
-        }
+        
+        return info
     }
     
-    private func fetchMeowDomainStatus() {
-        guard let username = self.userInfo?.username else {
-            return
-        }
-        
+    private func fetchMeowDomainStatus(_ username: String) {
         Task {
             do {
                 let _ = try await FlowNetwork.queryAddressByDomainFlowns(domain: username, root: Contact.DomainType.meow.domain)
-                DispatchQueue.main.async {
-                    self.isMeowDomainEnabled = true
+                if userInfo?.username == username {
+                    DispatchQueue.main.async {
+                        self.isMeowDomainEnabled = true
+                    }
                 }
             } catch {
-                DispatchQueue.main.async {
-                    self.isMeowDomainEnabled = false
+                if userInfo?.username == username {
+                    DispatchQueue.main.async {
+                        self.isMeowDomainEnabled = false
+                    }
                 }
             }
         }
@@ -256,8 +268,12 @@ extension UserManager {
             }
         }
     }
+    
+    func getUID() -> String? {
+        return MultiAccountStorage.shared.activatedUID
+    }
 
-    func getUid() -> String? {
+    private func getFirebaseUID() -> String? {
         return Auth.auth().currentUser?.uid
     }
 

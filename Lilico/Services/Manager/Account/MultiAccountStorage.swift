@@ -12,11 +12,10 @@ import FirebaseAuth
 
 class MultiAccountStorage: ObservableObject {
     static let shared = MultiAccountStorage()
-    
-    private(set) var activatedUID: String?
-    @Published private(set) var userInfo: UserInfo?
-    
     private init() {}
+    
+    @Published private(set) var activatedUID: String?
+    @Published private(set) var userInfo: UserInfo?
     
     func upgradeFromOldVersionIfNeeded() {
         if LocalUserDefaults.shared.multiAccountUpgradeFlag {
@@ -61,9 +60,7 @@ extension MultiAccountStorage {
     /// reset current activate account
     func reset() {
         applyUserInfo(nil)
-        
-        activatedUID = nil
-        LocalUserDefaults.shared.activatedUID = nil
+        applyActivatedUID(nil)
     }
 }
 
@@ -92,6 +89,16 @@ extension MultiAccountStorage {
         } catch {
             log.error("apply user info failed", context: error)
         }
+    }
+    
+    func applyActivatedUID(_ uid: String?) {
+        // TODO: - Maybe it's more appropriate to put it on UI action.
+        if let activatedUID = activatedUID, let uid = uid, activatedUID != uid {
+            NotificationCenter.default.post(name: .willSwitchAccount, object: nil)
+        }
+        
+        activatedUID = uid
+        LocalUserDefaults.shared.activatedUID = uid
     }
 }
 

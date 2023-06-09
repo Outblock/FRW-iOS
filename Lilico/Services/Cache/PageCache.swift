@@ -16,13 +16,19 @@ class PageCache {
     private var cancelSet = Set<AnyCancellable>()
     
     init() {
-        UserManager.shared.$isLoggedIn.sink { _ in
+        UserManager.shared.$isLoggedIn
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
             if UserManager.shared.isLoggedIn == false {
-                DispatchQueue.main.async {
-                    self.clear()
-                }
+                self.clear()
             }
         }.store(in: &cancelSet)
+        
+        NotificationCenter.default.publisher(for: .willSwitchAccount)
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                self.clear()
+            }.store(in: &cancelSet)
     }
     
     private func clear() {

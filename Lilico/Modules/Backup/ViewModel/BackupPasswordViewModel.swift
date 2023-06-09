@@ -31,7 +31,6 @@ class BackupPasswordViewModel: ObservableObject {
         Task {
             do {
                 try await BackupManager.shared.uploadMnemonic(to: backupType, password: password)
-                setWebPassword(password: password)
                 
                 HUD.dismissLoading()
                 
@@ -54,12 +53,6 @@ class BackupPasswordViewModel: ObservableObject {
                 HUD.dismissLoading()
                 HUD.error(title: "backup_to_x_failed".localized(self.backupType.descLocalizedString))
             }
-        }
-    }
-    
-    private func setWebPassword(password: String) {
-        if let uid = UserManager.shared.getUid(), !uid.isEmpty {
-            try? WalletManager.shared.setSecurePassword(password, uid: uid)
         }
     }
 }
