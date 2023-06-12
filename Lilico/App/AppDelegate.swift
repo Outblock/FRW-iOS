@@ -116,7 +116,6 @@ extension AppDelegate {
     
     private func appConfig() {
         MultiAccountStorage.shared.upgradeFromOldVersionIfNeeded()
-        MultiAccountStorage.shared.setup()
         
         _ = UserManager.shared
         _ = WalletManager.shared

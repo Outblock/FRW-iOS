@@ -13,48 +13,58 @@ import Combine
 class UserManager: ObservableObject {
     static let shared = UserManager()
 
-    @Published var userInfo: UserInfo?
+    @Published var activatedUID: String? = LocalUserDefaults.shared.activatedUID {
+        didSet {
+            LocalUserDefaults.shared.activatedUID = activatedUID
+        }
+    }
+    @Published var userInfo: UserInfo? {
+        didSet {
+            do {
+                guard let uid = activatedUID else { return }
+                try MultiAccountStorage.shared.saveUserInfo(userInfo, uid: uid)
+            } catch {
+                log.error("save user info failed", context: error)
+            }
+        }
+    }
     @Published var isLoggedIn: Bool = false
     @Published var isAnonymous: Bool = true
     @Published var isMeowDomainEnabled: Bool = false
-    
-    private var cancelSets = Set<AnyCancellable>()
-    private var initUserInfoUpdated = false
 
     init() {
         checkIfHasOldAccount()
         
-        MultiAccountStorage.shared.$userInfo
-            .receive(on: DispatchQueue.main)
-            .map { $0 }
-            .sink { newUserInfo in
-                self.userInfo = newUserInfo
-                self.refreshFlags()
-                self.uploadUserNameIfNeeded()
-                self.initRefreshUserInfo()
-            }.store(in: &cancelSets)
+        if let activatedUID = activatedUID {
+            self.userInfo = MultiAccountStorage.shared.getUserInfo(activatedUID)
+            self.refreshFlags()
+            self.uploadUserNameIfNeeded()
+            self.initRefreshUserInfo()
+        }
         
         loginAnonymousIfNeeded()
     }
     
     private func initRefreshUserInfo() {
-        if !self.initUserInfoUpdated {
-            self.initUserInfoUpdated = true
-            if !isLoggedIn {
-                return
-            }
-            
-            Task {
-                do {
-                    let info = try await self.fetchUserInfo()
-                    DispatchQueue.main.async {
-                        MultiAccountStorage.shared.applyUserInfo(info)
-                    }
-                    
-                    self.fetchMeowDomainStatus(info.username)
-                } catch {
-                    log.error("init refresh user info failed", context: error)
+        if !isLoggedIn {
+            return
+        }
+        
+        guard let uid = activatedUID else { return }
+        
+        Task {
+            do {
+                let info = try await self.fetchUserInfo()
+                
+                if activatedUID != uid { return }
+                
+                DispatchQueue.main.async {
+                    self.userInfo = info
                 }
+                
+                self.fetchMeowDomainStatus(info.username)
+            } catch {
+                log.error("init refresh user info failed", context: error)
             }
         }
     }
@@ -81,7 +91,6 @@ extension UserManager {
         
         do {
             try Auth.auth().signOut()
-            MultiAccountStorage.shared.reset()
             loginAnonymousIfNeeded()
             
             NotificationCenter.default.post(name: .didResetWallet)
@@ -102,6 +111,14 @@ extension UserManager {
         guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) else {
             HUD.error(title: "empty_wallet_key".localized)
             throw LLError.emptyWallet
+        }
+        
+        if Auth.auth().currentUser != nil {
+            try await Auth.auth().signInAnonymously()
+            DispatchQueue.main.async {
+                self.userInfo = nil
+                self.activatedUID = nil
+            }
         }
 
         let key = hdWallet.flowAccountKey
@@ -156,6 +173,14 @@ extension UserManager {
         guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) else {
             throw LLError.incorrectPhrase
         }
+        
+        if Auth.auth().currentUser != nil {
+            try await Auth.auth().signInAnonymously()
+            DispatchQueue.main.async {
+                self.userInfo = nil
+                self.activatedUID = nil
+            }
+        }
 
         guard let token = try? await getIDToken(), !token.isEmpty else {
             loginAnonymousIfNeeded()
@@ -181,6 +206,18 @@ extension UserManager {
     }
 }
 
+// MARK: - Switch Account
+
+extension UserManager {
+    func switchAccount(withUID uid: String) async throws {
+        guard let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid) else {
+            return
+        }
+        
+        try await restoreLogin(withMnemonic: mnemonic)
+    }
+}
+
 // MARK: - Internal Login Logic
 
 extension UserManager {
@@ -197,8 +234,9 @@ extension UserManager {
         try WalletManager.shared.storeAndActiveMnemonicToKeychain(mnemonic, uid: uid)
         
         DispatchQueue.main.async {
-            MultiAccountStorage.shared.applyActivatedUID(uid)
-            MultiAccountStorage.shared.applyUserInfo(info)
+            self.activatedUID = uid
+            self.userInfo = info
+            NotificationCenter.default.post(name: .didFinishAccountLogin, object: nil)
         }
     }
 
@@ -268,10 +306,6 @@ extension UserManager {
             }
         }
     }
-    
-    func getUID() -> String? {
-        return MultiAccountStorage.shared.activatedUID
-    }
 
     private func getFirebaseUID() -> String? {
         return Auth.auth().currentUser?.uid
@@ -319,7 +353,7 @@ extension UserManager {
         }
 
         let newUserInfo = UserInfo(avatar: current.avatar, nickname: name, username: current.username, private: current.private, address: nil)
-        MultiAccountStorage.shared.applyUserInfo(newUserInfo)
+        self.userInfo = newUserInfo
     }
 
     func updatePrivate(_ isPrivate: Bool) {
@@ -328,7 +362,7 @@ extension UserManager {
         }
 
         let newUserInfo = UserInfo(avatar: current.avatar, nickname: current.nickname, username: current.username, private: isPrivate ? 2 : 1, address: nil)
-        MultiAccountStorage.shared.applyUserInfo(newUserInfo)
+        self.userInfo = newUserInfo
     }
 
     func updateAvatar(_ avatar: String) {
@@ -337,6 +371,6 @@ extension UserManager {
         }
 
         let newUserInfo = UserInfo(avatar: avatar, nickname: current.nickname, username: current.username, private: current.private, address: nil)
-        MultiAccountStorage.shared.applyUserInfo(newUserInfo)
+        self.userInfo = newUserInfo
     }
 }

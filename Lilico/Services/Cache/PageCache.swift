@@ -24,7 +24,7 @@ class PageCache {
             }
         }.store(in: &cancelSet)
         
-        NotificationCenter.default.publisher(for: .willSwitchAccount)
+        NotificationCenter.default.publisher(for: .didFinishAccountLogin)
             .receive(on: DispatchQueue.main)
             .sink { _ in
                 self.clear()

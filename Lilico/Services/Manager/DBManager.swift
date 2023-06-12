@@ -23,7 +23,7 @@ class DBManager {
     init() {
         prepare()
         
-        MultiAccountStorage.shared.$activatedUID
+        UserManager.shared.$activatedUID
             .dropFirst()
             .receive(on: DispatchQueue.main)
             .map { $0 }
@@ -49,12 +49,12 @@ class DBManager {
 // MARK: - init
 extension DBManager {
     var dbURL: URL {
-        let uid = UserManager.shared.getUID() ?? "0"
+        let uid = UserManager.shared.activatedUID ?? "0"
         return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("app_database/\(uid)/database.db")
     }
     
     private func prepare() {
-        guard UserManager.shared.getUID() != nil else {
+        guard UserManager.shared.activatedUID != nil else {
             return
         }
         

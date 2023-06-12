@@ -48,26 +48,19 @@ class WalletManager: ObservableObject {
     private var cancellableSet = Set<AnyCancellable>()
 
     init() {
-        MultiAccountStorage.shared.$activatedUID
+        NotificationCenter.default.addObserver(self, selector: #selector(reset), name: .willResetWallet, object: nil)
+        
+        if UserManager.shared.activatedUID != nil {
+            restoreMnemonicForCurrentUser()
+            loadCacheData()
+        }
+        
+        UserManager.shared.$activatedUID
             .receive(on: DispatchQueue.main)
             .map { $0 }
-            .sink { newActivatedUID in
-                guard let newActivatedUID = newActivatedUID else {
-                    return
-                }
-                
-                if !self.restoreMnemonicFromKeychain(uid: newActivatedUID) {
-                    HUD.error(title: "no_private_key".localized)
-                    return
-                }
-                
+            .sink { activatedUID in
                 self.reloadWalletInfo()
             }.store(in: &cancellableSet)
-        
-        loadCacheData()
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(reset), name: .willResetWallet, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(willSwitchAccount), name: .willSwitchAccount, object: nil)
     }
     
     private func loadCacheData() {
@@ -99,7 +92,7 @@ class WalletManager: ObservableObject {
 // MARK: - Reset
 
 extension WalletManager {
-    @objc private func willSwitchAccount() {
+    private func resetProperties() {
         self.hdWallet = nil
         self.walletInfo = nil
         self.supportedCoins = nil
@@ -110,11 +103,7 @@ extension WalletManager {
     @objc private func reset() {
         debugPrint("WalletManager: reset start")
         
-        self.hdWallet = nil
-        self.walletInfo = nil
-        self.supportedCoins = nil
-        self.activatedCoins = []
-        self.coinBalances = [:]
+        resetProperties()
         
         debugPrint("WalletManager: wallet info clear success")
         
@@ -129,7 +118,7 @@ extension WalletManager {
     }
     
     private func removeCurrentMnemonicDataFromKeyChain() throws {
-        guard let uid = UserManager.shared.getUID() else {
+        guard let uid = UserManager.shared.activatedUID else {
             return
         }
         
@@ -236,19 +225,14 @@ extension WalletManager {
     func reloadWalletInfo() {
         log.debug("reloadWalletInfo")
         stopWalletInfoRetryTimer()
-
-        if !UserManager.shared.isLoggedIn {
-            log.warning("can't reload because isLoggedIn is false")
-            return
-        }
         
-        guard let uid = UserManager.shared.getUID() else { return }
+        guard let uid = UserManager.shared.activatedUID else { return }
 
         Task {
             do {
                 let response: UserWalletResponse = try await Network.request(LilicoAPI.User.userWallet)
                 
-                if UserManager.shared.getUID() != uid { return }
+                if UserManager.shared.activatedUID != uid { return }
                 
                 DispatchQueue.main.async {
                     self.walletInfo = response
@@ -258,7 +242,7 @@ extension WalletManager {
                     StakingManager.shared.refresh()
                 }
             } catch {
-                if UserManager.shared.getUID() != uid { return }
+                if UserManager.shared.activatedUID != uid { return }
                 
                 DispatchQueue.main.async {
                     debugPrint(error)
@@ -305,7 +289,7 @@ extension WalletManager {
 
     func storeAndActiveMnemonicToKeychain(_ mnemonic: String, uid: String) throws {
         guard var data = mnemonic.data(using: .utf8) else {
-            throw LLError.createWalletFailed
+            throw WalletError.storeAndActiveMnemonicFailed
         }
 
         defer {
@@ -316,10 +300,19 @@ extension WalletManager {
         defer {
             encodedData = Data()
         }
-
-        try set(toMainKeychain: encodedData, forKey: getMnemonicStoreKey(uid: uid), comment: "Lilico user uid: \(uid)")
-        if !activeMnemonic(mnemonic) {
-            throw LLError.createWalletFailed
+        
+        if let existingMnemonic = getMnemonicFromKeychain(uid: uid) {
+            if existingMnemonic != mnemonic {
+                log.error("existingMnemonic should equal the current")
+                throw WalletError.existingMnemonicMismatch
+            }
+        } else {
+            try set(toMainKeychain: encodedData, forKey: getMnemonicStoreKey(uid: uid), comment: "Lilico user uid: \(uid)")
+        }
+        
+        DispatchQueue.main.async {
+            self.resetProperties()
+            let _ = self.activeMnemonic(mnemonic)
         }
     }
 }
@@ -345,7 +338,7 @@ extension WalletManager {
     }
     
     private func restoreMnemonicForCurrentUser() {
-        if !UserManager.shared.isAnonymous, let uid = UserManager.shared.getUID() {
+        if !UserManager.shared.isAnonymous, let uid = UserManager.shared.activatedUID {
             if !restoreMnemonicFromKeychain(uid: uid) {
                 HUD.error(title: "no_private_key".localized)
             }
@@ -705,12 +698,7 @@ extension HDWallet {
     }
 
     var flowAccountKey: Flow.AccountKey {
-        let p256PublicKey = getKeyByCurve(curve: .secp256k1, derivationPath: WalletManager.flowPath)
-            .getPublicKeySecp256k1(compressed: false)
-            .uncompressed
-            .data
-            .hexValue
-            .dropPrefix("04")
+        let p256PublicKey = getPublicKey()
         let key = Flow.PublicKey(hex: String(p256PublicKey))
         return Flow.AccountKey(publicKey: key,
                                signAlgo: .ECDSA_SECP256k1,

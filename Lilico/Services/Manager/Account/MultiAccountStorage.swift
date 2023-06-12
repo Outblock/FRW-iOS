@@ -12,10 +12,9 @@ import FirebaseAuth
 
 class MultiAccountStorage: ObservableObject {
     static let shared = MultiAccountStorage()
-    private init() {}
-    
-    @Published private(set) var activatedUID: String?
-    @Published private(set) var userInfo: UserInfo?
+    private init() {
+        NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
+    }
     
     func upgradeFromOldVersionIfNeeded() {
         if LocalUserDefaults.shared.multiAccountUpgradeFlag {
@@ -33,7 +32,7 @@ class MultiAccountStorage: ObservableObject {
         
         if let legacyUserInfo = LocalUserDefaults.shared.legacyUserInfo {
             do {
-                try saveUserInfo(legacyUserInfo)
+                try saveUserInfo(legacyUserInfo, uid: uid)
             } catch {
                 log.error("save legacy user info failed", context: error)
             }
@@ -45,73 +44,29 @@ class MultiAccountStorage: ObservableObject {
         
         LocalUserDefaults.shared.multiAccountUpgradeFlag = true
     }
-    
-    func setup() {
-        activatedUID = LocalUserDefaults.shared.activatedUID
-        
-        if let uid = activatedUID {
-            userInfo = getUserInfo(uid)
-        }
-    }
 }
 
 // MARK: -
 extension MultiAccountStorage {
-    /// reset current activate account
-    func reset() {
-        applyUserInfo(nil)
-        applyActivatedUID(nil)
+    @objc private func willReset() {
+        guard let uid = UserManager.shared.activatedUID else { return }
+        delete(uid: uid)
     }
-}
-
-// MARK: - Setter
-extension MultiAccountStorage {
     
-    /// apply user info and save to file
-    func applyUserInfo(_ newUserInfo: UserInfo?) {
-        guard let uid = activatedUID else {
-            log.warning("activatedUID is nil")
-            return
-        }
-
+    private func delete(uid: String) {
         do {
-            try saveUserInfo(newUserInfo)
-            
-            if let newUserInfo = newUserInfo {
-                let data = try JSONEncoder().encode(newUserInfo)
-                try data.write(to: UserStorageFileType.userInfo(uid).url)
-                userInfo = newUserInfo
-            } else {
-                // remove file
-                try UserStorageFileType.userInfo(uid).remove()
-                userInfo = nil
-            }
+            try AppFolderType.userStorage(uid).remove()
         } catch {
-            log.error("apply user info failed", context: error)
+            log.error("delete user storage failed", context: error)
         }
-    }
-    
-    func applyActivatedUID(_ uid: String?) {
-        // TODO: - Maybe it's more appropriate to put it on UI action.
-        if let activatedUID = activatedUID, let uid = uid, activatedUID != uid {
-            NotificationCenter.default.post(name: .willSwitchAccount, object: nil)
-        }
-        
-        activatedUID = uid
-        LocalUserDefaults.shared.activatedUID = uid
     }
 }
 
 // MARK: - Saver
 extension MultiAccountStorage {
-    
-    /// only save to file
-    private func saveUserInfo(_ newUserInfo: UserInfo?) throws {
-        guard let uid = activatedUID else {
-            log.warning("activatedUID is nil")
-            return
-        }
-
+    func saveUserInfo(_ newUserInfo: UserInfo?, uid: String) throws {
+        AppFolderType.userStorage(uid).createFolderIfNeeded()
+        
         if let newUserInfo = newUserInfo {
             let data = try JSONEncoder().encode(newUserInfo)
             try data.write(to: UserStorageFileType.userInfo(uid).url)
@@ -124,7 +79,7 @@ extension MultiAccountStorage {
 
 // MARK: - Getter
 extension MultiAccountStorage {
-    private func getUserInfo(_ uid: String) -> UserInfo? {
+    func getUserInfo(_ uid: String) -> UserInfo? {
         if !UserStorageFileType.userInfo(uid).isExist {
             log.warning("activatedUID is nil")
             return nil
