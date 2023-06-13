@@ -64,11 +64,10 @@ class WalletManager: ObservableObject {
     }
     
     private func loadCacheData() {
+        guard let uid = UserManager.shared.activatedUID else { return }
+        let cacheWalletInfo = MultiAccountStorage.shared.getWalletInfo(uid)
+        
         Task {
-            guard let cacheWalletInfo = try? await PageCache.cache.get(forKey: CacheKeys.walletInfo.rawValue, type: UserWalletResponse.self) else {
-                return
-            }
-            
             let cacheSupportedCoins = try? await PageCache.cache.get(forKey: CacheKeys.supportedCoins.rawValue, type: [TokenModel].self)
             let cacheActivatedCoins = try? await PageCache.cache.get(forKey: CacheKeys.activatedCoins.rawValue, type: [TokenModel].self)
             let cacheBalances = try? await PageCache.cache.get(forKey: CacheKeys.coinBalances.rawValue, type: [String: Double].self)
@@ -236,16 +235,14 @@ extension WalletManager {
                 
                 DispatchQueue.main.async {
                     self.walletInfo = response
+                    try? MultiAccountStorage.shared.saveWalletInfo(response, uid: uid)
                     self.pollingWalletInfoIfNeeded()
-                    debugPrint(response)
-                    
-                    StakingManager.shared.refresh()
                 }
             } catch {
                 if UserManager.shared.activatedUID != uid { return }
+                log.error("reloadWalletInfo failed", context: error)
                 
                 DispatchQueue.main.async {
-                    debugPrint(error)
                     self.startWalletInfoRetryTimer()
                 }
             }

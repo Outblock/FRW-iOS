@@ -18,6 +18,7 @@ class UserManager: ObservableObject {
             LocalUserDefaults.shared.activatedUID = activatedUID
         }
     }
+    
     @Published var userInfo: UserInfo? {
         didSet {
             do {
@@ -28,12 +29,21 @@ class UserManager: ObservableObject {
             }
         }
     }
+    
+    @Published var loginUIDList: [String] = [] {
+        didSet {
+            LocalUserDefaults.shared.loginUIDList = loginUIDList
+        }
+    }
+    
     @Published var isLoggedIn: Bool = false
     @Published var isAnonymous: Bool = true
     @Published var isMeowDomainEnabled: Bool = false
 
     init() {
         checkIfHasOldAccount()
+        
+        self.loginUIDList = LocalUserDefaults.shared.loginUIDList
         
         if let activatedUID = activatedUID {
             self.userInfo = MultiAccountStorage.shared.getUserInfo(activatedUID)
@@ -116,8 +126,8 @@ extension UserManager {
         if Auth.auth().currentUser != nil {
             try await Auth.auth().signInAnonymously()
             DispatchQueue.main.async {
-                self.userInfo = nil
                 self.activatedUID = nil
+                self.userInfo = nil
             }
         }
 
@@ -177,8 +187,8 @@ extension UserManager {
         if Auth.auth().currentUser != nil {
             try await Auth.auth().signInAnonymously()
             DispatchQueue.main.async {
-                self.userInfo = nil
                 self.activatedUID = nil
+                self.userInfo = nil
             }
         }
 
@@ -211,6 +221,12 @@ extension UserManager {
 extension UserManager {
     func switchAccount(withUID uid: String) async throws {
         guard let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid) else {
+            log.error("\(uid) mnemonic is missing")
+            throw WalletError.mnemonicMissing
+        }
+        
+        if uid == activatedUID {
+            log.warning("switching the same account")
             return
         }
         
@@ -236,8 +252,16 @@ extension UserManager {
         DispatchQueue.main.async {
             self.activatedUID = uid
             self.userInfo = info
+            self.insertLoginUID(uid)
             NotificationCenter.default.post(name: .didFinishAccountLogin, object: nil)
         }
+    }
+    
+    private func insertLoginUID(_ uid: String) {
+        var oldList = loginUIDList
+        oldList.removeAll { $0 == uid }
+        oldList.insert(uid, at: 0)
+        loginUIDList = oldList
     }
 
     private func firebaseLogin(customToken: String) async throws {

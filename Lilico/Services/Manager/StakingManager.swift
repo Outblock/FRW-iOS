@@ -86,17 +86,23 @@ class StakingManager: ObservableObject {
         createFolderIfNeeded()
         loadCache()
         
-        UserManager.shared.$isLoggedIn.sink { _ in
-            DispatchQueue.main.async {
-                if UserManager.shared.isLoggedIn == false {
-                    self.willReset()
-                }
-            }
-        }.store(in: &cancelSet)
+        TransactionManager.shared.$holders
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                self.refresh()
+            }.store(in: &cancelSet)
         
-        TransactionManager.shared.$holders.receive(on: DispatchQueue.main).sink { _ in
-            self.refresh()
-        }.store(in: &cancelSet)
+        WalletManager.shared.$walletInfo
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { walletInfo in
+                if walletInfo != nil {
+                    self.refresh()
+                } else {
+                    self.clean()
+                }
+            }.store(in: &cancelSet)
     }
     
     func refresh() {
@@ -189,7 +195,7 @@ extension StakingManager {
                     self.saveCache()
                 }
             } catch {
-                debugPrint("StakingManager -> updateApy failed: \(error)")
+                log.error("updateApy failed", context: error)
             }
         }
     }
@@ -205,15 +211,23 @@ extension StakingManager {
                     }
                     
                     DispatchQueue.main.async {
-                        debugPrint("StakingManager -> queryStakingInfo success")
+                        log.debug("queryStakingInfo success")
                         self.nodeInfos = response
                         self.saveCache()
                     }
                 } else {
-                    debugPrint("StakingManager -> queryStakingInfo is empty")
+                    log.debug("queryStakingInfo is empty")
+                    DispatchQueue.main.async {
+                        self.nodeInfos = []
+                        self.saveCache()
+                    }
                 }
             } catch {
-                debugPrint("StakingManager -> queryStakingInfo failed: \(error)")
+                log.error("queryStakingInfo failed", context: error)
+                DispatchQueue.main.async {
+                    self.nodeInfos = []
+                    self.saveCache()
+                }
             }
         }
     }
@@ -255,13 +269,13 @@ extension StakingManager {
         }
     }
     
-    @objc private func willReset() {
+    @objc private func clean() {
         self.nodeInfos = []
         self.delegatorIds.removeAll()
         self.apy = StakingDefaultApy
         self.isSetup = false
         
-        clearCache()
+        deleteCache()
     }
 }
 
@@ -290,7 +304,7 @@ extension StakingManager {
             try data.write(to: cacheFile)
         } catch {
             debugPrint("StakingManager -> saveCache: error: \(error)")
-            clearCache()
+            deleteCache()
         }
     }
     
@@ -307,12 +321,12 @@ extension StakingManager {
             self.isSetup = cacheObj.isSetup
         } catch {
             debugPrint("StakingManager -> loadCache error: \(error)")
-            clearCache()
+            deleteCache()
             return
         }
     }
     
-    private func clearCache() {
+    private func deleteCache() {
         if FileManager.default.fileExists(atPath: cacheFile.relativePath) {
             do {
                 try FileManager.default.removeItem(at: cacheFile)

@@ -14,10 +14,6 @@ protocol AppPathProtocol {
     func remove() throws
 }
 
-protocol AppFolderProtocol: AppPathProtocol {
-    func createFolderIfNeeded()
-}
-
 extension AppPathProtocol {
     var isExist: Bool {
         return FileManager.default.fileExists(atPath: self.url.relativePath)
@@ -30,6 +26,10 @@ extension AppPathProtocol {
         
         try FileManager.default.removeItem(at: url)
     }
+}
+
+protocol AppFolderProtocol: AppPathProtocol {
+    func createFolderIfNeeded()
 }
 
 extension AppFolderProtocol {
@@ -65,11 +65,14 @@ enum AppFolderType: AppFolderProtocol {
 
 enum UserStorageFileType: AppPathProtocol {
     case userInfo(String)                       // ./account_info/1234/user_info
+    case walletInfo(String)                     // ./account_info/1234/wallet_info
     
     var url: URL {
         switch self {
         case .userInfo(let uid):
             return AppFolderType.userStorage(uid).url.appendingPathComponent("user_info")
+        case .walletInfo(let uid):
+            return AppFolderType.userStorage(uid).url.appendingPathComponent("wallet_info")
         }
     }
 }

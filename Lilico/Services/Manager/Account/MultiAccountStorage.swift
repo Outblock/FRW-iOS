@@ -41,6 +41,7 @@ class MultiAccountStorage: ObservableObject {
         }
         
         LocalUserDefaults.shared.activatedUID = uid
+        LocalUserDefaults.shared.loginUIDList = [uid]
         
         LocalUserDefaults.shared.multiAccountUpgradeFlag = true
     }
@@ -75,13 +76,25 @@ extension MultiAccountStorage {
             try UserStorageFileType.userInfo(uid).remove()
         }
     }
+    
+    func saveWalletInfo(_ walletInfo: UserWalletResponse?, uid: String) throws {
+        AppFolderType.userStorage(uid).createFolderIfNeeded()
+        
+        if let walletInfo = walletInfo {
+            let data = try JSONEncoder().encode(walletInfo)
+            try data.write(to: UserStorageFileType.walletInfo(uid).url)
+        } else {
+            // remove file
+            try UserStorageFileType.walletInfo(uid).remove()
+        }
+    }
 }
 
 // MARK: - Getter
 extension MultiAccountStorage {
     func getUserInfo(_ uid: String) -> UserInfo? {
         if !UserStorageFileType.userInfo(uid).isExist {
-            log.warning("activatedUID is nil")
+            log.warning("user info cache is not exist")
             return nil
         }
         
@@ -91,6 +104,22 @@ extension MultiAccountStorage {
             return userInfo
         } catch {
             log.error("get user info failed", context: error)
+            return nil
+        }
+    }
+    
+    func getWalletInfo(_ uid: String) -> UserWalletResponse? {
+        if !UserStorageFileType.walletInfo(uid).isExist {
+            log.warning("wallet info cache is not exist")
+            return nil
+        }
+        
+        do {
+            let data = try Data(contentsOf: UserStorageFileType.walletInfo(uid).url)
+            let walletInfo = try JSONDecoder().decode(UserWalletResponse.self, from: data)
+            return walletInfo
+        } catch {
+            log.error("get wallet info failed", context: error)
             return nil
         }
     }

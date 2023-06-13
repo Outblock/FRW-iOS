@@ -11,8 +11,18 @@ import Combine
 
 private let SideOffset: CGFloat = 65
 
+extension SideMenuViewModel {
+    struct AccountPlaceholder {
+        let uid: String
+        let avatar: String
+    }
+}
+
 class SideMenuViewModel: ObservableObject {
     @Published var nftCount: Int = 0
+    @Published var accountPlaceholders: [AccountPlaceholder] = []
+    @Published var switchAccountListPresent: Bool = false
+    
     private var cancelSets = Set<AnyCancellable>()
     
     init() {
@@ -23,6 +33,18 @@ class SideMenuViewModel: ObservableObject {
                 self?.nftCount = LocalUserDefaults.shared.nftCount
             }
         }.store(in: &cancelSets)
+        
+        UserManager.shared.$loginUIDList
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { [weak self] uidList in
+                guard let self = self else { return }
+                
+                self.accountPlaceholders = Array(uidList.dropFirst().prefix(2)).map({ uid in
+                    let avatar = MultiAccountStorage.shared.getUserInfo(uid)?.avatar.convertedAvatarString() ?? ""
+                    return AccountPlaceholder(uid: uid, avatar: avatar)
+                })
+            }.store(in: &cancelSets)
     }
     
     func scanAction() {
@@ -30,6 +52,24 @@ class SideMenuViewModel: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             ScanHandler.scan()
         }
+    }
+    
+    func switchAccountAction(_ uid: String) {
+        Task {
+            do {
+                HUD.loading()
+                try await UserManager.shared.switchAccount(withUID: uid)
+                HUD.dismissLoading()
+            } catch {
+                log.error("switch account failed", context: error)
+                HUD.dismissLoading()
+                HUD.error(title: error.localizedDescription)
+            }
+        }
+    }
+    
+    func switchAccountMoreAction() {
+        switchAccountListPresent = true
     }
 }
 
@@ -60,20 +100,31 @@ struct SideMenuView: View {
             .frame(width: SideOffset)
             .frame(maxHeight: .infinity)
         }
+        .halfSheet(showSheet: $vm.switchAccountListPresent) {
+            AccountSwitchView()
+                .environmentObject(vm)
+        }
     }
     
     var cardView: some View {
         VStack(alignment: .leading, spacing: 0) {
-            KFImage.url(URL(string: um.userInfo?.avatar.convertedAvatarString() ?? ""))
-                .placeholder({
-                    Image("placeholder")
-                        .resizable()
-                })
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 72, height: 72)
-                .cornerRadius(36)
-                .offset(y: -20)
+            HStack {
+                KFImage.url(URL(string: um.userInfo?.avatar.convertedAvatarString() ?? ""))
+                    .placeholder({
+                        Image("placeholder")
+                            .resizable()
+                    })
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 72, height: 72)
+                    .cornerRadius(36)
+                    .offset(y: -20)
+                
+                Spacer()
+                
+                multiAccountView
+                    .offset(y: -30)
+            }
             
             Text(um.userInfo?.nickname ?? "Lilico")
                 .foregroundColor(.LL.Neutrals.text)
@@ -91,6 +142,34 @@ struct SideMenuView: View {
         .background {
             Color.LL.Neutrals.neutrals6
                 .cornerRadius(12)
+        }
+    }
+    
+    var multiAccountView: some View {
+        HStack(spacing: 15) {
+            ForEach(vm.accountPlaceholders, id: \.uid) { placeholder in
+                Button {
+                    vm.switchAccountAction(placeholder.uid)
+                } label: {
+                    KFImage.url(URL(string: placeholder.avatar))
+                        .placeholder({
+                            Image("placeholder")
+                                .resizable()
+                        })
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 28, height: 28)
+                        .cornerRadius(14)
+                }
+            }
+            
+            Button {
+                vm.switchAccountMoreAction()
+            } label: {
+                Image("icon-more")
+                    .renderingMode(.template)
+                    .foregroundColor(Color.LL.Neutrals.text)
+            }
         }
     }
     

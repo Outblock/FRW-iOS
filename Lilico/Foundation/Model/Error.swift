@@ -31,6 +31,7 @@ enum WalletError: Error {
     case fetchBalanceFailed
     case existingMnemonicMismatch
     case storeAndActiveMnemonicFailed
+    case mnemonicMissing
 }
 
 enum BackupError: Error {

@@ -35,6 +35,7 @@ extension LocalUserDefaults {
         case nftCount
         case onBoardingShown
         case multiAccountUpgradeFlag
+        case loginUIDList
     }
 
     enum FlowNetworkType: String, CaseIterable {
@@ -230,6 +231,15 @@ class LocalUserDefaults: ObservableObject {
     
     @AppStorage(Keys.onBoardingShown.rawValue) var onBoardingShown: Bool = false
     @AppStorage(Keys.multiAccountUpgradeFlag.rawValue) var multiAccountUpgradeFlag: Bool = false
+    
+    var loginUIDList: [String] {
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: Keys.loginUIDList.rawValue)
+        }
+        get {
+            return UserDefaults.standard.array(forKey: Keys.loginUIDList.rawValue) as? [String] ?? []
+        }
+    }
 }
 
 extension LocalUserDefaults {

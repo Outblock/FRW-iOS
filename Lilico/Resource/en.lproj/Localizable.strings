@@ -466,3 +466,6 @@
 "onboarding_title_site" = "Explore\nyour favourite site";
 "backup_tips_desc" = "Backup Recovery Phrase is important in protect your prize property.";
 "not_now" = "Not Now";
+"accounts" = "Accounts";
+"create_new_account" = "Create a New Account";
+"add_existing_account" = "Add an Existing Account";
