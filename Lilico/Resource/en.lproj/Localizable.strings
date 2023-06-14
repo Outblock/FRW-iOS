@@ -468,4 +468,4 @@
 "not_now" = "Not Now";
 "accounts" = "Accounts";
 "create_new_account" = "Create a New Account";
-"add_existing_account" = "Add an Existing Account";
+"add_existing_account" = "Import an Existing Account";

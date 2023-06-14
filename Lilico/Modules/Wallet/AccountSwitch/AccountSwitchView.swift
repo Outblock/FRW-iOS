@@ -38,7 +38,7 @@ struct AccountSwitchView: View {
                 .frame(height: 1)
                 .frame(maxWidth: .infinity)
                 .foregroundColor(Color.LL.Neutrals.background)
-                .padding(.bottom, 36)
+                .padding(.bottom, 30)
             
             Button {
                 sideVM.switchAccountListPresent = false
@@ -46,15 +46,20 @@ struct AccountSwitchView: View {
                     vm.createNewAccountAction()
                 }
             } label: {
-                Text("create_new_account".localized)
-                    .font(.inter(size: 17, weight: .semibold))
-                    .foregroundColor(Color.LL.frontColor)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 54)
-                    .background(Color.LL.rebackground)
-                    .cornerRadius(14)
+                HStack(spacing: 15) {
+                    Image("icon-plus")
+                        .renderingMode(.template)
+                        .foregroundColor(Color.LL.Neutrals.text)
+                        .frame(width: 14, height: 14)
+                    
+                    Text("create_new_account".localized)
+                        .font(.inter(size: 14, weight: .semibold))
+                        .foregroundColor(Color.LL.Neutrals.text)
+                    
+                    Spacer()
+                }
+                .frame(height: 40)
             }
-            .padding(.bottom, 20)
             
             Button {
                 sideVM.switchAccountListPresent = false
@@ -62,9 +67,19 @@ struct AccountSwitchView: View {
                     vm.loginAccountAction()
                 }
             } label: {
-                Text("add_existing_account".localized)
-                    .font(.inter(size: 17, weight: .regular))
-                    .foregroundColor(Color.LL.Neutrals.text2)
+                HStack(spacing: 15) {
+                    Image("icon-down-arrow")
+                        .renderingMode(.template)
+                        .foregroundColor(Color.LL.Neutrals.text)
+                        .frame(width: 14, height: 14)
+                    
+                    Text("add_existing_account".localized)
+                        .font(.inter(size: 14, weight: .semibold))
+                        .foregroundColor(Color.LL.Neutrals.text)
+                    
+                    Spacer()
+                }
+                .frame(height: 40)
             }
         }
         .padding(.horizontal, 28)
