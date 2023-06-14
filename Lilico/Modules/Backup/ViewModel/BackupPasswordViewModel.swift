@@ -26,6 +26,8 @@ class BackupPasswordViewModel: ObservableObject {
     }
     
     func backupToCloudAction(password: String) {
+        guard let uid = UserManager.shared.activatedUID else { return }
+        
         HUD.loading()
         
         Task {
@@ -35,7 +37,7 @@ class BackupPasswordViewModel: ObservableObject {
                 HUD.dismissLoading()
                 
                 DispatchQueue.main.async {
-                    LocalUserDefaults.shared.backupType = self.backupType
+                    MultiAccountStorage.shared.setBackupType(self.backupType, uid: uid)
                     
                     if let navi = Router.topNavigationController(),
                        let _ = navi.viewControllers.first(where: { $0.navigationItem.title == "backup".localized }) {

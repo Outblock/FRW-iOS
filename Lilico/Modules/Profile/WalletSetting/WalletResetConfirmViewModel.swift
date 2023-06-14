@@ -19,7 +19,21 @@ class WalletResetConfirmViewModel: ObservableObject {
         HUD.showAlert(title: "reset_warning_alert_title".localized, msg: "delete_warning_alert_desc".localized, cancelAction: {
             
         }, confirmTitle: "delete_wallet".localized) {
-            UserManager.shared.reset()
+            self.doReset()
+        }
+    }
+    
+    private func doReset() {
+        HUD.loading()
+        
+        Task {
+            do {
+                try await UserManager.shared.reset()
+                HUD.dismissLoading()
+            } catch {
+                log.error("reset failed", context: error)
+                HUD.dismissLoading()
+            }
         }
     }
 }

@@ -18,13 +18,15 @@ class RecentListCache: ObservableObject {
     private var cancelSet = Set<AnyCancellable>()
     
     init() {
-        UserManager.shared.$isLoggedIn.sink { _ in
-            if UserManager.shared.isLoggedIn == false {
-                DispatchQueue.main.async {
+        UserManager.shared.$activatedUID
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { activatedUID in
+                if activatedUID == nil {
                     self.clear()
                 }
-            }
-        }.store(in: &cancelSet)
+            }.store(in: &cancelSet)
         
         loadFromCache()
     }
@@ -47,7 +49,7 @@ class RecentListCache: ObservableObject {
             let data = try JSONEncoder().encode(list)
             Shared.dataCache.set(value: data, key: recentListKey)
         } catch {
-            clear()
+            log.error("save to cache failed", context: error)
         }
     }
     

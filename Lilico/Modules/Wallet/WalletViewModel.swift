@@ -183,7 +183,9 @@ class WalletViewModel: ObservableObject {
             return
         }
         
-        if LocalUserDefaults.shared.backupType != .none {
+        guard let uid = UserManager.shared.activatedUID else { return }
+        
+        if MultiAccountStorage.shared.getBackupType(uid) != .none {
             return
         }
         
@@ -235,7 +237,6 @@ class WalletViewModel: ObservableObject {
     
     @objc private func willReset() {
         LocalUserDefaults.shared.transactionCount = 0
-        LocalUserDefaults.shared.walletHidden = false
     }
     
     @objc private func didReset() {

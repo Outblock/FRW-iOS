@@ -19,7 +19,7 @@ protocol BackupTarget {
 }
 
 extension BackupManager {
-    enum BackupType: Int {
+    enum BackupType: Int, Codable {
         case none = -1
         case icloud = 0
         case googleDrive

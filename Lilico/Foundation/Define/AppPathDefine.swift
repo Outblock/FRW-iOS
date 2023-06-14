@@ -66,6 +66,7 @@ enum AppFolderType: AppFolderProtocol {
 enum UserStorageFileType: AppPathProtocol {
     case userInfo(String)                       // ./account_info/1234/user_info
     case walletInfo(String)                     // ./account_info/1234/wallet_info
+    case userDefaults(String)                   // ./account_info/1234/user_defaults
     
     var url: URL {
         switch self {
@@ -73,6 +74,8 @@ enum UserStorageFileType: AppPathProtocol {
             return AppFolderType.userStorage(uid).url.appendingPathComponent("user_info")
         case .walletInfo(let uid):
             return AppFolderType.userStorage(uid).url.appendingPathComponent("wallet_info")
+        case .userDefaults(let uid):
+            return AppFolderType.userStorage(uid).url.appendingPathComponent("user_defaults")
         }
     }
 }

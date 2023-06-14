@@ -10,6 +10,12 @@ import Combine
 import Firebase
 import FirebaseAuth
 
+extension MultiAccountStorage {
+    struct UserDefaults: Codable {
+        var backupType: BackupManager.BackupType = .none
+    }
+}
+
 class MultiAccountStorage: ObservableObject {
     static let shared = MultiAccountStorage()
     private init() {
@@ -42,6 +48,7 @@ class MultiAccountStorage: ObservableObject {
         
         LocalUserDefaults.shared.activatedUID = uid
         LocalUserDefaults.shared.loginUIDList = [uid]
+        setBackupType(LocalUserDefaults.shared.legacyBackupType, uid: uid, postNotification: false)
         
         LocalUserDefaults.shared.multiAccountUpgradeFlag = true
     }
@@ -88,6 +95,18 @@ extension MultiAccountStorage {
             try UserStorageFileType.walletInfo(uid).remove()
         }
     }
+    
+    func saveUserDefaults(_ userDefaults: MultiAccountStorage.UserDefaults?, uid: String) throws {
+        AppFolderType.userStorage(uid).createFolderIfNeeded()
+        
+        if let userDefaults = userDefaults {
+            let data = try JSONEncoder().encode(userDefaults)
+            try data.write(to: UserStorageFileType.userDefaults(uid).url)
+        } else {
+            // remove file
+            try UserStorageFileType.userDefaults(uid).remove()
+        }
+    }
 }
 
 // MARK: - Getter
@@ -121,6 +140,43 @@ extension MultiAccountStorage {
         } catch {
             log.error("get wallet info failed", context: error)
             return nil
+        }
+    }
+    
+    func getUserDefaults(_ uid: String) -> MultiAccountStorage.UserDefaults? {
+        if !UserStorageFileType.userDefaults(uid).isExist {
+            log.warning("user defaults cache is not exist")
+            return nil
+        }
+        
+        do {
+            let data = try Data(contentsOf: UserStorageFileType.userDefaults(uid).url)
+            let ud = try JSONDecoder().decode(MultiAccountStorage.UserDefaults.self, from: data)
+            return ud
+        } catch {
+            log.error("get user defaults failed", context: error)
+            return nil
+        }
+    }
+}
+
+// MARK: - UserDefaults
+extension MultiAccountStorage {
+    func getBackupType(_ uid: String) -> BackupManager.BackupType {
+        return getUserDefaults(uid)?.backupType ?? .none
+    }
+    
+    func setBackupType(_ type: BackupManager.BackupType, uid: String, postNotification: Bool = true) {
+        var ud = getUserDefaults(uid) ?? MultiAccountStorage.UserDefaults()
+        ud.backupType = type
+        
+        do {
+            try saveUserDefaults(ud, uid: uid)
+            if postNotification {
+                NotificationCenter.default.post(name: .backupTypeDidChanged)
+            }
+        } catch {
+            log.error("save user defaults failed", context: error)
         }
     }
 }

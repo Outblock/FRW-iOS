@@ -36,9 +36,11 @@ class UserManager: ObservableObject {
         }
     }
     
-    @Published var isLoggedIn: Bool = false
-    @Published var isAnonymous: Bool = true
     @Published var isMeowDomainEnabled: Bool = false
+    
+    var isLoggedIn: Bool {
+        return activatedUID != nil
+    }
 
     init() {
         checkIfHasOldAccount()
@@ -47,7 +49,6 @@ class UserManager: ObservableObject {
         
         if let activatedUID = activatedUID {
             self.userInfo = MultiAccountStorage.shared.getUserInfo(activatedUID)
-            self.refreshFlags()
             self.uploadUserNameIfNeeded()
             self.initRefreshUserInfo()
         }
@@ -94,22 +95,26 @@ class UserManager: ObservableObject {
 // MARK: - Reset
 
 extension UserManager {
-    func reset() {
-        log.info("reset start")
+    func reset() async throws {
+        log.debug("reset start")
         
-        NotificationCenter.default.post(name: .willResetWallet)
+        guard let willResetUID = activatedUID else {
+            log.warning("willResetUID is nil")
+            return
+        }
         
-        do {
-            try Auth.auth().signOut()
-            loginAnonymousIfNeeded()
+        try await Auth.auth().signInAnonymously()
+        
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .willResetWallet)
+            
+            self.activatedUID = nil
+            self.userInfo = nil
+            self.deleteLoginUID(willResetUID)
             
             NotificationCenter.default.post(name: .didResetWallet)
             
             Router.popToRoot()
-            
-            log.debug("reset finished")
-        } catch {
-            log.error("reset failed", context: error)
         }
     }
 }
@@ -123,7 +128,7 @@ extension UserManager {
             throw LLError.emptyWallet
         }
         
-        if Auth.auth().currentUser != nil {
+        if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
             DispatchQueue.main.async {
                 self.activatedUID = nil
@@ -184,7 +189,7 @@ extension UserManager {
             throw LLError.incorrectPhrase
         }
         
-        if Auth.auth().currentUser != nil {
+        if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
             DispatchQueue.main.async {
                 self.activatedUID = nil
@@ -241,7 +246,6 @@ extension UserManager {
         try await firebaseLogin(customToken: customToken)
         let info = try await fetchUserInfo()
         fetchMeowDomainStatus(info.username)
-        uploadUserNameIfNeeded()
 
         guard let uid = getFirebaseUID() else {
             throw LLError.fetchUserInfoFailed
@@ -254,6 +258,7 @@ extension UserManager {
             self.userInfo = info
             self.insertLoginUID(uid)
             NotificationCenter.default.post(name: .didFinishAccountLogin, object: nil)
+            self.uploadUserNameIfNeeded()
         }
     }
     
@@ -261,6 +266,12 @@ extension UserManager {
         var oldList = loginUIDList
         oldList.removeAll { $0 == uid }
         oldList.insert(uid, at: 0)
+        loginUIDList = oldList
+    }
+    
+    private func deleteLoginUID(_ uid: String) {
+        var oldList = loginUIDList
+        oldList.removeAll { $0 == uid }
         loginUIDList = oldList
     }
 
@@ -303,29 +314,13 @@ extension UserManager {
 // MARK: - Internal
 
 extension UserManager {
-    private func refreshFlags() {
-        let newIsLoggedIn = userInfo != nil
-        if isLoggedIn != newIsLoggedIn {
-            isLoggedIn = newIsLoggedIn
-        }
-        
-        isAnonymous = Auth.auth().currentUser?.isAnonymous ?? true
-    }
-
     private func loginAnonymousIfNeeded() {
-        if isLoggedIn {
-            return
-        }
-
         if Auth.auth().currentUser == nil {
             Task {
                 do {
                     try await Auth.auth().signInAnonymously()
-                    DispatchQueue.main.async {
-                        self.refreshFlags()
-                    }
                 } catch {
-                    debugPrint("signInAnonymously failed: \(error.localizedDescription)")
+                    log.error("signInAnonymously failed", context: error)
                 }
             }
         }
@@ -344,7 +339,7 @@ extension UserManager {
 
 extension UserManager {
     private func uploadUserNameIfNeeded() {
-        if isAnonymous || !isLoggedIn {
+        if !isLoggedIn {
             return
         }
 

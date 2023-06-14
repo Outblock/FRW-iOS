@@ -22,7 +22,7 @@ extension LocalUserDefaults {
         case quoteMarket
         case coinSummary
         case recentSendByToken
-        case backupType
+        case legacyBackupType = "backupType"
         case securityType
         case lockOnExit
         case panelHolderFrame
@@ -177,11 +177,7 @@ class LocalUserDefaults: ObservableObject {
     
     @AppStorage(Keys.recentSendByToken.rawValue) var recentToken: String?
     
-    @AppStorage(Keys.backupType.rawValue) var backupType: BackupManager.BackupType = .none {
-        didSet {
-            NotificationCenter.default.post(name: .backupTypeDidChanged, object: nil)
-        }
-    }
+    @AppStorage(Keys.legacyBackupType.rawValue) var legacyBackupType: BackupManager.BackupType = .none
     
     @AppStorage(Keys.securityType.rawValue) var securityType: SecurityManager.SecurityType = .none
     @AppStorage(Keys.lockOnExit.rawValue) var lockOnExit: Bool = false
@@ -245,7 +241,6 @@ class LocalUserDefaults: ObservableObject {
 extension LocalUserDefaults {
     @objc private func willReset() {
         self.recentToken = nil
-        self.backupType = .none
         self.flowNetwork = .mainnet
     }
 }

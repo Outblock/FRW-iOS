@@ -74,7 +74,8 @@ class UsernameViewModel: ViewModel {
             return
         }
         
-        LocalUserDefaults.shared.backupType = .manual
+        guard let uid = UserManager.shared.activatedUID else { return }
+        MultiAccountStorage.shared.setBackupType(.manual, uid: uid)
     }
 
     func localCheckUserName(_ username: String) -> Bool {

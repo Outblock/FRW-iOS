@@ -49,18 +49,10 @@ class SecurityManager {
                                                selector: #selector(onEnterBackground),
                                                name: UIApplication.didEnterBackgroundNotification,
                                                object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
     }
     
     @objc private func onEnterBackground() {
         lockAppIfNeeded()
-    }
-    
-    @objc private func willReset() {
-        changeLockOnExistStatus(false)
-        let _ = disablePinCode()
-        let _ = disableBionic()
     }
 }
 

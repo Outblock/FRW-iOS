@@ -48,28 +48,29 @@ extension ProfileView {
                 self?.state.colorScheme = newScheme
             }).store(in: &cancelSets)
             
-            UserManager.shared.$isLoggedIn.sink { [weak self] _ in
-                DispatchQueue.main.async {
+            UserManager.shared.$activatedUID
+                .receive(on: DispatchQueue.main)
+                .map { $0 }
+                .sink { [weak self] activatedUID in
                     self?.refreshBackupState()
-                }
-            }.store(in: &cancelSets)
+                }.store(in: &cancelSets)
             
-            NotificationCenter.default.publisher(for: .backupTypeDidChanged).sink { _ in
-                DispatchQueue.main.async {
+            NotificationCenter.default.publisher(for: .backupTypeDidChanged)
+                .receive(on: DispatchQueue.main)
+                .sink { _ in
                     self.refreshBackupState()
-                }
-            }.store(in: &cancelSets)
+                }.store(in: &cancelSets)
         }
 
         func trigger(_: ProfileInput) {}
         
         private func refreshBackupState() {
-            if !UserManager.shared.isLoggedIn {
+            guard let uid = UserManager.shared.activatedUID else {
                 state.backupFetchingState = .none
                 return
             }
             
-            let backupType = LocalUserDefaults.shared.backupType
+            let backupType = MultiAccountStorage.shared.getBackupType(uid)
             switch backupType {
             case .manual:
                 state.backupFetchingState = .manually

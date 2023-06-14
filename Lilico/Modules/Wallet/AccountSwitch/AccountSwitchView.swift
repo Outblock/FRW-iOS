@@ -21,7 +21,7 @@ struct AccountSwitchView: View {
             contentView
             
             bottomView
-                .padding(.top, 30)
+                .padding(.top, 7)
         }
         .backgroundFill(Color.LL.Neutrals.background)
     }
@@ -73,7 +73,7 @@ struct AccountSwitchView: View {
     
     var contentView: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            LazyVStack(spacing: 8) {
+            LazyVStack(spacing: 20) {
                 ForEach(vm.placeholders, id: \.uid) { placeholder in
                     Button {
                         sideVM.switchAccountListPresent = false

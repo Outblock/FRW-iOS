@@ -16,13 +16,14 @@ class PageCache {
     private var cancelSet = Set<AnyCancellable>()
     
     init() {
-        UserManager.shared.$isLoggedIn
+        UserManager.shared.$activatedUID
             .receive(on: DispatchQueue.main)
-            .sink { _ in
-            if UserManager.shared.isLoggedIn == false {
-                self.clear()
-            }
-        }.store(in: &cancelSet)
+            .map { $0 }
+            .sink { activatedUID in
+                if activatedUID == nil {
+                    self.clear()
+                }
+            }.store(in: &cancelSet)
         
         NotificationCenter.default.publisher(for: .didFinishAccountLogin)
             .receive(on: DispatchQueue.main)
