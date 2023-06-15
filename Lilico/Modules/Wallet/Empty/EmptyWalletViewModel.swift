@@ -6,61 +6,57 @@
 //
 
 import Foundation
-
 import SwiftUI
-import SwiftUIX
+import Combine
 
-struct EmptyWalletState {
-    var dataSource: [CardDataSource]
-}
-
-enum EmptyWalletAction {
-    case signUp
-    case signIn
-}
-
-struct CardDataSource: Identifiable {
-    var id = UUID().uuidString
-    var title: String
-    let bgGradient: [Color]
-    let bgImage: Image
-    let buttonText: String
-    let icon: Image
-    let iconColor: Color
-    let action: EmptyWalletAction
-}
-
-class EmptyWalletViewModel: ViewModel {
-    @Published private(set) var state: EmptyWalletState
-
-    init() {
-        let dataSource = [
-            CardDataSource(title: "create_btn_desc".localized,
-                           bgGradient: [.red, Color.LL.orange],
-                           bgImage: Image(componentAsset: "Gradient-Circle")
-                               .renderingMode(.original),
-                           buttonText: "create_btn_text".localized,
-                           icon: Image(systemName: "plus"),
-                           iconColor: .purple,
-                           action: .signUp),
-            CardDataSource(title: "import_btn_desc".localized,
-                           bgGradient: [Color(hex: "#659EAF"), Color(hex: "#88CBE1")],
-                           bgImage: Image(componentAsset: "Gradient-Rect")
-                               .renderingMode(.original),
-                           buttonText: "import_btn_text".localized,
-                           icon: Image(systemName: "arrow.forward.to.line"),
-                           iconColor: .yellow,
-                           action: .signIn),
-        ]
-        state = EmptyWalletState(dataSource: dataSource)
+extension EmptyWalletViewModel {
+    struct Placeholder {
+        let uid: String
+        let avatar: String
+        let username: String
+        let address: String
     }
+}
 
-    func trigger(_ input: EmptyWalletAction) {
-        switch input {
-        case .signUp:
-            Router.route(to: RouteMap.Register.root(nil))
-        case .signIn:
-            Router.route(to: RouteMap.RestoreLogin.root)
+
+class EmptyWalletViewModel: ObservableObject {
+    @Published var placeholders: [EmptyWalletViewModel.Placeholder] = []
+    private var cancelSets = Set<AnyCancellable>()
+    
+    init() {
+        UserManager.shared.$loginUIDList
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { [weak self] list in
+                guard let self = self else { return }
+                self.placeholders = list.map { uid in
+                    let userInfo = MultiAccountStorage.shared.getUserInfo(uid)
+                    let address = MultiAccountStorage.shared.getWalletInfo(uid)?.currentNetworkWalletModel?.getAddress ?? "0x"
+                    
+                    return Placeholder(uid: uid, avatar: userInfo?.avatar ?? "", username: userInfo?.username ?? "", address: address)
+                }
+            }.store(in: &cancelSets)
+    }
+    
+    func switchAccountAction(_ uid: String) {
+        Task {
+            do {
+                HUD.loading()
+                try await UserManager.shared.switchAccount(withUID: uid)
+                HUD.dismissLoading()
+            } catch {
+                log.error("switch account failed", context: error)
+                HUD.dismissLoading()
+                HUD.error(title: error.localizedDescription)
+            }
         }
+    }
+    
+    func createNewAccountAction() {
+        Router.route(to: RouteMap.Register.root(nil))
+    }
+    
+    func loginAccountAction() {
+        Router.route(to: RouteMap.RestoreLogin.root)
     }
 }
