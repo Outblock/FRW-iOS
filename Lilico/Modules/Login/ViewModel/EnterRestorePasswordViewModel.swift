@@ -36,7 +36,9 @@ class EnterRestorePasswordViewModel: ObservableObject {
                 try await UserManager.shared.restoreLogin(withMnemonic: mnemonic)
                 
                 DispatchQueue.main.async {
-                    LocalUserDefaults.shared.backupType = self.backupType
+                    if let uid = UserManager.shared.activatedUID, MultiAccountStorage.shared.getBackupType(uid) == .none {
+                        MultiAccountStorage.shared.setBackupType(self.backupType, uid: uid)
+                    }
                 }
                 
                 HUD.dismissLoading()

@@ -14,10 +14,13 @@ import SwiftUI
 import UIKit
 import WalletCore
 import Translized
+import SwiftyBeaver
 
 #if DEBUG
 import Atlantis
 #endif
+
+let log = SwiftyBeaver.self
 
 @main
 class AppDelegate: NSObject, UIApplicationDelegate {
@@ -34,6 +37,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         let _ = LocalEnvManager.shared
+        
+#if DEBUG
+        let console = ConsoleDestination()
+        console.format = "$DHH:mm:ss.SSS$d $C$L$c $N.$F:$l - $M - $X"
+        log.addDestination(console)
+#endif
         
         FirebaseApp.configure()
         
@@ -106,6 +115,8 @@ extension AppDelegate {
     }
     
     private func appConfig() {
+        MultiAccountStorage.shared.upgradeFromOldVersionIfNeeded()
+        
         _ = UserManager.shared
         _ = WalletManager.shared
         _ = BackupManager.shared

@@ -60,16 +60,17 @@ class WalletConnectManager: ObservableObject {
         //        try? Sign.instance.cleanup()
         //        #endif
         
-        UserManager.shared.$isLoggedIn.sink { [weak self] _ in
-            DispatchQueue.main.async {
-                if UserManager.shared.isLoggedIn {
-                    self?.startPendingRequestCheckTimer()
+        UserManager.shared.$activatedUID
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { activatedUID in
+                if activatedUID != nil {
+                    self.startPendingRequestCheckTimer()
                 } else {
-                    self?.stopPendingRequestCheckTimer()
-                    self?.pendingRequests = []
+                    self.stopPendingRequestCheckTimer()
+                    self.pendingRequests = []
                 }
-            }
-        }.store(in: &publishers)
+            }.store(in: &publishers)
         
         NotificationCenter.default.addObserver(self, selector: #selector(reloadPendingRequests), name: UIApplication.didBecomeActiveNotification, object: nil)
     }

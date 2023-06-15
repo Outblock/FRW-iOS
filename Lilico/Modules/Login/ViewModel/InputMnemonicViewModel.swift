@@ -60,7 +60,9 @@ class InputMnemonicViewModel: ViewModel {
                 try await UserManager.shared.restoreLogin(withMnemonic: mnemonic)
                 
                 DispatchQueue.main.async {
-                    LocalUserDefaults.shared.backupType = .manual
+                    if let uid = UserManager.shared.activatedUID, MultiAccountStorage.shared.getBackupType(uid) == .none {
+                        MultiAccountStorage.shared.setBackupType(.manual, uid: uid)
+                    }
                 }
                 
                 HUD.dismissLoading()

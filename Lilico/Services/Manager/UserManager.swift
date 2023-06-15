@@ -8,36 +8,74 @@
 import Firebase
 import FirebaseAuth
 import Foundation
+import Combine
 
 class UserManager: ObservableObject {
     static let shared = UserManager()
 
-    @Published var userInfo: UserInfo? = LocalUserDefaults.shared.userInfo {
+    @Published var activatedUID: String? = LocalUserDefaults.shared.activatedUID {
         didSet {
-            refreshFlags()
-            uploadUserNameIfNeeded()
+            LocalUserDefaults.shared.activatedUID = activatedUID
         }
     }
-
-    @Published var isLoggedIn: Bool = false {
+    
+    @Published var userInfo: UserInfo? {
         didSet {
-            debugPrint("UserManager -> isLoggedIn: \(isLoggedIn)")
+            do {
+                guard let uid = activatedUID else { return }
+                try MultiAccountStorage.shared.saveUserInfo(userInfo, uid: uid)
+            } catch {
+                log.error("save user info failed", context: error)
+            }
         }
     }
-
-    @Published var isAnonymous: Bool = true
+    
+    @Published var loginUIDList: [String] = [] {
+        didSet {
+            LocalUserDefaults.shared.loginUIDList = loginUIDList
+        }
+    }
+    
     @Published var isMeowDomainEnabled: Bool = false
+    
+    var isLoggedIn: Bool {
+        return activatedUID != nil
+    }
 
     init() {
         checkIfHasOldAccount()
         
-        refreshFlags()
-        uploadUserNameIfNeeded()
+        self.loginUIDList = LocalUserDefaults.shared.loginUIDList
+        
+        if let activatedUID = activatedUID {
+            self.userInfo = MultiAccountStorage.shared.getUserInfo(activatedUID)
+            self.uploadUserNameIfNeeded()
+            self.initRefreshUserInfo()
+        }
+        
         loginAnonymousIfNeeded()
-
-        if isLoggedIn {
-            Task {
-                try? await fetchUserInfo()
+    }
+    
+    private func initRefreshUserInfo() {
+        if !isLoggedIn {
+            return
+        }
+        
+        guard let uid = activatedUID else { return }
+        
+        Task {
+            do {
+                let info = try await self.fetchUserInfo()
+                
+                if activatedUID != uid { return }
+                
+                DispatchQueue.main.async {
+                    self.userInfo = info
+                }
+                
+                self.fetchMeowDomainStatus(info.username)
+            } catch {
+                log.error("init refresh user info failed", context: error)
             }
         }
     }
@@ -57,28 +95,26 @@ class UserManager: ObservableObject {
 // MARK: - Reset
 
 extension UserManager {
-    func reset() {
-        debugPrint("UserManager: reset start")
+    func reset() async throws {
+        log.debug("reset start")
         
-        NotificationCenter.default.post(name: .willResetWallet)
+        guard let willResetUID = activatedUID else {
+            log.warning("willResetUID is nil")
+            return
+        }
         
-        do {
-            try Auth.auth().signOut()
-            debugPrint("UserManager: firebase signOut success")
+        try await Auth.auth().signInAnonymously()
+        
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .willResetWallet)
             
+            self.activatedUID = nil
             self.userInfo = nil
-            LocalUserDefaults.shared.userInfo = nil
-            debugPrint("UserManager: user info cache clear success")
-            
-            loginAnonymousIfNeeded()
+            self.deleteLoginUID(willResetUID)
             
             NotificationCenter.default.post(name: .didResetWallet)
             
             Router.popToRoot()
-            
-            debugPrint("UserManager: reset finished")
-        } catch {
-            debugPrint("UserManager: reset failed: \(error)")
         }
     }
 }
@@ -90,6 +126,14 @@ extension UserManager {
         guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) else {
             HUD.error(title: "empty_wallet_key".localized)
             throw LLError.emptyWallet
+        }
+        
+        if Auth.auth().currentUser?.isAnonymous != true {
+            try await Auth.auth().signInAnonymously()
+            DispatchQueue.main.async {
+                self.activatedUID = nil
+                self.userInfo = nil
+            }
         }
 
         let key = hdWallet.flowAccountKey
@@ -117,7 +161,7 @@ extension UserManager {
         
         HUD.loading()
         
-        guard let uid = getUid(), let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid) else {
+        guard let uid = getFirebaseUID(), let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid) else {
             HUD.dismissLoading()
             HUD.error(title: "restore_account_failed".localized)
             return
@@ -144,6 +188,14 @@ extension UserManager {
         guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) else {
             throw LLError.incorrectPhrase
         }
+        
+        if Auth.auth().currentUser?.isAnonymous != true {
+            try await Auth.auth().signInAnonymously()
+            DispatchQueue.main.async {
+                self.activatedUID = nil
+                self.userInfo = nil
+            }
+        }
 
         guard let token = try? await getIDToken(), !token.isEmpty else {
             loginAnonymousIfNeeded()
@@ -169,19 +221,58 @@ extension UserManager {
     }
 }
 
+// MARK: - Switch Account
+
+extension UserManager {
+    func switchAccount(withUID uid: String) async throws {
+        guard let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid) else {
+            log.error("\(uid) mnemonic is missing")
+            throw WalletError.mnemonicMissing
+        }
+        
+        if uid == activatedUID {
+            log.warning("switching the same account")
+            return
+        }
+        
+        try await restoreLogin(withMnemonic: mnemonic)
+    }
+}
+
 // MARK: - Internal Login Logic
 
 extension UserManager {
     private func finishLogin(mnemonic: String, customToken: String) async throws {
         try await firebaseLogin(customToken: customToken)
-        try await fetchUserInfo()
-        uploadUserNameIfNeeded()
+        let info = try await fetchUserInfo()
+        fetchMeowDomainStatus(info.username)
 
-        guard let uid = UserManager.shared.getUid() else {
+        guard let uid = getFirebaseUID() else {
             throw LLError.fetchUserInfoFailed
         }
 
         try WalletManager.shared.storeAndActiveMnemonicToKeychain(mnemonic, uid: uid)
+        
+        DispatchQueue.main.async {
+            self.activatedUID = uid
+            self.userInfo = info
+            self.insertLoginUID(uid)
+            NotificationCenter.default.post(name: .didFinishAccountLogin, object: nil)
+            self.uploadUserNameIfNeeded()
+        }
+    }
+    
+    private func insertLoginUID(_ uid: String) {
+        var oldList = loginUIDList
+        oldList.removeAll { $0 == uid }
+        oldList.insert(uid, at: 0)
+        loginUIDList = oldList
+    }
+    
+    private func deleteLoginUID(_ uid: String) {
+        var oldList = loginUIDList
+        oldList.removeAll { $0 == uid }
+        loginUIDList = oldList
     }
 
     private func firebaseLogin(customToken: String) async throws {
@@ -189,35 +280,31 @@ extension UserManager {
         debugPrint("Logged in -> \(result.user.uid)")
     }
 
-    private func fetchUserInfo() async throws {
+    private func fetchUserInfo() async throws -> UserInfo {
         let response: UserInfoResponse = try await Network.request(LilicoAPI.User.userInfo)
         let info = UserInfo(avatar: response.avatar, nickname: response.nickname, username: response.username, private: response.private, address: nil)
 
         if info.username.isEmpty {
             throw LLError.fetchUserInfoFailed
         }
-
-        LocalUserDefaults.shared.userInfo = info
-        DispatchQueue.main.async {
-            self.userInfo = info
-            self.fetchMeowDomainStatus()
-        }
+        
+        return info
     }
     
-    private func fetchMeowDomainStatus() {
-        guard let username = self.userInfo?.username else {
-            return
-        }
-        
+    private func fetchMeowDomainStatus(_ username: String) {
         Task {
             do {
                 let _ = try await FlowNetwork.queryAddressByDomainFlowns(domain: username, root: Contact.DomainType.meow.domain)
-                DispatchQueue.main.async {
-                    self.isMeowDomainEnabled = true
+                if userInfo?.username == username {
+                    DispatchQueue.main.async {
+                        self.isMeowDomainEnabled = true
+                    }
                 }
             } catch {
-                DispatchQueue.main.async {
-                    self.isMeowDomainEnabled = false
+                if userInfo?.username == username {
+                    DispatchQueue.main.async {
+                        self.isMeowDomainEnabled = false
+                    }
                 }
             }
         }
@@ -227,35 +314,19 @@ extension UserManager {
 // MARK: - Internal
 
 extension UserManager {
-    private func refreshFlags() {
-        let newIsLoggedIn = userInfo != nil
-        if isLoggedIn != newIsLoggedIn {
-            isLoggedIn = newIsLoggedIn
-        }
-        
-        isAnonymous = Auth.auth().currentUser?.isAnonymous ?? true
-    }
-
     private func loginAnonymousIfNeeded() {
-        if isLoggedIn {
-            return
-        }
-
         if Auth.auth().currentUser == nil {
             Task {
                 do {
                     try await Auth.auth().signInAnonymously()
-                    DispatchQueue.main.async {
-                        self.refreshFlags()
-                    }
                 } catch {
-                    debugPrint("signInAnonymously failed: \(error.localizedDescription)")
+                    log.error("signInAnonymously failed", context: error)
                 }
             }
         }
     }
 
-    func getUid() -> String? {
+    private func getFirebaseUID() -> String? {
         return Auth.auth().currentUser?.uid
     }
 
@@ -268,7 +339,7 @@ extension UserManager {
 
 extension UserManager {
     private func uploadUserNameIfNeeded() {
-        if isAnonymous || !isLoggedIn {
+        if !isLoggedIn {
             return
         }
 
@@ -301,8 +372,7 @@ extension UserManager {
         }
 
         let newUserInfo = UserInfo(avatar: current.avatar, nickname: name, username: current.username, private: current.private, address: nil)
-        LocalUserDefaults.shared.userInfo = newUserInfo
-        userInfo = newUserInfo
+        self.userInfo = newUserInfo
     }
 
     func updatePrivate(_ isPrivate: Bool) {
@@ -311,8 +381,7 @@ extension UserManager {
         }
 
         let newUserInfo = UserInfo(avatar: current.avatar, nickname: current.nickname, username: current.username, private: isPrivate ? 2 : 1, address: nil)
-        LocalUserDefaults.shared.userInfo = newUserInfo
-        userInfo = newUserInfo
+        self.userInfo = newUserInfo
     }
 
     func updateAvatar(_ avatar: String) {
@@ -321,7 +390,6 @@ extension UserManager {
         }
 
         let newUserInfo = UserInfo(avatar: avatar, nickname: current.nickname, username: current.username, private: current.private, address: nil)
-        LocalUserDefaults.shared.userInfo = newUserInfo
-        userInfo = newUserInfo
+        self.userInfo = newUserInfo
     }
 }

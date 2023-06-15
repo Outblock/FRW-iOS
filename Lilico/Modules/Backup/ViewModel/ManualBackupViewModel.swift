@@ -68,7 +68,8 @@ class ManualBackupViewModel: ViewModel {
     func trigger(_ input: ManualBackupView.Action) {
         switch input {
         case .backupSuccess:
-            LocalUserDefaults.shared.backupType = .manual
+            guard let uid = UserManager.shared.activatedUID else { return }
+            MultiAccountStorage.shared.setBackupType(.manual, uid: uid)
             
             Router.popToRoot()
             SPConfetti.startAnimating(.fullWidthToDown,

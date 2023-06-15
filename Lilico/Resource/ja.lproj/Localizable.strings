@@ -464,3 +464,12 @@
 "onboarding_title_token" = "トークンを\n集めてください";
 "onboarding_title_domain" = "無料の Lilico ドメインを\n請求します";
 "onboarding_title_site" = "探索\nあなたが一番好きなサイト";
+"backup_tips_desc" = "バックアップ・リカバリ・フレーズは、賞品の財産を保護するために重要です。";
+"not_now" = "今はやめろ";
+"accounts" = "アカウント";
+"create_new_account" = "新しいアカウントを作成する";
+"add_existing_account" = "既存のアカウントをインポートする";
+"import_wallet" = "ウォレットをインポートする";
+"welcome" = "いらっしゃいませ";
+"welcome_sub_desc" = "セキュリティについてさらに詳しく説明する";
+"registerd_accounts" = "登録済みアカウント";

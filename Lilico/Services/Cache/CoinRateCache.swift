@@ -58,7 +58,11 @@ class CoinRateCache {
             }
         }.store(in: &cancelSets)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
+        NotificationCenter.default.publisher(for: .willResetWallet)
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                self.willReset()
+            }.store(in: &cancelSets)
     }
     
     @objc private func willReset() {

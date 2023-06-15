@@ -28,6 +28,8 @@ public extension Notification.Name {
     static let webBookmarkDidChanged = Notification.Name("webBookmarkDidChanged")
     static let willResetWallet = Notification.Name("willResetWallet")
     static let didResetWallet = Notification.Name("didResetWallet")
+    static let didFinishAccountLogin = Notification.Name("didFinishedAccountLogin")
+    
     static let networkChange = Notification.Name("networkChange")
     
     static let openNFTCollectionList = Notification.Name("openNFTCollectionList")

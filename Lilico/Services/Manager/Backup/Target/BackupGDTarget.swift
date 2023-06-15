@@ -41,7 +41,7 @@ class BackupGDTarget: BackupTarget {
         
         Task {
             do {
-                var user = try await googleRestoreLogin()
+                let user = try await googleRestoreLogin()
                 
                 if !checkUserScopes(user: user) {
                     return

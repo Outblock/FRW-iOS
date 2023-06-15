@@ -8,7 +8,6 @@
 import Foundation
 
 enum LLError: Error {
-    case createWalletFailed
     case aesKeyEncryptionFailed
     case aesEncryptionFailed
     case missingUserInfoWhilBackup
@@ -30,6 +29,9 @@ enum LLError: Error {
 enum WalletError: Error {
     case fetchFailed
     case fetchBalanceFailed
+    case existingMnemonicMismatch
+    case storeAndActiveMnemonicFailed
+    case mnemonicMissing
 }
 
 enum BackupError: Error {

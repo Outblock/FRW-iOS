@@ -382,7 +382,7 @@
 "staking_empty_list" = "Empty Staking List";
 "staking_claim" = "Claim";
 "staking_claim_rewards" = "Claiming Rewards";
-"staking_reStake" = "ReSatke";
+"staking_reStake" = "ReStake";
 "staking_reStake_rewards" = "Restaking Rewards";
 "staking_amount" = "Staking Amount";
 "staking_rewards" = "Rewards";
@@ -466,3 +466,10 @@
 "onboarding_title_site" = "Explore\nyour favourite site";
 "backup_tips_desc" = "Backup Recovery Phrase is important in protect your prize property.";
 "not_now" = "Not Now";
+"accounts" = "Accounts";
+"create_new_account" = "Create a New Account";
+"add_existing_account" = "Import an Existing Account";
+"import_wallet" = "Import Wallet";
+"welcome" = "Welcome";
+"welcome_sub_desc" = "PROVIDE MORE ABOUT THE SECURITY";
+"registerd_accounts" = "Registered Accounts";

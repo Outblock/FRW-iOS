@@ -9,130 +9,143 @@ import SceneKit
 import SPConfetti
 import SwiftUI
 import SwiftUIX
-
-struct EnumeratedForEach<ItemType, ContentView: View>: View {
-    let data: [ItemType]
-    let content: (Int, ItemType) -> ContentView
-
-    init(_ data: [ItemType], @ViewBuilder content: @escaping (Int, ItemType) -> ContentView) {
-        self.data = data
-        self.content = content
-    }
-
-    var body: some View {
-        ForEach(Array(self.data.enumerated()), id: \.offset) { idx, item in
-            self.content(idx, item)
-        }
-    }
-}
+import Kingfisher
 
 struct EmptyWalletView: View {
-    @StateObject
-    var viewModel: EmptyWalletViewModel = EmptyWalletViewModel()
-
-    @State
-    var viewStateArray: [CGSize] = [.zero, .zero]
-
-    @State
-    var isDraggingArray: [Bool] = [false, false]
-
-    @State
-    var isPresenting: Bool = false
-
-    fileprivate func cardView(_ dataSource: CardDataSource, index: Int) -> some View {
-        return VStack(spacing: 50) {
-            Text(dataSource.title)
-                .font(.title)
-                .bold()
-                .foregroundColor(Color.white)
-                .frame(maxWidth: .infinity, alignment: .topLeading)
-                .offset(x: viewStateArray[index].width / 10,
-                        y: viewStateArray[index].height / 10)
-
-            Button {
-                viewModel.trigger(dataSource.action)
-            } label: {
-                HStack(spacing: 20) {
-                    dataSource.icon
-                        .foregroundColor(dataSource.iconColor)
-                        .font(Font.headline.weight(.bold))
-                    Text(dataSource.buttonText)
-                        .foregroundColor(.black)
-                        .semibold()
-                }
-                .font(.body)
-                .padding(.horizontal, 18)
-                .padding(.vertical, 15)
-                .background {
-                    Capsule()
-                        .foregroundColor(.white)
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .bottomTrailing)
+    @StateObject private var vm = EmptyWalletViewModel()
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            topContent
+                .padding(.horizontal, 30)
+                .padding(.top, 50)
+                .padding(.bottom, 36)
+            
+            recentListContent
+                .padding(.horizontal, 41)
+                .visibility(vm.placeholders.isEmpty ? .invisible : .visible)
+            
+            bottomContent
+                .padding(.horizontal, 41)
+                .padding(.bottom, 80)
+                .padding(.top, 16)
         }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background {
-            dataSource.bgImage
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                    LinearGradient(colors: dataSource.bgGradient,
-                                   startPoint: .bottomTrailing,
-                                   endPoint: .topLeading)
-                )
-                .cornerRadius(20)
-                .offset(x: viewStateArray[index].width / 25,
-                        y: viewStateArray[index].height / 25)
-        }
-        .padding()
-        .scaleEffect(isDraggingArray[index] ? 0.9 : 1)
-        .animation(.timingCurve(0.2, 0.8, 0.2, 1, duration: 0.8),
-                   value: viewStateArray[index])
-        .rotation3DEffect(Angle(degrees: 5), axis: (x: viewStateArray[index].width, y: viewStateArray[index].height, z: 0))
-        .gesture(
-            DragGesture().onChanged { value in
-                self.viewStateArray[index] = value.translation
-                self.isDraggingArray[index] = true
-            }
-            .onEnded { _ in
-                self.viewStateArray[index] = .zero
-                self.isDraggingArray[index] = false
-            }
-        )
-        .onTapGesture {
-            viewModel.trigger(dataSource.action)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .backgroundFill {
+            Image("login-bg")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
         }
     }
     
-    var headerView: some View {
-        HStack {
-            Text("wallet".localized)
-                .foregroundColor(.LL.Neutrals.text)
-                .font(.inter(size: 24, weight: .bold))
-
-            Spacer()
-
-//            Image("icon-wallet-scan").renderingMode(.template).foregroundColor(.primary)
+    var topContent: some View {
+        VStack(spacing: 4) {
+            Text("welcome".localized)
+                .font(.montserrat(size: 52, weight: .bold))
+                .foregroundColor(.white)
+            
+            Text("welcome_sub_desc".localized)
+                .font(.montserrat(size: 14, weight: .light))
+                .foregroundColor(.white)
         }
-        .padding(.horizontal, 18)
     }
-
-    var body: some View {
-        VStack(spacing: 0) {
-            headerView
-                .padding(.bottom, 10)
-
-            EnumeratedForEach(viewModel.state.dataSource) { index, dataSource in
-                cardView(dataSource, index: index)
+    
+    var bottomContent: some View {
+        VStack(spacing: 24) {
+            Button {
+                vm.createNewAccountAction()
+            } label: {
+                ZStack {
+                    HStack(spacing: 8) {
+                        Image("wallet-create-icon")
+                            .frame(width: 24, height: 24)
+                        
+                        Text("create_wallet".localized)
+                            .font(.inter(size: 17, weight: .bold))
+                            .foregroundColor(.white)
+                    }
+                }
+                .frame(height: 58)
+                .frame(maxWidth: .infinity)
+                .background(Color.LL.Primary.salmonPrimary)
+                .contentShape(Rectangle())
+                .cornerRadius(29)
+                .shadow(color: Color.black.opacity(0.12), x: 0, y: 4, blur: 24)
+            }
+            
+            Button {
+                vm.loginAccountAction()
+            } label: {
+                ZStack {
+                    HStack(spacing: 8) {
+                        Image("wallet-login-icon")
+                            .frame(width: 24, height: 24)
+                        
+                        Text("import_wallet".localized)
+                            .font(.inter(size: 17, weight: .bold))
+                            .foregroundColor(Color(hex: "#333333"))
+                    }
+                }
+                .frame(height: 58)
+                .frame(maxWidth: .infinity)
+                .background(.white)
+                .contentShape(Rectangle())
+                .cornerRadius(29)
+                .shadow(color: Color.black.opacity(0.08), x: 0, y: 4, blur: 24)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(Color.LL.background.edgesIgnoringSafeArea(.all))
     }
-}
-
-struct EmptyWalletView_Previews: PreviewProvider {
-    static var previews: some View {
-        EmptyWalletView()
+    
+    var recentListContent: some View {
+        VStack(spacing: 16) {
+            Text("registerd_accounts".localized)
+                .font(.inter(size: 16, weight: .bold))
+                .foregroundColor(.white)
+            
+            ScrollView(.vertical, showsIndicators: false) {
+                LazyVStack(spacing: 8) {
+                    ForEach(vm.placeholders, id: \.uid) { placeholder in
+                        Button {
+                            vm.switchAccountAction(placeholder.uid)
+                        } label: {
+                            createRecentLoginCell(placeholder)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func createRecentLoginCell(_ placeholder: EmptyWalletViewModel.Placeholder) -> some View {
+        HStack(spacing: 16) {
+            KFImage.url(URL(string: placeholder.avatar.convertedAvatarString()))
+                .placeholder({
+                    Image("placeholder")
+                        .resizable()
+                })
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 36, height: 36)
+                .cornerRadius(18)
+            
+            VStack(alignment: .leading, spacing: 5) {
+                Text("@\(placeholder.username)")
+                    .font(.inter(size: 12, weight: .bold))
+                    .foregroundColor(Color(hex: "#333333"))
+                
+                Text("\(placeholder.address)")
+                    .font(.inter(size: 12, weight: .regular))
+                    .foregroundColor(Color(hex: "#808080"))
+            }
+            
+            Spacer()
+        }
+        .padding(.horizontal, 12)
+        .frame(height: 60)
+        .frame(maxWidth: .infinity)
+        .background(Color.white.opacity(0.5))
+        .contentShape(Rectangle())
+        .cornerRadius(30)
+        .shadow(color: Color.black.opacity(0.04), x: 0, y: 4, blur: 16)
     }
 }

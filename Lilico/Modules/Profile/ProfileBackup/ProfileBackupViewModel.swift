@@ -9,31 +9,42 @@ import SwiftUI
 import Combine
 
 class ProfileBackupViewModel: ObservableObject {
-    @Published var selectedBackupType: BackupManager.BackupType = LocalUserDefaults.shared.backupType
+    @Published var selectedBackupType: BackupManager.BackupType = .none
     
     private var cancelSets = Set<AnyCancellable>()
     
     init() {
-        NotificationCenter.default.publisher(for: .backupTypeDidChanged).sink { [weak self] _ in
-            DispatchQueue.main.async {
+        if let uid = UserManager.shared.activatedUID {
+            self.selectedBackupType = MultiAccountStorage.shared.getBackupType(uid)
+        }
+        
+        NotificationCenter.default.publisher(for: .backupTypeDidChanged)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
                 self?.refreshBackupType()
-            }
-        }.store(in: &cancelSets)
+            }.store(in: &cancelSets)
     }
     
     private func refreshBackupType() {
-        selectedBackupType = LocalUserDefaults.shared.backupType
+        if let uid = UserManager.shared.activatedUID {
+            self.selectedBackupType = MultiAccountStorage.shared.getBackupType(uid)
+        } else {
+            self.selectedBackupType = .none
+        }
     }
     
     func changeBackupTypeAction(_ type: BackupManager.BackupType) {
-        if LocalUserDefaults.shared.backupType == type {
+        guard let uid = UserManager.shared.activatedUID else { return }
+        
+        let oldBackupType = MultiAccountStorage.shared.getBackupType(uid)
+        
+        if oldBackupType == type {
             selectedBackupType = type
             return
         }
         
         if type == .manual {
-//            Router.route(to: RouteMap.Profile.manualBackup)
-            LocalUserDefaults.shared.backupType = .manual
+            MultiAccountStorage.shared.setBackupType(.manual, uid: uid)
             return
         }
         
@@ -52,7 +63,7 @@ class ProfileBackupViewModel: ObservableObject {
                 if exist {
                     HUD.dismissLoading()
                     DispatchQueue.main.async {
-                        LocalUserDefaults.shared.backupType = type
+                        MultiAccountStorage.shared.setBackupType(type, uid: uid)
                     }
                     return
                 }

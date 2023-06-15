@@ -8,7 +8,7 @@
 import UIKit
 import SwiftUI
 
-class BackupiCloudTarget: BackupTarget {
+actor BackupiCloudTarget: BackupTarget {
     private var api: iCloudAPI?
     
     var isPrepared: Bool {

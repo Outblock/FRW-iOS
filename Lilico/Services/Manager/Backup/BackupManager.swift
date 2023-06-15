@@ -19,7 +19,7 @@ protocol BackupTarget {
 }
 
 extension BackupManager {
-    enum BackupType: Int {
+    enum BackupType: Int, Codable {
         case none = -1
         case icloud = 0
         case googleDrive
@@ -131,7 +131,7 @@ extension BackupManager {
             return list
         }
         
-        guard let uid = UserManager.shared.getUid(), !uid.isEmpty else {
+        guard let uid = UserManager.shared.activatedUID, !uid.isEmpty else {
             throw BackupError.missingUid
         }
         

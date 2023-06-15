@@ -26,17 +26,18 @@ class BackupPasswordViewModel: ObservableObject {
     }
     
     func backupToCloudAction(password: String) {
+        guard let uid = UserManager.shared.activatedUID else { return }
+        
         HUD.loading()
         
         Task {
             do {
                 try await BackupManager.shared.uploadMnemonic(to: backupType, password: password)
-                setWebPassword(password: password)
                 
                 HUD.dismissLoading()
                 
                 DispatchQueue.main.async {
-                    LocalUserDefaults.shared.backupType = self.backupType
+                    MultiAccountStorage.shared.setBackupType(self.backupType, uid: uid)
                     
                     if let navi = Router.topNavigationController(),
                        let _ = navi.viewControllers.first(where: { $0.navigationItem.title == "backup".localized }) {
@@ -54,12 +55,6 @@ class BackupPasswordViewModel: ObservableObject {
                 HUD.dismissLoading()
                 HUD.error(title: "backup_to_x_failed".localized(self.backupType.descLocalizedString))
             }
-        }
-    }
-    
-    private func setWebPassword(password: String) {
-        if let uid = UserManager.shared.getUid(), !uid.isEmpty {
-            try? WalletManager.shared.setSecurePassword(password, uid: uid)
         }
     }
 }
