@@ -32,19 +32,24 @@ class MultiAccountStorage: ObservableObject {
             return
         }
         
+        guard let legacyUserInfo = LocalUserDefaults.shared.legacyUserInfo else {
+            // firebase is login but userInfo is nil, Maybe it is a new app installed
+            // UserManager 'restore from keychain' logic will handle this
+            LocalUserDefaults.shared.multiAccountUpgradeFlag = true
+            return
+        }
+        
         let uid = user.uid
                 
         AppFolderType.userStorage(uid).createFolderIfNeeded()
         
-        if let legacyUserInfo = LocalUserDefaults.shared.legacyUserInfo {
-            do {
-                try saveUserInfo(legacyUserInfo, uid: uid)
-            } catch {
-                log.error("save legacy user info failed", context: error)
-            }
-            
-            LocalUserDefaults.shared.legacyUserInfo = nil
+        do {
+            try saveUserInfo(legacyUserInfo, uid: uid)
+        } catch {
+            log.error("save legacy user info failed", context: error)
         }
+        
+        LocalUserDefaults.shared.legacyUserInfo = nil
         
         LocalUserDefaults.shared.activatedUID = uid
         LocalUserDefaults.shared.loginUIDList = [uid]
