@@ -473,3 +473,13 @@
 "welcome" = "Welcome";
 "welcome_sub_desc" = "PROVIDE MORE ABOUT THE SECURITY";
 "registerd_accounts" = "Registered Accounts";
+
+"link_account" = "Link Account";
+"account_linking" = "Account Linking";
+"successful" = "Successful";
+"link_failure" = "Link Failure";
+"hold_to_link" = "Hold to Link";
+"work_in_progress" = "Work in Progress";
+"try_it_again" = "Try it again";
+"link_account_start_desc_x" = "We would like to link your NBATopShot account to your Lilico account “%@”";
+"link_account_success_desc" = "Now you can find your child account under side menu";
