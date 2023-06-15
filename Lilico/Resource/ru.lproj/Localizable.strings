@@ -382,7 +382,7 @@
 "staking_empty_list" = "Пустой список ставок";
 "staking_claim" = "Требовать";
 "staking_claim_rewards" = "Получение наград";
-"staking_reStake" = "РеСатке";
+"staking_reStake" = "ReStake";
 "staking_reStake_rewards" = "Переукладывание вознаграждений";
 "staking_amount" = "Сумма ставки";
 "staking_rewards" = "Награды";
@@ -464,3 +464,12 @@
 "onboarding_title_token" = "Соберите\nвсе свои токены";
 "onboarding_title_domain" = "Получить\nбесплатный домен Lilico";
 "onboarding_title_site" = "Исследуйте\nсвой любимый сайт";
+"backup_tips_desc" = "Резервная фраза восстановления важна для защиты вашей призовой собственности.";
+"not_now" = "Не сейчас";
+"accounts" = "Счета";
+"create_new_account" = "Создать новый аккаунт";
+"add_existing_account" = "Импорт существующей учетной записи";
+"import_wallet" = "Импорт кошелька";
+"welcome" = "Добро пожаловать";
+"welcome_sub_desc" = "ПОДРОБНЕЕ О БЕЗОПАСНОСТИ";
+"registerd_accounts" = "Зарегистрированные аккаунты";

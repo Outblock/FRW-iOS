@@ -260,7 +260,6 @@
 "account_not_found_highlight" = "your phrase";
 "account_not_found_suff" = "?";
 "create_wallet" = "Create Wallet";
-"import_wallet" = "Import Wallet";
 "wallet_transactions" = "Transactions";
 "transaction_list_transaction_x" = "Transaction (%d)";
 "transaction_list_transfer_x" = "Transfer (%d)";
@@ -383,7 +382,7 @@
 "staking_empty_list" = "Empty Staking List";
 "staking_claim" = "Claim";
 "staking_claim_rewards" = "Claiming Rewards";
-"staking_reStake" = "ReSatke";
+"staking_reStake" = "ReStake";
 "staking_reStake_rewards" = "Restaking Rewards";
 "staking_amount" = "Staking Amount";
 "staking_rewards" = "Rewards";
@@ -470,6 +469,7 @@
 "accounts" = "Accounts";
 "create_new_account" = "Create a New Account";
 "add_existing_account" = "Import an Existing Account";
+"import_wallet" = "Import Wallet";
 "welcome" = "Welcome";
 "welcome_sub_desc" = "PROVIDE MORE ABOUT THE SECURITY";
 "registerd_accounts" = "Registered Accounts";
