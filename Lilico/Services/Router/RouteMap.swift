@@ -375,7 +375,7 @@ extension RouteMap {
         case searchExplore
         case claimDomain
         case bookmark
-        case linkChildAccount
+        case linkChildAccount(ChildAccountLinkViewModel)
     }
 }
 
@@ -415,8 +415,8 @@ extension RouteMap.Explore: RouterTarget {
             navi.push(content: ClaimDomainView())
         case .bookmark:
             navi.present(content: BrowserBookmarkView())
-        case .linkChildAccount:
-            let vc = CustomHostingController(rootView: ChildAccountLinkView())
+        case .linkChildAccount(let vm):
+            let vc = CustomHostingController(rootView: ChildAccountLinkView(vm: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         }
     }

@@ -13,7 +13,7 @@ class ChildAccountManager {
         
     }
     
-    func startLink() {
-        Router.route(to: RouteMap.Explore.linkChildAccount)
+    func linkAccount(_ response: FCLAuthzResponse, callback: @escaping ChildAccountLinkViewModel.Callback) {
+        
     }
 }

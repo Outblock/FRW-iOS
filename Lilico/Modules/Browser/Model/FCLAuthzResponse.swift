@@ -25,6 +25,10 @@ struct FCLAuthzResponse: Codable, FCLResponseProtocol {
         return service.type == .authz && body.f_type == "Signable" && body.roles.isSignEnvelope
     }
     
+    var isLinkAccount: Bool {
+        return body.cadence.trim.hasPrefix("#allowAccountLinking")
+    }
+    
     func uniqueId() -> String {
         return "\(service.type.rawValue)-\(type)-\(body.roles.value)"
     }

@@ -10,7 +10,11 @@ import Combine
 import Kingfisher
 
 struct ChildAccountLinkView: View {
-    @StateObject private var vm = ChildAccountLinkViewModel()
+    @StateObject private var vm: ChildAccountLinkViewModel
+    
+    init(vm: ChildAccountLinkViewModel) {
+        _vm = StateObject(wrappedValue: vm)
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -24,8 +28,15 @@ struct ChildAccountLinkView: View {
             }
             .padding(.vertical, 8)
             
-            WalletSendButtonView {
-                vm.test()
+            Group {
+                WalletSendButtonView(buttonText: "hold_to_link".localized) {
+                    log.info("user long tap link button")
+                    vm.linkAction()
+                }
+                .visibility(vm.state == .idle || vm.state == .processing ? .visible : .gone)
+                
+                buttonView
+                    .visibility(vm.state == .success || vm.state == .fail ? .visible : .gone)
             }
             .padding(.horizontal, 18)
             .padding(.bottom, 20)
@@ -92,12 +103,26 @@ extension ChildAccountLinkView {
 
 // MARK: - Components
 extension ChildAccountLinkView {
+    var buttonView: some View {
+        Button {
+            vm.onConfirmBtnAction()
+        } label: {
+            Text(vm.state.confirmBtnTitle)
+                .foregroundColor(Color.LL.Button.text)
+                .font(.inter(size: 14, weight: .bold))
+                .frame(height: 54)
+                .frame(maxWidth: .infinity)
+                .background(Color.LL.Button.color)
+                .cornerRadius(12)
+        }
+    }
+    
     var fromToView: some View {
         ZStack {
             HStack {
-                ChildAccountTargetView(iconURL: "", name: "targetname")
+                ChildAccountTargetView(iconURL: vm.logo, name: vm.fromTitle)
                 Spacer()
-                ChildAccountTargetView(iconURL: "", name: "targetname")
+                ChildAccountTargetView(iconURL: UserManager.shared.userInfo?.avatar.convertedAvatarString() ?? "", name: UserManager.shared.userInfo?.meowDomain ?? "")
             }
             
             ProcessingIndicator(state: vm.state)
@@ -124,8 +149,9 @@ extension ChildAccountLinkView {
                 Text(name)
                     .font(.inter(size: 12, weight: .medium))
                     .foregroundColor(Color.LL.Neutrals.text)
+                    .lineLimit(1)
             }
-            .frame(width: 90)
+            .frame(width: 130)
         }
     }
     
