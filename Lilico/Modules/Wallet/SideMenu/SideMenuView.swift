@@ -77,6 +77,7 @@ struct SideMenuView: View {
     @StateObject private var vm = SideMenuViewModel()
     @StateObject private var um = UserManager.shared
     @StateObject private var wm = WalletManager.shared
+    @StateObject private var cm = ChildAccountManager.shared
     
     var body: some View {
         HStack(spacing: 0) {
@@ -206,10 +207,16 @@ struct SideMenuView: View {
                     if LocalUserDefaults.shared.flowNetwork != .mainnet {
                         LocalUserDefaults.shared.flowNetwork = .mainnet
                     }
-                    
-                    NotificationCenter.default.post(name: .toggleSideMenu)
                 } label: {
                     addressCell(type: .mainnet, address: mainnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .mainnet)
+                }
+                
+                if LocalUserDefaults.shared.flowNetwork == .mainnet {
+                    LazyVStack(spacing: 0) {
+                        ForEach(cm.childAccounts, id: \.address) { childAccount in
+                            childAccountCell(childAccount, isSelected: false)
+                        }
+                    }
                 }
             }
             
@@ -218,10 +225,16 @@ struct SideMenuView: View {
                     if LocalUserDefaults.shared.flowNetwork != .testnet {
                         LocalUserDefaults.shared.flowNetwork = .testnet
                     }
-                    
-                    NotificationCenter.default.post(name: .toggleSideMenu)
                 } label: {
                     addressCell(type: .testnet, address: testnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .testnet)
+                }
+                
+                if LocalUserDefaults.shared.flowNetwork == .testnet {
+                    LazyVStack(spacing: 0) {
+                        ForEach(cm.childAccounts, id: \.address) { childAccount in
+                            childAccountCell(childAccount, isSelected: false)
+                        }
+                    }
                 }
             }
             
@@ -230,15 +243,63 @@ struct SideMenuView: View {
                     if LocalUserDefaults.shared.flowNetwork != .sandboxnet {
                         LocalUserDefaults.shared.flowNetwork = .sandboxnet
                     }
-                    
-                    NotificationCenter.default.post(name: .toggleSideMenu)
                 } label: {
                     addressCell(type: .sandboxnet, address: sandboxAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .sandboxnet)
                 }
+                
+//                if LocalUserDefaults.shared.flowNetwork == .sandboxnet {
+//                    LazyVStack(spacing: 0) {
+//                        ForEach(cm.childAccounts, id: \.address) { childAccount in
+//                            childAccountCell(childAccount, isSelected: false)
+//                        }
+//                    }
+//                }
             }
         }
         .background(Color.LL.Neutrals.neutrals6)
         .cornerRadius(12)
+    }
+    
+    func childAccountCell(_ childAccount: ChildAccount, isSelected: Bool) -> some View {
+        HStack(spacing: 15) {
+            KFImage.url(URL(string: childAccount.icon))
+                .placeholder({
+                    Image("placeholder")
+                        .resizable()
+                })
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 24, height: 24)
+                .cornerRadius(12)
+            
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Text("@\(childAccount.name)")
+                        .foregroundColor(Color.LL.Neutrals.text)
+                        .font(.inter(size: 14, weight: .semibold))
+                }
+                .frame(alignment: .leading)
+                
+                Text(childAccount.address)
+                    .foregroundColor(Color.LL.Neutrals.text3)
+                    .font(.inter(size: 12))
+            }
+            .frame(alignment: .leading)
+            
+            Spacer()
+            
+            Circle()
+                .frame(width: 8, height: 8)
+                .foregroundColor(Color(hex: "#00FF38"))
+                .visibility(isSelected ? .visible : .gone)
+        }
+        .frame(height: 66)
+        .padding(.leading, 36)
+        .padding(.trailing, 18)
+        .background {
+            selectedBg
+                .visibility(isSelected ? .visible : .gone)
+        }
     }
     
     func addressCell(type: LocalUserDefaults.FlowNetworkType, address: String, isSelected: Bool) -> some View {
@@ -256,13 +317,13 @@ struct SideMenuView: View {
                     Text(type.rawValue)
                         .textCase(.uppercase)
                         .lineLimit(1)
-                        .foregroundColor(type.color)
+                        .foregroundColor(Color(hex: "#333333"))
                         .font(.inter(size: 10, weight: .semibold))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
                         .background(
                             Capsule(style: .circular)
-                                .fill(type.color.opacity(0.2))
+                                .fill(Color(hex: "#EAEAEA"))
                         )
                         .visibility(type == .mainnet ? .gone : .visible)
                 }
@@ -276,11 +337,21 @@ struct SideMenuView: View {
             
             Spacer()
             
-            Image("icon-checkmark")
+            Circle()
+                .frame(width: 8, height: 8)
+                .foregroundColor(Color(hex: "#00FF38"))
                 .visibility(isSelected ? .visible : .gone)
         }
+        .frame(height: 78)
         .padding(.horizontal, 18)
-        .frame(height: 70)
+        .background {
+            selectedBg
+                .visibility(isSelected ? .visible : .gone)
+        }
+    }
+    
+    var selectedBg: some View {
+        LinearGradient(colors: [Color(hex: "#00FF38").opacity(0.08), Color(hex: "#00FF38").opacity(0)], startPoint: .leading, endPoint: .trailing)
     }
 }
 

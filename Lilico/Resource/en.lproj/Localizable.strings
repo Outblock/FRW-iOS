@@ -481,5 +481,5 @@
 "hold_to_link" = "Hold to Link";
 "work_in_progress" = "Work in Progress";
 "try_it_again" = "Try it again";
-"link_account_start_desc_x" = "We would like to link your NBATopShot account to your Lilico account “%@”";
+"link_account_start_desc_x" = "We would like to link your %@ account to your Lilico account “%@”";
 "link_account_success_desc" = "Now you can find your child account under side menu";

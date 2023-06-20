@@ -49,7 +49,7 @@ struct ChildAccountLinkView: View {
 extension ChildAccountLinkView {
     var startView: some View {
         VStack {
-            Text("link_account_start_desc_x".localized(UserManager.shared.userInfo?.username ?? ""))
+            Text("link_account_start_desc_x".localized(vm.fromTitle, UserManager.shared.userInfo?.username ?? ""))
                 .font(.inter(size: 14, weight: .regular))
                 .foregroundColor(Color.LL.Neutrals.text2)
                 .multilineTextAlignment(.center)

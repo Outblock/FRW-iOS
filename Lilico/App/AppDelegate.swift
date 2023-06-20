@@ -127,6 +127,8 @@ extension AppDelegate {
             _ = RemoteConfigManager.shared
         }
         _ = StakingManager.shared
+        
+        _ = ChildAccountManager.shared
     }
     
     private func commonConfig() {

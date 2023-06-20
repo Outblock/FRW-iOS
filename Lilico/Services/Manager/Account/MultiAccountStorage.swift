@@ -78,7 +78,7 @@ extension MultiAccountStorage {
 // MARK: - Saver
 extension MultiAccountStorage {
     func saveUserInfo(_ newUserInfo: UserInfo?, uid: String) throws {
-        AppFolderType.userStorage(uid).createFolderIfNeeded()
+        UserStorageFileType.userInfo(uid).createFolderIfNeeded()
         
         if let newUserInfo = newUserInfo {
             let data = try JSONEncoder().encode(newUserInfo)
@@ -90,7 +90,7 @@ extension MultiAccountStorage {
     }
     
     func saveWalletInfo(_ walletInfo: UserWalletResponse?, uid: String) throws {
-        AppFolderType.userStorage(uid).createFolderIfNeeded()
+        UserStorageFileType.walletInfo(uid).createFolderIfNeeded()
         
         if let walletInfo = walletInfo {
             let data = try JSONEncoder().encode(walletInfo)
@@ -102,7 +102,7 @@ extension MultiAccountStorage {
     }
     
     func saveUserDefaults(_ userDefaults: MultiAccountStorage.UserDefaults?, uid: String) throws {
-        AppFolderType.userStorage(uid).createFolderIfNeeded()
+        UserStorageFileType.userDefaults(uid).createFolderIfNeeded()
         
         if let userDefaults = userDefaults {
             let data = try JSONEncoder().encode(userDefaults)
@@ -110,6 +110,17 @@ extension MultiAccountStorage {
         } else {
             // remove file
             try UserStorageFileType.userDefaults(uid).remove()
+        }
+    }
+    
+    func saveChildAccounts(_ childAccounds: [ChildAccount]?, uid: String, address: String) throws {
+        UserStorageFileType.childAccounts(uid, address).createFolderIfNeeded()
+        
+        if let childAccounds = childAccounds {
+            let data = try JSONEncoder().encode(childAccounds)
+            try data.write(to: UserStorageFileType.childAccounts(uid, address).url)
+        } else {
+            try UserStorageFileType.childAccounts(uid, address).remove()
         }
     }
 }
@@ -160,6 +171,22 @@ extension MultiAccountStorage {
             return ud
         } catch {
             log.error("get user defaults failed", context: error)
+            return nil
+        }
+    }
+    
+    func getChildAccounts(uid: String, address: String) -> [ChildAccount]? {
+        if !UserStorageFileType.childAccounts(uid, address).isExist {
+            log.warning("child accounts cache is not exist")
+            return nil
+        }
+        
+        do {
+            let data = try Data(contentsOf: UserStorageFileType.childAccounts(uid, address).url)
+            let list = try JSONDecoder().decode([ChildAccount].self, from: data)
+            return list
+        } catch {
+            log.error("get child accounts failed", context: error)
             return nil
         }
     }

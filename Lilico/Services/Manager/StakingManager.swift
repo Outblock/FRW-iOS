@@ -110,6 +110,8 @@ class StakingManager: ObservableObject {
             return
         }
         
+        log.debug("start refresh")
+        
         updateApy()
         updateSetupStatus()
         queryStakingInfo()

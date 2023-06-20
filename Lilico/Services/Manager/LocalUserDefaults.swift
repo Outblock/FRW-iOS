@@ -105,7 +105,6 @@ class LocalUserDefaults: ObservableObject {
                     WalletManager.shared.reloadWalletInfo()
                 } else {
                     WalletManager.shared.walletInfo = WalletManager.shared.walletInfo
-                    StakingManager.shared.refresh()
                 }
                 
                 NotificationCenter.default.post(name: .networkChange)
