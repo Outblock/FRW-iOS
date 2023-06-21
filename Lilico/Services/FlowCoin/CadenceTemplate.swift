@@ -831,6 +831,7 @@ extension CadenceTemplate {
     """
 }
 
+// MARK: - Child Account
 extension CadenceTemplate {
     static let queryChildAccountMeta = """
         import HybridCustody from 0xHybridCustody
@@ -865,6 +866,18 @@ extension CadenceTemplate {
             let manager = acct.borrow<&HybridCustody.Manager>(from: HybridCustody.ManagerStoragePath)
                 ?? panic("manager not found")
             return manager.getAddresses()
+        }
+    """
+    
+    static let unlinkChildAccount = """
+        import HybridCustody from 0xHybridCustody
+
+        transaction(child: Address) {
+            prepare (acct: AuthAccount) {
+                let manager = acct.borrow<&HybridCustody.Manager>(from: HybridCustody.ManagerStoragePath)
+                    ?? panic("manager not found")
+                manager.removeChild(addr: child)
+            }
         }
     """
 }

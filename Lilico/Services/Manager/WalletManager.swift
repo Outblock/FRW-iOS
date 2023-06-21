@@ -402,6 +402,7 @@ extension WalletManager {
         try await fetchSupportedCoins()
         try await fetchActivatedCoins()
         try await fetchBalance()
+        ChildAccountManager.shared.refresh()
     }
 
     private func fetchSupportedCoins() async throws {

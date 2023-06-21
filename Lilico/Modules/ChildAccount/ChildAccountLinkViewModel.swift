@@ -97,6 +97,7 @@ class ChildAccountLinkViewModel: ObservableObject {
         switch obj.internalStatus {
         case .success:
             changeState(.success)
+            ChildAccountManager.shared.refresh()
         case .failed:
             changeState(.fail)
         default:

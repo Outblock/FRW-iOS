@@ -198,6 +198,7 @@ extension RouteMap {
         case resetWalletConfirm
         case currency
         case accountSetting
+        case accountDetail(ChildAccount)
     }
 }
 
@@ -248,6 +249,9 @@ extension RouteMap.Profile: RouterTarget {
             navi.push(content: CurrencyListView())
         case .accountSetting:
             navi.push(content: AccountSettingView())
+        case .accountDetail(let childAccount):
+            let vm = ChildAccountDetailViewModel(childAccount: childAccount)
+            navi.push(content: ChildAccountDetailView(vm: vm))
         }
     }
 }

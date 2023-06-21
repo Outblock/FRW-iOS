@@ -25,6 +25,10 @@ class ChildAccountManager: ObservableObject {
     
     @Published var childAccounts: [ChildAccount] = []
     
+    var sortedChildAccounts: [ChildAccount] {
+        return childAccounts.sorted { $0.pinTime > $1.pinTime }
+    }
+    
     private var cacheLoaded = false
     private var cancelSets = Set<AnyCancellable>()
     
@@ -58,6 +62,12 @@ class ChildAccountManager: ObservableObject {
             .sink { _ in
                 self.clean()
             }.store(in: &cancelSets)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
+    }
+    
+    @objc private func willReset() {
+        childAccounts = []
     }
     
     private func loadCache() {
@@ -79,7 +89,7 @@ class ChildAccountManager: ObservableObject {
         childAccounts = []
     }
     
-    private func refresh() {
+    func refresh() {
         guard let uid = UserManager.shared.activatedUID, let address = WalletManager.shared.getPrimaryWalletAddress() else {
             log.warning("uid or address is nil")
             return
@@ -133,8 +143,20 @@ extension ChildAccountManager {
         
         let newChildAccount = ChildAccount(address: oldChildAccount.address, name: oldChildAccount.name, desc: oldChildAccount.desc, icon: oldChildAccount.icon, pinTime: oldChildAccount.isPinned ? 0 : Date().timeIntervalSince1970)
         oldList.append(newChildAccount)
-        oldList.sort { $0.pinTime > $1.pinTime }
         
+        childAccounts = oldList
+        
+        guard let uid = UserManager.shared.activatedUID, let address = WalletManager.shared.getPrimaryWalletAddress() else {
+            log.error("uid or address is nil")
+            return
+        }
+        
+        saveToCache(oldList, uid: uid, address: address)
+    }
+    
+    func didUnlinkAccount(_ childAccount: ChildAccount) {
+        var oldList = childAccounts
+        oldList.removeAll(where: { $0.address == childAccount.address })
         childAccounts = oldList
         
         guard let uid = UserManager.shared.activatedUID, let address = WalletManager.shared.getPrimaryWalletAddress() else {

@@ -9,8 +9,15 @@ import SwiftUI
 import Combine
 import Kingfisher
 
+class AccountSettingViewModel: ObservableObject {
+    init() {
+        ChildAccountManager.shared.refresh()
+    }
+}
+
 struct AccountSettingView: RouteableView {
     @StateObject private var cm = ChildAccountManager.shared
+    @StateObject private var vm = AccountSettingViewModel()
     
     var title: String {
         "wallet".localized.capitalized
@@ -67,15 +74,17 @@ struct AccountSettingView: RouteableView {
     }
     
     var linkAccountContentView: some View {
-        LazyVStack(alignment: .leading, spacing: 0) {
+        LazyVStack(alignment: .leading, spacing: 8) {
             Text("linked_account".localized)
                 .foregroundColor(Color.LL.Neutrals.text4)
                 .font(.inter(size: 16, weight: .bold))
-                .padding(.bottom, 8)
             
-            ForEach(cm.childAccounts, id: \.address) { childAccount in
-                childAccountCell(childAccount)
-                    .padding(.bottom, 8)
+            ForEach(cm.sortedChildAccounts, id: \.address) { childAccount in
+                Button {
+                    Router.route(to: RouteMap.Profile.accountDetail(childAccount))
+                } label: {
+                    childAccountCell(childAccount)
+                }
             }
         }
     }

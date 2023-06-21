@@ -645,6 +645,39 @@ extension FlowNetwork {
         return response
     }
     
+    static func unlinkChildAccount(_ address: String) async throws -> Flow.ID {
+        let cadenceString = CadenceTemplate.unlinkChildAccount.replace(by: ScriptAddress.addressMap())
+        let walletAddress = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
+        
+        let txId = try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+            cadence {
+                cadenceString
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            
+            proposer {
+                walletAddress
+            }
+            
+            authorizers {
+                walletAddress
+            }
+            
+            arguments {
+                [.address(Flow.Address(hex: address))]
+            }
+            
+            gasLimit {
+                9999
+            }
+        })
+        
+        return txId
+    }
+    
     static func queryChildAccountMeta(_ address: String) async throws -> [ChildAccount] {
         let address = Flow.Address(hex: address)
         let replacedCadence = CadenceTemplate.queryChildAccountMeta.replace(by: ScriptAddress.addressMap())
