@@ -14,6 +14,10 @@ struct ChildAccount: Codable {
     let desc: String
     let icon: String
     let pinTime: TimeInterval
+    
+    var isPinned: Bool {
+        return pinTime > 0
+    }
 }
 
 class ChildAccountManager: ObservableObject {
@@ -114,5 +118,30 @@ class ChildAccountManager: ObservableObject {
         } catch {
             log.error("save to cache failed", context: error)
         }
+    }
+}
+
+extension ChildAccountManager {
+    func togglePinStatus(_ childAccount: ChildAccount) {
+        var oldList = childAccounts
+        guard let oldChildAccount = oldList.first(where: { $0.address == childAccount.address }) else {
+            log.warning("child account is not exist")
+            return
+        }
+        
+        oldList.removeAll(where: { $0.address == childAccount.address })
+        
+        let newChildAccount = ChildAccount(address: oldChildAccount.address, name: oldChildAccount.name, desc: oldChildAccount.desc, icon: oldChildAccount.icon, pinTime: oldChildAccount.isPinned ? 0 : Date().timeIntervalSince1970)
+        oldList.append(newChildAccount)
+        oldList.sort { $0.pinTime > $1.pinTime }
+        
+        childAccounts = oldList
+        
+        guard let uid = UserManager.shared.activatedUID, let address = WalletManager.shared.getPrimaryWalletAddress() else {
+            log.error("uid or address is nil")
+            return
+        }
+        
+        saveToCache(oldList, uid: uid, address: address)
     }
 }

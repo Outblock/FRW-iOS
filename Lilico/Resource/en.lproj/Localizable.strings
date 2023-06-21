@@ -483,3 +483,4 @@
 "try_it_again" = "Try it again";
 "link_account_start_desc_x" = "We would like to link your %@ account to your Lilico account “%@”";
 "link_account_success_desc" = "Now you can find your child account under side menu";
+"linked_account" = "Linked Account";
