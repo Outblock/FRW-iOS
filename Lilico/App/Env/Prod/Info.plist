@@ -61,9 +61,9 @@
 		<string>_Proxyman._tcp</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>lilico need camera to scan QR Code</string>
+	<string>Lilico need camera to scan QR Code</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Lilico-dev use Face ID to secure your assests</string>
+	<string>Lilico use Face ID to secure your assests</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Atlantis would use Bonjour Service to discover Proxyman app from your local network.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
