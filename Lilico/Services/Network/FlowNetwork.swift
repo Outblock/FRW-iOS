@@ -683,46 +683,22 @@ extension FlowNetwork {
         let replacedCadence = CadenceTemplate.queryChildAccountMeta.replace(by: ScriptAddress.addressMap())
         let rawResponse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: replacedCadence),
                                                                            arguments: [.address(address)])
-        guard let list = rawResponse.fields?.value.toDictionary() else {
+
+        guard let decode = rawResponse.decode() as? [String: Any] else {
             return []
         }
-        
-        var results = [ChildAccount]()
-        for dict in list {
-            guard let address = dict.key.value.toAddress()?.hex else {
-                continue
+
+        let result: [ChildAccount] = decode.keys.compactMap { key in
+            guard let value = decode[key],
+                  let data = try? JSONSerialization.data(withJSONObject: value),
+                  var model = try? JSONDecoder().decode(ChildAccount.self, from: data) else {
+                return nil
             }
-            
-            var name = ""
-            var desc = ""
-            var thumbnail = ""
-            if let flowStruct = dict.value.value.toOptional()?.toStruct() {
-                for eventName in flowStruct.fields {
-                    switch eventName.name {
-                    case "name":
-                        name = eventName.value.value.toString() ?? ""
-                    case "description":
-                        desc = eventName.value.value.toString() ?? ""
-                    case "thumbnail":
-                        if let thumbnailStruct = eventName.value.value.toStruct() {
-                            for thumbnailStructEventName in thumbnailStruct.fields {
-                                if thumbnailStructEventName.name == "url" {
-                                    thumbnail = thumbnailStructEventName.value.value.toString() ?? ""
-                                    break
-                                }
-                            }
-                        }
-                    default:
-                        break
-                    }
-                }
-                
-                let childAccount = ChildAccount(address: address, name: name, desc: desc, icon: thumbnail, pinTime: 0)
-                results.append(childAccount)
-            }
+            model.addr = key
+            return model
         }
-        
-        return results
+
+        return result
     }
 }
 

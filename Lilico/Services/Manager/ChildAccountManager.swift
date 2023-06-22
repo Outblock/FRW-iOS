@@ -9,14 +9,42 @@ import SwiftUI
 import Combine
 
 struct ChildAccount: Codable {
-    let address: String
+    var addr: String?
+    var address: String {
+        addr ?? ""
+    }
+
     let name: String
-    let desc: String
-    let icon: String
-    let pinTime: TimeInterval
     
+    let description: String
+    var desc: String {
+        description
+    }
+
+    let thumbnail: Thumbnail
+    var icon: String {
+        thumbnail.url
+    }
+
+    var time: TimeInterval?
+    var pinTime: TimeInterval {
+        time ?? 0
+    }
+
     var isPinned: Bool {
         return pinTime > 0
+    }
+
+    struct Thumbnail: Codable {
+        let url: String
+    }
+
+    init(address: String, name: String, desc: String, icon: String, pinTime: TimeInterval) {
+        self.addr = address
+        self.name = name
+        self.description = desc
+        self.thumbnail = Thumbnail(url: icon)
+        self.time = pinTime
     }
 }
 
