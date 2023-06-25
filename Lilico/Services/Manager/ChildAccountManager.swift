@@ -46,12 +46,29 @@ struct ChildAccount: Codable {
         self.thumbnail = Thumbnail(url: icon)
         self.time = pinTime
     }
+    
+    var isSelected: Bool {
+        if let selectedChildAccount = ChildAccountManager.shared.selectedChildAccount, selectedChildAccount.address == address, !address.isEmpty {
+            return true
+        }
+        
+        return false
+    }
 }
 
 class ChildAccountManager: ObservableObject {
     static let shared = ChildAccountManager()
     
-    @Published var childAccounts: [ChildAccount] = []
+    @Published var childAccounts: [ChildAccount] = [] {
+        didSet {
+            self.validSelectedChildAccount()
+        }
+    }
+    @Published var selectedChildAccount: ChildAccount? = LocalUserDefaults.shared.selectedChildAccount {
+        didSet {
+            LocalUserDefaults.shared.selectedChildAccount = selectedChildAccount
+        }
+    }
     
     var sortedChildAccounts: [ChildAccount] {
         return childAccounts.sorted { $0.pinTime > $1.pinTime }
@@ -59,6 +76,7 @@ class ChildAccountManager: ObservableObject {
     
     private var cacheLoaded = false
     private var cancelSets = Set<AnyCancellable>()
+    private var isRefreshing: Bool = false
     
     private init() {
         UserManager.shared.$activatedUID
@@ -123,15 +141,23 @@ class ChildAccountManager: ObservableObject {
             return
         }
         
+        if isRefreshing {
+            return
+        }
+        
+        isRefreshing = true
+        
         log.debug("start refresh")
         
         Task {
             do {
                 let list = try await FlowNetwork.queryChildAccountMeta(address)
                 
-                if UserManager.shared.activatedUID != uid { return }
-                
                 DispatchQueue.main.async {
+                    self.isRefreshing = false
+                    
+                    if UserManager.shared.activatedUID != uid { return }
+                    
                     let oldList = MultiAccountStorage.shared.getChildAccounts(uid: uid, address: address) ?? []
                     let finalList = list.map { newAccount in
                         if let oldAccount = oldList.first(where: { $0.address == newAccount.address }) {
@@ -146,6 +172,9 @@ class ChildAccountManager: ObservableObject {
                 }
             } catch {
                 log.error("refresh failed", context: error)
+                DispatchQueue.main.async {
+                    self.isRefreshing = false
+                }
             }
         }
     }
@@ -155,6 +184,16 @@ class ChildAccountManager: ObservableObject {
             try MultiAccountStorage.shared.saveChildAccounts(childAccounts, uid: uid, address: address)
         } catch {
             log.error("save to cache failed", context: error)
+        }
+    }
+    
+    private func validSelectedChildAccount() {
+        guard let selectedChildAccount = selectedChildAccount else {
+            return
+        }
+        
+        if childAccounts.contains(where: { $0.address == selectedChildAccount.address }) == false {
+            self.selectedChildAccount = nil
         }
     }
 }
@@ -193,5 +232,13 @@ extension ChildAccountManager {
         }
         
         saveToCache(oldList, uid: uid, address: address)
+    }
+    
+    func select(_ childAccount: ChildAccount?) {
+        if selectedChildAccount?.address == childAccount?.address {
+            return
+        }
+        
+        selectedChildAccount = childAccount
     }
 }

@@ -33,6 +33,7 @@ extension WalletView: AppTabBarPageProtocol {
 
 struct WalletView: View {
     @StateObject var um = UserManager.shared
+    @StateObject var wm = WalletManager.shared
     @StateObject private var vm = WalletViewModel()
     @State var isRefreshing: Bool = false
 
@@ -168,7 +169,7 @@ struct WalletView: View {
                 vm.sideToggleAction()
             } label: {
                 HStack {
-                    KFImage.url(URL(string: um.userInfo?.avatar.convertedAvatarString() ?? ""))
+                    KFImage.url(URL(string: wm.selectedAccountIcon))
                         .placeholder({
                             Image("placeholder")
                                 .resizable()
@@ -178,7 +179,7 @@ struct WalletView: View {
                         .frame(width: 28, height: 28)
                         .cornerRadius(14)
                     
-                    Text(um.userInfo?.nickname ?? "Lilico")
+                    Text(wm.selectedAccountNickName)
                         .foregroundColor(.LL.Neutrals.text)
                         .font(.inter(size: 18, weight: .semibold))
                 }

@@ -129,6 +129,7 @@ extension AppDelegate {
         _ = StakingManager.shared
         
         _ = ChildAccountManager.shared
+        WalletManager.shared.bindChildAccountManager()
     }
     
     private func commonConfig() {

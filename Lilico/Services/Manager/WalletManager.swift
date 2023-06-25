@@ -36,6 +36,7 @@ class WalletManager: ObservableObject {
     @Published var supportedCoins: [TokenModel]?
     @Published var activatedCoins: [TokenModel] = []
     @Published var coinBalances: [String: Double] = [:]
+    @Published var childAccount: ChildAccount? = nil
 
     private var hdWallet: HDWallet?
 
@@ -63,6 +64,13 @@ class WalletManager: ObservableObject {
             }.store(in: &cancellableSet)
     }
     
+    func bindChildAccountManager() {
+        ChildAccountManager.shared.$selectedChildAccount
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.childAccount, on: self)
+            .store(in: &cancellableSet)
+    }
+    
     private func loadCacheData() {
         guard let uid = UserManager.shared.activatedUID else { return }
         let cacheWalletInfo = MultiAccountStorage.shared.getWalletInfo(uid)
@@ -85,6 +93,61 @@ class WalletManager: ObservableObject {
                 }
             }
         }
+    }
+}
+
+// MARK: - Child Account
+extension WalletManager {
+    var isSelectedChildAccount: Bool {
+        return childAccount != nil
+    }
+    
+    var selectedAccountIcon: String {
+        if let childAccount = childAccount {
+            return childAccount.icon
+        }
+        
+        return UserManager.shared.userInfo?.avatar.convertedAvatarString() ?? ""
+    }
+    
+    var selectedAccountNickName: String {
+        if let childAccount = childAccount {
+            return childAccount.name
+        }
+        
+        return UserManager.shared.userInfo?.nickname ?? "Lilico"
+    }
+    
+    var selectedAccountWalletName: String {
+        if let childAccount = childAccount {
+            return childAccount.name
+        }
+        
+        if let walletInfo = self.walletInfo?.currentNetworkWalletModel {
+            return walletInfo.getName ?? "wallet".localized
+        }
+        
+        return "wallet".localized
+    }
+    
+    func changeNetwork(_ type: LocalUserDefaults.FlowNetworkType) {
+        if LocalUserDefaults.shared.flowNetwork == type {
+            if isSelectedChildAccount {
+                ChildAccountManager.shared.select(nil)
+            }
+            return
+        }
+        
+        LocalUserDefaults.shared.flowNetwork = type
+        FlowNetwork.setup()
+        
+        if getPrimaryWalletAddress() == nil {
+            WalletManager.shared.reloadWalletInfo()
+        } else {
+            self.walletInfo = self.walletInfo
+        }
+        
+        NotificationCenter.default.post(name: .networkChange)
     }
 }
 

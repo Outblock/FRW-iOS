@@ -54,17 +54,13 @@ struct DeveloperModeView: RouteableView {
                             
                             Cell(sysImageTuple: (isMainnet ? .checkmarkSelected : .checkmarkUnselected, isMainnet ? .LL.Primary.salmonPrimary : .LL.Neutrals.neutrals1), title: "Mainnet", desc: isMainnet ? "Selected" : "")
                                 .onTapGestureOnBackground {
-                                    if lud.flowNetwork != .mainnet {
-                                        lud.flowNetwork = .mainnet
-                                    }
+                                    walletManager.changeNetwork(.mainnet)
                                 }
                             
                             Divider()
                             Cell(sysImageTuple: (isTestnet ? .checkmarkSelected : .checkmarkUnselected, isTestnet ? LocalUserDefaults.FlowNetworkType.testnet.color : .LL.Neutrals.neutrals1), title: "Testnet", desc: isTestnet ? "Selected" : "")
                                 .onTapGestureOnBackground {
-                                    if lud.flowNetwork != .testnet {
-                                        lud.flowNetwork = .testnet
-                                    }
+                                    walletManager.changeNetwork(.testnet)
                                 }
                             
                             Divider()
@@ -74,8 +70,8 @@ struct DeveloperModeView: RouteableView {
                                 }
                             }, titleAlpha: walletManager.isSandboxnetEnabled ? 1 : 0.5)
                                 .onTapGestureOnBackground {
-                                    if walletManager.isSandboxnetEnabled, lud.flowNetwork != .sandboxnet {
-                                        lud.flowNetwork = .sandboxnet
+                                    if walletManager.isSandboxnetEnabled {
+                                        walletManager.changeNetwork(.sandboxnet)
                                     }
                                 }
                         }

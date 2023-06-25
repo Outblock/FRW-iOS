@@ -83,7 +83,7 @@ extension DeveloperModeViewModel {
         let successBlock = {
             DispatchQueue.main.async {
                 HUD.dismissLoading()
-                LocalUserDefaults.shared.flowNetwork = .sandboxnet
+                WalletManager.shared.changeNetwork(.sandboxnet)
             }
         }
         

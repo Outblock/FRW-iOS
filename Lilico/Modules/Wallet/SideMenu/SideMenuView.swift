@@ -204,17 +204,15 @@ struct SideMenuView: View {
         VStack(spacing: 0) {
             if let mainnetAddress = wm.getFlowNetworkTypeAddress(network: .mainnet) {
                 Button {
-                    if LocalUserDefaults.shared.flowNetwork != .mainnet {
-                        LocalUserDefaults.shared.flowNetwork = .mainnet
-                    }
+                    WalletManager.shared.changeNetwork(.mainnet)
                 } label: {
-                    addressCell(type: .mainnet, address: mainnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .mainnet)
+                    addressCell(type: .mainnet, address: mainnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .mainnet && !wm.isSelectedChildAccount)
                 }
                 
                 if LocalUserDefaults.shared.flowNetwork == .mainnet {
                     LazyVStack(spacing: 0) {
                         ForEach(cm.childAccounts, id: \.address) { childAccount in
-                            childAccountCell(childAccount, isSelected: false)
+                            childAccountCell(childAccount, isSelected: childAccount.isSelected)
                         }
                     }
                 }
@@ -222,17 +220,15 @@ struct SideMenuView: View {
             
             if let testnetAddress = wm.getFlowNetworkTypeAddress(network: .testnet) {
                 Button {
-                    if LocalUserDefaults.shared.flowNetwork != .testnet {
-                        LocalUserDefaults.shared.flowNetwork = .testnet
-                    }
+                    WalletManager.shared.changeNetwork(.testnet)
                 } label: {
-                    addressCell(type: .testnet, address: testnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .testnet)
+                    addressCell(type: .testnet, address: testnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .testnet && !wm.isSelectedChildAccount)
                 }
                 
                 if LocalUserDefaults.shared.flowNetwork == .testnet {
                     LazyVStack(spacing: 0) {
                         ForEach(cm.childAccounts, id: \.address) { childAccount in
-                            childAccountCell(childAccount, isSelected: false)
+                            childAccountCell(childAccount, isSelected: childAccount.isSelected)
                         }
                     }
                 }
@@ -240,9 +236,7 @@ struct SideMenuView: View {
             
             if let sandboxAddress = wm.getFlowNetworkTypeAddress(network: .sandboxnet) {
                 Button {
-                    if LocalUserDefaults.shared.flowNetwork != .sandboxnet {
-                        LocalUserDefaults.shared.flowNetwork = .sandboxnet
-                    }
+                    WalletManager.shared.changeNetwork(.sandboxnet)
                 } label: {
                     addressCell(type: .sandboxnet, address: sandboxAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .sandboxnet)
                 }
@@ -261,44 +255,49 @@ struct SideMenuView: View {
     }
     
     func childAccountCell(_ childAccount: ChildAccount, isSelected: Bool) -> some View {
-        HStack(spacing: 15) {
-            KFImage.url(URL(string: childAccount.icon))
-                .placeholder({
-                    Image("placeholder")
-                        .resizable()
-                })
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 24, height: 24)
-                .cornerRadius(12)
-            
-            VStack(alignment: .leading, spacing: 6) {
-                HStack {
-                    Text("@\(childAccount.name)")
-                        .foregroundColor(Color.LL.Neutrals.text)
-                        .font(.inter(size: 14, weight: .semibold))
+        Button {
+            ChildAccountManager.shared.select(childAccount)
+        } label: {
+            HStack(spacing: 15) {
+                KFImage.url(URL(string: childAccount.icon))
+                    .placeholder({
+                        Image("placeholder")
+                            .resizable()
+                    })
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 24, height: 24)
+                    .cornerRadius(12)
+                
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("@\(childAccount.name)")
+                            .foregroundColor(Color.LL.Neutrals.text)
+                            .font(.inter(size: 14, weight: .semibold))
+                    }
+                    .frame(alignment: .leading)
+                    
+                    Text(childAccount.address)
+                        .foregroundColor(Color.LL.Neutrals.text3)
+                        .font(.inter(size: 12))
                 }
                 .frame(alignment: .leading)
                 
-                Text(childAccount.address)
-                    .foregroundColor(Color.LL.Neutrals.text3)
-                    .font(.inter(size: 12))
+                Spacer()
+                
+                Circle()
+                    .frame(width: 8, height: 8)
+                    .foregroundColor(Color(hex: "#00FF38"))
+                    .visibility(isSelected ? .visible : .gone)
             }
-            .frame(alignment: .leading)
-            
-            Spacer()
-            
-            Circle()
-                .frame(width: 8, height: 8)
-                .foregroundColor(Color(hex: "#00FF38"))
-                .visibility(isSelected ? .visible : .gone)
-        }
-        .frame(height: 66)
-        .padding(.leading, 36)
-        .padding(.trailing, 18)
-        .background {
-            selectedBg
-                .visibility(isSelected ? .visible : .gone)
+            .frame(height: 66)
+            .padding(.leading, 36)
+            .padding(.trailing, 18)
+            .background {
+                selectedBg
+                    .visibility(isSelected ? .visible : .gone)
+            }
+            .contentShape(Rectangle())
         }
     }
     
