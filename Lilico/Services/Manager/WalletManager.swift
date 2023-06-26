@@ -120,7 +120,7 @@ extension WalletManager {
     
     var selectedAccountWalletName: String {
         if let childAccount = childAccount {
-            return childAccount.name
+            return "\(childAccount.name) Wallet"
         }
         
         if let walletInfo = self.walletInfo?.currentNetworkWalletModel {
@@ -128,6 +128,18 @@ extension WalletManager {
         }
         
         return "wallet".localized
+    }
+    
+    var selectedAccountAddress: String {
+        if let childAccount = childAccount {
+            return childAccount.address
+        }
+        
+        if let walletInfo = self.walletInfo?.currentNetworkWalletModel {
+            return walletInfo.getAddress ?? "0x"
+        }
+        
+        return "0x"
     }
     
     func changeNetwork(_ type: LocalUserDefaults.FlowNetworkType) {

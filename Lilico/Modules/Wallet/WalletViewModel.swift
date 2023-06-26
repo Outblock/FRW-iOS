@@ -46,8 +46,6 @@ extension WalletViewModel {
 
 class WalletViewModel: ObservableObject {
     @Published var isHidden: Bool = LocalUserDefaults.shared.walletHidden
-    @Published var walletName: String = "wallet".localized
-    @Published var address: String = "0x0000000000000000"
     @Published var balance: Double = 0
     @Published var coinItems: [WalletCoinItemModel] = []
     @Published var walletState: WalletState = .noAddress
@@ -58,78 +56,68 @@ class WalletViewModel: ObservableObject {
     private var lastRefreshTS: TimeInterval = 0
     private let autoRefreshInterval: TimeInterval = 30
     
+    private var isReloading: Bool = false
+    
     /// If the current account is not backed up, each time start app, backup tips will be displayed.
     private var backupTipsShown: Bool = false
 
     private var cancelSets = Set<AnyCancellable>()
 
     init() {
-        NotificationCenter.default.publisher(for: .walletHiddenFlagUpdated).sink { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.refreshHiddenFlag()
-            }
-        }.store(in: &cancelSets)
-
-        WalletManager.shared.$walletInfo.sink { [weak self] newInfo in
-            guard let address = newInfo?.currentNetworkWalletModel?.getAddress else {
-                DispatchQueue.main.async {
+        WalletManager.shared.$walletInfo
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { [weak self] newInfo in
+                guard newInfo?.currentNetworkWalletModel?.getAddress != nil else {
                     self?.walletState = .noAddress
-                    self?.address = "0x0000000000000000"
                     self?.balance = 0
                     self?.coinItems = []
+                    return
                 }
-                return
-            }
+                
+                self?.reloadWalletData()
+            }.store(in: &cancelSets)
 
-            if address != self?.address {
-                DispatchQueue.main.async {
-                    self?.refreshWalletInfo()
-                    self?.reloadWalletData()
-                }
-            }
-        }.store(in: &cancelSets)
-
-        WalletManager.shared.$coinBalances.sink { [weak self] _ in
-            if let self = self {
-                DispatchQueue.main.async {
-                    self.refreshCoinItems()
-                }
-            }
-        }.store(in: &cancelSets)
+        WalletManager.shared.$coinBalances
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.refreshCoinItems()
+            }.store(in: &cancelSets)
         
-        WalletConnectManager.shared.$pendingRequests.sink { [weak self] _ in
-            guard let self = self else {
-                return
-            }
-            
-            DispatchQueue.main.async {
-                self.pendingRequestCount = WalletConnectManager.shared.pendingRequests.count
-            }
-        }.store(in: &cancelSets)
-
-        NotificationCenter.default.publisher(for: .coinSummarysUpdated).sink { [weak self] _ in
-            if let self = self {
-                DispatchQueue.main.async {
-                    self.refreshCoinItems()
-                }
-            }
-        }.store(in: &cancelSets)
+        WalletConnectManager.shared.$pendingRequests
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.pendingRequestCount = WalletConnectManager.shared.pendingRequests.count
+            }.store(in: &cancelSets)
         
-        NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification).sink { [weak self] _ in
-            guard let self = self else {
-                return
-            }
-            
-            if self.lastRefreshTS == 0 {
-                return
-            }
-            
-            DispatchQueue.main.async {
+        NotificationCenter.default.publisher(for: .walletHiddenFlagUpdated)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.refreshHiddenFlag()
+            }.store(in: &cancelSets)
+
+        NotificationCenter.default.publisher(for: .coinSummarysUpdated)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.refreshCoinItems()
+            }.store(in: &cancelSets)
+        
+        NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self = self else {
+                    return
+                }
+                
+                if self.lastRefreshTS == 0 {
+                    return
+                }
+                
                 if abs(self.lastRefreshTS - Date().timeIntervalSince1970) > self.autoRefreshInterval {
                     self.reloadWalletData()
                 }
-            }
-        }.store(in: &cancelSets)
+            }.store(in: &cancelSets)
         
         NotificationCenter.default.addObserver(self, selector: #selector(transactionCountDidChanged), name: .transactionCountDidChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
@@ -138,13 +126,6 @@ class WalletViewModel: ObservableObject {
 
     private func refreshHiddenFlag() {
         isHidden = LocalUserDefaults.shared.walletHidden
-    }
-
-    private func refreshWalletInfo() {
-        if let walletInfo = WalletManager.shared.walletInfo?.currentNetworkWalletModel {
-            walletName = walletInfo.getName ?? "wallet".localized
-            address = walletInfo.getAddress ?? "0x0000000000000000"
-        }
     }
 
     private func refreshCoinItems() {
@@ -252,26 +233,37 @@ extension WalletViewModel {
             return
         }
         
-        DispatchQueue.main.async {
-            self.lastRefreshTS = Date().timeIntervalSince1970
-            self.walletState = .idle
+        if isReloading {
+            return
         }
+        
+        isReloading = true
+        
+        log.debug("reloadWalletData")
+        
+        self.lastRefreshTS = Date().timeIntervalSince1970
+        self.walletState = .idle
         
         Task {
             do {
                 try await WalletManager.shared.fetchWalletDatas()
                 self.reloadTransactionCount()
+                
+                DispatchQueue.main.async {
+                    self.isReloading = false
+                }
             } catch {
                 HUD.error(title: "fetch_wallet_error".localized)
                 DispatchQueue.main.async {
                     self.walletState = .error
+                    self.isReloading = false
                 }
             }
         }
     }
     
     func copyAddressAction() {
-        UIPasteboard.general.string = address
+        UIPasteboard.general.string = WalletManager.shared.selectedAccountAddress
         HUD.success(title: "copied".localized)
     }
     
