@@ -37,6 +37,8 @@ class WalletManager: ObservableObject {
     @Published var activatedCoins: [TokenModel] = []
     @Published var coinBalances: [String: Double] = [:]
     @Published var childAccount: ChildAccount? = nil
+    
+    private var childAccountInited: Bool = false
 
     private var hdWallet: HDWallet?
 
@@ -67,8 +69,20 @@ class WalletManager: ObservableObject {
     func bindChildAccountManager() {
         ChildAccountManager.shared.$selectedChildAccount
             .receive(on: DispatchQueue.main)
-            .assign(to: \.childAccount, on: self)
-            .store(in: &cancellableSet)
+            .map { $0 }
+            .sink(receiveValue: { newChildAccount in
+                log.info("change account did changed")
+                self.childAccount = newChildAccount
+                
+                if self.childAccountInited {
+                    Task {
+                        try? await self.fetchWalletDatas()
+                    }
+                }
+                
+                self.childAccountInited = true
+                NotificationCenter.default.post(name: .childAccountChanged)
+            }).store(in: &cancellableSet)
     }
     
     private func loadCacheData() {
@@ -230,6 +244,23 @@ extension WalletManager {
     /// get custom watch address first, then primary address, this method is only used for tab2.
     func getPrimaryWalletAddressOrCustomWatchAddress() -> String? {
         return LocalUserDefaults.shared.customWatchAddress ?? getPrimaryWalletAddress()
+    }
+    
+    /// watch address -> child account address -> primary address
+    func getWatchAddressOrChildAccountAddressOrPrimaryAddress() -> String? {
+        if let customAddress = LocalUserDefaults.shared.customWatchAddress, !customAddress.isEmpty {
+            return customAddress
+        }
+        
+        if let childAccount = childAccount {
+            return childAccount.address
+        }
+        
+        if let walletInfo = self.walletInfo?.currentNetworkWalletModel {
+            return walletInfo.getAddress
+        }
+        
+        return nil
     }
     
     var isSandboxnetEnabled: Bool {
@@ -474,6 +505,8 @@ extension WalletManager {
             return
         }
         
+        log.debug("fetchWalletDatas")
+        
         try await fetchSupportedCoins()
         try await fetchActivatedCoins()
         try await fetchBalance()
@@ -498,7 +531,8 @@ extension WalletManager {
             return
         }
 
-        guard let address = walletInfo?.currentNetworkWalletModel?.getAddress, !address.isEmpty else {
+        let address = selectedAccountAddress
+        if address.isEmpty {
             DispatchQueue.main.sync {
                 self.activatedCoins.removeAll()
             }
@@ -530,7 +564,8 @@ extension WalletManager {
             return
         }
 
-        guard let address = walletInfo?.currentNetworkWalletModel?.getAddress, !address.isEmpty else {
+        let address = selectedAccountAddress
+        if address.isEmpty {
             throw WalletError.fetchBalanceFailed
         }
 

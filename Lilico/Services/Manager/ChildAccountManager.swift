@@ -99,14 +99,9 @@ class ChildAccountManager: ObservableObject {
                         return
                     }
                     
+                    self.clean()
                     self.refresh()
                 }
-            }.store(in: &cancelSets)
-        
-        NotificationCenter.default.publisher(for: .networkChange)
-            .receive(on: DispatchQueue.main)
-            .sink { _ in
-                self.clean()
             }.store(in: &cancelSets)
         
         NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)

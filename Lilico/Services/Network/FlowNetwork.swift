@@ -13,7 +13,7 @@ import BigInt
 class FlowNetwork {
     static func setup() {
         let type = LocalUserDefaults.shared.flowNetwork.toFlowType()
-        debugPrint("did setup flow chainID to \(LocalUserDefaults.shared.flowNetwork.rawValue)")
+        log.debug("did setup flow chainID to \(LocalUserDefaults.shared.flowNetwork.rawValue)")
         flow.configure(chainID: type)
     }
 }

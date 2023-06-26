@@ -11,7 +11,7 @@ class WalletReceiveViewModel: ObservableObject {
     @Published var address: String
     
     init() {
-        address = WalletManager.shared.getPrimaryWalletAddress() ?? "0x"
+        address = WalletManager.shared.selectedAccountAddress
     }
     
     func copyAddressAction() {

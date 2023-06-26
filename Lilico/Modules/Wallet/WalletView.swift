@@ -239,7 +239,10 @@ struct WalletView: View {
                 actionButton(imageName: "wallet-send-stroke") {
                     Router.route(to: RouteMap.Wallet.send())
                 }
+                .disabled(wm.isSelectedChildAccount)
+                
                 Spacer()
+                
                 actionButton(imageName: "wallet-receive-stroke") {
                     Router.route(to: RouteMap.Wallet.receive)
                 }
@@ -249,6 +252,7 @@ struct WalletView: View {
                     actionButton(imageName: "wallet-swap-stroke") {
                         Router.route(to: RouteMap.Wallet.swap(nil))
                     }
+                    .disabled(wm.isSelectedChildAccount)
                 }
                 
                 if currentNetwork.isMainnet {
@@ -256,6 +260,7 @@ struct WalletView: View {
                     actionButton(imageName: "wallet-staking") {
                         vm.stakingAction()
                     }
+                    .disabled(wm.isSelectedChildAccount)
                 }
             }
         }
@@ -298,6 +303,7 @@ struct WalletView: View {
                     .renderingMode(.template)
                     .foregroundColor(.LL.Neutrals.neutrals1)
             }
+            .disabled(wm.isSelectedChildAccount)
 
         }
         .buttonStyle(.plain)
@@ -367,6 +373,7 @@ extension WalletView {
                         .padding(.horizontal, 18)
                 }
                 .zIndex(-1)
+                .visibility(WalletManager.shared.isSelectedChildAccount ? .gone : .visible)
             }
         }
         

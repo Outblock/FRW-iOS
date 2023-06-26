@@ -253,6 +253,7 @@ extension WalletViewModel {
                     self.isReloading = false
                 }
             } catch {
+                log.error("reload wallet data failed", context: error)
                 HUD.error(title: "fetch_wallet_error".localized)
                 DispatchQueue.main.async {
                     self.walletState = .error

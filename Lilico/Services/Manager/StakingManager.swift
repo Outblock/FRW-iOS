@@ -103,10 +103,27 @@ class StakingManager: ObservableObject {
                     self.clean()
                 }
             }.store(in: &cancelSet)
+        
+        WalletManager.shared.$childAccount
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { newChildAccount in
+                self.clean()
+                
+                if newChildAccount == nil {
+                    self.refresh()
+                }
+            }.store(in: &cancelSet)
     }
     
     func refresh() {
         if !UserManager.shared.isLoggedIn {
+            return
+        }
+        
+        if WalletManager.shared.isSelectedChildAccount {
+            log.warning("child account should will not refresh staking info")
             return
         }
         

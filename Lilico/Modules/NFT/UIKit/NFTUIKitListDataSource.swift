@@ -46,7 +46,7 @@ class NFTUIKitListGridDataModel {
     }
     
     private func requestGrid(offset: Int, limit: Int = 24) async throws -> [NFTModel] {
-        guard let address = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress() else {
+        guard let address = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
             return []
         }
         
@@ -101,7 +101,7 @@ class NFTUIKitListNormalDataModel {
     }
     
     private func loadCache() {
-        if var cachedCollections = NFTUIKitCache.cache.getCollections(), let address = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress() {
+        if var cachedCollections = NFTUIKitCache.cache.getCollections(), let address = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() {
             cachedCollections.sort {
                 if $0.count == $1.count {
                     return $0.collection.contractName < $1.collection.contractName
@@ -143,7 +143,7 @@ class NFTUIKitListNormalDataModel {
         
         removeAllCache()
         
-        guard let address = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress() else {
+        guard let address = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
             DispatchQueue.syncOnMain {
                 self.items = []
             }
@@ -178,7 +178,7 @@ class NFTUIKitListNormalDataModel {
     }
     
     private func requestCollections() async throws -> [NFTCollection] {
-        guard let address = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress() else {
+        guard let address = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
             return []
         }
         

@@ -127,7 +127,7 @@ extension NFTUIKitGridStyleHandler {
             return
         }
         
-        guard WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress() != nil else {
+        guard WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() != nil else {
             showEmptyView()
             return
         }
