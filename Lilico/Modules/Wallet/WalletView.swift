@@ -490,8 +490,19 @@ extension WalletView {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                VisualEffectBlurView(blurStyle: .dark)
+                    .blur(radius: 6)
+                
+                LinearGradient(colors:
+                                [
+                                    Color(hex: "#333333"),
+                                    Color(hex: "#333333"),
+                                    Color(hex: "#333333").opacity(0.88),
+                                    Color(hex: "#333333").opacity(0.32),
+                                ],
+                               startPoint: .leading,
+                               endPoint: .trailing)
             }
+            
         }
     }
 

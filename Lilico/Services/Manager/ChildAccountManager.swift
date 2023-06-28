@@ -99,7 +99,6 @@ class ChildAccountManager: ObservableObject {
                         return
                     }
                     
-                    self.clean()
                     self.refresh()
                 }
             }.store(in: &cancelSets)
@@ -133,6 +132,7 @@ class ChildAccountManager: ObservableObject {
     func refresh() {
         guard let uid = UserManager.shared.activatedUID, let address = WalletManager.shared.getPrimaryWalletAddress() else {
             log.warning("uid or address is nil")
+            clean()
             return
         }
         
