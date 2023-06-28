@@ -144,7 +144,7 @@ extension ChildAccountLinkView {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 18)
         .padding(.vertical, 18)
-        .background(Color(hex: "#F4F4F7"))
+        .background(Color.LL.Other.bg1)
         .cornerRadius(12)
     }
     

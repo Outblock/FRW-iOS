@@ -484,7 +484,7 @@
 "link_account_start_desc_x" = "We would like to link your %@ account to your Lilico account “%@”";
 "link_account_success_desc" = "Now you can find your linked account under side menu";
 "linked_account" = "Linked Account";
-"description" = "DESCRIPTION";
+"description" = "Description";
 "unlink_account" = "Unlink Account";
 "unlink_confirmation" = "Unlink Confirmation";
 "unlink_account_desc_x" = "Unlink your account, the main wallet will not have any access to your %@ account anymore.";

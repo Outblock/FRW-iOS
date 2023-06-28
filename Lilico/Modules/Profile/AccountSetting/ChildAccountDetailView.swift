@@ -166,7 +166,7 @@ struct ChildAccountDetailView: RouteableView {
     var addressContentView: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("address".localized)
-                .foregroundColor(Color.LL.Neutrals.text)
+                .foregroundColor(Color.LL.Neutrals.text4)
                 .font(.inter(size: 16, weight: .semibold))
             
             HStack {
@@ -194,8 +194,8 @@ struct ChildAccountDetailView: RouteableView {
     var descContentView: some View {
         VStack(alignment: .leading, spacing: 15) {
             Text("description".localized)
-                .foregroundColor(Color.LL.Neutrals.text)
-                .font(.inter(size: 14, weight: .bold))
+                .foregroundColor(Color.LL.Neutrals.text4)
+                .font(.inter(size: 16, weight: .semibold))
             
             Text(vm.childAccount.desc)
                 .foregroundColor(Color.LL.Neutrals.text2)
@@ -213,22 +213,38 @@ extension ChildAccountDetailView {
         }
         
         var barColors: [Color] {
-            return [.clear, styleColor, .clear]
+            return [.clear, styleColor]
         }
         
         var body: some View {
             HStack(spacing: 0) {
                 dotView
+                lineView(start: .leading, end: .trailing)
+                shortLine
+                    .padding(.horizontal, 4)
                 
-                ZStack {
-                    LinearGradient(colors: barColors, startPoint: .leading, endPoint: .trailing)
-                        .frame(height: 2)
-                }
-                .frame(maxWidth: .infinity)
+                Image("unlink-indicator")
+                    .renderingMode(.template)
+                    .foregroundColor(styleColor)
                 
+                shortLine
+                    .padding(.horizontal, 4)
+                lineView(start: .trailing, end: .leading)
                 dotView
             }
             .frame(width: 114, height: 8)
+        }
+        
+        var shortLine: some View {
+            Rectangle()
+                .frame(width: 4, height: 2)
+                .foregroundColor(styleColor)
+        }
+        
+        func lineView(start: UnitPoint, end: UnitPoint) -> some View {
+            LinearGradient(colors: barColors, startPoint: start, endPoint: end)
+                .frame(height: 2)
+                .frame(maxWidth: .infinity)
         }
         
         var dotView: some View {
