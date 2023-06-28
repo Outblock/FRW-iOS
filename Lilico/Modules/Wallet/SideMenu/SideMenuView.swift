@@ -78,6 +78,7 @@ struct SideMenuView: View {
     @StateObject private var um = UserManager.shared
     @StateObject private var wm = WalletManager.shared
     @StateObject private var cm = ChildAccountManager.shared
+    @AppStorage("isDeveloperMode") private var isDeveloperMode = false
     
     var body: some View {
         HStack(spacing: 0) {
@@ -218,7 +219,7 @@ struct SideMenuView: View {
                 }
             }
             
-            if let testnetAddress = wm.getFlowNetworkTypeAddress(network: .testnet) {
+            if let testnetAddress = wm.getFlowNetworkTypeAddress(network: .testnet), isDeveloperMode {
                 Button {
                     WalletManager.shared.changeNetwork(.testnet)
                 } label: {
@@ -234,7 +235,7 @@ struct SideMenuView: View {
                 }
             }
             
-            if let sandboxAddress = wm.getFlowNetworkTypeAddress(network: .sandboxnet) {
+            if let sandboxAddress = wm.getFlowNetworkTypeAddress(network: .sandboxnet), isDeveloperMode {
                 Button {
                     WalletManager.shared.changeNetwork(.sandboxnet)
                 } label: {
@@ -347,6 +348,7 @@ struct SideMenuView: View {
             selectedBg
                 .visibility(isSelected ? .visible : .gone)
         }
+        .clipped()
     }
     
     var selectedBg: some View {
