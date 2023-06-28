@@ -49,18 +49,17 @@ struct ChildAccountLinkView: View {
 extension ChildAccountLinkView {
     var startView: some View {
         VStack {
-            Text("link_account_start_desc_x".localized(vm.fromTitle, UserManager.shared.userInfo?.username ?? ""))
-                .font(.inter(size: 14, weight: .regular))
-                .foregroundColor(Color.LL.Neutrals.text2)
-                .multilineTextAlignment(.center)
-            
             Spacer()
             
             fromToView
+                .padding(.horizontal, 30)
+                .padding(.bottom, 10)
+            
+            noticePanel
+                .padding(.horizontal, 18)
             
             Spacer()
         }
-        .padding(.horizontal, 30)
     }
     
     var processingView: some View {
@@ -79,14 +78,14 @@ extension ChildAccountLinkView {
             Text("link_account_success_desc".localized)
                 .font(.inter(size: 14, weight: .regular))
                 .foregroundColor(Color.LL.Neutrals.text2)
+                .multilineTextAlignment(.center)
             
             Spacer()
             
             Image("img-link-account-success")
-            
-            Spacer()
         }
         .padding(.horizontal, 30)
+        .padding(.bottom, -48)
     }
     
     var failureView: some View {
@@ -127,6 +126,37 @@ extension ChildAccountLinkView {
             
             ProcessingIndicator(state: vm.state)
                 .padding(.bottom, 20)
+        }
+    }
+    
+    var noticePanel: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("browser_app_like_to".localized)
+                .font(.inter(size: 14, weight: .medium))
+                .foregroundColor(Color.LL.Neutrals.note)
+                .padding(.bottom, 18)
+            
+            createNoticeDetailView(text: "link_account_notice_1".localized)
+                .padding(.bottom, 12)
+            
+            createNoticeDetailView(text: "link_account_notice_2".localized)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 18)
+        .background(Color(hex: "#F4F4F7"))
+        .cornerRadius(12)
+    }
+    
+    func createNoticeDetailView(text: String) -> some View {
+        HStack(spacing: 12) {
+            Image("icon-right-mark")
+            
+            Text(text)
+                .font(.inter(size: 14, weight: .medium))
+                .foregroundColor(Color.LL.Neutrals.text)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .lineLimit(1)
         }
     }
     
