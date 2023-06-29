@@ -134,18 +134,27 @@ struct ExploreTabScreen: View {
         HStack {
             Image(systemName: "square.grid.2x2.fill")
                 .font(.LL.caption)
-            Text("List")
+            Text("dApps")
                 .bold()
             Spacer()
-            //                        Button {
-            //
-            //                        } label: {
-            //                            Text("All")
-            //                                .font(.LL.footnote)
-            //                                .foregroundColor(.LL.Secondary.violetDiscover)
-            //                            Image(systemName: "arrow.right")
-            //                                .foregroundColor(.LL.Secondary.violet4)
-            //                        }
+            
+            Button {
+                Router.route(to: RouteMap.Explore.dapps)
+            } label: {
+                HStack(spacing: 5) {
+                    Text("browser_bookmark_view".localized)
+                        .font(.inter(size: 16, weight: .medium))
+                        .foregroundColor(Color(hex: "#7D7AFF"))
+                    
+                    Image("icon-search-arrow")
+                        .renderingMode(.template)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 15, height: 11)
+                        .foregroundColor(Color(hex: "#C2C3F2"))
+                }
+                .contentShape(Rectangle())
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

@@ -383,6 +383,7 @@ extension RouteMap {
         case claimDomain
         case bookmark
         case linkChildAccount(ChildAccountLinkViewModel)
+        case dapps
     }
 }
 
@@ -425,6 +426,8 @@ extension RouteMap.Explore: RouterTarget {
         case .linkChildAccount(let vm):
             let vc = CustomHostingController(rootView: ChildAccountLinkView(vm: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
+        case .dapps:
+            navi.present(content: DAppsListView())
         }
     }
 }
