@@ -206,6 +206,7 @@ struct SideMenuView: View {
             if let mainnetAddress = wm.getFlowNetworkTypeAddress(network: .mainnet) {
                 Button {
                     WalletManager.shared.changeNetwork(.mainnet)
+                    NotificationCenter.default.post(name: .toggleSideMenu)
                 } label: {
                     addressCell(type: .mainnet, address: mainnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .mainnet && !wm.isSelectedChildAccount)
                 }
@@ -222,6 +223,7 @@ struct SideMenuView: View {
             if let testnetAddress = wm.getFlowNetworkTypeAddress(network: .testnet), isDeveloperMode {
                 Button {
                     WalletManager.shared.changeNetwork(.testnet)
+                    NotificationCenter.default.post(name: .toggleSideMenu)
                 } label: {
                     addressCell(type: .testnet, address: testnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .testnet && !wm.isSelectedChildAccount)
                 }
@@ -238,6 +240,7 @@ struct SideMenuView: View {
             if let sandboxAddress = wm.getFlowNetworkTypeAddress(network: .sandboxnet), isDeveloperMode {
                 Button {
                     WalletManager.shared.changeNetwork(.sandboxnet)
+                    NotificationCenter.default.post(name: .toggleSideMenu)
                 } label: {
                     addressCell(type: .sandboxnet, address: sandboxAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .sandboxnet)
                 }
@@ -258,6 +261,7 @@ struct SideMenuView: View {
     func childAccountCell(_ childAccount: ChildAccount, isSelected: Bool) -> some View {
         Button {
             ChildAccountManager.shared.select(childAccount)
+            NotificationCenter.default.post(name: .toggleSideMenu)
         } label: {
             HStack(spacing: 15) {
                 KFImage.url(URL(string: childAccount.icon))

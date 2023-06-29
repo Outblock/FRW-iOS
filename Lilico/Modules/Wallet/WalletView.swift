@@ -169,7 +169,7 @@ struct WalletView: View {
                 vm.sideToggleAction()
             } label: {
                 HStack {
-                    KFImage.url(URL(string: wm.selectedAccountIcon))
+                    KFImage.url(URL(string: um.userInfo?.avatar.convertedAvatarString() ?? ""))
                         .placeholder({
                             Image("placeholder")
                                 .resizable()
@@ -179,7 +179,7 @@ struct WalletView: View {
                         .frame(width: 28, height: 28)
                         .cornerRadius(14)
                     
-                    Text(wm.selectedAccountNickName)
+                    Text(um.userInfo?.nickname ?? "Lilico")
                         .foregroundColor(.LL.Neutrals.text)
                         .font(.inter(size: 18, weight: .semibold))
                 }
