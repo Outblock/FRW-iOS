@@ -76,7 +76,6 @@ class ChildAccountManager: ObservableObject {
     
     private var cacheLoaded = false
     private var cancelSets = Set<AnyCancellable>()
-    private var isRefreshing: Bool = false
     
     private init() {
         UserManager.shared.$activatedUID
@@ -101,6 +100,12 @@ class ChildAccountManager: ObservableObject {
                     
                     self.refresh()
                 }
+            }.store(in: &cancelSets)
+        
+        NotificationCenter.default.publisher(for: .networkChange)
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                self.clean()
             }.store(in: &cancelSets)
         
         NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
@@ -136,11 +141,7 @@ class ChildAccountManager: ObservableObject {
             return
         }
         
-        if isRefreshing {
-            return
-        }
-        
-        isRefreshing = true
+        let network = LocalUserDefaults.shared.flowNetwork
         
         log.debug("start refresh")
         
@@ -149,9 +150,8 @@ class ChildAccountManager: ObservableObject {
                 let list = try await FlowNetwork.queryChildAccountMeta(address)
                 
                 DispatchQueue.main.async {
-                    self.isRefreshing = false
-                    
                     if UserManager.shared.activatedUID != uid { return }
+                    if LocalUserDefaults.shared.flowNetwork != network { return }
                     
                     let oldList = MultiAccountStorage.shared.getChildAccounts(uid: uid, address: address) ?? []
                     let finalList = list.map { newAccount in
@@ -167,9 +167,6 @@ class ChildAccountManager: ObservableObject {
                 }
             } catch {
                 log.error("refresh failed", context: error)
-                DispatchQueue.main.async {
-                    self.isRefreshing = false
-                }
             }
         }
     }

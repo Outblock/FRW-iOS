@@ -99,8 +99,8 @@ struct AccountSettingView: RouteableView {
                     })
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 24, height: 24)
-                    .cornerRadius(12)
+                    .frame(width: 36, height: 36)
+                    .cornerRadius(18)
                 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(childAccount.name)
@@ -125,7 +125,14 @@ struct AccountSettingView: RouteableView {
                     .renderingMode(.template)
                     .foregroundColor(childAccount.isPinned ? Color.LL.Primary.salmonPrimary : Color(hex: "#E6E6E6"))
                     .frame(width: 32, height: 32)
-                    .background(childAccount.isPinned ? Color(hex: "#FC814A").opacity(0.15) : Color.clear)
+                    .background {
+                        if childAccount.isPinned {
+                            LinearGradient(colors: [Color.clear, Color(hex: "#FC814A").opacity(0.15)], startPoint: .bottomLeading, endPoint: .topTrailing)
+                                .cornerRadius([.topTrailing, .bottomLeading], 16)
+                        } else {
+                            Color.clear
+                        }
+                    }
                     .contentShape(Rectangle())
             }
         }

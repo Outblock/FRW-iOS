@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-private let SheetHeaderHeight: CGFloat = 50
+private let SheetHeaderHeight: CGFloat = 76
 
 struct SheetHeaderView: View {
     let title: String
@@ -16,28 +16,40 @@ struct SheetHeaderView: View {
     
     var body: some View {
         ZStack {
-            HStack(spacing: 0) {
+            Text(title)
+                .foregroundColor(.LL.Neutrals.text)
+                .font(.inter(size: 24, weight: .bold))
+                .frame(maxWidth: .infinity)
+                .padding(.top, 15)
+            
+            HStack {
                 Spacer()
                 
-                Button(action: {
+                Button {
                     if let closeAction = closeAction {
                         closeAction()
                     } else {
                         defaultCloseAction()
                     }
-                }) {
-                    Image(systemName: "xmark").foregroundColor(.LL.Neutrals.neutrals8)
+                } label: {
+                    ZStack {
+                        Circle()
+                            .foregroundColor(Color.LL.Neutrals.neutrals6)
+                            .frame(width: 24, height: 24)
+                        
+                        Image(systemName: "xmark")
+                            .font(.system(size: 10))
+                            .foregroundColor(.LL.Neutrals.neutrals8)
+                    }
+                    .frame(width: 40, height: 40)
+                    .padding(.bottom, 20)
+                    .contentShape(Rectangle())
                 }
-                .frame(width: SheetHeaderHeight, height: SheetHeaderHeight)
             }
-            .frame(maxWidth: .infinity)
-            
-            Text(title)
-                .foregroundColor(.LL.Neutrals.text)
-                .font(.inter(size: 18, weight: .bold))
         }
         .frame(maxWidth: .infinity)
         .frame(height: SheetHeaderHeight)
+        .padding(.horizontal, 16)
     }
     
     private func defaultCloseAction() {
