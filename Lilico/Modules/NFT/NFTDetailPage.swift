@@ -199,6 +199,7 @@ struct NFTDetailPage: RouteableView {
                                 .foregroundColor(theColor)
                             }
                             .padding(.horizontal, 6)
+                            .disabled(WalletManager.shared.isSelectedChildAccount)
                         }
                         .padding(.top, 16)
                         .padding(.horizontal, 26)
@@ -264,6 +265,7 @@ struct NFTDetailPage: RouteableView {
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
                 .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
                 .visibility(vm.nft.isDomain ? .gone : .visible)
+                .disabled(WalletManager.shared.isSelectedChildAccount)
                 
                 Menu {
                     Button {

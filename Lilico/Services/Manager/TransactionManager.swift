@@ -92,6 +92,7 @@ extension TransactionManager {
         case fclTransaction
         case claimDomain
         case stakeFlow
+        case unlinkAccount
     }
     
     enum InternalStatus: Int, Codable {
@@ -167,6 +168,12 @@ extension TransactionManager {
                 }
                 
                 return urlString.toFavIcon()
+            case .unlinkAccount:
+                guard let iconString = decodedObject(ChildAccount.self)?.icon, let url = URL(string: iconString) else {
+                    return nil
+                }
+                
+                return url
             default:
                 return nil
             }
@@ -311,6 +318,10 @@ class TransactionManager: ObservableObject {
             }
         case .stakeFlow:
             StakingManager.shared.refresh()
+        case .unlinkAccount:
+            if let model = holder.decodedObject(ChildAccount.self) {
+                ChildAccountManager.shared.didUnlinkAccount(model)
+            }
         case .common:
             Task {
                 try? await WalletManager.shared.fetchWalletDatas()

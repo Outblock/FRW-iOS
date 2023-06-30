@@ -12,6 +12,7 @@ protocol AppPathProtocol {
     var isExist: Bool { get }
     
     func remove() throws
+    func createFolderIfNeeded()
 }
 
 extension AppPathProtocol {
@@ -29,7 +30,7 @@ extension AppPathProtocol {
 }
 
 protocol AppFolderProtocol: AppPathProtocol {
-    func createFolderIfNeeded()
+
 }
 
 extension AppFolderProtocol {
@@ -42,6 +43,23 @@ extension AppFolderProtocol {
             try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         } catch {
             log.error("create folder failed", context: error)
+        }
+    }
+}
+
+protocol AppFileProtocol: AppPathProtocol {
+    
+}
+
+extension AppFileProtocol {
+    func createFolderIfNeeded() {
+        let folder = url.deletingLastPathComponent()
+        if !FileManager.default.fileExists(atPath: folder.relativePath) {
+            do {
+                try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            } catch {
+                log.error("create folder failed", context: error)
+            }
         }
     }
 }
@@ -63,10 +81,11 @@ enum AppFolderType: AppFolderProtocol {
     }
 }
 
-enum UserStorageFileType: AppPathProtocol {
+enum UserStorageFileType: AppFileProtocol {
     case userInfo(String)                       // ./account_info/1234/user_info
     case walletInfo(String)                     // ./account_info/1234/wallet_info
     case userDefaults(String)                   // ./account_info/1234/user_defaults
+    case childAccounts(String, String)          // ./account_info/1234/0x12345678/child_accounts
     
     var url: URL {
         switch self {
@@ -76,6 +95,8 @@ enum UserStorageFileType: AppPathProtocol {
             return AppFolderType.userStorage(uid).url.appendingPathComponent("wallet_info")
         case .userDefaults(let uid):
             return AppFolderType.userStorage(uid).url.appendingPathComponent("user_defaults")
+        case .childAccounts(let uid, let address):
+            return AppFolderType.userStorage(uid).url.appendingPathComponent(address).appendingPathComponent("child_accounts")
         }
     }
 }

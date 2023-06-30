@@ -87,7 +87,7 @@ extension NFTAddCollectionView {
                             HStack {
                                 Spacer()
                                 KFImage
-                                    .url(item.collection.bannerURL ?? item.collection.logoURL)
+                                    .url(item.collection.bannerURL)
                                     .placeholder({
                                         Image("placeholder")
                                             .resizable()

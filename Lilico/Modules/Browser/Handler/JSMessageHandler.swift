@@ -21,28 +21,31 @@ class JSMessageHandler: NSObject {
     private var readyToSignEnvelope: Bool = false
     
     private(set) var processingAuthzTransaction: AuthzTransaction?
+    private weak var processingLinkAccountViewModel: ChildAccountLinkViewModel?
     
     weak var webVC: BrowserViewController?
 }
 
 extension JSMessageHandler: WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        log.debug("did receive message")
         switch JSListenerType(rawValue: message.name) {
         case .message:
             guard let msgString = message.body as? String else {
-                debugPrint("JSMessageHandler -> JSListenerType.message body invalid")
+                log.error("JSListenerType.message body invalid")
                 return
             }
             
             handleMessage(msgString)
         case .flowTransaction:
             guard let msgString = message.body as? String else {
-                debugPrint("JSMessageHandler -> JSListenerType.flowTransaction body invalid")
+                log.error("JSListenerType.flowTransaction body invalid")
                 return
             }
             
             handleTransaction(msgString)
         default:
+            log.error("can't handle message", context: message.body)
             break
         }
     }
@@ -54,27 +57,31 @@ extension JSMessageHandler {
             guard let msgData = message.data(using: .utf8),
                   let jsonDict = try JSONSerialization.jsonObject(with: msgData, options: .mutableContainers) as? [String: AnyObject],
                   let tid = jsonDict["txId"] as? String else {
-                debugPrint("JSMessageHandler -> handleTransaction: invalid message")
-                return
-            }
-            
-            guard let processingAuthzTransaction = processingAuthzTransaction, let data = try? JSONEncoder().encode(processingAuthzTransaction) else {
-                debugPrint("JSMessageHandler -> handleTransaction: no processingAuthzTransaction")
+                log.error("invalid message")
                 return
             }
             
             if TransactionManager.shared.isExist(tid: tid) {
-                debugPrint("JSMessageHandler -> handleTransaction: tid is exist")
+                log.warning("tid is exist")
                 return
             }
             
-            debugPrint("JSMessageHandler -> handleTransaction")
+            guard let processingAuthzTransaction = processingAuthzTransaction, let data = try? JSONEncoder().encode(processingAuthzTransaction) else {
+                log.error("no processingAuthzTransaction")
+                return
+            }
+            
+            log.debug("handle transaction", context: message)
             
             let id = Flow.ID(hex: tid)
             let holder = TransactionManager.TransactionHolder(id: id, type: .fclTransaction, data: data)
             TransactionManager.shared.newTransaction(holder: holder)
+            
+            if let linkAccountVM = processingLinkAccountViewModel {
+                linkAccountVM.onTxID(id)
+            }
         } catch {
-            debugPrint("JSMessageHandler -> handleTransaction: invalid message: \(error)")
+            log.error("invalid message", context: error)
         }
     }
 }
@@ -91,23 +98,25 @@ extension JSMessageHandler {
         }
         
         processingMessage = message
-        debugPrint("JSMessageHandler -> handleMessage: \(message)")
+        log.debug("handle message", context: message)
         
         do {
             if let msgData = message.data(using: .utf8),
                let jsonDict = try JSONSerialization.jsonObject(with: msgData, options: .mutableContainers) as? [String: AnyObject] {
                 if messageIsServce(jsonDict) {
+                    log.debug("will handle service")
                     handleService(message)
                 } else if jsonDict["type"] as? String == JSMessageType.response.rawValue {
+                    log.debug("will handle view ready response")
                     handleViewReadyResponse(message)
                 } else {
-                    debugPrint("JSMessageHandler -> handleMessage: unknown message")
+                    log.warning("unknown message", context: message)
                 }
             } else {
-                debugPrint("JSMessageHandler -> handleMessage: decode message failed")
+                log.error("decode message failed")
             }
         } catch {
-            debugPrint("JSMessageHandler -> handleMessage: invalid message: \(error)")
+            log.error("invalid message", context: error)
         }
     }
     
@@ -128,6 +137,7 @@ extension JSMessageHandler {
     }
     
     private func finishService() {
+        log.debug("finish service")
         self.processingServiceType = nil
         self.processingFCLResponse = nil
     }
@@ -139,11 +149,11 @@ extension JSMessageHandler {
     private func handleService(_ message: String) {
         do {
             guard let data = message.data(using: .utf8) else {
-                debugPrint("JSMessageHandler -> handleService: decode message failed")
+                log.error("decode failed")
                 return
             }
             
-            debugPrint("JSMessageHandler -> handleService")
+            log.debug("handle service")
             
             let serviceWrapper = try JSONDecoder().decode(JSFCLServiceModelWrapper.self, from: data)
             processingServiceType = serviceWrapper.service.type
@@ -154,7 +164,7 @@ extension JSMessageHandler {
                 webVC?.postReadyResponse()
             }
         } catch {
-            debugPrint("JSMessageHandler -> handleService: decode message failed: \(error)")
+            log.error("handle service failed", context: error)
         }
     }
 }
@@ -165,49 +175,53 @@ extension JSMessageHandler {
     private func handleViewReadyResponse(_ message: String) {
         do {
             guard let data = message.data(using: .utf8) else {
-                debugPrint("JSMessageHandler -> handleViewReadyResponse: decode message failed")
+                log.error("decode message failed")
                 return
             }
             
             let fcl = try JSONDecoder().decode(FCLSimpleResponse.self, from: data)
             
             if self.processingServiceType != fcl.serviceType {
-                debugPrint("JSMessageHandler -> handleViewReadyResponse: service not same (old: \(String(describing: self.processingServiceType)), new: \(fcl.serviceType))")
+                log.error("service not same (old: \(String(describing: self.processingServiceType)), new: \(fcl.serviceType))")
                 return
             }
             
-            debugPrint("JSMessageHandler -> handleViewReadyResponse")
+            log.debug("handle view ready response")
             
             switch fcl.serviceType {
             case .authn:
+                log.debug("will handle authn")
                 handleAuthn(message)
             case .authz:
+                log.debug("will handle authz")
                 handleAuthz(message)
             case .userSignature:
+                log.debug("will handle user signature")
                 handleUserSignature(message)
             default:
-                debugPrint("JSMessageHandler -> handleViewReadyResponse: unsupport service type: \(fcl.serviceType)")
+                log.error("unsupport service type", context: fcl.serviceType)
             }
         } catch {
-            debugPrint("JSMessageHandler -> handleViewReadyResponse: decode message failed: \(error)")
+            log.error("decode message failed", context: error)
         }
     }
     
     private func handleAuthn(_ message: String) {
         do {
             guard let data = message.data(using: .utf8) else {
-                debugPrint("JSMessageHandler -> handleAuthn: decode message failed")
+                log.error("decode message failed")
                 return
             }
             
             let authnResponse = try JSONDecoder().decode(FCLAuthnResponse.self, from: data)
             
             if authnResponse.uniqueId() == processingFCLResponse?.uniqueId() {
-                debugPrint("JSMessageHandler -> handleAuthn, is processing: \(authnResponse.uniqueId())")
+                log.error("handle authn is processing: \(authnResponse.uniqueId())")
                 return
             }
             
-            debugPrint("JSMessageHandler -> handleAuthn")
+            log.debug("handle authn")
+            
             processingFCLResponse = authnResponse
             
             let title = authnResponse.config?.app?.title ?? webVC?.webView.title ?? "unknown"
@@ -222,7 +236,7 @@ extension JSMessageHandler {
                 if result {
                     self.didConfirmAuthn(response: authnResponse)
                 } else {
-                    debugPrint("JSMessageHandler -> handleAuthn: cancelled")
+                    log.debug("handle authn cancelled")
                 }
                 
                 self.finishService()
@@ -230,7 +244,7 @@ extension JSMessageHandler {
             
             Router.route(to: RouteMap.Explore.authn(vm))
         } catch {
-            debugPrint("JSMessageHandler -> handleAuthn: decode message failed: \(error)")
+            log.error("decode message failed", context: error)
         }
     }
     
@@ -238,8 +252,9 @@ extension JSMessageHandler {
         Task {
             do {
                 try await self.webVC?.postAuthnViewReadyResponse(response: response)
+                log.debug("did confirm authn")
             } catch {
-                debugPrint("JSMessageHandler -> didConfirmAuthn failed: \(error)")
+                log.error("confirm authn failed", context: error)
                 HUD.error(title: "browser_request_failed".localized)
             }
         }
@@ -248,64 +263,70 @@ extension JSMessageHandler {
     private func handleAuthz(_ message: String) {
         do {
             guard let data = message.data(using: .utf8) else {
-                debugPrint("JSMessageHandler -> handleAuthz: decode message failed")
+                log.error("decode message failed")
                 return
             }
             
             let authzResponse = try JSONDecoder().decode(FCLAuthzResponse.self, from: data)
             
             if authzResponse.uniqueId() == processingFCLResponse?.uniqueId() {
-                debugPrint("JSMessageHandler -> handleAuthz, is processing: \(authzResponse.uniqueId())")
+                log.error("handle authz is processing: \(authzResponse.uniqueId())")
                 return
             }
             
-            debugPrint("JSMessageHandler -> handleAuthz")
+            log.debug("handle authz")
             processingFCLResponse = authzResponse
             
+            if readyToSignEnvelope && authzResponse.isSignEnvelope {
+                log.debug("will sign envelope")
+                signEnvelope(authzResponse)
+                return
+            }
+            
+            if authzResponse.isLinkAccount {
+                log.debug("will link account")
+                linkAccount(authzResponse)
+                return
+            }
+            
             if authzResponse.body.f_type == "Signable" {
-                debugPrint("JSMessageHandler -> handleAuthz, roles: \(authzResponse.body.roles.value)")
+                log.debug("roles: \(authzResponse.body.roles.value)")
             }
             
             if authzResponse.isSignAuthz {
-                debugPrint("JSMessageHandler -> signAuthz")
+                log.debug("will sign authz")
                 signAuthz(authzResponse)
                 return
             }
             
             if authzResponse.isSignPayload {
-                debugPrint("JSMessageHandler -> signPayload")
+                log.debug("will sign payload")
                 signPayload(authzResponse)
                 return
             }
             
-            if readyToSignEnvelope && authzResponse.isSignEnvelope {
-                debugPrint("JSMessageHandler -> signEnvelope")
-                signEnvelope(authzResponse)
-                return
-            }
-            
-            debugPrint("JSMessageHandler -> handleAuthz: unknown authz")
+            log.error("unknown authz")
         } catch {
-            debugPrint("JSMessageHandler -> handleAuthz: decode message failed: \(error)")
+            log.error("decode message failed", context: error)
         }
     }
     
     private func handleUserSignature(_ message: String) {
         do {
             guard let data = message.data(using: .utf8) else {
-                debugPrint("JSMessageHandler -> handleUserSignature: decode message failed")
+                log.error("decode message failed")
                 return
             }
             
             let response = try JSONDecoder().decode(FCLSignMessageResponse.self, from: data)
             
             if response.uniqueId() == processingFCLResponse?.uniqueId() {
-                debugPrint("JSMessageHandler -> handleUserSignature, is processing: \(response.uniqueId())")
+                log.error("handle user signature, is processing: \(response.uniqueId())")
                 return
             }
             
             processingFCLResponse = response
-            debugPrint("JSMessageHandler -> handleUserSignature, uid: \(response.uniqueId())")
+            log.debug("handle user signature, uid: \(response.uniqueId())")
             
             let title = response.config?.app?.title ?? webVC?.webView.title ?? "unknown"
             let url = webVC?.webView.url?.host ?? "unknown"
@@ -323,7 +344,7 @@ extension JSMessageHandler {
             
             Router.route(to: RouteMap.Explore.signMessage(vm))
         } catch {
-            debugPrint("JSMessageHandler -> handleUserSignature: decode message failed: \(error)")
+            log.error("decode message failed", context: error)
         }
     }
 }
@@ -346,8 +367,29 @@ extension JSMessageHandler {
             
             self.finishService()
         }
-        
         Router.route(to: RouteMap.Explore.authz(vm))
+    }
+    
+    private func linkAccount(_ authzResponse: FCLAuthzResponse) {
+        let title = authzResponse.config?.app?.title ?? webVC?.webView.title ?? "unknown"
+        let url = webVC?.webView.url?.host ?? "unknown"
+        let logo = authzResponse.config?.app?.icon ?? ""
+        
+        let vm = ChildAccountLinkViewModel(fromTitle: title, url: url, logo: logo) { [weak self] result in
+            guard let self = self else {
+                return
+            }
+            
+            self.readyToSignEnvelope = result
+            if result {
+                self.didConfirmSignPayload(authzResponse)
+            } else {
+                self.finishService()
+            }
+        }
+        
+        processingLinkAccountViewModel = vm
+        Router.route(to: RouteMap.Explore.linkChildAccount(vm))
     }
     
     private func signPayload(_ authzResponse: FCLAuthzResponse) {
@@ -373,8 +415,9 @@ extension JSMessageHandler {
         Task {
             do {
                 try await self.webVC?.postAuthzPayloadSignResponse(response:response)
+                log.debug("did confirm sign payload")
             } catch {
-                debugPrint("JSMessageHandler -> didConfirmSignPayload failed: \(error)")
+                log.error("did confirm sign payload failed", context: error)
                 HUD.error(title: "browser_request_failed".localized)
             }
         }

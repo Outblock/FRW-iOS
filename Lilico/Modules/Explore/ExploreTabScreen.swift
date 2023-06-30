@@ -104,6 +104,8 @@ struct ExploreTabScreen: View {
                         
                         dAppHeader
                             .visibility(vm.state.list.isEmpty ? .gone : .visible)
+                        dAppCategory
+                            .visibility(vm.state.list.isEmpty ? .gone : .visible)
                         dappList
                             .visibility(vm.state.list.isEmpty ? .gone : .visible)
                     }
@@ -132,26 +134,65 @@ struct ExploreTabScreen: View {
         HStack {
             Image(systemName: "square.grid.2x2.fill")
                 .font(.LL.caption)
-            Text("List")
+            Text("dApps")
                 .bold()
             Spacer()
-            //                        Button {
-            //
-            //                        } label: {
-            //                            Text("All")
-            //                                .font(.LL.footnote)
-            //                                .foregroundColor(.LL.Secondary.violetDiscover)
-            //                            Image(systemName: "arrow.right")
-            //                                .foregroundColor(.LL.Secondary.violet4)
-            //                        }
+            
+            Button {
+                Router.route(to: RouteMap.Explore.dapps)
+            } label: {
+                HStack(spacing: 5) {
+                    Text("browser_bookmark_view".localized)
+                        .font(.inter(size: 16, weight: .medium))
+                        .foregroundColor(Color(hex: "#7D7AFF"))
+                    
+                    Image("icon-search-arrow")
+                        .renderingMode(.template)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 15, height: 11)
+                        .foregroundColor(Color(hex: "#C2C3F2"))
+                }
+                .contentShape(Rectangle())
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     
+    var dAppCategory: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 4) {
+                ForEach(vm.state.categoryList, id: \.self) { category in
+                    Button {
+                        vm.changeCategory(category)
+                    } label: {
+                        Text(category.uppercased())
+                            .font(.inter(size: 14, weight: .semibold))
+                            .foregroundColor(Color.LL.Neutrals.text)
+                            .padding(.horizontal, 18)
+                            .padding(.vertical, 8)
+                            .roundedBg(cornerRadius: 18, fillColor: Color.LL.Other.bg2, strokeColor: vm.state.selectedCategory == category ? Color(hex: "#7678ED") : Color(hex: "#F5F5F5"), strokeLineWidth: 2)
+                            .contentShape(Rectangle())
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 40)
+    }
+    
     var dappList : some View {
         
-        ForEach(vm.state.list, id: \.name) { dApp in
+        ForEach(vm.state.filterdList, id: \.name) { dApp in
             Button {
+                
+//                #warning("test")
+//                #if DEBUG
+//                let url = URL(string: "https://outblock.github.io/harness/")!
+//                Router.route(to: RouteMap.Explore.browser(url))
+//                return
+//                #endif
                 
                 let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
                 feedbackGenerator.impactOccurred()

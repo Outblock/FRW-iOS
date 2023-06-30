@@ -36,6 +36,7 @@ extension LocalUserDefaults {
         case onBoardingShown
         case multiAccountUpgradeFlag
         case loginUIDList
+        case selectedChildAccount
     }
 
     enum FlowNetworkType: String, CaseIterable {
@@ -98,33 +99,9 @@ class LocalUserDefaults: ObservableObject {
     }
 
     #if DEBUG
-        @AppStorage(Keys.flowNetwork.rawValue) var flowNetwork: FlowNetworkType = .testnet {
-            didSet {
-                FlowNetwork.setup()
-                if WalletManager.shared.getPrimaryWalletAddress() == nil {
-                    WalletManager.shared.reloadWalletInfo()
-                } else {
-                    WalletManager.shared.walletInfo = WalletManager.shared.walletInfo
-                    StakingManager.shared.refresh()
-                }
-                
-                NotificationCenter.default.post(name: .networkChange)
-            }
-        }
+        @AppStorage(Keys.flowNetwork.rawValue) var flowNetwork: FlowNetworkType = .testnet
     #else
-        @AppStorage(Keys.flowNetwork.rawValue) var flowNetwork: FlowNetworkType = .mainnet {
-            didSet {
-                FlowNetwork.setup()
-                if WalletManager.shared.getPrimaryWalletAddress() == nil {
-                    WalletManager.shared.reloadWalletInfo()
-                } else {
-                    WalletManager.shared.walletInfo = WalletManager.shared.walletInfo
-                    StakingManager.shared.refresh()
-                }
-                
-                NotificationCenter.default.post(name: .networkChange)
-            }
-        }
+        @AppStorage(Keys.flowNetwork.rawValue) var flowNetwork: FlowNetworkType = .mainnet
     #endif
     
     @AppStorage(Keys.activatedUID.rawValue) var activatedUID: String?
@@ -236,11 +213,28 @@ class LocalUserDefaults: ObservableObject {
             return UserDefaults.standard.array(forKey: Keys.loginUIDList.rawValue) as? [String] ?? []
         }
     }
+    
+    var selectedChildAccount: ChildAccount? {
+        set {
+            if let value = newValue, let data = try? JSONEncoder().encode(value) {
+                UserDefaults.standard.set(data, forKey: Keys.selectedChildAccount.rawValue)
+            } else {
+                UserDefaults.standard.removeObject(forKey: Keys.selectedChildAccount.rawValue)
+            }
+        }
+        get {
+            if let data = UserDefaults.standard.data(forKey: Keys.selectedChildAccount.rawValue), let model = try? JSONDecoder().decode(ChildAccount.self, from: data) {
+                return model
+            } else {
+                return nil
+            }
+        }
+    }
 }
 
 extension LocalUserDefaults {
     @objc private func willReset() {
         self.recentToken = nil
-        self.flowNetwork = .mainnet
+        WalletManager.shared.changeNetwork(.mainnet)
     }
 }

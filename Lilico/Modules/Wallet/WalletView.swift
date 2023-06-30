@@ -33,6 +33,7 @@ extension WalletView: AppTabBarPageProtocol {
 
 struct WalletView: View {
     @StateObject var um = UserManager.shared
+    @StateObject var wm = WalletManager.shared
     @StateObject private var vm = WalletViewModel()
     @State var isRefreshing: Bool = false
 
@@ -238,7 +239,10 @@ struct WalletView: View {
                 actionButton(imageName: "wallet-send-stroke") {
                     Router.route(to: RouteMap.Wallet.send())
                 }
+                .disabled(wm.isSelectedChildAccount)
+                
                 Spacer()
+                
                 actionButton(imageName: "wallet-receive-stroke") {
                     Router.route(to: RouteMap.Wallet.receive)
                 }
@@ -248,6 +252,7 @@ struct WalletView: View {
                     actionButton(imageName: "wallet-swap-stroke") {
                         Router.route(to: RouteMap.Wallet.swap(nil))
                     }
+                    .disabled(wm.isSelectedChildAccount)
                 }
                 
                 if currentNetwork.isMainnet {
@@ -255,6 +260,7 @@ struct WalletView: View {
                     actionButton(imageName: "wallet-staking") {
                         vm.stakingAction()
                     }
+                    .disabled(wm.isSelectedChildAccount)
                 }
             }
         }
@@ -297,6 +303,7 @@ struct WalletView: View {
                     .renderingMode(.template)
                     .foregroundColor(.LL.Neutrals.neutrals1)
             }
+            .disabled(wm.isSelectedChildAccount)
 
         }
         .buttonStyle(.plain)
@@ -366,6 +373,7 @@ extension WalletView {
                         .padding(.horizontal, 18)
                 }
                 .zIndex(-1)
+                .visibility(WalletManager.shared.isSelectedChildAccount ? .gone : .visible)
             }
         }
         
@@ -403,14 +411,15 @@ extension WalletView {
             ZStack {
                 VStack {
                     HStack {
-                        Text(vm.walletName)
+                        Text(WalletManager.shared.selectedAccountWalletName)
                             .foregroundColor(Color(hex: "#FDFBF9"))
                             .font(.inter(size: 14, weight: .semibold))
                         
                         Spacer()
                         
                         if UserManager.shared.isMeowDomainEnabled,
-                           let domain = UserManager.shared.userInfo?.meowDomain {
+                           let domain = UserManager.shared.userInfo?.meowDomain,
+                           WalletManager.shared.isSelectedChildAccount == false {
                             HStack(spacing: 8) {
                                 
                                 Image("logo")
@@ -421,7 +430,7 @@ extension WalletView {
                                     .foregroundColor(Color(hex: "#FDFBF9"))
                                     .font(.inter(size: 14, weight: .semibold))
                             }
-
+                            
                         }
                     }
 
@@ -439,7 +448,7 @@ extension WalletView {
                             vm.copyAddressAction()
                         } label: {
                             HStack(spacing: 8) {
-                                Text(vm.isHidden ? "******************" : vm.address)
+                                Text(vm.isHidden ? "******************" : WalletManager.shared.selectedAccountAddress)
                                     .foregroundColor(Color(hex: "#FDFBF9"))
                                     .font(.inter(size: 15, weight: .bold))
                                 Image("icon-address-copy")
@@ -458,13 +467,42 @@ extension WalletView {
                 }
                 .padding(.vertical, 18)
                 .padding(.horizontal, 24)
-                .background {                    
-                    CardBackground(value: walletCardBackrgound).renderView()
+                .background {
+                    if WalletManager.shared.isSelectedChildAccount {
+                        childAccountBackground
+                    } else {
+                        CardBackground(value: walletCardBackrgound).renderView()
+                    }
                 }
                 .cornerRadius(16)
             }
             .frame(height: CardViewHeight)
             .buttonStyle(.plain)
+        }
+        
+        var childAccountBackground: some View {
+            ZStack {
+                KFImage.url(URL(string: WalletManager.shared.selectedAccountIcon))
+                    .placeholder({
+                        Image("placeholder")
+                            .resizable()
+                    })
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .blur(radius: 6)
+                
+                LinearGradient(colors:
+                                [
+                                    Color(hex: "#333333"),
+                                    Color(hex: "#333333"),
+                                    Color(hex: "#333333").opacity(0.88),
+                                    Color(hex: "#333333").opacity(0.32),
+                                ],
+                               startPoint: .leading,
+                               endPoint: .trailing)
+            }
+            
         }
     }
 

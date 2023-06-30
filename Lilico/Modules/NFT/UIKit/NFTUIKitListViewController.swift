@@ -101,6 +101,7 @@ class NFTUIKitListViewController: UIViewController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(onCustomAddressChanged), name: .watchAddressDidChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didReset), name: .didResetWallet, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onChildAccountChanged), name: .childAccountChanged, object: nil)
     }
     
     @objc private func didReset() {
@@ -109,6 +110,11 @@ class NFTUIKitListViewController: UIViewController {
     }
     
     @objc private func onCustomAddressChanged() {
+        listStyleHandler.collectionView.beginRefreshing()
+        gridStyleHandler.collectionView.beginRefreshing()
+    }
+    
+    @objc private func onChildAccountChanged() {
         listStyleHandler.collectionView.beginRefreshing()
         gridStyleHandler.collectionView.beginRefreshing()
     }

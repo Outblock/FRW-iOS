@@ -40,9 +40,11 @@ struct TokenDetailView: RouteableView {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 12) {
                 summaryView
-                stakeAdView.visibility(stakingManager.isStaked || !vm.token.isFlowCoin || LocalUserDefaults.shared.stakingGuideDisplayed ? .gone : .visible)
-                stakeRewardView.visibility(stakingManager.isStaked && vm.token.isFlowCoin ? .visible : .gone)
-                activitiesView.visibility(vm.recentTransfers.isEmpty ? .gone : .visible)
+                stakeAdView
+                    .visibility(stakingManager.isStaked || !vm.token.isFlowCoin || LocalUserDefaults.shared.stakingGuideDisplayed || WalletManager.shared.isSelectedChildAccount ? .gone : .visible)
+                stakeRewardView
+                    .visibility(stakingManager.isStaked && vm.token.isFlowCoin && !WalletManager.shared.isSelectedChildAccount ? .visible : .gone)
+                activitiesView.visibility(vm.recentTransfers.isEmpty || WalletManager.shared.isSelectedChildAccount ? .gone : .visible)
                 chartContainerView.visibility(vm.hasRateAndChartData ? .visible : .gone)
             }
             .padding(.horizontal, 18)
@@ -123,6 +125,7 @@ struct TokenDetailView: RouteableView {
                         .background(.LL.Primary.salmonPrimary)
                         .cornerRadius(12)
                 }
+                .disabled(WalletManager.shared.isSelectedChildAccount)
                 
                 Button {
                     vm.receiveAction()

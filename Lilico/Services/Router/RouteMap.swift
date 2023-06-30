@@ -197,6 +197,8 @@ extension RouteMap {
         case inbox
         case resetWalletConfirm
         case currency
+        case accountSetting
+        case accountDetail(ChildAccount)
     }
 }
 
@@ -245,6 +247,11 @@ extension RouteMap.Profile: RouterTarget {
             navi.push(content: WalletResetConfirmView())
         case .currency:
             navi.push(content: CurrencyListView())
+        case .accountSetting:
+            navi.push(content: AccountSettingView())
+        case .accountDetail(let childAccount):
+            let vm = ChildAccountDetailViewModel(childAccount: childAccount)
+            navi.push(content: ChildAccountDetailView(vm: vm))
         }
     }
 }
@@ -375,6 +382,8 @@ extension RouteMap {
         case searchExplore
         case claimDomain
         case bookmark
+        case linkChildAccount(ChildAccountLinkViewModel)
+        case dapps
     }
 }
 
@@ -414,6 +423,11 @@ extension RouteMap.Explore: RouterTarget {
             navi.push(content: ClaimDomainView())
         case .bookmark:
             navi.present(content: BrowserBookmarkView())
+        case .linkChildAccount(let vm):
+            let vc = CustomHostingController(rootView: ChildAccountLinkView(vm: vm))
+            Router.topPresentedController().present(vc, animated: true, completion: nil)
+        case .dapps:
+            navi.present(content: DAppsListView())
         }
     }
 }

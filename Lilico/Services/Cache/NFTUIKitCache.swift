@@ -312,6 +312,11 @@ extension NFTUIKitCache {
     }
     
     func addFav(nft: NFTModel) {
+        if WalletManager.shared.isSelectedChildAccount {
+            log.error("child account can not add fav")
+            return
+        }
+        
         guard var address = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress(), let collectionId = nft.response.collectionID else {
             return
         }
@@ -371,7 +376,7 @@ extension NFTUIKitCache {
             return
         }
         
-        guard let address = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress() else {
+        guard let address = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
             return
         }
         

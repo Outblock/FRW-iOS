@@ -63,7 +63,7 @@ private func generateFCLExtensionInject() -> String {
 
 enum JSListenerType: String {
     case message
-    case flowTransaction = "FLOW::TX"
+    case flowTransaction = "transaction"
 }
 
 extension BrowserViewController {
@@ -104,21 +104,25 @@ extension BrowserViewController {
         let script = "window.ethereum.sendResponse(\(callbackID), \"\(value)\")"
         webView.evaluateJavaScript(script) { result, error in
             if let error = error {
-                debugPrint("\(error)")
+                log.error("notify finish failed", context: error)
             }
         }
     }
     
     func postPreAuthzResponse() {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
+            log.error("primary address is nil")
             return
         }
         
+        log.debug("will post pre authz response")
         postMessage(FCLScripts.generatePreAuthzResponse(address: address))
+        log.debug("did post pre authz response")
     }
     
     func postAuthnViewReadyResponse(response: FCLAuthnResponse) async throws {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
+            log.error("primary address is nil")
             return
         }
         
@@ -134,12 +138,15 @@ extension BrowserViewController {
         let message = try await FCLScripts.generateAuthnResponse(accountProofSign: accountProofSign, nonce: response.body.nonce ?? "", address: address)
         
         DispatchQueue.syncOnMain {
+            log.debug("will post authn view ready response")
             postMessage(message)
+            log.debug("did post authn view ready response")
         }
     }
     
     func postAuthzPayloadSignResponse(response: FCLAuthzResponse) async throws {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
+            log.error("primary address is nil")
             return
         }
         
@@ -152,28 +159,36 @@ extension BrowserViewController {
         
         let message = FCLScripts.generateAuthzResponse(address: address, signature: signData.hexValue, keyId: keyId)
         DispatchQueue.syncOnMain {
+            log.debug("will post authz payload sign response")
             postMessage(message)
+            log.debug("did post authz payload sign response")
         }
     }
     
     func postAuthzEnvelopeSignResponse(sign: FCLVoucher.Signature) {
         let message = FCLScripts.generateAuthzResponse(address: sign.address.hex.addHexPrefix(), signature: sign.sig, keyId: sign.keyId)
+        log.debug("will post authz envelope response")
         postMessage(message)
+        log.debug("did post authz envelope response")
     }
     
     func postReadyResponse() {
+        log.debug("will post ready response")
         postMessage("{type: '\(JSMessageType.ready.rawValue)'}")
+        log.debug("did post ready response")
     }
     
     func postSignMessageResponse(_ response: FCLSignMessageResponse) {
         guard let address = WalletManager.shared.getPrimaryWalletAddress(),
               let message = response.body?.message,
               let js = FCLScripts.generateSignMessageResponse(message: message, address: address) else {
-            debugPrint("BrowserViewController -> postSignMessageResponse: generate js failed")
+            log.error("generate js failed")
             return
         }
         
+        log.debug("will post sign message response")
         postMessage(js)
+        log.debug("did post sign message response")
     }
     
     func postMessage(_ message: String) {
@@ -181,7 +196,7 @@ extension BrowserViewController {
         
         webView.evaluateJavaScript(js) { result, error in
             if let error = error {
-                debugPrint("BrowserViewController -> postMessage error: \(error)")
+                log.error("post message error", context: error)
             }
         }
     }

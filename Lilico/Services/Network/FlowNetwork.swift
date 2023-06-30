@@ -13,7 +13,7 @@ import BigInt
 class FlowNetwork {
     static func setup() {
         let type = LocalUserDefaults.shared.flowNetwork.toFlowType()
-        debugPrint("did setup flow chainID to \(LocalUserDefaults.shared.flowNetwork.rawValue)")
+        log.debug("did setup flow chainID to \(LocalUserDefaults.shared.flowNetwork.rawValue)")
         flow.configure(chainID: type)
     }
 }
@@ -634,6 +634,71 @@ extension FlowNetwork {
         }
 
         return results
+    }
+}
+
+// MARK: - Child Account
+extension FlowNetwork {
+    static func queryChildAccountList() async throws -> [String] {
+        let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
+        let response: [String] = try await self.fetch(at: address, by: CadenceTemplate.queryChildAccountList)
+        return response
+    }
+    
+    static func unlinkChildAccount(_ address: String) async throws -> Flow.ID {
+        let cadenceString = CadenceTemplate.unlinkChildAccount.replace(by: ScriptAddress.addressMap())
+        let walletAddress = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
+        
+        let txId = try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+            cadence {
+                cadenceString
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            
+            proposer {
+                walletAddress
+            }
+            
+            authorizers {
+                walletAddress
+            }
+            
+            arguments {
+                [.address(Flow.Address(hex: address))]
+            }
+            
+            gasLimit {
+                9999
+            }
+        })
+        
+        return txId
+    }
+    
+    static func queryChildAccountMeta(_ address: String) async throws -> [ChildAccount] {
+        let address = Flow.Address(hex: address)
+        let replacedCadence = CadenceTemplate.queryChildAccountMeta.replace(by: ScriptAddress.addressMap())
+        let rawResponse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: replacedCadence),
+                                                                           arguments: [.address(address)])
+
+        guard let decode = rawResponse.decode() as? [String: Any] else {
+            return []
+        }
+
+        let result: [ChildAccount] = decode.keys.compactMap { key in
+            guard let value = decode[key],
+                  let data = try? JSONSerialization.data(withJSONObject: value),
+                  var model = try? JSONDecoder().decode(ChildAccount.self, from: data) else {
+                return nil
+            }
+            model.addr = key
+            return model
+        }
+
+        return result
     }
 }
 
