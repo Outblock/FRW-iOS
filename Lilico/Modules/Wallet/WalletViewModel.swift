@@ -18,7 +18,7 @@ extension WalletViewModel {
         case error
     }
 
-    struct WalletCoinItemModel {
+    struct WalletCoinItemModel: Mockable {
         let token: TokenModel
         let balance: Double
         let last: Double
@@ -41,6 +41,10 @@ extension WalletViewModel {
         var balanceAsCurrentCurrency: String {
             return (balance * last).formatCurrencyString(considerCustomCurrency: true)
         }
+        
+        static func mock() -> WalletViewModel.WalletCoinItemModel {
+            return WalletCoinItemModel(token: TokenModel.mock(), balance: 999, last: 10, changePercentage: 50)
+        }
     }
 }
 
@@ -52,6 +56,15 @@ class WalletViewModel: ObservableObject {
     @Published var transactionCount: Int = LocalUserDefaults.shared.transactionCount
     @Published var pendingRequestCount: Int = 0
     @Published var backupTipsPresent: Bool = false
+    
+    @Published var isMock: Bool = false
+    var mCoinItems: [WalletCoinItemModel] {
+        if isMock {
+            return [WalletCoinItemModel].mock()
+        } else {
+            return coinItems
+        }
+    }
     
     private var lastRefreshTS: TimeInterval = 0
     private let autoRefreshInterval: TimeInterval = 30
@@ -244,12 +257,17 @@ extension WalletViewModel {
         self.lastRefreshTS = Date().timeIntervalSince1970
         self.walletState = .idle
         
+        if coinItems.isEmpty {
+            isMock = true
+        }
+        
         Task {
             do {
                 try await WalletManager.shared.fetchWalletDatas()
                 self.reloadTransactionCount()
                 
                 DispatchQueue.main.async {
+                    self.isMock = false
                     self.isReloading = false
                 }
             } catch {
@@ -258,6 +276,7 @@ extension WalletViewModel {
                 DispatchQueue.main.async {
                     self.walletState = .error
                     self.isReloading = false
+                    self.isMock = false
                 }
             }
         }

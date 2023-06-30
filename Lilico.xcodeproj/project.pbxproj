@@ -1060,6 +1060,8 @@
 		6A29115828CB3D04003295BD /* FlowTransactionItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A29115628CB3D04003295BD /* FlowTransactionItemCell.swift */; };
 		6A29115A28CB519D003295BD /* FlowTransferItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A29115928CB519D003295BD /* FlowTransferItemCell.swift */; };
 		6A29115B28CB519D003295BD /* FlowTransferItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A29115928CB519D003295BD /* FlowTransferItemCell.swift */; };
+		6A293F5B2A4E883100A4A02E /* Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A293F5A2A4E883100A4A02E /* Mock.swift */; };
+		6A293F5C2A4E883100A4A02E /* Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A293F5A2A4E883100A4A02E /* Mock.swift */; };
 		6A2C560B290BE46800306A6C /* Currency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C560A290BE46800306A6C /* Currency.swift */; };
 		6A2C560C290BE46800306A6C /* Currency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C560A290BE46800306A6C /* Currency.swift */; };
 		6A2C560E290BE75C00306A6C /* CurrencyCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C560D290BE75C00306A6C /* CurrencyCache.swift */; };
@@ -1998,6 +2000,7 @@
 		6A29115228CB3B88003295BD /* FlowScanTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowScanTransfer.swift; sourceTree = "<group>"; };
 		6A29115628CB3D04003295BD /* FlowTransactionItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowTransactionItemCell.swift; sourceTree = "<group>"; };
 		6A29115928CB519D003295BD /* FlowTransferItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowTransferItemCell.swift; sourceTree = "<group>"; };
+		6A293F5A2A4E883100A4A02E /* Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mock.swift; sourceTree = "<group>"; };
 		6A2C560A290BE46800306A6C /* Currency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Currency.swift; sourceTree = "<group>"; };
 		6A2C560D290BE75C00306A6C /* CurrencyCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyCache.swift; sourceTree = "<group>"; };
 		6A2C5610290BE9FF00306A6C /* LilicoAPI+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LilicoAPI+Utils.swift"; sourceTree = "<group>"; };
@@ -2481,6 +2484,7 @@
 				15D874DB28C5C3740072C6EA /* DragGestureViewModifier.swift */,
 				154866F228D0FE8900D012B8 /* ViewCondition.swift */,
 				6A3FFA842A28A91F00CB2B2C /* AnimationModifier.swift */,
+				6A293F5A2A4E883100A4A02E /* Mock.swift */,
 			);
 			path = Modifier;
 			sourceTree = "<group>";
@@ -5470,6 +5474,7 @@
 				6A29113B28CAEADC003295BD /* AccountResponses.swift in Sources */,
 				6A29113828CAE7FE003295BD /* LilicoAPI+Account.swift in Sources */,
 				15F22F0A278B009200FCF772 /* ChooseAccountViewModel.swift in Sources */,
+				6A293F5C2A4E883100A4A02E /* Mock.swift in Sources */,
 				6A29115B28CB519D003295BD /* FlowTransferItemCell.swift in Sources */,
 				15DC218327819C56000B187A /* VToggleState.swift in Sources */,
 				15DE23012780208300B5EE03 /* RestoreWalletViewModel.swift in Sources */,
@@ -6083,6 +6088,7 @@
 				6A29113A28CAEADC003295BD /* AccountResponses.swift in Sources */,
 				6A29113728CAE7FE003295BD /* LilicoAPI+Account.swift in Sources */,
 				15C58AE92868A4EE00BD4FC6 /* ChooseAccountViewModel.swift in Sources */,
+				6A293F5B2A4E883100A4A02E /* Mock.swift in Sources */,
 				6A29115A28CB519D003295BD /* FlowTransferItemCell.swift in Sources */,
 				15C58AEA2868A4EE00BD4FC6 /* VToggleState.swift in Sources */,
 				15C58AEB2868A4EE00BD4FC6 /* RestoreWalletViewModel.swift in Sources */,

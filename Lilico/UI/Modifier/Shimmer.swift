@@ -56,6 +56,14 @@ public struct Shimmer: ViewModifier {
     }
 }
 
+public struct PlaceholderShimmer: ViewModifier {
+    public func body(content: Content) -> some View {
+        content.redacted(reason: .placeholder)
+            .shimmering()
+            .disabled(true)
+    }
+}
+
 public extension View {
     /// Adds an animated shimmering effect to any view, typically to show that
     /// an operation is in progress.
@@ -68,6 +76,14 @@ public extension View {
     ) -> some View {
         if active {
             modifier(Shimmer(duration: duration, bounce: bounce))
+        } else {
+            self
+        }
+    }
+    
+    @ViewBuilder func mockPlaceholder(_ active: Bool = true) -> some View {
+        if active {
+            modifier(PlaceholderShimmer())
         } else {
             self
         }

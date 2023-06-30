@@ -72,7 +72,7 @@ enum ListedToken: String, CaseIterable {
     }
 }
 
-struct TokenModel: Codable, Identifiable {
+struct TokenModel: Codable, Identifiable, Mockable {
     let name: String
     let address: FlowNetworkModel
     let contractName: String
@@ -131,6 +131,17 @@ struct TokenModel: Codable, Identifiable {
         }
         
         return false
+    }
+    
+    static func mock() -> TokenModel {
+        return TokenModel(name: "mockname",
+                          address: FlowNetworkModel(mainnet: nil, testnet: nil, sandboxnet: nil),
+                          contractName: "contractname",
+                          storagePath: FlowTokenStoragePath(balance: "", vault: "", receiver: ""),
+                          decimal: 999,
+                          icon: nil,
+                          symbol: randomString(),
+                          website: nil)
     }
 }
 
