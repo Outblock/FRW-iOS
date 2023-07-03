@@ -37,28 +37,6 @@ struct WalletView: View {
     @StateObject private var vm = WalletViewModel()
     @State var isRefreshing: Bool = false
 
-    var emptyView: some View {
-        VStack(spacing: 12) {
-            Color.systemGray4
-                .frame(height: CardViewHeight)
-                .cornerRadius(16)
-                .padding(.top, 44)
-            
-            Spacer()
-            
-            ForEach(0..<4, id: \.self) { _ in
-                Color.systemGray4
-                    .frame(height: 60)
-                    .cornerRadius(16)
-            }
-        }
-        .padding(.horizontal, 18)
-        .padding(.bottom, 40)
-        .disabled(true)
-        .redacted(reason: .placeholder)
-        .shimmering(active: vm.walletState == .noAddress)
-    }
-
     var errorView: some View {
         Text("error")
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -73,9 +51,6 @@ struct WalletView: View {
     /// user logged in UI
     var normalView: some View {
         ZStack {
-            emptyView
-                .visibility(vm.walletState == .noAddress ? .visible : .gone)
-            
             VStack(spacing: 10) {
                 
                 headerView
@@ -122,7 +97,7 @@ struct WalletView: View {
                         
                         Section {
                             coinSectionView
-                            ForEach(vm.coinItems, id: \.token.symbol) { coin in
+                            ForEach(vm.mCoinItems, id: \.token.symbol) { coin in
                                 Button {
                                     Router.route(to: RouteMap.Wallet.tokenDetail(coin.token))
                                 } label: {
@@ -146,8 +121,8 @@ struct WalletView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .backgroundFill(.LL.Neutrals.background)
             .environmentObject(vm)
-            .visibility(vm.walletState != .noAddress ? .visible : .gone)
         }
+        .mockPlaceholder(vm.isMock)
     }
 
     var body: some View {
