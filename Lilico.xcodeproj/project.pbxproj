@@ -12,6 +12,8 @@
 		1505E5FF2836365C007B98D8 /* LilicoAPI+AddressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1505E5FD2836365C007B98D8 /* LilicoAPI+AddressBook.swift */; };
 		1507A66F28BFA4CA009B050A /* WalletSendButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1507A66E28BFA4CA009B050A /* WalletSendButtonView.swift */; };
 		1507A67028BFA4CA009B050A /* WalletSendButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1507A66E28BFA4CA009B050A /* WalletSendButtonView.swift */; };
+		150D3E372A58718700F7F2DC /* QRCode in Frameworks */ = {isa = PBXBuildFile; productRef = 150D3E362A58718700F7F2DC /* QRCode */; };
+		150D3E392A58719A00F7F2DC /* QRCode in Frameworks */ = {isa = PBXBuildFile; productRef = 150D3E382A58719A00F7F2DC /* QRCode */; };
 		15185ED8278A73A3006B74A9 /* SPConfetti in Frameworks */ = {isa = PBXBuildFile; productRef = 15185ED7278A73A3006B74A9 /* SPConfetti */; };
 		152711A028D4C418002520EA /* NFTEmptyView_dev.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1527119F28D4C3F5002520EA /* NFTEmptyView_dev.swift */; };
 		152BB09428AE8FD100B2A2AA /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 152BB09328AE8FD100B2A2AA /* Lottie */; };
@@ -1074,7 +1076,6 @@
 		6A32213A2927B49B000B8E1F /* StakingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3221382927B49B000B8E1F /* StakingDetailView.swift */; };
 		6A35EADA2859BD36005A85B8 /* EditAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A35EAD82859BD36005A85B8 /* EditAvatarView.swift */; };
 		6A37AD9428BDAA310047E5F7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A37AD9328BDAA300047E5F7 /* GoogleService-Info.plist */; };
-		6A37AD9528BDAB560047E5F7 /* QRCode in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 6A400924287578D400A77070 /* QRCode */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		6A37AD9728BE0DE40047E5F7 /* TransactionProcessStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A37AD9628BE0DE40047E5F7 /* TransactionProcessStatusView.swift */; };
 		6A37AD9828BE0DE40047E5F7 /* TransactionProcessStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A37AD9628BE0DE40047E5F7 /* TransactionProcessStatusView.swift */; };
 		6A37AD9B28BE15700047E5F7 /* SendAmountTransactionProcessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A37AD9A28BE15700047E5F7 /* SendAmountTransactionProcessView.swift */; };
@@ -1099,9 +1100,6 @@
 		6A4009132875615A00A77070 /* WalletReceiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4009112875615A00A77070 /* WalletReceiveView.swift */; };
 		6A4009152875699D00A77070 /* WalletReceiveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4009142875699D00A77070 /* WalletReceiveViewModel.swift */; };
 		6A4009162875699E00A77070 /* WalletReceiveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4009142875699D00A77070 /* WalletReceiveViewModel.swift */; };
-		6A400925287578D400A77070 /* QRCode in Frameworks */ = {isa = PBXBuildFile; productRef = 6A400924287578D400A77070 /* QRCode */; };
-		6A400927287578FF00A77070 /* QRCode in Frameworks */ = {isa = PBXBuildFile; productRef = 6A400926287578FF00A77070 /* QRCode */; };
-		6A400928287578FF00A77070 /* QRCode in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 6A400926287578FF00A77070 /* QRCode */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		6A41005C28E2F4DC002946CE /* SwapConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A41005B28E2F4DC002946CE /* SwapConfirmView.swift */; };
 		6A41005D28E2F4DC002946CE /* SwapConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A41005B28E2F4DC002946CE /* SwapConfirmView.swift */; };
 		6A41B6AA2861D06F00999451 /* NotificationDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A41B6A82861D06F00999451 /* NotificationDefine.swift */; };
@@ -1484,7 +1482,6 @@
 				155E371828D35E5200834C30 /* WalletCore.xcframework in Embed Frameworks */,
 				6ABFE5B929A74DDB00AA1688 /* Translized.xcframework in Embed Frameworks */,
 				155E371628D35E5200834C30 /* SwiftProtobuf.xcframework in Embed Frameworks */,
-				6A400928287578FF00A77070 /* QRCode in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1498,7 +1495,6 @@
 				155E371C28D35E6500834C30 /* WalletCore.xcframework in Embed Frameworks */,
 				6ABFE5B729A74DCD00AA1688 /* Translized.xcframework in Embed Frameworks */,
 				155E371A28D35E6500834C30 /* SwiftProtobuf.xcframework in Embed Frameworks */,
-				6A37AD9528BDAB560047E5F7 /* QRCode in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2233,6 +2229,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				150D3E392A58719A00F7F2DC /* QRCode in Frameworks */,
 				156AC7AB27802F9D00ED5E3E /* GoogleAPIClientForREST_Drive in Frameworks */,
 				154B891A276A1EEB00780E93 /* Flow in Frameworks */,
 				154B891B276A1EEB00780E93 /* FirebaseAuth in Frameworks */,
@@ -2278,7 +2275,6 @@
 				15DE22F1277F133B00B5EE03 /* SkeletonUI in Frameworks */,
 				1552DC6A2787090D00EAA7D5 /* Introspect in Frameworks */,
 				15D3BA7228C3B90A009AEA6E /* ViewAnimator in Frameworks */,
-				6A400927287578FF00A77070 /* QRCode in Frameworks */,
 				154B8920276A1EEB00780E93 /* SwiftUIX in Frameworks */,
 				6AC1AE6B289BAD0600F76C7A /* SnapKit in Frameworks */,
 				158832D42894277600142B35 /* Starscream in Frameworks */,
@@ -2298,6 +2294,7 @@
 				15F517FB28C6574C00504FDC /* Atlantis in Frameworks */,
 				15C58C402868A4EE00BD4FC6 /* FirebaseAuth in Frameworks */,
 				6AADFB56293CB81A00E5D6B2 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
+				150D3E372A58718700F7F2DC /* QRCode in Frameworks */,
 				155E371928D35E6500834C30 /* SwiftProtobuf.xcframework in Frameworks */,
 				15D3BA7028C3B8E3009AEA6E /* ViewAnimator in Frameworks */,
 				15C58C412868A4EE00BD4FC6 /* AuthenticationServices.framework in Frameworks */,
@@ -2334,7 +2331,6 @@
 				15C58C552868A4EE00BD4FC6 /* SPIndicator in Frameworks */,
 				15C58C562868A4EE00BD4FC6 /* SkeletonUI in Frameworks */,
 				15C58C572868A4EE00BD4FC6 /* Introspect in Frameworks */,
-				6A400925287578D400A77070 /* QRCode in Frameworks */,
 				15D6D8F428CBAEBD00CBA152 /* FancyScrollView in Frameworks */,
 				15C58C582868A4EE00BD4FC6 /* SwiftUIX in Frameworks */,
 				6AC1AE69289BACDF00F76C7A /* SnapKit in Frameworks */,
@@ -4952,7 +4948,6 @@
 				15832B632867641D0066046D /* GTMSessionFetcherCore */,
 				1500783328682BF700A00109 /* SPIndicator */,
 				6A7C080E286EE95E00020987 /* SwiftUICharts */,
-				6A400926287578FF00A77070 /* QRCode */,
 				6AE1D48D287690E7000FA0B7 /* SwiftUIPager */,
 				158832CB2894267700142B35 /* WalletConnect */,
 				158832D32894277600142B35 /* Starscream */,
@@ -4973,6 +4968,7 @@
 				157D91BD293E102C00AC102B /* GoogleSignIn */,
 				6ABFE5A029A711ED00AA1688 /* Gzip */,
 				6A5F15F92A3185860035AC38 /* SwiftyBeaver */,
+				150D3E382A58719A00F7F2DC /* QRCode */,
 			);
 			productName = "Lilico-lite";
 			productReference = 154B8928276A1EEB00780E93 /* Lilico-dev.app */;
@@ -5022,7 +5018,6 @@
 				15C58AA82868A4EE00BD4FC6 /* GTMSessionFetcherCore */,
 				15C58AAA2868A4EE00BD4FC6 /* SPIndicator */,
 				6AE46061286EE644009C2B96 /* SwiftUICharts */,
-				6A400924287578D400A77070 /* QRCode */,
 				6A0454CC28768E9E00A9131C /* SwiftUIPager */,
 				158832C92894262B00142B35 /* WalletConnect */,
 				158832D12894273600142B35 /* Starscream */,
@@ -5043,6 +5038,7 @@
 				6AADFB55293CB81A00E5D6B2 /* FirebaseAnalyticsWithoutAdIdSupport */,
 				1549CF02299A10C2002B37A5 /* Gzip */,
 				6A5F15F72A3185310035AC38 /* SwiftyBeaver */,
+				150D3E362A58718700F7F2DC /* QRCode */,
 			);
 			productName = "Lilico-lite";
 			productReference = 15C58C6D2868A4EE00BD4FC6 /* Lilico.app */;
@@ -5142,7 +5138,6 @@
 				4ED6DD0E285A22A800105133 /* XCRemoteSwiftPackageReference "IrregularGradient" */,
 				1500783028682B8900A00109 /* XCRemoteSwiftPackageReference "SPIndicator" */,
 				6AE46060286EE644009C2B96 /* XCRemoteSwiftPackageReference "SwiftUICharts" */,
-				6A400923287578D400A77070 /* XCRemoteSwiftPackageReference "QRCode" */,
 				6A0454CB28768E9E00A9131C /* XCRemoteSwiftPackageReference "SwiftUIPager" */,
 				158832C82894262B00142B35 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */,
 				158832D02894273600142B35 /* XCRemoteSwiftPackageReference "Starscream" */,
@@ -5161,6 +5156,7 @@
 				6A46754428F2D44800F705A8 /* XCRemoteSwiftPackageReference "fmdb" */,
 				1549CF01299A10C2002B37A5 /* XCRemoteSwiftPackageReference "GzipSwift" */,
 				6A5F15F62A3185300035AC38 /* XCRemoteSwiftPackageReference "SwiftyBeaver" */,
+				150D3E352A58718700F7F2DC /* XCRemoteSwiftPackageReference "QRCode" */,
 			);
 			productRefGroup = 15EC9DEF274FD1FC00F70CD9 /* Products */;
 			projectDirPath = "";
@@ -7206,6 +7202,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		150D3E352A58718700F7F2DC /* XCRemoteSwiftPackageReference "QRCode" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WalletConnect/QRCode";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 14.3.1;
+			};
+		};
 		152BB09228AE8FD100B2A2AA /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios";
@@ -7315,7 +7319,7 @@
 			repositoryURL = "https://github.com/WalletConnect/WalletConnectSwiftV2";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.2;
+				minimumVersion = 1.6.11;
 			};
 		};
 		158832D02894273600142B35 /* XCRemoteSwiftPackageReference "Starscream" */ = {
@@ -7631,14 +7635,6 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		6A400923287578D400A77070 /* XCRemoteSwiftPackageReference "QRCode" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/dagronf/QRCode";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
-			};
-		};
 		6A46754428F2D44800F705A8 /* XCRemoteSwiftPackageReference "fmdb" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ccgus/fmdb";
@@ -7686,6 +7682,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1500783028682B8900A00109 /* XCRemoteSwiftPackageReference "SPIndicator" */;
 			productName = SPIndicator;
+		};
+		150D3E362A58718700F7F2DC /* QRCode */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 150D3E352A58718700F7F2DC /* XCRemoteSwiftPackageReference "QRCode" */;
+			productName = QRCode;
+		};
+		150D3E382A58719A00F7F2DC /* QRCode */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 150D3E352A58718700F7F2DC /* XCRemoteSwiftPackageReference "QRCode" */;
+			productName = QRCode;
 		};
 		15185ED7278A73A3006B74A9 /* SPConfetti */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -8076,16 +8082,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6A29114028CB2A87003295BD /* XCRemoteSwiftPackageReference "JXSegmentedView" */;
 			productName = JXSegmentedView;
-		};
-		6A400924287578D400A77070 /* QRCode */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6A400923287578D400A77070 /* XCRemoteSwiftPackageReference "QRCode" */;
-			productName = QRCode;
-		};
-		6A400926287578FF00A77070 /* QRCode */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6A400923287578D400A77070 /* XCRemoteSwiftPackageReference "QRCode" */;
-			productName = QRCode;
 		};
 		6A46754528F2D44800F705A8 /* FMDB */ = {
 			isa = XCSwiftPackageProductDependency;
