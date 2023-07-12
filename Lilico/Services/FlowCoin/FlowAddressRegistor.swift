@@ -104,8 +104,8 @@ enum ScriptAddress: String, CaseIterable {
         case (.swapError, .testnet):
             return Flow.Address(hex: "0xddb929038d45d4b3")
         case (.hybridCustody, .testnet):
-            return Flow.Address(hex: "0x96b15ff6dfde11fe")
-            
+            return Flow.Address(hex: "0x294e44e1ec6993c6")
+
             // Sandboxnet
         case (.fungibleToken, .sandboxnet):
             return Flow.Address(hex: "0xe20612a0776ca4bf")
