@@ -114,4 +114,8 @@ extension ProfileView.ProfileViewModel {
             }
         }
     }
+    
+    func showSwitchProfileAction() {
+        Router.route(to: RouteMap.Profile.switchProfile)
+    }
 }

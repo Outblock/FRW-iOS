@@ -11,7 +11,6 @@ import Kingfisher
 
 struct AccountSwitchView: View {
     @StateObject private var vm = AccountSwitchViewModel()
-    @EnvironmentObject var sideVM: SideMenuViewModel
     
     var body: some View {
         VStack(spacing: 0) {
@@ -41,8 +40,7 @@ struct AccountSwitchView: View {
                 .padding(.bottom, 30)
             
             Button {
-                sideVM.switchAccountListPresent = false
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                Router.dismiss {
                     vm.createNewAccountAction()
                 }
             } label: {
@@ -62,8 +60,7 @@ struct AccountSwitchView: View {
             }
             
             Button {
-                sideVM.switchAccountListPresent = false
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                Router.dismiss {
                     vm.loginAccountAction()
                 }
             } label: {
@@ -91,8 +88,9 @@ struct AccountSwitchView: View {
             LazyVStack(spacing: 20) {
                 ForEach(vm.placeholders, id: \.uid) { placeholder in
                     Button {
-                        sideVM.switchAccountListPresent = false
-                        vm.switchAccountAction(placeholder.uid)
+                        Router.dismiss {
+                            vm.switchAccountAction(placeholder.uid)
+                        }
                     } label: {
                         createAccountCell(placeholder)
                     }

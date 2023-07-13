@@ -21,7 +21,6 @@ extension SideMenuViewModel {
 class SideMenuViewModel: ObservableObject {
     @Published var nftCount: Int = 0
     @Published var accountPlaceholders: [AccountPlaceholder] = []
-    @Published var switchAccountListPresent: Bool = false
     
     private var cancelSets = Set<AnyCancellable>()
     
@@ -69,7 +68,7 @@ class SideMenuViewModel: ObservableObject {
     }
     
     func switchAccountMoreAction() {
-        switchAccountListPresent = true
+        Router.route(to: RouteMap.Profile.switchProfile)
     }
 }
 
@@ -101,10 +100,6 @@ struct SideMenuView: View {
             }
             .frame(width: SideOffset)
             .frame(maxHeight: .infinity)
-        }
-        .halfSheet(showSheet: $vm.switchAccountListPresent) {
-            AccountSwitchView()
-                .environmentObject(vm)
         }
     }
     

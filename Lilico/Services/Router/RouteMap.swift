@@ -199,6 +199,7 @@ extension RouteMap {
         case currency
         case accountSetting
         case accountDetail(ChildAccount)
+        case switchProfile
     }
 }
 
@@ -252,6 +253,9 @@ extension RouteMap.Profile: RouterTarget {
         case .accountDetail(let childAccount):
             let vm = ChildAccountDetailViewModel(childAccount: childAccount)
             navi.push(content: ChildAccountDetailView(vm: vm))
+        case .switchProfile:
+            let vc = CustomHostingController(rootView: AccountSwitchView())
+            Router.topPresentedController().present(vc, animated: true, completion: nil)
         }
     }
 }
