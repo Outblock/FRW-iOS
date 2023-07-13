@@ -491,3 +491,5 @@
 "hold_to_unlink" = "Hold to Unlink";
 "link_account_notice_1" = "Delegate account to your lilico wallet";
 "link_account_notice_2" = "Lilico wallet will manage linked account";
+
+"switch_profile_tips" = "Tap the profile name to switch profiles.";

@@ -45,6 +45,8 @@ struct ProfileView: RouteableView {
             ScrollView {
                 VStack(spacing: 16) {
                     if userManager.isLoggedIn {
+                        switchProfileTips
+                            .visibility(lud.switchProfileTipsFlag ? .gone : .visible)
                         InfoContainerView()
                         ActionSectionView()
                         WalletConnectView()
@@ -132,10 +134,18 @@ extension ProfileView {
 
 extension ProfileView {
     struct InfoContainerView: View {
+        @EnvironmentObject private var vm: ProfileViewModel
+        
         var body: some View {
             Section {
                 VStack(spacing: 24) {
-                    ProfileView.InfoView()
+                    Button {
+                        vm.showSwitchProfileAction()
+                    } label: {
+                        ProfileView.InfoView()
+                            .contentShape(Rectangle())
+                    }
+                    
                     ProfileView.InfoActionView()
                 }
             }
@@ -159,7 +169,16 @@ extension ProfileView {
                     .cornerRadius(41)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(userManager.userInfo?.nickname ?? "").foregroundColor(.LL.Neutrals.text).font(.inter(weight: .semibold))
+                    HStack(spacing: 0) {
+                        Text(userManager.userInfo?.nickname ?? "")
+                            .foregroundColor(.LL.Neutrals.text)
+                            .font(.inter(weight: .semibold))
+                        
+                        Image("icon-switch-profile")
+                            .renderingMode(.template)
+                            .foregroundColor(Color(hex: "#7b7bff"))
+                    }
+                    
                     Text("@\(userManager.userInfo?.username ?? "")").foregroundColor(.LL.Neutrals.text).font(.inter(size: 14, weight: .medium))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -706,6 +725,42 @@ extension ProfileView {
             .padding(.horizontal, 16)
             .contentShape(Rectangle())
 //            .backgroundFill(Color.LL.bgForIcon)
+        }
+    }
+    
+    var switchProfileTips: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 5) {
+                Image("light-tips-icon")
+                
+                Text("switch_profile_tips".localized)
+                    .font(.inter(size: 12))
+                    .foregroundColor(Color.LL.Primary.salmonPrimary)
+                    .multilineTextAlignment(.leading)
+                
+                Spacer()
+                
+                Button {
+                    LocalUserDefaults.shared.switchProfileTipsFlag = true
+                } label: {
+                    Image("icon-close-tips")
+                        .renderingMode(.template)
+                        .foregroundColor(Color.LL.Primary.salmonPrimary)
+                        .frame(width: 30, height: 30)
+                        .contentShape(Rectangle())
+                }
+            }
+            .padding(.vertical, 8)
+            .padding(.leading, 18)
+            .padding(.trailing, 8)
+            .background {
+                RoundedRectangle(cornerRadius: 8)
+                    .foregroundColor(Color(hex: "#FCE9E1"))
+            }
+            
+            Image("icon-tips-bottom-arrow")
+                .renderingMode(.template)
+                .foregroundColor(Color(hex: "#FCE9E1"))
         }
     }
 }

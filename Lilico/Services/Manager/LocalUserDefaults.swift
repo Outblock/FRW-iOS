@@ -37,6 +37,7 @@ extension LocalUserDefaults {
         case multiAccountUpgradeFlag
         case loginUIDList
         case selectedChildAccount
+        case switchProfileTipsFlag
     }
 
     enum FlowNetworkType: String, CaseIterable {
@@ -230,6 +231,8 @@ class LocalUserDefaults: ObservableObject {
             }
         }
     }
+    
+    @AppStorage(Keys.switchProfileTipsFlag.rawValue) var switchProfileTipsFlag: Bool = false
 }
 
 extension LocalUserDefaults {
