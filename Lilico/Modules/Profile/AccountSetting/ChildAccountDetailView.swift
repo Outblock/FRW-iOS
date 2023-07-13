@@ -90,10 +90,14 @@ class ChildAccountDetailViewModel: ObservableObject {
             }
         }
     }
+    
+    @objc func editChildAccountAction() {
+        Router.route(to: RouteMap.Profile.editChildAccount(childAccount))
+    }
 }
 
 struct ChildAccountDetailView: RouteableView {
-    @StateObject private var vm: ChildAccountDetailViewModel
+    @StateObject var vm: ChildAccountDetailViewModel
     
     init(vm: ChildAccountDetailViewModel) {
         _vm = StateObject(wrappedValue: vm)
@@ -101,6 +105,12 @@ struct ChildAccountDetailView: RouteableView {
     
     var title: String {
         "linked_account".localized
+    }
+    
+    func configNavigationItem(_ navigationItem: UINavigationItem) {
+        let editButton = UIBarButtonItem(image: UIImage(named: "icon-edit-child-account"), style: .plain, target: vm, action: Selector("editChildAccountAction"))
+        editButton.tintColor = UIColor(named: "button.color")
+        navigationItem.rightBarButtonItem = editButton
     }
     
     var body: some View {
