@@ -9,9 +9,18 @@ import SwiftUI
 import Combine
 import UIKit
 import Kingfisher
+import SwiftUIX
+
+extension ChildAccountDetailEditViewModel {
+    class NewAccountInfo {
+        var newImage: UIImage?
+    }
+}
 
 class ChildAccountDetailEditViewModel: ObservableObject {
     @Published var childAccount: ChildAccount
+    @Published var imagePickerShowFlag = false
+    @Published var newInfo: NewAccountInfo = NewAccountInfo()
     
     init(childAccount: ChildAccount) {
         self.childAccount = childAccount
@@ -19,6 +28,10 @@ class ChildAccountDetailEditViewModel: ObservableObject {
     
     @objc func saveAction() {
         log.debug("save save")
+    }
+    
+    func pickAvatarAction() {
+        imagePickerShowFlag = true
     }
 }
 
@@ -68,32 +81,48 @@ struct ChildAccountDetailEditView: RouteableView {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .backgroundFill(Color.LL.Neutrals.background)
         .applyRouteable(self)
+        .sheet(isPresented: $vm.imagePickerShowFlag) {
+            ImagePicker(image: $vm.newInfo.newImage)
+        }
     }
     
     var avatarEditCell: some View {
-        HStack(spacing: 0) {
-            Text("avatar".localized)
-                .font(.inter(size: 16, weight: .medium))
-                .foregroundColor(Color.LL.Neutrals.text)
-            
-            Spacer()
-            
-            KFImage.url(URL(string: vm.childAccount.icon))
-                .placeholder({
-                    Image("placeholder")
+        Button {
+            vm.pickAvatarAction()
+        } label: {
+            HStack(spacing: 0) {
+                Text("avatar".localized)
+                    .font(.inter(size: 16, weight: .medium))
+                    .foregroundColor(Color.LL.Neutrals.text)
+                
+                Spacer()
+                
+                if let image = vm.newInfo.newImage {
+                    Image(uiImage: image)
                         .resizable()
-                })
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 50, height: 50)
-                .cornerRadius(25)
-                .padding(.trailing, 15)
-            
-            Image("icon-black-right-arrow")
-                .renderingMode(.template)
-                .foregroundColor(Color.LL.Neutrals.text2)
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 50, height: 50)
+                        .cornerRadius(25)
+                        .padding(.trailing, 15)
+                } else {
+                    KFImage.url(URL(string: vm.childAccount.icon))
+                        .placeholder({
+                            Image("placeholder")
+                                .resizable()
+                        })
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 50, height: 50)
+                        .cornerRadius(25)
+                        .padding(.trailing, 15)
+                }
+                
+                Image("icon-black-right-arrow")
+                    .renderingMode(.template)
+                    .foregroundColor(Color.LL.Neutrals.text2)
+            }
+            .padding(.all, 16)
         }
-        .padding(.all, 16)
     }
     
     var nameEditCell: some View {
