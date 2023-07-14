@@ -15,6 +15,7 @@ import UIKit
 import WalletCore
 import Translized
 import SwiftyBeaver
+import FirebaseMessaging
 
 #if DEBUG
 import Atlantis
@@ -130,6 +131,8 @@ extension AppDelegate {
         
         _ = ChildAccountManager.shared
         WalletManager.shared.bindChildAccountManager()
+        
+        configNotification()
     }
     
     private func commonConfig() {
@@ -204,5 +207,24 @@ extension AppDelegate {
             debugPrint("Translized updated: \(updated), error: \(error)")
         }
 #endif
+    }
+}
+
+// MARK: - Push
+extension AppDelegate: MessagingDelegate, UNUserNotificationCenterDelegate {
+    func configNotification() {
+        Messaging.messaging().delegate = self
+        
+        UNUserNotificationCenter.current().delegate = self
+        let options: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(options: options) { result, error in
+            
+        }
+        
+        UIApplication.shared.registerForRemoteNotifications()
+    }
+    
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        log.debug("fcm token: ", context: fcmToken)
     }
 }

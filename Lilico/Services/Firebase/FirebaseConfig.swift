@@ -19,6 +19,7 @@ enum FirebaseConfig: String {
     case flowCoins = "flow_coins"
     case config = "free_gas_config"
     case dapp
+    case contractAddress = "contract_address"
 
     static func start() {
         Task {
@@ -39,20 +40,19 @@ enum FirebaseConfig: String {
 }
 
 extension FirebaseConfig {
-    func fetch<T: Codable>(decoder:JSONDecoder = LilicoAPI.jsonDecoder ) async throws -> T {
+    func fetch<T: Codable>(decoder:JSONDecoder = LilicoAPI.jsonDecoder ) throws -> T {
         let remoteConfig = RemoteConfig.remoteConfig()
         let json = remoteConfig.configValue(forKey: rawValue)
         do {
             let collections = try decoder.decode(T.self, from: json.dataValue)
             return collections
-
         } catch {
             debugPrint(error)
             throw FirebaseConfigError.decode
         }
     }
     
-    func fetchLocal<T: Codable>() async throws -> T {
+    func fetchLocal<T: Codable>() throws -> T {
         let remoteConfig = RemoteConfig.remoteConfig()
         guard let json = remoteConfig.defaultValue(forKey: rawValue) else {
             throw FirebaseConfigError.decode
