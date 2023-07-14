@@ -36,96 +36,10 @@ enum ScriptAddress: String, CaseIterable {
     }
     
     func address(on network: LocalUserDefaults.FlowNetworkType = LocalUserDefaults.shared.flowNetwork ) -> Flow.Address? {
-        switch (self, network) {
-            // Mainnet
-        case (.fungibleToken, .mainnet):
-            return Flow.Address(hex: "0xf233dcee88fe0abe")
-        case (.flowToken, .mainnet):
-            return Flow.Address(hex: "0x1654653399040a61")
-        case (.flowFees, .mainnet):
-            return Flow.Address(hex: "0xf919ee77447b7497")
-        case (.flowTablesTaking, .mainnet):
-            return Flow.Address(hex: "0x8624b52f9ddcd04a")
-        case (.lockedTokens, .mainnet):
-            return Flow.Address(hex: "0x8d0e87b65159ae63")
-        case (.stakingProxy, .mainnet):
-            return Flow.Address(hex: "0x62430cf28c26d095")
-        case (.nonFungibleToken, .mainnet):
-            return Flow.Address(hex: "0x1d7e57aa55817448")
-        case (.findToken, .mainnet):
-            return Flow.Address(hex: "0x097bafa4e0b48eef")
-        case (.domainsToken, .mainnet):
-            return Flow.Address(hex: "0x233eb012d34b0070")
-        case (.flownsToken, .mainnet):
-            return Flow.Address(hex: "0x233eb012d34b0070")
-        case (.metadataViews, .mainnet):
-            return Flow.Address(hex: "0x1d7e57aa55817448")
-        case (.swapRouter, .mainnet):
-            return Flow.Address(hex: "0xa6850776a94e6551")
-        case (.swapError, .mainnet):
-            return Flow.Address(hex: "0xb78ef7afa52ff906")
-        case (.stakingCollection, .mainnet):
-            return Flow.Address(hex: "0x8d0e87b65159ae63")
-        case (.flowIDTableStaking, .mainnet):
-            return Flow.Address(hex: "0x8624b52f9ddcd04a")
-        case (.hybridCustody, .mainnet):
-#warning("mainnet address need be replaced")
-            return Flow.Address(hex: "0x8624b52f9ddcd04a")
-            
-            // Testnet
-        case (.fungibleToken, .testnet):
-            return Flow.Address(hex: "0x9a0766d93b6608b7")
-        case (.flowToken, .testnet):
-            return Flow.Address(hex: "0x7e60df042a9c0868")
-        case (.flowFees, .testnet):
-            return Flow.Address(hex: "0x912d5440f7e3769e")
-        case (.flowTablesTaking, .testnet):
-            return Flow.Address(hex: "0x9eca2b38b18b5dfe")
-        case (.lockedTokens, .testnet):
-            return Flow.Address(hex: "0x95e019a17d0e23d7")
-        case (.stakingProxy, .testnet):
-            return Flow.Address(hex: "0x7aad92e5a0715d21")
-        case (.nonFungibleToken, .testnet):
-            return Flow.Address(hex: "0x631e88ae7f1d7c20")
-        case (.findToken, .testnet):
-            return Flow.Address(hex: "0xa16ab1d0abde3625")
-        case (.domainsToken, .testnet):
-            return Flow.Address(hex: "0xb05b2abb42335e88")
-        case (.flownsToken, .testnet):
-            return Flow.Address(hex: "0xb05b2abb42335e88")
-        case (.metadataViews, .testnet):
-            return Flow.Address(hex: "0x631e88ae7f1d7c20")
-        case (.stakingCollection, .testnet):
-            return Flow.Address(hex: "0x95e019a17d0e23d7")
-        case (.flowIDTableStaking, .testnet):
-            return Flow.Address(hex: "0x9eca2b38b18b5dfe")
-        case (.swapRouter, .testnet):
-            return Flow.Address(hex: "0x2f8af5ed05bbde0d")
-        case (.swapError, .testnet):
-            return Flow.Address(hex: "0xddb929038d45d4b3")
-        case (.hybridCustody, .testnet):
-            return Flow.Address(hex: "0x96b15ff6dfde11fe")
-            
-            // Sandboxnet
-        case (.fungibleToken, .sandboxnet):
-            return Flow.Address(hex: "0xe20612a0776ca4bf")
-        case (.flowToken, .sandboxnet):
-            return Flow.Address(hex: "0x0661ab7d6696a460")
-        case (.flowFees, .sandboxnet):
-            return Flow.Address(hex: "0xe92c2039bbe9da96")
-        case (.flowTablesTaking, .sandboxnet):
-            return Flow.Address(hex: "0xf4527793ee68aede")
-        case (.lockedTokens, .sandboxnet):
-            return Flow.Address(hex: "0xf4527793ee68aede")
-        case (.nonFungibleToken, .sandboxnet):
-            return Flow.Address(hex: "0x83ade3a54eb3870c")
-        case (.domainsToken, .sandboxnet):
-            return Flow.Address(hex: "0x8998b29311d1f3da")
-        case (.flownsToken, .sandboxnet):
-            return Flow.Address(hex: "0x8998b29311d1f3da")
-            
-        default:
+        guard let addressMap = RemoteConfigManager.shared.getContarctAddress(network), let address = addressMap[self.rawValue], !address.isEmpty else {
             return nil
         }
+        
+        return Flow.Address(hex: address)
     }
 }

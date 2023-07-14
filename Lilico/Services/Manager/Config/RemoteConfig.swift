@@ -8,6 +8,12 @@
 import Foundation
 
 extension RemoteConfigManager {
+    struct ContractAddress: Codable {
+        let mainnet: [String: String]?
+        let testnet: [String: String]?
+        let sandboxnet: [String: String]?
+    }
+    
     struct Config: Codable {
         let features: Features
         let payer: Payer

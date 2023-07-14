@@ -1023,6 +1023,8 @@
 		6A18DDFA2A3AFFC6003232AB /* ChildAccountLinkViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A18DDF82A3AFFC6003232AB /* ChildAccountLinkViewModel.swift */; };
 		6A18DDFC2A3B10F5003232AB /* ChildAccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A18DDFB2A3B10F5003232AB /* ChildAccountManager.swift */; };
 		6A18DDFD2A3B10F5003232AB /* ChildAccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A18DDFB2A3B10F5003232AB /* ChildAccountManager.swift */; };
+		6A19A74E2A612FAB00B84F09 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 6A19A74D2A612FAB00B84F09 /* FirebaseMessaging */; };
+		6A19A7502A612FC600B84F09 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 6A19A74F2A612FC600B84F09 /* FirebaseMessaging */; };
 		6A19E61D2A25DDCB00392206 /* WalletConnectRouter in Frameworks */ = {isa = PBXBuildFile; productRef = 6A19E61C2A25DDCB00392206 /* WalletConnectRouter */; };
 		6A19E61E2A25DE4800392206 /* SymmetricEncryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15ADAE2C28F51ECE0014B722 /* SymmetricEncryptionTests.swift */; };
 		6A204C652860236600D0D3A4 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A204C632860236600D0D3A4 /* ViewExtensions.swift */; };
@@ -2245,6 +2247,7 @@
 				155E371528D35E5200834C30 /* SwiftProtobuf.xcframework in Frameworks */,
 				6A5F15FA2A3185860035AC38 /* SwiftyBeaver in Frameworks */,
 				4E9BFF5D2867631300601339 /* UIKit.framework in Frameworks */,
+				6A19A74E2A612FAB00B84F09 /* FirebaseMessaging in Frameworks */,
 				6AE1D48E287690E7000FA0B7 /* SwiftUIPager in Frameworks */,
 				6AADFB54293CB7F800E5D6B2 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				15D6D8F628CBAEE000CBA152 /* FancyScrollView in Frameworks */,
@@ -2301,6 +2304,7 @@
 				15F517FB28C6574C00504FDC /* Atlantis in Frameworks */,
 				15C58C402868A4EE00BD4FC6 /* FirebaseAuth in Frameworks */,
 				6AADFB56293CB81A00E5D6B2 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
+				6A19A7502A612FC600B84F09 /* FirebaseMessaging in Frameworks */,
 				155E371928D35E6500834C30 /* SwiftProtobuf.xcframework in Frameworks */,
 				15D3BA7028C3B8E3009AEA6E /* ViewAnimator in Frameworks */,
 				15C58C412868A4EE00BD4FC6 /* AuthenticationServices.framework in Frameworks */,
@@ -4977,6 +4981,7 @@
 				157D91BD293E102C00AC102B /* GoogleSignIn */,
 				6ABFE5A029A711ED00AA1688 /* Gzip */,
 				6A5F15F92A3185860035AC38 /* SwiftyBeaver */,
+				6A19A74D2A612FAB00B84F09 /* FirebaseMessaging */,
 			);
 			productName = "Lilico-lite";
 			productReference = 154B8928276A1EEB00780E93 /* Lilico-dev.app */;
@@ -5047,6 +5052,7 @@
 				6AADFB55293CB81A00E5D6B2 /* FirebaseAnalyticsWithoutAdIdSupport */,
 				1549CF02299A10C2002B37A5 /* Gzip */,
 				6A5F15F72A3185310035AC38 /* SwiftyBeaver */,
+				6A19A74F2A612FC600B84F09 /* FirebaseMessaging */,
 			);
 			productName = "Lilico-lite";
 			productReference = 15C58C6D2868A4EE00BD4FC6 /* Lilico.app */;
@@ -8062,6 +8068,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 157046712793237300D1747B /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		6A19A74D2A612FAB00B84F09 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 154B887C2765EBA700780E93 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		6A19A74F2A612FC600B84F09 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 154B887C2765EBA700780E93 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 		6A19E61C2A25DDCB00392206 /* WalletConnectRouter */ = {
 			isa = XCSwiftPackageProductDependency;
