@@ -1350,6 +1350,8 @@
 		6ADA4C0228F180C400C7B341 /* UIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ADA4C0028F180C400C7B341 /* UIImageView.swift */; };
 		6ADBBC9F28D1755F00F1F0DA /* AccountRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ADBBC9E28D1755F00F1F0DA /* AccountRequests.swift */; };
 		6ADBBCA028D1755F00F1F0DA /* AccountRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ADBBC9E28D1755F00F1F0DA /* AccountRequests.swift */; };
+		6ADC280C2A651AFD003B0B3A /* PushHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ADC280B2A651AFD003B0B3A /* PushHandler.swift */; };
+		6ADC280D2A651AFD003B0B3A /* PushHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ADC280B2A651AFD003B0B3A /* PushHandler.swift */; };
 		6AE08417284EF667003BEEF0 /* LocalUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE08415284EF667003BEEF0 /* LocalUserDefaults.swift */; };
 		6AE0841B284EFF6D003BEEF0 /* DeveloperModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE08419284EFF6D003BEEF0 /* DeveloperModeView.swift */; };
 		6AE0841E284F58F3003BEEF0 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE0841C284F58F3003BEEF0 /* UserModel.swift */; };
@@ -2155,6 +2157,7 @@
 		6ADA4BFD28F17CEA00C7B341 /* BrowserSearchDAppItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserSearchDAppItemCell.swift; sourceTree = "<group>"; };
 		6ADA4C0028F180C400C7B341 /* UIImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageView.swift; sourceTree = "<group>"; };
 		6ADBBC9E28D1755F00F1F0DA /* AccountRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRequests.swift; sourceTree = "<group>"; };
+		6ADC280B2A651AFD003B0B3A /* PushHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushHandler.swift; sourceTree = "<group>"; };
 		6AE08415284EF667003BEEF0 /* LocalUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalUserDefaults.swift; sourceTree = "<group>"; };
 		6AE08419284EFF6D003BEEF0 /* DeveloperModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperModeView.swift; sourceTree = "<group>"; };
 		6AE0841C284F58F3003BEEF0 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
@@ -3872,6 +3875,7 @@
 				6A46754928F2D50500F705A8 /* DBManager.swift */,
 				6A998DA82936769000EF133B /* StakingManager.swift */,
 				6A18DDFB2A3B10F5003232AB /* ChildAccountManager.swift */,
+				6ADC280B2A651AFD003B0B3A /* PushHandler.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -5832,6 +5836,7 @@
 				15DC21E927819C57000B187A /* StateColors_OOD.swift in Sources */,
 				6AF4A6CB28D472F600B12FAB /* FlownsRequests.swift in Sources */,
 				15DC1D3F27809F83000B187A /* BackupManager.swift in Sources */,
+				6ADC280D2A651AFD003B0B3A /* PushHandler.swift in Sources */,
 				15DC21E127819C56000B187A /* StateOpacities_D.swift in Sources */,
 				6A6BE742288805140012588F /* GoogleDriveAPI.swift in Sources */,
 				6A6C410828D84A1100074DE9 /* InboxViewModel.swift in Sources */,
@@ -6447,6 +6452,7 @@
 				6AF4A6CA28D472F600B12FAB /* FlownsRequests.swift in Sources */,
 				15C58BC82868A4EE00BD4FC6 /* BackupManager.swift in Sources */,
 				15C58BCB2868A4EE00BD4FC6 /* StateOpacities_D.swift in Sources */,
+				6ADC280C2A651AFD003B0B3A /* PushHandler.swift in Sources */,
 				6A6BE741288805130012588F /* GoogleDriveAPI.swift in Sources */,
 				15C58BCF2868A4EE00BD4FC6 /* View.ConditionalViewModifiers.swift in Sources */,
 				6A6C410728D84A1100074DE9 /* InboxViewModel.swift in Sources */,
