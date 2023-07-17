@@ -23,6 +23,7 @@ extension ProfileView {
         var currency: String = CurrencyCache.cache.currentCurrency.rawValue
         var colorScheme: ColorScheme?
         var backupFetchingState: BackupFetchingState = .manually
+        var isPushEnabled: Bool = PushHandler.shared.isPushEnabled
     }
 
     enum ProfileInput {}
@@ -59,6 +60,14 @@ extension ProfileView {
                 .receive(on: DispatchQueue.main)
                 .sink { _ in
                     self.refreshBackupState()
+                }.store(in: &cancelSets)
+            
+            PushHandler.shared.$isPushEnabled
+                .dropFirst()
+                .receive(on: DispatchQueue.main)
+                .map { $0 }
+                .sink { isEnabled in
+                    self.state.isPushEnabled = isEnabled
                 }.store(in: &cancelSets)
         }
 
@@ -117,5 +126,11 @@ extension ProfileView.ProfileViewModel {
     
     func showSwitchProfileAction() {
         Router.route(to: RouteMap.Profile.switchProfile)
+    }
+    
+    func showSystemSettingAction() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
+        }
     }
 }

@@ -424,31 +424,48 @@ extension ProfileView {
     struct GeneralSectionView: View {
         @EnvironmentObject private var vm: ProfileViewModel
 
-        enum Row: CaseIterable {
+        enum Row: Hashable {
+            case notification
             case currency
             case theme
-            case notification
         }
 
         var body: some View {
             VStack {
                 Section {
                     // Hide notification
-                    ForEach([Row.currency, Row.theme], id: \.self) { row in
+                    ForEach([Row.notification, Row.currency, Row.theme], id: \.self) { row in
                         
-                        Button {
-                            switch row {
-                            case .theme:
-                                Router.route(to: RouteMap.Profile.themeChange)
-                            case .currency:
-                                Router.route(to: RouteMap.Profile.currency)
-                            default:
-                                break
-                            }
-                        } label: {
-                            ProfileView.SettingItemCell(iconName: row.iconName, title: row.title, style: row.style, desc: row.desc(with: vm), toggle: row.toggle)
+                        if row == Row.notification {
+                            HStack {
+                                Image("icon-notification")
+                                Text("notifications".localized).font(.inter()).frame(maxWidth: .infinity, alignment: .leading)
                                 
+                                Spacer()
+                                
+                                Toggle(isOn: $vm.state.isPushEnabled) {}
+                                    .tint(.LL.Primary.salmonPrimary)
+                                    .onTapGesture {
+                                        vm.showSystemSettingAction()
+                                    }
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+                        } else {
+                            Button {
+                                switch row {
+                                case .theme:
+                                    Router.route(to: RouteMap.Profile.themeChange)
+                                case .currency:
+                                    Router.route(to: RouteMap.Profile.currency)
+                                default:
+                                    break
+                                }
+                            } label: {
+                                ProfileView.SettingItemCell(iconName: row.iconName, title: row.title, style: row.style, desc: row.desc(with: vm), toggle: row.toggle)
+                            }
                         }
+                        
                         
                         if row != .theme {
                             Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
