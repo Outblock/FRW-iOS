@@ -132,7 +132,7 @@ extension AppDelegate {
         _ = ChildAccountManager.shared
         WalletManager.shared.bindChildAccountManager()
         
-        PushHandler.shared.requestPermission()
+//        PushHandler.shared.requestPermission()
     }
     
     private func commonConfig() {

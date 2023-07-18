@@ -425,7 +425,6 @@ extension ProfileView {
         @EnvironmentObject private var vm: ProfileViewModel
 
         enum Row: Hashable {
-            case notification
             case currency
             case theme
         }
@@ -436,34 +435,17 @@ extension ProfileView {
                     // Hide notification
                     ForEach([Row.notification, Row.currency, Row.theme], id: \.self) { row in
                         
-                        if row == Row.notification {
-                            HStack {
-                                Image("icon-notification")
-                                Text("notifications".localized).font(.inter()).frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                Spacer()
-                                
-                                Toggle(isOn: $vm.state.isPushEnabled) {}
-                                    .tint(.LL.Primary.salmonPrimary)
-                                    .onTapGesture {
-                                        vm.showSystemSettingAction()
-                                    }
+                        Button {
+                            switch row {
+                            case .theme:
+                                Router.route(to: RouteMap.Profile.themeChange)
+                            case .currency:
+                                Router.route(to: RouteMap.Profile.currency)
+                            default:
+                                break
                             }
-                            .frame(height: 64)
-                            .padding(.horizontal, 16)
-                        } else {
-                            Button {
-                                switch row {
-                                case .theme:
-                                    Router.route(to: RouteMap.Profile.themeChange)
-                                case .currency:
-                                    Router.route(to: RouteMap.Profile.currency)
-                                default:
-                                    break
-                                }
-                            } label: {
-                                ProfileView.SettingItemCell(iconName: row.iconName, title: row.title, style: row.style, desc: row.desc(with: vm), toggle: row.toggle)
-                            }
+                        } label: {
+                            ProfileView.SettingItemCell(iconName: row.iconName, title: row.title, style: row.style, desc: row.desc(with: vm), toggle: row.toggle)
                         }
                         
                         
