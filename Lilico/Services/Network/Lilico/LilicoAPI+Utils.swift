@@ -11,18 +11,35 @@ import Moya
 extension LilicoAPI {
     enum Utils {
         case currencyRate(Currency)
+        case retoken(String, String)
     }
 }
 
-extension LilicoAPI.Utils: TargetType {
+extension LilicoAPI.Utils: TargetType, AccessTokenAuthorizable {
+    var authorizationType: AuthorizationType? {
+        switch self {
+        case .currencyRate:
+            return nil
+        case .retoken:
+            return .bearer
+        }
+    }
+    
     var baseURL: URL {
-        return .init(string: "https://api.exchangerate.host")!
+        switch self {
+        case .currencyRate:
+            return .init(string: "https://api.exchangerate.host")!
+        case .retoken:
+            return .init(string: "https://scanner.lilico.app")!
+        }
     }
     
     var path: String {
         switch self {
         case .currencyRate:
             return "/convert"
+        case .retoken:
+            return "/retoken"
         }
     }
     
@@ -30,6 +47,8 @@ extension LilicoAPI.Utils: TargetType {
         switch self {
         case .currencyRate:
             return .get
+        case .retoken:
+            return .post
         }
     }
     
@@ -37,10 +56,17 @@ extension LilicoAPI.Utils: TargetType {
         switch self {
         case .currencyRate(let toCurrency):
             return .requestParameters(parameters: ["from": "USD", "to": toCurrency.rawValue], encoding: URLEncoding.queryString)
+        case .retoken(let token, let address):
+            return .requestJSONEncodable(["token": token, "address": address])
         }
     }
     
     var headers: [String : String]? {
-        return nil
+        switch self {
+        case .currencyRate:
+            return nil
+        case .retoken:
+            return LilicoAPI.commonHeaders
+        }
     }
 }

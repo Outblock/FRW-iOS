@@ -15,6 +15,7 @@ import UIKit
 import WalletCore
 import Translized
 import SwiftyBeaver
+import FirebaseMessaging
 
 #if DEBUG
 import Atlantis
@@ -130,6 +131,8 @@ extension AppDelegate {
         
         _ = ChildAccountManager.shared
         WalletManager.shared.bindChildAccountManager()
+        
+//        PushHandler.shared.requestPermission()
     }
     
     private func commonConfig() {

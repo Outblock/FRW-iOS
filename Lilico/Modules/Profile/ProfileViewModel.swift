@@ -118,4 +118,10 @@ extension ProfileView.ProfileViewModel {
     func showSwitchProfileAction() {
         Router.route(to: RouteMap.Profile.switchProfile)
     }
+    
+    func showSystemSettingAction() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
+        }
+    }
 }

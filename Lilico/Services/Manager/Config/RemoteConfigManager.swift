@@ -14,6 +14,7 @@ class RemoteConfigManager {
     let emptyAddress = "0x0000000000000000"
     
     var config: Config?
+    var contractAddress: ContractAddress?
     
     var isFailed: Bool = false
     
@@ -59,18 +60,31 @@ class RemoteConfigManager {
         }
     }
     
+    func getContarctAddress(_ network: LocalUserDefaults.FlowNetworkType) -> [String: String]? {
+        switch network {
+        case .mainnet:
+            return contractAddress?.mainnet
+        case .testnet:
+            return contractAddress?.testnet
+        case .sandboxnet:
+            return contractAddress?.sandboxnet
+        }
+    }
+    
     init() {
-        Task {
+        do {
+            let config: Config = try FirebaseConfig.config.fetch(decoder: JSONDecoder())
+            self.config = config
+            self.contractAddress = try FirebaseConfig.contractAddress.fetch(decoder: JSONDecoder())
+        } catch {
             do {
-                let config: Config = try await FirebaseConfig.config.fetch(decoder: JSONDecoder())
+                log.warning("will load from local")
+                let config: Config = try FirebaseConfig.config.fetchLocal()
                 self.config = config
+                self.contractAddress = try FirebaseConfig.contractAddress.fetchLocal()
             } catch {
-                do {
-                    let config: Config = try await FirebaseConfig.config.fetchLocal()
-                    self.config = config
-                } catch {
-                    self.isFailed = true
-                }
+                self.isFailed = true
+                log.error("load failed")
             }
         }
     }

@@ -24,6 +24,9 @@ protocol RouterContentDelegate {
     
     /// handle the back button action, default implementation is Router.pop()
     func backButtonAction()
+    
+    /// config navigation item
+    func configNavigationItem(_ navigationItem: UINavigationItem)
 }
 
 extension RouterContentDelegate {
@@ -41,6 +44,10 @@ extension RouterContentDelegate {
     
     func backButtonAction() {
         Router.pop()
+    }
+    
+    func configNavigationItem(_ navigationItem: UINavigationItem) {
+        
     }
 }
 
@@ -65,6 +72,8 @@ class RouteableUIHostingController<Content: RouteableView>: UIHostingController<
         
         navigationController?.navigationBar.prefersLargeTitles = rootView.navigationBarTitleDisplayMode == .large
         navigationItem.largeTitleDisplayMode = rootView.navigationBarTitleDisplayMode == .large ? .always : .never
+        
+        rootView.configNavigationItem(navigationItem)
     }
     
     override func viewWillAppear(_ animated: Bool) {
