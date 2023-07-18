@@ -7181,9 +7181,9 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = LilicoNotificationServiceExtension/LilicoNotificationServiceExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
 				DEVELOPMENT_TEAM = C7CT739SU9;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = LilicoNotificationServiceExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LilicoNotificationServiceExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -7193,7 +7193,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "$(CFBundleShortVersionString)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.LilicoNotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -7209,9 +7209,9 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = LilicoNotificationServiceExtension/LilicoNotificationServiceExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
 				DEVELOPMENT_TEAM = C7CT739SU9;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = LilicoNotificationServiceExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LilicoNotificationServiceExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -7221,7 +7221,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "$(CFBundleShortVersionString)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.LilicoNotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
