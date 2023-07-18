@@ -148,10 +148,11 @@ class WalletConnectManager: ObservableObject {
         // TODO: Adapt proposal data to be used on the view
         Sign.instance.sessionProposalPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] sessionProposal in
+            .sink { [weak self] context in
                 print("[RESPONDER] WC: Did receive session proposal")
-                self?.currentProposal = sessionProposal
-                
+                self?.currentProposal = context.proposal
+                let sessionProposal = context.proposal
+
                 let pairings = Pair.instance.getPairings()
                 if pairings.contains(where: { $0.peer == sessionProposal.proposer }) {
                     self?.approveSession(proposal: sessionProposal)
@@ -203,11 +204,11 @@ class WalletConnectManager: ObservableObject {
         
         Sign.instance.sessionRequestPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] sessionRequest in
+            .sink { [weak self] data in
                 print("[RESPONDER] WC: Did receive session request")
-                
-                self?.handleRequest(sessionRequest)
-                
+
+                self?.handleRequest(data.request)
+
             }.store(in: &publishers)
         
         Sign.instance.sessionDeletePublisher
@@ -435,9 +436,11 @@ extension WalletConnectManager {
         proposal.requiredNamespaces.forEach {
             let caip2Namespace = $0.key
             let proposalNamespace = $0.value
-            let accounts = Set(proposalNamespace.chains.compactMap { WalletConnectSign.Account($0.absoluteString + ":\(account)") } )
-            let sessionNamespace = SessionNamespace(accounts: accounts, methods: proposalNamespace.methods, events: proposalNamespace.events)
-            sessionNamespaces[caip2Namespace] = sessionNamespace
+            if let chains = proposalNamespace.chains  {
+                let accounts = Set(chains.compactMap { WalletConnectSign.Account($0.absoluteString + ":\(account)") } )
+                let sessionNamespace = SessionNamespace(accounts: accounts, methods: proposalNamespace.methods, events: proposalNamespace.events)
+                sessionNamespaces[caip2Namespace] = sessionNamespace
+            }
         }
         
         let namespaces = sessionNamespaces

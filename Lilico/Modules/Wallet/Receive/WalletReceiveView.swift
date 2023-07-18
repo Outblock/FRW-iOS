@@ -236,48 +236,25 @@ struct WalletReceiveView: RouteableView {
 }
 
 extension WalletReceiveView {
-    var contentShape: QRCode.Shape {
-        let shape = QRCode.Shape()
-        shape.eye = QRCode.EyeShape.Squircle()
-        shape.data = QRCode.DataShape.Circle(inset: 1 )
-        return shape
-    }
     
-    var color: Color {
-        Color.LL.Neutrals.text
+    func doc(text: String, eyeColor: UIColor) -> QRCode.Document {
+        let d = QRCode.Document(generator: QRCodeGenerator_External())
+        d.utf8String = text
+        d.design.backgroundColor(UIColor(hex: "#FAFAFA").cgColor)
+        d.design.shape.eye = QRCode.EyeShape.Squircle()
+        d.design.style.pupil = QRCode.FillStyle.Solid(eyeColor.cgColor)
+        d.design.shape.onPixels = QRCode.PixelShape.Circle(insetFraction: 0.1)
+        d.design.style.onPixels = QRCode.FillStyle.Solid(UIColor(hex: "#333333").cgColor)
+        return d
     }
-    
+
+    var eyeColor: UIColor {
+        currentNetwork.isMainnet ?
+        UIColor.LL.Primary.salmonPrimary : UIColor(hex: "#333333")
+    }
+
     var qrCodeView: some View {
-        let codeView = QRCodeUI(text: vm.address, errorCorrection: .high, contentShape: contentShape)!
-        
-        let v =
-        ZStack {
-            codeView
-                .components(.eyeOuter)
-                .fill(color)
-                .colorScheme(.light)
-            
-            codeView
-                .components(.eyePupil)
-                .fill(
-                    currentNetwork.isMainnet ?
-                    Color.LL.Primary.salmonPrimary:
-                    Color.LL.text
-                )
-                .colorScheme(.light)
-            
-            codeView
-                .components(.onPixels)
-                .fill(color)
-                .colorScheme(.light)
-        }
-        .padding(8)
-        .background(
-            Color.LL.Neutrals.background
-        )
-        .colorScheme(.light)
-        .preferredColorScheme(.light)
-        
-        return v
+        QRCodeDocumentUIView(document: doc(text: vm.address,
+                                           eyeColor: eyeColor))
     }
 }
