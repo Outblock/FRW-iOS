@@ -487,6 +487,8 @@ extension ProfileView.GeneralSectionView.Row {
             return "icon-currency"
         case .theme:
             return "icon-theme"
+        default:
+            return ""
         }
     }
 
@@ -496,6 +498,8 @@ extension ProfileView.GeneralSectionView.Row {
             return "currency".localized
         case .theme:
             return "theme".localized
+        default:
+            return ""
         }
     }
 
@@ -505,6 +509,8 @@ extension ProfileView.GeneralSectionView.Row {
             return .desc
         case .theme:
             return .desc
+        default:
+            return .none
         }
     }
 
@@ -513,6 +519,8 @@ extension ProfileView.GeneralSectionView.Row {
         case .currency:
             return false
         case .theme:
+            return false
+        default:
             return false
         }
     }
@@ -523,6 +531,8 @@ extension ProfileView.GeneralSectionView.Row {
             return vm.state.currency
         case .theme:
             return vm.state.colorScheme?.desc ?? "auto".localized
+        default:
+            return ""
         }
     }
 }
