@@ -976,6 +976,7 @@
 		6A06CB1128AA54A600C81BE1 /* NFTUIKitGridStyleHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A06CB0F28AA54A600C81BE1 /* NFTUIKitGridStyleHandler.swift */; };
 		6A074E382922962D00D976F1 /* SelectProviderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A074E372922962D00D976F1 /* SelectProviderView.swift */; };
 		6A074E392922962D00D976F1 /* SelectProviderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A074E372922962D00D976F1 /* SelectProviderView.swift */; };
+		6A0B10442A664A1E00023767 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 6A0B10432A664A1E00023767 /* FirebaseMessaging */; };
 		6A0C6E1329540682005F0EF6 /* EnvDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0C6E1229540682005F0EF6 /* EnvDefine.swift */; };
 		6A0C6E1629540696005F0EF6 /* EnvDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0C6E1529540696005F0EF6 /* EnvDefine.swift */; };
 		6A0C6E1C29542DFC005F0EF6 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9DFBC429519D9800E10EAC /* WidgetKit.framework */; };
@@ -2226,6 +2227,7 @@
 				1545705029461AB7004A278E /* MJRefresh in Frameworks */,
 				6AC62AFA286AE964000876D9 /* FirebaseStorage in Frameworks */,
 				6A19E61D2A25DDCB00392206 /* WalletConnectRouter in Frameworks */,
+				6A0B10442A664A1E00023767 /* FirebaseMessaging in Frameworks */,
 				6AC62B00286AE9D2000876D9 /* GoogleAPIClientForRESTCore in Frameworks */,
 				6AC62AF8286AE955000876D9 /* FirebaseRemoteConfig in Frameworks */,
 				1545705229461ABD004A278E /* FMDB in Frameworks */,
@@ -4912,6 +4914,7 @@
 				1545704F29461AB7004A278E /* MJRefresh */,
 				1545705129461ABD004A278E /* FMDB */,
 				6A19E61C2A25DDCB00392206 /* WalletConnectRouter */,
+				6A0B10432A664A1E00023767 /* FirebaseMessaging */,
 			);
 			productName = LilicoTests;
 			productReference = 1500783B286830EF00A00109 /* LilicoTests.xctest */;
@@ -8075,6 +8078,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6A0454CB28768E9E00A9131C /* XCRemoteSwiftPackageReference "SwiftUIPager" */;
 			productName = SwiftUIPager;
+		};
+		6A0B10432A664A1E00023767 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 154B887C2765EBA700780E93 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 		6A0C6E3129542EC9005F0EF6 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
