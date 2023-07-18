@@ -434,7 +434,7 @@ extension ProfileView {
             VStack {
                 Section {
                     // Hide notification
-                    ForEach([Row.notification, Row.currency, Row.theme], id: \.self) { row in
+                    ForEach([Row.currency, Row.theme], id: \.self) { row in
                         
                         if row == Row.notification {
                             HStack {
@@ -487,8 +487,6 @@ extension ProfileView.GeneralSectionView.Row {
             return "icon-currency"
         case .theme:
             return "icon-theme"
-        case .notification:
-            return "icon-notification"
         }
     }
 
@@ -498,8 +496,6 @@ extension ProfileView.GeneralSectionView.Row {
             return "currency".localized
         case .theme:
             return "theme".localized
-        case .notification:
-            return "notifications".localized
         }
     }
 
@@ -509,8 +505,6 @@ extension ProfileView.GeneralSectionView.Row {
             return .desc
         case .theme:
             return .desc
-        case .notification:
-            return .toggle
         }
     }
 
@@ -519,8 +513,6 @@ extension ProfileView.GeneralSectionView.Row {
         case .currency:
             return false
         case .theme:
-            return false
-        case .notification:
             return false
         }
     }
@@ -531,8 +523,6 @@ extension ProfileView.GeneralSectionView.Row {
             return vm.state.currency
         case .theme:
             return vm.state.colorScheme?.desc ?? "auto".localized
-        case .notification:
-            return ""
         }
     }
 }
