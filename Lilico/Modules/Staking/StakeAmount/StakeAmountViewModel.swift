@@ -12,7 +12,8 @@ extension StakeAmountViewModel {
     enum ErrorType {
         case none
         case insufficientBalance
-        case belowMinimum
+        case belowMinimumBalance
+        case belowMinimumAmount
         
         var desc: String {
             switch self {
@@ -20,9 +21,11 @@ extension StakeAmountViewModel {
                 return ""
             case .insufficientBalance:
                 return "insufficient_balance".localized
-            case .belowMinimum:
+            case .belowMinimumBalance:
                 // TODO: Use localized to replace
-                return "The balance cannot be less than 0.01"
+                return "The balance cannot be less than 0.001"
+            case .belowMinimumAmount:
+                return "50 FLOW minimum required"
             }
         }
     }
@@ -90,7 +93,12 @@ class StakeAmountViewModel: ObservableObject {
         }
         
         if balance - inputTextNum < 0.001, !isUnstake {
-            errorType = .belowMinimum
+            errorType = .belowMinimumBalance
+            return
+        }
+        
+        if inputTextNum < 50, !isUnstake {
+            errorType = .belowMinimumAmount
             return
         }
         
