@@ -690,10 +690,12 @@ extension FlowNetwork {
 
         let result: [ChildAccount] = decode.keys.compactMap { key in
             guard let value = decode[key],
+                  JSONSerialization.isValidJSONObject(value),
                   let data = try? JSONSerialization.data(withJSONObject: value),
                   var model = try? JSONDecoder().decode(ChildAccount.self, from: data) else {
-                return nil
+                return ChildAccount(address: key, name: nil, desc: nil, icon: nil, pinTime: 0)
             }
+            
             model.addr = key
             return model
         }

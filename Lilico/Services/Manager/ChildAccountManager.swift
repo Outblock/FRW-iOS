@@ -9,21 +9,16 @@ import SwiftUI
 import Combine
 
 struct ChildAccount: Codable {
-    var addr: String?
-    var address: String {
-        addr ?? ""
+    var addr: String
+    let name: String?
+    var aName: String {
+        return name ?? "Linked Account"
     }
-
-    let name: String
     
-    let description: String
-    var desc: String {
-        description
-    }
-
-    let thumbnail: Thumbnail
+    let description: String?
+    let thumbnail: Thumbnail?
     var icon: String {
-        thumbnail.url
+        thumbnail?.url ?? "https://lilico.app/placeholder.png"
     }
 
     var time: TimeInterval?
@@ -36,10 +31,10 @@ struct ChildAccount: Codable {
     }
 
     struct Thumbnail: Codable {
-        let url: String
+        let url: String?
     }
 
-    init(address: String, name: String, desc: String, icon: String, pinTime: TimeInterval) {
+    init(address: String, name: String?, desc: String?, icon: String?, pinTime: TimeInterval) {
         self.addr = address
         self.name = name
         self.description = desc
@@ -48,7 +43,7 @@ struct ChildAccount: Codable {
     }
     
     var isSelected: Bool {
-        if let selectedChildAccount = ChildAccountManager.shared.selectedChildAccount, selectedChildAccount.address == address, !address.isEmpty {
+        if let selectedChildAccount = ChildAccountManager.shared.selectedChildAccount, selectedChildAccount.addr == addr, !addr.isEmpty {
             return true
         }
         
@@ -155,8 +150,8 @@ class ChildAccountManager: ObservableObject {
                     
                     let oldList = MultiAccountStorage.shared.getChildAccounts(uid: uid, address: address) ?? []
                     let finalList = list.map { newAccount in
-                        if let oldAccount = oldList.first(where: { $0.address == newAccount.address }) {
-                            return ChildAccount(address: newAccount.address, name: newAccount.name, desc: newAccount.desc, icon: newAccount.icon, pinTime: oldAccount.pinTime)
+                        if let oldAccount = oldList.first(where: { $0.addr == newAccount.addr }) {
+                            return ChildAccount(address: newAccount.addr, name: newAccount.name, desc: newAccount.description, icon: newAccount.icon, pinTime: oldAccount.pinTime)
                         } else {
                             return newAccount
                         }
@@ -184,7 +179,7 @@ class ChildAccountManager: ObservableObject {
             return
         }
         
-        if childAccounts.contains(where: { $0.address == selectedChildAccount.address }) == false {
+        if childAccounts.contains(where: { $0.addr == selectedChildAccount.addr }) == false {
             self.selectedChildAccount = nil
         }
     }
@@ -193,14 +188,14 @@ class ChildAccountManager: ObservableObject {
 extension ChildAccountManager {
     func togglePinStatus(_ childAccount: ChildAccount) {
         var oldList = childAccounts
-        guard let oldChildAccount = oldList.first(where: { $0.address == childAccount.address }) else {
+        guard let oldChildAccount = oldList.first(where: { $0.addr == childAccount.addr }) else {
             log.warning("child account is not exist")
             return
         }
         
-        oldList.removeAll(where: { $0.address == childAccount.address })
+        oldList.removeAll(where: { $0.addr == childAccount.addr })
         
-        let newChildAccount = ChildAccount(address: oldChildAccount.address, name: oldChildAccount.name, desc: oldChildAccount.desc, icon: oldChildAccount.icon, pinTime: oldChildAccount.isPinned ? 0 : Date().timeIntervalSince1970)
+        let newChildAccount = ChildAccount(address: oldChildAccount.addr, name: oldChildAccount.name, desc: oldChildAccount.description, icon: oldChildAccount.icon, pinTime: oldChildAccount.isPinned ? 0 : Date().timeIntervalSince1970)
         oldList.append(newChildAccount)
         
         childAccounts = oldList
@@ -215,7 +210,7 @@ extension ChildAccountManager {
     
     func didUnlinkAccount(_ childAccount: ChildAccount) {
         var oldList = childAccounts
-        oldList.removeAll(where: { $0.address == childAccount.address })
+        oldList.removeAll(where: { $0.addr == childAccount.addr })
         childAccounts = oldList
         
         guard let uid = UserManager.shared.activatedUID, let address = WalletManager.shared.getPrimaryWalletAddress() else {
@@ -227,7 +222,7 @@ extension ChildAccountManager {
     }
     
     func select(_ childAccount: ChildAccount?) {
-        if selectedChildAccount?.address == childAccount?.address {
+        if selectedChildAccount?.addr == childAccount?.addr {
             return
         }
         

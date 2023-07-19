@@ -79,7 +79,7 @@ struct AccountSettingView: RouteableView {
                 .foregroundColor(Color.LL.Neutrals.text4)
                 .font(.inter(size: 16, weight: .bold))
             
-            ForEach(cm.sortedChildAccounts, id: \.address) { childAccount in
+            ForEach(cm.sortedChildAccounts, id: \.addr) { childAccount in
                 Button {
                     Router.route(to: RouteMap.Profile.accountDetail(childAccount))
                 } label: {
@@ -103,11 +103,11 @@ struct AccountSettingView: RouteableView {
                     .cornerRadius(18)
                 
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(childAccount.name)
+                    Text(childAccount.aName)
                         .foregroundColor(Color.LL.Neutrals.text)
                         .font(.inter(size: 14, weight: .semibold))
                     
-                    Text(childAccount.address)
+                    Text(childAccount.addr)
                         .foregroundColor(Color.LL.Neutrals.text3)
                         .font(.inter(size: 12))
                 }

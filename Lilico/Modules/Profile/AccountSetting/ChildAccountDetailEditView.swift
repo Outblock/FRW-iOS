@@ -133,7 +133,7 @@ struct ChildAccountDetailEditView: RouteableView {
             
             Spacer()
             
-            Text(vm.childAccount.name)
+            Text(vm.childAccount.aName)
                 .font(.inter(size: 16))
                 .foregroundColor(Color.LL.Neutrals.note)
                 .multilineTextAlignment(.leading)
@@ -149,7 +149,7 @@ struct ChildAccountDetailEditView: RouteableView {
             
             Spacer()
             
-            Text(vm.childAccount.description)
+            Text(vm.childAccount.description ?? "")
                 .font(.inter(size: 16))
                 .foregroundColor(Color.LL.Neutrals.note)
                 .multilineTextAlignment(.leading)

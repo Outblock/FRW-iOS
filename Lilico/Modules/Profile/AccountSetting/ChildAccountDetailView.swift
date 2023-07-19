@@ -20,7 +20,7 @@ class ChildAccountDetailViewModel: ObservableObject {
     }
     
     func copyAction() {
-        UIPasteboard.general.string = childAccount.address
+        UIPasteboard.general.string = childAccount.addr
         HUD.success(title: "copied".localized)
     }
     
@@ -42,14 +42,14 @@ class ChildAccountDetailViewModel: ObservableObject {
     }
     
     private func checkChildAcountExist() -> Bool {
-        return ChildAccountManager.shared.childAccounts.contains(where: { $0.address == childAccount.address })
+        return ChildAccountManager.shared.childAccounts.contains(where: { $0.addr == childAccount.addr })
     }
     
     private func checkUnlinkingTransactionIsProcessing() -> Bool {
         for holder in TransactionManager.shared.holders {
             if holder.type == .unlinkAccount, holder.internalStatus == .pending,
                let holderModel = try? JSONDecoder().decode(ChildAccount.self, from: holder.data),
-               holderModel.address == self.childAccount.address {
+               holderModel.addr == self.childAccount.addr {
                 return true
             }
         }
@@ -66,7 +66,7 @@ class ChildAccountDetailViewModel: ObservableObject {
         
         Task {
             do {
-                let txId = try await FlowNetwork.unlinkChildAccount(childAccount.address)
+                let txId = try await FlowNetwork.unlinkChildAccount(childAccount.addr)
                 let data = try JSONEncoder().encode(self.childAccount)
                 let holder = TransactionManager.TransactionHolder(id: txId, type: .unlinkAccount, data: data)
                 
@@ -156,7 +156,7 @@ struct ChildAccountDetailView: RouteableView {
                     .cornerRadius(50)
                     .padding(.vertical, 20)
                 
-                Text(vm.childAccount.name)
+                Text(vm.childAccount.aName)
                     .foregroundColor(Color.LL.Neutrals.text)
                     .font(.inter(size: 18, weight: .semibold))
                     .multilineTextAlignment(.center)
@@ -180,7 +180,7 @@ struct ChildAccountDetailView: RouteableView {
                 .font(.inter(size: 16, weight: .semibold))
             
             HStack {
-                Text(vm.childAccount.address)
+                Text(vm.childAccount.addr)
                     .foregroundColor(Color.LL.Neutrals.text)
                     .font(.inter(size: 16, weight: .medium))
                 
@@ -207,7 +207,7 @@ struct ChildAccountDetailView: RouteableView {
                 .foregroundColor(Color.LL.Neutrals.text4)
                 .font(.inter(size: 16, weight: .semibold))
             
-            Text(vm.childAccount.desc)
+            Text(vm.childAccount.description ?? "")
                 .foregroundColor(Color.LL.Neutrals.text2)
                 .font(.inter(size: 14, weight: .medium))
                 .multilineTextAlignment(.leading)
@@ -332,7 +332,7 @@ extension ChildAccountDetailView {
 
         var fromToView: some View {
             HStack {
-                ChildAccountTargetView(iconURL: vm.childAccount.icon, name: vm.childAccount.name, address: vm.childAccount.address)
+                ChildAccountTargetView(iconURL: vm.childAccount.icon, name: vm.childAccount.aName, address: vm.childAccount.addr)
                 
                 Spacer()
                 
@@ -348,7 +348,7 @@ extension ChildAccountDetailView {
                     .font(.inter(size: 14, weight: .semibold))
                     .foregroundColor(Color.LL.Neutrals.text4)
                 
-                Text("unlink_account_desc_x".localized(vm.childAccount.name))
+                Text("unlink_account_desc_x".localized(vm.childAccount.aName))
                     .font(.inter(size: 14, weight: .medium))
                     .foregroundColor(Color.LL.Neutrals.text2)
                     .multilineTextAlignment(.leading)

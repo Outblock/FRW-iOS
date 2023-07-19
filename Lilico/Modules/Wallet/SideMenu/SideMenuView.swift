@@ -208,7 +208,7 @@ struct SideMenuView: View {
                 
                 if LocalUserDefaults.shared.flowNetwork == .mainnet {
                     LazyVStack(spacing: 0) {
-                        ForEach(cm.childAccounts, id: \.address) { childAccount in
+                        ForEach(cm.childAccounts, id: \.addr) { childAccount in
                             childAccountCell(childAccount, isSelected: childAccount.isSelected)
                         }
                     }
@@ -225,7 +225,7 @@ struct SideMenuView: View {
                 
                 if LocalUserDefaults.shared.flowNetwork == .testnet {
                     LazyVStack(spacing: 0) {
-                        ForEach(cm.childAccounts, id: \.address) { childAccount in
+                        ForEach(cm.childAccounts, id: \.addr) { childAccount in
                             childAccountCell(childAccount, isSelected: childAccount.isSelected)
                         }
                     }
@@ -271,13 +271,13 @@ struct SideMenuView: View {
                 
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
-                        Text("@\(childAccount.name)")
+                        Text("@\(childAccount.aName)")
                             .foregroundColor(Color.LL.Neutrals.text)
                             .font(.inter(size: 14, weight: .semibold))
                     }
                     .frame(alignment: .leading)
                     
-                    Text(childAccount.address)
+                    Text(childAccount.addr)
                         .foregroundColor(Color.LL.Neutrals.text3)
                         .font(.inter(size: 12))
                 }

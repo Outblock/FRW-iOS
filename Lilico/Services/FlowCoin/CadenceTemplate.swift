@@ -836,23 +836,16 @@ extension CadenceTemplate {
     static let queryChildAccountMeta = """
         import HybridCustody from 0xHybridCustody
         import MetadataViews from 0xMetadataViews
-        
-        pub fun getChildMetaData(child: Address): AnyStruct {
-            let acct = getAuthAccount(child)
-            let c = acct.borrow<&HybridCustody.ChildAccount>(from: HybridCustody.ChildStoragePath)
-                    ?? panic("child account not found")
-            
-            let d = c.resolveView(Type<MetadataViews.Display>())
-            return d
-        }
-        
+
         pub fun main(parent: Address): {Address: AnyStruct} {
             let acct = getAuthAccount(parent)
-            let manager = acct.borrow<&HybridCustody.Manager>(from: HybridCustody.ManagerStoragePath)
+            let m = acct.borrow<&HybridCustody.Manager>(from: HybridCustody.ManagerStoragePath)
                 ?? panic("manager not found")
             var data: {Address: AnyStruct} = {}
-            for address in manager.getAddresses() {
-                data.insert(key: address, getChildMetaData(child: address))
+            for address in m.getChildAddresses() {
+                let c = m.borrowAccount(addr: address) ?? panic("child not found")
+                let d = c.resolveView(Type<MetadataViews.Display>())
+                data.insert(key: address, d)
             }
             return data
         }
@@ -865,7 +858,7 @@ extension CadenceTemplate {
             let acct = getAuthAccount(parent)
             let manager = acct.borrow<&HybridCustody.Manager>(from: HybridCustody.ManagerStoragePath)
                 ?? panic("manager not found")
-            return manager.getAddresses()
+            return manager.getChildAddresses()
         }
     """
     
@@ -877,6 +870,26 @@ extension CadenceTemplate {
                 let manager = acct.borrow<&HybridCustody.Manager>(from: HybridCustody.ManagerStoragePath)
                     ?? panic("manager not found")
                 manager.removeChild(addr: child)
+            }
+        }
+    """
+    
+    static let editChildAccount = """
+        import HybridCustody from 0xHybridCustody
+        import MetadataViews from 0xMetadataViews
+
+        transaction(childAddress: Address, name: String, description: String, thumbnail: String) {
+            prepare(acct: AuthAccount) {
+                let m = acct.borrow<&HybridCustody.Manager>(from: HybridCustody.ManagerStoragePath)
+                    ?? panic("manager not found")
+                
+                let d = MetadataViews.Display(
+                    name: name,
+                    description: description,
+                    thumbnail: MetadataViews.HTTPFile(url: thumbnail)
+                )
+
+                m.setChildAccountDisplay(address: childAddress, d)
             }
         }
     """
