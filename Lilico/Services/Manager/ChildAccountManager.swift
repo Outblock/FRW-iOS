@@ -9,16 +9,23 @@ import SwiftUI
 import Combine
 
 struct ChildAccount: Codable {
-    var addr: String
+    var addr: String?
     let name: String?
     var aName: String {
-        return name ?? "Linked Account"
+        if let n = name?.trim, !n.isEmpty {
+            return n
+        }
+        return "Linked Account"
     }
     
     let description: String?
     let thumbnail: Thumbnail?
     var icon: String {
-        thumbnail?.url ?? "https://lilico.app/placeholder.png"
+        if let t = thumbnail?.url, !t.isEmpty {
+            return t
+        }
+        
+        return "https://lilico.app/placeholder.png"
     }
 
     var time: TimeInterval?
@@ -43,7 +50,7 @@ struct ChildAccount: Codable {
     }
     
     var isSelected: Bool {
-        if let selectedChildAccount = ChildAccountManager.shared.selectedChildAccount, selectedChildAccount.addr == addr, !addr.isEmpty {
+        if let selectedChildAccount = ChildAccountManager.shared.selectedChildAccount, selectedChildAccount.addr == addr, let addr = addr, !addr.isEmpty {
             return true
         }
         
@@ -104,6 +111,26 @@ class ChildAccountManager: ObservableObject {
             }.store(in: &cancelSets)
         
         NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
+        
+        NotificationCenter.default.publisher(for: .transactionStatusDidChanged)
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { [weak self] noti in
+                self?.onTransactionStatusChanged(noti)
+            }.store(in: &cancelSets)
+    }
+    
+    @objc private func onTransactionStatusChanged(_ noti: Notification) {
+        guard let obj = noti.object as? TransactionManager.TransactionHolder, obj.type == .editChildAccount else {
+            return
+        }
+        
+        switch obj.internalStatus {
+        case .success:
+            self.refresh()
+        default:
+            break
+        }
     }
     
     @objc private func willReset() {
@@ -151,7 +178,7 @@ class ChildAccountManager: ObservableObject {
                     let oldList = MultiAccountStorage.shared.getChildAccounts(uid: uid, address: address) ?? []
                     let finalList = list.map { newAccount in
                         if let oldAccount = oldList.first(where: { $0.addr == newAccount.addr }) {
-                            return ChildAccount(address: newAccount.addr, name: newAccount.name, desc: newAccount.description, icon: newAccount.icon, pinTime: oldAccount.pinTime)
+                            return ChildAccount(address: newAccount.addr ?? "", name: newAccount.name, desc: newAccount.description, icon: newAccount.icon, pinTime: oldAccount.pinTime)
                         } else {
                             return newAccount
                         }
@@ -195,7 +222,7 @@ extension ChildAccountManager {
         
         oldList.removeAll(where: { $0.addr == childAccount.addr })
         
-        let newChildAccount = ChildAccount(address: oldChildAccount.addr, name: oldChildAccount.name, desc: oldChildAccount.description, icon: oldChildAccount.icon, pinTime: oldChildAccount.isPinned ? 0 : Date().timeIntervalSince1970)
+        let newChildAccount = ChildAccount(address: oldChildAccount.addr ?? "", name: oldChildAccount.name, desc: oldChildAccount.description, icon: oldChildAccount.icon, pinTime: oldChildAccount.isPinned ? 0 : Date().timeIntervalSince1970)
         oldList.append(newChildAccount)
         
         childAccounts = oldList

@@ -66,7 +66,7 @@ class ChildAccountDetailViewModel: ObservableObject {
         
         Task {
             do {
-                let txId = try await FlowNetwork.unlinkChildAccount(childAccount.addr)
+                let txId = try await FlowNetwork.unlinkChildAccount(childAccount.addr ?? "")
                 let data = try JSONEncoder().encode(self.childAccount)
                 let holder = TransactionManager.TransactionHolder(id: txId, type: .unlinkAccount, data: data)
                 
@@ -180,7 +180,7 @@ struct ChildAccountDetailView: RouteableView {
                 .font(.inter(size: 16, weight: .semibold))
             
             HStack {
-                Text(vm.childAccount.addr)
+                Text(vm.childAccount.addr ?? "")
                     .foregroundColor(Color.LL.Neutrals.text)
                     .font(.inter(size: 16, weight: .medium))
                 
@@ -332,7 +332,7 @@ extension ChildAccountDetailView {
 
         var fromToView: some View {
             HStack {
-                ChildAccountTargetView(iconURL: vm.childAccount.icon, name: vm.childAccount.aName, address: vm.childAccount.addr)
+                ChildAccountTargetView(iconURL: vm.childAccount.icon, name: vm.childAccount.aName, address: vm.childAccount.addr ?? "")
                 
                 Spacer()
                 

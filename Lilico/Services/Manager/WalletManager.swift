@@ -146,7 +146,7 @@ extension WalletManager {
     
     var selectedAccountAddress: String {
         if let childAccount = childAccount {
-            return childAccount.addr
+            return childAccount.addr ?? ""
         }
         
         if let walletInfo = self.walletInfo?.currentNetworkWalletModel {

@@ -277,7 +277,7 @@ struct SideMenuView: View {
                     }
                     .frame(alignment: .leading)
                     
-                    Text(childAccount.addr)
+                    Text(childAccount.addr ?? "")
                         .foregroundColor(Color.LL.Neutrals.text3)
                         .font(.inter(size: 12))
                 }

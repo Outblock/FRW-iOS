@@ -93,6 +93,7 @@ extension TransactionManager {
         case claimDomain
         case stakeFlow
         case unlinkAccount
+        case editChildAccount
     }
     
     enum InternalStatus: Int, Codable {

@@ -201,6 +201,7 @@ extension RouteMap {
         case accountDetail(ChildAccount)
         case switchProfile
         case editChildAccount(ChildAccount)
+        case backToAccountSetting
     }
 }
 
@@ -260,6 +261,13 @@ extension RouteMap.Profile: RouterTarget {
         case .editChildAccount(let childAccount):
             let vm = ChildAccountDetailEditViewModel(childAccount: childAccount)
             navi.push(content: ChildAccountDetailEditView(vm: vm))
+        case .backToAccountSetting:
+            if let existVC = navi.viewControllers.first(where: { $0 as? RouteableUIHostingController<AccountSettingView> != nil }) {
+                navi.popToViewController(existVC, animated: true)
+                return
+            }
+            
+            navi.popToRootViewController(animated: true)
         }
     }
 }

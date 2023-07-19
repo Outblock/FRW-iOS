@@ -107,7 +107,7 @@ struct AccountSettingView: RouteableView {
                         .foregroundColor(Color.LL.Neutrals.text)
                         .font(.inter(size: 14, weight: .semibold))
                     
-                    Text(childAccount.addr)
+                    Text(childAccount.addr ?? "")
                         .foregroundColor(Color.LL.Neutrals.text3)
                         .font(.inter(size: 12))
                 }
