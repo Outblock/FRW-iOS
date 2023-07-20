@@ -684,12 +684,13 @@ extension FlowNetwork {
         let rawResponse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: replacedCadence),
                                                                            arguments: [.address(address)])
 
-        guard let decode = rawResponse.decode() as? [String: Any] else {
+        guard let decode = rawResponse.decode() as? [String: Any?] else {
             return []
         }
 
         let result: [ChildAccount] = decode.keys.compactMap { key in
             guard let value = decode[key],
+                  let value = value,
                   let data = try? JSONSerialization.data(withJSONObject: value),
                   var model = try? JSONDecoder().decode(ChildAccount.self, from: data) else {
                 return ChildAccount(address: key, name: nil, desc: nil, icon: nil, pinTime: 0)
