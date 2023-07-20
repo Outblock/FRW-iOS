@@ -819,3 +819,9 @@
 "link_account_notice_2" = "Lilico wallet will manage linked account";
 "switch_profile_tips" = "Tap the profile name to switch profiles.";
 "avatar" = "Avatar";
+"jailbreak_title" = "Jailbreak Detected";
+"jailbreak_desc" = "Your keychain is exposing in threats.\nPlease make sure it’s your movement and improve the safety of your account.";
+"things_you_need_to_know" = "Things you need to know";
+"jailbreak_tips_0" = "Your keychain is exposing in threats.";
+"understand_btn_title" = "I Understand";
+"jailbreak_alert_msg" = "Jailbreak Detection Alert";

@@ -136,6 +136,31 @@ extension ProfileView {
     struct InfoContainerView: View {
         @EnvironmentObject private var vm: ProfileViewModel
         
+        var jailbreakTipsView: some View {
+            Button {
+                Router.route(to: RouteMap.Wallet.jailbreakAlert)
+            } label: {
+                HStack(spacing: 8) {
+                    Image("icon-warning-mark")
+                        .renderingMode(.template)
+                        .foregroundColor(Color.LL.Warning.warning2)
+                    
+                    Text("jailbreak_alert_msg".localized)
+                        .font(.inter(size: 16, weight: .medium))
+                        .foregroundColor(Color.LL.Warning.warning2)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .lineLimit(1)
+                    
+                    Image("icon-account-arrow-right")
+                        .renderingMode(.template)
+                        .foregroundColor(Color.LL.Warning.warning2)
+                }
+                .padding(.all, 18)
+                .background(Color.LL.Warning.warning5)
+                .cornerRadius(16)
+            }
+        }
+        
         var body: some View {
             Section {
                 VStack(spacing: 24) {
@@ -145,6 +170,9 @@ extension ProfileView {
                         ProfileView.InfoView()
                             .contentShape(Rectangle())
                     }
+                    
+                    jailbreakTipsView
+                        .visibility(UIDevice.isJailbreak ? .visible : .gone)
                     
                     ProfileView.InfoActionView()
                 }

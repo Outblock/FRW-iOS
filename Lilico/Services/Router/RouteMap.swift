@@ -115,6 +115,7 @@ extension RouteMap {
         case stakeDetail(StakingProvider, StakingNode)
         case stakeSetupConfirm(StakeAmountViewModel)
         case backToTokenDetail
+        case jailbreakAlert
     }
 }
 
@@ -173,6 +174,9 @@ extension RouteMap.Wallet: RouterTarget {
             }
             
             navi.popToRootViewController(animated: true)
+        case .jailbreakAlert:
+            let vc = CustomHostingController(rootView: JailbreakAlertView())
+            Router.topPresentedController().present(vc, animated: true, completion: nil)
         }
     }
 }

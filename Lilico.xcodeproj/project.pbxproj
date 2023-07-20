@@ -1249,6 +1249,10 @@
 		6A9C34F928AB6C0A00AA41A5 /* NFTUIKitSegmentControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9C34F728AB6C0A00AA41A5 /* NFTUIKitSegmentControl.swift */; };
 		6A9C34FB28AB939600AA41A5 /* NFTUIKitCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9C34FA28AB939600AA41A5 /* NFTUIKitCache.swift */; };
 		6A9C34FC28AB939600AA41A5 /* NFTUIKitCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9C34FA28AB939600AA41A5 /* NFTUIKitCache.swift */; };
+		6A9CFE482A6931F900AEA847 /* UIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9CFE472A6931F900AEA847 /* UIDevice.swift */; };
+		6A9CFE492A6931F900AEA847 /* UIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9CFE472A6931F900AEA847 /* UIDevice.swift */; };
+		6A9CFE4C2A69331100AEA847 /* JailbreakAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9CFE4B2A69331100AEA847 /* JailbreakAlertView.swift */; };
+		6A9CFE4D2A69331100AEA847 /* JailbreakAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9CFE4B2A69331100AEA847 /* JailbreakAlertView.swift */; };
 		6A9D7C472833B45500078F63 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D7C3D2833AC9700078F63 /* ThemeManager.swift */; };
 		6A9D7C4D2834D7D100078F63 /* ThemeChangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D7C4B2834D7D100078F63 /* ThemeChangeView.swift */; };
 		6A9DFBC529519D9800E10EAC /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9DFBC429519D9800E10EAC /* WidgetKit.framework */; };
@@ -2100,6 +2104,8 @@
 		6A998DA82936769000EF133B /* StakingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StakingManager.swift; sourceTree = "<group>"; };
 		6A9C34F728AB6C0A00AA41A5 /* NFTUIKitSegmentControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTUIKitSegmentControl.swift; sourceTree = "<group>"; };
 		6A9C34FA28AB939600AA41A5 /* NFTUIKitCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTUIKitCache.swift; sourceTree = "<group>"; };
+		6A9CFE472A6931F900AEA847 /* UIDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDevice.swift; sourceTree = "<group>"; };
+		6A9CFE4B2A69331100AEA847 /* JailbreakAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JailbreakAlertView.swift; sourceTree = "<group>"; };
 		6A9D7C3D2833AC9700078F63 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		6A9D7C4B2834D7D100078F63 /* ThemeChangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeChangeView.swift; sourceTree = "<group>"; };
 		6A9DFBC329519D9800E10EAC /* LilicoWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LilicoWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2451,6 +2457,7 @@
 		153C440427520811006D1E8D /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				6A9CFE4A2A6932FD00AEA847 /* JailbreakAlert */,
 				6A18DDF42A3AFEE0003232AB /* ChildAccount */,
 				6A3FFA7D2A283A3D00CB2B2C /* OnBoarding */,
 				6A3AD5C7291D4F8800C30D57 /* Staking */,
@@ -3812,6 +3819,7 @@
 				6AB3732B28D084EC00E8BF05 /* UIColor.swift */,
 				6ADA4C0028F180C400C7B341 /* UIImageView.swift */,
 				6A46754C28F2D70400F705A8 /* FileManager.swift */,
+				6A9CFE472A6931F900AEA847 /* UIDevice.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -4556,6 +4564,14 @@
 				6AB90AD82937C2D00008E74A /* StakingInfo.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		6A9CFE4A2A6932FD00AEA847 /* JailbreakAlert */ = {
+			isa = PBXGroup;
+			children = (
+				6A9CFE4B2A69331100AEA847 /* JailbreakAlertView.swift */,
+			);
+			path = JailbreakAlert;
 			sourceTree = "<group>";
 		};
 		6A9DFBC829519D9800E10EAC /* LilicoWidgets */ = {
@@ -5740,6 +5756,7 @@
 				15DC212927819C56000B187A /* VProgressBar.swift in Sources */,
 				15DC209B27819C56000B187A /* VBaseHeaderFooterView.swift in Sources */,
 				15DC213327819C56000B187A /* VSegmentedPickerModel.swift in Sources */,
+				6A9CFE4D2A69331100AEA847 /* JailbreakAlertView.swift in Sources */,
 				15DC21E327819C56000B187A /* StateColors_EFD.swift in Sources */,
 				15DC20E727819C56000B187A /* VAccordionModel.swift in Sources */,
 				6A8FA4A2285B192900EE5BE3 /* SnapAlignmentEnvironmentKey.swift in Sources */,
@@ -5988,6 +6005,7 @@
 				6A074E392922962D00D976F1 /* SelectProviderView.swift in Sources */,
 				15DC217327819C56000B187A /* VDialogModel.swift in Sources */,
 				15DC219327819C56000B187A /* VCheckBoxModel.swift in Sources */,
+				6A9CFE492A6931F900AEA847 /* UIDevice.swift in Sources */,
 				156E84B2281CF01000415896 /* EventLoop+Future.swift in Sources */,
 				15DC20D927819C56000B187A /* VPrimaryButtonModel.swift in Sources */,
 				15DC208327819C56000B187A /* VLazyScrollViewModelHorizontal.swift in Sources */,
@@ -6356,6 +6374,7 @@
 				15C58B922868A4EE00BD4FC6 /* VBaseHeaderFooterView.swift in Sources */,
 				15C58B932868A4EE00BD4FC6 /* VSegmentedPickerModel.swift in Sources */,
 				15C58B942868A4EE00BD4FC6 /* StateColors_EFD.swift in Sources */,
+				6A9CFE4C2A69331100AEA847 /* JailbreakAlertView.swift in Sources */,
 				15C58B952868A4EE00BD4FC6 /* VAccordionModel.swift in Sources */,
 				15C58B962868A4EE00BD4FC6 /* SnapAlignmentEnvironmentKey.swift in Sources */,
 				15C58B972868A4EE00BD4FC6 /* CoinRateCache.swift in Sources */,
@@ -6604,6 +6623,7 @@
 				6A074E382922962D00D976F1 /* SelectProviderView.swift in Sources */,
 				15C58C332868A4EE00BD4FC6 /* VDialogModel.swift in Sources */,
 				15C58C342868A4EE00BD4FC6 /* VCheckBoxModel.swift in Sources */,
+				6A9CFE482A6931F900AEA847 /* UIDevice.swift in Sources */,
 				15C58C352868A4EE00BD4FC6 /* EventLoop+Future.swift in Sources */,
 				15C58C362868A4EE00BD4FC6 /* VPrimaryButtonModel.swift in Sources */,
 				15C58C372868A4EE00BD4FC6 /* VLazyScrollViewModelHorizontal.swift in Sources */,
