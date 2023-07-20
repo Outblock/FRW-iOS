@@ -819,3 +819,9 @@
 "link_account_notice_2" = "Lilico ウォレットはリンクされたアカウントを管理します";
 "switch_profile_tips" = "プロファイル名をタップしてプロファイルを切り替えます。";
 "avatar" = "アバター";
+"jailbreak_title" = "脱獄が検出されました";
+"jailbreak_desc" = "あなたのキーチェーンが脅威にさらされています。\nそれがあなたの動きであることを確認し、アカウントの安全性を向上させてください。";
+"things_you_need_to_know" = "知っておくべきこと";
+"jailbreak_tips_0" = "あなたのキーチェーンが脅威にさらされています。";
+"understand_btn_title" = "わかりました";
+"jailbreak_alert_msg" = "脱獄検出アラート";

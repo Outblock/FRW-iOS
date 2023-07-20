@@ -64,6 +64,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         Atlantis.start()
 #endif
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.jailbreakDetect()
+        }
+        
         return true
     }
     
@@ -191,5 +195,13 @@ extension AppDelegate {
     
     @objc func handleNetworkChange() {
         self.window?.backgroundColor = currentNetwork.isMainnet ? UIColor.LL.Neutrals.background : UIColor(currentNetwork.color)
+    }
+}
+
+extension AppDelegate {
+    private func jailbreakDetect() {
+        if UIDevice.isJailbreak {
+            Router.route(to: RouteMap.Wallet.jailbreakAlert)
+        }
     }
 }

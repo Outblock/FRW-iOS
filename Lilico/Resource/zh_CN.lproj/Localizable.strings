@@ -819,3 +819,9 @@
 "link_account_notice_2" = "Lilico 钱包将管理关联帐户";
 "switch_profile_tips" = "点击配置文件名称即可切换配置文件。";
 "avatar" = "头像";
+"jailbreak_title" = "检测到越狱";
+"jailbreak_desc" = "您的钥匙串面临威胁。\n请确保这是您的移动并提高您帐户的安全性。";
+"things_you_need_to_know" = "你需要知道的事情";
+"jailbreak_tips_0" = "您的钥匙串正面临威胁。";
+"understand_btn_title" = "我明白";
+"jailbreak_alert_msg" = "越狱检测警报";
