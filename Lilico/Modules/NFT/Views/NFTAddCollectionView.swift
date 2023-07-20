@@ -49,6 +49,7 @@ struct NFTAddCollectionView: RouteableView {
                     .environmentObject(addViewModel)
             }
         })
+        .mockPlaceholder(addViewModel.isMock)
     }
 
     private func title(title: String) -> some View {

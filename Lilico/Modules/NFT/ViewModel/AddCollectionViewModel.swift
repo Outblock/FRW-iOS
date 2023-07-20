@@ -15,8 +15,13 @@ class AddCollectionViewModel: ObservableObject {
     @Published var searchQuery = ""
     @Published var isAddingCollection: Bool = false
     @Published var isConfirmSheetPresented: Bool = false
+    @Published var isMock: Bool = false
 
     var liveList: [NFTCollectionItem] {
+        if isMock {
+            return [NFTCollectionItem].mock(10)
+        }
+        
         if searchQuery.isEmpty {
             return collectionList
         }
@@ -53,6 +58,10 @@ class AddCollectionViewModel: ObservableObject {
     }
     
     func load() async {
+        DispatchQueue.main.async {
+            self.isMock = true
+        }
+        
         await NFTCollectionConfig.share.reload()
         await NFTCollectionStateManager.share.fetch()
         collectionList.removeAll { _ in true }
@@ -71,6 +80,7 @@ class AddCollectionViewModel: ObservableObject {
         
         await MainActor.run {
             self.searchQuery = ""
+            self.isMock = false
         }
     }
 }
@@ -130,7 +140,7 @@ extension AddCollectionViewModel {
 
 
 
-struct NFTCollectionItem: Hashable {
+struct NFTCollectionItem: Hashable, Mockable {
     
     enum ItemStatus {
         case idle
@@ -154,5 +164,9 @@ struct NFTCollectionItem: Hashable {
         case .failed:
             return "nft_collection_add_failed".localized
         }
+    }
+    
+    static func mock() -> NFTCollectionItem {
+        return NFTCollectionItem(collection: NFTCollectionInfo.mock(), status: .idle)
     }
 }

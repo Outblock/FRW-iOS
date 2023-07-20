@@ -19,7 +19,7 @@ struct NFTCollection: Codable {
     var ids: [String]?
 }
 
-struct NFTCollectionInfo: Codable, Hashable {
+struct NFTCollectionInfo: Codable, Hashable, Mockable {
     let id: String
     let name: String
     let contractName: String
@@ -47,14 +47,22 @@ struct NFTCollectionInfo: Codable, Hashable {
 
         return URL(string: placeholder)!
     }
+    
+    static func mock() -> NFTCollectionInfo {
+        return NFTCollectionInfo(id: randomString(), name: randomString(), contractName: randomString(), address: randomString(), logo: randomString(), banner: randomString(), officialWebsite: randomString(), description: randomString(), path: ContractPath.mock())
+    }
 }
 
-struct ContractPath: Codable, Hashable {
+struct ContractPath: Codable, Hashable, Mockable {
     let storagePath: String
     let publicPath: String
     let publicCollectionName: String
     let publicType: String
     let privateType: String
+    
+    static func mock() -> ContractPath {
+        return ContractPath(storagePath: randomString(), publicPath: randomString(), publicCollectionName: randomString(), publicType: randomString(), privateType: randomString())
+    }
 }
 
 struct NFTModel: Codable, Hashable, Identifiable {
