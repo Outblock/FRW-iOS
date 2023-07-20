@@ -35,12 +35,4 @@ extension LocalEnvManager {
     var aesIV: String {
         return dict["AESIV"]!
     }
-    
-    var translizedProjectID: String {
-        return dict["TranslizedProjectID"]!
-    }
-    
-    var translizedOTAToken: String {
-        return dict["TranslizedOTAToken"]!
-    }
 }

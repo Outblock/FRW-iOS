@@ -1296,10 +1296,6 @@
 		6ABFE59E29A70E6700AA1688 /* LocalEnvManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABFE59B29A70E6700AA1688 /* LocalEnvManager.swift */; };
 		6ABFE59F29A70E6700AA1688 /* LocalEnvManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABFE59B29A70E6700AA1688 /* LocalEnvManager.swift */; };
 		6ABFE5A129A711ED00AA1688 /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = 6ABFE5A029A711ED00AA1688 /* Gzip */; };
-		6ABFE5B629A74DCD00AA1688 /* Translized.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABFE5B529A74DCC00AA1688 /* Translized.xcframework */; };
-		6ABFE5B729A74DCD00AA1688 /* Translized.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABFE5B529A74DCC00AA1688 /* Translized.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6ABFE5B829A74DDB00AA1688 /* Translized.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABFE5B529A74DCC00AA1688 /* Translized.xcframework */; };
-		6ABFE5B929A74DDB00AA1688 /* Translized.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABFE5B529A74DCC00AA1688 /* Translized.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6AC1AE69289BACDF00F76C7A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6AC1AE68289BACDF00F76C7A /* SnapKit */; };
 		6AC1AE6B289BAD0600F76C7A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6AC1AE6A289BAD0600F76C7A /* SnapKit */; };
 		6AC1AE6D289BAD3500F76C7A /* PinCodeTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AC1AE6C289BAD3500F76C7A /* PinCodeTextField.swift */; };
@@ -1487,7 +1483,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				155E371828D35E5200834C30 /* WalletCore.xcframework in Embed Frameworks */,
-				6ABFE5B929A74DDB00AA1688 /* Translized.xcframework in Embed Frameworks */,
 				155E371628D35E5200834C30 /* SwiftProtobuf.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1500,7 +1495,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				155E371C28D35E6500834C30 /* WalletCore.xcframework in Embed Frameworks */,
-				6ABFE5B729A74DCD00AA1688 /* Translized.xcframework in Embed Frameworks */,
 				155E371A28D35E6500834C30 /* SwiftProtobuf.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -2133,7 +2127,6 @@
 		6ABAE52E28362D1100C97AE2 /* Others.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Others.swift; sourceTree = "<group>"; };
 		6ABFE59329A708C400AA1688 /* LocalEnv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LocalEnv; sourceTree = "<group>"; };
 		6ABFE59B29A70E6700AA1688 /* LocalEnvManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalEnvManager.swift; sourceTree = "<group>"; };
-		6ABFE5B529A74DCC00AA1688 /* Translized.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Translized.xcframework; path = Lilico/Library/Translized.xcframework; sourceTree = "<group>"; };
 		6AC1AE6C289BAD3500F76C7A /* PinCodeTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinCodeTextField.swift; sourceTree = "<group>"; };
 		6AC476E728F3C993008503E6 /* WebBookmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebBookmark.swift; sourceTree = "<group>"; };
 		6AC476EB28F40E50008503E6 /* BrowserBookmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserBookmarkView.swift; sourceTree = "<group>"; };
@@ -2268,7 +2261,6 @@
 				156AC7AD27802FAC00ED5E3E /* GoogleAPIClientForRESTCore in Frameworks */,
 				1570466927930E6A00D1747B /* CollectionViewPagingLayout in Frameworks */,
 				4ED6DD10285A22A800105133 /* IrregularGradient in Frameworks */,
-				6ABFE5B829A74DDB00AA1688 /* Translized.xcframework in Frameworks */,
 				154B891D276A1EEB00780E93 /* FirebaseCrashlytics in Frameworks */,
 				6A46754828F2D46500F705A8 /* FMDB in Frameworks */,
 				155E373028D3ADC100834C30 /* Highlightr in Frameworks */,
@@ -2319,7 +2311,6 @@
 				1549CF03299A10C2002B37A5 /* Gzip in Frameworks */,
 				15C58C452868A4EE00BD4FC6 /* GTMSessionFetcherCore in Frameworks */,
 				6AE46062286EE644009C2B96 /* SwiftUICharts in Frameworks */,
-				6ABFE5B629A74DCD00AA1688 /* Translized.xcframework in Frameworks */,
 				1588332228943F4D00142B35 /* NativeUIKit in Frameworks */,
 				15C58C462868A4EE00BD4FC6 /* Moya in Frameworks */,
 				15C58C472868A4EE00BD4FC6 /* BiometricAuthentication in Frameworks */,
@@ -2871,7 +2862,6 @@
 		15B1A67A276A2D670006B621 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				6ABFE5B529A74DCC00AA1688 /* Translized.xcframework */,
 				4E9BFF5C2867631300601339 /* UIKit.framework */,
 				4E17466E281AF840002A029C /* SwiftProtobuf.xcframework */,
 				15C6F4B9278A8965003CADF2 /* AuthenticationServices.framework */,

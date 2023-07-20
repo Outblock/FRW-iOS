@@ -13,7 +13,6 @@ import Resolver
 import SwiftUI
 import UIKit
 import WalletCore
-import Translized
 import SwiftyBeaver
 import FirebaseMessaging
 
@@ -49,11 +48,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         Analytics.setAnalyticsCollectionEnabled(true)
         Analytics.logEvent("ios_app_launch", parameters: [:])
-#if !DEBUG
-        Translized.shared.setup(projectId: LocalEnvManager.shared.translizedProjectID, otaToken: LocalEnvManager.shared.translizedOTAToken)
-        Translized.shared.swizzleMainBundle()
-#endif
-        
         
         appConfig()
         commonConfig()
@@ -197,15 +191,5 @@ extension AppDelegate {
     
     @objc func handleNetworkChange() {
         self.window?.backgroundColor = currentNetwork.isMainnet ? UIColor.LL.Neutrals.background : UIColor(currentNetwork.color)
-    }
-}
-
-extension AppDelegate {
-    func applicationDidBecomeActive(_ application: UIApplication) {
-#if !DEBUG
-        Translized.shared.checkForUpdates { (updated, error) in
-            debugPrint("Translized updated: \(updated), error: \(error)")
-        }
-#endif
     }
 }
