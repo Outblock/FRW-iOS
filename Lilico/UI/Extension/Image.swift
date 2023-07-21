@@ -21,4 +21,5 @@ extension String {
     static let warning = "exclamationmark.circle.fill"
     static let star = "star"
     static let starFill = "star.fill"
+    static let wifi = "wifi"
 }

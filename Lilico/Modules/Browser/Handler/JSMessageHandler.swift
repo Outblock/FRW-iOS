@@ -181,6 +181,18 @@ extension JSMessageHandler {
             
             let fcl = try JSONDecoder().decode(FCLSimpleResponse.self, from: data)
             
+            if !fcl.networkIsMatch {
+                let current = LocalUserDefaults.shared.flowNetwork
+                log.warning("network mismatch, current: \(current), prefer: \(fcl.network ?? "unknown")")
+                self.finishService()
+                
+                if let network = fcl.network, let toNetwork = LocalUserDefaults.FlowNetworkType(rawValue: network.lowercased()) {
+                    Router.route(to: RouteMap.Explore.switchNetwork(current, toNetwork))
+                }
+                
+                return
+            }
+            
             if self.processingServiceType != fcl.serviceType {
                 log.error("service not same (old: \(String(describing: self.processingServiceType)), new: \(fcl.serviceType))")
                 return
@@ -225,10 +237,13 @@ extension JSMessageHandler {
             processingFCLResponse = authnResponse
             
             let title = authnResponse.config?.app?.title ?? webVC?.webView.title ?? "unknown"
+            let network = authnResponse.config?.client?.network ?? ""
+            let chainID = Flow.ChainID(name: network)
             let vm = BrowserAuthnViewModel(title: title,
                                            url: webVC?.webView.url?.host ?? "unknown",
                                            logo: authnResponse.config?.app?.icon,
-                                           walletAddress: WalletManager.shared.getPrimaryWalletAddress()) { [weak self] result in
+                                           walletAddress: WalletManager.shared.getPrimaryWalletAddress(),
+                                           network: chainID) { [weak self] result in
                 guard let self = self else {
                     return
                 }

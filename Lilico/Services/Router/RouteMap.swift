@@ -404,6 +404,7 @@ extension RouteMap {
         case bookmark
         case linkChildAccount(ChildAccountLinkViewModel)
         case dapps
+        case switchNetwork(LocalUserDefaults.FlowNetworkType, LocalUserDefaults.FlowNetworkType)
     }
 }
 
@@ -448,6 +449,9 @@ extension RouteMap.Explore: RouterTarget {
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .dapps:
             navi.present(content: DAppsListView())
+        case .switchNetwork(let from, let to):
+            let vc = CustomHostingController(rootView: NetworkSwitchPopView(from: from, to: to))
+            Router.topPresentedController().present(vc, animated: true, completion: nil)
         }
     }
 }

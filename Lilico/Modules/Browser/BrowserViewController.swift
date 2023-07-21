@@ -10,11 +10,13 @@ import SwiftUI
 import SnapKit
 import WebKit
 import Hero
+import Combine
 
 class BrowserViewController: UIViewController {
     private var observation: NSKeyValueObservation?
     private var actionBarIsHiddenFlag: Bool = false
     public var shouldHideActionBar: Bool = false
+    private var cancelSets = Set<AnyCancellable>()
     
     private lazy var contentView: UIView = {
         let view = UIView()
@@ -127,6 +129,12 @@ class BrowserViewController: UIViewController {
                 self?.reloadActionBarView()
             }
         })
+        
+        NotificationCenter.default.publisher(for: .networkChange)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.onReloadBtnClick()
+            }.store(in: &cancelSets)
     }
     
     private func reloadBgPaths() {
