@@ -825,3 +825,5 @@
 "jailbreak_tips_0" = "您的钥匙串正面临威胁。";
 "understand_btn_title" = "我明白";
 "jailbreak_alert_msg" = "越狱检测警报";
+"switch_network_tips_title" = "允许该站点切换网络吗？";
+"switch_network_tips_msg_slice_0" = "此操作将改变您的网络\n";

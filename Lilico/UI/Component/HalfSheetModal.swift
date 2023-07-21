@@ -8,20 +8,12 @@
 
 import SwiftUI
 
-private let SheetHeaderHeight: CGFloat = 76
-
 struct SheetHeaderView: View {
     let title: String
     var closeAction: (() -> Void)? = nil
     
     var body: some View {
-        ZStack {
-            Text(title)
-                .foregroundColor(.LL.Neutrals.text)
-                .font(.inter(size: 24, weight: .bold))
-                .frame(maxWidth: .infinity)
-                .padding(.top, 15)
-            
+        VStack(spacing: 0) {
             HStack {
                 Spacer()
                 
@@ -42,14 +34,20 @@ struct SheetHeaderView: View {
                             .foregroundColor(.LL.Neutrals.neutrals8)
                     }
                     .frame(width: 40, height: 40)
-                    .padding(.bottom, 20)
                     .contentShape(Rectangle())
                 }
             }
+            
+            Text(title)
+                .foregroundColor(.LL.Neutrals.text)
+                .font(.inter(size: 24, weight: .bold))
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
         }
         .frame(maxWidth: .infinity)
-        .frame(height: SheetHeaderHeight)
         .padding(.horizontal, 16)
+        .padding(.bottom, 16)
+        .padding(.top, 10)
     }
     
     private func defaultCloseAction() {

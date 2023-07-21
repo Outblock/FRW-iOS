@@ -12,7 +12,7 @@ struct BackupTipsView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            SheetHeaderView(title: "") {
+            SheetHeaderView(title: "backup".localized) {
                 onCloseAction()
             }
             
@@ -23,11 +23,6 @@ struct BackupTipsView: View {
     
     var contentView: some View {
         VStack(spacing: 0) {
-            Text("backup".localized)
-                .font(.inter(size: 24, weight: .bold))
-                .foregroundColor(Color.LL.Neutrals.text)
-                .padding(.bottom, 7)
-            
             Text("backup_tips_desc".localized)
                 .font(.inter(size: 14))
                 .foregroundColor(Color.LL.Neutrals.text2)

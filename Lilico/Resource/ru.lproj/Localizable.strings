@@ -825,3 +825,5 @@
 "jailbreak_tips_0" = "Ваш брелок подвержен угрозам.";
 "understand_btn_title" = "Я понимаю";
 "jailbreak_alert_msg" = "Предупреждение об обнаружении джейлбрейка";
+"switch_network_tips_title" = "Разрешить этому сайту переключать сеть?";
+"switch_network_tips_msg_slice_0" = "Это действие изменит вашу сеть\nс";

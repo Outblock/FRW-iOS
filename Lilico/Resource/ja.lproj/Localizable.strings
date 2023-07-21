@@ -825,3 +825,5 @@
 "jailbreak_tips_0" = "あなたのキーチェーンが脅威にさらされています。";
 "understand_btn_title" = "わかりました";
 "jailbreak_alert_msg" = "脱獄検出アラート";
+"switch_network_tips_title" = "このサイトにネットワークの切り替えを許可しますか?";
+"switch_network_tips_msg_slice_0" = "この操作によりネットワークが\n以前の状態から変更されます";

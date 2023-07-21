@@ -825,3 +825,5 @@
 "jailbreak_tips_0" = "Your keychain is exposing in threats.";
 "understand_btn_title" = "I Understand";
 "jailbreak_alert_msg" = "Jailbreak Detection Alert";
+"switch_network_tips_title" = "Allow this site to switch the network?";
+"switch_network_tips_msg_slice_0" = "This action will change your network\nfrom";
