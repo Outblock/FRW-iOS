@@ -115,6 +115,7 @@ extension RouteMap {
         case stakeDetail(StakingProvider, StakingNode)
         case stakeSetupConfirm(StakeAmountViewModel)
         case backToTokenDetail
+        case jailbreakAlert
     }
 }
 
@@ -173,6 +174,9 @@ extension RouteMap.Wallet: RouterTarget {
             }
             
             navi.popToRootViewController(animated: true)
+        case .jailbreakAlert:
+            let vc = CustomHostingController(rootView: JailbreakAlertView())
+            Router.topPresentedController().present(vc, animated: true, completion: nil)
         }
     }
 }
@@ -201,6 +205,7 @@ extension RouteMap {
         case accountDetail(ChildAccount)
         case switchProfile
         case editChildAccount(ChildAccount)
+        case backToAccountSetting
     }
 }
 
@@ -260,6 +265,13 @@ extension RouteMap.Profile: RouterTarget {
         case .editChildAccount(let childAccount):
             let vm = ChildAccountDetailEditViewModel(childAccount: childAccount)
             navi.push(content: ChildAccountDetailEditView(vm: vm))
+        case .backToAccountSetting:
+            if let existVC = navi.viewControllers.first(where: { $0 as? RouteableUIHostingController<AccountSettingView> != nil }) {
+                navi.popToViewController(existVC, animated: true)
+                return
+            }
+            
+            navi.popToRootViewController(animated: true)
         }
     }
 }
@@ -392,6 +404,7 @@ extension RouteMap {
         case bookmark
         case linkChildAccount(ChildAccountLinkViewModel)
         case dapps
+        case switchNetwork(LocalUserDefaults.FlowNetworkType, LocalUserDefaults.FlowNetworkType)
     }
 }
 
@@ -436,6 +449,9 @@ extension RouteMap.Explore: RouterTarget {
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .dapps:
             navi.present(content: DAppsListView())
+        case .switchNetwork(let from, let to):
+            let vc = CustomHostingController(rootView: NetworkSwitchPopView(from: from, to: to))
+            Router.topPresentedController().present(vc, animated: true, completion: nil)
         }
     }
 }

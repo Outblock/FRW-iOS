@@ -12,7 +12,7 @@ import SwiftUI
 import UIKit
 
 struct FirebaseStorageUtils {
-    static func upload(avatar: UIImage) async -> String? {
+    static func upload(avatar: UIImage, removeQuery: Bool = true) async -> String? {
         await withCheckedContinuation { config in
             guard let username = UserManager.shared.userInfo?.username else {
                 config.resume(returning: nil)
@@ -38,7 +38,10 @@ struct FirebaseStorageUtils {
                         return
                     }
 
-                    comp.query = nil
+                    if removeQuery {
+                        comp.query = nil
+                    }
+                    
                     config.resume(returning: comp.url?.absoluteString)
                 }
             }

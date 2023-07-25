@@ -684,21 +684,56 @@ extension FlowNetwork {
         let rawResponse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: replacedCadence),
                                                                            arguments: [.address(address)])
 
-        guard let decode = rawResponse.decode() as? [String: Any] else {
+        guard let decode = rawResponse.decode() as? [String: Any?] else {
             return []
         }
 
         let result: [ChildAccount] = decode.keys.compactMap { key in
             guard let value = decode[key],
+                  let value = value,
                   let data = try? JSONSerialization.data(withJSONObject: value),
                   var model = try? JSONDecoder().decode(ChildAccount.self, from: data) else {
-                return nil
+                return ChildAccount(address: key, name: nil, desc: nil, icon: nil, pinTime: 0)
             }
+            
             model.addr = key
             return model
         }
 
         return result
+    }
+    
+    static func editChildAccountMeta(_ address: String, name: String, desc: String, thumbnail: String) async throws -> Flow.ID {
+        let cadenceString = CadenceTemplate.editChildAccount.replace(by: ScriptAddress.addressMap())
+        let walletAddress = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
+        
+        let txId = try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+            cadence {
+                cadenceString
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            
+            proposer {
+                walletAddress
+            }
+            
+            authorizers {
+                walletAddress
+            }
+            
+            arguments {
+                [.address(Flow.Address(hex: address)), .string(name), .string(desc), .string(thumbnail)]
+            }
+            
+            gasLimit {
+                9999
+            }
+        })
+        
+        return txId
     }
 }
 

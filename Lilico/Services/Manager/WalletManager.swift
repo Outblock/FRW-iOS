@@ -126,7 +126,7 @@ extension WalletManager {
     
     var selectedAccountNickName: String {
         if let childAccount = childAccount {
-            return childAccount.name
+            return childAccount.aName
         }
         
         return UserManager.shared.userInfo?.nickname ?? "Lilico"
@@ -134,7 +134,7 @@ extension WalletManager {
     
     var selectedAccountWalletName: String {
         if let childAccount = childAccount {
-            return "\(childAccount.name) Wallet"
+            return "\(childAccount.aName) Wallet"
         }
         
         if let walletInfo = self.walletInfo?.currentNetworkWalletModel {
@@ -146,7 +146,7 @@ extension WalletManager {
     
     var selectedAccountAddress: String {
         if let childAccount = childAccount {
-            return childAccount.address
+            return childAccount.addr ?? ""
         }
         
         if let walletInfo = self.walletInfo?.currentNetworkWalletModel {
@@ -253,7 +253,7 @@ extension WalletManager {
         }
         
         if let childAccount = childAccount {
-            return childAccount.address
+            return childAccount.addr
         }
         
         if let walletInfo = self.walletInfo?.currentNetworkWalletModel {
@@ -507,14 +507,14 @@ extension WalletManager {
         
         log.debug("fetchWalletDatas")
         
-        try await fetchSupportedCoins()
+        try fetchSupportedCoins()
         try await fetchActivatedCoins()
         try await fetchBalance()
         ChildAccountManager.shared.refresh()
     }
 
-    private func fetchSupportedCoins() async throws {
-        let coins: [TokenModel] = try await FirebaseConfig.flowCoins.fetch()
+    private func fetchSupportedCoins() throws {
+        let coins: [TokenModel] = try FirebaseConfig.flowCoins.fetch()
         let validCoins = coins.filter { $0.getAddress()?.isEmpty == false }
         DispatchQueue.main.sync {
             self.supportedCoins = validCoins

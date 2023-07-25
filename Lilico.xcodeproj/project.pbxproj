@@ -1253,6 +1253,10 @@
 		6A9C34F928AB6C0A00AA41A5 /* NFTUIKitSegmentControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9C34F728AB6C0A00AA41A5 /* NFTUIKitSegmentControl.swift */; };
 		6A9C34FB28AB939600AA41A5 /* NFTUIKitCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9C34FA28AB939600AA41A5 /* NFTUIKitCache.swift */; };
 		6A9C34FC28AB939600AA41A5 /* NFTUIKitCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9C34FA28AB939600AA41A5 /* NFTUIKitCache.swift */; };
+		6A9CFE482A6931F900AEA847 /* UIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9CFE472A6931F900AEA847 /* UIDevice.swift */; };
+		6A9CFE492A6931F900AEA847 /* UIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9CFE472A6931F900AEA847 /* UIDevice.swift */; };
+		6A9CFE4C2A69331100AEA847 /* JailbreakAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9CFE4B2A69331100AEA847 /* JailbreakAlertView.swift */; };
+		6A9CFE4D2A69331100AEA847 /* JailbreakAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9CFE4B2A69331100AEA847 /* JailbreakAlertView.swift */; };
 		6A9D7C472833B45500078F63 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D7C3D2833AC9700078F63 /* ThemeManager.swift */; };
 		6A9D7C4D2834D7D100078F63 /* ThemeChangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D7C4B2834D7D100078F63 /* ThemeChangeView.swift */; };
 		6A9DFBC529519D9800E10EAC /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9DFBC429519D9800E10EAC /* WidgetKit.framework */; };
@@ -1300,10 +1304,6 @@
 		6ABFE59E29A70E6700AA1688 /* LocalEnvManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABFE59B29A70E6700AA1688 /* LocalEnvManager.swift */; };
 		6ABFE59F29A70E6700AA1688 /* LocalEnvManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABFE59B29A70E6700AA1688 /* LocalEnvManager.swift */; };
 		6ABFE5A129A711ED00AA1688 /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = 6ABFE5A029A711ED00AA1688 /* Gzip */; };
-		6ABFE5B629A74DCD00AA1688 /* Translized.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABFE5B529A74DCC00AA1688 /* Translized.xcframework */; };
-		6ABFE5B729A74DCD00AA1688 /* Translized.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABFE5B529A74DCC00AA1688 /* Translized.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6ABFE5B829A74DDB00AA1688 /* Translized.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABFE5B529A74DCC00AA1688 /* Translized.xcframework */; };
-		6ABFE5B929A74DDB00AA1688 /* Translized.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABFE5B529A74DCC00AA1688 /* Translized.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6AC1AE69289BACDF00F76C7A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6AC1AE68289BACDF00F76C7A /* SnapKit */; };
 		6AC1AE6B289BAD0600F76C7A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6AC1AE6A289BAD0600F76C7A /* SnapKit */; };
 		6AC1AE6D289BAD3500F76C7A /* PinCodeTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AC1AE6C289BAD3500F76C7A /* PinCodeTextField.swift */; };
@@ -1326,6 +1326,8 @@
 		6AC62B03286AEFB5000876D9 /* LilicoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1500783D286830EF00A00109 /* LilicoTests.swift */; };
 		6AC717E2287EA61100AA5040 /* WalletSendAmountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AC717E1287EA61100AA5040 /* WalletSendAmountViewModel.swift */; };
 		6AC717E3287EA61100AA5040 /* WalletSendAmountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AC717E1287EA61100AA5040 /* WalletSendAmountViewModel.swift */; };
+		6AC965D82A6A312500E0AD1C /* NetworkSwitchPopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AC965D72A6A312500E0AD1C /* NetworkSwitchPopView.swift */; };
+		6AC965D92A6A312500E0AD1C /* NetworkSwitchPopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AC965D72A6A312500E0AD1C /* NetworkSwitchPopView.swift */; };
 		6ACDD16A2858688700F406EB /* ProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACDD1682858688700F406EB /* ProfileEditView.swift */; };
 		6ACDD17028587A7700F406EB /* ProfileEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACDD16E28587A7700F406EB /* ProfileEditViewModel.swift */; };
 		6ACDD17428587E8B00F406EB /* ProfileEditNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACDD17228587E8B00F406EB /* ProfileEditNameView.swift */; };
@@ -1505,7 +1507,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				155E371828D35E5200834C30 /* WalletCore.xcframework in Embed Frameworks */,
-				6ABFE5B929A74DDB00AA1688 /* Translized.xcframework in Embed Frameworks */,
 				155E371628D35E5200834C30 /* SwiftProtobuf.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1518,7 +1519,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				155E371C28D35E6500834C30 /* WalletCore.xcframework in Embed Frameworks */,
-				6ABFE5B729A74DCD00AA1688 /* Translized.xcframework in Embed Frameworks */,
 				155E371A28D35E6500834C30 /* SwiftProtobuf.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -2133,6 +2133,8 @@
 		6A998DA82936769000EF133B /* StakingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StakingManager.swift; sourceTree = "<group>"; };
 		6A9C34F728AB6C0A00AA41A5 /* NFTUIKitSegmentControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTUIKitSegmentControl.swift; sourceTree = "<group>"; };
 		6A9C34FA28AB939600AA41A5 /* NFTUIKitCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTUIKitCache.swift; sourceTree = "<group>"; };
+		6A9CFE472A6931F900AEA847 /* UIDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDevice.swift; sourceTree = "<group>"; };
+		6A9CFE4B2A69331100AEA847 /* JailbreakAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JailbreakAlertView.swift; sourceTree = "<group>"; };
 		6A9D7C3D2833AC9700078F63 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		6A9D7C4B2834D7D100078F63 /* ThemeChangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeChangeView.swift; sourceTree = "<group>"; };
 		6A9DFBC329519D9800E10EAC /* LilicoWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LilicoWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2160,12 +2162,12 @@
 		6ABAE52E28362D1100C97AE2 /* Others.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Others.swift; sourceTree = "<group>"; };
 		6ABFE59329A708C400AA1688 /* LocalEnv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LocalEnv; sourceTree = "<group>"; };
 		6ABFE59B29A70E6700AA1688 /* LocalEnvManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalEnvManager.swift; sourceTree = "<group>"; };
-		6ABFE5B529A74DCC00AA1688 /* Translized.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Translized.xcframework; path = Lilico/Library/Translized.xcframework; sourceTree = "<group>"; };
 		6AC1AE6C289BAD3500F76C7A /* PinCodeTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinCodeTextField.swift; sourceTree = "<group>"; };
 		6AC476E728F3C993008503E6 /* WebBookmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebBookmark.swift; sourceTree = "<group>"; };
 		6AC476EB28F40E50008503E6 /* BrowserBookmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserBookmarkView.swift; sourceTree = "<group>"; };
 		6AC476EE28F41563008503E6 /* BrowserBookmarkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserBookmarkViewModel.swift; sourceTree = "<group>"; };
 		6AC717E1287EA61100AA5040 /* WalletSendAmountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletSendAmountViewModel.swift; sourceTree = "<group>"; };
+		6AC965D72A6A312500E0AD1C /* NetworkSwitchPopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSwitchPopView.swift; sourceTree = "<group>"; };
 		6ACDD1682858688700F406EB /* ProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditView.swift; sourceTree = "<group>"; };
 		6ACDD16E28587A7700F406EB /* ProfileEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditViewModel.swift; sourceTree = "<group>"; };
 		6ACDD17228587E8B00F406EB /* ProfileEditNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditNameView.swift; sourceTree = "<group>"; };
@@ -2295,7 +2297,6 @@
 				156AC7AD27802FAC00ED5E3E /* GoogleAPIClientForRESTCore in Frameworks */,
 				1570466927930E6A00D1747B /* CollectionViewPagingLayout in Frameworks */,
 				4ED6DD10285A22A800105133 /* IrregularGradient in Frameworks */,
-				6ABFE5B829A74DDB00AA1688 /* Translized.xcframework in Frameworks */,
 				154B891D276A1EEB00780E93 /* FirebaseCrashlytics in Frameworks */,
 				6A46754828F2D46500F705A8 /* FMDB in Frameworks */,
 				155E373028D3ADC100834C30 /* Highlightr in Frameworks */,
@@ -2346,7 +2347,6 @@
 				1549CF03299A10C2002B37A5 /* Gzip in Frameworks */,
 				15C58C452868A4EE00BD4FC6 /* GTMSessionFetcherCore in Frameworks */,
 				6AE46062286EE644009C2B96 /* SwiftUICharts in Frameworks */,
-				6ABFE5B629A74DCD00AA1688 /* Translized.xcframework in Frameworks */,
 				1588332228943F4D00142B35 /* NativeUIKit in Frameworks */,
 				15C58C462868A4EE00BD4FC6 /* Moya in Frameworks */,
 				15C58C472868A4EE00BD4FC6 /* BiometricAuthentication in Frameworks */,
@@ -2501,6 +2501,7 @@
 		153C440427520811006D1E8D /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				6A9CFE4A2A6932FD00AEA847 /* JailbreakAlert */,
 				6A18DDF42A3AFEE0003232AB /* ChildAccount */,
 				6A3FFA7D2A283A3D00CB2B2C /* OnBoarding */,
 				6A3AD5C7291D4F8800C30D57 /* Staking */,
@@ -2912,7 +2913,6 @@
 		15B1A67A276A2D670006B621 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				6ABFE5B529A74DCC00AA1688 /* Translized.xcframework */,
 				4E9BFF5C2867631300601339 /* UIKit.framework */,
 				4E17466E281AF840002A029C /* SwiftProtobuf.xcframework */,
 				15C6F4B9278A8965003CADF2 /* AuthenticationServices.framework */,
@@ -3863,6 +3863,7 @@
 				6AB3732B28D084EC00E8BF05 /* UIColor.swift */,
 				6ADA4C0028F180C400C7B341 /* UIImageView.swift */,
 				6A46754C28F2D70400F705A8 /* FileManager.swift */,
+				6A9CFE472A6931F900AEA847 /* UIDevice.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -4632,6 +4633,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		6A9CFE4A2A6932FD00AEA847 /* JailbreakAlert */ = {
+			isa = PBXGroup;
+			children = (
+				6A9CFE4B2A69331100AEA847 /* JailbreakAlertView.swift */,
+			);
+			path = JailbreakAlert;
+			sourceTree = "<group>";
+		};
 		6A9DFBC829519D9800E10EAC /* LilicoWidgets */ = {
 			isa = PBXGroup;
 			children = (
@@ -4835,6 +4844,7 @@
 				6A9850A028C74CA600A07C2D /* BrowserAuthzViewModel.swift */,
 				6A99342C28C89D0400E4EF59 /* BrowserSignMessageView.swift */,
 				6A99342F28C89FFF00E4EF59 /* BrowserSignMessageViewModel.swift */,
+				6AC965D72A6A312500E0AD1C /* NetworkSwitchPopView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -5872,6 +5882,7 @@
 				15DC212927819C56000B187A /* VProgressBar.swift in Sources */,
 				15DC209B27819C56000B187A /* VBaseHeaderFooterView.swift in Sources */,
 				15DC213327819C56000B187A /* VSegmentedPickerModel.swift in Sources */,
+				6A9CFE4D2A69331100AEA847 /* JailbreakAlertView.swift in Sources */,
 				15DC21E327819C56000B187A /* StateColors_EFD.swift in Sources */,
 				15DC20E727819C56000B187A /* VAccordionModel.swift in Sources */,
 				6A8FA4A2285B192900EE5BE3 /* SnapAlignmentEnvironmentKey.swift in Sources */,
@@ -5987,6 +5998,7 @@
 				6AD6D7C82907D82D0037E206 /* WalletResetConfirmView.swift in Sources */,
 				6A12173929659F5E00BA0C3B /* SideMenuView.swift in Sources */,
 				6ADA4BFF28F17CEA00C7B341 /* BrowserSearchDAppItemCell.swift in Sources */,
+				6AC965D92A6A312500E0AD1C /* NetworkSwitchPopView.swift in Sources */,
 				6AD6D7CB2907DDA00037E206 /* WalletResetConfirmViewModel.swift in Sources */,
 				154B8914276A1EEB00780E93 /* ViewModel.swift in Sources */,
 				15BA24BA28C7A93400755CBF /* WalletSettingView.swift in Sources */,
@@ -6120,6 +6132,7 @@
 				6A074E392922962D00D976F1 /* SelectProviderView.swift in Sources */,
 				15DC217327819C56000B187A /* VDialogModel.swift in Sources */,
 				15DC219327819C56000B187A /* VCheckBoxModel.swift in Sources */,
+				6A9CFE492A6931F900AEA847 /* UIDevice.swift in Sources */,
 				156E84B2281CF01000415896 /* EventLoop+Future.swift in Sources */,
 				15DC20D927819C56000B187A /* VPrimaryButtonModel.swift in Sources */,
 				15DC208327819C56000B187A /* VLazyScrollViewModelHorizontal.swift in Sources */,
@@ -6488,6 +6501,7 @@
 				15C58B922868A4EE00BD4FC6 /* VBaseHeaderFooterView.swift in Sources */,
 				15C58B932868A4EE00BD4FC6 /* VSegmentedPickerModel.swift in Sources */,
 				15C58B942868A4EE00BD4FC6 /* StateColors_EFD.swift in Sources */,
+				6A9CFE4C2A69331100AEA847 /* JailbreakAlertView.swift in Sources */,
 				15C58B952868A4EE00BD4FC6 /* VAccordionModel.swift in Sources */,
 				15C58B962868A4EE00BD4FC6 /* SnapAlignmentEnvironmentKey.swift in Sources */,
 				15C58B972868A4EE00BD4FC6 /* CoinRateCache.swift in Sources */,
@@ -6603,6 +6617,7 @@
 				6AD6D7C72907D82D0037E206 /* WalletResetConfirmView.swift in Sources */,
 				6A12173829659F5E00BA0C3B /* SideMenuView.swift in Sources */,
 				6ADA4BFE28F17CEA00C7B341 /* BrowserSearchDAppItemCell.swift in Sources */,
+				6AC965D82A6A312500E0AD1C /* NetworkSwitchPopView.swift in Sources */,
 				6AD6D7CA2907DDA00037E206 /* WalletResetConfirmViewModel.swift in Sources */,
 				15C58BDC2868A4EE00BD4FC6 /* ViewModel.swift in Sources */,
 				15BA24B928C7A93400755CBF /* WalletSettingView.swift in Sources */,
@@ -6736,6 +6751,7 @@
 				6A074E382922962D00D976F1 /* SelectProviderView.swift in Sources */,
 				15C58C332868A4EE00BD4FC6 /* VDialogModel.swift in Sources */,
 				15C58C342868A4EE00BD4FC6 /* VCheckBoxModel.swift in Sources */,
+				6A9CFE482A6931F900AEA847 /* UIDevice.swift in Sources */,
 				15C58C352868A4EE00BD4FC6 /* EventLoop+Future.swift in Sources */,
 				15C58C362868A4EE00BD4FC6 /* VPrimaryButtonModel.swift in Sources */,
 				15C58C372868A4EE00BD4FC6 /* VLazyScrollViewModelHorizontal.swift in Sources */,

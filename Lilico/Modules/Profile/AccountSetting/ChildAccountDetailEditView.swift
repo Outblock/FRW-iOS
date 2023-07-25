@@ -13,21 +13,73 @@ import SwiftUIX
 
 extension ChildAccountDetailEditViewModel {
     class NewAccountInfo {
-        var newImage: UIImage?
+        var newImage: UIImage? {
+            didSet {
+                imageURL = nil
+            }
+        }
+        var imageURL: String?
+        var name: String = ""
+        var desc: String = ""
     }
 }
 
 class ChildAccountDetailEditViewModel: ObservableObject {
     @Published var childAccount: ChildAccount
     @Published var imagePickerShowFlag = false
-    @Published var newInfo: NewAccountInfo = NewAccountInfo()
+    @Published var newInfo: NewAccountInfo
     
     init(childAccount: ChildAccount) {
         self.childAccount = childAccount
+        self.newInfo = NewAccountInfo()
+        self.newInfo.name = childAccount.name ?? ""
+        self.newInfo.desc = childAccount.description ?? ""
+        self.newInfo.imageURL = childAccount.icon
     }
     
     @objc func saveAction() {
-        log.debug("save save")
+        if newInfo.name.trim.count > 100 {
+            HUD.error(title: "name must be less than 100 characters")
+            return
+        }
+        
+        if newInfo.desc.trim.count > 1000 {
+            HUD.error(title: "description must be less than 1000 characters")
+            return
+        }
+        
+        HUD.loading()
+        
+        Task {
+            do {
+                if let image = newInfo.newImage, newInfo.imageURL == nil {
+                    let newURL = await FirebaseStorageUtils.upload(avatar: image, removeQuery: false)
+                    if newURL == nil {
+                        HUD.dismissLoading()
+                        HUD.error(title: "upload avatar failed")
+                        return
+                    }
+                    
+                    newInfo.imageURL = newURL
+                }
+                
+                let txId = try await FlowNetwork.editChildAccountMeta(childAccount.addr ?? "", name: newInfo.name.trim, desc: newInfo.desc.trim, thumbnail: newInfo.imageURL?.trim ?? "")
+                let holder = TransactionManager.TransactionHolder(id: txId, type: .editChildAccount)
+                
+                DispatchQueue.main.async {
+                    HUD.dismissLoading()
+                    TransactionManager.shared.newTransaction(holder: holder)
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        Router.route(to: RouteMap.Profile.backToAccountSetting)
+                    }
+                }
+            } catch {
+                log.error("edit failed", context: error)
+                HUD.dismissLoading()
+                HUD.error(title: "request_failed".localized)
+            }
+        }
     }
     
     func pickAvatarAction() {
@@ -105,7 +157,7 @@ struct ChildAccountDetailEditView: RouteableView {
                         .cornerRadius(25)
                         .padding(.trailing, 15)
                 } else {
-                    KFImage.url(URL(string: vm.childAccount.icon))
+                    KFImage.url(URL(string: vm.newInfo.imageURL ?? ""))
                         .placeholder({
                             Image("placeholder")
                                 .resizable()
@@ -131,12 +183,26 @@ struct ChildAccountDetailEditView: RouteableView {
                 .font(.inter(size: 16, weight: .medium))
                 .foregroundColor(Color.LL.Neutrals.text)
             
-            Spacer()
-            
-            Text(vm.childAccount.name)
-                .font(.inter(size: 16))
-                .foregroundColor(Color.LL.Neutrals.note)
-                .multilineTextAlignment(.leading)
+            if #available(iOS 16.0, *) {
+                TextEditor(text: $vm.newInfo.name)
+                    .font(.inter(size: 16))
+                    .foregroundColor(Color.LL.Neutrals.note)
+                    .multilineTextAlignment(.trailing)
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: 30)
+                    .scrollContentBackground(.hidden)
+            } else {
+                TextEditor(text: $vm.newInfo.name)
+                    .font(.inter(size: 16))
+                    .foregroundColor(Color.LL.Neutrals.note)
+                    .multilineTextAlignment(.trailing)
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: 30)
+                    .onAppear {
+                        UITextView.appearance().backgroundColor = .clear
+                    }
+                    .background(.clear)
+            }
         }
         .padding(.all, 16)
     }
@@ -147,12 +213,26 @@ struct ChildAccountDetailEditView: RouteableView {
                 .font(.inter(size: 16, weight: .medium))
                 .foregroundColor(Color.LL.Neutrals.text)
             
-            Spacer()
-            
-            Text(vm.childAccount.description)
-                .font(.inter(size: 16))
-                .foregroundColor(Color.LL.Neutrals.note)
-                .multilineTextAlignment(.leading)
+            if #available(iOS 16.0, *) {
+                TextEditor(text: $vm.newInfo.desc)
+                    .font(.inter(size: 16))
+                    .foregroundColor(Color.LL.Neutrals.note)
+                    .multilineTextAlignment(.trailing)
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: 30)
+                    .scrollContentBackground(.hidden)
+            } else {
+                TextEditor(text: $vm.newInfo.desc)
+                    .font(.inter(size: 16))
+                    .foregroundColor(Color.LL.Neutrals.note)
+                    .multilineTextAlignment(.trailing)
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: 30)
+                    .onAppear {
+                        UITextView.appearance().backgroundColor = .clear
+                    }
+                    .background(.clear)
+            }
         }
         .padding(.all, 16)
     }

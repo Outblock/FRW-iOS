@@ -13,7 +13,6 @@ import Resolver
 import SwiftUI
 import UIKit
 import WalletCore
-import Translized
 import SwiftyBeaver
 import FirebaseMessaging
 
@@ -49,11 +48,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         Analytics.setAnalyticsCollectionEnabled(true)
         Analytics.logEvent("ios_app_launch", parameters: [:])
-#if !DEBUG
-        Translized.shared.setup(projectId: LocalEnvManager.shared.translizedProjectID, otaToken: LocalEnvManager.shared.translizedOTAToken)
-        Translized.shared.swizzleMainBundle()
-#endif
-        
         
         appConfig()
         commonConfig()
@@ -69,6 +63,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 #if DEBUG
         Atlantis.start()
 #endif
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.jailbreakDetect()
+        }
         
         return true
     }
@@ -201,11 +199,9 @@ extension AppDelegate {
 }
 
 extension AppDelegate {
-    func applicationDidBecomeActive(_ application: UIApplication) {
-#if !DEBUG
-        Translized.shared.checkForUpdates { (updated, error) in
-            debugPrint("Translized updated: \(updated), error: \(error)")
+    private func jailbreakDetect() {
+        if UIDevice.isJailbreak {
+            Router.route(to: RouteMap.Wallet.jailbreakAlert)
         }
-#endif
     }
 }

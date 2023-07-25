@@ -54,6 +54,7 @@ struct FCLClient: Codable {
     let fclLibrary: String?
     let fclVersion: String?
     let hostname: String?
+    let network: String?
 }
 
 struct FCLServices: Codable {
@@ -75,9 +76,22 @@ struct FCLResponseConfig: Codable {
 struct FCLSimpleResponse: Codable {
     let service: FCLSimpleService
     let type: String
+    let config: FCLResponseConfig?
     
     var serviceType: FCLServiceType {
         return service.type
+    }
+    
+    var network: String? {
+        return config?.client?.network
+    }
+    
+    var networkIsMatch: Bool {
+        guard let network = network, !network.isEmpty else {
+            return true
+        }
+        
+        return network.lowercased() == LocalUserDefaults.shared.flowNetwork.rawValue
     }
 }
 
