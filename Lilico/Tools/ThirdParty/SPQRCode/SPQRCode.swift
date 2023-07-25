@@ -42,7 +42,7 @@ public class SPQRCode {
         }
         qrController.handledQRCodeData = handled
         qrController.clickQRCodeData = click
-        qrController.modalPresentationStyle = .formSheet
+        qrController.modalPresentationStyle = .fullScreen
         controller.present(qrController)
     }
     

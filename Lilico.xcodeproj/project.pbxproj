@@ -930,6 +930,8 @@
 		4E4F794F2831FF0F00ED027C /* NFTSquareCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4F794D2831FF0F00ED027C /* NFTSquareCard.swift */; };
 		4E51B4FC2854A76500EDE4FE /* CaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E51B4FA2854A76500EDE4FE /* CaptureView.swift */; };
 		4E51B4FF2854BEB600EDE4FE /* ImageSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E51B4FD2854BEB600EDE4FE /* ImageSaver.swift */; };
+		4E5885442A6FDF00007CACCC /* SPQRMaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5885432A6FDF00007CACCC /* SPQRMaskView.swift */; };
+		4E5885452A6FDF00007CACCC /* SPQRMaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5885432A6FDF00007CACCC /* SPQRMaskView.swift */; };
 		4E7DD2622858E74600052B21 /* LilicoAPI+NFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7DD2602858E74600052B21 /* LilicoAPI+NFT.swift */; };
 		4E8DD9FD282E52110016A931 /* JSONStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8DD9FB282E52110016A931 /* JSONStorage.swift */; };
 		4E9BFF5D2867631300601339 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E9BFF5C2867631300601339 /* UIKit.framework */; };
@@ -1935,6 +1937,7 @@
 		4E4F794D2831FF0F00ED027C /* NFTSquareCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTSquareCard.swift; sourceTree = "<group>"; };
 		4E51B4FA2854A76500EDE4FE /* CaptureView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaptureView.swift; sourceTree = "<group>"; };
 		4E51B4FD2854BEB600EDE4FE /* ImageSaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaver.swift; sourceTree = "<group>"; };
+		4E5885432A6FDF00007CACCC /* SPQRMaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPQRMaskView.swift; sourceTree = "<group>"; };
 		4E7DD2602858E74600052B21 /* LilicoAPI+NFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LilicoAPI+NFT.swift"; sourceTree = "<group>"; };
 		4E8DD9F7282E2FBB0016A931 /* NFTEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTEmptyView.swift; sourceTree = "<group>"; };
 		4E8DD9FB282E52110016A931 /* JSONStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONStorage.swift; sourceTree = "<group>"; };
@@ -2750,6 +2753,7 @@
 				158832FD28943D1C00142B35 /* SPQRCameraController+AVCaptureMetadataOutputObjectsDelegate.swift */,
 				158832FE28943D1C00142B35 /* SPQRFrameLayer.swift */,
 				158832FF28943D1C00142B35 /* SPQRCorner.swift */,
+				4E5885432A6FDF00007CACCC /* SPQRMaskView.swift */,
 			);
 			path = Interface;
 			sourceTree = "<group>";
@@ -5933,6 +5937,7 @@
 				6AAD4E6A28BC6E9900AEAB1F /* TransactionModels.swift in Sources */,
 				6A3FFA832A2842A400CB2B2C /* OnBoardingViewModel.swift in Sources */,
 				159DEC9328C67DB900493E9F /* NFTDetailPageViewModel.swift in Sources */,
+				4E5885452A6FDF00007CACCC /* SPQRMaskView.swift in Sources */,
 				6A164F422840A1380026B31E /* TabBar.swift in Sources */,
 				6AE084242851D481003BEEF0 /* Logger.swift in Sources */,
 				6AEDD6112A42CB8D008BC5CD /* ChildAccountDetailView.swift in Sources */,
@@ -6553,6 +6558,7 @@
 				159DEC9228C67DB900493E9F /* NFTDetailPageViewModel.swift in Sources */,
 				6A3FFA822A2842A400CB2B2C /* OnBoardingViewModel.swift in Sources */,
 				15C58BA52868A4EE00BD4FC6 /* TabBar.swift in Sources */,
+				4E5885442A6FDF00007CACCC /* SPQRMaskView.swift in Sources */,
 				15C58BA62868A4EE00BD4FC6 /* Logger.swift in Sources */,
 				6A382E24289BDAFF00163564 /* SecurityManager.swift in Sources */,
 				6AEDD6102A42CB8D008BC5CD /* ChildAccountDetailView.swift in Sources */,
