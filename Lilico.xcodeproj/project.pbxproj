@@ -977,6 +977,10 @@
 		6A074E382922962D00D976F1 /* SelectProviderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A074E372922962D00D976F1 /* SelectProviderView.swift */; };
 		6A074E392922962D00D976F1 /* SelectProviderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A074E372922962D00D976F1 /* SelectProviderView.swift */; };
 		6A0B10442A664A1E00023767 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 6A0B10432A664A1E00023767 /* FirebaseMessaging */; };
+		6A0B104C2A66679100023767 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0B104B2A66679100023767 /* NotificationService.swift */; };
+		6A0B10602A6675A600023767 /* LilicoDevNotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6A0B10592A6675A600023767 /* LilicoDevNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6A0B10672A66763C00023767 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0B104B2A66679100023767 /* NotificationService.swift */; };
+		6A0B10682A6676B200023767 /* LilicoNotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6A0B10492A66679100023767 /* LilicoNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6A0C6E1329540682005F0EF6 /* EnvDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0C6E1229540682005F0EF6 /* EnvDefine.swift */; };
 		6A0C6E1629540696005F0EF6 /* EnvDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0C6E1529540696005F0EF6 /* EnvDefine.swift */; };
 		6A0C6E1C29542DFC005F0EF6 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9DFBC429519D9800E10EAC /* WidgetKit.framework */; };
@@ -1137,6 +1141,8 @@
 		6A5006D628A78CC8007FE3F5 /* NFTUIKitListTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A5006D428A78CC8007FE3F5 /* NFTUIKitListTitleView.swift */; };
 		6A531C042877CB1C00EEF6C7 /* WalletSendViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A531C032877CB1C00EEF6C7 /* WalletSendViewModel.swift */; };
 		6A531C052877CB1C00EEF6C7 /* WalletSendViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A531C032877CB1C00EEF6C7 /* WalletSendViewModel.swift */; };
+		6A5908D32A6FAE00001C6512 /* PushAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A5908D22A6FAE00001C6512 /* PushAlertView.swift */; };
+		6A5908D42A6FAE00001C6512 /* PushAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A5908D22A6FAE00001C6512 /* PushAlertView.swift */; };
 		6A5D99AB2A4D5B1600C43D36 /* DAppsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A5D99AA2A4D5B1600C43D36 /* DAppsListView.swift */; };
 		6A5D99AC2A4D5B1600C43D36 /* DAppsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A5D99AA2A4D5B1600C43D36 /* DAppsListView.swift */; };
 		6A5D99AE2A4D5E7400C43D36 /* DAppsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A5D99AD2A4D5E7400C43D36 /* DAppsListViewModel.swift */; };
@@ -1458,6 +1464,20 @@
 			remoteGlobalIDString = 154B88F0276A1EEB00780E93;
 			remoteInfo = "Lilico-dev";
 		};
+		6A0B105E2A6675A600023767 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15EC9DE6274FD1FC00F70CD9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6A0B10582A6675A600023767;
+			remoteInfo = LilicoDevNotificationServiceExtension;
+		};
+		6A0B10652A6675E000023767 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15EC9DE6274FD1FC00F70CD9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6A0B10482A66679100023767;
+			remoteInfo = LilicoNotificationServiceExtension;
+		};
 		6A0C6E2629542DFE005F0EF6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 15EC9DE6274FD1FC00F70CD9 /* Project object */;
@@ -1513,6 +1533,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				6A0C6E2829542DFE005F0EF6 /* LilicoDevWidgetsExtension.appex in Embed Foundation Extensions */,
+				6A0B10602A6675A600023767 /* LilicoDevNotificationServiceExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1523,6 +1544,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				6A0B10682A6676B200023767 /* LilicoNotificationServiceExtension.appex in Embed Foundation Extensions */,
 				6A9DFBD229519D9A00E10EAC /* LilicoWidgetsExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
@@ -1951,6 +1973,13 @@
 		6A06CB0928AA485200C81BE1 /* NFTUIKitListStyleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTUIKitListStyleHandler.swift; sourceTree = "<group>"; };
 		6A06CB0F28AA54A600C81BE1 /* NFTUIKitGridStyleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTUIKitGridStyleHandler.swift; sourceTree = "<group>"; };
 		6A074E372922962D00D976F1 /* SelectProviderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectProviderView.swift; sourceTree = "<group>"; };
+		6A0B10492A66679100023767 /* LilicoNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LilicoNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A0B104B2A66679100023767 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		6A0B104D2A66679100023767 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6A0B10542A6669BB00023767 /* LilicoNotificationServiceExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LilicoNotificationServiceExtension.entitlements; sourceTree = "<group>"; };
+		6A0B10592A6675A600023767 /* LilicoDevNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LilicoDevNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A0B105D2A6675A600023767 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6A0B10642A6675C500023767 /* LilicoDevNotificationServiceExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LilicoDevNotificationServiceExtension.entitlements; sourceTree = "<group>"; };
 		6A0C6E1229540682005F0EF6 /* EnvDefine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvDefine.swift; sourceTree = "<group>"; };
 		6A0C6E1529540696005F0EF6 /* EnvDefine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvDefine.swift; sourceTree = "<group>"; };
 		6A0C6E1B29542DFC005F0EF6 /* LilicoDevWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LilicoDevWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2041,6 +2070,7 @@
 		6A5006D128A7892D007FE3F5 /* NFTUIKitCollectionRegularItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTUIKitCollectionRegularItemCell.swift; sourceTree = "<group>"; };
 		6A5006D428A78CC8007FE3F5 /* NFTUIKitListTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTUIKitListTitleView.swift; sourceTree = "<group>"; };
 		6A531C032877CB1C00EEF6C7 /* WalletSendViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletSendViewModel.swift; sourceTree = "<group>"; };
+		6A5908D22A6FAE00001C6512 /* PushAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushAlertView.swift; sourceTree = "<group>"; };
 		6A5D99AA2A4D5B1600C43D36 /* DAppsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAppsListView.swift; sourceTree = "<group>"; };
 		6A5D99AD2A4D5E7400C43D36 /* DAppsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAppsListViewModel.swift; sourceTree = "<group>"; };
 		6A5D99B22A4D674900C43D36 /* WrappingHStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WrappingHStack.swift; sourceTree = "<group>"; };
@@ -2352,6 +2382,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6A0B10462A66679100023767 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6A0B10562A6675A600023767 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6A0C6E1829542DFC005F0EF6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2460,6 +2504,7 @@
 		153C440427520811006D1E8D /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				6A5908D12A6FADD4001C6512 /* PushAlert */,
 				6A9CFE4A2A6932FD00AEA847 /* JailbreakAlert */,
 				6A18DDF42A3AFEE0003232AB /* ChildAccount */,
 				6A3FFA7D2A283A3D00CB2B2C /* OnBoarding */,
@@ -3903,6 +3948,8 @@
 				1500783C286830EF00A00109 /* LilicoTests */,
 				6A9DFBC829519D9800E10EAC /* LilicoWidgets */,
 				6A0C6E1E29542DFD005F0EF6 /* LilicoDevWidgets */,
+				6A0B104A2A66679100023767 /* LilicoNotificationServiceExtension */,
+				6A0B105A2A6675A600023767 /* LilicoDevNotificationServiceExtension */,
 				15EC9DEF274FD1FC00F70CD9 /* Products */,
 				15B1A67A276A2D670006B621 /* Frameworks */,
 			);
@@ -3916,6 +3963,8 @@
 				15C58C6D2868A4EE00BD4FC6 /* Lilico.app */,
 				6A9DFBC329519D9800E10EAC /* LilicoWidgetsExtension.appex */,
 				6A0C6E1B29542DFC005F0EF6 /* LilicoDevWidgetsExtension.appex */,
+				6A0B10492A66679100023767 /* LilicoNotificationServiceExtension.appex */,
+				6A0B10592A6675A600023767 /* LilicoDevNotificationServiceExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4085,6 +4134,25 @@
 				6A06CB0F28AA54A600C81BE1 /* NFTUIKitGridStyleHandler.swift */,
 			);
 			path = ViewHandler;
+			sourceTree = "<group>";
+		};
+		6A0B104A2A66679100023767 /* LilicoNotificationServiceExtension */ = {
+			isa = PBXGroup;
+			children = (
+				6A0B10542A6669BB00023767 /* LilicoNotificationServiceExtension.entitlements */,
+				6A0B104B2A66679100023767 /* NotificationService.swift */,
+				6A0B104D2A66679100023767 /* Info.plist */,
+			);
+			path = LilicoNotificationServiceExtension;
+			sourceTree = "<group>";
+		};
+		6A0B105A2A6675A600023767 /* LilicoDevNotificationServiceExtension */ = {
+			isa = PBXGroup;
+			children = (
+				6A0B10642A6675C500023767 /* LilicoDevNotificationServiceExtension.entitlements */,
+				6A0B105D2A6675A600023767 /* Info.plist */,
+			);
+			path = LilicoDevNotificationServiceExtension;
 			sourceTree = "<group>";
 		};
 		6A0C6E1E29542DFD005F0EF6 /* LilicoDevWidgets */ = {
@@ -4361,6 +4429,14 @@
 				1507A66E28BFA4CA009B050A /* WalletSendButtonView.swift */,
 			);
 			path = Send;
+			sourceTree = "<group>";
+		};
+		6A5908D12A6FADD4001C6512 /* PushAlert */ = {
+			isa = PBXGroup;
+			children = (
+				6A5908D22A6FAE00001C6512 /* PushAlertView.swift */,
+			);
+			path = PushAlert;
 			sourceTree = "<group>";
 		};
 		6A5D99A92A4D5AFC00C43D36 /* DApps */ = {
@@ -4946,6 +5022,7 @@
 			);
 			dependencies = (
 				6A0C6E2729542DFE005F0EF6 /* PBXTargetDependency */,
+				6A0B105F2A6675A600023767 /* PBXTargetDependency */,
 			);
 			name = "Lilico-dev";
 			packageProductDependencies = (
@@ -5015,6 +5092,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6A0B10662A6675E000023767 /* PBXTargetDependency */,
 				6A9DFBD129519D9A00E10EAC /* PBXTargetDependency */,
 			);
 			name = Lilico;
@@ -5071,6 +5149,40 @@
 			productReference = 15C58C6D2868A4EE00BD4FC6 /* Lilico.app */;
 			productType = "com.apple.product-type.application";
 		};
+		6A0B10482A66679100023767 /* LilicoNotificationServiceExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6A0B10532A66679100023767 /* Build configuration list for PBXNativeTarget "LilicoNotificationServiceExtension" */;
+			buildPhases = (
+				6A0B10452A66679100023767 /* Sources */,
+				6A0B10462A66679100023767 /* Frameworks */,
+				6A0B10472A66679100023767 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LilicoNotificationServiceExtension;
+			productName = LilicoNotificationServiceExtension;
+			productReference = 6A0B10492A66679100023767 /* LilicoNotificationServiceExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		6A0B10582A6675A600023767 /* LilicoDevNotificationServiceExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6A0B10612A6675A600023767 /* Build configuration list for PBXNativeTarget "LilicoDevNotificationServiceExtension" */;
+			buildPhases = (
+				6A0B10552A6675A600023767 /* Sources */,
+				6A0B10562A6675A600023767 /* Frameworks */,
+				6A0B10572A6675A600023767 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LilicoDevNotificationServiceExtension;
+			productName = LilicoDevNotificationServiceExtension;
+			productReference = 6A0B10592A6675A600023767 /* LilicoDevNotificationServiceExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		6A0C6E1A29542DFC005F0EF6 /* LilicoDevWidgetsExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6A0C6E2929542DFE005F0EF6 /* Build configuration list for PBXNativeTarget "LilicoDevWidgetsExtension" */;
@@ -5118,12 +5230,18 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1420;
+				LastSwiftUpdateCheck = 1430;
 				LastUpgradeCheck = 1400;
 				TargetAttributes = {
 					1500783A286830EF00A00109 = {
 						CreatedOnToolsVersion = 14.0;
 						TestTargetID = 154B88F0276A1EEB00780E93;
+					};
+					6A0B10482A66679100023767 = {
+						CreatedOnToolsVersion = 14.3.1;
+					};
+					6A0B10582A6675A600023767 = {
+						CreatedOnToolsVersion = 14.3.1;
 					};
 					6A0C6E1A29542DFC005F0EF6 = {
 						CreatedOnToolsVersion = 14.2;
@@ -5194,6 +5312,8 @@
 				1500783A286830EF00A00109 /* LilicoTests */,
 				6A9DFBC229519D9700E10EAC /* LilicoWidgetsExtension */,
 				6A0C6E1A29542DFC005F0EF6 /* LilicoDevWidgetsExtension */,
+				6A0B10482A66679100023767 /* LilicoNotificationServiceExtension */,
+				6A0B10582A6675A600023767 /* LilicoDevNotificationServiceExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -5293,6 +5413,20 @@
 				15D6D8ED28CB730800CBA152 /* inAR.json in Resources */,
 				1565FB9B28B1681F0086A652 /* Coin.json in Resources */,
 				15C58C662868A4EE00BD4FC6 /* Montserrat-Bold.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6A0B10472A66679100023767 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6A0B10572A6675A600023767 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5943,6 +6077,7 @@
 				6A49C19C2899126B00C8FF05 /* ProfileBackupView.swift in Sources */,
 				6A8FA4AC285B192900EE5BE3 /* SnappableModifier.swift in Sources */,
 				154B8917276A1EEB00780E93 /* PageIndictor.swift in Sources */,
+				6A5908D42A6FAE00001C6512 /* PushAlertView.swift in Sources */,
 				6A164F6A2845F1CB0026B31E /* IndexBar.swift in Sources */,
 				15DC216B27819C56000B187A /* VHalfModalModel.swift in Sources */,
 				4EC56B2B281D385D00246878 /* FirebaseConfig.swift in Sources */,
@@ -6562,6 +6697,7 @@
 				6A49C19B2899126B00C8FF05 /* ProfileBackupView.swift in Sources */,
 				15C58C0E2868A4EE00BD4FC6 /* SnappableModifier.swift in Sources */,
 				15C58C0F2868A4EE00BD4FC6 /* PageIndictor.swift in Sources */,
+				6A5908D32A6FAE00001C6512 /* PushAlertView.swift in Sources */,
 				15C58C102868A4EE00BD4FC6 /* IndexBar.swift in Sources */,
 				15C58C112868A4EE00BD4FC6 /* VHalfModalModel.swift in Sources */,
 				15C58C122868A4EE00BD4FC6 /* FirebaseConfig.swift in Sources */,
@@ -6647,6 +6783,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6A0B10452A66679100023767 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6A0B104C2A66679100023767 /* NotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6A0B10552A6675A600023767 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6A0B10672A66763C00023767 /* NotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6A0C6E1729542DFC005F0EF6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6676,6 +6828,16 @@
 			isa = PBXTargetDependency;
 			target = 154B88F0276A1EEB00780E93 /* Lilico-dev */;
 			targetProxy = 15C58CCF2868ABF700BD4FC6 /* PBXContainerItemProxy */;
+		};
+		6A0B105F2A6675A600023767 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6A0B10582A6675A600023767 /* LilicoDevNotificationServiceExtension */;
+			targetProxy = 6A0B105E2A6675A600023767 /* PBXContainerItemProxy */;
+		};
+		6A0B10662A6675E000023767 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6A0B10482A66679100023767 /* LilicoNotificationServiceExtension */;
+			targetProxy = 6A0B10652A6675E000023767 /* PBXContainerItemProxy */;
 		};
 		6A0C6E2729542DFE005F0EF6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -7043,6 +7205,118 @@
 			};
 			name = Release;
 		};
+		6A0B10512A66679100023767 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = LilicoNotificationServiceExtension/LilicoNotificationServiceExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
+				DEVELOPMENT_TEAM = C7CT739SU9;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LilicoNotificationServiceExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LilicoNotificationServiceExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = "$(CFBundleShortVersionString)";
+				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.LilicoNotificationServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6A0B10522A66679100023767 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = LilicoNotificationServiceExtension/LilicoNotificationServiceExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
+				DEVELOPMENT_TEAM = C7CT739SU9;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LilicoNotificationServiceExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LilicoNotificationServiceExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = "$(CFBundleShortVersionString)";
+				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.LilicoNotificationServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		6A0B10622A6675A600023767 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = LilicoDevNotificationServiceExtension/LilicoDevNotificationServiceExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = C7CT739SU9;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LilicoDevNotificationServiceExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LilicoDevNotificationServiceExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.dev.LilicoDevNotificationServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6A0B10632A6675A600023767 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = LilicoDevNotificationServiceExtension/LilicoDevNotificationServiceExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = C7CT739SU9;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LilicoDevNotificationServiceExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LilicoDevNotificationServiceExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.dev.LilicoDevNotificationServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		6A0C6E2A29542DFE005F0EF6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7198,6 +7472,24 @@
 			buildConfigurations = (
 				15EC9E10274FD1FD00F70CD9 /* Debug */,
 				15EC9E11274FD1FD00F70CD9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6A0B10532A66679100023767 /* Build configuration list for PBXNativeTarget "LilicoNotificationServiceExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6A0B10512A66679100023767 /* Debug */,
+				6A0B10522A66679100023767 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6A0B10612A6675A600023767 /* Build configuration list for PBXNativeTarget "LilicoDevNotificationServiceExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6A0B10622A6675A600023767 /* Debug */,
+				6A0B10632A6675A600023767 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

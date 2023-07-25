@@ -79,6 +79,7 @@ extension Coordinator {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             TransactionUIHandler.shared.refreshPanelHolder()
+            PushHandler.shared.showPushAlertIfNeeded()
         }
         
 //        #if DEBUG

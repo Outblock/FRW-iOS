@@ -827,3 +827,6 @@
 "jailbreak_alert_msg" = "Jailbreak Detection Alert";
 "switch_network_tips_title" = "Allow this site to switch the network?";
 "switch_network_tips_msg_slice_0" = "This action will change your network\nfrom";
+"turn_on_noti_title" = "Turn On Push Nofitications";
+"turn_on_noti_desc" = "Get notified when your transfers, swaps, and approvals complete.";
+"maybe_later_text" = "Maybe Later";

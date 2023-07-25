@@ -30,7 +30,12 @@ extension LilicoAPI.Utils: TargetType, AccessTokenAuthorizable {
         case .currencyRate:
             return .init(string: "https://api.exchangerate.host")!
         case .retoken:
+            #if LILICOPROD
             return .init(string: "https://scanner.lilico.app")!
+            #else
+            return .init(string: "https://dev-scanner.lilico.app")!
+            #endif
+            
         }
     }
     

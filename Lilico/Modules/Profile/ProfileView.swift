@@ -453,6 +453,7 @@ extension ProfileView {
         @EnvironmentObject private var vm: ProfileViewModel
 
         enum Row: Hashable {
+            case notification
             case currency
             case theme
         }
@@ -461,19 +462,36 @@ extension ProfileView {
             VStack {
                 Section {
                     // Hide notification
-                    ForEach([Row.currency, Row.theme], id: \.self) { row in
+                    ForEach([Row.notification, Row.currency, Row.theme], id: \.self) { row in
                         
-                        Button {
-                            switch row {
-                            case .theme:
-                                Router.route(to: RouteMap.Profile.themeChange)
-                            case .currency:
-                                Router.route(to: RouteMap.Profile.currency)
-                            default:
-                                break
+                        if row == Row.notification {
+                            HStack {
+                                Image("icon-notification")
+                                Text("notifications".localized).font(.inter()).frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                Spacer()
+                                
+                                Toggle(isOn: $vm.state.isPushEnabled) {}
+                                    .tint(.LL.Primary.salmonPrimary)
+                                    .onTapGesture {
+                                        vm.showSystemSettingAction()
+                                    }
                             }
-                        } label: {
-                            ProfileView.SettingItemCell(iconName: row.iconName, title: row.title, style: row.style, desc: row.desc(with: vm), toggle: row.toggle)
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+                        } else {
+                            Button {
+                                switch row {
+                                case .theme:
+                                    Router.route(to: RouteMap.Profile.themeChange)
+                                case .currency:
+                                    Router.route(to: RouteMap.Profile.currency)
+                                default:
+                                    break
+                                }
+                            } label: {
+                                ProfileView.SettingItemCell(iconName: row.iconName, title: row.title, style: row.style, desc: row.desc(with: vm), toggle: row.toggle)
+                            }
                         }
                         
                         
@@ -497,6 +515,8 @@ extension ProfileView.GeneralSectionView.Row {
             return "icon-currency"
         case .theme:
             return "icon-theme"
+        default:
+            return ""
         }
     }
 
@@ -506,6 +526,8 @@ extension ProfileView.GeneralSectionView.Row {
             return "currency".localized
         case .theme:
             return "theme".localized
+        default:
+            return ""
         }
     }
 
@@ -515,6 +537,8 @@ extension ProfileView.GeneralSectionView.Row {
             return .desc
         case .theme:
             return .desc
+        default:
+            return .none
         }
     }
 
@@ -523,6 +547,8 @@ extension ProfileView.GeneralSectionView.Row {
         case .currency:
             return false
         case .theme:
+            return false
+        default:
             return false
         }
     }
@@ -533,6 +559,8 @@ extension ProfileView.GeneralSectionView.Row {
             return vm.state.currency
         case .theme:
             return vm.state.colorScheme?.desc ?? "auto".localized
+        default:
+            return ""
         }
     }
 }
