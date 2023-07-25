@@ -55,9 +55,23 @@ class PushHandler: NSObject, ObservableObject {
             }
         }
     }
+    
+    func showPushAlertIfNeeded() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                if settings.authorizationStatus == .notDetermined {
+                    self.showPushAlert()
+                }
+            }
+        }
+    }
 }
 
 extension PushHandler {
+    private func showPushAlert() {
+        Router.route(to: RouteMap.Wallet.pushAlert)
+    }
+    
     private func refreshPushStatus() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {

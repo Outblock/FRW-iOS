@@ -462,7 +462,7 @@ extension ProfileView {
             VStack {
                 Section {
                     // Hide notification
-                    ForEach([Row.currency, Row.theme], id: \.self) { row in
+                    ForEach([Row.notification, Row.currency, Row.theme], id: \.self) { row in
                         
                         if row == Row.notification {
                             HStack {
