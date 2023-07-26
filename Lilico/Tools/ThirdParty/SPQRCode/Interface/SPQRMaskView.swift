@@ -13,7 +13,9 @@ class SPQRMaskView: UIView {
     internal let maskLayer = CAShapeLayer()
     internal let maskBorder = UIImageView(image: UIImage(named: "scan_border"))
     internal let padding = 35.0
-    internal let top = 137.0
+    var top = 72.0
+    var statusBarHeight = 20.0;
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -44,7 +46,7 @@ class SPQRMaskView: UIView {
     func buildMaskPath() {
         let rect = bounds
         let exceptSize = rect.width -  2 * padding
-        let exceptRect = CGRect(x: padding, y: top, width: exceptSize, height: exceptSize)
+        let exceptRect = CGRect(x: padding, y: topMargin(), width: exceptSize, height: exceptSize)
         
         let coverPath = UIBezierPath.init(rect: rect)
         let scanPath = UIBezierPath()
@@ -91,5 +93,9 @@ class SPQRMaskView: UIView {
         maskBorder.frame = exceptRect.insetBy(dx: -16, dy: -16)
         
         
+    }
+    
+    func topMargin() -> CGFloat {
+        return top + statusBarHeight + 44;
     }
 }
