@@ -58,8 +58,13 @@ class WalletViewModel: ObservableObject {
     @Published var backupTipsPresent: Bool = false
     
     @Published var isMock: Bool = false
+    
+    var needShowPlaceholder: Bool {
+        return isMock || walletState == .noAddress
+    }
+    
     var mCoinItems: [WalletCoinItemModel] {
-        if isMock {
+        if needShowPlaceholder  {
             return [WalletCoinItemModel].mock()
         } else {
             return coinItems
@@ -78,7 +83,6 @@ class WalletViewModel: ObservableObject {
 
     init() {
         WalletManager.shared.$walletInfo
-            .dropFirst()
             .receive(on: DispatchQueue.main)
             .map { $0 }
             .sink { [weak self] newInfo in
