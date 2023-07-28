@@ -933,6 +933,8 @@
 		4E5885442A6FDF00007CACCC /* SPQRMaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5885432A6FDF00007CACCC /* SPQRMaskView.swift */; };
 		4E5885452A6FDF00007CACCC /* SPQRMaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5885432A6FDF00007CACCC /* SPQRMaskView.swift */; };
 		4E7DD2622858E74600052B21 /* LilicoAPI+NFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7DD2602858E74600052B21 /* LilicoAPI+NFT.swift */; };
+		4E8394442A7153EB00DFC422 /* CalloutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8394432A7153EB00DFC422 /* CalloutView.swift */; };
+		4E8394452A7153EB00DFC422 /* CalloutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8394432A7153EB00DFC422 /* CalloutView.swift */; };
 		4E8DD9FD282E52110016A931 /* JSONStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8DD9FB282E52110016A931 /* JSONStorage.swift */; };
 		4E9BFF5D2867631300601339 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E9BFF5C2867631300601339 /* UIKit.framework */; };
 		4E9E21B3282644B200E1BACD /* WalletViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9E21B1282644B100E1BACD /* WalletViewModel.swift */; };
@@ -1939,6 +1941,7 @@
 		4E51B4FD2854BEB600EDE4FE /* ImageSaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaver.swift; sourceTree = "<group>"; };
 		4E5885432A6FDF00007CACCC /* SPQRMaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPQRMaskView.swift; sourceTree = "<group>"; };
 		4E7DD2602858E74600052B21 /* LilicoAPI+NFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LilicoAPI+NFT.swift"; sourceTree = "<group>"; };
+		4E8394432A7153EB00DFC422 /* CalloutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalloutView.swift; sourceTree = "<group>"; };
 		4E8DD9F7282E2FBB0016A931 /* NFTEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTEmptyView.swift; sourceTree = "<group>"; };
 		4E8DD9FB282E52110016A931 /* JSONStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONStorage.swift; sourceTree = "<group>"; };
 		4E9BFF5C2867631300601339 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -3893,6 +3896,7 @@
 				6AC1AE6C289BAD3500F76C7A /* PinCodeTextField.swift */,
 				6A37AD9628BE0DE40047E5F7 /* TransactionProcessStatusView.swift */,
 				15F2443328CAC47100C1090E /* SafariView.swift */,
+				4E8394432A7153EB00DFC422 /* CalloutView.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -6069,6 +6073,7 @@
 				15DE22E0277DF37D00B5EE03 /* RestoreWalletView.swift in Sources */,
 				6A8D2A3B283C7C880041100E /* AddressBookViewModel.swift in Sources */,
 				15DC21BB27819C56000B187A /* View.CornerRadius.swift in Sources */,
+				4E8394452A7153EB00DFC422 /* CalloutView.swift in Sources */,
 				6AE0842A2851E7B3003BEEF0 /* Published.swift in Sources */,
 				158CE87E27829E68006A8394 /* RecoveryPhraseView.swift in Sources */,
 				4EC482D1284A3D75000A7E1B /* ColorThief.swift in Sources */,
@@ -6690,6 +6695,7 @@
 				15C58C012868A4EE00BD4FC6 /* RestoreWalletView.swift in Sources */,
 				15C58C032868A4EE00BD4FC6 /* AddressBookViewModel.swift in Sources */,
 				15C58C042868A4EE00BD4FC6 /* View.CornerRadius.swift in Sources */,
+				4E8394442A7153EB00DFC422 /* CalloutView.swift in Sources */,
 				15C58C052868A4EE00BD4FC6 /* Published.swift in Sources */,
 				15C58C062868A4EE00BD4FC6 /* RecoveryPhraseView.swift in Sources */,
 				15C58C072868A4EE00BD4FC6 /* ColorThief.swift in Sources */,

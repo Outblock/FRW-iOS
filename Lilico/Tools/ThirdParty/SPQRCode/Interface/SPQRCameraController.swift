@@ -74,7 +74,7 @@ open class SPQRCameraController: SPController {
         view.layer.addSublayer(frameLayer)
         captureSession.startRunning()
         
-        //TODO: order
+        //TODO: order #cat
         maskView.statusBarHeight = self.statusBarHeight
         view.addSubviews(maskView)
         
@@ -125,7 +125,7 @@ open class SPQRCameraController: SPController {
         }
         
         let titleLabel = UILabel()
-        //TODO: 小六，多语言
+        //TODO: localized #cat
         titleLabel.text = "Scan QR Code"
         titleLabel.textColor = UIColor(red: 0.949, green: 0.949, blue: 0.949, alpha: 1)
         titleLabel.font = UIFont.interSemiBold(size: 18)

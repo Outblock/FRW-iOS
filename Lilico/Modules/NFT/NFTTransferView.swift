@@ -12,6 +12,8 @@ import Flow
 class NFTTransferViewModel: ObservableObject {
     @Published var nft: NFTModel
     @Published var targetContact: Contact
+    //TODO: how check #cat
+    @Published var isValidNFT = true
     private var isRequesting: Bool = false
     
     init(nft: NFTModel, targetContact: Contact) {
@@ -103,6 +105,11 @@ struct NFTTransferView: View {
                 
                 detailView
                     .padding(.top, 37)
+                //TODO:  where data from。 #cat
+                CalloutView(content: "The system identifies the account as empty.")
+                    .padding(.horizontal, 30)
+                    .visibility(vm.isValidNFT ? .gone : .visible)
+                    .transition(.move(edge: .top))
                 
                 Spacer()
                 
