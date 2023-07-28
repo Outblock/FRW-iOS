@@ -49,13 +49,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         Analytics.setAnalyticsCollectionEnabled(true)
         Analytics.logEvent("ios_app_launch", parameters: [:])
         
-        appConfig()
-        commonConfig()
-        flowConfig()
-        
         if !AppDelegate.isUnitTest {
             FirebaseConfig.start()
         }
+        
+        appConfig()
+        commonConfig()
+        flowConfig()
         
         setupUI()
         tryToRestoreAccountWhenFirstLaunch()

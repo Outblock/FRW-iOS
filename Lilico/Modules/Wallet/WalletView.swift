@@ -114,7 +114,7 @@ struct WalletView: View {
                         .listRowInsets(.zero)
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.LL.Neutrals.background)
-                        .visibility(vm.walletState == .idle ? .visible : .gone)
+                        .visibility(vm.walletState == .idle || vm.needShowPlaceholder ? .visible : .gone)
                     }
                     
                 }
@@ -124,7 +124,7 @@ struct WalletView: View {
             .backgroundFill(.LL.Neutrals.background)
             .environmentObject(vm)
         }
-        .mockPlaceholder(vm.isMock)
+        .mockPlaceholder(vm.needShowPlaceholder)
     }
 
     var body: some View {
