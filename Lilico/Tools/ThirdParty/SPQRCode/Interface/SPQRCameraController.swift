@@ -125,8 +125,7 @@ open class SPQRCameraController: SPController {
         }
         
         let titleLabel = UILabel()
-        //TODO: localized #cat
-        titleLabel.text = "Scan QR Code"
+        titleLabel.text = "scan_qr_title".localized
         titleLabel.textColor = UIColor(red: 0.949, green: 0.949, blue: 0.949, alpha: 1)
         titleLabel.font = UIFont.interSemiBold(size: 18)
         titleLabel.textAlignment = .center

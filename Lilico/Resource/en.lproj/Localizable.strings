@@ -830,3 +830,6 @@
 "turn_on_noti_title" = "Turn On Push Nofitications";
 "turn_on_noti_desc" = "Get notified when your transfers, swaps, and approvals complete.";
 "maybe_later_text" = "Maybe Later";
+"scan_qr_title" = "Scan QR Code";
+"wallet_send_token_empty" = "The system identifies the account as empty.";
+"nft_send_collection_empty" = "The system identifies the account as empty.The next transfer will be made only after the current transfer is completed.";

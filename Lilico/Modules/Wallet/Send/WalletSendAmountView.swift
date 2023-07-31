@@ -123,8 +123,7 @@ struct WalletSendAmountView: RouteableView {
             .background(.LL.bgForIcon)
             .cornerRadius(16)
             .padding(.horizontal, 18)
-            //TODO: where data from? #cat
-            CalloutView(content: "The system identifies the account as empty.")
+            CalloutView(content: "wallet_send_token_empty".localized)
                 .padding(.horizontal, 30)
                 .visibility(vm.isValidToken ? .gone : .visible)
                 .transition(.move(edge: .top))

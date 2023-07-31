@@ -60,6 +60,16 @@ class NFTTransferViewModel: ObservableObject {
         
         Task {
             do {
+                
+                guard let collection = nft.collection else {
+                    return
+                }
+                let result = try await FlowNetwork.checkCollectionEnable(address: Flow.Address(hex: toAddress), list: [collection])
+                self.isValidNFT = result.first ?? false;
+                if(!self.isValidNFT) {
+                    return;
+                }
+                
                 let tid = try await FlowNetwork.transferNFT(to: Flow.Address(hex: toAddress), nft: nft)
                 
                 let model = NFTTransferModel(nft: nft, target: self.targetContact, from: fromAddress)
@@ -105,9 +115,8 @@ struct NFTTransferView: View {
                 
                 detailView
                     .padding(.top, 37)
-                //TODO:  where data from。 #cat
-                CalloutView(content: "The system identifies the account as empty.")
-                    .padding(.horizontal, 30)
+                CalloutView(content: "nft_send_collection_empty".localized)
+                    .padding(.horizontal, 12)
                     .visibility(vm.isValidNFT ? .gone : .visible)
                     .transition(.move(edge: .top))
                 
