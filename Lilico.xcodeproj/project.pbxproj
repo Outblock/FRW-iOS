@@ -940,6 +940,12 @@
 		4E9E21B3282644B200E1BACD /* WalletViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9E21B1282644B100E1BACD /* WalletViewModel.swift */; };
 		4E9E21DB282A5B9400E1BACD /* SecureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9E21D9282A586500E1BACD /* SecureView.swift */; };
 		4E9E21E0282A71B500E1BACD /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E9E21DC282A68CB00E1BACD /* Colors.xcassets */; };
+		4EA0D0A32A7A357E004C6A19 /* LLSegmenControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA0D0A22A7A357E004C6A19 /* LLSegmenControl.swift */; };
+		4EA0D0A42A7A357E004C6A19 /* LLSegmenControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA0D0A22A7A357E004C6A19 /* LLSegmenControl.swift */; };
+		4EA0D0A62A7A5AED004C6A19 /* LilicoAPI+ChildAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA0D0A52A7A5AED004C6A19 /* LilicoAPI+ChildAccount.swift */; };
+		4EA0D0A72A7A5AED004C6A19 /* LilicoAPI+ChildAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA0D0A52A7A5AED004C6A19 /* LilicoAPI+ChildAccount.swift */; };
+		4EA0D0AC2A7A61B5004C6A19 /* AppPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA0D0AB2A7A61B5004C6A19 /* AppPlaceholder.swift */; };
+		4EA0D0AD2A7A61B5004C6A19 /* AppPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA0D0AB2A7A61B5004C6A19 /* AppPlaceholder.swift */; };
 		4EA820C7286354E200DF36A8 /* remote_config_defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4EA820C5286354E200DF36A8 /* remote_config_defaults.plist */; };
 		4EAF31BA2845E501002AF489 /* NFTSegmentControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAF31B82845E501002AF489 /* NFTSegmentControl.swift */; };
 		4EAF31BF28464ACE002AF489 /* BackAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAF31BD28464ACE002AF489 /* BackAppBar.swift */; };
@@ -967,6 +973,10 @@
 		4EE8E4962834DC7100DFEF59 /* NFTModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE8E4942834DC7100DFEF59 /* NFTModel.swift */; };
 		4EE8E4992835EAF500DFEF59 /* NFTFavoriteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE8E4972835EAF100DFEF59 /* NFTFavoriteView.swift */; };
 		4EE8E49C283626D000DFEF59 /* NFTLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE8E49A283626D000DFEF59 /* NFTLoading.swift */; };
+		4EEC374F2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */; };
+		4EEC37502A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */; };
+		4EF3FAE02A7B8D8400D7B09B /* FlowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */; };
+		4EF3FAE12A7B8D8400D7B09B /* FlowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */; };
 		4EF5129A28329ADA0014F4EC /* NFTDetailPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF5129828329ADA0014F4EC /* NFTDetailPage.swift */; };
 		4EF5129D28333A230014F4EC /* NFTTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF5129B28333A230014F4EC /* NFTTagsView.swift */; };
 		6A0137662897E7A0009BEF20 /* HalfSheetModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0137652897E7A0009BEF20 /* HalfSheetModal.swift */; };
@@ -1948,6 +1958,9 @@
 		4E9E21B1282644B100E1BACD /* WalletViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletViewModel.swift; sourceTree = "<group>"; };
 		4E9E21D9282A586500E1BACD /* SecureView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecureView.swift; sourceTree = "<group>"; };
 		4E9E21DC282A68CB00E1BACD /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		4EA0D0A22A7A357E004C6A19 /* LLSegmenControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLSegmenControl.swift; sourceTree = "<group>"; };
+		4EA0D0A52A7A5AED004C6A19 /* LilicoAPI+ChildAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LilicoAPI+ChildAccount.swift"; sourceTree = "<group>"; };
+		4EA0D0AB2A7A61B5004C6A19 /* AppPlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPlaceholder.swift; sourceTree = "<group>"; };
 		4EA820C5286354E200DF36A8 /* remote_config_defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = remote_config_defaults.plist; sourceTree = "<group>"; };
 		4EAF31B82845E501002AF489 /* NFTSegmentControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTSegmentControl.swift; sourceTree = "<group>"; };
 		4EAF31BD28464ACE002AF489 /* BackAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackAppBar.swift; sourceTree = "<group>"; };
@@ -1972,6 +1985,8 @@
 		4EE8E4942834DC7100DFEF59 /* NFTModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTModel.swift; sourceTree = "<group>"; };
 		4EE8E4972835EAF100DFEF59 /* NFTFavoriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTFavoriteView.swift; sourceTree = "<group>"; };
 		4EE8E49A283626D000DFEF59 /* NFTLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTLoading.swift; sourceTree = "<group>"; };
+		4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CadenceTemplate+ChildAccount.swift"; sourceTree = "<group>"; };
+		4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowModel.swift; sourceTree = "<group>"; };
 		4EF5129828329ADA0014F4EC /* NFTDetailPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTDetailPage.swift; sourceTree = "<group>"; };
 		4EF5129B28333A230014F4EC /* NFTTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTTagsView.swift; sourceTree = "<group>"; };
 		6A0137652897E7A0009BEF20 /* HalfSheetModal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HalfSheetModal.swift; sourceTree = "<group>"; };
@@ -2442,6 +2457,7 @@
 				1505E5FA28363578007B98D8 /* LilicoAPI+User.swift */,
 				1505E5FD2836365C007B98D8 /* LilicoAPI+AddressBook.swift */,
 				6ACDD17828588B3F00F406EB /* LilicoAPI+Profile.swift */,
+				4EA0D0A52A7A5AED004C6A19 /* LilicoAPI+ChildAccount.swift */,
 				4E7DD2602858E74600052B21 /* LilicoAPI+NFT.swift */,
 				6AEF839A28647B830081E285 /* LilicoAPI+Crypto.swift */,
 				6A45898828C1DF0000B1024B /* LilicoAPI+Browser.swift */,
@@ -3897,6 +3913,7 @@
 				6A37AD9628BE0DE40047E5F7 /* TransactionProcessStatusView.swift */,
 				15F2443328CAC47100C1090E /* SafariView.swift */,
 				4E8394432A7153EB00DFC422 /* CalloutView.swift */,
+				4EA0D0A22A7A357E004C6A19 /* LLSegmenControl.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -4093,9 +4110,11 @@
 		4EC56B2E281FC55400246878 /* FlowCoin */ = {
 			isa = PBXGroup;
 			children = (
+				4EF3FADE2A7B8D7200D7B09B /* Model */,
 				4EC56B2F281FC57900246878 /* FlowQuery.swift */,
 				15832D58286816ED0066046D /* FlowAddressRegistor.swift */,
 				6AD9EC24286C4E4C0062A9CE /* CadenceTemplate.swift */,
+				4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */,
 			);
 			path = FlowCoin;
 			sourceTree = "<group>";
@@ -4133,6 +4152,21 @@
 				4EB17C8828629DE200CA4DAE /* NFTCollectionStateManager.swift */,
 			);
 			path = NFTModel;
+			sourceTree = "<group>";
+		};
+		4EF3FADD2A7B84A300D7B09B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4EF3FADE2A7B8D7200D7B09B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		6A06CB0828AA483A00C81BE1 /* ViewHandler */ = {
@@ -4406,6 +4440,7 @@
 			children = (
 				6A41B6A82861D06F00999451 /* NotificationDefine.swift */,
 				6A5F15EF2A317E3A0035AC38 /* AppPathDefine.swift */,
+				4EA0D0AB2A7A61B5004C6A19 /* AppPlaceholder.swift */,
 			);
 			path = Define;
 			sourceTree = "<group>";
@@ -4935,6 +4970,7 @@
 		6AEDD60B2A429E09008BC5CD /* AccountSetting */ = {
 			isa = PBXGroup;
 			children = (
+				4EF3FADD2A7B84A300D7B09B /* Models */,
 				6AEDD60C2A429E22008BC5CD /* AccountSettingView.swift */,
 				6AEDD60F2A42CB8D008BC5CD /* ChildAccountDetailView.swift */,
 				6A6F6A512A5FE76E006C4CCE /* ChildAccountDetailEditView.swift */,
@@ -5674,6 +5710,7 @@
 				6ADBBCA028D1755F00F1F0DA /* AccountRequests.swift in Sources */,
 				15DC210927819C56000B187A /* VSlider.swift in Sources */,
 				1507A67028BFA4CA009B050A /* WalletSendButtonView.swift in Sources */,
+				4EF3FAE12A7B8D8400D7B09B /* FlowModel.swift in Sources */,
 				6AE0841E284F58F3003BEEF0 /* UserModel.swift in Sources */,
 				152711A028D4C418002520EA /* NFTEmptyView_dev.swift in Sources */,
 				15D874DD28C5C3740072C6EA /* DragGestureViewModifier.swift in Sources */,
@@ -5840,6 +5877,7 @@
 				15DC20C927819C56000B187A /* VNavigationViewBackButtonHidden.swift in Sources */,
 				1588331928943D1D00142B35 /* SPQRCodeData.swift in Sources */,
 				15DC219927819C56000B187A /* VTextFieldModel.swift in Sources */,
+				4EA0D0AD2A7A61B5004C6A19 /* AppPlaceholder.swift in Sources */,
 				15F2444728CB370D00C1090E /* HeartImageView.swift in Sources */,
 				15DC212B27819C56000B187A /* VProgressBarModel.swift in Sources */,
 				6A164F6E2845F1CB0026B31E /* View+IndexBarBackground.swift in Sources */,
@@ -5862,11 +5900,13 @@
 				15F22F1D278B28CC00FCF772 /* ConfirmPinCodeViewModel.swift in Sources */,
 				6AEA375128A4FA52004545D4 /* NFTUIKitCollectionPinnedSectionView.swift in Sources */,
 				15DC213127819C56000B187A /* VWheelPickerModel.swift in Sources */,
+				4EA0D0A72A7A5AED004C6A19 /* LilicoAPI+ChildAccount.swift in Sources */,
 				15BA24B628C785B300755CBF /* GradientButton.swift in Sources */,
 				15DC20B127819C56000B187A /* VBaseButtonState.swift in Sources */,
 				15D9282D2783395F00382226 /* HUDManager.swift in Sources */,
 				4E4F794C2831FCB700ED027C /* ImageName.swift in Sources */,
 				15B1F6302786AC9E00847BB5 /* BackupPasswordViewModel.swift in Sources */,
+				4EA0D0A42A7A357E004C6A19 /* LLSegmenControl.swift in Sources */,
 				6A164F782845F1CB0026B31E /* ScrollAccessory.swift in Sources */,
 				15D9282A278338DB00382226 /* UIApplication.swift in Sources */,
 				6A7D9DCF28E1858E00333954 /* SwapEstimateRequest.swift in Sources */,
@@ -6167,6 +6207,7 @@
 				6AAFFEDF292544BD00B5A264 /* StakeAmountView.swift in Sources */,
 				6AB5FBA328926C9100FA2261 /* iCloudAPI.swift in Sources */,
 				4EC31183284508F200F711F5 /* NFTListView.swift in Sources */,
+				4EEC37502A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift in Sources */,
 				154866F128D0EEF000D012B8 /* FlowTransactionTemplate.swift in Sources */,
 				6A6C410528D849A000074DE9 /* InboxView.swift in Sources */,
 				154866ED28D0ECE400D012B8 /* FlixAuditEndpoint.swift in Sources */,
@@ -6296,6 +6337,7 @@
 				6ADBBC9F28D1755F00F1F0DA /* AccountRequests.swift in Sources */,
 				15C58AFC2868A4EE00BD4FC6 /* VSlider.swift in Sources */,
 				1507A66F28BFA4CA009B050A /* WalletSendButtonView.swift in Sources */,
+				4EF3FAE02A7B8D8400D7B09B /* FlowModel.swift in Sources */,
 				15C58AFD2868A4EE00BD4FC6 /* UserModel.swift in Sources */,
 				15D874DC28C5C3740072C6EA /* DragGestureViewModifier.swift in Sources */,
 				15C58AFE2868A4EE00BD4FC6 /* VPickableItems.swift in Sources */,
@@ -6462,6 +6504,7 @@
 				1588331828943D1D00142B35 /* SPQRCodeData.swift in Sources */,
 				15C58B5F2868A4EE00BD4FC6 /* VTextFieldModel.swift in Sources */,
 				15F2444628CB370D00C1090E /* HeartImageView.swift in Sources */,
+				4EA0D0AC2A7A61B5004C6A19 /* AppPlaceholder.swift in Sources */,
 				15C58B602868A4EE00BD4FC6 /* VProgressBarModel.swift in Sources */,
 				15C58B612868A4EE00BD4FC6 /* View+IndexBarBackground.swift in Sources */,
 				15C58B622868A4EE00BD4FC6 /* VMenuPickerRow.swift in Sources */,
@@ -6484,11 +6527,13 @@
 				6AEA375028A4FA52004545D4 /* NFTUIKitCollectionPinnedSectionView.swift in Sources */,
 				15C58B6E2868A4EE00BD4FC6 /* VWheelPickerModel.swift in Sources */,
 				15BA24B528C785B300755CBF /* GradientButton.swift in Sources */,
+				4EA0D0A62A7A5AED004C6A19 /* LilicoAPI+ChildAccount.swift in Sources */,
 				15C58B6F2868A4EE00BD4FC6 /* VBaseButtonState.swift in Sources */,
 				15C58B702868A4EE00BD4FC6 /* HUDManager.swift in Sources */,
 				15C58B712868A4EE00BD4FC6 /* ImageName.swift in Sources */,
 				15C58B722868A4EE00BD4FC6 /* BackupPasswordViewModel.swift in Sources */,
 				15C58B732868A4EE00BD4FC6 /* ScrollAccessory.swift in Sources */,
+				4EA0D0A32A7A357E004C6A19 /* LLSegmenControl.swift in Sources */,
 				15C58B742868A4EE00BD4FC6 /* UIApplication.swift in Sources */,
 				15C58B752868A4EE00BD4FC6 /* VChevronButtonModel.swift in Sources */,
 				6A7D9DCE28E1858E00333954 /* SwapEstimateRequest.swift in Sources */,
@@ -6789,6 +6834,7 @@
 				6AAFFEDE292544BD00B5A264 /* StakeAmountView.swift in Sources */,
 				6AB5FBA228926C9100FA2261 /* iCloudAPI.swift in Sources */,
 				15C58C3B2868A4EE00BD4FC6 /* NFTListView.swift in Sources */,
+				4EEC374F2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift in Sources */,
 				154866F028D0EEF000D012B8 /* FlowTransactionTemplate.swift in Sources */,
 				6A6C410428D849A000074DE9 /* InboxView.swift in Sources */,
 				154866EC28D0ECE400D012B8 /* FlixAuditEndpoint.swift in Sources */,

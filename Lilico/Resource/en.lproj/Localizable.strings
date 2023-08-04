@@ -831,5 +831,7 @@
 "turn_on_noti_desc" = "Get notified when your transfers, swaps, and approvals complete.";
 "maybe_later_text" = "Maybe Later";
 "scan_qr_title" = "Scan QR Code";
-"wallet_send_token_empty" = "The system identifies the account as empty.";
-"nft_send_collection_empty" = "The system identifies the account as empty.The next transfer will be made only after the current transfer is completed.";
+"wallet_send_token_empty" = "It seems like the receiver hasn’t enabled this token, you won’t be to deliver this item.";
+"nft_send_collection_empty" = "It seems like the receiver hasn’t enabled this collection, you won’t be to deliver this item.";
+"accessible_cap" = "Accessible";
+"coins_cap" = "Coins";

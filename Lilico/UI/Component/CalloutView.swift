@@ -39,6 +39,6 @@ struct CalloutView: View {
 
 struct CalloutView_Previews: PreviewProvider {
     static var previews: some View {
-        CalloutView()
+        CalloutView(content: "hello world")
     }
 }

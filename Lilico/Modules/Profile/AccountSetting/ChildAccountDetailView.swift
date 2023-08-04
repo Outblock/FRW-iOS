@@ -13,10 +13,27 @@ import UIKit
 class ChildAccountDetailViewModel: ObservableObject {
     @Published var childAccount: ChildAccount
     @Published var isPresent: Bool = false
+    @Published var accessibleItems: [ChildAccountAccessible] = []
+    
+    @Published var isLoading: Bool = true
+    
     private var isUnlinking: Bool = false
+    
+    private var tabIndex: Int = 0
+    private var collections: [ChildAccountAccessible]?
+    private var coins:[ChildAccountAccessible]?
+    
+    var accessibleEmptyTitle: String {
+        var title = "None Accessible "
+        if tabIndex == 0 {
+            return title + "collections".localized
+        }
+        return title + "coins_cap".localized
+    }
     
     init(childAccount: ChildAccount) {
         self.childAccount = childAccount
+        fetchCollections()
     }
     
     func copyAction() {
@@ -55,6 +72,67 @@ class ChildAccountDetailViewModel: ObservableObject {
         }
         
         return false
+    }
+    
+    func switchTab(index: Int) {
+        self.tabIndex = index
+        if index == 0 {
+            if let list = collections {
+                self.accessibleItems = list
+            }else {
+                fetchCollections()
+            }
+        }else if index == 1 {
+            if let list = coins {
+                self.accessibleItems = list
+            }else {
+                fetchCoins()
+            }
+        }
+    }
+    
+    private func fetchCollections() {
+        self.accessibleItems = [FlowModel.NFTCollection].mock(1)
+        self.isLoading = true
+        
+        Task {
+            guard let parent = WalletManager.shared.getPrimaryWalletAddress(), let child = childAccount.addr else {
+                DispatchQueue.main.async {
+                    self.collections = []
+                    self.accessibleItems = []
+                }
+                return
+            }
+            
+            let result = try await FlowNetwork.fetchAccessibleCollection(parent: parent, child: child)
+            DispatchQueue.main.async {
+                self.collections = result
+                self.accessibleItems = result
+                self.isLoading = false
+            }
+        }
+    }
+    
+    private func fetchCoins() {
+        self.accessibleItems = [FlowModel.TokenInfo].mock(1)
+        self.isLoading = true
+        
+        Task {
+            guard let parent = WalletManager.shared.getPrimaryWalletAddress(), let child = childAccount.addr else {
+                DispatchQueue.main.async {
+                    self.coins = []
+                    self.accessibleItems = []
+                }
+                return
+            }
+            
+            let result = try await FlowNetwork.fetchAccessibleFT(parent: parent, child: child)
+            DispatchQueue.main.async {
+                self.coins = result
+                self.accessibleItems = result
+                self.isLoading = false
+            }
+        }
     }
     
     func doUnlinkAction() {
@@ -163,14 +241,20 @@ struct ChildAccountDetailView: RouteableView {
                     .padding(.bottom, 20)
                 
                 addressContentView
-                    .padding(.bottom, 20)
+                    .padding(.bottom, bottomPadding)
                 
                 descContentView
-                    .padding(.bottom, 20)
+                    .padding(.bottom, bottomPadding)
+                accessibleView
+                    .padding(.bottom, bottomPadding)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipped()
+    }
+    
+    private var bottomPadding: CGFloat {
+        return 24
     }
     
     var addressContentView: some View {
@@ -214,6 +298,42 @@ struct ChildAccountDetailView: RouteableView {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+    
+    var accessibleView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("accessible_cap".localized)
+                .foregroundColor(Color.LL.Neutrals.text4)
+                .font(.inter(size: 16, weight: .semibold))
+                .padding(.bottom, 8)
+            LLSegmenControl(titles: ["collections".localized, "coins_cap".localized]) { idx in
+                vm.switchTab(index: idx)
+            }
+            if(vm.accessibleItems.count == 0 && !vm.isLoading) {
+                emptyAccessibleView
+            }
+            ForEach(vm.accessibleItems.indices, id: \.self) { idx in
+                AccessibleItemView(item: vm.accessibleItems[idx]) { item in
+                    
+                }
+            }
+            .mockPlaceholder(vm.isLoading)
+        }
+        
+    }
+    
+    var emptyAccessibleView: some View {
+        HStack {
+            Text(vm.accessibleEmptyTitle)
+                .font(Font.inter(size: 14,weight: .semibold))
+                .foregroundStyle(Color.LL.Neutrals.text4)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 48)
+        .padding(.horizontal, 18)
+        .background(.LL.Neutrals.neutrals6)
+        .cornerRadius(16, style: .continuous)
+    }
+    
 }
 
 extension ChildAccountDetailView {
@@ -365,5 +485,127 @@ extension ChildAccountDetailView {
                 vm.doUnlinkAction()
             }
         }
+    }
+    
+    
+}
+
+private extension ChildAccountDetailView {
+    struct AccessibleItemView: View {
+        
+        var item: ChildAccountAccessible
+        var onClick: ((_ item: ChildAccountAccessible)->())?
+        
+        var body: some View {
+            HStack(spacing: 16) {
+                KFImage.url(URL(string: item.img))
+                    .placeholder({
+                        Image("placeholder")
+                            .resizable()
+                    })
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 24, height: 24)
+                    .cornerRadius(12, style: .continuous)
+                
+                Text(item.title)
+                    .foregroundColor(Color.LL.Neutrals.text)
+                    .font(.inter(size: 14, weight: .semibold))
+                    .lineLimit(2)
+                
+                Spacer()
+                
+                Text(item.subtitle)
+                    .foregroundColor(Color.LL.Neutrals.text3)
+                    .font(.inter(size: 12))
+                Image("icon-black-right-arrow")
+                    .renderingMode(.template)
+                    .foregroundColor(Color.LL.Neutrals.text2)
+                    .visibility(item.isShowNext ? .visible : .gone)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 48)
+            .padding(.horizontal, 16)
+            .background(.white)
+            .cornerRadius(16, style: .circular)
+            .onTapGesture {
+                if let onClick = onClick {
+                    onClick(item)
+                }
+            }
+        }
+    }
+    
+    
+}
+
+protocol ChildAccountAccessible {
+    var img: String { get }
+    var title: String { get }
+    var subtitle: String { get }
+    var isShowNext: Bool { get }
+}
+
+extension FlowModel.NFTCollection : ChildAccountAccessible {
+    var img: String {
+        return self.display?.squareImage ?? AppPlaceholder.image
+    }
+    
+    var title: String {
+        if let name = self.display?.name {
+            return name
+        }
+        if let name2 = self.id.split(separator:".")[safe: 2] {
+            return String(name2)
+        }
+        
+        return "Unrecognised Collection"
+    }
+    
+    var subtitle: String {
+        return "\(idList.count) Collectible"
+    }
+    
+    var isShowNext: Bool {
+        return idList.count > 0
+    }
+}
+
+extension FlowModel.TokenInfo : ChildAccountAccessible {
+    var img: String {
+        if let model = theToken, let url = model.icon?.absoluteString {
+            return url
+        }
+        return AppPlaceholder.image
+    }
+    
+    var title: String {
+        guard let model = theToken else {
+            let title = self.id.split(separator:".")[safe: 2] ?? "Unrecognised Coin"
+            return String(title)
+        }
+        
+        if model.name.count > 0 {
+            return model.name
+        }
+        return model.contractName
+    }
+    
+    var subtitle: String {
+        if let model = theToken {
+            let sub = model.symbol?.uppercased() ?? "?"
+            return "\(balance) \(sub)"
+        }
+        return "\(balance) ?"
+    }
+    
+    var isShowNext: Bool {
+        return false
+    }
+    
+    private var theToken: TokenModel? {
+        let contractName = self.id.split(separator:".")[safe: 2] ?? "empty"
+        let address = self.id.split(separator:".")[safe: 1] ?? "empty_error"
+        return WalletManager.shared.supportedCoins?.filter{ $0.contractName == contractName && ($0.getAddress() ?? "") == address }.first
     }
 }

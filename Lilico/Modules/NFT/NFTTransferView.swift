@@ -12,13 +12,24 @@ import Flow
 class NFTTransferViewModel: ObservableObject {
     @Published var nft: NFTModel
     @Published var targetContact: Contact
-    //TODO: how check #cat
     @Published var isValidNFT = true
     private var isRequesting: Bool = false
     
     init(nft: NFTModel, targetContact: Contact) {
         self.nft = nft
         self.targetContact = targetContact
+        checkNFTReachable()
+    }
+    
+    func checkNFTReachable() {
+        Task {
+            guard let toAddress = targetContact.address, let collection = nft.collection else {
+                return
+            }
+
+            let result = try await FlowNetwork.checkCollectionEnable(address: Flow.Address(hex: toAddress), list: [collection])
+            self.isValidNFT = result.first ?? false;
+        }
     }
     
     func sendAction() {
@@ -61,14 +72,6 @@ class NFTTransferViewModel: ObservableObject {
         Task {
             do {
                 
-                guard let collection = nft.collection else {
-                    return
-                }
-                let result = try await FlowNetwork.checkCollectionEnable(address: Flow.Address(hex: toAddress), list: [collection])
-                self.isValidNFT = result.first ?? false;
-                if(!self.isValidNFT) {
-                    return;
-                }
                 
                 let tid = try await FlowNetwork.transferNFT(to: Flow.Address(hex: toAddress), nft: nft)
                 
