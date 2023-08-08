@@ -835,3 +835,4 @@
 "nft_send_collection_empty" = "It seems like the receiver hasn’t enabled this collection, you won’t be to deliver this item.";
 "accessible_cap" = "Accessible";
 "coins_cap" = "Coins";
+"accessible_not_x_x" = "Lilico doesn’t have access to %@ in %@ Account, please check your linked account settings.";

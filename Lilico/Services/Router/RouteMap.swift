@@ -99,7 +99,7 @@ extension RouteMap.Backup: RouterTarget {
 extension RouteMap {
     enum Wallet {
         case addToken
-        case tokenDetail(TokenModel)
+        case tokenDetail(TokenModel, Bool)
         case receive
         case send(_ address: String = "")
         case sendAmount(Contact, TokenModel, isPush: Bool = true)
@@ -125,8 +125,8 @@ extension RouteMap.Wallet: RouterTarget {
         switch self {
         case .addToken:
             navi.push(content: AddTokenView(vm: AddTokenViewModel()))
-        case .tokenDetail(let token):
-            navi.push(content: TokenDetailView(token: token))
+        case .tokenDetail(let token, let isAccessible):
+                navi.push(content: TokenDetailView(token: token, accessible: isAccessible))
         case .receive:
             let vc = UIHostingController(rootView: WalletReceiveView())
             vc.modalPresentationStyle = .overCurrentContext

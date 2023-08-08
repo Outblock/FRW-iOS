@@ -25,6 +25,8 @@ struct TokenDetailView: RouteableView {
     @StateObject private var vm: TokenDetailViewModel
     @StateObject private var stakingManager = StakingManager.shared
     
+    private var isAccessible: Bool = true
+    
     private let lightGradientColors: [Color] = [.white.opacity(0), Color(hex: "#E6E6E6").opacity(0), Color(hex: "#E6E6E6").opacity(1)]
     private let darkGradientColors: [Color] = [.white.opacity(0), .white.opacity(0), Color(hex: "#282828").opacity(1)]
     
@@ -32,13 +34,18 @@ struct TokenDetailView: RouteableView {
         return ""
     }
     
-    init(token: TokenModel) {
+    init(token: TokenModel, accessible: Bool) {
         _vm = StateObject(wrappedValue: TokenDetailViewModel(token: token))
+        isAccessible = accessible
     }
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 12) {
+                CalloutView(type: .tip, corners: [.topLeading, .topTrailing, .bottomTrailing, .bottomLeading], content: naccessibleDesc())
+                .padding(.bottom, 12)
+                .visibility( showAccessibleWarning() ? .visible : .gone)
+                
                 summaryView
                 stakeAdView
                     .visibility(stakingManager.isStaked || !vm.token.isFlowCoin || LocalUserDefaults.shared.stakingGuideDisplayed || WalletManager.shared.isSelectedChildAccount ? .gone : .visible)
@@ -48,7 +55,7 @@ struct TokenDetailView: RouteableView {
                 chartContainerView.visibility(vm.hasRateAndChartData ? .visible : .gone)
             }
             .padding(.horizontal, 18)
-            .padding(.top, 12)
+//            .padding(.top, 12)
         }
         .buttonStyle(.plain)
         .backgroundFill(.LL.deepBg)
@@ -596,4 +603,19 @@ extension TokenDetailView {
             }
         }
     }
+}
+
+// MARK: - Data for UI
+extension TokenDetailView {
+    func naccessibleDesc() -> String {
+        let token = vm.token.name
+        let account = WalletManager.shared.selectedAccountWalletName
+        let desc = "accessible_not_x_x".localized(token, account)
+        return desc
+    }
+    
+    func showAccessibleWarning() -> Bool {
+        return !isAccessible
+    }
+    
 }

@@ -118,7 +118,7 @@ struct NFTTransferView: View {
                 
                 detailView
                     .padding(.top, 37)
-                CalloutView(content: "nft_send_collection_empty".localized)
+                CalloutView(corners: [.bottomLeading, .bottomTrailing] ,content: "nft_send_collection_empty".localized)
                     .padding(.horizontal, 12)
                     .visibility(vm.isValidNFT ? .gone : .visible)
                     .transition(.move(edge: .top))

@@ -123,7 +123,7 @@ struct WalletSendAmountView: RouteableView {
             .background(.LL.bgForIcon)
             .cornerRadius(16)
             .padding(.horizontal, 18)
-            CalloutView(content: "wallet_send_token_empty".localized)
+            CalloutView(corners: [.bottomLeading, .bottomTrailing], content: "wallet_send_token_empty".localized)
                 .padding(.horizontal, 30)
                 .visibility(vm.isValidToken ? .gone : .visible)
                 .transition(.move(edge: .top))

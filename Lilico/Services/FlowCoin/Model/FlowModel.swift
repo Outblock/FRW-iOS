@@ -57,14 +57,14 @@ extension FlowModel {
             return FlowModel.NFTCollection(id: "", display: nil, idList: [])
         }
         
-        let id: String
+        var id: String
         let display: CollectionDislay?
         let idList: [UInt64]
         
     }
     
     struct TokenInfo: Codable, Mockable {
-        let id: String
+        var id: String
         let balance: UInt64
         
         static func mock() -> FlowModel.TokenInfo {

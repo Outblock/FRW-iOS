@@ -6,20 +6,25 @@
 //
 
 import SwiftUI
+import SwiftUIX
 
-enum CalloutType {
-case tip,warning,failure
+enum CalloutType: String {
+    case tip,warning,failure
+        func iconName() -> String {
+            "callout_icon_" + self.rawValue
+        }
 }
 
 struct CalloutView: View {
     
-    let icon = "callout_icon_warning"
+    var type = CalloutType.warning
+    var corners: [RectangleCorner] = []
     @State var content: String?
     
     var body: some View {
         VStack {
             HStack(alignment: .top, spacing: 5) {
-                Image(icon)
+                Image(type.iconName())
                     .resizable()
                     .frame(size: CGSize(width: 16, height: 16))
                 
@@ -32,7 +37,7 @@ struct CalloutView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.LL.Primary.salmon5)
-        .cornerRadius([.bottomLeading, .bottomTrailing], 8)
+        .cornerRadius(corners, 8)
         .hidden((content == nil) ? true : false)
     }
 }

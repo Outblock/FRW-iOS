@@ -24,7 +24,7 @@ class ChildAccountDetailViewModel: ObservableObject {
     private var coins:[ChildAccountAccessible]?
     
     var accessibleEmptyTitle: String {
-        var title = "None Accessible "
+        let title = "None Accessible "
         if tabIndex == 0 {
             return title + "collections".localized
         }
@@ -518,10 +518,10 @@ private extension ChildAccountDetailView {
                 Text(item.subtitle)
                     .foregroundColor(Color.LL.Neutrals.text3)
                     .font(.inter(size: 12))
-                Image("icon-black-right-arrow")
-                    .renderingMode(.template)
-                    .foregroundColor(Color.LL.Neutrals.text2)
-                    .visibility(item.isShowNext ? .visible : .gone)
+//                Image("icon-black-right-arrow")
+//                    .renderingMode(.template)
+//                    .foregroundColor(Color.LL.Neutrals.text2)
+//                    .visibility(item.isShowNext ? .visible : .gone)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 48)
@@ -544,6 +544,7 @@ protocol ChildAccountAccessible {
     var title: String { get }
     var subtitle: String { get }
     var isShowNext: Bool { get }
+    var id: String { get set }
 }
 
 extension FlowModel.NFTCollection : ChildAccountAccessible {
@@ -567,7 +568,7 @@ extension FlowModel.NFTCollection : ChildAccountAccessible {
     }
     
     var isShowNext: Bool {
-        return idList.count > 0
+        return false // idList.count > 0
     }
 }
 
