@@ -64,7 +64,7 @@ struct NFTSquareCard: View {
             return nftAccessible
         }
         let collectionAccessible = WalletManager.shared.accessibleManager.isAccessible(collection)
-        return collectionAccessible & nftAccessible
+        return collectionAccessible && nftAccessible
     }
 }
 
