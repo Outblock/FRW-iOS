@@ -74,7 +74,7 @@ class NFTUIKitCollectionItemCell: UICollectionViewCell {
     }()
     
     private lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [hStackView, descLabel, inaccessibleLabel])
+        let stackView = UIStackView(arrangedSubviews: [hStackView, descLabel])
         stackView.axis = .vertical
         stackView.spacing = 3
         return stackView
@@ -114,7 +114,7 @@ class NFTUIKitCollectionItemCell: UICollectionViewCell {
         iconImageView.kf.setImage(with: item.iconURL, placeholder: UIImage(named: "placeholder"))
         titleLabel.text = item.showName
         //TODO: #six 这个用那个信息判断，如果collection 为空怎么处理
-        if let info = item.collection, WalletManager.shared.accessibleManager.isAccessible(info) {
+        if let info = item.collection, !WalletManager.shared.accessibleManager.isAccessible(info) {
             descLabel.isHidden = true
             inaccessibleLabel.isHidden = false
         }else {

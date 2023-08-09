@@ -77,7 +77,13 @@ struct NFTCollectionListView: RouteableView {
                 }, isNoData: vm.collection.isEnd) {
                     Spacer()
                         .frame(height: 64)
-
+                    
+                    if let collection = vm.collection.collection {
+                        CalloutView(type: .warning, corners: [.topLeading, .topTrailing, .bottomTrailing, .bottomLeading], content: calloutTitle() )
+                            .visibility( WalletManager.shared.accessibleManager.isAccessible(collection) ? .gone : .visible)
+                    }
+                    
+                    
                     InfoView(collection: vm.collection)
                         .padding(.bottom, 24)
                     NFTListView(list: vm.nfts, imageEffect: imageEffect)
@@ -96,6 +102,13 @@ struct NFTCollectionListView: RouteableView {
         )
         .applyRouteable(self)
         .environmentObject(viewModel)
+    }
+    
+    private func calloutTitle() -> String {
+        let token = vm.collection.name
+        let account = WalletManager.shared.selectedAccountWalletName
+        let desc = "accessible_not_x_x".localized(token, account)
+        return desc
     }
 }
 

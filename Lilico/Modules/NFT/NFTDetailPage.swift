@@ -65,6 +65,8 @@ struct NFTDetailPage: RouteableView {
             OffsetScrollViewWithAppBar(title: "") {
                 Spacer()
                     .frame(height: 64)
+                CalloutView(type: .warning, corners: [.topLeading, .topTrailing, .bottomTrailing, .bottomLeading], content: calloutTitle() )
+                    .visibility( WalletManager.shared.accessibleManager.isAccessible(vm.nft) ? .gone : .visible)
                 VStack(alignment: .leading) {
                     VStack(spacing: 0) {
                         if vm.nft.isSVG {
@@ -386,6 +388,13 @@ struct NFTDetailPage: RouteableView {
                 // TODO: share error
             }
         }
+    }
+    
+    private func calloutTitle() -> String {
+        let token = vm.nft.title
+        let account = WalletManager.shared.selectedAccountWalletName
+        let desc = "accessible_not_x_x".localized(token, account)
+        return desc
     }
 }
 

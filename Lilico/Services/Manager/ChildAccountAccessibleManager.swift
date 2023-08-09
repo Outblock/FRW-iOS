@@ -77,11 +77,26 @@ extension ChildAccountManager {
             return result?.count == 1
         }
         // check nft
-        func isAccessible() ->Bool {
+        func isAccessible(_ model: NFTModel) ->Bool {
             guard isChildAccount() else {
                 return true
             }
-            return true
+            let result = collections?.filter({ fModel in
+                guard let contractName = fModel.id.split(separator:".")[safe: 2],
+                      let address = fModel.id.split(separator:".")[safe: 1],
+                      let targetName = model.collection?.contractName,
+                      let targetAddr = model.collection?.address
+                else {
+                    return false
+                }
+                return contractName == targetName && address == targetAddr
+            })
+            //TODO: NFT 的id 
+            guard let collection = result?.first, let targerId = UInt64(model.id) else {
+                return false
+            }
+            
+            return collection.idList.contains(targerId)
         }
     }
 }
