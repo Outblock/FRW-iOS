@@ -33,15 +33,38 @@ struct NFTSquareCard: View {
                     .semibold()
                     .lineLimit(1)
 
-                Text(nft.subtitle)
-                    .font(.LL.body)
-                    .foregroundColor(.LL.note)
-                    .lineLimit(1)
+                HStack {
+                    
+                    Text("Inaccessible")
+                        .foregroundStyle(Color.LL.Primary.salmonPrimary)
+                        .font(Font.inter(size: 10, weight: .semibold))
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 5)
+                        .background(.LL.Primary.salmon5.opacity(0.75))
+                        .cornerRadius(4, style: .continuous)
+                        .visibility(isAccessible() ? .gone : .visible)
+                    
+                    Text(nft.subtitle)
+                        .font(.LL.body)
+                        .foregroundColor(.LL.note)
+                        .lineLimit(1)
+                        .visibility(isAccessible() ? .visible : .gone)
+                }
+                
             }
         }
         .onTapGesture {
             onClick(nft)
         }
+    }
+    
+    private func isAccessible() -> Bool {
+        let nftAccessible = WalletManager.shared.accessibleManager.isAccessible(nft)
+        guard let collection = nft.collection else {
+            return nftAccessible
+        }
+        let collectionAccessible = WalletManager.shared.accessibleManager.isAccessible(collection)
+        return collectionAccessible & nftAccessible
     }
 }
 
