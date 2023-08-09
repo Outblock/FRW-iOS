@@ -9,6 +9,7 @@ import SwiftUI
 import Combine
 import Kingfisher
 import UIKit
+import SwiftUIX
 
 class ChildAccountDetailViewModel: ObservableObject {
     @Published var childAccount: ChildAccount
@@ -526,7 +527,7 @@ private extension ChildAccountDetailView {
             .frame(maxWidth: .infinity)
             .frame(height: 48)
             .padding(.horizontal, 16)
-            .background(.white)
+            .background(Color.LL.background)
             .cornerRadius(16, style: .circular)
             .onTapGesture {
                 if let onClick = onClick {
