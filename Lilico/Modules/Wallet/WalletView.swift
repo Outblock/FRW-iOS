@@ -547,8 +547,12 @@ extension WalletView {
 
                             Text(coin.changeString)
                                 .foregroundColor(coin.changeColor)
-                                .font(.inter(size: 14, weight: .regular))
-
+                                .font(.inter(size: 12, weight: .semibold))
+                                .frame(height: 22)
+                                .padding(.horizontal, 6)
+                                .background(coin.changeBG)
+                                .cornerRadius(11, style: .continuous)
+                            
                             Spacer()
 
                             Text(vm.isHidden ? "****" : "\(CurrencyCache.cache.currencySymbol)\(coin.balanceAsCurrentCurrency)")
