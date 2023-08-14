@@ -88,6 +88,10 @@
 		<string>Montserrat-Regular.ttf</string>
 		<string>Montserrat-Italic.ttf</string>
 		<string>Matrix Code NFI.ttf</string>
+		<string>e-Ukraine-Bold.ttf</string>
+		<string>e-Ukraine-Light.ttf</string>
+		<string>e-Ukraine-Medium.ttf</string>
+		<string>e-Ukraine-Regular.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

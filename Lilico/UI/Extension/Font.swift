@@ -31,16 +31,16 @@ extension Font {
         static let miniTitle = Font.custom("Montserrat", size: 10, relativeTo: .largeTitle)
         static let miniTitle2 = Font.custom("Montserrat", size: 12, relativeTo: .largeTitle)
 
-        static let title = Font.custom("Inter", relativeTo: .title)
-        static let title2 = Font.custom("Inter", relativeTo: .title2)
-        static let title3 = Font.custom("Inter", relativeTo: .title3)
-        static let headline = Font.custom("Inter", relativeTo: .headline)
-        static let subheadline = Font.custom("Inter", relativeTo: .subheadline)
-        static let body = Font.custom("Inter", size: 14, relativeTo: .body)
-        static let callout = Font.custom("Inter", relativeTo: .callout)
-        static let footnote = Font.custom("Inter", relativeTo: .footnote)
-        static let caption = Font.custom("Inter", relativeTo: .caption)
-        static let caption2 = Font.custom("Inter", relativeTo: .caption2)
+        static let title = Font.custom("e-Ukraine-Regular", relativeTo: .title)
+        static let title2 = Font.custom("e-Ukraine-Regular", relativeTo: .title2)
+        static let title3 = Font.custom("e-Ukraine-Regular", relativeTo: .title3)
+        static let headline = Font.custom("e-Ukraine-Regular", relativeTo: .headline)
+        static let subheadline = Font.custom("e-Ukraine-Regular", relativeTo: .subheadline)
+        static let body = Font.custom("e-Ukraine-Regular", size: 14, relativeTo: .body)
+        static let callout = Font.custom("e-Ukraine-Regular", relativeTo: .callout)
+        static let footnote = Font.custom("e-Ukraine-Regular", relativeTo: .footnote)
+        static let caption = Font.custom("e-Ukraine-Regular", relativeTo: .caption)
+        static let caption2 = Font.custom("e-Ukraine-Regular", relativeTo: .caption2)
     }
 }
 
@@ -58,7 +58,21 @@ extension Font {
 
 extension Font {
     static func inter(size: CGFloat = 16, weight: Weight = .regular) -> Font {
-        return Font.custom("Inter", size: size).weight(weight)
+        switch weight {
+            case .regular:
+                return Font.custom("e-Ukraine-Regular", size: size)
+            case .medium:
+                return Font.custom("e-Ukraine-Medium", size: size)
+            case .semibold: //TODO: #cat 这个字体没有
+                return Font.custom("e-Ukraine-Bold", size: size)
+            case .light:
+                return Font.custom("e-Ukraine-Light", size: size)
+            case .bold:
+                return Font.custom("e-Ukraine-Bold", size: size)
+            default:
+                return Font.custom("e-Ukraine-Regular", size: size)
+        }
+        
     }
     
     static func montserrat(size: CGFloat = 16, weight: Weight = .regular) -> Font {
