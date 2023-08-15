@@ -923,6 +923,14 @@
 		15F517FB28C6574C00504FDC /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = 15F517FA28C6574C00504FDC /* Atlantis */; };
 		15F517FD28C6577000504FDC /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = 15F517FC28C6577000504FDC /* Atlantis */; };
 		4E0A75AF2868929C00527D08 /* AddCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0A75AE2868929C00527D08 /* AddCollectionViewModel.swift */; };
+		4E0D349F2A8B4E2900BC6E43 /* e-Ukraine-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349B2A8B4E2800BC6E43 /* e-Ukraine-Bold.ttf */; };
+		4E0D34A02A8B4E2900BC6E43 /* e-Ukraine-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349B2A8B4E2800BC6E43 /* e-Ukraine-Bold.ttf */; };
+		4E0D34A12A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349C2A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf */; };
+		4E0D34A22A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349C2A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf */; };
+		4E0D34A32A8B4E2900BC6E43 /* e-Ukraine-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349D2A8B4E2900BC6E43 /* e-Ukraine-Light.ttf */; };
+		4E0D34A42A8B4E2900BC6E43 /* e-Ukraine-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349D2A8B4E2900BC6E43 /* e-Ukraine-Light.ttf */; };
+		4E0D34A52A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349E2A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf */; };
+		4E0D34A62A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349E2A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf */; };
 		4E344480282EC1C40040E5A4 /* NFTCollectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E34447E282EC1C40040E5A4 /* NFTCollectionCard.swift */; };
 		4E3E5BE32875DC2000A5FA65 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E5BE22875DC2000A5FA65 /* SearchBar.swift */; };
 		4E3E5BE42875DC2000A5FA65 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E5BE22875DC2000A5FA65 /* SearchBar.swift */; };
@@ -1928,6 +1936,10 @@
 		15F2444028CB370D00C1090E /* LowerCapsuleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowerCapsuleView.swift; sourceTree = "<group>"; };
 		15F43D112753B4F6004F6F49 /* PageIndictor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageIndictor.swift; sourceTree = "<group>"; };
 		4E0A75AE2868929C00527D08 /* AddCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCollectionViewModel.swift; sourceTree = "<group>"; };
+		4E0D349B2A8B4E2800BC6E43 /* e-Ukraine-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "e-Ukraine-Bold.ttf"; sourceTree = "<group>"; };
+		4E0D349C2A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "e-Ukraine-Regular.ttf"; sourceTree = "<group>"; };
+		4E0D349D2A8B4E2900BC6E43 /* e-Ukraine-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "e-Ukraine-Light.ttf"; sourceTree = "<group>"; };
+		4E0D349E2A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "e-Ukraine-Medium.ttf"; sourceTree = "<group>"; };
 		4E17466E281AF840002A029C /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = Lilico/Library/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
 		4E34447E282EC1C40040E5A4 /* NFTCollectionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTCollectionCard.swift; sourceTree = "<group>"; };
 		4E3E5BE22875DC2000A5FA65 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
@@ -2767,6 +2779,10 @@
 		158C9CA12787F6BC0062E0C6 /* fonts */ = {
 			isa = PBXGroup;
 			children = (
+				4E0D349B2A8B4E2800BC6E43 /* e-Ukraine-Bold.ttf */,
+				4E0D349D2A8B4E2900BC6E43 /* e-Ukraine-Light.ttf */,
+				4E0D349E2A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf */,
+				4E0D349C2A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf */,
 				15D3BA6628C39454009AEA6E /* Matrix Code NFI.ttf */,
 				158C9CAE2787F7610062E0C6 /* Montserrat-SemiBold.ttf */,
 				158C9CA52787F7490062E0C6 /* Montserrat-Bold.ttf */,
@@ -5332,6 +5348,7 @@
 			files = (
 				1565FB6A28B14F140086A652 /* Notification.json in Resources */,
 				158C9CAD2787F7490062E0C6 /* Montserrat-Regular.ttf in Resources */,
+				4E0D34A02A8B4E2900BC6E43 /* e-Ukraine-Bold.ttf in Resources */,
 				6AEF4278287537E5000A77D7 /* Localizable.strings in Resources */,
 				1575A72728B26B9600ADC513 /* index.html in Resources */,
 				1575A73828B28D3300ADC513 /* LDR_LLL1_0.png in Resources */,
@@ -5346,9 +5363,11 @@
 				158C9CB02787F7660062E0C6 /* Montserrat-SemiBold.ttf in Resources */,
 				1575A72928B26B9600ADC513 /* dat.gui.min.js in Resources */,
 				1565FB6428B14F140086A652 /* Chat.json in Resources */,
+				4E0D34A42A8B4E2900BC6E43 /* e-Ukraine-Light.ttf in Resources */,
 				6ABFE59529A708C400AA1688 /* LocalEnv in Resources */,
 				15CC8A6A28C4EA63001D2696 /* shapes.riv in Resources */,
 				158C9CAB2787F7490062E0C6 /* Montserrat-Italic.ttf in Resources */,
+				4E0D34A62A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf in Resources */,
 				1565FBA528B16FD70086A652 /* Category.json in Resources */,
 				1565FB9928B1677F0086A652 /* Grid.json in Resources */,
 				1565FBA328B16FD70086A652 /* Compass.json in Resources */,
@@ -5362,6 +5381,7 @@
 				6A998DA7293674FC00EF133B /* staking_provider.json in Resources */,
 				1575A72B28B26B9600ADC513 /* script.js in Resources */,
 				1565FBB428B171BB0086A652 /* Copy-soild.json in Resources */,
+				4E0D34A22A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf in Resources */,
 				1565FBB228B171BB0086A652 /* Copy.json in Resources */,
 				1565FB6628B14F140086A652 /* Saved.json in Resources */,
 				4E9E21E0282A71B500E1BACD /* Colors.xcassets in Resources */,
@@ -5377,6 +5397,7 @@
 			files = (
 				1565FB6928B14F140086A652 /* Notification.json in Resources */,
 				15C58C5B2868A4EE00BD4FC6 /* Montserrat-Regular.ttf in Resources */,
+				4E0D349F2A8B4E2900BC6E43 /* e-Ukraine-Bold.ttf in Resources */,
 				15C58C5C2868A4EE00BD4FC6 /* Preview Assets.xcassets in Resources */,
 				15D3BA7A28C4D2A4009AEA6E /* LaunchScreen.storyboard in Resources */,
 				1575A72628B26B9600ADC513 /* index.html in Resources */,
@@ -5391,9 +5412,11 @@
 				15DE214328C52FA4008AFE17 /* QRScan.json in Resources */,
 				15C58C602868A4EE00BD4FC6 /* Montserrat-SemiBold.ttf in Resources */,
 				1575A72828B26B9600ADC513 /* dat.gui.min.js in Resources */,
+				4E0D34A32A8B4E2900BC6E43 /* e-Ukraine-Light.ttf in Resources */,
 				15C628AB29F6A53200ED6A93 /* LocalEnv in Resources */,
 				1565FB6328B14F140086A652 /* Chat.json in Resources */,
 				6A37AD9428BDAA310047E5F7 /* GoogleService-Info.plist in Resources */,
+				4E0D34A52A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf in Resources */,
 				15C58C612868A4EE00BD4FC6 /* Montserrat-Italic.ttf in Resources */,
 				1565FBA428B16FD70086A652 /* Category.json in Resources */,
 				1565FB9828B1677F0086A652 /* Grid.json in Resources */,
@@ -5407,6 +5430,7 @@
 				6A998DA6293674FC00EF133B /* staking_provider.json in Resources */,
 				1565FBB128B171BB0086A652 /* Copy.json in Resources */,
 				15D3BA6728C39454009AEA6E /* Matrix Code NFI.ttf in Resources */,
+				4E0D34A12A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf in Resources */,
 				1565FB6528B14F140086A652 /* Saved.json in Resources */,
 				15C58C652868A4EE00BD4FC6 /* Colors.xcassets in Resources */,
 				152EEC7028E4F5EC00C37A67 /* config.plist in Resources */,
