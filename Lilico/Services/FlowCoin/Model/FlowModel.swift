@@ -54,13 +54,20 @@ extension FlowModel {
     
     struct NFTCollection: Codable, Mockable {
         static func mock() -> FlowModel.NFTCollection {
-            return FlowModel.NFTCollection(id: "", display: nil, idList: [])
+            return FlowModel.NFTCollection(id: "", path: "", display: nil, idList: [])
         }
         
         var id: String
+        var path: String
         let display: CollectionDislay?
         let idList: [UInt64]
-        
+    }
+    
+    struct NFTInfo: Codable {
+        let id: String
+        let name: String
+        let description: String
+        let thumbnail: String
     }
     
     struct TokenInfo: Codable, Mockable {
@@ -70,5 +77,10 @@ extension FlowModel {
         static func mock() -> FlowModel.TokenInfo {
             return TokenInfo(id: " ", balance: 0)
         }
+    }
+    
+    struct NFTResponse: Codable {
+        let collection: FlowModel.NFTCollection
+        let nfts: [NFTInfo]
     }
 }

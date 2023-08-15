@@ -10,9 +10,29 @@ import SwiftUI
 
 class NFTCollectionListViewViewModel: ObservableObject {
     @Published var collection: CollectionItem
-    @Published var nfts: [NFTModel]
+    @Published var nfts: [NFTModel] = []
+    
+    var address: String?
+    var collectionPath: String?
+    @Published var isLoading = false
     
     private var proxy: ScrollViewProxy?
+    
+    convenience init(address: String, path: String) {
+        
+        let item = CollectionItem.mock()
+        self.init(collection: item)
+        self.address = address
+        self.collectionPath = path
+        isLoading = true
+    }
+    
+    func load(address: String, path: String) {
+        self.address = address
+        self.collectionPath = path
+        self.isLoading = true
+        fetch()
+    }
     
     init(collection: CollectionItem) {
         self.collection = collection
@@ -39,6 +59,58 @@ class NFTCollectionListViewViewModel: ObservableObject {
         }
     }
     
+    func load(collection: CollectionItem)  {
+        self.collection = collection
+        self.nfts = collection.nfts
+        
+        collection.loadCallback2 = { [weak self] result in
+            guard let self = self else {
+                return
+            }
+            
+            if result {
+                if let proxy = self.proxy {
+                    proxy.scrollTo(999, anchor: .bottom)
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    self.nfts = self.collection.nfts
+                }
+            }
+        }
+        
+        if collection.nfts.isEmpty {
+            collection.load()
+        }
+    }
+    
+    func fetch() {
+        
+        Task {
+            guard let addr = address, let path = collectionPath else {
+                return
+            }
+            do {
+                let model: FlowModel.NFTCollection = try await Network.request(LilicoAPI.ChildAccount.collectionInfo(addr, path))
+                //TODO: 请求所有数据
+                let nftInfoResponse: FlowModel.NFTResponse = try await Network.request(LilicoAPI.ChildAccount.nftList(addr, path, 0, 100))
+                DispatchQueue.main.async {
+                    self.collection = model.toCollectionModel()
+                    self.collection.nfts = nftInfoResponse.nfts.map({ info in
+                        NFTModel(NFTResponse(id: info.id, name: info.name, description: info.description, thumbnail: info.thumbnail, externalURL: "", contractAddress: addr, collectionID: "", collectionName: "", collectionDescription: "", collectionSquareImage: "", collectionExternalURL: "", collectionContractName: "", collectionBannerImage: "", traits: nil, postMedia: NFTPostMedia(title: "", image: info.thumbnail, description: info.description, video: nil, isSvg: false)), in: self.collection.collection)
+                    })
+                    self.nfts = self.collection.nfts
+                    
+                    self.isLoading = false
+                }
+                
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
+    
     func loadMoreAction(proxy: ScrollViewProxy) {
         self.proxy = proxy
         collection.load()
@@ -52,6 +124,8 @@ struct NFTCollectionListView: RouteableView {
     @State var opacity: Double = 0
     @Namespace var imageEffect
     
+    
+    
     var title: String {
         return ""
     }
@@ -64,6 +138,12 @@ struct NFTCollectionListView: RouteableView {
         _viewModel = StateObject(wrappedValue: viewModel)
         _vm = StateObject(wrappedValue: NFTCollectionListViewViewModel(collection: collection))
     }
+    
+    init(address: String, path: String) {
+        _viewModel = StateObject(wrappedValue: NFTTabViewModel())
+        _vm = StateObject(wrappedValue: NFTCollectionListViewViewModel(address: address, path: path))
+    }
+    
 
     var body: some View {
         ZStack {
@@ -80,20 +160,25 @@ struct NFTCollectionListView: RouteableView {
                     
                     if let collection = vm.collection.collection {
                         CalloutView(type: .warning, corners: [.topLeading, .topTrailing, .bottomTrailing, .bottomLeading], content: calloutTitle() )
+                            .padding(.bottom,20)
+                            .padding(.horizontal, 18)
                             .visibility( WalletManager.shared.accessibleManager.isAccessible(collection) ? .gone : .visible)
                     }
                     
                     
                     InfoView(collection: vm.collection)
                         .padding(.bottom, 24)
+                        .mockPlaceholder(vm.isLoading)
                     NFTListView(list: vm.nfts, imageEffect: imageEffect)
                         .id(999)
+                        .mockPlaceholder(vm.isLoading)
                 } appBar: {
                     BackAppBar {
                         viewModel.trigger(.back)
                     }
                 }
             }
+            
         }
         .background(
             NFTBlurImageView(colors: viewModel.state.colorsMap[vm.collection.iconURL.absoluteString] ?? [])
@@ -102,6 +187,9 @@ struct NFTCollectionListView: RouteableView {
         )
         .applyRouteable(self)
         .environmentObject(viewModel)
+        .onAppear {
+            vm.fetch()
+        }
     }
     
     private func calloutTitle() -> String {

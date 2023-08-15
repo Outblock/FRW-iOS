@@ -105,12 +105,18 @@ class ChildAccountDetailViewModel: ObservableObject {
                 return
             }
             
-            let result = try await FlowNetwork.fetchAccessibleCollection(parent: parent, child: child)
-            DispatchQueue.main.async {
-                self.collections = result
-                self.accessibleItems = result
-                self.isLoading = false
+            do {
+                let result = try await FlowNetwork.fetchAccessibleCollection(parent: parent, child: child)
+                print(result)
+                DispatchQueue.main.async {
+                    self.collections = result
+                    self.accessibleItems = result
+                    self.isLoading = false
+                }
+            } catch {
+                print("Error")
             }
+            
         }
     }
     
@@ -314,6 +320,9 @@ struct ChildAccountDetailView: RouteableView {
             }
             ForEach(vm.accessibleItems.indices, id: \.self) { idx in
                 AccessibleItemView(item: vm.accessibleItems[idx]) { item in
+                    if let collectionInfo = item as? FlowModel.NFTCollection, let addr = vm.childAccount.addr, collectionInfo.idList.count > 0 {
+                        Router.route(to: RouteMap.NFT.collectionDetail( addr, collectionInfo.fromPath))
+                    }
                     
                 }
             }
@@ -569,7 +578,20 @@ extension FlowModel.NFTCollection : ChildAccountAccessible {
     }
     
     var isShowNext: Bool {
-        return false // idList.count > 0
+        return idList.count > 0
+    }
+    
+    var fromPath: String {
+        return String(path.split(separator: "/").last ?? "")
+    }
+    
+    func toCollectionModel() -> CollectionItem {
+        let item = CollectionItem()
+        item.name = title
+        item.count = idList.count
+        item.collection = NFTCollectionInfo(id: self.id, name: title, contractName: title, address: "", logo: self.img, banner: "", officialWebsite: "", description: "", path: ContractPath(storagePath: "", publicPath: "", publicCollectionName: "", publicType: "", privateType: ""))
+        item.isEnd = true
+        return item
     }
 }
 

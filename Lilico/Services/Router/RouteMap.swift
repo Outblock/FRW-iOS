@@ -351,6 +351,7 @@ extension RouteMap {
     enum NFT {
         case detail(NFTTabViewModel, NFTModel)
         case collection(NFTTabViewModel, CollectionItem)
+        case collectionDetail(String, String)
         case addCollection
         case send(NFTModel, Contact)
         case AR(UIImage)
@@ -360,19 +361,21 @@ extension RouteMap {
 extension RouteMap.NFT: RouterTarget {
     func onPresent(navi: UINavigationController) {
         switch self {
-        case .detail(let vm, let nft):
-            navi.push(content: NFTDetailPage(viewModel: vm, nft: nft))
-        case .collection(let vm, let collection):
-            navi.push(content: NFTCollectionListView(viewModel: vm, collection: collection))
-        case .addCollection:
-            navi.push(content: NFTAddCollectionView())
-        case .send(let nft, let contact):
-            let vc = CustomHostingController(rootView: NFTTransferView(nft: nft, target: contact))
-            Router.topPresentedController().present(vc, animated: true, completion: nil)
-        case let .AR(image):
-            let vc = ARViewController()
-            vc.image = image
-            navi.pushViewController(vc)
+            case .detail(let vm, let nft):
+                navi.push(content: NFTDetailPage(viewModel: vm, nft: nft))
+            case .collection(let vm, let collection):
+                navi.push(content: NFTCollectionListView(viewModel: vm, collection: collection))
+            case .collectionDetail(let addr, let path):
+                navi.push(content: NFTCollectionListView(address: addr, path: path))
+            case .addCollection:
+                navi.push(content: NFTAddCollectionView())
+            case .send(let nft, let contact):
+                let vc = CustomHostingController(rootView: NFTTransferView(nft: nft, target: contact))
+                Router.topPresentedController().present(vc, animated: true, completion: nil)
+            case let .AR(image):
+                let vc = ARViewController()
+                vc.image = image
+                navi.pushViewController(vc)
         }
     }
 }
