@@ -123,7 +123,7 @@ struct SideMenuView: View {
                     .offset(y: -30)
             }
             
-            Text(um.userInfo?.nickname ?? "Lilico")
+            Text(um.userInfo?.nickname ?? "lilico".localized)
                 .foregroundColor(.LL.Neutrals.text)
                 .font(.inter(size: 24, weight: .semibold))
                 .padding(.top, 10)

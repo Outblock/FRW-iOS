@@ -182,7 +182,7 @@ struct WalletView: View {
                         .frame(width: 28, height: 28)
                         .cornerRadius(14)
                     
-                    Text(um.userInfo?.nickname ?? "Lilico")
+                    Text(um.userInfo?.nickname ?? "lilico".localized)
                         .foregroundColor(.LL.Neutrals.text)
                         .font(.inter(size: 18, weight: .semibold))
                 }

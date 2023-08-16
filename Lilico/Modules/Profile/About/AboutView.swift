@@ -25,7 +25,7 @@ struct AboutView: RouteableView {
                 .frame(width: 100, height: 100)
                 .padding(.top, 20)
             
-            Text("lilico")
+            Text("lilico".localized)
                 .textCase(.lowercase)
                 .font(.inter(size: 26, weight: .semibold))
             
@@ -73,7 +73,7 @@ struct AboutView: RouteableView {
                 VStack(spacing: 0) {
                     
                     SocialButton(imageName: "logo",
-                                 text: "Lilico Extension",
+                                 text: "lilico".localized + " Extension",
                                  showDivider: false) {
                         UIApplication.shared.open(URL(string: "https://chrome.google.com/webstore/detail/lilico/hpclkefagolihohboafpheddmmgdffjm")!)
                     }
