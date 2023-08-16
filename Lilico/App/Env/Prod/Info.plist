@@ -9,7 +9,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Lilico</string>
+	<string>Flow Core</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -61,13 +61,13 @@
 		<string>_Proxyman._tcp</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>Lilico need camera to scan QR Code</string>
+	<string>Flow Core need camera to scan QR Code</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Lilico use Face ID to secure your assests</string>
+	<string>Flow Core use Face ID to secure your assests</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Atlantis would use Bonjour Service to discover Proxyman app from your local network.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Lilico requires access to photo library</string>
+	<string>Flow Core requires access to photo library</string>
 	<key>NSUbiquitousContainers</key>
 	<dict>
 		<key>iCloud.io.outblock.lilico</key>

@@ -6959,10 +6959,10 @@
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Lilico/App/Env/Dev/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Lilico-dev";
+				INFOPLIST_KEY_CFBundleDisplayName = "Flow Core-dev";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
-				INFOPLIST_KEY_NSCameraUsageDescription = "lilico need camera to scan QR Code";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Lilico-dev use Face ID to secure your assests";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Core need camera to scan QR Code";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Core-dev use Face ID to secure your assests";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "requires access to photo library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -6999,10 +6999,10 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "SWIFT_PACKAGE=1";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Lilico/App/Env/Dev/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Lilico-dev";
+				INFOPLIST_KEY_CFBundleDisplayName = "Flow Core-dev";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
-				INFOPLIST_KEY_NSCameraUsageDescription = "lilico need camera to scan QR Code";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Lilico-dev use Face ID to secure your assests";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Core need camera to scan QR Code";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Core-dev use Face ID to secure your assests";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "requires access to photo library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -7042,7 +7042,7 @@
 				);
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Lilico/App/Env/Prod/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Lilico;
+				INFOPLIST_KEY_CFBundleDisplayName = "Flow Core";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSCameraUsageDescription = "lilico need camera to scan QR Code";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Lilico-dev use Face ID to secure your assests";
@@ -7083,7 +7083,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "SWIFT_PACKAGE=1";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Lilico/App/Env/Prod/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Lilico;
+				INFOPLIST_KEY_CFBundleDisplayName = "Flow Core";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSCameraUsageDescription = "lilico need camera to scan QR Code";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Lilico-dev use Face ID to secure your assests";
