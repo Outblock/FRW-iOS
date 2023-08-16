@@ -5,12 +5,12 @@
       "scale" : "1x"
     },
     {
-      "filename" : "logo-new@2x.png",
+      "filename" : "icon_mac_256.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "logo-new@3x.png",
+      "filename" : "icon_mac_512.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
