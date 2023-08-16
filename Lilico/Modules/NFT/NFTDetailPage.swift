@@ -66,6 +66,8 @@ struct NFTDetailPage: RouteableView {
                 Spacer()
                     .frame(height: 64)
                 CalloutView(type: .warning, corners: [.topLeading, .topTrailing, .bottomTrailing, .bottomLeading], content: calloutTitle() )
+                    .padding(.horizontal, 18)
+                    .padding(.bottom, 12)
                     .visibility( WalletManager.shared.accessibleManager.isAccessible(vm.nft) ? .gone : .visible)
                 VStack(alignment: .leading) {
                     VStack(spacing: 0) {

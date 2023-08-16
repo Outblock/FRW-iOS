@@ -741,8 +741,8 @@ extension FlowNetwork {
         var child = child
 //        //TODO: test, remove when release @cat
 #if DEBUG
-        parent = "0x7eaf4aabd4e3b62c"
-        child = "0xb4eb6438cd2b4c23"
+//        parent = "0x7179def56a8b9c5e"
+//        child = "0xa3897cee18b350ea"
 #endif
         let cadenceString = CadenceTemplate.accessibleCollection.replace(by: ScriptAddress.addressMap())
         let parentAddress = Flow.Address(hex: parent)

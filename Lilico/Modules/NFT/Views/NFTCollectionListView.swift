@@ -85,19 +85,25 @@ class NFTCollectionListViewViewModel: ObservableObject {
     }
     
     func fetch() {
-        
+//        #if DEBUG
+//        address = "0xa3897cee18b350ea"
+//        #endif
         Task {
             guard let addr = address, let path = collectionPath else {
                 return
             }
+            
             do {
+                
+                
+                
                 let model: FlowModel.NFTCollection = try await Network.request(LilicoAPI.ChildAccount.collectionInfo(addr, path))
                 //TODO: 请求所有数据
                 let nftInfoResponse: FlowModel.NFTResponse = try await Network.request(LilicoAPI.ChildAccount.nftList(addr, path, 0, 100))
                 DispatchQueue.main.async {
                     self.collection = model.toCollectionModel()
                     self.collection.nfts = nftInfoResponse.nfts.map({ info in
-                        NFTModel(NFTResponse(id: info.id, name: info.name, description: info.description, thumbnail: info.thumbnail, externalURL: "", contractAddress: addr, collectionID: "", collectionName: "", collectionDescription: "", collectionSquareImage: "", collectionExternalURL: "", collectionContractName: "", collectionBannerImage: "", traits: nil, postMedia: NFTPostMedia(title: "", image: info.thumbnail, description: info.description, video: nil, isSvg: false)), in: self.collection.collection)
+                        NFTModel(NFTResponse(id: info.id, name: info.name, description: info.description, thumbnail: info.thumbnail, externalURL: "", contractAddress: addr, collectionID: "", collectionName: "", collectionDescription: "", collectionSquareImage: "", collectionExternalURL: "", collectionContractName: "", collectionBannerImage: "", traits: nil, postMedia: NFTPostMedia(title: info.name, image: info.thumbnail, description: info.description, video: nil, isSvg: false)), in: self.collection.collection)
                     })
                     self.nfts = self.collection.nfts
                     
