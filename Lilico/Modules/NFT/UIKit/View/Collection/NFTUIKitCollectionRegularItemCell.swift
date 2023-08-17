@@ -99,6 +99,7 @@ class NFTUIKitCollectionRegularItemCell: UICollectionViewCell {
         arrowImageView.snp.makeConstraints { make in
             make.right.equalTo(-16)
             make.centerY.equalToSuperview()
+            make.left.equalTo(stackView.snp.right).offset(Padding)
         }
         
         contentView.backgroundColor = UIColor.LL.frontColor
