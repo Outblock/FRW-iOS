@@ -48,6 +48,7 @@ open class SPQRCameraController: SPController {
     internal let frameLayer = SPQRFrameLayer()
     internal let detailView = SPQRDetailButton()
     internal lazy var previewLayer = makeVideoPreviewLayer()
+    internal let maskView = SPQRMaskView()
     
     public override init() {
         super.init()
@@ -72,6 +73,10 @@ open class SPQRCameraController: SPController {
         view.layer.addSublayer(previewLayer)
         view.layer.addSublayer(frameLayer)
         captureSession.startRunning()
+        
+        //TODO: order #cat
+        maskView.statusBarHeight = self.statusBarHeight
+        view.addSubviews(maskView)
         
         detailView.addTarget(self, action: #selector(didTapDetailButtonClick), for: .touchUpInside)
         view.addSubview(detailView)
@@ -118,6 +123,18 @@ open class SPQRCameraController: SPController {
             make.left.equalTo(0)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
         }
+        
+        let titleLabel = UILabel()
+        titleLabel.text = "scan_qr_title".localized
+        titleLabel.textColor = UIColor(red: 0.949, green: 0.949, blue: 0.949, alpha: 1)
+        titleLabel.font = UIFont.interSemiBold(size: 18)
+        titleLabel.textAlignment = .center
+        view.addSubview(titleLabel)
+        titleLabel.snp.makeConstraints { make in
+            make.left.equalTo(64)
+            make.right.equalTo(-64)
+            make.centerY.equalTo(backButton.snp.centerY)
+        }
     }
     
     open override func viewDidLayoutSubviews() {
@@ -128,6 +145,7 @@ open class SPQRCameraController: SPController {
             width: view.layer.bounds.width,
             height: view.layer.bounds.height
         )
+        maskView.frame = previewLayer.frame
     }
 
     // MARK: - Internal
@@ -178,3 +196,14 @@ open class SPQRCameraController: SPController {
     }
 }
 
+extension UIViewController {
+    var statusBarHeight: CGFloat {
+        guard
+            let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+            let height = scene.statusBarManager?.statusBarFrame.height
+        else {
+            return 0
+        }
+        return height
+    }
+}

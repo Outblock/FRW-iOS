@@ -64,64 +64,70 @@ struct WalletSendAmountView: RouteableView {
     }
     
     var targetView: some View {
-        HStack(spacing: 15) {
-            // avatar
-            ZStack {
-                if let avatar = vm.targetContact.avatar?.convertedAvatarString(), avatar.isEmpty == false {
-                    KFImage.url(URL(string: avatar))
-                        .placeholder({
-                            Image("placeholder")
-                                .resizable()
-                        })
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 44, height: 44)
-                } else if vm.targetContact.needShowLocalAvatar {
-                    Image(vm.targetContact.localAvatar ?? "")
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 44, height: 44)
-                } else {
-                    if let contactType = vm.targetContact.contactType, let contactName = vm.targetContact.contactName, contactType == .external, contactName.isAddress {
-                        Text("0x")
-                            .foregroundColor(.LL.Primary.salmonPrimary)
-                            .font(.inter(size: 24, weight: .semibold))
+        VStack(spacing: 0) {
+            HStack(spacing: 15) {
+                // avatar
+                ZStack {
+                    if let avatar = vm.targetContact.avatar?.convertedAvatarString(), avatar.isEmpty == false {
+                        KFImage.url(URL(string: avatar))
+                            .placeholder({
+                                Image("placeholder")
+                                    .resizable()
+                            })
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 44, height: 44)
+                    } else if vm.targetContact.needShowLocalAvatar {
+                        Image(vm.targetContact.localAvatar ?? "")
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 44, height: 44)
                     } else {
-                        Text(String((vm.targetContact.contactName?.first ?? "A").uppercased()))
-                            .foregroundColor(.LL.Primary.salmonPrimary)
-                            .font(.inter(size: 24, weight: .semibold))
+                        if let contactType = vm.targetContact.contactType, let contactName = vm.targetContact.contactName, contactType == .external, contactName.isAddress {
+                            Text("0x")
+                                .foregroundColor(.LL.Primary.salmonPrimary)
+                                .font(.inter(size: 24, weight: .semibold))
+                        } else {
+                            Text(String((vm.targetContact.contactName?.first ?? "A").uppercased()))
+                                .foregroundColor(.LL.Primary.salmonPrimary)
+                                .font(.inter(size: 24, weight: .semibold))
+                        }
                     }
                 }
-            }
-            .frame(width: 44, height: 44)
-            .background(.LL.Primary.salmon5)
-            .clipShape(Circle())
+                .frame(width: 44, height: 44)
+                .background(.LL.Primary.salmon5)
+                .clipShape(Circle())
 
-            // text
-            VStack(alignment: .leading, spacing: 3) {
-                Text(vm.targetContact.contactName ?? "no name")
-                    .foregroundColor(.LL.Neutrals.text)
-                    .font(.inter(size: 14, weight: .bold))
+                // text
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(vm.targetContact.contactName ?? "no name")
+                        .foregroundColor(.LL.Neutrals.text)
+                        .font(.inter(size: 14, weight: .bold))
 
-                Text(vm.targetContact.address ?? "no address")
-                    .foregroundColor(.LL.Neutrals.note)
-                    .font(.inter(size: 14, weight: .regular))
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
-            Button {
-                Router.pop()
-            } label: {
-                Image(systemName: .delete)
-                    .foregroundColor(.LL.Neutrals.note)
-            }
+                    Text(vm.targetContact.address ?? "no address")
+                        .foregroundColor(.LL.Neutrals.note)
+                        .font(.inter(size: 14, weight: .regular))
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Button {
+                    Router.pop()
+                } label: {
+                    Image(systemName: .delete)
+                        .foregroundColor(.LL.Neutrals.note)
+                }
 
+            }
+            .padding(.horizontal, 16)
+            .frame(height: 73)
+            .background(.LL.bgForIcon)
+            .cornerRadius(16)
+            .padding(.horizontal, 18)
+            CalloutView(corners: [.bottomLeading, .bottomTrailing], content: "wallet_send_token_empty".localized)
+                .padding(.horizontal, 30)
+                .visibility(vm.isValidToken ? .gone : .visible)
+                .transition(.move(edge: .top))
         }
-        .padding(.horizontal, 16)
-        .frame(height: 73)
-        .background(.LL.bgForIcon)
-        .cornerRadius(16)
-        .padding(.horizontal, 18)
     }
     
     var transferInputContainerView: some View {

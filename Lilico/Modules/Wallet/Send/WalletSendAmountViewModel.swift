@@ -56,6 +56,8 @@ class WalletSendAmountViewModel: ObservableObject {
     
     @Published var showConfirmView: Bool = false
     
+    @Published var isValidToken: Bool = true
+    
     private var isSending = false
     private var cancelSets = Set<AnyCancellable>()
     
@@ -71,7 +73,6 @@ class WalletSendAmountViewModel: ObservableObject {
                 self?.refreshInput()
             }
         }.store(in: &cancelSets)
-        
         checkAddress()
     }
     
@@ -93,7 +94,20 @@ extension WalletSendAmountViewModel {
                     self.addressIsValid = isValid
                     if isValid == false {
                         self.errorType = .invalidAddress
+                    } else {
+                        self.checkToken()
                     }
+                }
+            }
+        }
+    }
+    
+    private func checkToken() {
+        Task {
+            if let address = targetContact.address {
+                let isValid = try await FlowNetwork.checkTokensEnable(address: Flow.Address(hex: address), tokens: [token]).first
+                DispatchQueue.main.async {
+                    self.isValidToken = isValid ?? false
                 }
             }
         }

@@ -46,6 +46,19 @@ class NFTUIKitCollectionItemCell: UICollectionViewCell {
         return view
     }()
     
+    private lazy var inaccessibleLabel: UILabel = {
+        let view = UILabel()
+        view.font = .inter(size: 10)
+        view.textAlignment = .center
+        view.textColor = UIColor.LL.Primary.salmonPrimary
+        view.layer.cornerRadius = 4
+        view.snp.makeConstraints { make in
+            make.width.equalTo(68)
+            make.height.equalTo(22)
+        }
+        return view
+    }()
+    
     private lazy var descLabel: UILabel = {
         let view = UILabel()
         view.font = .inter(size: 14)
@@ -100,6 +113,15 @@ class NFTUIKitCollectionItemCell: UICollectionViewCell {
         
         iconImageView.kf.setImage(with: item.iconURL, placeholder: UIImage(named: "placeholder"))
         titleLabel.text = item.showName
+        //TODO: #six 这个用那个信息判断，如果collection 为空怎么处理
+        if let info = item.collection, !WalletManager.shared.accessibleManager.isAccessible(info) {
+            descLabel.isHidden = true
+            inaccessibleLabel.isHidden = false
+        }else {
+            descLabel.isHidden = false
+            inaccessibleLabel.isHidden = true
+        }
+        
         descLabel.text = "x_collections".localized(item.count)
         
         contentView.layer.borderColor = isSelectItem ? UIColor.LL.Neutrals.neutrals3.cgColor : UIColor.clear.cgColor
