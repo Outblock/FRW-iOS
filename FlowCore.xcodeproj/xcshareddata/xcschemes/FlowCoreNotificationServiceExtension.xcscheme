@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1340"
-   version = "1.3">
+   LastUpgradeVersion = "1500"
+   wasCreatedForAppExtension = "YES"
+   version = "2.0">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
@@ -14,10 +15,24 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "154B88F0276A1EEB00780E93"
-               BuildableName = "Lilico-dev.app"
-               BlueprintName = "Lilico-dev"
-               ReferencedContainer = "container:Lilico.xcodeproj">
+               BlueprintIdentifier = "6A0B10482A66679100023767"
+               BuildableName = "FlowCoreNotificationServiceExtension.appex"
+               BlueprintName = "FlowCoreNotificationServiceExtension"
+               ReferencedContainer = "container:FlowCore.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "15C58A7E2868A4EE00BD4FC6"
+               BuildableName = "FlowCore.app"
+               BlueprintName = "FlowCore"
+               ReferencedContainer = "container:FlowCore.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -26,28 +41,29 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES">
-      <Testables>
-      </Testables>
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      shouldAutocreateTestPlan = "YES">
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      selectedDebuggerIdentifier = ""
+      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
       launchStyle = "0"
+      askForAppToLaunch = "Yes"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES">
+      allowLocationSimulation = "YES"
+      launchAutomaticallySubstyle = "2">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "154B88F0276A1EEB00780E93"
-            BuildableName = "Lilico-dev.app"
-            BlueprintName = "Lilico-dev"
-            ReferencedContainer = "container:Lilico.xcodeproj">
+            BlueprintIdentifier = "15C58A7E2868A4EE00BD4FC6"
+            BuildableName = "FlowCore.app"
+            BlueprintName = "FlowCore"
+            ReferencedContainer = "container:FlowCore.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -56,15 +72,17 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      debugDocumentVersioning = "YES">
+      debugDocumentVersioning = "YES"
+      askForAppToLaunch = "Yes"
+      launchAutomaticallySubstyle = "2">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "154B88F0276A1EEB00780E93"
-            BuildableName = "Lilico-dev.app"
-            BlueprintName = "Lilico-dev"
-            ReferencedContainer = "container:Lilico.xcodeproj">
+            BlueprintIdentifier = "15C58A7E2868A4EE00BD4FC6"
+            BuildableName = "FlowCore.app"
+            BlueprintName = "FlowCore"
+            ReferencedContainer = "container:FlowCore.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

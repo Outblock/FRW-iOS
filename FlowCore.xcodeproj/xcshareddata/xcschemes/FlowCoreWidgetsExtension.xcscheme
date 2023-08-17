@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1430"
+   LastUpgradeVersion = "1500"
    wasCreatedForAppExtension = "YES"
    version = "2.0">
    <BuildAction
@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6A9DFBC229519D9700E10EAC"
-               BuildableName = "LilicoWidgetsExtension.appex"
-               BlueprintName = "LilicoWidgetsExtension"
-               ReferencedContainer = "container:Lilico.xcodeproj">
+               BuildableName = "FlowCoreWidgetsExtension.appex"
+               BlueprintName = "FlowCoreWidgetsExtension"
+               ReferencedContainer = "container:FlowCore.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -30,9 +30,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "15C58A7E2868A4EE00BD4FC6"
-               BuildableName = "Lilico.app"
-               BlueprintName = "Lilico"
-               ReferencedContainer = "container:Lilico.xcodeproj">
+               BuildableName = "FlowCore.app"
+               BlueprintName = "FlowCore"
+               ReferencedContainer = "container:FlowCore.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -61,26 +61,26 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "15C58A7E2868A4EE00BD4FC6"
-            BuildableName = "Lilico.app"
-            BlueprintName = "Lilico"
-            ReferencedContainer = "container:Lilico.xcodeproj">
+            BuildableName = "FlowCore.app"
+            BlueprintName = "FlowCore"
+            ReferencedContainer = "container:FlowCore.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "_XCWidgetKind"
             value = ""
-            isEnabled = "NO">
+            isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
             key = "_XCWidgetDefaultView"
             value = "timeline"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
             key = "_XCWidgetFamily"
-            value = "medium"
-            isEnabled = "NO">
+            value = "systemMedium"
+            isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
    </LaunchAction>
@@ -97,9 +97,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "15C58A7E2868A4EE00BD4FC6"
-            BuildableName = "Lilico.app"
-            BlueprintName = "Lilico"
-            ReferencedContainer = "container:Lilico.xcodeproj">
+            BuildableName = "FlowCore.app"
+            BlueprintName = "FlowCore"
+            ReferencedContainer = "container:FlowCore.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
