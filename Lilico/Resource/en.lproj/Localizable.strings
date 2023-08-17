@@ -246,7 +246,7 @@
 "QR__Code::message" = "QR Code";
 "username" = "Username";
 "Choose_provider::message" = "Choose Provider";
-"username_desc" = "Other Lilico users can find you and send you payments via your unique username.";
+"username_desc" = "Other Flow Core users can find you and send you payments via your unique username.";
 "Shown__your__QR__code__to__receive__transactions::message" = "Shown your QR code to receive funds on flow blockchain";
 "next" = "Next";
 "Make__sure__you__are__using__the__correct__network::message" = "Make sure you are using the correct network. Send only testnet assets to this deposit address.";
@@ -835,4 +835,4 @@
 "nft_send_collection_empty" = "It seems like the receiver hasn’t enabled this collection, you won’t be to deliver this item.";
 "accessible_cap" = "Accessible";
 "coins_cap" = "Coins";
-"accessible_not_x_x" = "Lilico doesn't have access to %@ in %@ Account, please check your linked account settings.";
+"accessible_not_x_x" = "Flow Core doesn't have access to %@ in %@ Account, please check your linked account settings.";
