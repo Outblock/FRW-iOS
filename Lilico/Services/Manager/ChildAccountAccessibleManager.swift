@@ -62,6 +62,7 @@ extension ChildAccountManager {
             })
             return result?.count == 1
         }
+        
         // check collection
         func isAccessible(_ model: NFTCollectionInfo) -> Bool {
             guard isChildAccount() else {

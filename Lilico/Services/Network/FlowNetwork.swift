@@ -737,13 +737,6 @@ extension FlowNetwork {
     }
     
     static func fetchAccessibleCollection(parent: String, child: String) async throws -> [FlowModel.NFTCollection] {
-        var parent = parent
-        var child = child
-//        //TODO: test, remove when release @cat
-#if DEBUG
-//        parent = "0x7179def56a8b9c5e"
-//        child = "0xa3897cee18b350ea"
-#endif
         let cadenceString = CadenceTemplate.accessibleCollection.replace(by: ScriptAddress.addressMap())
         let parentAddress = Flow.Address(hex: parent)
         let childAddress = Flow.Address(hex: child)
@@ -754,13 +747,6 @@ extension FlowNetwork {
     }
     
     static func fetchAccessibleFT(parent: String, child: String) async throws -> [FlowModel.TokenInfo] {
-        var parent = parent
-        var child = child
-        //TODO: test, remove when release @cat
-//#if DEBUG
-//        parent = "0x7eaf4aabd4e3b62c"
-//        child = "0xb4eb6438cd2b4c23"
-//#endif
         let cadenceString = CadenceTemplate.accessibleFT.replace(by: ScriptAddress.addressMap())
         let parentAddress = Flow.Address(hex: parent)
         let childAddress = Flow.Address(hex: child)

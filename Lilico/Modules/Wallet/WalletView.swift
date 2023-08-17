@@ -554,7 +554,6 @@ extension WalletView {
                             }
                             .visibility( WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .visible : .gone)
                             
-                            //TODO: 判断下是否显示
                             Text("Inaccessible")
                                 .foregroundStyle(Color.LL.Primary.salmonPrimary)
                                 .font(Font.inter(size: 10, weight: .semibold))

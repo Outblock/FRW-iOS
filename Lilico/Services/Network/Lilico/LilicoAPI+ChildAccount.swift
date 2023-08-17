@@ -23,9 +23,6 @@ extension LilicoAPI.ChildAccount: TargetType, AccessTokenAuthorizable {
     }
 
     var baseURL: URL {
-        #if DEBUG
-        return URL(string: "https://a5e5-220-233-193-77.ngrok-free.app")!
-        #endif
         return Config.get(.lilico)
     }
 

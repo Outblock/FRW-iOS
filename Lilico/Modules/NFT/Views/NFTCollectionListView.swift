@@ -85,9 +85,6 @@ class NFTCollectionListViewViewModel: ObservableObject {
     }
     
     func fetch() {
-//        #if DEBUG
-//        address = "0xa3897cee18b350ea"
-//        #endif
         Task {
             guard let addr = address, let path = collectionPath else {
                 return
