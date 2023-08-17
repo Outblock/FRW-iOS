@@ -176,6 +176,7 @@ extension Color {
             static let light = Color("button.light")
             static let color = Color("button.color")
             static let text = Color("button.text")
+            static let send = Color("button.send")
         }
         
         enum Other {

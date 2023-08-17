@@ -118,7 +118,7 @@ struct TokenDetailView: RouteableView {
                     vm.sendAction()
                 } label: {
                     Text("send_uppercase".localized)
-                        .foregroundColor(.white)
+                        .foregroundColor(.LL.Button.send)
                         .font(.inter(size: 14, weight: .bold))
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
@@ -131,7 +131,7 @@ struct TokenDetailView: RouteableView {
                     vm.receiveAction()
                 } label: {
                     Text("receive_uppercase".localized)
-                        .foregroundColor(.white)
+                        .foregroundColor(.LL.Button.send)
                         .font(.inter(size: 14, weight: .bold))
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)

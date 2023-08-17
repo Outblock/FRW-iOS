@@ -800,7 +800,7 @@ extension ProfileView {
             .padding(.trailing, 8)
             .background {
                 RoundedRectangle(cornerRadius: 8)
-                    .foregroundColor(Color(hex: "#FCE9E1"))
+                    .foregroundColor(Color.LL.Primary.salmonPrimary.opacity(0.16))
             }
             
             Image("icon-tips-bottom-arrow")

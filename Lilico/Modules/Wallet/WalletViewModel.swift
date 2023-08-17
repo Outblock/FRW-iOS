@@ -39,7 +39,7 @@ extension WalletViewModel {
         }
         
         var changeBG: Color {
-            return changeIsNegative ? Color(hex:"#FFF3F2") : Color.LL.Success.success5
+            return changeIsNegative ? Color("coin.reduce") : Color("coin.increase")
         }
 
         var balanceAsCurrentCurrency: String {
