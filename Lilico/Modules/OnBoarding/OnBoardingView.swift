@@ -105,7 +105,7 @@ extension OnBoardingView {
 extension OnBoardingView {
     var bodyContainer: some View {
         GeometryReader { geoProxy in
-            Pager(page: vm.page, data: OnBoardingViewModel.PageType.allCases, id: \.self) { type in
+            Pager(page: vm.page, data: OnBoardingViewModel.installPage(), id: \.self) { type in
                 createPageView(type, size: geoProxy.size)
             }
             .bounces(false)

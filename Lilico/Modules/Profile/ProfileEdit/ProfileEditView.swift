@@ -26,7 +26,7 @@ struct ProfileEditView: RouteableView {
             VStack(spacing: 16) {
                 editContainer
                 domainEnabledView
-                claimDomainBanner
+//                claimDomainBanner
             }
         }
         .backgroundFill(.LL.Neutrals.background)

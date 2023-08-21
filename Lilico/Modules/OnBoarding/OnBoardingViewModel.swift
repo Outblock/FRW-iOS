@@ -53,6 +53,15 @@ class OnBoardingViewModel: ObservableObject {
     @Published var currentPageIndex: Int = 0
     @Published var page: Page = .first()
     
+    static func installPage() -> [OnBoardingViewModel.PageType] {
+        var pages = [
+            OnBoardingViewModel.PageType.nft,
+            OnBoardingViewModel.PageType.token,
+            OnBoardingViewModel.PageType.site,
+        ]
+        return pages
+    }
+    
     var totalPages: Int {
         return PageType.count
     }
