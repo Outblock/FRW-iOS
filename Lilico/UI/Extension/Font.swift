@@ -42,6 +42,7 @@ extension Font {
         static let caption = Font.custom("e-Ukraine-Regular", relativeTo: .caption)
         static let caption2 = Font.custom("e-Ukraine-Regular", relativeTo: .caption2)
     }
+    
 }
 
 /*

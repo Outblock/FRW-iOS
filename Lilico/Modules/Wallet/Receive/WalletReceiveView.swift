@@ -129,7 +129,7 @@ struct WalletReceiveView: RouteableView {
         VStack(spacing: 0) {
             ZStack {
                 qrCodeView
-                Image("logo")
+                Image("lilico-app-icon")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 60, height: 60)

@@ -189,3 +189,14 @@ extension Color {
         }
     }
 }
+
+extension Color {
+    // 2023-08-21
+    enum Flow {
+        enum Font {
+            static let ascend = Color("font.ascend")
+            static let descend = Color("font.descend")
+            static let inaccessible = Color("font.inaccessible")
+        }
+    }
+}

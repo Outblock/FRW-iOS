@@ -555,11 +555,11 @@ extension WalletView {
                             .visibility( WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .visible : .gone)
                             
                             Text("Inaccessible")
-                                .foregroundStyle(Color.LL.Primary.salmonPrimary)
+                                .foregroundStyle(Color.Flow.Font.inaccessible)
                                 .font(Font.inter(size: 10, weight: .semibold))
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 5)
-                                .background(.LL.Primary.salmon5.opacity(0.75))
+                                .background(.Flow.Font.inaccessible.opacity(0.16))
                                 .cornerRadius(4, style: .continuous)
                                 .visibility(WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .gone : .visible)
 

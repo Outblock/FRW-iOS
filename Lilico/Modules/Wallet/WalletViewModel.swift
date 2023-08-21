@@ -35,11 +35,11 @@ extension WalletViewModel {
         }
 
         var changeColor: Color {
-            return changeIsNegative ? Color.LL.Warning.warning2 : Color.LL.Success.success2
+            return changeIsNegative ? Color.Flow.Font.descend : Color.Flow.Font.ascend
         }
         
         var changeBG: Color {
-            return changeIsNegative ? Color("coin.reduce") : Color("coin.increase")
+            return changeIsNegative ? Color.Flow.Font.descend.opacity(0.16) : Color.Flow.Font.ascend.opacity(0.16)
         }
 
         var balanceAsCurrentCurrency: String {

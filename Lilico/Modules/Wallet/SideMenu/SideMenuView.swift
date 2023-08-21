@@ -310,7 +310,7 @@ struct SideMenuView: View {
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text("My Wallet")
-                        .foregroundColor(Color.LL.Neutrals.text)
+                        .foregroundColor(Color.LL.Neutrals.text2)
                         .font(.inter(size: 14, weight: .semibold))
                     
                     Text(type.rawValue)
