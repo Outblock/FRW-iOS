@@ -23,7 +23,7 @@ extension LilicoAPI.ChildAccount: TargetType, AccessTokenAuthorizable {
     }
 
     var baseURL: URL {
-        return Config.get(.lilico)
+        return Config.get(.lilicoWeb)
     }
 
     var path: String {
@@ -31,11 +31,11 @@ extension LilicoAPI.ChildAccount: TargetType, AccessTokenAuthorizable {
         let network = LocalUserDefaults.shared.flowNetwork == .testnet ? "testnet" : "mainnet"
         switch self {
             case .collection:
-                thePath = "/api/hc/{{network}}/nftIdWithDisplay"
+                thePath = "/hc/{{network}}/nftIdWithDisplay"
             case .collectionInfo:
-                thePath = "/api/storage/{{network}}/nft/collection"
+                thePath = "/storage/{{network}}/nft/collection"
             case .nftList:
-                thePath = "/api/storage/{{network}}/nft"
+                thePath = "/storage/{{network}}/nft"
         }
         
         thePath = thePath.replace("{{network}}", with: network)
