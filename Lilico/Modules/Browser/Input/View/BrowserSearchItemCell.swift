@@ -10,7 +10,9 @@ import SnapKit
 
 class BrowserSearchItemCell: UICollectionViewCell {
     private lazy var iconImageView: UIImageView = {
-        let view = UIImageView(image: UIImage(named: "icon-search-input"))
+        var img = UIImage(named: "icon-search-input")?.withRenderingMode(.alwaysTemplate)
+        let view = UIImageView(image: img)
+        view.tintColor = UIColor(named: "accessory")
         return view
     }()
     
@@ -25,7 +27,8 @@ class BrowserSearchItemCell: UICollectionViewCell {
     }()
     
     private lazy var arrowImageView: UIImageView = {
-        let view = UIImageView(image: UIImage(named: "icon-search-arrow"))
+        let view = UIImageView(image: UIImage(named: "icon-search-arrow")?.withRenderingMode(.alwaysTemplate))
+        view.tintColor = UIColor(named: "accessory")
         return view
     }()
     
