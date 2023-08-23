@@ -83,7 +83,7 @@ struct WalletSendView: RouteableView {
                 
                 // indicator
                 let widthPerTab = geo.size.width / CGFloat(tabCount)
-                Color.LL.Primary.salmon4
+                Color.Flow.accessory
                     .frame(width: widthPerTab, height: 2)
                     .padding(.leading, widthPerTab * CGFloat(vm.tabType.rawValue))
             }
@@ -114,6 +114,8 @@ extension WalletSendView {
     var searchBar: some View {
         HStack(spacing: 8) {
             Image("icon-search")
+                .renderingMode(.template)
+                .foregroundStyle(Color.LL.Primary.salmonPrimary)
             TextField("", text: $vm.searchText)
                 .disableAutocorrection(true)
                 .modifier(PlaceholderStyle(showPlaceHolder: vm.searchText.isEmpty,
@@ -339,7 +341,7 @@ extension WalletSendView {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 20, height: 20)
-                    .foregroundColor(isSelected ? Color.LL.Primary.salmon3 : Color.LL.Primary.salmon5)
+                    .foregroundColor(isSelected ? Color.Flow.accessory : Color.Flow.accessory)
                 
                 Text(title)
                     .foregroundColor(.LL.Neutrals.text)

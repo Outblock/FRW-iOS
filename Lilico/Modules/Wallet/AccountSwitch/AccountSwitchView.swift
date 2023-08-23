@@ -123,9 +123,13 @@ struct AccountSwitchView: View {
             }
             
             Spacer()
-            
-            Image("icon-backup-success")
+            Image(systemName: "checkmark.circle.fill")
+                .tintColor(.Flow.accessory)
                 .visibility(placeholder.uid == UserManager.shared.activatedUID ? .visible : .invisible)
+//            Image("icon-backup-success")
+//                .renderingMode(.template)
+                
+                
         }
         .frame(height: 42)
         .contentShape(Rectangle())
