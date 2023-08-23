@@ -150,10 +150,10 @@ struct StakingListView: RouteableView {
                 
                 Text(item.provider.apyYearPercentString)
                     .font(.inter(size: 12, weight: .semibold))
-                    .foregroundColor(Color.LL.Success.success1)
+                    .foregroundColor(Color.Flow.Font.ascend)
                     .padding(.horizontal, 5)
                     .frame(height: 18)
-                    .background(Color.LL.Success.success4)
+                    .background(Color.Flow.Font.ascend.opacity(0.16))
                     .cornerRadius(4)
                     .padding(.leading, 8)
                 
@@ -167,7 +167,7 @@ struct StakingListView: RouteableView {
                         .foregroundColor(.white)
                         .padding(.horizontal, 12)
                         .frame(height: 26)
-                        .background(Color.LL.Primary.salmonPrimary)
+                        .background(Color.Flow.accessory)
                         .cornerRadius(16)
                 }
             }

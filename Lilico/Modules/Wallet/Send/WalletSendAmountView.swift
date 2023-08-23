@@ -85,17 +85,17 @@ struct WalletSendAmountView: RouteableView {
                     } else {
                         if let contactType = vm.targetContact.contactType, let contactName = vm.targetContact.contactName, contactType == .external, contactName.isAddress {
                             Text("0x")
-                                .foregroundColor(.LL.Primary.salmonPrimary)
+                                .foregroundColor(.white)
                                 .font(.inter(size: 24, weight: .semibold))
                         } else {
                             Text(String((vm.targetContact.contactName?.first ?? "A").uppercased()))
-                                .foregroundColor(.LL.Primary.salmonPrimary)
+                                .foregroundColor(.white)
                                 .font(.inter(size: 24, weight: .semibold))
                         }
                     }
                 }
                 .frame(width: 44, height: 44)
-                .background(.LL.Primary.salmon5)
+                .background(.LL.Primary.salmonPrimary)
                 .clipShape(Circle())
 
                 // text
@@ -395,12 +395,12 @@ extension WalletSendAmountView {
                             .frame(width: 44, height: 44)
                     } else {
                         Text(String((contact.contactName?.first ?? "A").uppercased()))
-                            .foregroundColor(.LL.Primary.salmonPrimary)
+                            .foregroundColor(.white)
                             .font(.inter(size: 24, weight: .semibold))
                     }
                 }
                 .frame(width: 44, height: 44)
-                .background(.LL.Primary.salmon5)
+                .background(.LL.Primary.salmonPrimary)
                 .clipShape(Circle())
 
                 // contact name
@@ -490,15 +490,27 @@ extension WalletSendAmountView {
                         case 0:
                             Circle()
                                 .frame(width: 6, height: 6)
-                                .foregroundColor(.LL.Primary.salmon5)
+                                .foregroundColor(.LL.Primary.salmonPrimary).opacity(0.25)
                         case 1:
                             Circle()
                                 .frame(width: 6, height: 6)
-                                .foregroundColor(.LL.Primary.salmon4)
+                                .foregroundColor(.LL.Primary.salmonPrimary).opacity(0.35)
                         case 2:
                             Circle()
                                 .frame(width: 6, height: 6)
-                                .foregroundColor(.LL.Primary.salmon3)
+                                .foregroundColor(.LL.Primary.salmonPrimary).opacity(0.50)
+                        case 3:
+                            Circle()
+                                .frame(width: 6, height: 6)
+                                .foregroundColor(.LL.Primary.salmonPrimary).opacity(0.65)
+                        case 4:
+                            Circle()
+                                .frame(width: 6, height: 6)
+                                .foregroundColor(.LL.Primary.salmonPrimary).opacity(0.80)
+                        case 5:
+                            Circle()
+                                .frame(width: 6, height: 6)
+                                .foregroundColor(.LL.Primary.salmonPrimary).opacity(0.95)
                         default:
                             Circle()
                                 .frame(width: 6, height: 6)

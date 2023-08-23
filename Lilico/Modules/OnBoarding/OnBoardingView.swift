@@ -58,7 +58,7 @@ extension OnBoardingView {
     
     var bottomContainer: some View {
         HStack {
-            OnBoardingView.PageControl(numberOfPages: OnBoardingViewModel.PageType.count, currentPage: $vm.currentPageIndex)
+            OnBoardingView.PageControl(numberOfPages: OnBoardingViewModel.installPage().count, currentPage: $vm.currentPageIndex)
             Spacer()
             
             if vm.isLastPage {

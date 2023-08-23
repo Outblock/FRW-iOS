@@ -44,7 +44,7 @@ struct SelectProviderView: RouteableView {
                     }
                     .padding(.horizontal, 18)
                     .frame(height: 64)
-                    .background(Color.LL.Primary.salmonPrimary)
+                    .background(Color.Flow.accessory)
                     .cornerRadius(16)
                     .padding(.top, 12)
                     
