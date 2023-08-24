@@ -417,21 +417,21 @@ extension WalletView {
                         
                         Spacer()
                         
-                        if UserManager.shared.isMeowDomainEnabled,
-                           let domain = UserManager.shared.userInfo?.meowDomain,
-                           WalletManager.shared.isSelectedChildAccount == false {
-                            HStack(spacing: 8) {
-                                
-                                Image("logo")
-                                    .resizable()
-                                    .frame(width: 16, height: 16)
-                                
-                                Text(domain)
-                                    .foregroundColor(Color(hex: "#FDFBF9"))
-                                    .font(.inter(size: 14, weight: .semibold))
-                            }
-                            
-                        }
+//                        if UserManager.shared.isMeowDomainEnabled,
+//                           let domain = UserManager.shared.userInfo?.meowDomain,
+//                           WalletManager.shared.isSelectedChildAccount == false {
+//                            HStack(spacing: 8) {
+//                                
+//                                Image("logo")
+//                                    .resizable()
+//                                    .frame(width: 16, height: 16)
+//                                
+//                                Text(domain)
+//                                    .foregroundColor(Color(hex: "#FDFBF9"))
+//                                    .font(.inter(size: 14, weight: .semibold))
+//                            }
+//                            
+//                        }
                     }
 
                     Spacer()
