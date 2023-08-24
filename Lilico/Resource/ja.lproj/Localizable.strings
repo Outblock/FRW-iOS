@@ -53,7 +53,7 @@
 "words_not_found" = "おっと、一致する単語が見つかりませんでした。";
 "Anonymous::message" = "匿名";
 "update_nickname_failed" = "ニックネームを更新できませんでした";
-"Other__Lilico__users__cannot__search__for__your__username::message" = "他の Lilico ユーザーはあなたのユーザー名を検索できません。";
+"Other__Lilico__users__cannot__search__for__your__username::message" = "他の Flow Core ユーザーはあなたのユーザー名を検索できません。";
 "update_private_failed" = "非公開ステータスを変更できませんでした";
 "Private__Key::message" = "秘密鍵";
 "avatar_info_error" = "NFT情報エラー";
@@ -163,7 +163,7 @@
 "your_wallet" = "あなたの財布";
 "Are__you__sure__you__want__to__reset__your__wallet::message" = "ウォレットをリセットしてもよろしいですか?";
 "extra_protection_desc" = "ウォレットのセキュリティを強化するために、PIN とバイオメトリクスでロックを解除します。";
-"Removing__the__wallet__from__Lilico__does__not__remove__the__wallet__from__Flow__blockchain::message" = "Lilico からウォレットを削除しても、Flow ブロックチェーンからウォレットは削除されません。リカバリフレーズまたはGoogleドライブバックアップを使用してウォレットを再度インポートできます。";
+"Removing__the__wallet__from__Lilico__does__not__remove__the__wallet__from__Flow__blockchain::message" = "Flow Core からウォレットを削除しても、Flow ブロックチェーンからウォレットは削除されません。リカバリフレーズまたはGoogleドライブバックアップを使用してウォレットを再度インポートできます。";
 "select_word_by_order" = "語順を参考に、一つ一つ選んでください。";
 "Reset::message" = "リセット";
 "switch_to_x" = "切り替える ％@";
@@ -179,7 +179,7 @@
 "verify_x" = "確認 ％@";
 "Security::message" = "安全";
 "recovery" = "回復";
-"Allow__lilico__to__pay__the__gas__fee::message" = "lilico が私のすべての取引のガス料金を支払うことを許可します。";
+"Allow__lilico__to__pay__the__gas__fee::message" = "Flow Core が私のすべての取引のガス料金を支払うことを許可します。";
 "phrase" = "言葉";
 "This__feature__has__been__disabled__temporarily::message" = "この機能は一時的に無効になっています";
 "words_save_tips" = "単語を正しい順序で書くかコピーして、安全な場所に保管してください。";
@@ -214,7 +214,7 @@
 "Transaction_created::message" = "トランザクションが作成されました";
 "password" = "パスワード";
 "Your_address_is_currently_processing_another_transaction::message" = "あなたのアドレスは現在別のトランザクションを処理しています";
-"password_use_tips" = "Lilico はこのパスワードを使用して、クラウド ストレージのバックアップを保護します。";
+"password_use_tips" = "Flow Core はこのパスワードを使用して、クラウド ストレージのバックアップを保護します。";
 "Sending::message" = " 送信...";
 "backup_password" = "バックアップパスワード";
 "Confirmation::message" = "確認";
@@ -229,8 +229,8 @@
 "legal" = "法的";
 "SCRIPT::message" = "脚本";
 "information" = "情報";
-"lilico__covers__this__gas__fee__for__you::message" = "このガソリン代は lilico が負担します";
-"review_policy_tips" = "Lilico のプライバシー ポリシーと利用規約を確認してください。";
+"lilico__covers__this__gas__fee__for__you::message" = "このガソリン代は Flow Core が負担します";
+"review_policy_tips" = "Flow Core のプライバシー ポリシーと利用規約を確認してください。";
 "SIGN__MESSAGE::message" = "サインメッセージ";
 "terms_of_service" = "利用規約";
 "Unavailable::message" = "利用不可";
@@ -246,14 +246,14 @@
 "QR__Code::message" = "QRコード";
 "username" = "ユーザー名";
 "Choose_provider::message" = "プロバイダーの選択";
-"username_desc" = "他の Lilico ユーザーはあなたを見つけて、あなたの固有のユーザー名を使用して送金することができます。";
+"username_desc" = "他の Flow Core ユーザーはあなたを見つけて、あなたの固有のユーザー名を使用して送金することができます。";
 "Shown__your__QR__code__to__receive__transactions::message" = "QRコードを提示してフローブロックチェーンで資金を受け取る";
 "next" = "次";
 "Make__sure__you__are__using__the__correct__network::message" = "正しいネットワークを使用していることを確認してください。テストネット アセットのみをこのデポジット アドレスに送信します。";
 "things_you" = "問題、";
 "Things__You__should__Know::message" = "知っておくべきこと";
 "need_to" = "必要がある";
-"Free__lilico__domain__help__you__find__each__other__easier__on__chain::message" = "無料の lilico ドメインは、チェーン上でお互いを簡単に見つけるのに役立ちます。";
+"Free__lilico__domain__help__you__find__each__other__easier__on__chain::message" = "無料の Flow Core ドメインは、チェーン上でお互いを簡単に見つけるのに役立ちます。";
 "know" = "知る";
 "An__Inbox__system__will__help__you__send__tokens__and__NFT__to__your__friend__without__enable__vault::message" = "Inbox システムは、ボールトを有効にせずにトークンと NFT を友人に送信するのに役立ちます。";
 "secret_phrase_tips" = "次のステップでは、パスフレーズ (12 語) が表示されます。合言葉は、財布を取り出すための唯一の鍵です。";
@@ -377,7 +377,7 @@
 "add_contact" = "連絡先を追加";
 "Pick__Your::message" = "あなたを選んでください";
 "save" = "保存";
-"Your__username__will__be__used__to__send__and__receive::message" = "あなたのユーザー名は、Lilico 上の友達とトークンを送受信するために使用されます。";
+"Your__username__will__be__used__to__send__and__receive::message" = "あなたのユーザー名は、Flow Core 上の友達とトークンを送受信するために使用されます。";
 "saving" = "保存中...";
 "Okay__I__have__saved__it__properly::message" = "はい、ちゃんと保存しましたよ";
 "name" = "名前";
@@ -413,7 +413,7 @@
 "create_btn_text" = "作成";
 "Terms__of__Service::message" = "利用規約";
 "import_btn_desc" = "既に\nアカウントをお持ちですか?";
-"Lilico__uses__this__password__to__protect__your__recovery__phrase::message" = "Lilico はこのパスワードを使用して回復フレーズを保護します。";
+"Lilico__uses__this__password__to__protect__your__recovery__phrase::message" = "Flow Core はこのパスワードを使用して回復フレーズを保護します。";
 "import_btn_text" = "輸入";
 "I__agree__to__Lilico::message" = "リリコさんの意見に同意します";
 "wallet" = "財布";
@@ -421,7 +421,7 @@
 "flow" = "フロー";
 "Welcome__Back::message" = "おかえり、";
 "receive" = "お金を集める";
-"Use__the__same__Google__Drive__password::message" = "同じ Google ドライブのパスワードを使用して Lilico ウォレットを保護します";
+"Use__the__same__Google__Drive__password::message" = "同じ Google ドライブのパスワードを使用して Flow Core ウォレットを保護します";
 "buy" = "買う";
 "Please__enter__your__password__to__decrypt::message" = "ウォレットのバックアップを復号化するには、パスワードを入力してください。";
 "buy_uppercase" = "買う";
@@ -548,7 +548,7 @@
 "Flow::message" = "フロー";
 "free_gas_fee" = "取引手数料なし";
 "Import_your_wallet::message" = "ウォレットをインポートする";
-"gas_fee_desc" = "すべてのトランザクションで lilico がガスを支払うことを許可する";
+"gas_fee_desc" = "すべてのトランザクションで Flow Core がガスを支払うことを許可する";
 "Create_a_new_wallet::message" = "新しいウォレットを作成する";
 "delete_wallet" = "ウォレットを削除";
 "Feature_Coming_Soon::message" = "近日公開予定の機能";
@@ -557,7 +557,7 @@
 "delete_wallet_confirm_desc" = "ウォレットを削除すると、ウォレットにアクセスできなくなります。シード フレーズは必ずバックアップしてください。";
 "This_will_remove_this_google_backup_You_will_not_import_this_wallet_via_Google_backup::message" = " これにより、この Google バックアップが削除されます。このウォレットを Google バックアップ経由でインポートすることはありません。";
 "delete_wallet_desc_2" = "財布を削除";
-"Your_lilico_domain_will_look_like::message" = "lilico ドメインは次のようになります。";
+"Your_lilico_domain_will_look_like::message" = "Flow Core ドメインは次のようになります。";
 "delete_warning_alert_desc" = "ウォレットを削除してもよろしいですか？ウォレット情報をバックアップしないと、すべての資産が失われます。";
 "meow::message" = "。ニャー";
 "reset_wallet" = "ウォレットのリセット";
@@ -668,7 +668,7 @@
 "hold_to_sign" = "長押しサイン";
 "free_domain" = "無料ドメイン名";
 "things_you_should_known" = "知っておくべきこと";
-"domain_tips1" = "無料の lilico ドメインを使用すると、チェーン上でお互いをより簡単に見つけることができます。";
+"domain_tips1" = "無料の Flow Core ドメインを使用すると、チェーン上でお互いをより簡単に見つけることができます。";
 "domain_tips2" = "受信トレイ システムは、ボールトを有効にすることなくトークンと NFT を友達に送信するのに役立ちます。";
 "domain_tips3" = "匿名モードが影響を受け、他のユーザーがドメインを通じてあなたのアドレスを見つけることができます。";
 "domain_claim" = "受け取る";
@@ -789,7 +789,7 @@
 "start" = "始める";
 "onboarding_title_nft" = "NFT の\n遊び場";
 "onboarding_title_token" = "トークンを\n集めてください";
-"onboarding_title_domain" = "無料の Lilico ドメインを\n請求します";
+"onboarding_title_domain" = "無料の Flow Core ドメインを\n請求します";
 "onboarding_title_site" = "探索\nあなたが一番好きなサイト";
 "backup_tips_desc" = "バックアップ・リカバリ・フレーズは、賞品の財産を保護するために重要です。";
 "not_now" = "今はやめろ";
@@ -800,7 +800,7 @@
 "welcome" = "いらっしゃいませ";
 "welcome_sub_desc" = "セキュリティについてさらに詳しく説明する";
 "registerd_accounts" = "登録済みアカウント";
-"link_account_start_desc_x" = "あなたの %@ アカウントを Lilico アカウント「%@」にリンクしたいと考えています";
+"link_account_start_desc_x" = "あなたの %@ アカウントを Flow Core アカウント「%@」にリンクしたいと考えています";
 "link_account_success_desc" = "サイドメニューの下にリンクされたアカウントが表示されるようになりました";
 "link_account" = "アカウントをリンクする";
 "account_linking" = "アカウントリンク";
@@ -815,8 +815,8 @@
 "unlink_confirmation" = "リンク解除の確認";
 "unlink_account_desc_x" = "アカウントのリンクを解除すると、メイン ウォレットは %@ アカウントにアクセスできなくなります。";
 "hold_to_unlink" = "長押ししてリンクを解除する";
-"link_account_notice_1" = "lilico ウォレットにアカウントを委任します";
-"link_account_notice_2" = "Lilico ウォレットはリンクされたアカウントを管理します";
+"link_account_notice_1" = "Flow Core ウォレットにアカウントを委任します";
+"link_account_notice_2" = "Flow Core ウォレットはリンクされたアカウントを管理します";
 "switch_profile_tips" = "プロファイル名をタップしてプロファイルを切り替えます。";
 "avatar" = "アバター";
 "jailbreak_title" = "脱獄が検出されました";
@@ -830,3 +830,9 @@
 "turn_on_noti_title" = "プッシュ通知をオンにする";
 "turn_on_noti_desc" = "転送、交換、承認が完了すると通知を受け取ります。";
 "maybe_later_text" = "たぶん後で";
+"scan_qr_title" = "QRコードをスキャン";
+"wallet_send_token_empty" = "受信者がこのトークンを有効にしていないようです。このアイテムを配達することはできません。";
+"nft_send_collection_empty" = "受信者がこのコレクションを有効にしていないようです。このアイテムを配達することはできません。";
+"accessible_cap" = "アクセシビリティ対応";
+"coins_cap" = "コイン";
+"accessible_not_x_x" = "Flow Core は %@ アカウントの %@ にアクセスできません。リンクされたアカウントの設定を確認してください。";

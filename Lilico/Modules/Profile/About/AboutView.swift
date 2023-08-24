@@ -49,16 +49,16 @@ struct AboutView: RouteableView {
                         UIApplication.shared.open(URL(string: "https://discord.gg/sfQKARA3SA")!)
                     }
                     
-                    SocialButton(imageName: "twitter",
-                                 text: "Twitter") {
-                        UIApplication.shared.open(URL(string: "https://twitter.com/lilico_app")!)
-                    }
-                    
-                    SocialButton(imageName: "email",
-                                 text: "Email",
-                                 showDivider: false) {
-                        UIApplication.shared.open(URL(string: "mailto:hi@lilico.app")!)
-                    }
+//                    SocialButton(imageName: "twitter",
+//                                 text: "Twitter") {
+//                        UIApplication.shared.open(URL(string: "https://twitter.com/lilico_app")!)
+//                    }
+//                    
+//                    SocialButton(imageName: "email",
+//                                 text: "Email",
+//                                 showDivider: false) {
+//                        UIApplication.shared.open(URL(string: "mailto:hi@lilico.app")!)
+//                    }
                 }
                 .cornerRadius(16)
             } header: {
