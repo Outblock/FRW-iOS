@@ -63,7 +63,20 @@ extension Font {
     }
     
     static func montserrat(size: CGFloat = 16, weight: Weight = .regular) -> Font {
-        return Font.custom("Montserrat", size: size).weight(weight)
+        switch weight {
+            case .regular:
+                return Font.custom("e-Ukraine-Regular", size: size)
+            case .medium:
+                return Font.custom("e-Ukraine-Medium", size: size)
+            case .semibold:
+                return Font.custom("e-Ukraine-Bold", size: size)
+            case .light:
+                return Font.custom("e-Ukraine-Light", size: size)
+            case .bold:
+                return Font.custom("e-Ukraine-Bold", size: size)
+            default:
+                return Font.custom("e-Ukraine-Regular", size: size)
+        }
     }
 
     static func W700(size: CGFloat = 16) -> Font {
