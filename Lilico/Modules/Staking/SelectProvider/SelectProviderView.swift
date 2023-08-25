@@ -24,34 +24,34 @@ struct SelectProviderView: RouteableView {
         ScrollView {
             LazyVStack(spacing: 0) {
                 Group {
-//                    createSectionTitleView("staking_recommend".localized)
-//                    
-//                    VStack(spacing: 0) {
-//                        HStack {
-//                            Text("stake_on_lilico_only".localized)
-//                                .font(.inter(size: 12, weight: .bold))
-//                                .foregroundColor(Color.white.opacity(0.72))
-//                            
-//                            Spacer()
-//                            
-//                            Image("icon-account-arrow-right")
-//                                .renderingMode(.template)
-//                                .foregroundColor(Color.white.opacity(0.72))
-//                        }
-//                        .frame(height: 32)
-//                        
-//                        Spacer()
-//                    }
-//                    .padding(.horizontal, 18)
-//                    .frame(height: 64)
-//                    .background(Color.Flow.accessory)
-//                    .cornerRadius(16)
-//                    .padding(.top, 12)
+                    createSectionTitleView("staking_recommend".localized)
+                    
+                    VStack(spacing: 0) {
+                        HStack {
+                            Text("stake_on_lilico_only".localized)
+                                .font(.inter(size: 12, weight: .bold))
+                                .foregroundColor(Color.white.opacity(0.72))
+                            
+                            Spacer()
+                            
+                            Image("icon-account-arrow-right")
+                                .renderingMode(.template)
+                                .foregroundColor(Color.white.opacity(0.72))
+                        }
+                        .frame(height: 32)
+                        
+                        Spacer()
+                    }
+                    .padding(.horizontal, 18)
+                    .frame(height: 64)
+                    .background(Color.Flow.accessory)
+                    .cornerRadius(16)
+                    .padding(.top, 12)
                     
                     createProviderView(provider: vm.lilicoProvider, gradientStart: colorScheme == .light ? "#FFD7C6" : "#292929", gradientEnd: colorScheme == .light ? "#FAFAFA" : "#292929")
                         .padding(.top, -40)
                 }
-                .visibility(vm.lilicoProvider != nil ? .visible : .gone)
+                .visibility(.gone)
                 
 //                createSectionTitleView("staking_liquid_stake".localized)
 //                ForEach(dataList2, id: \.self) { _ in
