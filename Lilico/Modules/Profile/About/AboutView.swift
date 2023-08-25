@@ -26,7 +26,6 @@ struct AboutView: RouteableView {
                 .padding(.top, 20)
             
             Text("lilico".localized)
-                .textCase(.lowercase)
                 .font(.inter(size: 26, weight: .semibold))
             
             HStack {
@@ -46,13 +45,13 @@ struct AboutView: RouteableView {
                     
                     SocialButton(imageName: "disocrd",
                                  text: "Disocrd") {
-                        UIApplication.shared.open(URL(string: "https://discord.gg/sfQKARA3SA")!)
+                        UIApplication.shared.open(URL(string: "https://discord.com/invite/J6fFnh2xx6")!)
                     }
                     
-//                    SocialButton(imageName: "twitter",
-//                                 text: "Twitter") {
-//                        UIApplication.shared.open(URL(string: "https://twitter.com/lilico_app")!)
-//                    }
+                    SocialButton(imageName: "twitter",
+                                 text: "Twitter") {
+                        UIApplication.shared.open(URL(string: "https://twitter.com/flow_blockchain")!)
+                    }
 //                    
 //                    SocialButton(imageName: "email",
 //                                 text: "Email",
@@ -92,11 +91,11 @@ struct AboutView: RouteableView {
 
             Spacer()
             
-            Image("outblock-logo")
+            Image("logo")
                 .resizable()
                 .frame(width: 50, height: 50)
                 .onTapGesture {
-                    UIApplication.shared.open(URL(string: "https://outblock.io")!)
+                    UIApplication.shared.open(URL(string: "https://flow.com")!)
                 }
             
         }
