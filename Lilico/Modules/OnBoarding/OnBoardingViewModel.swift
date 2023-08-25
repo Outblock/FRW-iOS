@@ -13,14 +13,14 @@ extension OnBoardingViewModel {
     enum PageType: String, CaseIterable {
         case nft
         case token
-        case domain
+//        case domain
         case site
         
         /// Basically only used in the text color of skip button
         var needLightContent: Bool {
             switch self {
-            case .domain:
-                return true
+//            case .domain:
+//                return true
             default:
                 return false
             }
@@ -32,8 +32,8 @@ extension OnBoardingViewModel {
                 return [Color(hex: "#d7d7e5"), Color(hex: "#695ddb")]
             case .token:
                 return [Color(hex: "#bcdefa"), Color(hex: "#306ad6")]
-            case .domain:
-                return [Color(hex: "#606060"), Color.black]
+//            case .domain:
+//                return [Color(hex: "#606060"), Color.black]
             case .site:
                 return [Color(hex: "#fde782"), Color(hex: "#20c477")]
             }
@@ -54,7 +54,7 @@ class OnBoardingViewModel: ObservableObject {
     @Published var page: Page = .first()
     
     static func installPage() -> [OnBoardingViewModel.PageType] {
-        var pages = [
+        let pages = [
             OnBoardingViewModel.PageType.nft,
             OnBoardingViewModel.PageType.token,
             OnBoardingViewModel.PageType.site,

@@ -126,7 +126,7 @@ extension OnBoardingView {
             Spacer()
             
             Text(type.title)
-                .font(.montserrat(size: 36, weight: .semibold))
+                .font(.montserrat(size: 34, weight: .semibold))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)
