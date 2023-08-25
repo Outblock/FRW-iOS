@@ -74,7 +74,7 @@ open class SPQRCameraController: SPController {
         view.layer.addSublayer(frameLayer)
         captureSession.startRunning()
         
-        //TODO: order #cat
+        
         maskView.statusBarHeight = self.statusBarHeight
         view.addSubviews(maskView)
         

@@ -25,6 +25,11 @@ class SPQRMaskView: UIView {
     func config() {
         backgroundColor = .clear
         
+        if let img = UIImage(named: "scan_border")?.withRenderingMode(.alwaysTemplate) {
+            maskBorder.image = img
+            maskBorder.tintColor = UIColor.LL.Primary.salmonPrimary
+        }
+        
         maskLayer.fillColor = UIColor.init(white: 0, alpha: 0.75).cgColor
         maskLayer.fillRule = .evenOdd;
         layer.addSublayer(maskLayer)
