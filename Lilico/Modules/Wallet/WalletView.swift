@@ -197,7 +197,7 @@ struct WalletView: View {
                     .foregroundColor(LocalUserDefaults.shared.flowNetwork.color)
                     .background(
                         Capsule(style: .circular)
-                            .fill(LocalUserDefaults.shared.flowNetwork.color.opacity(0.2))
+                            .fill(LocalUserDefaults.shared.flowNetwork.color.opacity(0.16))
                     )
             }
             

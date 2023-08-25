@@ -316,13 +316,13 @@ struct SideMenuView: View {
                     Text(type.rawValue)
                         .textCase(.uppercase)
                         .lineLimit(1)
-                        .foregroundColor(Color(hex: "#333333"))
+                        .foregroundColor(type.color)
                         .font(.inter(size: 10, weight: .semibold))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
                         .background(
                             Capsule(style: .circular)
-                                .fill(Color(hex: "#EAEAEA"))
+                                .fill(type.color.opacity(0.16))
                         )
                         .visibility(type == .mainnet ? .gone : .visible)
                 }
