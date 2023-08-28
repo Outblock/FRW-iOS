@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Flow
 
-let placeholder: String = "https://lilico.app/placeholder.png"
+let placeholder: String = AppPlaceholder.image
 // TODO: which filter?
 let filterMetadata = ["uri", "img", "description"]
 
