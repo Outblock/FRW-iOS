@@ -42,8 +42,9 @@ class WalletConnectManager: ObservableObject {
     var currentRequestInfo: RequestInfo?
     var currentMessageInfo: RequestMessageInfo?
     
+    //TODO: rebranding @Hao @six
     let metadata = AppMetadata(
-        name: "Lilico",
+        name: "lilico".localized,
         description: "A crypto wallet on Flow built for Explorers, Collectors and Gamers",
         url: "https://link.lilico.app",
         icons: ["https://lilico.app/logo.png"])

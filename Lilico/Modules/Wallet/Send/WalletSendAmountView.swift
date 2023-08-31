@@ -467,8 +467,10 @@ extension WalletSendAmountView {
         }
         
         var sendButton: some View {
-            WalletSendButtonView {
-                vm.sendWithVerifyAction()
+            WalletSendButtonView(allowEnable: $vm.isEmptyTransation) {
+                if vm.isEmptyTransation {
+                    vm.sendWithVerifyAction()
+                }
             }
         }
     }

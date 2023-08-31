@@ -58,6 +58,8 @@ class WalletSendAmountViewModel: ObservableObject {
     
     @Published var isValidToken: Bool = true
     
+    @Published var isEmptyTransation = true
+    
     private var isSending = false
     private var cancelSets = Set<AnyCancellable>()
     
@@ -74,6 +76,12 @@ class WalletSendAmountViewModel: ObservableObject {
             }
         }.store(in: &cancelSets)
         checkAddress()
+        checkTransaction()
+        NotificationCenter.default.addObserver(self, selector: #selector(onHolderChanged(noti:)), name: .transactionStatusDidChanged, object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     var amountBalanceAsDollar: Double {
@@ -295,5 +303,15 @@ extension WalletSendAmountViewModel {
         self.token = token
         refreshTokenData()
         refreshInput()
+    }
+}
+
+extension WalletSendAmountViewModel {
+    func checkTransaction() {
+        isEmptyTransation = TransactionManager.shared.holders.count == 0
+    }
+ 
+    @objc private func onHolderChanged(noti: Notification) {
+        checkTransaction()
     }
 }

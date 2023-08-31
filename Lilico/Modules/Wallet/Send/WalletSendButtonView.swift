@@ -18,6 +18,10 @@ struct WalletSendButtonView: View {
     @State
     var isLoading: Bool = false
     
+    @Binding var allowEnable: Bool
+    
+    
+    
     var buttonText: String = "hold_to_send".localized
     
     var action: () -> ()
@@ -69,7 +73,7 @@ struct WalletSendButtonView: View {
         }
         .frame(height: 54)
         .frame(maxWidth: .infinity)
-        .background(Color.LL.Button.color)
+        .background( allowEnable ? Color.LL.Button.color : Color.LL.Neutrals.neutrals6)
         .cornerRadius(12)
         .scaleEffect(tap ? 0.95 : 1)
         .gesture(
@@ -86,6 +90,7 @@ struct WalletSendButtonView: View {
                 }
         )
         .animation(.spring(response: 0.5, dampingFraction: 0.5, blendDuration: 0), value: tap)
+        .disabled(!allowEnable)
         //            .buttonStyle(ScaleButtonStyle())
         
     }
@@ -125,8 +130,12 @@ struct ScaleButtonStyle: SwiftUI.ButtonStyle {
 
 
 struct WalletSendButtonView_Previews: PreviewProvider {
+    @State static var isEnable = true
+    @State static var isNot = false
     static var previews: some View {
-        WalletSendButtonView{}
+        WalletSendButtonView(allowEnable: $isEnable){}
+            .previewLayout(.sizeThatFits)
+        WalletSendButtonView(allowEnable: $isNot){}
             .previewLayout(.sizeThatFits)
     }
 }
