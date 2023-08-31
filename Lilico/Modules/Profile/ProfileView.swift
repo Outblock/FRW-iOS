@@ -197,14 +197,13 @@ extension ProfileView {
                     .cornerRadius(41)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 0) {
+                    HStack(spacing: 8) {
                         Text(userManager.userInfo?.nickname ?? "")
                             .foregroundColor(.LL.Neutrals.text)
                             .font(.inter(weight: .semibold))
                         
                         Image("icon-switch-profile")
                             .renderingMode(.template)
-                            .foregroundColor(Color(hex: "#7b7bff"))
                     }
                     
 //                    Text("@\(userManager.userInfo?.username ?? "")").foregroundColor(.LL.Neutrals.text).font(.inter(size: 14, weight: .medium))
@@ -217,7 +216,7 @@ extension ProfileView {
                     Image("icon-profile-edit")
                 }
                 .frame(size: CGSize(width: 36, height: 36))
-                .roundedButtonStyle()
+                .roundedButtonStyle(bgColor: .clear)
             }
         }
     }

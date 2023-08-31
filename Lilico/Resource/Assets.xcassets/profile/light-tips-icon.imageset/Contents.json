@@ -5,12 +5,12 @@
       "scale" : "1x"
     },
     {
-      "filename" : "light-tips-icon@2x.png",
+      "filename" : "tips@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "light-tips-icon@3x.png",
+      "filename" : "tips@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
