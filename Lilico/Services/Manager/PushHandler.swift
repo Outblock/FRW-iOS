@@ -33,6 +33,7 @@ class PushHandler: NSObject, ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { _ in
                 log.debug("wallet info refresh triggerd a upload token action")
+                self.uploadWhenAppUpgrade()
                 self.uploadCurrentToken()
             }.store(in: &cancelSets)
         
@@ -94,10 +95,6 @@ extension PushHandler {
             return
         }
         
-        if AppUpdateManager().isUpdated {
-            sendToken(token: fcmToken, address: address)
-            return
-        }
         
         if uploadedHistory[address] == fcmToken {
             // uploaded
@@ -112,6 +109,17 @@ extension PushHandler {
         uploadingAddress = address
         
         sendToken(token: fcmToken, address: address)
+    }
+    
+    func uploadWhenAppUpgrade()  {
+        guard let address = WalletManager.shared.getPrimaryWalletAddress(), let fcmToken = Messaging.messaging().fcmToken else {
+            return
+        }
+        
+        if AppUpdateManager.shared.isUpdated {
+            sendToken(token: fcmToken, address: address)
+            return
+        }
     }
     
     private func sendToken(token: String, address: String) {

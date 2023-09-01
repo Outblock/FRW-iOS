@@ -16,7 +16,7 @@ struct AppUpdateManager {
     var isUpdated: Bool = false
     var isNowInstall: Bool = false
     
-    init() {
+    private init() {
         let theKey = "flow_cache_version_key"
         if let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
             if let cacheVersion = UserDefaults.standard.string(forKey: theKey) {
