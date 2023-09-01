@@ -94,6 +94,11 @@ extension PushHandler {
             return
         }
         
+        if AppUpdateManager().isUpdated {
+            sendToken(token: fcmToken, address: address)
+            return
+        }
+        
         if uploadedHistory[address] == fcmToken {
             // uploaded
             log.debug("\(address) push token already uploaded")
@@ -106,12 +111,16 @@ extension PushHandler {
         
         uploadingAddress = address
         
+        sendToken(token: fcmToken, address: address)
+    }
+    
+    private func sendToken(token: String, address: String) {
         Task {
             do {
-                let resp: Network.EmptyResponse = try await Network.requestWithRawModel(LilicoAPI.Utils.retoken(fcmToken, address))
+                let resp: Network.EmptyResponse = try await Network.requestWithRawModel(LilicoAPI.Utils.retoken(token, address))
                 log.debug("\(address) upload push token success", context: resp)
                 DispatchQueue.main.async {
-                    self.uploadedHistory[address] = fcmToken
+                    self.uploadedHistory[address] = token
                     self.uploadingAddress = nil
                 }
             } catch {
