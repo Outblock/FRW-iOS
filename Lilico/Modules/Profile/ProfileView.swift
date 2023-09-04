@@ -592,7 +592,7 @@ extension ProfileView {
                     Button {
                         UIApplication.shared.open(URL(string: "https://chrome.google.com/webstore/detail/lilico/hpclkefagolihohboafpheddmmgdffjm")!)
                     } label: {
-                        ProfileView.SettingItemCell(iconName: Row.plugin.iconName, title: Row.plugin.title, style: Row.plugin.style, desc: Row.plugin.desc, toggle: Row.plugin.toggle)
+                        ProfileView.SettingItemCell(iconName: Row.plugin.iconName, title: Row.plugin.title, style: Row.plugin.style, desc: Row.plugin.desc, toggle: Row.plugin.toggle, imageName: Row.plugin.imageName, sysImageColor: Row.plugin.sysImageColor)
                     }
                     
                     Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
@@ -639,7 +639,7 @@ extension ProfileView.AboutSectionView.Row {
         case .about:
             return .arrow
         case .plugin:
-            return .none
+            return .sysImage
         case .developerMode:
             return .desc
         }
@@ -666,6 +666,30 @@ extension ProfileView.AboutSectionView.Row {
             return false
         }
     }
+    
+    var imageName: String {
+        switch self {
+        case .about:
+            return ""
+        case .plugin:
+            return "arrow.up.right"
+        case .developerMode:
+            return ""
+        }
+    }
+    
+    var sysImageColor: Color {
+        switch self {
+        case .about:
+            return Color.clear
+        case .plugin:
+            return Color.LL.note
+        case .developerMode:
+            return Color.clear
+        }
+    }
+    
+    
 }
 
 // MARK: - Section more setting
