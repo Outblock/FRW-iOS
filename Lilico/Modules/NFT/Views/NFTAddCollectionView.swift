@@ -95,7 +95,6 @@ extension NFTAddCollectionView {
                         
                         Text(item.collection.description ?? "")
                             .font(Font.inter(size: 12,weight: .w400))
-                            .fontWeight(.w400)
                             .multilineTextAlignment(.leading)
                             .foregroundColor(.LL.Neutrals.neutrals7)
                             .padding(.bottom, 18)

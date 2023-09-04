@@ -70,17 +70,22 @@ struct AddressBookView: RouteableView {
         if mode == .normal {
             return AnyView(view
                 .applyRouteable(self)
-                .navigationBarItems(trailing: HStack(spacing: 20) {
+                .navigationBarItems(trailing: HStack(spacing: 6) {
                     Button {
                         Router.route(to: RouteMap.AddressBook.add(vm))
                     } label: {
                         Image("btn-add")
+                            .renderingMode(.template)
+                            .foregroundColor(.LL.Primary.salmonPrimary)
+                            
                     }
                     
                     Button {
                         debugPrint("scan btn click")
                     } label: {
                         Image("btn-scan")
+                            .renderingMode(.template)
+                            .foregroundColor(.LL.Primary.salmonPrimary)
                     }
                 })
                 .alert("contact_delete_alert".localized, isPresented: $showAlert) {
@@ -239,13 +244,13 @@ extension AddressBookView {
                             .frame(width: 48, height: 48)
                     default:
                         Text(String((contact.contactName?.first ?? "A").uppercased()))
-                            .foregroundColor(.LL.Primary.salmonPrimary)
+                            .foregroundColor(.white)
                             .font(.inter(size: 24, weight: .semibold))
                     }
                     
                 }
                 .frame(width: 48, height: 48)
-                .background(.LL.Primary.salmon5)
+                .background(.LL.Primary.salmonPrimary)
                 .clipShape(Circle())
 
                 // text

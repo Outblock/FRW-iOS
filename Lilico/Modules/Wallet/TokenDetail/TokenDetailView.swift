@@ -125,11 +125,11 @@ struct TokenDetailView: RouteableView {
                     vm.sendAction()
                 } label: {
                     Text("send_uppercase".localized)
-                        .foregroundColor(.white)
+                        .foregroundColor(.LL.Button.send)
                         .font(.inter(size: 14, weight: .bold))
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
-                        .background(.LL.Primary.salmonPrimary)
+                        .background(.Flow.accessory)
                         .cornerRadius(12)
                 }
                 .disabled(WalletManager.shared.isSelectedChildAccount)
@@ -138,11 +138,11 @@ struct TokenDetailView: RouteableView {
                     vm.receiveAction()
                 } label: {
                     Text("receive_uppercase".localized)
-                        .foregroundColor(.white)
+                        .foregroundColor(.LL.Button.send)
                         .font(.inter(size: 14, weight: .bold))
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
-                        .background(.LL.Primary.salmonPrimary)
+                        .background(.Flow.accessory)
                         .cornerRadius(12)
                 }
             }
@@ -173,12 +173,12 @@ struct TokenDetailView: RouteableView {
                     HStack(spacing: 6) {
                         Text("more".localized)
                             .font(.inter(size: 14))
-                            .foregroundColor(Color.LL.Primary.salmonPrimary)
+                            .foregroundColor(Color.Flow.accessory)
                         
                         Image("icon-search-arrow")
                             .resizable()
                             .renderingMode(.template)
-                            .foregroundColor(Color.LL.Primary.salmonPrimary)
+                            .foregroundColor(Color.Flow.accessory)
                             .frame(width: 10, height: 10)
                     }
                     .contentShape(Rectangle())
@@ -492,7 +492,7 @@ extension TokenDetailView {
                         
                         Image("icon-account-arrow-right")
                             .renderingMode(.template)
-                            .foregroundColor(.LL.Other.icon1)
+                            .foregroundColor(.Flow.accessory)
                     }
                     .contentShape(Rectangle())
                     .frame(height: 50)
@@ -589,6 +589,8 @@ extension TokenDetailView {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     
                     Image("icon-stake-ad-arrow")
+                        .renderingMode(.template)
+                        .foregroundStyle(Color.Flow.accessory)
                 }
                 .frame(maxHeight: .infinity)
                 

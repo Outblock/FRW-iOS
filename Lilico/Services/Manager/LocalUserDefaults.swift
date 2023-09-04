@@ -50,9 +50,9 @@ extension LocalUserDefaults {
             case .mainnet:
                 return Color.LL.Primary.salmonPrimary
             case .testnet:
-                return Color.LL.flow
+                return Color(hex: "#FF8A00")
             case .sandboxnet:
-                return Color(hex: "#F3EA5F")
+                return Color(hex: "#CCAF21")
             }
         }
         

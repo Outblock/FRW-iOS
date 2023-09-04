@@ -130,7 +130,7 @@ extension WalletManager {
             return childAccount.aName
         }
         
-        return UserManager.shared.userInfo?.nickname ?? "Lilico"
+        return UserManager.shared.userInfo?.nickname ?? "lilico".localized
     }
     
     var selectedAccountWalletName: String {

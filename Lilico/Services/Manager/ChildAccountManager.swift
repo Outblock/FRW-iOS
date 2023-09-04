@@ -25,7 +25,7 @@ struct ChildAccount: Codable {
             return t
         }
         
-        return "https://lilico.app/placeholder.png"
+        return AppPlaceholder.image
     }
 
     var time: TimeInterval?

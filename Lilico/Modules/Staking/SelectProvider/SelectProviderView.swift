@@ -44,14 +44,14 @@ struct SelectProviderView: RouteableView {
                     }
                     .padding(.horizontal, 18)
                     .frame(height: 64)
-                    .background(Color.LL.Primary.salmonPrimary)
+                    .background(Color.Flow.accessory)
                     .cornerRadius(16)
                     .padding(.top, 12)
                     
                     createProviderView(provider: vm.lilicoProvider, gradientStart: colorScheme == .light ? "#FFD7C6" : "#292929", gradientEnd: colorScheme == .light ? "#FAFAFA" : "#292929")
                         .padding(.top, -40)
                 }
-                .visibility(vm.lilicoProvider != nil ? .visible : .gone)
+                .visibility(.gone)
                 
 //                createSectionTitleView("staking_liquid_stake".localized)
 //                ForEach(dataList2, id: \.self) { _ in

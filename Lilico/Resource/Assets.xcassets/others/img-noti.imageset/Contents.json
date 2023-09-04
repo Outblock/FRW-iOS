@@ -5,12 +5,11 @@
       "scale" : "1x"
     },
     {
-      "filename" : "img-noti@2x.png",
+      "filename" : "turn on notification.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "img-noti@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

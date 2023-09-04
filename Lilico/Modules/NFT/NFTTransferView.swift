@@ -13,12 +13,19 @@ class NFTTransferViewModel: ObservableObject {
     @Published var nft: NFTModel
     @Published var targetContact: Contact
     @Published var isValidNFT = true
+    @Published var isEmptyTransation = true
+    
     private var isRequesting: Bool = false
     
     init(nft: NFTModel, targetContact: Contact) {
         self.nft = nft
         self.targetContact = targetContact
         checkNFTReachable()
+        NotificationCenter.default.addObserver(self, selector: #selector(onHolderChanged(noti:)), name: .transactionStatusDidChanged, object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     func checkNFTReachable() {
@@ -93,6 +100,14 @@ class NFTTransferViewModel: ObservableObject {
                 failedBlock()
             }
         }
+    }
+    
+    func checkTransaction() {
+        isEmptyTransation = TransactionManager.shared.holders.count == 0
+    }
+ 
+    @objc private func onHolderChanged(noti: Notification) {
+        checkTransaction()
     }
 }
 
@@ -231,8 +246,11 @@ struct NFTTransferView: View {
     }
     
     var sendButton: some View {
-        WalletSendButtonView {
-            vm.sendAction()
+        WalletSendButtonView(allowEnable: $vm.isEmptyTransation) {
+            if vm.isEmptyTransation {
+                vm.sendAction()
+            }
+            
         }
     }
     

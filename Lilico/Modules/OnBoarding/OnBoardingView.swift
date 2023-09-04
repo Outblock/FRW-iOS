@@ -58,7 +58,7 @@ extension OnBoardingView {
     
     var bottomContainer: some View {
         HStack {
-            OnBoardingView.PageControl(numberOfPages: OnBoardingViewModel.PageType.count, currentPage: $vm.currentPageIndex)
+            OnBoardingView.PageControl(numberOfPages: OnBoardingViewModel.installPage().count, currentPage: $vm.currentPageIndex)
             Spacer()
             
             if vm.isLastPage {
@@ -105,7 +105,7 @@ extension OnBoardingView {
 extension OnBoardingView {
     var bodyContainer: some View {
         GeometryReader { geoProxy in
-            Pager(page: vm.page, data: OnBoardingViewModel.PageType.allCases, id: \.self) { type in
+            Pager(page: vm.page, data: OnBoardingViewModel.installPage(), id: \.self) { type in
                 createPageView(type, size: geoProxy.size)
             }
             .bounces(false)
@@ -126,7 +126,7 @@ extension OnBoardingView {
             Spacer()
             
             Text(type.title)
-                .font(.montserrat(size: 36, weight: .semibold))
+                .font(.montserrat(size: 34, weight: .semibold))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)

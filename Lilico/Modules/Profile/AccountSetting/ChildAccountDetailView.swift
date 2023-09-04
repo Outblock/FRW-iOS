@@ -491,7 +491,7 @@ extension ChildAccountDetailView {
         }
         
         var confirmButton: some View {
-            WalletSendButtonView(buttonText: "hold_to_unlink".localized) {
+            WalletSendButtonView(allowEnable: .constant(true), buttonText: "hold_to_unlink".localized) {
                 vm.doUnlinkAction()
             }
         }

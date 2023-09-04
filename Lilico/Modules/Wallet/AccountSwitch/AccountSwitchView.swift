@@ -123,9 +123,10 @@ struct AccountSwitchView: View {
             }
             
             Spacer()
-            
             Image("icon-backup-success")
                 .visibility(placeholder.uid == UserManager.shared.activatedUID ? .visible : .invisible)
+                
+                
         }
         .frame(height: 42)
         .contentShape(Rectangle())

@@ -176,6 +176,7 @@ extension Color {
             static let light = Color("button.light")
             static let color = Color("button.color")
             static let text = Color("button.text")
+            static let send = Color("button.send")
         }
         
         enum Other {
@@ -186,5 +187,20 @@ extension Color {
             static let bg3 = Color("other.bg3")
             static let icon1 = Color("other.icon1")
         }
+    }
+}
+
+extension Color {
+    // 2023-08-21
+    enum Flow {
+        
+        static let accessory = Color("accessory")
+        
+        enum Font {
+            static let ascend = Color("font.ascend")
+            static let descend = Color("font.descend")
+            static let inaccessible = Color("font.inaccessible")
+        }
+        
     }
 }

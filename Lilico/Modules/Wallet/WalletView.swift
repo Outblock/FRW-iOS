@@ -182,7 +182,7 @@ struct WalletView: View {
                         .frame(width: 28, height: 28)
                         .cornerRadius(14)
                     
-                    Text(um.userInfo?.nickname ?? "Lilico")
+                    Text(um.userInfo?.nickname ?? "lilico".localized)
                         .foregroundColor(.LL.Neutrals.text)
                         .font(.inter(size: 18, weight: .semibold))
                 }
@@ -197,7 +197,7 @@ struct WalletView: View {
                     .foregroundColor(LocalUserDefaults.shared.flowNetwork.color)
                     .background(
                         Capsule(style: .circular)
-                            .fill(LocalUserDefaults.shared.flowNetwork.color.opacity(0.2))
+                            .fill(LocalUserDefaults.shared.flowNetwork.color.opacity(0.16))
                     )
             }
             
@@ -417,21 +417,21 @@ extension WalletView {
                         
                         Spacer()
                         
-                        if UserManager.shared.isMeowDomainEnabled,
-                           let domain = UserManager.shared.userInfo?.meowDomain,
-                           WalletManager.shared.isSelectedChildAccount == false {
-                            HStack(spacing: 8) {
-                                
-                                Image("logo")
-                                    .resizable()
-                                    .frame(width: 16, height: 16)
-                                
-                                Text(domain)
-                                    .foregroundColor(Color(hex: "#FDFBF9"))
-                                    .font(.inter(size: 14, weight: .semibold))
-                            }
-                            
-                        }
+//                        if UserManager.shared.isMeowDomainEnabled,
+//                           let domain = UserManager.shared.userInfo?.meowDomain,
+//                           WalletManager.shared.isSelectedChildAccount == false {
+//                            HStack(spacing: 8) {
+//                                
+//                                Image("logo")
+//                                    .resizable()
+//                                    .frame(width: 16, height: 16)
+//                                
+//                                Text(domain)
+//                                    .foregroundColor(Color(hex: "#FDFBF9"))
+//                                    .font(.inter(size: 14, weight: .semibold))
+//                            }
+//                            
+//                        }
                     }
 
                     Spacer()
@@ -555,11 +555,11 @@ extension WalletView {
                             .visibility( WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .visible : .gone)
                             
                             Text("Inaccessible")
-                                .foregroundStyle(Color.LL.Primary.salmonPrimary)
+                                .foregroundStyle(Color.Flow.Font.inaccessible)
                                 .font(Font.inter(size: 10, weight: .semibold))
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 5)
-                                .background(.LL.Primary.salmon5.opacity(0.75))
+                                .background(.Flow.Font.inaccessible.opacity(0.16))
                                 .cornerRadius(4, style: .continuous)
                                 .visibility(WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .gone : .visible)
 

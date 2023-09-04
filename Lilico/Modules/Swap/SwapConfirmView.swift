@@ -174,15 +174,27 @@ extension SwapConfirmView {
                         case 0:
                             Circle()
                                 .frame(width: 6, height: 6)
-                                .foregroundColor(.LL.Primary.salmon5)
+                                .foregroundColor(.LL.Primary.salmonPrimary).opacity(0.25)
                         case 1:
                             Circle()
                                 .frame(width: 6, height: 6)
-                                .foregroundColor(.LL.Primary.salmon4)
+                                .foregroundColor(.LL.Primary.salmonPrimary).opacity(0.35)
                         case 2:
                             Circle()
                                 .frame(width: 6, height: 6)
-                                .foregroundColor(.LL.Primary.salmon3)
+                                .foregroundColor(.LL.Primary.salmonPrimary).opacity(0.50)
+                        case 3:
+                            Circle()
+                                .frame(width: 6, height: 6)
+                                .foregroundColor(.LL.Primary.salmonPrimary).opacity(0.65)
+                        case 4:
+                            Circle()
+                                .frame(width: 6, height: 6)
+                                .foregroundColor(.LL.Primary.salmonPrimary).opacity(0.80)
+                        case 5:
+                            Circle()
+                                .frame(width: 6, height: 6)
+                                .foregroundColor(.LL.Primary.salmonPrimary).opacity(0.95)
                         default:
                             Circle()
                                 .frame(width: 6, height: 6)
