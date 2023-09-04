@@ -20,7 +20,7 @@ struct CurrencyListView: RouteableView {
                 ForEach(vm.datas, id: \.self) { currency in
                     createCurrencyListCell(currency: currency, selected: vm.selectedCurrency == currency)
                     
-                    if currency != .MXN {
+                    if currency != vm.datas.last {
                         Divider().background(Color.LL.Neutrals.background)
                     }
                 }

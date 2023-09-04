@@ -21,6 +21,7 @@ enum Currency: String, CaseIterable {
     case TWD
     case CHF
     case MXN
+    case BRL
 
     var symbol: String {
         switch self {
@@ -49,6 +50,8 @@ enum Currency: String, CaseIterable {
         case .CAD:
             return "$"
         case .HKD:
+            return "$"
+        case .BRL:
             return "$"
         }
     }
@@ -81,6 +84,8 @@ enum Currency: String, CaseIterable {
             return "Canadian Dollar"
         case .HKD:
             return "Hong Kong Dollar"
+        case .BRL:
+            return "Brazilian Real"
         }
     }
 
@@ -112,6 +117,8 @@ enum Currency: String, CaseIterable {
             return "🇨🇭"
         case .MXN:
             return "🇲🇽"
+        case .BRL:
+            return "🇧🇷"
         }
     }
 }
