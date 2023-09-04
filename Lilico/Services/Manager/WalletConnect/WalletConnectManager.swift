@@ -44,11 +44,11 @@ class WalletConnectManager: ObservableObject {
     
     //TODO: rebranding @Hao @six
     let metadata = AppMetadata(
-        name: "lilico".localized,
-        description: "A crypto wallet on Flow built for Explorers, Collectors and Gamers",
-        url: "https://link.lilico.app",
-        icons: ["https://lilico.app/logo.png"])
-    
+        name: "Flow Core",
+        description: "Digital wallet created for everyone.",
+        url: "https://fcw-link.lilico.app",
+        icons: ["https://fcw-link.lilico.app/logo.png"])
+
     init() {
         Networking.configure(projectId: LocalEnvManager.shared.walletConnectProjectID, socketFactory: SocketFactory())
         Pair.configure(metadata: metadata)
@@ -287,7 +287,7 @@ extension WalletConnectManager {
                     
                     var services = [
                         // Since fcl-js is not implement pre-authz, hence we disable it for now
-//                        serviceDefinition(address: RemoteConfigManager.shared.payer, keyId: RemoteConfigManager.shared.keyIndex, type: .preAuthz),
+                        serviceDefinition(address: RemoteConfigManager.shared.payer, keyId: RemoteConfigManager.shared.keyIndex, type: .preAuthz),
                         serviceDefinition(address: address, keyId: keyId, type: .authn),
                         serviceDefinition(address: address, keyId: keyId, type: .authz),
                         serviceDefinition(address: address, keyId: keyId, type: .userSignature)
