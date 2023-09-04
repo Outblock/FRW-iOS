@@ -572,6 +572,7 @@ extension ProfileView {
 
         enum Row {
             case developerMode(LocalUserDefaults)
+            case plugin
             case about
         }
 
@@ -584,6 +585,14 @@ extension ProfileView {
                         Router.route(to: RouteMap.Profile.developer)
                     } label: {
                         ProfileView.SettingItemCell(iconName: dm.iconName, title: dm.title, style: dm.style, desc: dm.desc, toggle: dm.toggle)
+                    }
+                    
+                    Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
+                    
+                    Button {
+                        UIApplication.shared.open(URL(string: "https://chrome.google.com/webstore/detail/lilico/hpclkefagolihohboafpheddmmgdffjm")!)
+                    } label: {
+                        ProfileView.SettingItemCell(iconName: Row.plugin.iconName, title: Row.plugin.title, style: Row.plugin.style, desc: Row.plugin.desc, toggle: Row.plugin.toggle)
                     }
                     
                     Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
@@ -607,6 +616,8 @@ extension ProfileView.AboutSectionView.Row {
         switch self {
         case .about:
             return "icon-about"
+        case .plugin:
+            return "icon-plugin"
         case .developerMode:
             return "icon-developer-mode"
         }
@@ -616,6 +627,8 @@ extension ProfileView.AboutSectionView.Row {
         switch self {
         case .about:
             return "about".localized
+        case .plugin:
+            return "lilico".localized + " Extension"
         case .developerMode:
             return "developer_mode".localized
         }
@@ -625,6 +638,8 @@ extension ProfileView.AboutSectionView.Row {
         switch self {
         case .about:
             return .arrow
+        case .plugin:
+            return .none
         case .developerMode:
             return .desc
         }
@@ -634,6 +649,8 @@ extension ProfileView.AboutSectionView.Row {
         switch self {
         case .about:
             return "about".localized
+        case .plugin:
+            return ""
         case let .developerMode(lud):
             return lud.flowNetwork.rawValue.capitalized
         }
@@ -642,6 +659,8 @@ extension ProfileView.AboutSectionView.Row {
     var toggle: Bool {
         switch self {
         case .about:
+            return false
+        case .plugin:
             return false
         case .developerMode:
             return false

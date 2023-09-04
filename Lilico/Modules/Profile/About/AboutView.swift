@@ -68,30 +68,30 @@ struct AboutView: RouteableView {
                     .foregroundColor(.LL.note)
             }
             
-            Section {
-                VStack(spacing: 0) {
-                    
-                    SocialButton(imageName: "logo",
-                                 text: "lilico".localized + " Extension",
-                                 showDivider: false) {
-                        UIApplication.shared.open(URL(string: "https://chrome.google.com/webstore/detail/lilico/hpclkefagolihohboafpheddmmgdffjm")!)
-                    }
-                    
-                }
-                .cornerRadius(16)
-            } header: {
-                Text("more".localized)
-                    .textCase(.uppercase)
-                    .font(.inter(size: 14, weight: .regular))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .foregroundColor(.LL.note)
-                    .padding(.top, 20)
-            }
+//            Section {
+//                VStack(spacing: 0) {
+//                    
+//                    SocialButton(imageName: "logo",
+//                                 text: "lilico".localized + " Extension",
+//                                 showDivider: false) {
+//                        UIApplication.shared.open(URL(string: "https://chrome.google.com/webstore/detail/lilico/hpclkefagolihohboafpheddmmgdffjm")!)
+//                    }
+//                    
+//                }
+//                .cornerRadius(16)
+//            } header: {
+//                Text("more".localized)
+//                    .textCase(.uppercase)
+//                    .font(.inter(size: 14, weight: .regular))
+//                    .frame(maxWidth: .infinity, alignment: .leading)
+//                    .foregroundColor(.LL.note)
+//                    .padding(.top, 20)
+//            }
             
 
             Spacer()
             
-            Image("logo")
+            Image("Flow")
                 .resizable()
                 .frame(width: 50, height: 50)
                 .onTapGesture {
