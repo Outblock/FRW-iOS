@@ -28,7 +28,7 @@ class FCLScripts {
                     "f_type": "Service",
                     "f_vsn": "1.0.0",
                     "type": "authz",
-                    "uid": "lilico#authz",
+                    "uid": "fcw#authz",
                     "endpoint": "chrome-extension://hpclkefagolihohboafpheddmmgdffjm/popup.html",
                     "method": "EXT/RPC",
                     "identity": {
@@ -41,7 +41,7 @@ class FCLScripts {
                         "f_type": "Service",
                         "f_vsn": "1.0.0",
                         "type": "authz",
-                        "uid": "lilico#authz",
+                        "uid": "fcw#authz",
                         "endpoint": "chrome-extension://hpclkefagolihohboafpheddmmgdffjm/popup.html",
                         "method": "EXT/RPC",
                         "identity": {
@@ -55,7 +55,7 @@ class FCLScripts {
                         "f_type": "Service",
                         "f_vsn": "1.0.0",
                         "type": "authz",
-                        "uid": "lilico#authz",
+                        "uid": "fcw#authz",
                         "endpoint": "chrome-extension://hpclkefagolihohboafpheddmmgdffjm/popup.html",
                         "method": "EXT/RPC",
                         "identity": {
@@ -84,7 +84,7 @@ class FCLScripts {
                 "f_type": "Service",
                 "f_vsn": "1.0.0",
                 "type": "authn",
-                "uid": "lilicoWallet#authn",
+                "uid": "fcw#authn",
                 "endpoint": "ext:0x000",
                 "id": "$ADDRESS_REPLACEMENT",
                 "identity": {
@@ -104,7 +104,7 @@ class FCLScripts {
                 "f_type": "Service",
                 "f_vsn": "1.0.0",
                 "type": "authz",
-                "uid": "lilicoWallet#authz",
+                "uid": "fcw#authz",
                 "endpoint": "ext:0x000",
                 "method": "EXT/RPC",
                 "identity": {
@@ -141,7 +141,7 @@ class FCLScripts {
             "f_type": "Service",
             "f_vsn": "1.0.0",
             "type": "user-signature",
-            "uid": "lilico#user-signature",
+            "uid": "fcw#user-signature",
             "endpoint": "chrome-extension://hpclkefagolihohboafpheddmmgdffjm/popup.html",
             "method": "EXT/RPC"
         },
@@ -152,7 +152,7 @@ class FCLScripts {
             "f_type": "Service",
             "f_vsn": "1.0.0",
             "type": "account-proof",
-            "uid": "lilico#account-proof",
+            "uid": "fcw#account-proof",
             "endpoint": "chrome-extension://hpclkefagolihohboafpheddmmgdffjm/popup.html",
             "method": "EXT/RPC",
             "data": {
@@ -203,7 +203,7 @@ extension FCLScripts {
                     "f_type": "Service",
                     "f_vsn": "1.0.0",
                     "type": "pre-authz",
-                    "uid": "lilico#pre-authz",
+                    "uid": "fcw#pre-authz",
                     "endpoint": "ios://pre-authz.lilico.app",
                     "method": "EXT/RPC",
                     "data": {
