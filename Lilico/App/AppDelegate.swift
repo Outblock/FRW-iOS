@@ -91,12 +91,22 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         if let url = userActivity.webpageURL {
-            var uri = url.absoluteString.deletingPrefix("https://link.lilico.app/wc?uri=")
-            uri = uri.deletingPrefix("lilico://")
-            WalletConnectManager.shared.onClientConnected = {
+            if url.absoluteString.hasPrefix("https://fcw-link.lilico.app") {
+                var uri = url.absoluteString.deletingPrefix("https://fcw-link.lilico.app/wc?uri=")
+                uri = uri.deletingPrefix("fcw://")
+                WalletConnectManager.shared.onClientConnected = {
+                    WalletConnectManager.shared.connect(link: uri)
+                }
+                WalletConnectManager.shared.connect(link: uri)
+                
+            }else {
+                var uri = url.absoluteString.deletingPrefix("https://link.lilico.app/wc?uri=")
+                uri = uri.deletingPrefix("lilico://")
+                WalletConnectManager.shared.onClientConnected = {
+                    WalletConnectManager.shared.connect(link: uri)
+                }
                 WalletConnectManager.shared.connect(link: uri)
             }
-            WalletConnectManager.shared.connect(link: uri)
         }
         return true
     }

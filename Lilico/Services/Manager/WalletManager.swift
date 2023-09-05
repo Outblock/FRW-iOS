@@ -37,6 +37,7 @@ class WalletManager: ObservableObject {
     @Published var activatedCoins: [TokenModel] = []
     @Published var coinBalances: [String: Double] = [:]
     @Published var childAccount: ChildAccount? = nil
+    var accessibleManager: ChildAccountManager.AccessibleManager = ChildAccountManager.AccessibleManager()
     
     private var childAccountInited: Bool = false
 
@@ -129,7 +130,7 @@ extension WalletManager {
             return childAccount.aName
         }
         
-        return UserManager.shared.userInfo?.nickname ?? "Lilico"
+        return UserManager.shared.userInfo?.nickname ?? "lilico".localized
     }
     
     var selectedAccountWalletName: String {
@@ -510,6 +511,7 @@ extension WalletManager {
         try fetchSupportedCoins()
         try await fetchActivatedCoins()
         try await fetchBalance()
+        try await fetchAccessible()
         ChildAccountManager.shared.refresh()
     }
 
@@ -591,6 +593,10 @@ extension WalletManager {
         }
         
         PageCache.cache.set(value: newBalanceMap, forKey: CacheKeys.coinBalances.rawValue)
+    }
+    
+    func fetchAccessible() async throws {
+        try await accessibleManager.fetchFT()
     }
 }
 

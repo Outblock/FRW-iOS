@@ -101,7 +101,7 @@ struct WalletView: View {
                             coinSectionView
                             ForEach(vm.mCoinItems, id: \.token.symbol) { coin in
                                 Button {
-                                    Router.route(to: RouteMap.Wallet.tokenDetail(coin.token))
+                                    Router.route(to: RouteMap.Wallet.tokenDetail(coin.token, WalletManager.shared.accessibleManager.isAccessible(coin.token)))
                                 } label: {
                                     CoinCell(coin: coin)
                                         .contentShape(Rectangle())
@@ -182,7 +182,7 @@ struct WalletView: View {
                         .frame(width: 28, height: 28)
                         .cornerRadius(14)
                     
-                    Text(um.userInfo?.nickname ?? "Lilico")
+                    Text(um.userInfo?.nickname ?? "lilico".localized)
                         .foregroundColor(.LL.Neutrals.text)
                         .font(.inter(size: 18, weight: .semibold))
                 }
@@ -197,7 +197,7 @@ struct WalletView: View {
                     .foregroundColor(LocalUserDefaults.shared.flowNetwork.color)
                     .background(
                         Capsule(style: .circular)
-                            .fill(LocalUserDefaults.shared.flowNetwork.color.opacity(0.2))
+                            .fill(LocalUserDefaults.shared.flowNetwork.color.opacity(0.16))
                     )
             }
             
@@ -356,12 +356,9 @@ extension WalletView {
                 
                 ZStack {
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
-//                        .fill(Color.clear)
                         .frame(maxWidth: .infinity)
                         .frame(height: CardViewHeight)
                         .padding(.horizontal, 18)
-//                        .padding(3)
-//                        .padding(.horizontal, 24)
                         .shadow(color: CardBackground(value: walletCardBackrgound).color.opacity(0.1),
                                 radius: 20, x: 0, y: 8)
                     
@@ -420,21 +417,21 @@ extension WalletView {
                         
                         Spacer()
                         
-                        if UserManager.shared.isMeowDomainEnabled,
-                           let domain = UserManager.shared.userInfo?.meowDomain,
-                           WalletManager.shared.isSelectedChildAccount == false {
-                            HStack(spacing: 8) {
-                                
-                                Image("logo")
-                                    .resizable()
-                                    .frame(width: 16, height: 16)
-                                
-                                Text(domain)
-                                    .foregroundColor(Color(hex: "#FDFBF9"))
-                                    .font(.inter(size: 14, weight: .semibold))
-                            }
-                            
-                        }
+//                        if UserManager.shared.isMeowDomainEnabled,
+//                           let domain = UserManager.shared.userInfo?.meowDomain,
+//                           WalletManager.shared.isSelectedChildAccount == false {
+//                            HStack(spacing: 8) {
+//                                
+//                                Image("logo")
+//                                    .resizable()
+//                                    .frame(width: 16, height: 16)
+//                                
+//                                Text(domain)
+//                                    .foregroundColor(Color(hex: "#FDFBF9"))
+//                                    .font(.inter(size: 14, weight: .semibold))
+//                            }
+//                            
+//                        }
                     }
 
                     Spacer()
@@ -541,13 +538,30 @@ extension WalletView {
                         }
 
                         HStack {
-                            Text("\(CurrencyCache.cache.currencySymbol)\(coin.token.symbol == "fusd" ? CurrencyCache.cache.currentCurrencyRate.formatCurrencyString() : coin.last.formatCurrencyString(considerCustomCurrency: true))")
-                                .foregroundColor(.LL.Neutrals.neutrals7)
-                                .font(.inter(size: 14, weight: .regular))
+                            HStack() {
+                                Text("\(CurrencyCache.cache.currencySymbol)\(coin.token.symbol == "fusd" ? CurrencyCache.cache.currentCurrencyRate.formatCurrencyString() : coin.last.formatCurrencyString(considerCustomCurrency: true))")
+                                    .foregroundColor(.LL.Neutrals.neutrals7)
+                                    .font(.inter(size: 14, weight: .regular))
 
-                            Text(coin.changeString)
-                                .foregroundColor(coin.changeColor)
-                                .font(.inter(size: 14, weight: .regular))
+                                Text(coin.changeString)
+                                    .foregroundColor(coin.changeColor)
+                                    .font(.inter(size: 12, weight: .semibold))
+                                    .frame(height: 22)
+                                    .padding(.horizontal, 6)
+                                    .background(coin.changeBG)
+                                    .cornerRadius(11, style: .continuous)
+                                    
+                            }
+                            .visibility( WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .visible : .gone)
+                            
+                            Text("Inaccessible")
+                                .foregroundStyle(Color.Flow.Font.inaccessible)
+                                .font(Font.inter(size: 10, weight: .semibold))
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 5)
+                                .background(.Flow.Font.inaccessible.opacity(0.16))
+                                .cornerRadius(4, style: .continuous)
+                                .visibility(WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .gone : .visible)
 
                             Spacer()
 

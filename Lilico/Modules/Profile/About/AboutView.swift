@@ -25,8 +25,7 @@ struct AboutView: RouteableView {
                 .frame(width: 100, height: 100)
                 .padding(.top, 20)
             
-            Text("lilico")
-                .textCase(.lowercase)
+            Text("lilico".localized)
                 .font(.inter(size: 26, weight: .semibold))
             
             HStack {
@@ -46,19 +45,19 @@ struct AboutView: RouteableView {
                     
                     SocialButton(imageName: "disocrd",
                                  text: "Disocrd") {
-                        UIApplication.shared.open(URL(string: "https://discord.gg/sfQKARA3SA")!)
+                        UIApplication.shared.open(URL(string: "https://discord.com/invite/J6fFnh2xx6")!)
                     }
                     
                     SocialButton(imageName: "twitter",
                                  text: "Twitter") {
-                        UIApplication.shared.open(URL(string: "https://twitter.com/lilico_app")!)
+                        UIApplication.shared.open(URL(string: "https://twitter.com/flow_blockchain")!)
                     }
-                    
-                    SocialButton(imageName: "email",
-                                 text: "Email",
-                                 showDivider: false) {
-                        UIApplication.shared.open(URL(string: "mailto:hi@lilico.app")!)
-                    }
+//                    
+//                    SocialButton(imageName: "email",
+//                                 text: "Email",
+//                                 showDivider: false) {
+//                        UIApplication.shared.open(URL(string: "mailto:hi@lilico.app")!)
+//                    }
                 }
                 .cornerRadius(16)
             } header: {
@@ -69,34 +68,34 @@ struct AboutView: RouteableView {
                     .foregroundColor(.LL.note)
             }
             
-            Section {
-                VStack(spacing: 0) {
-                    
-                    SocialButton(imageName: "logo",
-                                 text: "Lilico Extension",
-                                 showDivider: false) {
-                        UIApplication.shared.open(URL(string: "https://chrome.google.com/webstore/detail/lilico/hpclkefagolihohboafpheddmmgdffjm")!)
-                    }
-                    
-                }
-                .cornerRadius(16)
-            } header: {
-                Text("more".localized)
-                    .textCase(.uppercase)
-                    .font(.inter(size: 14, weight: .regular))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .foregroundColor(.LL.note)
-                    .padding(.top, 20)
-            }
+//            Section {
+//                VStack(spacing: 0) {
+//                    
+//                    SocialButton(imageName: "logo",
+//                                 text: "lilico".localized + " Extension",
+//                                 showDivider: false) {
+//                        UIApplication.shared.open(URL(string: "https://chrome.google.com/webstore/detail/lilico/hpclkefagolihohboafpheddmmgdffjm")!)
+//                    }
+//                    
+//                }
+//                .cornerRadius(16)
+//            } header: {
+//                Text("more".localized)
+//                    .textCase(.uppercase)
+//                    .font(.inter(size: 14, weight: .regular))
+//                    .frame(maxWidth: .infinity, alignment: .leading)
+//                    .foregroundColor(.LL.note)
+//                    .padding(.top, 20)
+//            }
             
 
             Spacer()
             
-            Image("outblock-logo")
+            Image("Flow")
                 .resizable()
                 .frame(width: 50, height: 50)
                 .onTapGesture {
-                    UIApplication.shared.open(URL(string: "https://outblock.io")!)
+                    UIApplication.shared.open(URL(string: "https://flow.com")!)
                 }
             
         }

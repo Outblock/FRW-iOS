@@ -33,19 +33,19 @@ extension UIFont {
 
 extension UIFont {
     static func interMedium(size: CGFloat) -> UIFont {
-        return UIFont(name: "Inter-Regular_Medium", size: size)!
+        return UIFont(name: "e-Ukraine-Medium", size: size)!
     }
     
     static func interSemiBold(size: CGFloat) -> UIFont {
-        return UIFont(name: "Inter-Regular_SemiBold", size: size)!
+        return UIFont(name: "e-Ukraine-Bold", size: size)!
     }
     
     static func interBold(size: CGFloat) -> UIFont {
-        return UIFont(name: "Inter-Regular_Bold", size: size)!
+        return UIFont(name: "e-Ukraine-Bold", size: size)!
     }
     
     static func inter(size: CGFloat) -> UIFont {
-        return UIFont(name: "Inter", size: size)!
+        return UIFont(name: "e-Ukraine-Regular", size: size)!
     }
     
     static func montserratBold(size: CGFloat) -> UIFont {

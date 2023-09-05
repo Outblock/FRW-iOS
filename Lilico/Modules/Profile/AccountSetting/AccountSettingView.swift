@@ -123,11 +123,11 @@ struct AccountSettingView: RouteableView {
             } label: {
                 Image("icon-pin")
                     .renderingMode(.template)
-                    .foregroundColor(childAccount.isPinned ? Color.LL.Primary.salmonPrimary : Color(hex: "#E6E6E6"))
+                    .foregroundColor(childAccount.isPinned ? Color.LL.Primary.salmonPrimary : Color(hex: "#00B881"))
                     .frame(width: 32, height: 32)
                     .background {
                         if childAccount.isPinned {
-                            LinearGradient(colors: [Color.clear, Color(hex: "#FC814A").opacity(0.15)], startPoint: .bottomLeading, endPoint: .topTrailing)
+                            LinearGradient(colors: [Color.clear, Color(hex: "#00B881").opacity(0.15)], startPoint: .bottomLeading, endPoint: .topTrailing)
                                 .cornerRadius([.topTrailing, .bottomLeading], 16)
                         } else {
                             Color.clear

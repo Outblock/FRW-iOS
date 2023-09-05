@@ -350,7 +350,7 @@ extension StakeAmountView {
         }
         
         var confirmBtn: some View {
-            WalletSendButtonView(buttonText: vm.isUnstake ? "hold_to_unstake".localized : "hold_to_stake".localized) {
+            WalletSendButtonView(allowEnable: .constant(true), buttonText: vm.isUnstake ? "hold_to_unstake".localized : "hold_to_stake".localized) {
                 vm.confirmStakeAction()
             }
             .padding(.bottom)

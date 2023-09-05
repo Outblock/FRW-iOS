@@ -50,7 +50,7 @@ struct WalletConnectView: RouteableView {
                     ItemCell(title: session.peer.name,
                              url: session.peer.url,
                              network: String(session.namespaces.values.first?.accounts.first?.reference ?? ""),
-                             icon: session.peer.icons.first ?? "https://lilico.app/placeholder.png")
+                             icon: session.peer.icons.first ?? AppPlaceholder.image)
                     .buttonStyle(ScaleButtonStyle())
                     .padding(.horizontal, 16)
                     .roundedBg()
@@ -287,7 +287,7 @@ extension WalletConnectView {
 //        //        WalletConnectView.ItemCell(title: "NBA Top",
 //        //                                   url: "https://google.com",
 //        //                                   network: "mainnet",
-//        //                                   icon: "https://lilico.app/placeholder.png")
+//        //                                   icon: AppPlaceholder.image)
 //        //        .previewLayout(.sizeThatFits)
 //
 //        WalletConnectView.EmptyView()

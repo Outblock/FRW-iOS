@@ -89,7 +89,7 @@ struct BrowserSignMessageView: View {
     }
     
     var actionView: some View {
-        WalletSendButtonView(buttonText: "hold_to_sign".localized) {
+        WalletSendButtonView(allowEnable: .constant(true), buttonText: "hold_to_sign".localized) {
             vm.didChooseAction(true)
         }
     }

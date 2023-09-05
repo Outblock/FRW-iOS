@@ -197,17 +197,16 @@ extension ProfileView {
                     .cornerRadius(41)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 0) {
+                    HStack(spacing: 8) {
                         Text(userManager.userInfo?.nickname ?? "")
                             .foregroundColor(.LL.Neutrals.text)
                             .font(.inter(weight: .semibold))
                         
                         Image("icon-switch-profile")
                             .renderingMode(.template)
-                            .foregroundColor(Color(hex: "#7b7bff"))
                     }
                     
-                    Text("@\(userManager.userInfo?.username ?? "")").foregroundColor(.LL.Neutrals.text).font(.inter(size: 14, weight: .medium))
+//                    Text("@\(userManager.userInfo?.username ?? "")").foregroundColor(.LL.Neutrals.text).font(.inter(size: 14, weight: .medium))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -217,7 +216,7 @@ extension ProfileView {
                     Image("icon-profile-edit")
                 }
                 .frame(size: CGSize(width: 36, height: 36))
-                .roundedButtonStyle()
+                .roundedButtonStyle(bgColor: .clear)
             }
         }
     }
@@ -573,6 +572,7 @@ extension ProfileView {
 
         enum Row {
             case developerMode(LocalUserDefaults)
+            case plugin
             case about
         }
 
@@ -585,6 +585,14 @@ extension ProfileView {
                         Router.route(to: RouteMap.Profile.developer)
                     } label: {
                         ProfileView.SettingItemCell(iconName: dm.iconName, title: dm.title, style: dm.style, desc: dm.desc, toggle: dm.toggle)
+                    }
+                    
+                    Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
+                    
+                    Button {
+                        UIApplication.shared.open(URL(string: "https://chrome.google.com/webstore/detail/lilico/hpclkefagolihohboafpheddmmgdffjm")!)
+                    } label: {
+                        ProfileView.SettingItemCell(iconName: Row.plugin.iconName, title: Row.plugin.title, style: Row.plugin.style, desc: Row.plugin.desc, toggle: Row.plugin.toggle, imageName: Row.plugin.imageName, sysImageColor: Row.plugin.sysImageColor)
                     }
                     
                     Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
@@ -608,6 +616,8 @@ extension ProfileView.AboutSectionView.Row {
         switch self {
         case .about:
             return "icon-about"
+        case .plugin:
+            return "icon-plugin"
         case .developerMode:
             return "icon-developer-mode"
         }
@@ -617,6 +627,8 @@ extension ProfileView.AboutSectionView.Row {
         switch self {
         case .about:
             return "about".localized
+        case .plugin:
+            return "Chrome Extension"
         case .developerMode:
             return "developer_mode".localized
         }
@@ -626,6 +638,8 @@ extension ProfileView.AboutSectionView.Row {
         switch self {
         case .about:
             return .arrow
+        case .plugin:
+            return .sysImage
         case .developerMode:
             return .desc
         }
@@ -635,6 +649,8 @@ extension ProfileView.AboutSectionView.Row {
         switch self {
         case .about:
             return "about".localized
+        case .plugin:
+            return ""
         case let .developerMode(lud):
             return lud.flowNetwork.rawValue.capitalized
         }
@@ -644,10 +660,36 @@ extension ProfileView.AboutSectionView.Row {
         switch self {
         case .about:
             return false
+        case .plugin:
+            return false
         case .developerMode:
             return false
         }
     }
+    
+    var imageName: String {
+        switch self {
+        case .about:
+            return ""
+        case .plugin:
+            return "arrow.up.right"
+        case .developerMode:
+            return ""
+        }
+    }
+    
+    var sysImageColor: Color {
+        switch self {
+        case .about:
+            return Color.clear
+        case .plugin:
+            return Color.LL.note
+        case .developerMode:
+            return Color.clear
+        }
+    }
+    
+    
 }
 
 // MARK: - Section more setting
@@ -800,7 +842,7 @@ extension ProfileView {
             .padding(.trailing, 8)
             .background {
                 RoundedRectangle(cornerRadius: 8)
-                    .foregroundColor(Color(hex: "#FCE9E1"))
+                    .foregroundColor(Color.LL.Primary.salmonPrimary.opacity(0.16))
             }
             
             Image("icon-tips-bottom-arrow")

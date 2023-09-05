@@ -123,7 +123,7 @@ struct SideMenuView: View {
                     .offset(y: -30)
             }
             
-            Text(um.userInfo?.nickname ?? "Lilico")
+            Text(um.userInfo?.nickname ?? "lilico".localized)
                 .foregroundColor(.LL.Neutrals.text)
                 .font(.inter(size: 24, weight: .semibold))
                 .padding(.top, 10)
@@ -310,19 +310,19 @@ struct SideMenuView: View {
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text("My Wallet")
-                        .foregroundColor(Color.LL.Neutrals.text)
+                        .foregroundColor(Color.LL.Neutrals.text2)
                         .font(.inter(size: 14, weight: .semibold))
                     
                     Text(type.rawValue)
                         .textCase(.uppercase)
                         .lineLimit(1)
-                        .foregroundColor(Color(hex: "#333333"))
+                        .foregroundColor(type.color)
                         .font(.inter(size: 10, weight: .semibold))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
                         .background(
                             Capsule(style: .circular)
-                                .fill(Color(hex: "#EAEAEA"))
+                                .fill(type.color.opacity(0.16))
                         )
                         .visibility(type == .mainnet ? .gone : .visible)
                 }

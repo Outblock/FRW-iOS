@@ -29,7 +29,7 @@ struct ChildAccountLinkView: View {
             .padding(.vertical, 8)
             
             Group {
-                WalletSendButtonView(buttonText: "hold_to_link".localized) {
+                WalletSendButtonView(allowEnable: .constant(true), buttonText: "hold_to_link".localized) {
                     log.info("user long tap link button")
                     vm.linkAction()
                 }

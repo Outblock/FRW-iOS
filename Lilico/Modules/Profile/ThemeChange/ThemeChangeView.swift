@@ -128,7 +128,7 @@ extension ThemeChangeView {
                     Text("auto".localized).foregroundColor(.LL.Neutrals.text).font(.inter(size: 16, weight: .medium))
                 }
             }
-            .tint(.LL.Primary.salmonPrimary)
+            .tint(.Flow.accessory)
             .onChange(of: vm.state.isAuto) { value in
                 if value == true {
                     vm.trigger(.change(nil))
@@ -161,7 +161,7 @@ extension ThemeChangeView {
                     Image(imageName).padding(.bottom, 16).aspectRatio(contentMode: .fit)
                     Text(title).foregroundColor(.LL.Neutrals.text).font(.inter(size: 16, weight: .medium)).padding(.bottom, 9)
                     if isSelected {
-                        Image(systemName: .checkmarkSelected).foregroundColor(.LL.Success.success2)
+                        Image(systemName: .checkmarkSelected).foregroundColor(.Flow.accessory)
                     } else {
                         Image(systemName: .checkmarkUnselected).foregroundColor(.LL.Neutrals.neutrals1)
                     }
@@ -189,7 +189,7 @@ extension ThemeChangeView {
         var body: some View {
             HStack {
                 Image(systemName: isSelected ? .checkmarkSelected : .checkmarkUnselected )
-                    .foregroundColor(isSelected ? .LL.Primary.salmonPrimary : .LL.Neutrals.neutrals1)
+                    .foregroundColor(isSelected ? .Flow.accessory : .LL.Neutrals.neutrals1)
                 Text(title)
                     .font(.inter())
                     .foregroundColor(.LL.text)

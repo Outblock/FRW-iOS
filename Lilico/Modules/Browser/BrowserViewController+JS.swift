@@ -28,7 +28,7 @@ private func generateFCLExtensionInject() -> String {
       f_type: 'Service',
       f_vsn: '1.0.0',
       type: 'authn',
-      uid: 'Lilico',
+      uid: 'Flow Core Wallet',
       endpoint: 'chrome-extension://hpclkefagolihohboafpheddmmgdffjm/popup.html',
       method: 'EXT/RPC',
       id: 'hpclkefagolihohboafpheddmmgdffjm',
@@ -37,9 +37,9 @@ private func generateFCLExtensionInject() -> String {
       },
       provider: {
         address: '0x33f75ff0b830dcec',
-        name: 'Lilico',
-        icon: 'https://lilico.app/logo.png',
-        description: 'Lilico is bringing an out of the world experience to your crypto assets on Flow',
+        name: 'Flow Core Wallet',
+        icon: 'https://lilico.app/fcw-logo.png',
+        description: 'Digital wallet created for everyone.',
       },
     }
     

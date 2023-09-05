@@ -80,7 +80,7 @@ extension ProfileBackupView {
                 } label: {
                     Text("btn_sync".localized)
                         .font(.inter(size: 16, weight: .medium))
-                        .foregroundColor(.LL.Warning.warning3)
+                        .foregroundColor(Color("0x8C9BAB"))
                 }
                 .visibility(isSelected ? .gone : .visible)
             }

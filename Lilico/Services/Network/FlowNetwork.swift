@@ -735,6 +735,26 @@ extension FlowNetwork {
         
         return txId
     }
+    
+    static func fetchAccessibleCollection(parent: String, child: String) async throws -> [FlowModel.NFTCollection] {
+        let cadenceString = CadenceTemplate.accessibleCollection.replace(by: ScriptAddress.addressMap())
+        let parentAddress = Flow.Address(hex: parent)
+        let childAddress = Flow.Address(hex: child)
+        let response = try await flow.accessAPI
+            .executeScriptAtLatestBlock(script: Flow.Script(text: cadenceString), arguments: [.address(parentAddress), .address(childAddress)])
+            .decode([FlowModel.NFTCollection].self)
+        return response 
+    }
+    
+    static func fetchAccessibleFT(parent: String, child: String) async throws -> [FlowModel.TokenInfo] {
+        let cadenceString = CadenceTemplate.accessibleFT.replace(by: ScriptAddress.addressMap())
+        let parentAddress = Flow.Address(hex: parent)
+        let childAddress = Flow.Address(hex: child)
+        let response = try await flow.accessAPI
+            .executeScriptAtLatestBlock(script: Flow.Script(text: cadenceString), arguments: [.address(parentAddress), .address(childAddress)])
+            .decode([FlowModel.TokenInfo].self)
+        return response
+    }
 }
 
 // MARK: - Others

@@ -35,7 +35,11 @@ extension WalletViewModel {
         }
 
         var changeColor: Color {
-            return changeIsNegative ? Color.LL.Warning.warning2 : Color.LL.Success.success2
+            return changeIsNegative ? Color.Flow.Font.descend : Color.Flow.Font.ascend
+        }
+        
+        var changeBG: Color {
+            return changeIsNegative ? Color.Flow.Font.descend.opacity(0.16) : Color.Flow.Font.ascend.opacity(0.16)
         }
 
         var balanceAsCurrentCurrency: String {
@@ -199,9 +203,28 @@ class WalletViewModel: ObservableObject {
             return
         }
         
-        if balance < 0.01 {
+        if balance <= 0.01 {
             return
         }
+        
+        
+        if WalletManager.shared.isSelectedChildAccount {
+            return
+        }
+        
+        let result = WalletManager.shared.activatedCoins.filter { tokenModel in
+            if !tokenModel.isFlowCoin,let symbol = tokenModel.symbol {
+                return WalletManager.shared.getBalance(bySymbol: symbol) > 0.0
+            }
+            return false
+        }
+        
+        
+        
+        if result.count == 0 && LocalUserDefaults.shared.nftCount == 0 {
+            return
+        }
+        
         
         backupTipsPresent = true
         backupTipsShown = true

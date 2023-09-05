@@ -178,7 +178,7 @@ struct BrowserAuthzView: View {
     }
     
     var actionView: some View {
-        WalletSendButtonView {
+        WalletSendButtonView(allowEnable: .constant(true)) {
             vm.didChooseAction(true)
         }
     }

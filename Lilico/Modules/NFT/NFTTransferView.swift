@@ -12,11 +12,31 @@ import Flow
 class NFTTransferViewModel: ObservableObject {
     @Published var nft: NFTModel
     @Published var targetContact: Contact
+    @Published var isValidNFT = true
+    @Published var isEmptyTransation = true
+    
     private var isRequesting: Bool = false
     
     init(nft: NFTModel, targetContact: Contact) {
         self.nft = nft
         self.targetContact = targetContact
+        checkNFTReachable()
+        NotificationCenter.default.addObserver(self, selector: #selector(onHolderChanged(noti:)), name: .transactionStatusDidChanged, object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    func checkNFTReachable() {
+        Task {
+            guard let toAddress = targetContact.address, let collection = nft.collection else {
+                return
+            }
+
+            let result = try await FlowNetwork.checkCollectionEnable(address: Flow.Address(hex: toAddress), list: [collection])
+            self.isValidNFT = result.first ?? false;
+        }
     }
     
     func sendAction() {
@@ -58,6 +78,8 @@ class NFTTransferViewModel: ObservableObject {
         
         Task {
             do {
+                
+                
                 let tid = try await FlowNetwork.transferNFT(to: Flow.Address(hex: toAddress), nft: nft)
                 
                 let model = NFTTransferModel(nft: nft, target: self.targetContact, from: fromAddress)
@@ -78,6 +100,14 @@ class NFTTransferViewModel: ObservableObject {
                 failedBlock()
             }
         }
+    }
+    
+    func checkTransaction() {
+        isEmptyTransation = TransactionManager.shared.holders.count == 0
+    }
+ 
+    @objc private func onHolderChanged(noti: Notification) {
+        checkTransaction()
     }
 }
 
@@ -103,6 +133,10 @@ struct NFTTransferView: View {
                 
                 detailView
                     .padding(.top, 37)
+                CalloutView(corners: [.bottomLeading, .bottomTrailing] ,content: "nft_send_collection_empty".localized)
+                    .padding(.horizontal, 12)
+                    .visibility(vm.isValidNFT ? .gone : .visible)
+                    .transition(.move(edge: .top))
                 
                 Spacer()
                 
@@ -212,8 +246,11 @@ struct NFTTransferView: View {
     }
     
     var sendButton: some View {
-        WalletSendButtonView {
-            vm.sendAction()
+        WalletSendButtonView(allowEnable: $vm.isEmptyTransation) {
+            if vm.isEmptyTransation {
+                vm.sendAction()
+            }
+            
         }
     }
     

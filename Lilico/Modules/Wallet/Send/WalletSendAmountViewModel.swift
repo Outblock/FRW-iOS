@@ -56,6 +56,10 @@ class WalletSendAmountViewModel: ObservableObject {
     
     @Published var showConfirmView: Bool = false
     
+    @Published var isValidToken: Bool = true
+    
+    @Published var isEmptyTransation = true
+    
     private var isSending = false
     private var cancelSets = Set<AnyCancellable>()
     
@@ -71,8 +75,13 @@ class WalletSendAmountViewModel: ObservableObject {
                 self?.refreshInput()
             }
         }.store(in: &cancelSets)
-        
         checkAddress()
+        checkTransaction()
+        NotificationCenter.default.addObserver(self, selector: #selector(onHolderChanged(noti:)), name: .transactionStatusDidChanged, object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     var amountBalanceAsDollar: Double {
@@ -93,7 +102,20 @@ extension WalletSendAmountViewModel {
                     self.addressIsValid = isValid
                     if isValid == false {
                         self.errorType = .invalidAddress
+                    } else {
+                        self.checkToken()
                     }
+                }
+            }
+        }
+    }
+    
+    private func checkToken() {
+        Task {
+            if let address = targetContact.address {
+                let isValid = try await FlowNetwork.checkTokensEnable(address: Flow.Address(hex: address), tokens: [token]).first
+                DispatchQueue.main.async {
+                    self.isValidToken = isValid ?? false
                 }
             }
         }
@@ -281,5 +303,15 @@ extension WalletSendAmountViewModel {
         self.token = token
         refreshTokenData()
         refreshInput()
+    }
+}
+
+extension WalletSendAmountViewModel {
+    func checkTransaction() {
+        isEmptyTransation = TransactionManager.shared.holders.count == 0
+    }
+ 
+    @objc private func onHolderChanged(noti: Notification) {
+        checkTransaction()
     }
 }

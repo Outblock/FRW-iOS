@@ -25,6 +25,8 @@ struct TokenDetailView: RouteableView {
     @StateObject private var vm: TokenDetailViewModel
     @StateObject private var stakingManager = StakingManager.shared
     
+    private var isAccessible: Bool = true
+    
     private let lightGradientColors: [Color] = [.white.opacity(0), Color(hex: "#E6E6E6").opacity(0), Color(hex: "#E6E6E6").opacity(1)]
     private let darkGradientColors: [Color] = [.white.opacity(0), .white.opacity(0), Color(hex: "#282828").opacity(1)]
     
@@ -32,13 +34,18 @@ struct TokenDetailView: RouteableView {
         return ""
     }
     
-    init(token: TokenModel) {
+    init(token: TokenModel, accessible: Bool) {
         _vm = StateObject(wrappedValue: TokenDetailViewModel(token: token))
+        isAccessible = accessible
     }
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 12) {
+                CalloutView(type: .tip, corners: [.topLeading, .topTrailing, .bottomTrailing, .bottomLeading], content: naccessibleDesc())
+                .padding(.bottom, 12)
+                .visibility( showAccessibleWarning() ? .visible : .gone)
+                
                 summaryView
                 stakeAdView
                     .visibility(stakingManager.isStaked || !vm.token.isFlowCoin || LocalUserDefaults.shared.stakingGuideDisplayed || WalletManager.shared.isSelectedChildAccount ? .gone : .visible)
@@ -48,7 +55,7 @@ struct TokenDetailView: RouteableView {
                 chartContainerView.visibility(vm.hasRateAndChartData ? .visible : .gone)
             }
             .padding(.horizontal, 18)
-            .padding(.top, 12)
+//            .padding(.top, 12)
         }
         .buttonStyle(.plain)
         .backgroundFill(.LL.deepBg)
@@ -118,11 +125,11 @@ struct TokenDetailView: RouteableView {
                     vm.sendAction()
                 } label: {
                     Text("send_uppercase".localized)
-                        .foregroundColor(.white)
+                        .foregroundColor(.LL.Button.send)
                         .font(.inter(size: 14, weight: .bold))
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
-                        .background(.LL.Primary.salmonPrimary)
+                        .background(.Flow.accessory)
                         .cornerRadius(12)
                 }
                 .disabled(WalletManager.shared.isSelectedChildAccount)
@@ -131,11 +138,11 @@ struct TokenDetailView: RouteableView {
                     vm.receiveAction()
                 } label: {
                     Text("receive_uppercase".localized)
-                        .foregroundColor(.white)
+                        .foregroundColor(.LL.Button.send)
                         .font(.inter(size: 14, weight: .bold))
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
-                        .background(.LL.Primary.salmonPrimary)
+                        .background(.Flow.accessory)
                         .cornerRadius(12)
                 }
             }
@@ -166,12 +173,12 @@ struct TokenDetailView: RouteableView {
                     HStack(spacing: 6) {
                         Text("more".localized)
                             .font(.inter(size: 14))
-                            .foregroundColor(Color.LL.Primary.salmonPrimary)
+                            .foregroundColor(Color.Flow.accessory)
                         
                         Image("icon-search-arrow")
                             .resizable()
                             .renderingMode(.template)
-                            .foregroundColor(Color.LL.Primary.salmonPrimary)
+                            .foregroundColor(Color.Flow.accessory)
                             .frame(width: 10, height: 10)
                     }
                     .contentShape(Rectangle())
@@ -485,7 +492,7 @@ extension TokenDetailView {
                         
                         Image("icon-account-arrow-right")
                             .renderingMode(.template)
-                            .foregroundColor(.LL.Other.icon1)
+                            .foregroundColor(.Flow.accessory)
                     }
                     .contentShape(Rectangle())
                     .frame(height: 50)
@@ -582,6 +589,8 @@ extension TokenDetailView {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     
                     Image("icon-stake-ad-arrow")
+                        .renderingMode(.template)
+                        .foregroundStyle(Color.Flow.accessory)
                 }
                 .frame(maxHeight: .infinity)
                 
@@ -596,4 +605,19 @@ extension TokenDetailView {
             }
         }
     }
+}
+
+// MARK: - Data for UI
+extension TokenDetailView {
+    func naccessibleDesc() -> String {
+        let token = vm.token.name
+        let account = WalletManager.shared.selectedAccountWalletName
+        let desc = "accessible_not_x_x".localized(token, account)
+        return desc
+    }
+    
+    func showAccessibleWarning() -> Bool {
+        return !isAccessible
+    }
+    
 }
