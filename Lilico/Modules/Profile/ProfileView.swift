@@ -628,7 +628,7 @@ extension ProfileView.AboutSectionView.Row {
         case .about:
             return "about".localized
         case .plugin:
-            return "lilico".localized + " Extension"
+            return "Chrome Extension"
         case .developerMode:
             return "developer_mode".localized
         }
