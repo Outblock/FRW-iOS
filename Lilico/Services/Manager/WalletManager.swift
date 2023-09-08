@@ -139,7 +139,7 @@ extension WalletManager {
         }
         
         if let walletInfo = self.walletInfo?.currentNetworkWalletModel {
-            return walletInfo.getName ?? "wallet".localized
+            return "wallet".localized
         }
         
         return "wallet".localized
