@@ -140,9 +140,9 @@ extension AddCollectionViewModel {
 
 
 
-struct NFTCollectionItem: Hashable, Mockable {
+struct NFTCollectionItem: Hashable, Mockable,Codable {
     
-    enum ItemStatus {
+    enum ItemStatus: Codable {
         case idle
         case own
         case pending

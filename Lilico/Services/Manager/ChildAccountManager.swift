@@ -61,6 +61,8 @@ struct ChildAccount: Codable {
 class ChildAccountManager: ObservableObject {
     static let shared = ChildAccountManager()
     
+    @Published var isLoading: Bool = false
+    
     @Published var childAccounts: [ChildAccount] = [] {
         didSet {
             self.validSelectedChildAccount()
@@ -166,7 +168,7 @@ class ChildAccountManager: ObservableObject {
         let network = LocalUserDefaults.shared.flowNetwork
         
         log.debug("start refresh")
-        
+        isLoading = true
         Task {
             do {
                 let list = try await FlowNetwork.queryChildAccountMeta(address)
@@ -186,8 +188,13 @@ class ChildAccountManager: ObservableObject {
                     
                     self.childAccounts = finalList
                     self.saveToCache(finalList, uid: uid, address: address)
+                    self.isLoading = false
                 }
             } catch {
+                DispatchQueue.main.async {
+                    self.isLoading = false
+                }
+                
                 log.error("refresh failed", context: error)
             }
         }

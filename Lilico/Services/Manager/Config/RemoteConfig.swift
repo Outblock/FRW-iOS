@@ -25,12 +25,14 @@ extension RemoteConfigManager {
         let walletConnect: Bool
         let onRamp: Bool?
         let appList: Bool?
+        let swap: Bool?
 
         enum CodingKeys: String, CodingKey {
             case freeGas = "free_gas"
             case walletConnect = "wallet_connect"
             case onRamp = "on_ramp"
             case appList = "app_list"
+            case swap = "swap"
         }
     }
 

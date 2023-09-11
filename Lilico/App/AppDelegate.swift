@@ -139,6 +139,7 @@ extension AppDelegate {
         
         _ = ChildAccountManager.shared
         WalletManager.shared.bindChildAccountManager()
+        NFTCatalogCache.cache.fetchIfNeed()
     }
     
     private func commonConfig() {

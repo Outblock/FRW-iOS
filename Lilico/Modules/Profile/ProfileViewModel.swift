@@ -124,6 +124,10 @@ extension ProfileView.ProfileViewModel {
         }
     }
     
+    func linkedAccountAction()  {
+        Router.route(to: RouteMap.Profile.linkedAccount)
+    }
+    
     func showSwitchProfileAction() {
         Router.route(to: RouteMap.Profile.switchProfile)
     }

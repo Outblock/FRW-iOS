@@ -18,6 +18,8 @@ class ChildAccountDetailViewModel: ObservableObject {
     
     @Published var isLoading: Bool = true
     
+    @Published var showEmptyCollection : Bool = true
+    
     private var isUnlinking: Bool = false
     
     private var tabIndex: Int = 0
@@ -78,7 +80,10 @@ class ChildAccountDetailViewModel: ObservableObject {
     func switchTab(index: Int) {
         self.tabIndex = index
         if index == 0 {
-            if let list = collections {
+            if var list = collections {
+                if !showEmptyCollection {
+                    list = list.filter { $0.count > 0 }
+                }
                 self.accessibleItems = list
             }else {
                 fetchCollections()
@@ -106,19 +111,26 @@ class ChildAccountDetailViewModel: ObservableObject {
             }
             
             do {
-                let result = try await FlowNetwork.fetchAccessibleCollection(parent: parent, child: child)
-                print(result)
+                var result = try await FlowNetwork.fetchAccessibleCollection(parent: parent, child: child)
+                result = result.map { item in
+                    if let model = NFTCatalogCache.cache.find(by: item.path) {
+                        return FlowModel.NFTCollection(id: item.id, path: item.path, display: FlowModel.CollectionDislay(name: model.collection.name, squareImage: model.collection.logo ?? AppPlaceholder.image, mediaType: ""), idList: item.idList)
+                    }
+                    return item
+                }
+                result.sort { $0.count > $1.count }
+                
                 DispatchQueue.main.async {
                     self.collections = result
-                    self.accessibleItems = result
+                    self.accessibleItems = self.collections ?? []
                     self.isLoading = false
                 }
             } catch {
                 print("Error")
             }
-            
         }
     }
+    
     
     private func fetchCoins() {
         self.accessibleItems = [FlowModel.TokenInfo].mock(1)
@@ -178,6 +190,12 @@ class ChildAccountDetailViewModel: ObservableObject {
     
     @objc func editChildAccountAction() {
         Router.route(to: RouteMap.Profile.editChildAccount(childAccount))
+    }
+    
+    func switchEmptyCollection() {
+        self.showEmptyCollection.toggle()
+        switchTab(index: self.tabIndex)
+        
     }
 }
 
@@ -308,10 +326,30 @@ struct ChildAccountDetailView: RouteableView {
     
     var accessibleView: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("accessible_cap".localized)
-                .foregroundColor(Color.LL.Neutrals.text4)
-                .font(.inter(size: 16, weight: .semibold))
-                .padding(.bottom, 8)
+            HStack {
+                Text("accessible_cap".localized)
+                    .foregroundColor(Color.LL.Neutrals.text4)
+                    .font(.inter(size: 16, weight: .semibold))
+                
+                Spacer()
+                
+                Button(action: {
+                    vm.switchEmptyCollection()
+                }, label: {
+                    HStack(spacing: 6) {
+                        Image(vm.showEmptyCollection ? "icon-right-mark": "icon-empty-mark")
+                            .resizable()
+                            .frame(width: 11, height: 11)
+                        Text("Hide Empty Collection")
+                            .font(.inter(size: 10,weight: .w500))
+                            .foregroundStyle(
+                                Color(hex: "#CCCCCC")
+                            )
+                    }
+                })
+            }
+            .padding(.bottom, 8)
+            
             LLSegmenControl(titles: ["collections".localized, "coins_cap".localized]) { idx in
                 vm.switchTab(index: idx)
             }
@@ -496,9 +534,13 @@ extension ChildAccountDetailView {
             }
         }
     }
-    
+}
+
+
+extension ChildAccountManager {
     
 }
+
 
 private extension ChildAccountDetailView {
     struct AccessibleItemView: View {
@@ -555,6 +597,13 @@ protocol ChildAccountAccessible {
     var subtitle: String { get }
     var isShowNext: Bool { get }
     var id: String { get set }
+    var count: Int { get }
+}
+
+extension ChildAccountAccessible {
+    var count: Int {
+        return 0
+    }
 }
 
 extension FlowModel.NFTCollection : ChildAccountAccessible {
@@ -583,6 +632,10 @@ extension FlowModel.NFTCollection : ChildAccountAccessible {
     
     var fromPath: String {
         return String(path.split(separator: "/").last ?? "")
+    }
+    
+    var count: Int {
+        return idList.count
     }
     
     func toCollectionModel() -> CollectionItem {

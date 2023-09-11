@@ -250,12 +250,14 @@ struct WalletView: View {
                     Router.route(to: RouteMap.Wallet.receive)
                 }
                 
-                if currentNetwork.isMainnet || currentNetwork == .testnet {
-                    Spacer()
-                    actionButton(imageName: "wallet-swap-stroke") {
-                        Router.route(to: RouteMap.Wallet.swap(nil))
+                if currentNetwork.isMainnet || currentNetwork == .testnet  {
+                    if let swapStatus = RemoteConfigManager.shared.config?.features.swap, swapStatus == true {
+                        Spacer()
+                        actionButton(imageName: "wallet-swap-stroke") {
+                            Router.route(to: RouteMap.Wallet.swap(nil))
+                        }
+                        .disabled(wm.isSelectedChildAccount)
                     }
-                    .disabled(wm.isSelectedChildAccount)
                 }
                 
                 if currentNetwork.isMainnet {

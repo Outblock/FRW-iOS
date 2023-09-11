@@ -214,6 +214,8 @@ extension RouteMap {
         case switchProfile
         case editChildAccount(ChildAccount)
         case backToAccountSetting
+        
+        case linkedAccount
     }
 }
 
@@ -278,8 +280,9 @@ extension RouteMap.Profile: RouterTarget {
                 navi.popToViewController(existVC, animated: true)
                 return
             }
-            
             navi.popToRootViewController(animated: true)
+        case .linkedAccount:
+            navi.push(content: LinkedAccountView())
         }
     }
 }

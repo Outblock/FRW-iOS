@@ -47,9 +47,9 @@ extension FlowModel {
 // https://testnet.contractbrowser.com/A.631e88ae7f1d7c20.MetadataViews
 extension FlowModel {
     struct CollectionDislay: Codable {
-        let name: String
-        let squareImage: String
-        let mediaType: String
+        var name: String
+        var squareImage: String
+        var mediaType: String
     }
     
     struct NFTCollection: Codable, Mockable {
@@ -59,7 +59,7 @@ extension FlowModel {
         
         var id: String
         var path: String
-        let display: CollectionDislay?
+        var display: CollectionDislay?
         let idList: [UInt64]
     }
     

@@ -230,7 +230,7 @@ extension ProfileView {
                 }
 
                 ProfileView.InfoActionButton(iconName: "icon-wallet", title: "wallets".localized) {
-                    Router.route(to: RouteMap.Profile.accountSetting)
+                    Router.route(to: RouteMap.Profile.walletSetting(true))
                 }
 
                 ProfileView.InfoActionButton(iconName: "icon-inbox", title: "inbox".localized) {
@@ -272,11 +272,18 @@ extension ProfileView {
         enum Row {
             case backup(ProfileViewModel)
             case security
+            case linkedAccount
         }
 
         var body: some View {
             VStack {
                 Section {
+                    Button {
+                        vm.linkedAccountAction()
+                    } label: {
+                        ProfileView.SettingItemCell(iconName: Row.linkedAccount.iconName, title: Row.linkedAccount.title, style: Row.linkedAccount.style, desc: Row.linkedAccount.desc)
+                    }
+                    Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
                     
                     Button {
                         Router.route(to: RouteMap.Profile.backupChange)
@@ -291,7 +298,10 @@ extension ProfileView {
                     } label: {
                         ProfileView.SettingItemCell(iconName: Row.security.iconName, title: Row.security.title, style: Row.security.style, desc: Row.security.desc)
                     }
+                    
+                    
 
+                    
                 }
             }
             .background(RoundedRectangle(cornerRadius: 16)
@@ -366,6 +376,8 @@ extension ProfileView.ActionSectionView.Row {
             return "icon-backup"
         case .security:
             return "icon-security"
+        case .linkedAccount:
+            return "icon-linked-account"
         }
     }
 
@@ -375,6 +387,8 @@ extension ProfileView.ActionSectionView.Row {
             return "backup".localized
         case .security:
             return "security".localized
+        case .linkedAccount:
+            return "linked_account".localized
         }
     }
 
@@ -390,6 +404,8 @@ extension ProfileView.ActionSectionView.Row {
                 return .sysImage
             }
         case .security:
+            return .arrow
+        case .linkedAccount:
             return .arrow
         }
     }
@@ -407,7 +423,10 @@ extension ProfileView.ActionSectionView.Row {
             }
         case .security:
             return ""
+        case .linkedAccount:
+            return ""
         }
+        
     }
     
     var imageName: String {
@@ -822,7 +841,7 @@ extension ProfileView {
                 
                 Text("switch_profile_tips".localized)
                     .font(.inter(size: 12))
-                    .foregroundColor(Color.LL.Primary.salmonPrimary)
+                    .foregroundColor( Color("profile.tap") )
                     .multilineTextAlignment(.leading)
                 
                 Spacer()
