@@ -118,10 +118,10 @@ class ChildAccountDetailViewModel: ObservableObject {
                     }
                     return item
                 }
-                result.sort { $0.count > $1.count }
+                let res = result.sorted { $0.count > $1.count }
                 
                 DispatchQueue.main.async {
-                    self.collections = result
+                    self.collections = res
                     self.accessibleItems = self.collections ?? []
                     self.isLoading = false
                 }
