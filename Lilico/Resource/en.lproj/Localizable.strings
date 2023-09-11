@@ -514,7 +514,7 @@
 "1M::message" = "1M";
 "account_not_found" = "Account not Found";
 "3M::message" = "3M";
-"account_not_found_prev" = "No account found with the recoveray phrase. Do you want to create a new account with ";
+"account_not_found_prev" = "No account found with the recovery phrase. Do you want to create a new account with ";
 "1Y::message" = "1Y";
 "account_not_found_highlight" = "your phrase";
 "All::message" = "All";
@@ -633,7 +633,7 @@
 "pending_transaction" = "Pending Transaction";
 "transaction_failed" = "Transaction process failed";
 "Welcome__Back__Unlock::message" = "Welcome Back";
-"transaction_success" = "Transaction process successd";
+"transaction_success" = "Transaction process succeeded";
 "AddressBook::message" = "Address Book";
 "process_pending_text" = "Pending";
 "Search__PlaceHolder::message" = "Search address(0x), or flow Domain";
@@ -701,7 +701,7 @@
 "unknown" = "unknown";
 "stake_reward_title" = "Staked Flow";
 "stake_daily_reward" = "Daily Reward";
-"stake_mothly_reward" = "Mothly Reward";
+"stake_mothly_reward" = "Monthly Reward";
 "stake_ad_title_1" = "Stake %@ and ";
 "stake_ad_title_2" = "Earn Rewards";
 "stake_ad_desc" = "Stake tokens and earn rewards";
@@ -827,7 +827,7 @@
 "jailbreak_alert_msg" = "Jailbreak Detection Alert";
 "switch_network_tips_title" = "Allow this site to switch the network?";
 "switch_network_tips_msg_slice_0" = "This action will change your network\nfrom";
-"turn_on_noti_title" = "Turn On Push Nofitications";
+"turn_on_noti_title" = "Turn On Push Notifications";
 "turn_on_noti_desc" = "Get notified when your transfers, swaps, and approvals complete.";
 "maybe_later_text" = "Maybe Later";
 "scan_qr_title" = "Scan QR Code";
