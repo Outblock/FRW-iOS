@@ -337,7 +337,7 @@ struct ChildAccountDetailView: RouteableView {
                     vm.switchEmptyCollection()
                 }, label: {
                     HStack(spacing: 6) {
-                        Image(vm.showEmptyCollection ? "icon-right-mark": "icon-empty-mark")
+                        Image(vm.showEmptyCollection ? "icon-empty-mark" : "icon-right-mark")
                             .resizable()
                             .frame(width: 11, height: 11)
                         Text("Hide Empty Collection")
