@@ -25,7 +25,7 @@ struct ProfileEditView: RouteableView {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 16) {
                 editContainer
-                domainEnabledView
+//                domainEnabledView
 //                claimDomainBanner
             }
         }
