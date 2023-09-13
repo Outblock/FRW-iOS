@@ -308,9 +308,9 @@ extension String {
     }
     
     var toFlowScanTransactionDetailURL: URL? {
-        var string = "https://flowscan.org/transaction/\(self)"
+        var string = "https://flowdiver.io/tx/\(self)"
         if LocalUserDefaults.shared.flowNetwork == .testnet {
-            string = "https://testnet.flowscan.org/transaction/\(self)"
+            string = "https://testnet.flowdiver.io/tx/\(self)"
         } else if LocalUserDefaults.shared.flowNetwork == .sandboxnet {
             string = "https://sandboxnet.flowscan.org/transaction/\(self)"
         }
