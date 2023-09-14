@@ -7,6 +7,7 @@
 
 import Kingfisher
 import SwiftUI
+import AVKit
 
 struct NFTDetailPage: RouteableView {
     static var ShareNFTView: NFTShareView? = nil
@@ -54,7 +55,9 @@ struct NFTDetailPage: RouteableView {
     var showImageViewer = false
     
     @Namespace var heroAnimation: Namespace.ID
-    
+
+    var player = AVPlayer()
+
     init(viewModel: NFTTabViewModel, nft: NFTModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
         _vm = StateObject(wrappedValue: NFTDetailPageViewModel(nft: nft))
@@ -82,6 +85,18 @@ struct NFTDetailPage: RouteableView {
                                 .onAppear{
                                     fetchColor()
                                 }
+                        } else if let video = vm.nft.video {
+                            VideoPlayer(player: player)
+                                .onAppear{
+                                      if player.currentItem == nil {
+                                            let item = AVPlayerItem(url: video)
+                                            player.replaceCurrentItem(with: item)
+                                        }
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+                                            player.play()
+                                        })
+                                    }
+                                .frame(width: UIScreen.screenWidth - 16 * 2, height: UIScreen.screenWidth - 16 * 2)
                         } else {
                             KFImage
                                 .url(vm.nft.imageURL)

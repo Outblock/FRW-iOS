@@ -124,4 +124,25 @@ struct NFTTrait: Codable, Hashable {
     let value: String?
     let displayType: String?
 //    let rarity:
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case value
+        case displayType
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String?.self, forKey: .name)
+        displayType = try container.decode(String?.self, forKey: .displayType)
+        do {
+            value = try String(container.decode(Int.self, forKey: .value))
+        } catch DecodingError.typeMismatch {
+            do {
+                value = try String(container.decode(Bool.self, forKey: .value))
+            } catch DecodingError.typeMismatch {
+                value = try container.decode(String.self, forKey: .value)
+            }
+        }
+    }
 }
