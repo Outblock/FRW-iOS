@@ -118,10 +118,10 @@ class ChildAccountDetailViewModel: ObservableObject {
                     }
                     return item
                 }
-                result.sort { $0.count > $1.count }
+                let res = result.sorted { $0.count > $1.count }
                 
                 DispatchQueue.main.async {
-                    self.collections = result
+                    self.collections = res
                     self.accessibleItems = self.collections ?? []
                     self.isLoading = false
                 }
@@ -337,7 +337,7 @@ struct ChildAccountDetailView: RouteableView {
                     vm.switchEmptyCollection()
                 }, label: {
                     HStack(spacing: 6) {
-                        Image(vm.showEmptyCollection ? "icon-right-mark": "icon-empty-mark")
+                        Image(vm.showEmptyCollection ? "icon-empty-mark" : "icon-right-mark")
                             .resizable()
                             .frame(width: 11, height: 11)
                         Text("Hide Empty Collection")

@@ -27,7 +27,7 @@ extension WalletView: AppTabBarPageProtocol {
     }
 
     static func color() -> Color {
-        return .LL.Primary.salmonPrimary
+        return .Flow.accessory
     }
 }
 

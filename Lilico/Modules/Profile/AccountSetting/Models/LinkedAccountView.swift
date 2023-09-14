@@ -124,6 +124,3 @@ extension LinkedAccountView {
 }
 
 
-#Preview {
-    LinkedAccountView()
-}

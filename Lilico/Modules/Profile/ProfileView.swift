@@ -838,10 +838,12 @@ extension ProfileView {
         VStack(spacing: 0) {
             HStack(spacing: 5) {
                 Image("light-tips-icon")
+                    .renderingMode(.template)
+                    .foregroundStyle(Color.Flow.blue)
                 
                 Text("switch_profile_tips".localized)
                     .font(.inter(size: 12))
-                    .foregroundColor( Color("profile.tap") )
+                    .foregroundColor( .Flow.blue )
                     .multilineTextAlignment(.leading)
                 
                 Spacer()
@@ -851,22 +853,22 @@ extension ProfileView {
                 } label: {
                     Image("icon-close-tips")
                         .renderingMode(.template)
-                        .foregroundColor(Color.LL.Primary.salmonPrimary)
+                        .foregroundColor(Color.Flow.blue)
                         .frame(width: 30, height: 30)
                         .contentShape(Rectangle())
                 }
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, 3)
             .padding(.leading, 18)
             .padding(.trailing, 8)
             .background {
                 RoundedRectangle(cornerRadius: 8)
-                    .foregroundColor(Color.LL.Primary.salmonPrimary.opacity(0.16))
+                    .foregroundColor(Color.Flow.blue.opacity(0.16))
             }
             
             Image("icon-tips-bottom-arrow")
                 .renderingMode(.template)
-                .foregroundColor(Color(hex: "#FCE9E1"))
+                .foregroundColor( .Flow.blue.opacity(0.16))
         }
     }
 }

@@ -195,7 +195,7 @@ extension Color {
     enum Flow {
         
         static let accessory = Color("accessory")
-        
+        static let blue = Color("tip.blue")
         enum Font {
             static let ascend = Color("font.ascend")
             static let descend = Color("font.descend")
