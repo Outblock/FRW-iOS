@@ -129,19 +129,19 @@ struct WalletReceiveView: RouteableView {
         VStack(spacing: 0) {
             ZStack {
                 qrCodeView
-                Image("lilico-app-icon")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 60, height: 60)
-                    .padding(10)
-                    .background(
-                        Color.LL.Neutrals.background
-//                        .thickMaterial
-//                            .opacity(0.95)
-//                            .blur(radius: 2)
-                    )
-                    .colorScheme(.light)
-                    .cornerRadius(50)
+//                Image("lilico-app-icon")
+//                    .resizable()
+//                    .aspectRatio(contentMode: .fill)
+//                    .frame(width: 60, height: 60)
+//                    .padding(5)
+//                    .background(
+//                        Color.LL.Neutrals.background
+////                        .thickMaterial
+////                            .opacity(0.95)
+////                            .blur(radius: 2)
+//                    )
+//                    .colorScheme(.light)
+//                    .cornerRadius(30)
             }
             .cornerRadius(25)
             .overlay(
@@ -240,6 +240,11 @@ extension WalletReceiveView {
     func doc(text: String, eyeColor: UIColor) -> QRCode.Document {
         let d = QRCode.Document(generator: QRCodeGenerator_External())
         d.utf8String = text
+        if let logo = UIImage(named: "lilico-app-icon")?.cgImage {
+            let path = CGPath(ellipseIn: CGRect(x: 0.38, y: 0.38, width: 0.24, height: 0.24), transform: nil)
+            d.logoTemplate = QRCode.LogoTemplate(image: logo , path: path, inset: 6)
+        }
+        
         d.design.backgroundColor(UIColor(hex: "#FAFAFA").cgColor)
         d.design.shape.eye = QRCode.EyeShape.Squircle()
         d.design.style.pupil = QRCode.FillStyle.Solid(eyeColor.cgColor)
