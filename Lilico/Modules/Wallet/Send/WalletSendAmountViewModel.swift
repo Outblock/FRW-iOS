@@ -144,10 +144,10 @@ extension WalletSendAmountViewModel {
         }
         
         if exchangeType == .token {
-            inputTokenNum = Double(inputText)!
+            inputTokenNum = inputText.doubleValue
             inputDollarNum = inputTokenNum * coinRate * CurrencyCache.cache.currentCurrencyRate
         } else {
-            inputDollarNum = Double(inputText)!
+            inputDollarNum = inputText.doubleValue
             if coinRate == 0 {
                 inputTokenNum = 0
             } else {
@@ -175,20 +175,20 @@ extension WalletSendAmountViewModel {
 
 extension WalletSendAmountViewModel {
     func inputTextDidChangeAction(text: String) {
-        let filtered = text.filter {"0123456789.".contains($0)}
-        
-        if filtered.contains(".") {
-            let splitted = filtered.split(separator: ".")
-            if splitted.count >= 2 {
-                let preDecimal = String(splitted[0])
-                let afterDecimal = String(splitted[1])
-                inputText = "\(preDecimal).\(afterDecimal)"
-            } else {
-                inputText = filtered
-            }
-        } else {
-            inputText = filtered
-        }
+//        let filtered = text.filter {"0123456789.".contains($0)}
+//        
+//        if filtered.contains(".") {
+//            let splitted = filtered.split(separator: ".")
+//            if splitted.count >= 2 {
+//                let preDecimal = String(splitted[0])
+//                let afterDecimal = String(splitted[1])
+//                inputText = "\(preDecimal).\(afterDecimal)"
+//            } else {
+//                inputText = filtered
+//            }
+//        } else {
+//            inputText = filtered
+//        }
         
         refreshInput()
     }
@@ -313,5 +313,21 @@ extension WalletSendAmountViewModel {
  
     @objc private func onHolderChanged(noti: Notification) {
         checkTransaction()
+    }
+}
+
+extension String {
+    static let numberFormatter = NumberFormatter()
+    var doubleValue: Double {
+        String.numberFormatter.decimalSeparator = "."
+        if let result = String.numberFormatter.number(from: self) {
+            return result.doubleValue
+        }else {
+            String.numberFormatter.decimalSeparator = ","
+            if let result = String.numberFormatter.number(from: self) {
+                return result.doubleValue
+            }
+        }
+        return 0
     }
 }
