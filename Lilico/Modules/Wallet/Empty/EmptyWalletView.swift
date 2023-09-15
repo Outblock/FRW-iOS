@@ -18,7 +18,7 @@ struct EmptyWalletView: View {
         VStack(spacing: 0) {
             topContent
                 .padding(.horizontal, 30)
-                .padding(.top, 50)
+                .padding(.top, 160)
                 .padding(.bottom, 36)
             
             recentListContent
@@ -31,22 +31,25 @@ struct EmptyWalletView: View {
                 .padding(.top, 16)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .backgroundFill {
-            Image("login-bg")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-        }
+        .background(Color.LL.background)
     }
     
     var topContent: some View {
-        VStack(spacing: 4) {
-            Text("welcome".localized)
-                .font(.montserrat(size: 52, weight: .bold))
-                .foregroundColor(.white)
+        VStack(spacing: 0) {
+            Image("lilico-app-icon")
+                .resizable()
+                .padding(15)
+                .frame(width: 160, height: 160)
+            VStack(spacing: 12) {
+                Text("lilico".localized)
+                    .font(.montserrat(size: 36, weight: .bold))
+                    .foregroundColor(Color.LL.text)
+                
+                Text("welcome_sub_desc".localized)
+                    .font(.montserrat(size: 16, weight: .light))
+                    .foregroundColor(.LL.note)
+            }
             
-            Text("welcome_sub_desc".localized)
-                .font(.montserrat(size: 14, weight: .light))
-                .foregroundColor(.white)
         }
     }
     
@@ -91,7 +94,11 @@ struct EmptyWalletView: View {
                 .background(.white)
                 .contentShape(Rectangle())
                 .cornerRadius(29)
-                .shadow(color: Color.black.opacity(0.08), x: 0, y: 4, blur: 24)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 28)
+                        .stroke(Color.black, lineWidth: 1.5)
+                )
+//                .shadow(color: Color.black.opacity(0.08), x: 0, y: 4, blur: 24)
             }
         }
     }

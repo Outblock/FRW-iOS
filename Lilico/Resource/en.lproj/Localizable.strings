@@ -798,7 +798,7 @@
 "add_existing_account" = "Import an Existing Account";
 "import_wallet" = "Import Wallet";
 "welcome" = "Welcome";
-"welcome_sub_desc" = "PROVIDE MORE ABOUT THE SECURITY";
+"welcome_sub_desc" = "Provide More About The Security";
 "registerd_accounts" = "Registered Accounts";
 "link_account_start_desc_x" = "We would like to link your %@ account to your Flow Core account “%@”";
 "link_account_success_desc" = "Now you can find your linked account under side menu";
@@ -836,3 +836,4 @@
 "accessible_cap" = "Accessible";
 "coins_cap" = "Coins";
 "accessible_not_x_x" = "Flow Core doesn't have access to %@ in %@ Account, please check your linked account settings.";
+"view_empty" = "View Empty";
