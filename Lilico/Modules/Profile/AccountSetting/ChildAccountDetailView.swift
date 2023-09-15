@@ -333,20 +333,26 @@ struct ChildAccountDetailView: RouteableView {
                 
                 Spacer()
                 
-                Button(action: {
-                    vm.switchEmptyCollection()
-                }, label: {
-                    HStack(spacing: 6) {
-                        Image(vm.showEmptyCollection ? "icon-empty-mark" : "icon-right-mark")
-                            .resizable()
-                            .frame(width: 11, height: 11)
-                        Text("Hide Empty Collection")
-                            .font(.inter(size: 10,weight: .w500))
-                            .foregroundStyle(
-                                Color(hex: "#CCCCCC")
-                            )
-                    }
-                })
+                HStack(spacing: 6) {
+                    Spacer()
+//                    Image(vm.showEmptyCollection ? "icon-empty-mark" : "icon-right-mark")
+//                        .resizable()
+//                        .frame(width: 11, height: 11)
+                    Text("view_empty".localized)
+                        .font(.inter(size: 14,weight: .w600))
+                        .foregroundStyle(
+                            Color.LL.Neutrals.text4
+                        )
+                    Toggle(isOn: $vm.showEmptyCollection) {}
+                        .tint(.LL.Primary.salmonPrimary)
+                        .onChange(of: vm.showEmptyCollection) { value in
+                            vm.switchEmptyCollection()
+                        }
+                        .labelsHidden()
+                        .contentShape(Rectangle())
+                    Spacer()
+                        .frame(width: 2)
+                }
             }
             .padding(.bottom, 8)
             
