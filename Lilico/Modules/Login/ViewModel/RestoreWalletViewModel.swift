@@ -1,6 +1,6 @@
 //
 //  RestoreWalletViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 1/1/22.
 //

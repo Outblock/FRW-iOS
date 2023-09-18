@@ -1,6 +1,6 @@
 //
 //  PushHandler.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 17/7/2023.
 //
@@ -125,7 +125,7 @@ extension PushHandler {
     private func sendToken(token: String, address: String) {
         Task {
             do {
-                let resp: Network.EmptyResponse = try await Network.requestWithRawModel(LilicoAPI.Utils.retoken(token, address))
+                let resp: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.Utils.retoken(token, address))
                 log.debug("\(address) upload push token success", context: resp)
                 DispatchQueue.main.async {
                     self.uploadedHistory[address] = token

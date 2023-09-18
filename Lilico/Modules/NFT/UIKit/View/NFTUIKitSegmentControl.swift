@@ -1,6 +1,6 @@
 //
 //  NFTUIKitSegmentControl.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 16/8/2022.
 //

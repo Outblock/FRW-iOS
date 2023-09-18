@@ -1,6 +1,6 @@
 //
-//  LilicoWebEndpoint.swift
-//  Lilico
+//  FRWWebEndpoint.swift
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 29/9/2022.
 //
@@ -8,12 +8,12 @@
 import Foundation
 import Moya
 
-enum LilicoWebEndpoint {
+enum FRWWebEndpoint {
     case txTemplate(TxTemplateRequest)
     case swapEstimate(SwapEstimateRequest)
 }
 
-extension LilicoWebEndpoint: TargetType {
+extension FRWWebEndpoint: TargetType {
     var authorizationType: AuthorizationType? {
         return .bearer
     }
@@ -50,6 +50,6 @@ extension LilicoWebEndpoint: TargetType {
     }
 
     var headers: [String: String]? {
-        return LilicoAPI.commonHeaders
+        return FRWAPI.commonHeaders
     }
 }

@@ -1,6 +1,6 @@
 //
 //  FileManager.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 9/10/2022.
 //

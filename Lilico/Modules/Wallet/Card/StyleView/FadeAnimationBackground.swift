@@ -1,6 +1,6 @@
 //
 //  FadeAnimationBackground.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 9/8/2022.
 //

@@ -1,6 +1,6 @@
 //
 //  CurrencyListViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 31/10/2022.
 //
@@ -32,7 +32,7 @@ class CurrencyListViewModel: ObservableObject {
         HUD.loading()
         Task {
             do {
-                let response: CurrencyRateResponse = try await Network.requestWithRawModel(LilicoAPI.Utils.currencyRate(newCurrency))
+                let response: CurrencyRateResponse = try await Network.requestWithRawModel(FRWAPI.Utils.currencyRate(newCurrency))
                 
                 if let success = response.success, success != true {
                     failedBlock()

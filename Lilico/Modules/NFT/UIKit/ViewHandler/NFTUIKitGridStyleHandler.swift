@@ -1,6 +1,6 @@
 //
 //  NFTUIKitGridStyleHandler.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 15/8/2022.
 //

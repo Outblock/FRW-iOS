@@ -1,6 +1,6 @@
 //
 //  TokenDetailViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 1/7/2022.
 //
@@ -252,7 +252,7 @@ extension TokenDetailViewModel {
             let request = CryptoHistoryRequest(provider: market.rawValue, pair: pair, after: currentRangeType.after, period: "\(currentRangeType.frequency.rawValue)")
             
             do {
-                let response: CryptoHistoryResponse = try await Network.request(LilicoAPI.Crypto.history(request))
+                let response: CryptoHistoryResponse = try await Network.request(FRWAPI.Crypto.history(request))
                 
                 if currentRangeType != self.selectedRangeType {
                     // selectedRangeType is changed, this is an outdated response
@@ -302,7 +302,7 @@ extension TokenDetailViewModel {
             
             do {
                 let request = TokenTransfersRequest(address: WalletManager.shared.getPrimaryWalletAddress() ?? "", limit: 3, after: "", token: self.token.contractId)
-                let response: TransfersResponse = try await Network.request(LilicoAPI.Account.tokenTransfers(request))
+                let response: TransfersResponse = try await Network.request(FRWAPI.Account.tokenTransfers(request))
                 
                 let list = response.transactions ?? []
                 PageCache.cache.set(value: list, forKey: self.transactionsCacheKey)

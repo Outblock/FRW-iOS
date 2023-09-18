@@ -1,6 +1,6 @@
 //
 //  AddressBookListResponse.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 2/6/2022.
 //

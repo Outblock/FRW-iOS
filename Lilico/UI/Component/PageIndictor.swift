@@ -1,6 +1,6 @@
 //
 //  PageIndictor.swift
-//  Lilico-lite
+//  Flow Reference Wallet-lite
 //
 //  Created by Hao Fu on 29/11/21.
 //

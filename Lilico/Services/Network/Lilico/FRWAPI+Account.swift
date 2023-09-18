@@ -1,6 +1,6 @@
 //
-//  LilicoAPI+Account.swift
-//  Lilico
+//  Flow Reference WalletAPI+Account.swift
+//  Flow Reference Wallet
 //
 //  Created by Selina on 9/9/2022.
 //
@@ -8,7 +8,7 @@
 import Foundation
 import Moya
 
-extension LilicoAPI {
+extension FRWAPI {
     enum Account {
         case flowScanQuery(String)
         case transfers(TransfersRequest)
@@ -16,7 +16,7 @@ extension LilicoAPI {
     }
 }
 
-extension LilicoAPI.Account: TargetType, AccessTokenAuthorizable {
+extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
         return .bearer
     }
@@ -57,11 +57,11 @@ extension LilicoAPI.Account: TargetType, AccessTokenAuthorizable {
     }
     
     var headers: [String : String]? {
-        return LilicoAPI.commonHeaders
+        return FRWAPI.commonHeaders
     }
 }
 
-extension LilicoAPI.Account {
+extension FRWAPI.Account {
     static func fetchAccountTransferCount() async throws -> Int {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             return 0
@@ -75,7 +75,7 @@ extension LilicoAPI.Account {
             }
         """
         
-        let response: FlowScanAccountTransferCountResponse = try await Network.request(LilicoAPI.Account.flowScanQuery(script))
+        let response: FlowScanAccountTransferCountResponse = try await Network.request(FRWAPI.Account.flowScanQuery(script))
         return response.data?.account?.transactionCount ?? 0
     }
     
@@ -119,7 +119,7 @@ extension LilicoAPI.Account {
            }
         """
         
-        let response: FlowScanAccountTransferResponse = try await Network.request(LilicoAPI.Account.flowScanQuery(script))
+        let response: FlowScanAccountTransferResponse = try await Network.request(FRWAPI.Account.flowScanQuery(script))
         
         guard let edges = response.data?.account?.transactions?.edges else {
             return ([], 0)
@@ -192,7 +192,7 @@ extension LilicoAPI.Account {
             }
         """
         
-        let response: FlowScanTokenTransferResponse = try await Network.request(LilicoAPI.Account.flowScanQuery(script))
+        let response: FlowScanTokenTransferResponse = try await Network.request(FRWAPI.Account.flowScanQuery(script))
         
         guard let edges = response.data?.account?.tokenTransfers?.edges else {
             return []

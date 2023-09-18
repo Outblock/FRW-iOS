@@ -1,6 +1,6 @@
 //
 //  CoinRateCache.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 23/6/2022.
 //
@@ -142,7 +142,7 @@ extension CoinRateCache {
         case let .query(coinPair):
             let market = LocalUserDefaults.shared.market
             let request = CryptoSummaryRequest(provider: market.rawValue, pair: coinPair)
-            let response: CryptoSummaryResponse = try await Network.request(LilicoAPI.Crypto.summary(request))
+            let response: CryptoSummaryResponse = try await Network.request(FRWAPI.Crypto.summary(request))
             await set(summary: response, forSymbol: symbol)
         case let .mirror(token):
             guard let mirrorTokenModel = WalletManager.shared.supportedCoins?.first(where: { $0.symbol == token.rawValue }) else {

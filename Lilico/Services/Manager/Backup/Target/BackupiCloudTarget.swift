@@ -1,6 +1,6 @@
 //
 //  BackupiCloudTarget.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 28/7/2022.
 //

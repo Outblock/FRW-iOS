@@ -1,6 +1,6 @@
 //
 //  NFTUIKitCache.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 16/8/2022.
 //
@@ -333,7 +333,7 @@ extension NFTUIKitCache {
         let request = NFTAddFavRequest(address: address, contract: collectionId, ids: tokenId)
         Task {
             do {
-                let _: Network.EmptyResponse = try await Network.requestWithRawModel(LilicoAPI.NFT.addFav(request))
+                let _: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.NFT.addFav(request))
             } catch {
                 debugPrint("NFTUIKitCache -> addFav error: \(error)")
             }
@@ -350,7 +350,7 @@ extension NFTUIKitCache {
             Task {
                 do {
                     let request = NFTUpdateFavRequest(ids: ids)
-                    let _: Network.EmptyResponse = try await Network.requestWithRawModel(LilicoAPI.NFT.updateFav(request))
+                    let _: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.NFT.updateFav(request))
                 } catch {
                     debugPrint("NFTUIKitCache -> removeFav error: \(error)")
                 }
@@ -384,7 +384,7 @@ extension NFTUIKitCache {
         
         Task {
             do {
-                let request: Network.Response<NFTFavListResponse> = try await Network.requestWithRawModel(LilicoAPI.NFT.favList(address))
+                let request: Network.Response<NFTFavListResponse> = try await Network.requestWithRawModel(FRWAPI.NFT.favList(address))
                 
                 DispatchQueue.main.async {
                     self.favIsRequesting = false

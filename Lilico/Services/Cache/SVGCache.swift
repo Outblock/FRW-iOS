@@ -1,6 +1,6 @@
 //
 //  SVGCache.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 24/8/2022.
 //

@@ -1,6 +1,6 @@
 //
 //  InboxViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 19/9/2022.
 //
@@ -53,7 +53,7 @@ extension InboxViewModel {
         
         Task {
             do {
-                let response: InboxResponse = try await Network.requestWithRawModel(LilicoAPI.Flowns.queryInbox(domain))
+                let response: InboxResponse = try await Network.requestWithRawModel(FRWAPI.Flowns.queryInbox(domain))
                 DispatchQueue.main.async {
                     self.isRequesting = false
                     self.fetchSuccess(response)

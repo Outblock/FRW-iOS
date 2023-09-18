@@ -1,6 +1,6 @@
 //
 //  Others.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 19/5/2022.
 //

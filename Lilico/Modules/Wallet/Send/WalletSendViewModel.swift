@@ -1,6 +1,6 @@
 //
 //  WalletSendViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 8/7/2022.
 //
@@ -142,7 +142,7 @@ extension WalletSendViewModel {
         
         Task {
             do {
-                let response: UserSearchResponse = try await Network.request(LilicoAPI.User.search(trimedText))
+                let response: UserSearchResponse = try await Network.request(FRWAPI.User.search(trimedText))
                 if trimedText != self.searchText.trim() {
                     return
                 }
@@ -419,7 +419,7 @@ extension WalletSendViewModel {
                                                     domain: contact.domain?.value ?? "",
                                                     domainType: contact.domain?.domainType ?? .unknown,
                                                     username: contact.username ?? "")
-                let response: Network.EmptyResponse = try await Network.requestWithRawModel(LilicoAPI.AddressBook.addExternal(request))
+                let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.AddressBook.addExternal(request))
 
                 if response.httpCode != 200 {
                     errorAction()

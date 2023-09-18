@@ -1,6 +1,6 @@
 //
 //  UserManager.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 30/12/21.
 //
@@ -138,7 +138,7 @@ extension UserManager {
 
         let key = hdWallet.flowAccountKey
         let request = RegisterRequest(username: username, accountKey: key.toCodableModel())
-        let model: RegisterResponse = try await Network.request(LilicoAPI.User.register(request))
+        let model: RegisterResponse = try await Network.request(FRWAPI.User.register(request))
 
         try await finishLogin(mnemonic: hdWallet.mnemonic, customToken: model.customToken)
         WalletManager.shared.asyncCreateWalletAddressFromServer()
@@ -208,7 +208,7 @@ extension UserManager {
         }
 
         let request = LoginRequest(publicKey: publicKey, signature: signature)
-        let response: Network.Response<LoginResponse> = try await Network.requestWithRawModel(LilicoAPI.User.login(request))
+        let response: Network.Response<LoginResponse> = try await Network.requestWithRawModel(FRWAPI.User.login(request))
         if response.httpCode == 404 {
             throw LLError.accountNotFound
         }
@@ -281,7 +281,7 @@ extension UserManager {
     }
 
     private func fetchUserInfo() async throws -> UserInfo {
-        let response: UserInfoResponse = try await Network.request(LilicoAPI.User.userInfo)
+        let response: UserInfoResponse = try await Network.request(FRWAPI.User.userInfo)
         let info = UserInfo(avatar: response.avatar, nickname: response.nickname, username: response.username, private: response.private, address: nil)
 
         if info.username.isEmpty {

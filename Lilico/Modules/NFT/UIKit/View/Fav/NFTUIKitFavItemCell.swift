@@ -1,6 +1,6 @@
 //
 //  NFTUIKitFavItemCell.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 18/8/2022.
 //

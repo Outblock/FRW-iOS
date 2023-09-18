@@ -1,6 +1,6 @@
 //
 //  WalletViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by cat on 2022/5/7.
 //
@@ -233,7 +233,7 @@ class WalletViewModel: ObservableObject {
     private func reloadTransactionCount() {
         Task {
             do {
-                var count = try await LilicoAPI.Account.fetchAccountTransferCount()
+                var count = try await FRWAPI.Account.fetchAccountTransferCount()
                 count += TransactionManager.shared.holders.count
                 
                 if count < LocalUserDefaults.shared.transactionCount {

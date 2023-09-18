@@ -1,6 +1,6 @@
 //
 //  ChildAccountLinkView.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 15/6/2023.
 //

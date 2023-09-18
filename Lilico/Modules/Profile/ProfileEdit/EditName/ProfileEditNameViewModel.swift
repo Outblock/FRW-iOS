@@ -1,6 +1,6 @@
 //
 //  ProfileEditNameViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 14/6/2022.
 //
@@ -74,7 +74,7 @@ class ProfileEditNameViewModel: ObservableObject {
         Task {
             do {
                 let request = UserInfoUpdateRequest(nickname: name, avatar: avatar)
-                let response: Network.EmptyResponse = try await Network.requestWithRawModel(LilicoAPI.Profile.updateInfo(request))
+                let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.Profile.updateInfo(request))
                 if response.httpCode != 200 {
                     failed()
                 } else {

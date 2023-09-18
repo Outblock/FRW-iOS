@@ -1,6 +1,6 @@
 //
 //  ProfileEditViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 14/6/2022.
 //
@@ -66,7 +66,7 @@ class ProfileEditViewModel: ViewModel {
 
         Task {
             do {
-                let response: Network.EmptyResponse = try await Network.requestWithRawModel(LilicoAPI.Profile.updatePrivate(isPrivate))
+                let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.Profile.updatePrivate(isPrivate))
                 DispatchQueue.main.async {
                     HUD.dismissLoading()
                     if response.httpCode == 200 {

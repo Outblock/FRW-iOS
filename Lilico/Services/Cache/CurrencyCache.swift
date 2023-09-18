@@ -1,6 +1,6 @@
 //
 //  CurrencyCache.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 28/10/2022.
 //
@@ -65,7 +65,7 @@ extension CurrencyCache {
         
         Task {
             do {
-                let response: CurrencyRateResponse = try await Network.requestWithRawModel(LilicoAPI.Utils.currencyRate(requestingCurrency))
+                let response: CurrencyRateResponse = try await Network.requestWithRawModel(FRWAPI.Utils.currencyRate(requestingCurrency))
                 if self.currentCurrency != requestingCurrency {
                     // expired response
                     return

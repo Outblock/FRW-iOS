@@ -1,6 +1,6 @@
 //
 //  LocalUserDefaultsManager.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 7/6/2022.
 //
@@ -109,14 +109,14 @@ class LocalUserDefaults: ObservableObject {
 
     var legacyUserInfo: UserInfo? {
         set {
-            if let value = newValue, let data = try? LilicoAPI.jsonEncoder.encode(value) {
+            if let value = newValue, let data = try? FRWAPI.jsonEncoder.encode(value) {
                 UserDefaults.standard.set(data, forKey: Keys.legacyUserInfo.rawValue)
             } else {
                 UserDefaults.standard.removeObject(forKey: Keys.legacyUserInfo.rawValue)
             }
         }
         get {
-            if let data = UserDefaults.standard.data(forKey: Keys.legacyUserInfo.rawValue), let info = try? LilicoAPI.jsonDecoder.decode(UserInfo.self, from: data) {
+            if let data = UserDefaults.standard.data(forKey: Keys.legacyUserInfo.rawValue), let info = try? FRWAPI.jsonDecoder.decode(UserInfo.self, from: data) {
                 return info
             } else {
                 return nil
@@ -138,14 +138,14 @@ class LocalUserDefaults: ObservableObject {
 
     var coinSummarys: [CoinRateCache.CoinRateModel]? {
         set {
-            if let value = newValue, let data = try? LilicoAPI.jsonEncoder.encode(value) {
+            if let value = newValue, let data = try? FRWAPI.jsonEncoder.encode(value) {
                 UserDefaults.standard.set(data, forKey: Keys.coinSummary.rawValue)
             } else {
                 UserDefaults.standard.removeObject(forKey: Keys.coinSummary.rawValue)
             }
         }
         get {
-            if let data = UserDefaults.standard.data(forKey: Keys.coinSummary.rawValue), let info = try? LilicoAPI.jsonDecoder.decode([CoinRateCache.CoinRateModel].self, from: data) {
+            if let data = UserDefaults.standard.data(forKey: Keys.coinSummary.rawValue), let info = try? FRWAPI.jsonDecoder.decode([CoinRateCache.CoinRateModel].self, from: data) {
                 return info
             } else {
                 return nil

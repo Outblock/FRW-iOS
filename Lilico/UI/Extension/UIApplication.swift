@@ -1,6 +1,6 @@
 //
 //  UIApplication.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 4/1/22.
 //

@@ -1,6 +1,6 @@
 //
 //  CreatePinCodeViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 10/1/22.
 //

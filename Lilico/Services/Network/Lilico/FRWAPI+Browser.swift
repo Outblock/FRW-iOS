@@ -1,6 +1,6 @@
 //
-//  LilicoAPI+Browser.swift
-//  Lilico
+//  Flow Reference WalletAPI+Browser.swift
+//  Flow Reference Wallet
 //
 //  Created by Selina on 2/9/2022.
 //
@@ -8,13 +8,13 @@
 import Foundation
 import Moya
 
-extension LilicoAPI {
+extension FRWAPI {
     enum Browser {
         case recommend(String)
     }
 }
 
-extension LilicoAPI.Browser: TargetType {
+extension FRWAPI.Browser: TargetType {
     var baseURL: URL {
         return .init(string: "https://ac.duckduckgo.com")!
     }

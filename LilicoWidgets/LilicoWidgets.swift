@@ -1,6 +1,6 @@
 //
-//  LilicoWidgets.swift
-//  LilicoWidgets
+//  Flow Reference WalletWidgets.swift
+//  Flow Reference WalletWidgets
 //
 //  Created by Selina on 20/12/2022.
 //

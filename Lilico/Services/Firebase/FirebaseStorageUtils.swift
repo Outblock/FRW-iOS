@@ -1,6 +1,6 @@
 //
 //  FirebaseStorageUtils.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 20/6/2022.
 //

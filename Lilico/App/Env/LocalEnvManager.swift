@@ -1,6 +1,6 @@
 //
 //  LocalEnvManager.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 23/2/2023.
 //

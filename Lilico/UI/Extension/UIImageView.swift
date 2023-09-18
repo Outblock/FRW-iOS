@@ -1,6 +1,6 @@
 //
 //  UIImageView.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 8/10/2022.
 //

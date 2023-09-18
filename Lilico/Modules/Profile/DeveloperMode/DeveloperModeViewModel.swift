@@ -1,6 +1,6 @@
 //
 //  DeveloperModeViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 15/9/2022.
 //
@@ -89,7 +89,7 @@ extension DeveloperModeViewModel {
         
         Task {
             do {
-                let id: String = try await Network.request(LilicoAPI.User.sandboxnet)
+                let id: String = try await Network.request(FRWAPI.User.sandboxnet)
                 let txId = Flow.ID(hex: id)
                 
                 flow.configure(chainID: .sandboxnet)

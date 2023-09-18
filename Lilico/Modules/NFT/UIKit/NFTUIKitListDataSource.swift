@@ -1,6 +1,6 @@
 //
 //  NFTUIKitListDataSource.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 15/8/2022.
 //
@@ -51,7 +51,7 @@ class NFTUIKitListGridDataModel {
         }
         
         let request = NFTGridDetailListRequest(address: address, offset: offset, limit: limit)
-        let response: Network.Response<NFTListResponse> = try await Network.requestWithRawModel(LilicoAPI.NFT.gridDetailList(request))
+        let response: Network.Response<NFTListResponse> = try await Network.requestWithRawModel(FRWAPI.NFT.gridDetailList(request))
         
         guard let nfts = response.data?.nfts else {
             return []
@@ -182,7 +182,7 @@ class NFTUIKitListNormalDataModel {
             return []
         }
         
-        let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(LilicoAPI.NFT.userCollection(address))
+        let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(address))
         if let list = response.data {
             return list
         } else {

@@ -1,6 +1,6 @@
 //
 //  Cadence.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 29/6/2022.
 //

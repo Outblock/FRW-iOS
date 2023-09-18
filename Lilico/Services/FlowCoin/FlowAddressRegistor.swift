@@ -1,6 +1,6 @@
 //
 //  FlowAddressRegistor.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 26/6/2022.
 //

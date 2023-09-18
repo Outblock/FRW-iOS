@@ -1,6 +1,6 @@
 //
-//  LilicoAPI+Account.swift
-//  Lilico
+//  Flow Reference WalletAPI+Account.swift
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 19/5/2022.
 //
@@ -8,7 +8,7 @@
 import Foundation
 import Moya
 
-extension LilicoAPI {
+extension FRWAPI {
     enum User {
         case login(LoginRequest)
         case register(RegisterRequest)
@@ -22,7 +22,7 @@ extension LilicoAPI {
     }
 }
 
-extension LilicoAPI.User: TargetType, AccessTokenAuthorizable {
+extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
         return .bearer
     }
@@ -70,16 +70,16 @@ extension LilicoAPI.User: TargetType, AccessTokenAuthorizable {
         case let .checkUsername(username):
             return .requestParameters(parameters: ["username": username], encoding: URLEncoding.queryString)
         case let .register(request):
-            return .requestCustomJSONEncodable(request, encoder: LilicoAPI.jsonEncoder)
+            return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         case let .login(request):
-            return .requestCustomJSONEncodable(request, encoder: LilicoAPI.jsonEncoder)
+            return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         case let .search(keyword):
             return .requestParameters(parameters: ["keyword": keyword], encoding: URLEncoding.queryString)
         }
     }
 
     var headers: [String: String]? {
-        var headers = LilicoAPI.commonHeaders
+        var headers = FRWAPI.commonHeaders
         switch self {
         case .sandboxnet:
             headers["Network"] = "sandboxnet"

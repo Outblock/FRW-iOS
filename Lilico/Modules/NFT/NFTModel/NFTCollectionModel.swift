@@ -1,6 +1,6 @@
 //
 //  NFTCollectionModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by cat on 2022/6/22.
 //
@@ -30,7 +30,7 @@ final class NFTCollectionConfig {
 extension NFTCollectionConfig {
     private func fetchData() async {
         do {
-            let list: [NFTCollectionInfo] = try await Network.request(LilicoAPI.NFT.collections)
+            let list: [NFTCollectionInfo] = try await Network.request(FRWAPI.NFT.collections)
             config = list
         } catch {
             debugPrint("NFTCollectionConfig -> fetchData failed: \(error)")

@@ -1,6 +1,6 @@
 //
 //  DispatchQueue.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 5/8/2022.
 //

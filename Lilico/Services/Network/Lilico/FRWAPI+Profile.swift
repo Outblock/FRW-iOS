@@ -1,6 +1,6 @@
 //
-//  LilicoAPI+Profile.swift
-//  Lilico
+//  Flow Reference WalletAPI+Profile.swift
+//  Flow Reference Wallet
 //
 //  Created by Selina on 14/6/2022.
 //
@@ -8,14 +8,14 @@
 import Foundation
 import Moya
 
-extension LilicoAPI {
+extension FRWAPI {
     enum Profile {
         case updateInfo(UserInfoUpdateRequest)
         case updatePrivate(Bool)
     }
 }
 
-extension LilicoAPI.Profile: TargetType, AccessTokenAuthorizable {
+extension FRWAPI.Profile: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
         return .bearer
     }
@@ -43,7 +43,7 @@ extension LilicoAPI.Profile: TargetType, AccessTokenAuthorizable {
     var task: Task {
         switch self {
         case let .updateInfo(request):
-            return .requestCustomJSONEncodable(request, encoder: LilicoAPI.jsonEncoder)
+            return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         case let .updatePrivate(isPrivate):
             let raw = isPrivate ? 2 : 1
             return .requestJSONEncodable(["private": raw])
@@ -51,6 +51,6 @@ extension LilicoAPI.Profile: TargetType, AccessTokenAuthorizable {
     }
 
     var headers: [String: String]? {
-        return LilicoAPI.commonHeaders
+        return FRWAPI.commonHeaders
     }
 }

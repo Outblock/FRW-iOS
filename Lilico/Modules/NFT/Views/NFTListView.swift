@@ -1,6 +1,6 @@
 //
 //  NFTListView.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by cat on 2022/5/30.
 //

@@ -1,6 +1,6 @@
 //
-//  LilicoAPI+AddressBook.swift
-//  Lilico
+//  Flow Reference WalletAPI+AddressBook.swift
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 19/5/2022.
 //
@@ -8,7 +8,7 @@
 import Foundation
 import Moya
 
-extension LilicoAPI {
+extension FRWAPI {
     enum AddressBook {
         case addExternal(AddressBookAddRequest)
         case fetchList
@@ -17,7 +17,7 @@ extension LilicoAPI {
     }
 }
 
-extension LilicoAPI.AddressBook: TargetType, AccessTokenAuthorizable {
+extension FRWAPI.AddressBook: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
         return .bearer
     }
@@ -53,15 +53,15 @@ extension LilicoAPI.AddressBook: TargetType, AccessTokenAuthorizable {
         case .fetchList:
             return .requestPlain
         case let .addExternal(request):
-            return .requestCustomJSONEncodable(request, encoder: LilicoAPI.jsonEncoder)
+            return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         case let .delete(contactId):
             return .requestParameters(parameters: ["id": contactId], encoding: URLEncoding.queryString)
         case let .edit(request):
-            return .requestCustomJSONEncodable(request, encoder: LilicoAPI.jsonEncoder)
+            return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         }
     }
 
     var headers: [String: String]? {
-        return LilicoAPI.commonHeaders
+        return FRWAPI.commonHeaders
     }
 }

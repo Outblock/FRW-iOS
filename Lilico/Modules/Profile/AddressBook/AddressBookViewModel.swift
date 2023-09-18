@@ -1,6 +1,6 @@
 //
 //  AddressBookViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 24/5/2022.
 //
@@ -174,7 +174,7 @@ extension AddressBookView {
 
             Task {
                 do {
-                    let response: Network.EmptyResponse = try await Network.requestWithRawModel(LilicoAPI.AddressBook.delete(contact.id))
+                    let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.AddressBook.delete(contact.id))
 
                     if response.httpCode != 200 {
                         failedAction()
@@ -199,7 +199,7 @@ extension AddressBookView {
 
             Task {
                 do {
-                    let response: AddressListBookResponse = try await Network.request(LilicoAPI.AddressBook.fetchList)
+                    let response: AddressListBookResponse = try await Network.request(FRWAPI.AddressBook.fetchList)
                     DispatchQueue.main.async {
                         self.rawContacts = response.contacts
                         self.saveToCache(contacts: response.contacts)

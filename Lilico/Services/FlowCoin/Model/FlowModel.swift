@@ -1,6 +1,6 @@
 //
 //  FlowModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by cat on 2023/8/3.
 //

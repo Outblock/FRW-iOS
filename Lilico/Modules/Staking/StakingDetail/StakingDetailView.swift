@@ -1,6 +1,6 @@
 //
 //  StakingDetailView.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 18/11/2022.
 //

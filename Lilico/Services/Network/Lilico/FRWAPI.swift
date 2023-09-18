@@ -1,13 +1,13 @@
 //
-//  LilicoAPI.swift
-//  Lilico
+//  Flow Reference WalletAPI.swift
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 29/12/21.
 //
 
 import Foundation
 
-enum LilicoAPI {
+enum FRWAPI {
     static var jsonEncoder: JSONEncoder {
         let coder = JSONEncoder()
         coder.keyEncodingStrategy = .convertToSnakeCase

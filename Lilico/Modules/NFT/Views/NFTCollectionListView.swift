@@ -1,6 +1,6 @@
 //
 //  NFTCollectionListView.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by cat on 2022/5/30.
 //
@@ -94,9 +94,9 @@ class NFTCollectionListViewViewModel: ObservableObject {
                 
                 
                 
-                let model: FlowModel.NFTCollection = try await Network.request(LilicoAPI.ChildAccount.collectionInfo(addr, path))
+                let model: FlowModel.NFTCollection = try await Network.request(FRWAPI.ChildAccount.collectionInfo(addr, path))
                 //TODO: 请求所有数据
-                let nftInfoResponse: FlowModel.NFTResponse = try await Network.request(LilicoAPI.ChildAccount.nftList(addr, path, 0, 100))
+                let nftInfoResponse: FlowModel.NFTResponse = try await Network.request(FRWAPI.ChildAccount.nftList(addr, path, 0, 100))
                 DispatchQueue.main.async {
                     self.collection = model.toCollectionModel()
                     self.collection.nfts = nftInfoResponse.nfts.map({ info in

@@ -1,6 +1,6 @@
 //
 //  TestView.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 6/1/22.
 //

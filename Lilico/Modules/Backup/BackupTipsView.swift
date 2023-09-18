@@ -1,6 +1,6 @@
 //
 //  BackupTipsView.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 6/6/2023.
 //

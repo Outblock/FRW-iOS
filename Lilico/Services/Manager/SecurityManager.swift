@@ -1,6 +1,6 @@
 //
 //  SecurityManager.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 4/8/2022.
 //

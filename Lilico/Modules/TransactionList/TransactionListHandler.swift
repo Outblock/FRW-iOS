@@ -1,6 +1,6 @@
 //
 //  TransactionListHandler.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 9/9/2022.
 //
@@ -93,13 +93,13 @@ extension TransactionListHandler {
         Task {
             do {
                 if let contractId = self.contractId {
-                    let results = try await LilicoAPI.Account.fetchTokenTransfers(contractId: contractId)
+                    let results = try await FRWAPI.Account.fetchTokenTransfers(contractId: contractId)
                     DispatchQueue.main.async {
                         self.isRequesting = false
                         self.requestSuccess(results, totalCount: results.count)
                     }
                 } else {
-                    let results = try await LilicoAPI.Account.fetchAccountTransfers()
+                    let results = try await FRWAPI.Account.fetchAccountTransfers()
                     DispatchQueue.main.async {
                         self.isRequesting = false
                         self.requestSuccess(results.0, totalCount: results.1)

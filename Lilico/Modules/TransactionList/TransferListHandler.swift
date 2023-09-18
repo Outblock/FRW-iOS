@@ -1,6 +1,6 @@
 //
 //  TransferListHandler.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 9/9/2022.
 //
@@ -124,14 +124,14 @@ extension TransferListHandler {
             do {
                 if let contractId = self.contractId {
                     let request = TokenTransfersRequest(address: WalletManager.shared.getPrimaryWalletAddress() ?? "", limit: Limit, after: start, token: contractId)
-                    let response: TransfersResponse = try await Network.request(LilicoAPI.Account.tokenTransfers(request))
+                    let response: TransfersResponse = try await Network.request(FRWAPI.Account.tokenTransfers(request))
                     DispatchQueue.main.async {
                         self.isRequesting = false
                         self.requestSuccess(response, start: start)
                     }
                 } else {
                     let request = TransfersRequest(address: WalletManager.shared.getPrimaryWalletAddress() ?? "", limit: Limit, after: start)
-                    let response: TransfersResponse = try await Network.request(LilicoAPI.Account.transfers(request))
+                    let response: TransfersResponse = try await Network.request(FRWAPI.Account.transfers(request))
                     DispatchQueue.main.async {
                         self.isRequesting = false
                         self.requestSuccess(response, start: start)

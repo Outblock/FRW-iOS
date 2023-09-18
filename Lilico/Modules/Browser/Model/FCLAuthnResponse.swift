@@ -1,6 +1,6 @@
 //
 //  FCLAuthnResponse.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 5/9/2022.
 //

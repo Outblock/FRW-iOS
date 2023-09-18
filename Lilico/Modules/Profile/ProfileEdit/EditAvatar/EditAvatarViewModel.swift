@@ -1,6 +1,6 @@
 //
 //  EditAvatarViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 16/6/2022.
 //
@@ -179,7 +179,7 @@ extension EditAvatarView {
 
             let request = UserInfoUpdateRequest(nickname: nickname, avatar: url)
             do {
-                let response: Network.EmptyResponse = try await Network.requestWithRawModel(LilicoAPI.Profile.updateInfo(request))
+                let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.Profile.updateInfo(request))
                 if response.httpCode != 200 {
                     return false
                 }
@@ -230,7 +230,7 @@ extension EditAvatarView.EditAvatarViewModel {
     
     private func requestGrid(offset: Int, limit: Int = 24) async throws -> [NFTModel] {
         let request = NFTGridDetailListRequest(address: owner, offset: offset, limit: limit)
-        let response: Network.Response<NFTListResponse> = try await Network.requestWithRawModel(LilicoAPI.NFT.gridDetailList(request))
+        let response: Network.Response<NFTListResponse> = try await Network.requestWithRawModel(FRWAPI.NFT.gridDetailList(request))
         
         guard let nfts = response.data?.nfts else {
             return []

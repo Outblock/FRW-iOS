@@ -1,6 +1,6 @@
 //
-//  LilicoAPI+NFT.swift
-//  Lilico
+//  Flow Reference WalletAPI+NFT.swift
+//  Flow Reference Wallet
 //
 //  Created by cat on 2022/6/14.
 //
@@ -8,7 +8,7 @@
 import Foundation
 import Moya
 
-extension LilicoAPI {
+extension FRWAPI {
     enum NFT {
         case collections
         case userCollection(String)
@@ -20,7 +20,7 @@ extension LilicoAPI {
     }
 }
 
-extension LilicoAPI.NFT: TargetType, AccessTokenAuthorizable {
+extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
         return .bearer
     }
@@ -86,7 +86,7 @@ extension LilicoAPI.NFT: TargetType, AccessTokenAuthorizable {
     }
 
     var headers: [String: String]? {
-        var headers = LilicoAPI.commonHeaders
+        var headers = FRWAPI.commonHeaders
 
 //        #if DEBUG
 //            // TODO: current nft is error on testnet, remove this code if testnet nft is working someday.

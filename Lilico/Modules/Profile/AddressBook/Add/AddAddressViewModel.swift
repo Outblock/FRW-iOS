@@ -1,6 +1,6 @@
 //
 //  AddAddressViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 1/6/2022.
 //
@@ -148,7 +148,7 @@ extension AddAddressView {
             Task {
                 do {
                     let request = AddressBookAddRequest(contactName: contactName, address: address, domain: "", domainType: .unknown, username: "")
-                    let response: Network.EmptyResponse = try await Network.requestWithRawModel(LilicoAPI.AddressBook.addExternal(request))
+                    let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.AddressBook.addExternal(request))
 
                     if response.httpCode != 200 {
                         errorAction()
@@ -191,7 +191,7 @@ extension AddAddressView {
                     }
 
                     let request = AddressBookEditRequest(id: id, contactName: contactName, address: address, domain: "", domainType: domainType, username: "")
-                    let response: Network.EmptyResponse = try await Network.requestWithRawModel(LilicoAPI.AddressBook.edit(request))
+                    let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.AddressBook.edit(request))
 
                     if response.httpCode != 200 {
                         errorAction()

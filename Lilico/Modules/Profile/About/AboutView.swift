@@ -1,6 +1,6 @@
 //
 //  AboutView.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 20/9/2022.
 //

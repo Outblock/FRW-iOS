@@ -1,6 +1,6 @@
 //
 //  SwapViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 23/9/2022.
 //
@@ -139,7 +139,7 @@ extension SwapViewModel {
         Task {
             do {
                 let request = SwapEstimateRequest(inToken: fromToken.contractId, outToken: toToken.contractId, inAmount: localIsFromInput ? fromAmount : nil, outAmount: localIsFromInput ? nil : toAmount)
-                let response: SwapEstimateResponse = try await Network.request(LilicoWebEndpoint.swapEstimate(request))
+                let response: SwapEstimateResponse = try await Network.request(FRWWebEndpoint.swapEstimate(request))
                 
                 DispatchQueue.main.async {
                     self.isRequesting = false

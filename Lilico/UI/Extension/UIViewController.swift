@@ -1,6 +1,6 @@
 //
 //  UIViewController.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 1/9/2022.
 //

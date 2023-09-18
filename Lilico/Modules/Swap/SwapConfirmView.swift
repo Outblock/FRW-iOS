@@ -1,6 +1,6 @@
 //
 //  SwapConfirmView.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 27/9/2022.
 //

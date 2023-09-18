@@ -1,6 +1,6 @@
 //
 //  ThemeChangeView.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 18/5/2022.
 //

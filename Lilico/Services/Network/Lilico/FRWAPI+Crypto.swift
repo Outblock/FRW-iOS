@@ -1,6 +1,6 @@
 //
-//  LilicoAPI+Crypto.swift
-//  Lilico
+//  Flow Reference WalletAPI+Crypto.swift
+//  Flow Reference Wallet
 //
 //  Created by Selina on 23/6/2022.
 //
@@ -8,14 +8,14 @@
 import Foundation
 import Moya
 
-extension LilicoAPI {
+extension FRWAPI {
     enum Crypto {
         case summary(CryptoSummaryRequest)
         case history(CryptoHistoryRequest)
     }
 }
 
-extension LilicoAPI.Crypto: TargetType, AccessTokenAuthorizable {
+extension FRWAPI.Crypto: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
         return .bearer
     }
@@ -50,6 +50,6 @@ extension LilicoAPI.Crypto: TargetType, AccessTokenAuthorizable {
     }
 
     var headers: [String: String]? {
-        return LilicoAPI.commonHeaders
+        return FRWAPI.commonHeaders
     }
 }

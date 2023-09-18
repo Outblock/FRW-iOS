@@ -1,6 +1,6 @@
 //
 //  UsernameView.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 26/12/21.
 //

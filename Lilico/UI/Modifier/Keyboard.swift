@@ -1,6 +1,6 @@
 //
 //  Keyboard.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 3/1/22.
 //

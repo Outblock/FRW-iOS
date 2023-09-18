@@ -1,6 +1,6 @@
 //
 //  Network.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 2/1/22.
 //
@@ -53,7 +53,7 @@ enum Network {
         return try await result.user.getIDToken()
     }
 
-    static func request<T: Decodable, U: TargetType>(_ target: U, decoder: JSONDecoder = LilicoAPI.jsonDecoder, needToken: Bool = true) async throws -> T {
+    static func request<T: Decodable, U: TargetType>(_ target: U, decoder: JSONDecoder = FRWAPI.jsonDecoder, needToken: Bool = true) async throws -> T {
         let token = try await fetchIDToken()
         let authPlugin = AccessTokenPlugin { _ in token }
         let logPlugin = NetworkLoggerPlugin(configuration: .init(logOptions: .verbose))
@@ -78,7 +78,7 @@ enum Network {
         }
     }
 
-    static func requestWithRawModel<T: Decodable, U: TargetType>(_ target: U, decoder: JSONDecoder = LilicoAPI.jsonDecoder, needToken: Bool = true) async throws -> T {
+    static func requestWithRawModel<T: Decodable, U: TargetType>(_ target: U, decoder: JSONDecoder = FRWAPI.jsonDecoder, needToken: Bool = true) async throws -> T {
         let token = try await fetchIDToken()
         let authPlugin = AccessTokenPlugin { _ in token }
         let provider = MoyaProvider<U>(plugins: needToken ? [NetworkLoggerPlugin(), authPlugin] : [NetworkLoggerPlugin()])

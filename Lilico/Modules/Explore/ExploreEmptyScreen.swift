@@ -1,6 +1,6 @@
 //
 //  ExploreEmptyScreen.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 16/9/2022.
 //

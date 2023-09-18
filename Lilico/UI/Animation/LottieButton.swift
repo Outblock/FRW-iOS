@@ -1,6 +1,6 @@
 //
 //  LottieButton.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 22/8/2022.
 //

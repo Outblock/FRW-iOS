@@ -1,6 +1,6 @@
 //
 //  ServiceDef.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 30/7/2022.
 //

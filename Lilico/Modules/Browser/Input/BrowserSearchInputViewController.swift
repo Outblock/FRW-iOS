@@ -1,6 +1,6 @@
 //
 //  BrowserSearchInputViewController.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 1/9/2022.
 //
@@ -198,7 +198,7 @@ extension BrowserSearchInputViewController {
         
         Task {
             do {
-                let result: [RecommendItemModel] = try await Network.requestWithRawModel(LilicoAPI.Browser.recommend(currentText))
+                let result: [RecommendItemModel] = try await Network.requestWithRawModel(FRWAPI.Browser.recommend(currentText))
                 
                 if self.searchingText != currentText {
                     // outdate result

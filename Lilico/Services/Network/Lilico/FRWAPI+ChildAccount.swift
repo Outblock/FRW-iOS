@@ -1,6 +1,6 @@
 //
-//  LilicoAPI+ChildAccount.swift
-//  Lilico
+//  Flow Reference WalletAPI+ChildAccount.swift
+//  Flow Reference Wallet
 //
 //  Created by cat on 2023/8/2.
 //
@@ -8,7 +8,7 @@
 import Foundation
 import Moya
 
-extension LilicoAPI {
+extension FRWAPI {
     enum ChildAccount {
         case collection(String, String)
         case collectionInfo(String, String)
@@ -17,7 +17,7 @@ extension LilicoAPI {
     }
 }
 
-extension LilicoAPI.ChildAccount: TargetType, AccessTokenAuthorizable {
+extension FRWAPI.ChildAccount: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
         return .bearer
     }
@@ -62,6 +62,6 @@ extension LilicoAPI.ChildAccount: TargetType, AccessTokenAuthorizable {
     }
 
     var headers: [String: String]? {
-        return LilicoAPI.commonHeaders
+        return FRWAPI.commonHeaders
     }
 }

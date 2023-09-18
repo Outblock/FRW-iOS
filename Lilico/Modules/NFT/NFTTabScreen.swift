@@ -1,6 +1,6 @@
 //
 //  NFTTabScreen.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 16/1/22.
 //

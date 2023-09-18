@@ -1,6 +1,6 @@
 //
 //  NFTModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by cat on 2022/5/18.
 //
@@ -266,7 +266,7 @@ class CollectionItem: Identifiable, ObservableObject {
     
     private func requestCollectionListDetail(offset: Int, limit: Int = 24) async throws -> NFTListResponse {
         let request = NFTCollectionDetailListRequest(address: address, collectionIdentifier: collection?.id ?? "", offset: offset, limit: limit)
-        let response: NFTListResponse = try await Network.request(LilicoAPI.NFT.collectionDetailList(request))
+        let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(request))
         return response
     }
     

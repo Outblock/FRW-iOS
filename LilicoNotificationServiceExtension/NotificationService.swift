@@ -1,6 +1,6 @@
 //
 //  NotificationService.swift
-//  LilicoNotificationServiceExtension
+//  Flow Reference WalletNotificationServiceExtension
 //
 //  Created by Selina on 18/7/2023.
 //

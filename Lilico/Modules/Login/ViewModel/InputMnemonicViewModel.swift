@@ -1,6 +1,6 @@
 //
 //  InputMnemonicViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 8/1/22.
 //

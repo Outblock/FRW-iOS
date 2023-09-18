@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  Lilico-lite
+//  Flow Reference Wallet-lite
 //
 //  Created by Hao Fu on 12/12/21.
 //

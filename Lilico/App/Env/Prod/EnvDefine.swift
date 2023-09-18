@@ -1,6 +1,6 @@
 //
 //  EnvDefine.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 22/12/2022.
 //

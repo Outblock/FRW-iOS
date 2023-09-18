@@ -1,6 +1,6 @@
 //
-//  Lilico-Bridging-Header.h
-//  Lilico
+//  Flow Reference Wallet-Bridging-Header.h
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 1/1/22.
 //

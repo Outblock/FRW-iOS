@@ -1,6 +1,6 @@
 //
 //  UIDevice.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 20/7/2023.
 //

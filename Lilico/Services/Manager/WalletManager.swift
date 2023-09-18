@@ -1,6 +1,6 @@
 //
 //  WalletManager.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 30/12/21.
 //
@@ -300,7 +300,7 @@ extension WalletManager {
     func asyncCreateWalletAddressFromServer() {
         Task {
             do {
-                let _: Network.EmptyResponse = try await Network.requestWithRawModel(LilicoAPI.User.userAddress)
+                let _: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.userAddress)
                 debugPrint("WalletManager -> asyncCreateWalletAddressFromServer success")
             } catch {
                 debugPrint("WalletManager -> asyncCreateWalletAddressFromServer failed")
@@ -336,7 +336,7 @@ extension WalletManager {
 
         Task {
             do {
-                let response: UserWalletResponse = try await Network.request(LilicoAPI.User.userWallet)
+                let response: UserWalletResponse = try await Network.request(FRWAPI.User.userWallet)
                 
                 if UserManager.shared.activatedUID != uid { return }
                 
@@ -365,7 +365,7 @@ extension WalletManager {
             
             Task {
                 do {
-                    let _: Network.EmptyResponse = try await Network.requestWithRawModel(LilicoAPI.User.manualCheck)
+                    let _: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.manualCheck)
                 } catch {
                     debugPrint(error)
                 }

@@ -1,6 +1,6 @@
 //
 //  EmptyWalletView.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 25/12/21.
 //

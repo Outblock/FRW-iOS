@@ -1,6 +1,6 @@
 //
 //  BackgroundModifer.swift
-//  Lilico-lite
+//  Flow Reference Wallet-lite
 //
 //  Created by Hao Fu on 27/11/21.
 //

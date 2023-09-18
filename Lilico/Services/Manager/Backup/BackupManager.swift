@@ -1,6 +1,6 @@
 //
 //  BackupManager.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Hao Fu on 2/1/22.
 //

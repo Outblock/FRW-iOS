@@ -1,6 +1,6 @@
 //
 //  FlowCoins.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by cat on 2022/4/30.
 //
@@ -40,7 +40,7 @@ enum FirebaseConfig: String {
 }
 
 extension FirebaseConfig {
-    func fetch<T: Codable>(decoder:JSONDecoder = LilicoAPI.jsonDecoder ) throws -> T {
+    func fetch<T: Codable>(decoder:JSONDecoder = FRWAPI.jsonDecoder ) throws -> T {
         let remoteConfig = RemoteConfig.remoteConfig()
         let json = remoteConfig.configValue(forKey: rawValue)
         do {

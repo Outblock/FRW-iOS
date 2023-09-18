@@ -1,6 +1,6 @@
 //
 //  ClaimDomainViewModel.swift
-//  Lilico
+//  Flow Reference Wallet
 //
 //  Created by Selina on 16/9/2022.
 //
@@ -38,9 +38,9 @@ class ClaimDomainViewModel: ObservableObject {
         
         Task {
             do {
-                let prepareResponse: ClaimDomainPrepareResponse = try await Network.request(LilicoAPI.Flowns.domainPrepare)
+                let prepareResponse: ClaimDomainPrepareResponse = try await Network.request(FRWAPI.Flowns.domainPrepare)
                 let request = try await buildPayerSignableRequest(response: prepareResponse)
-                let signatureResponse: ClaimDomainSignatureResponse = try await Network.request(LilicoAPI.Flowns.domainSignature(request))
+                let signatureResponse: ClaimDomainSignatureResponse = try await Network.request(FRWAPI.Flowns.domainSignature(request))
                 
                 guard let txId = signatureResponse.txId, !txId.isEmpty else {
                     debugPrint("ClaimDomainViewModel -> claimAction txId is empty")

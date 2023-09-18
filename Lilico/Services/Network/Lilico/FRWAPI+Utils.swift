@@ -1,6 +1,6 @@
 //
-//  LilicoAPI+Utils.swift
-//  Lilico
+//  Flow Reference WalletAPI+Utils.swift
+//  Flow Reference Wallet
 //
 //  Created by Selina on 28/10/2022.
 //
@@ -8,14 +8,14 @@
 import Foundation
 import Moya
 
-extension LilicoAPI {
+extension FRWAPI {
     enum Utils {
         case currencyRate(Currency)
         case retoken(String, String)
     }
 }
 
-extension LilicoAPI.Utils: TargetType, AccessTokenAuthorizable {
+extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
         switch self {
         case .currencyRate:
@@ -71,7 +71,7 @@ extension LilicoAPI.Utils: TargetType, AccessTokenAuthorizable {
         case .currencyRate:
             return nil
         case .retoken:
-            return LilicoAPI.commonHeaders
+            return FRWAPI.commonHeaders
         }
     }
 }
