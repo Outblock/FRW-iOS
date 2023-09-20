@@ -88,12 +88,12 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
-/Lilico.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+/FRW.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 *.xcbkptlist
-/Lilico/App/Env/Dev/GoogleOAuth2.plist
-/Lilico/App/Env/Dev/GoogleService-Info.plist
-/Lilico/App/Env/LocalEnv
-/Lilico/App/Env/Prod/GoogleOAuth2.plist
-/Lilico/App/Env/Prod/GoogleService-Info.plist
+/FRW/App/Env/Dev/GoogleOAuth2.plist
+/FRW/App/Env/Dev/GoogleService-Info.plist
+/FRW/App/Env/LocalEnv
+/FRW/App/Env/Prod/GoogleOAuth2.plist
+/FRW/App/Env/Prod/GoogleService-Info.plist
 .translized.yml
 .DS_Store
