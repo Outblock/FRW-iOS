@@ -36,7 +36,7 @@ struct CalloutView: View {
             .padding(.horizontal,16)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.LL.Primary.salmon5)
+        .background(Color.Theme.Accent.warning)
         .cornerRadius(corners, 8)
         .hidden((content == nil) ? true : false)
     }
