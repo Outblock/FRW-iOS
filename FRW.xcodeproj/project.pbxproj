@@ -1976,6 +1976,8 @@
 		4E51B4FA2854A76500EDE4FE /* CaptureView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaptureView.swift; sourceTree = "<group>"; };
 		4E51B4FD2854BEB600EDE4FE /* ImageSaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaver.swift; sourceTree = "<group>"; };
 		4E5885432A6FDF00007CACCC /* SPQRMaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPQRMaskView.swift; sourceTree = "<group>"; };
+		4E73F48C2ABA977D00B015C1 /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = FlowReferenceWallet/Library/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
+		4E73F48D2ABA977D00B015C1 /* WalletCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WalletCore.xcframework; path = FlowReferenceWallet/Library/WalletCore.xcframework; sourceTree = "<group>"; };
 		4E7DD2602858E74600052B21 /* FRWAPI+NFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FRWAPI+NFT.swift"; sourceTree = "<group>"; };
 		4E8394432A7153EB00DFC422 /* CalloutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalloutView.swift; sourceTree = "<group>"; };
 		4E8DD9F7282E2FBB0016A931 /* NFTEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTEmptyView.swift; sourceTree = "<group>"; };
@@ -4016,6 +4018,7 @@
 				6A0B105A2A6675A600023767 /* FRWDevNotificationServiceExtension */,
 				15EC9DEF274FD1FC00F70CD9 /* Products */,
 				15B1A67A276A2D670006B621 /* Frameworks */,
+				4ED06E482ABABEC000F49A1A /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -4173,6 +4176,15 @@
 				4EC97651286A07060066811D /* NFTCollectionEnableView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		4ED06E482ABABEC000F49A1A /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				4E73F48C2ABA977D00B015C1 /* SwiftProtobuf.xcframework */,
+				4E73F48D2ABA977D00B015C1 /* WalletCore.xcframework */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		4ED2D7742850DD9400B9A572 /* Helper */ = {
@@ -7051,8 +7063,8 @@
 				INFOPLIST_FILE = FRW/App/Env/Dev/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Flow Core-dev";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Core need camera to scan QR Code";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Core-dev use Face ID to secure your assests";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Reference Wallet(dev) need camera to scan QR Code";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Reference Wallet(dev) use Face ID to secure your assests";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "requires access to photo library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -7091,8 +7103,8 @@
 				INFOPLIST_FILE = FRW/App/Env/Dev/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Flow Core-dev";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Core need camera to scan QR Code";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Core-dev use Face ID to secure your assests";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Reference Wallet(dev) need camera to scan QR Code";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Reference Wallet(dev) use Face ID to secure your assests";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "requires access to photo library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

@@ -294,7 +294,7 @@ extension NFTUIKitCache {
 //        Task {
 //            do {
 //                let request = NFTUpdateFavRequest(ids: "")
-//                let _: Network.EmptyResponse = try await Network.requestWithRawModel(LilicoAPI.NFT.updateFav(request))
+//                let _: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.NFT.updateFav(request))
 //            } catch {
 //                debugPrint("NFTUIKitCache -> removeFav error: \(error)")
 //            }
