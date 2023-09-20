@@ -204,3 +204,11 @@ extension Color {
         
     }
 }
+
+extension Color {
+    enum Theme {
+        enum Accent {
+        static let warning = Color("accent.red")
+        }
+    }
+}
