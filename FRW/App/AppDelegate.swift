@@ -99,7 +99,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                 }
                 WalletConnectManager.shared.connect(link: uri)
                 
-            }else {
+            }
+            else if url.absoluteString.hasPrefix("https://frw-link.lilico.app") {
+                var uri = url.absoluteString.deletingPrefix("https://frw-link.lilico.app/wc?uri=")
+                uri = uri.deletingPrefix("frw://")
+                WalletConnectManager.shared.onClientConnected = {
+                    WalletConnectManager.shared.connect(link: uri)
+                }
+                WalletConnectManager.shared.connect(link: uri)
+                
+            }
+            else {
                 var uri = url.absoluteString.deletingPrefix("https://link.lilico.app/wc?uri=")
                 uri = uri.deletingPrefix("lilico://")
                 WalletConnectManager.shared.onClientConnected = {
