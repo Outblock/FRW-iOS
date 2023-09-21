@@ -20,6 +20,12 @@ class HUD {
             SPIndicator.present(title: title, message: message, preset: preset, haptic: haptic, from: .top, completion: nil)
         }
     }
+    
+    static func info(title: String, message: String? = nil, from: SPIndicatorPresentSide = .top ) {
+        DispatchQueue.main.async {
+            SPIndicator.present(title: title, message: message, haptic: .error)
+        }
+    }
 
     static func success(title: String, message: String? = nil, preset: SPIndicatorIconPreset = .done, haptic: SPIndicatorHaptic = .success) {
         HUD.present(title: title, message: message, preset: preset, haptic: haptic)
