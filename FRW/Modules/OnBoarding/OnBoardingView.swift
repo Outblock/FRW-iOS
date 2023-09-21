@@ -19,12 +19,13 @@ struct OnBoardingView: View {
             bottomContainer
         }
         .backgroundFill {
-            ZStack {
-                ForEach(enumerating: OnBoardingViewModel.PageType.allCases, id: \.self) { index, type in
-                    LinearGradient(colors: type.bgColors, startPoint: .top, endPoint: .bottom)
-                        .opacity(vm.currentPageIndex >= index ? 1 : 0)
-                }
-            }
+            Color.LL.background
+//            ZStack {
+//                ForEach(enumerating: OnBoardingViewModel.PageType.allCases, id: \.self) { index, type in
+//                    LinearGradient(colors: type.bgColors, startPoint: .top, endPoint: .bottom)
+//                        .opacity(vm.currentPageIndex >= index ? 1 : 0)
+//                }
+//            }
         }
     }
 }
