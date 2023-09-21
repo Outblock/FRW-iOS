@@ -352,9 +352,9 @@ extension RouteMap.PinCode: RouterTarget {
 
 extension RouteMap {
     enum NFT {
-        case detail(NFTTabViewModel, NFTModel)
+        case detail(NFTTabViewModel, NFTModel, Bool)
         case collection(NFTTabViewModel, CollectionItem)
-        case collectionDetail(String, String)
+        case collectionDetail(String, String, Bool)
         case addCollection
         case send(NFTModel, Contact)
         case AR(UIImage)
@@ -364,12 +364,12 @@ extension RouteMap {
 extension RouteMap.NFT: RouterTarget {
     func onPresent(navi: UINavigationController) {
         switch self {
-            case .detail(let vm, let nft):
-                navi.push(content: NFTDetailPage(viewModel: vm, nft: nft))
+            case .detail(let vm, let nft, let fromLinkedAccount):
+            navi.push(content: NFTDetailPage(viewModel: vm, nft: nft, from: fromLinkedAccount))
             case .collection(let vm, let collection):
                 navi.push(content: NFTCollectionListView(viewModel: vm, collection: collection))
-            case .collectionDetail(let addr, let path):
-                navi.push(content: NFTCollectionListView(address: addr, path: path))
+            case .collectionDetail(let addr, let path, let fromLinkedAccount):
+                navi.push(content: NFTCollectionListView(address: addr, path: path, from: fromLinkedAccount))
             case .addCollection:
                 navi.push(content: NFTAddCollectionView())
             case .send(let nft, let contact):

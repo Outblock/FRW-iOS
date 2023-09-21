@@ -98,7 +98,7 @@ extension NFTUIKitFavContainerView: UICollectionViewDataSource, UICollectionView
         }
         
         let item = NFTUIKitCache.cache.favList[indexPath.item]
-        Router.route(to: RouteMap.NFT.detail(vm, item))
+        Router.route(to: RouteMap.NFT.detail(vm, item, false))
     }
     
     func onCurrentPageChanged(layout: CollectionViewPagingLayout, currentPage: Int) {

@@ -34,7 +34,7 @@ extension NFTTabScreen {
 
     enum Action {
         case search
-        case info(NFTModel)
+        case info(NFTModel, Bool)
         case fetchColors(String)
         case back
     }
@@ -59,8 +59,8 @@ class NFTTabViewModel: ViewModel {
 
     func trigger(_ input: NFTTabScreen.Action) {
         switch input {
-        case let .info(model):
-            Router.route(to: RouteMap.NFT.detail(self, model))
+        case let .info(model,fromLinkedAccount):
+            Router.route(to: RouteMap.NFT.detail(self, model, fromLinkedAccount))
         case .search:
             break
         case let .fetchColors(url):

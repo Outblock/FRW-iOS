@@ -8,6 +8,7 @@
 import Kingfisher
 import SwiftUI
 import AVKit
+import SPIndicator
 
 struct NFTDetailPage: RouteableView {
     static var ShareNFTView: NFTShareView? = nil
@@ -57,10 +58,13 @@ struct NFTDetailPage: RouteableView {
     @Namespace var heroAnimation: Namespace.ID
 
     var player = AVPlayer()
+    
+    @State var fromLinkedAccount = false
 
-    init(viewModel: NFTTabViewModel, nft: NFTModel) {
+    init(viewModel: NFTTabViewModel, nft: NFTModel, from LinkedAccount: Bool = false) {
         _viewModel = StateObject(wrappedValue: viewModel)
         _vm = StateObject(wrappedValue: NFTDetailPageViewModel(nft: nft))
+        fromLinkedAccount = LinkedAccount
     }
     
     var body: some View {
@@ -268,6 +272,10 @@ struct NFTDetailPage: RouteableView {
             HStack(spacing: 8) {
                 Spacer()
                 Button {
+                    if fromLinkedAccount {
+                        HUD.info(title: "Feature coming soon")
+                        return
+                    }
                     vm.sendNFTAction()
                 } label: {
                     HStack {

@@ -262,7 +262,7 @@ extension NFTUIKitGridStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
         
         if indexPath.item < dataModel.nfts.count {
             let nft = dataModel.nfts[indexPath.item]
-            Router.route(to: RouteMap.NFT.detail(vm, nft))
+            Router.route(to: RouteMap.NFT.detail(vm, nft, false))
             return
         }
     }

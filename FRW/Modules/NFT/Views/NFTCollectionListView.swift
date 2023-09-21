@@ -127,7 +127,7 @@ struct NFTCollectionListView: RouteableView {
     @State var opacity: Double = 0
     @Namespace var imageEffect
     
-    
+    var fromLinkedAccount: Bool = false
     
     var title: String {
         return ""
@@ -142,9 +142,10 @@ struct NFTCollectionListView: RouteableView {
         _vm = StateObject(wrappedValue: NFTCollectionListViewViewModel(collection: collection))
     }
     
-    init(address: String, path: String) {
+    init(address: String, path: String, from linkedAccount: Bool = false) {
         _viewModel = StateObject(wrappedValue: NFTTabViewModel())
         _vm = StateObject(wrappedValue: NFTCollectionListViewViewModel(address: address, path: path))
+        fromLinkedAccount = linkedAccount
     }
     
 
@@ -172,7 +173,7 @@ struct NFTCollectionListView: RouteableView {
                     InfoView(collection: vm.collection)
                         .padding(.bottom, 24)
                         .mockPlaceholder(vm.isLoading)
-                    NFTListView(list: vm.nfts, imageEffect: imageEffect)
+                    NFTListView(list: vm.nfts, imageEffect: imageEffect, fromLinkedAccount: fromLinkedAccount)
                         .id(999)
                         .mockPlaceholder(vm.isLoading)
                 } appBar: {

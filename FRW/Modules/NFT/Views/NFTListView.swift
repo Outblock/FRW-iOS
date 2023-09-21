@@ -72,6 +72,7 @@ private struct ViewOffsetKey: PreferenceKey {
 struct NFTListView: View {
     var list: [NFTModel]
     var imageEffect: Namespace.ID
+    var fromLinkedAccount: Bool = false
 
     @EnvironmentObject private var viewModel: NFTTabViewModel
 
@@ -85,7 +86,7 @@ struct NFTListView: View {
             LazyVGrid(columns: nftLayout, alignment: .center) {
                 ForEach(list, id: \.self) { nft in
                     NFTSquareCard(nft: nft, imageEffect: imageEffect) { model in
-                        viewModel.trigger(.info(model))
+                        viewModel.trigger(.info(model, fromLinkedAccount))
                     }
                     .frame(height: ceil((screenWidth - 18 * 3) / 2 + 50))
                 }
