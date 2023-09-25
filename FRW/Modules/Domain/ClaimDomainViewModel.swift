@@ -101,7 +101,6 @@ extension Flow.Transaction {
     func buildSignPayerRequest() -> SignPayerRequest {
         let pKey = FCLVoucher.ProposalKey(address: proposalKey.address, keyId: proposalKey.keyIndex, sequenceNum: UInt64(proposalKey.sequenceNumber))
         let payloadSigs = payloadSignatures.map { FCLVoucher.Signature(address: $0.address, keyId: $0.keyIndex, sig: $0.signature.hexValue) }
-        
         let voucher = FCLVoucher(cadence: script, payer: payer, refBlock: referenceBlockId, arguments: arguments, proposalKey: pKey, computeLimit: UInt64(gasLimit), authorizers: authorizers, payloadSigs: payloadSigs)
      
         let msg = signablePlayload?.hexValue ?? ""

@@ -17,6 +17,7 @@ import UIKit
 import WalletConnectPairing
 import WalletConnectNetworking
 import WalletConnectRouter
+import WalletConnectNotify
 import Gzip
 
 class WalletConnectManager: ObservableObject {
@@ -28,7 +29,7 @@ class WalletConnectManager: ObservableObject {
     @Published
     var activePairings: [Pairing] = []
     
-    @Published var pendingRequests: [WalletConnectSign.Request] = []
+    @Published var pendingRequests: [(request: Request, context: VerifyContext?)] = []
     
     var onClientConnected: (() -> Void)?
     
@@ -557,5 +558,12 @@ extension WalletConnectManager {
                 rejectRequest(request: request)
             }
         }
+    }
+}
+
+extension WalletConnectManager {
+    private func configNotify() {
+//        Notify.configure(groupIdentifier: "group.com.walletconnect.sdk", environment: NotifyConfiguration.shared.apnsEnvironment, crypto: DefaultCryptoProvider())
+//        Notify.instance.setLogging(level: .debug)
     }
 }

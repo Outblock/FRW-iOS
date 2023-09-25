@@ -223,6 +223,14 @@ extension AddressBookView {
         var showAddBtn: Bool? = false
         var addAction: (() -> Void)? = nil
 
+        func aName() -> String {
+            
+            guard let name = contact.contactName?.first else {
+                return "A".uppercased()
+            }
+            return name.uppercased()
+        }
+        
         var body: some View {
             HStack {
                 // avatar
@@ -243,7 +251,7 @@ extension AddressBookView {
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 48, height: 48)
                     default:
-                        Text(String((contact.contactName?.first ?? "A").uppercased()))
+                        Text(aName())
                             .foregroundColor(.white)
                             .font(.inter(size: 24, weight: .semibold))
                     }
@@ -282,6 +290,9 @@ extension AddressBookView {
             .padding(EdgeInsets(top: 10, leading: 34, bottom: 10, trailing: 34))
         }
     }
+    
+    
+    
 }
 
 extension AddressBookView {

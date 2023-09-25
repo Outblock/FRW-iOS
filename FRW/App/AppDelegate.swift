@@ -15,6 +15,7 @@ import UIKit
 import WalletCore
 import SwiftyBeaver
 import FirebaseMessaging
+import WalletConnectNotify
 
 #if DEBUG
 import Atlantis
@@ -119,6 +120,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             }
         }
         return true
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Task(priority: .high) {
+            do {
+                try await Notify.instance.register(deviceToken:deviceToken)
+            }catch {
+                log.error("[WalletConnectNotify] register error")
+            }
+            
+        }
     }
 }
 

@@ -49,7 +49,7 @@ struct WalletConnectView: RouteableView {
                 } label: {
                     ItemCell(title: session.peer.name,
                              url: session.peer.url,
-                             network: String(session.namespaces.values.first?.accounts.first?.reference ?? ""),
+                             network: sessionNetwork(session: session),
                              icon: session.peer.icons.first ?? AppPlaceholder.image)
                     .buttonStyle(ScaleButtonStyle())
                     .padding(.horizontal, 16)
@@ -62,14 +62,21 @@ struct WalletConnectView: RouteableView {
         .padding(.top, 20)
     }
     
+    private func sessionNetwork(session: Session) -> String {
+        guard let str = session.namespaces.values.first?.accounts.first?.reference as? String  else {
+            return ""
+        }
+        return str
+    }
+    
     var pendingViews: some View {
         VStack(alignment: .leading) {
             Text("pending_request".localized)
                 .font(.inter(size: 14, weight: .medium))
                 .foregroundColor(Color.LL.Neutrals.text2)
             
-            ForEach(manager.pendingRequests, id: \.id) { request in
-                createPendingItemView(request: request)
+            ForEach(manager.pendingRequests, id: \.request.id) { request in
+                createPendingItemView(request: request.request)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
