@@ -60,7 +60,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         setupUI()
         tryToRestoreAccountWhenFirstLaunch()
-        
+        registerForPushNotifications()
 #if DEBUG
         Atlantis.start()
 #endif
@@ -70,6 +70,18 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         }
         
         return true
+    }
+    
+    func registerForPushNotifications() {
+        UNUserNotificationCenter.current()
+            .requestAuthorization(
+                options: [.alert, .sound, .badge]
+            ) { granted, error in
+                guard granted else { return }
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
     }
     
     func application(_: UIApplication, open url: URL, options _: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
@@ -89,6 +101,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         return GIDSignIn.sharedInstance.handle(url)
     }
+    
+    
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         if let url = userActivity.webpageURL {
@@ -125,7 +139,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Task(priority: .high) {
             do {
-                try await Notify.instance.register(deviceToken:deviceToken)
+//                try await Notify.instance.register(deviceToken:deviceToken)
             }catch {
                 log.error("[WalletConnectNotify] register error")
             }

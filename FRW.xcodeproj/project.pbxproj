@@ -965,6 +965,8 @@
 		4EB006D62A82660C0027D1CC /* ChildAccountAccessibleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB006D42A82660C0027D1CC /* ChildAccountAccessibleManager.swift */; };
 		4EB17C872862947600CA4DAE /* NFTCollectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB17C852862947600CA4DAE /* NFTCollectionModel.swift */; };
 		4EB17C8A28629DE200CA4DAE /* NFTCollectionStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB17C8828629DE200CA4DAE /* NFTCollectionStateManager.swift */; };
+		4EB5BE8F2AC3C11E00C608AF /* Web3 in Frameworks */ = {isa = PBXBuildFile; productRef = 4EB5BE8E2AC3C11E00C608AF /* Web3 */; };
+		4EB5BE912AC3D38400C608AF /* Web3Wallet in Frameworks */ = {isa = PBXBuildFile; productRef = 4EB5BE902AC3D38400C608AF /* Web3Wallet */; };
 		4EB60F90286825960025DD72 /* ContextMenuPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB60F8E286825960025DD72 /* ContextMenuPreview.swift */; };
 		4EBE49262AA1B732000FFFFE /* AppUpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE49252AA1B732000FFFFE /* AppUpdateManager.swift */; };
 		4EBE49272AA1B732000FFFFE /* AppUpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE49252AA1B732000FFFFE /* AppUpdateManager.swift */; };
@@ -975,6 +977,9 @@
 		4EC56B2B281D385D00246878 /* FirebaseConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC56B29281D385D00246878 /* FirebaseConfig.swift */; };
 		4EC56B2D281D3ED000246878 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC56B2C281D3ED000246878 /* FirebaseRemoteConfig */; };
 		4EC56B31281FC57900246878 /* FlowQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC56B2F281FC57900246878 /* FlowQuery.swift */; };
+		4EC6BF0C2AC1E5C800E7DC7A /* HDWalletKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC6BF0B2AC1E5C800E7DC7A /* HDWalletKit */; };
+		4EC6BF182AC1EC7B00E7DC7A /* WalletConnectChat in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC6BF172AC1EC7B00E7DC7A /* WalletConnectChat */; };
+		4EC6BF212AC263CD00E7DC7A /* HDWalletKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC6BF202AC263CD00E7DC7A /* HDWalletKit */; };
 		4EC97652286A07060066811D /* NFTCollectionEnableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC97651286A07060066811D /* NFTCollectionEnableView.swift */; };
 		4EC97653286A07060066811D /* NFTCollectionEnableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC97651286A07060066811D /* NFTCollectionEnableView.swift */; };
 		4ECA7E66284371CA0039A210 /* NFTBlurImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECA7E64284371CA0039A210 /* NFTBlurImageView.swift */; };
@@ -2335,11 +2340,13 @@
 				150D3E392A58719A00F7F2DC /* QRCode in Frameworks */,
 				4ED06E442ABABB9900F49A1A /* WalletCore.xcframework in Frameworks */,
 				156AC7AB27802F9D00ED5E3E /* GoogleAPIClientForREST_Drive in Frameworks */,
+				4EC6BF212AC263CD00E7DC7A /* HDWalletKit in Frameworks */,
 				154B891A276A1EEB00780E93 /* Flow in Frameworks */,
 				154B891B276A1EEB00780E93 /* FirebaseAuth in Frameworks */,
 				15F517FD28C6577000504FDC /* Atlantis in Frameworks */,
 				4E2E48662AC1962B003DBF8E /* WalletConnectAuth in Frameworks */,
 				157D91BE293E102C00AC102B /* GoogleSignIn in Frameworks */,
+				4EB5BE8F2AC3C11E00C608AF /* Web3 in Frameworks */,
 				15F22F07278A899D00FCF772 /* AuthenticationServices.framework in Frameworks */,
 				6A5F15FA2A3185860035AC38 /* SwiftyBeaver in Frameworks */,
 				4E9BFF5D2867631300601339 /* UIKit.framework in Frameworks */,
@@ -2367,6 +2374,7 @@
 				155E373028D3ADC100834C30 /* Highlightr in Frameworks */,
 				4EC56B2D281D3ED000246878 /* FirebaseRemoteConfig in Frameworks */,
 				15D57759277C23BF00045E79 /* CombineMoya in Frameworks */,
+				4EB5BE912AC3D38400C608AF /* Web3Wallet in Frameworks */,
 				154B891F276A1EEB00780E93 /* FirebaseDynamicLinks in Frameworks */,
 				158832CC2894267700142B35 /* WalletConnect in Frameworks */,
 				4ED06E462ABABB9D00F49A1A /* SwiftProtobuf.xcframework in Frameworks */,
@@ -2406,6 +2414,7 @@
 				6A5F15F82A3185310035AC38 /* SwiftyBeaver in Frameworks */,
 				15C58C422868A4EE00BD4FC6 /* UIKit.framework in Frameworks */,
 				6A0454CD28768E9E00A9131C /* SwiftUIPager in Frameworks */,
+				4EC6BF0C2AC1E5C800E7DC7A /* HDWalletKit in Frameworks */,
 				4ED06E422ABABB9500F49A1A /* WalletCore.xcframework in Frameworks */,
 				152BB09428AE8FD100B2A2AA /* Lottie in Frameworks */,
 				6AEA374028A49DBE004545D4 /* MJRefresh in Frameworks */,
@@ -2435,6 +2444,7 @@
 				15C58C522868A4EE00BD4FC6 /* FirebaseDynamicLinks in Frameworks */,
 				15C58C532868A4EE00BD4FC6 /* Kingfisher in Frameworks */,
 				15C58C542868A4EE00BD4FC6 /* FirebaseStorage in Frameworks */,
+				4EC6BF182AC1EC7B00E7DC7A /* WalletConnectChat in Frameworks */,
 				15C58C552868A4EE00BD4FC6 /* SPIndicator in Frameworks */,
 				15C58C562868A4EE00BD4FC6 /* SkeletonUI in Frameworks */,
 				15C58C572868A4EE00BD4FC6 /* Introspect in Frameworks */,
@@ -5186,6 +5196,9 @@
 				6A19A74D2A612FAB00B84F09 /* FirebaseMessaging */,
 				4E2E485A2AC190A0003DBF8E /* WalletConnectNotify */,
 				4E2E48652AC1962B003DBF8E /* WalletConnectAuth */,
+				4EC6BF202AC263CD00E7DC7A /* HDWalletKit */,
+				4EB5BE8E2AC3C11E00C608AF /* Web3 */,
+				4EB5BE902AC3D38400C608AF /* Web3Wallet */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 154B8928276A1EEB00780E93 /* FRW-dev.app */;
@@ -5260,6 +5273,8 @@
 				6A19A74F2A612FC600B84F09 /* FirebaseMessaging */,
 				4E2E48582AC19097003DBF8E /* WalletConnectNotify */,
 				4E2E48632AC195A3003DBF8E /* WalletConnectAuth */,
+				4EC6BF0B2AC1E5C800E7DC7A /* HDWalletKit */,
+				4EC6BF172AC1EC7B00E7DC7A /* WalletConnectChat */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 15C58C6D2868A4EE00BD4FC6 /* FRW.app */;
@@ -5418,6 +5433,8 @@
 				1549CF01299A10C2002B37A5 /* XCRemoteSwiftPackageReference "GzipSwift" */,
 				6A5F15F62A3185300035AC38 /* XCRemoteSwiftPackageReference "SwiftyBeaver" */,
 				150D3E352A58718700F7F2DC /* XCRemoteSwiftPackageReference "QRCode" */,
+				4EC6BF0A2AC1E5C800E7DC7A /* XCRemoteSwiftPackageReference "hdwallet" */,
+				4EB5BE8D2AC3C11E00C608AF /* XCRemoteSwiftPackageReference "web3" */,
 			);
 			productRefGroup = 15EC9DEF274FD1FC00F70CD9 /* Products */;
 			projectDirPath = "";
@@ -8090,6 +8107,22 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		4EB5BE8D2AC3C11E00C608AF /* XCRemoteSwiftPackageReference "web3" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WalletConnect/web3.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.2;
+			};
+		};
+		4EC6BF0A2AC1E5C800E7DC7A /* XCRemoteSwiftPackageReference "hdwallet" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WalletConnect/hdwallet";
+			requirement = {
+				branch = develop;
+				kind = branch;
+			};
+		};
 		4ED6DD0E285A22A800105133 /* XCRemoteSwiftPackageReference "IrregularGradient" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/joogps/IrregularGradient";
@@ -8542,10 +8575,35 @@
 			package = 158832C82894262B00142B35 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
 			productName = WalletConnectAuth;
 		};
+		4EB5BE8E2AC3C11E00C608AF /* Web3 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4EB5BE8D2AC3C11E00C608AF /* XCRemoteSwiftPackageReference "web3" */;
+			productName = Web3;
+		};
+		4EB5BE902AC3D38400C608AF /* Web3Wallet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 158832C82894262B00142B35 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
+			productName = Web3Wallet;
+		};
 		4EC56B2C281D3ED000246878 /* FirebaseRemoteConfig */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 154B887C2765EBA700780E93 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseRemoteConfig;
+		};
+		4EC6BF0B2AC1E5C800E7DC7A /* HDWalletKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4EC6BF0A2AC1E5C800E7DC7A /* XCRemoteSwiftPackageReference "hdwallet" */;
+			productName = HDWalletKit;
+		};
+		4EC6BF172AC1EC7B00E7DC7A /* WalletConnectChat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 158832C82894262B00142B35 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
+			productName = WalletConnectChat;
+		};
+		4EC6BF202AC263CD00E7DC7A /* HDWalletKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4EC6BF0A2AC1E5C800E7DC7A /* XCRemoteSwiftPackageReference "hdwallet" */;
+			productName = HDWalletKit;
 		};
 		4ED6DD0F285A22A800105133 /* IrregularGradient */ = {
 			isa = XCSwiftPackageProductDependency;

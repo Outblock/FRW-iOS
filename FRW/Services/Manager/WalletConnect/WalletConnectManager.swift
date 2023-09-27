@@ -53,7 +53,7 @@ class WalletConnectManager: ObservableObject {
     init() {
         Networking.configure(projectId: LocalEnvManager.shared.walletConnectProjectID, socketFactory: SocketFactory())
         Pair.configure(metadata: metadata)
-        
+        configNotify()
         reloadActiveSessions()
         reloadPairing()
         setUpAuthSubscribing()
@@ -563,7 +563,14 @@ extension WalletConnectManager {
 
 extension WalletConnectManager {
     private func configNotify() {
-//        Notify.configure(groupIdentifier: "group.com.walletconnect.sdk", environment: NotifyConfiguration.shared.apnsEnvironment, crypto: DefaultCryptoProvider())
-//        Notify.instance.setLogging(level: .debug)
+        Notify.configure(groupIdentifier: LocalEnvManager.shared.walletConnectProjectID, 
+                         environment: NotifyConfiguration.shared.apnsEnvironment,
+                         crypto: FlowCryptoProvider())
+        Notify.instance.setLogging(level: .debug)
+        log.info("---")
     }
 }
+/*
+ 1. github xcode
+ 2. 
+ */
