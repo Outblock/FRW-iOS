@@ -33,10 +33,11 @@ class TransactionListViewController: UIViewController {
         let ds = JXSegmentedTitleDataSource()
         ds.titles = [ "transaction_list_transfer_x".localized(transferHandler.totalCount),
                       "transaction_list_transaction_x".localized(transactionHandler.totalCount)]
-        ds.titleNormalColor = UIColor.LL.Neutrals.text
-        ds.titleSelectedColor = UIColor.LL.Primary.salmonPrimary
-        ds.titleNormalFont = .interMedium(size: 16)
-        ds.titleSelectedFont = .interMedium(size: 16)
+        let textColor = UIColor(named: "text.black.8")!
+        ds.titleNormalColor = textColor
+        ds.titleSelectedColor = textColor
+        ds.titleNormalFont = .interMedium(size: 14)
+        ds.titleSelectedFont = .interMedium(size: 14)
         ds.isTitleColorGradientEnabled = true
         ds.itemSpacing = 0
         ds.itemWidth = Router.coordinator.window.bounds.size.width / 2.0
@@ -46,8 +47,8 @@ class TransactionListViewController: UIViewController {
     private lazy var indicator: JXSegmentedIndicatorLineView = {
         let view = JXSegmentedIndicatorLineView()
         view.indicatorCornerRadius = 0
-        view.indicatorHeight = 4
-        view.indicatorColor = UIColor.LL.Primary.salmonPrimary
+        view.indicatorHeight = 2
+        view.indicatorColor = UIColor(named: "line.black")!
         return view
     }()
     

@@ -10,14 +10,15 @@ import UIKit
 private let AllTransfersListCacheKey = "AllTransfersListCacheKey"
 private let AllTransfersListCountKey = "AllTransfersListCountKey"
 private let Limit: Int = 30
-private let CellHeight: CGFloat = 50
+private let CellHeight: CGFloat = 66
 
 class TransferListHandler: TransactionListBaseHandler {
     private lazy var layout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 8
+        layout.minimumLineSpacing = 24
         layout.minimumInteritemSpacing = 0
+        layout.sectionInset = UIEdgeInsets(top: 24, left: 0, bottom: 0, right: 0)
         return layout
     }()
     

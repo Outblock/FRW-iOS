@@ -37,7 +37,7 @@ class FlowTransferItemCell: UICollectionViewCell {
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
         view.font = .interSemiBold(size: 14)
-        view.textColor = UIColor.LL.Neutrals.text
+        view.textColor = UIColor(named: "text.black.8")!
         view.text = "transaction_exec".localized
         return view
     }()
