@@ -65,7 +65,7 @@ extension CurrencyCache {
         
         Task {
             do {
-                let response: CurrencyRateResponse = try await Network.requestWithRawModel(FRWAPI.Utils.currencyRate(requestingCurrency))
+                let response: CurrencyRateResponse = try await Network.request(FRWAPI.Utils.currencyRate(requestingCurrency))
                 if self.currentCurrency != requestingCurrency {
                     // expired response
                     return

@@ -19,7 +19,7 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
         switch self {
         case .currencyRate:
-            return nil
+            return .bearer
         case .retoken:
             return .bearer
         }
@@ -28,7 +28,7 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
         switch self {
         case .currencyRate:
-            return .init(string: "https://api.exchangerate.host")!
+            return Config.get(.lilico)
         case .retoken:
             #if LILICOPROD
             return .init(string: "https://scanner.lilico.app")!
@@ -42,7 +42,7 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
     var path: String {
         switch self {
         case .currencyRate:
-            return "/convert"
+            return "/v1/crypto/exchange"
         case .retoken:
             return "/retoken"
         }
@@ -69,7 +69,7 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
     var headers: [String : String]? {
         switch self {
         case .currencyRate:
-            return nil
+            return FRWAPI.commonHeaders
         case .retoken:
             return FRWAPI.commonHeaders
         }

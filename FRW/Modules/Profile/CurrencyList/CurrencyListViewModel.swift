@@ -32,7 +32,7 @@ class CurrencyListViewModel: ObservableObject {
         HUD.loading()
         Task {
             do {
-                let response: CurrencyRateResponse = try await Network.requestWithRawModel(FRWAPI.Utils.currencyRate(newCurrency))
+                let response: CurrencyRateResponse = try await Network.request(FRWAPI.Utils.currencyRate(newCurrency))
                 
                 if let success = response.success, success != true {
                     failedBlock()
