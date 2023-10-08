@@ -21,19 +21,18 @@ extension CryptoSummaryResponse {
 
     struct Price: Codable {
         let last: Double
-        let low: Double
-        let high: Double
+        let low: Double?
+        let high: Double?
         let change: Change
     }
 
     struct Change: Codable {
-        let absolute: Double
+        let absolute: Double?
         let percentage: Double
     }
 }
 
 struct CryptoSummaryResponse: Codable {
-    let allowance: CryptoSummaryResponse.Allowance
     let result: CryptoSummaryResponse.Result
 
     func getLastRate() -> Double {
@@ -45,19 +44,20 @@ struct CryptoSummaryResponse: Codable {
     }
     
     static func createFixedRateResponse(fixedRate: Decimal) -> CryptoSummaryResponse {
-        let allowance = CryptoSummaryResponse.Allowance(cost: 0, remaining: 0)
+//        let allowance = CryptoSummaryResponse.Allowance(cost: 0, remaining: 0)
         let change = Change(absolute: 0, percentage: 0)
         let price = Price(last: fixedRate.doubleValue, low: fixedRate.doubleValue, high: fixedRate.doubleValue, change: change)
         let result = CryptoSummaryResponse.Result(price: price)
-        return CryptoSummaryResponse(allowance: allowance, result: result)
+        return CryptoSummaryResponse(result: result)
     }
 }
 
 // MARK: -
 
 struct CryptoHistoryResponse: Codable {
-    let allowance: CryptoSummaryResponse.Allowance
+//    let allowance: CryptoSummaryResponse.Allowance
     let result: [String: [[Double]]]
+    
     
     func parseMarketQuoteData(rangeType: TokenDetailView.ChartRangeType) -> [TokenDetailView.Quote] {
         guard let array = result["\(rangeType.frequency.rawValue)"] else {
