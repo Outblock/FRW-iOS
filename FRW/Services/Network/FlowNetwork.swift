@@ -820,11 +820,15 @@ extension FlowNetwork {
 
 extension Flow.TransactionResult {
     var isProcessing: Bool {
-        return status < .sealed && errorMessage.isEmpty
+        status < .sealed && errorMessage.isEmpty
     }
     
     var isComplete: Bool {
-        return status == .sealed && errorMessage.isEmpty
+        status == .sealed && errorMessage.isEmpty
+    }
+    
+    var isExpired: Bool {
+        status == .expired
     }
     
     var isFailed: Bool {
@@ -832,6 +836,9 @@ extension Flow.TransactionResult {
             return false
         }
         
+        if isExpired {
+            return true
+        }
         return !errorMessage.isEmpty
     }
 }
