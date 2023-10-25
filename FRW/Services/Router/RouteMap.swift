@@ -216,6 +216,7 @@ extension RouteMap {
         case backToAccountSetting
         
         case linkedAccount
+        case accountKeys
     }
 }
 
@@ -283,6 +284,8 @@ extension RouteMap.Profile: RouterTarget {
             navi.popToRootViewController(animated: true)
         case .linkedAccount:
             navi.push(content: LinkedAccountView())
+        case .accountKeys:
+            navi.push(content: AccountKeysView())
         }
     }
 }

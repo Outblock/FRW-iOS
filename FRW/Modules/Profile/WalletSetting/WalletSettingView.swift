@@ -24,44 +24,58 @@ struct WalletSettingView: RouteableView {
             
             ScrollView {
                 VStack(spacing: 16) {
-                        VStack(spacing: 0) {
-                            Button {
-                                if SecurityManager.shared.securityType == .none {
-                                    Router.route(to: RouteMap.Profile.privateKey(true))
-                                    return
-                                }
-                                
-                                Task {
-                                    let result = await SecurityManager.shared.inAppVerify()
-                                    if result {
-                                        Router.route(to: RouteMap.Profile.privateKey(false))
-                                    }
-                                }
-                            } label: {
-                                ProfileSecureView.ItemCell(title: "private_key".localized, style: .arrow, isOn: false, toggleAction: nil)
+                    VStack(spacing: 0) {
+                        Button {
+                            if SecurityManager.shared.securityType == .none {
+                                Router.route(to: RouteMap.Profile.privateKey(true))
+                                return
                             }
                             
-                            Divider().foregroundColor(.LL.Neutrals.background)
-                            
-                            Button {
-                                if SecurityManager.shared.securityType == .none {
-                                    Router.route(to: RouteMap.Profile.manualBackup(true))
-                                    return
+                            Task {
+                                let result = await SecurityManager.shared.inAppVerify()
+                                if result {
+                                    Router.route(to: RouteMap.Profile.privateKey(false))
                                 }
-                                
-                                Task {
-                                    let result = await SecurityManager.shared.inAppVerify()
-                                    if result {
-                                        Router.route(to: RouteMap.Profile.manualBackup(false))
-                                    }
-                                }
-                            } label: {
-                                ProfileSecureView.ItemCell(title: "recovery_phrase".localized, style: .arrow, isOn: false, toggleAction: nil)
-                                    .contentShape(Rectangle())
                             }
+                        } label: {
+                            ProfileSecureView.ItemCell(title: "private_key".localized, style: .arrow, isOn: false, toggleAction: nil)
                         }
-                        .padding(.horizontal, 16)
-                        .roundedBg()
+                        
+                        Divider().foregroundColor(.LL.Neutrals.background)
+                        
+                        Button {
+                            if SecurityManager.shared.securityType == .none {
+                                Router.route(to: RouteMap.Profile.manualBackup(true))
+                                return
+                            }
+                            
+                            Task {
+                                let result = await SecurityManager.shared.inAppVerify()
+                                if result {
+                                    Router.route(to: RouteMap.Profile.manualBackup(false))
+                                }
+                            }
+                        } label: {
+                            ProfileSecureView.ItemCell(title: "recovery_phrase".localized, style: .arrow, isOn: false, toggleAction: nil)
+                                .contentShape(Rectangle())
+                        }
+                        
+                        
+                    }
+                    .padding(.horizontal, 16)
+                    .roundedBg()
+                    
+                    VStack(spacing: 0) {
+                        Button {
+                            Router.route(to: RouteMap.Profile.accountKeys)
+                        } label: {
+                            ProfileSecureView.ItemCell(title: "wallet_account_key".localized, style: .arrow, isOn: false, toggleAction: nil)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 64)
+                    .padding(.horizontal, 16)
+                    .roundedBg()
                     
                     VStack(spacing: 0) {
                         
@@ -78,7 +92,7 @@ struct WalletSettingView: RouteableView {
                             }
                             .tint(.LL.Primary.salmonPrimary)
                             .onChange(of: isOn) { value in
-        //                        toggleAction?(value)
+                                //                        toggleAction?(value)
                             }
                             
                         }
@@ -87,8 +101,8 @@ struct WalletSettingView: RouteableView {
                             .font(.inter(size: 12, weight: .regular))
                             .foregroundColor(Color.LL.Neutrals.neutrals7)
                             .frame(maxWidth: .infinity, alignment: .leading)
-
-
+                        
+                        
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 80)
@@ -106,7 +120,7 @@ struct WalletSettingView: RouteableView {
             }
             
             VStack(alignment: .trailing) {
-
+                
                 Button {
                     vm.resetWalletAction()
                 } label: {
@@ -120,7 +134,7 @@ struct WalletSettingView: RouteableView {
                 }
                 .padding(.horizontal, 18)
             }
-                        
+            
         }
         .backgroundFill(.LL.background)
         .applyRouteable(self)

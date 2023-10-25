@@ -837,3 +837,9 @@
 "coins_cap" = "Coins";
 "accessible_not_x_x" = "Flow Ref doesn't have access to %@ in %@ Account, please check your linked account settings.";
 "view_empty" = "View Empty";
+"wallet_account_key" = "Account Keys";
+"account_key_key" = "Public Key";
+"account_key_curve" = "Curve";
+"account_key_hash" = "Hash";
+"account_key_number" = "Sequence Number";
+"account_key_current_tips" = "Can't revoke current device key";
