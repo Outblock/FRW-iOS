@@ -265,7 +265,9 @@ extension WalletConnectManager {
     
     @objc func reloadPendingRequests() {
         if UserManager.shared.isLoggedIn {
-            self.pendingRequests = Sign.instance.getPendingRequests()
+            self.pendingRequests = Sign.instance.getPendingRequests().map({ (request: Request, context: VerifyContext?) in
+                return request
+            })
         }
     }
 }
