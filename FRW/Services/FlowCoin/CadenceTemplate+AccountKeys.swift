@@ -8,7 +8,12 @@
 import Foundation
 
 extension CadenceTemplate {
-    static let AccountKeys = """
-    
+    static let revokeAccountKey = """
+    transaction(keyIndex: Int) {
+        prepare(signer: AuthAccount) {
+            // Get a key from an auth account.
+            let keyA = signer.keys.revoke(keyIndex: keyIndex)
+        }
+    }
     """
 }

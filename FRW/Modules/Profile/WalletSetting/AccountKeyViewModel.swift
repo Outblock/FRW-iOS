@@ -12,9 +12,12 @@ class AccountKeyViewModel: ObservableObject {
     @Published var allKeys: [AccountKeyModel] = []
     @Published var status: PageStatus = .loading
     
+    @Published var showRovekeView = false
+    var revokeModel: AccountKeyModel?
+    
     init() {
         let model = Flow.AccountKey(publicKey: Flow.PublicKey(hex: "abc"), signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 1000)
-        allKeys = [AccountKeyModel(accountKey: model),AccountKeyModel(accountKey: model),AccountKeyModel(accountKey: model)]
+        allKeys = [AccountKeyModel(accountKey: model)]
         fetch()
     }
     
@@ -32,8 +35,47 @@ class AccountKeyViewModel: ObservableObject {
                 }
                 
             } catch {
+                allKeys = []
                 status = .error
             }
+        }
+    }
+    
+    func revokeKey(at model: AccountKeyModel) {
+        
+        
+        if showRovekeView {
+            showRovekeView = false
+        }
+        self.revokeModel = model
+        withAnimation(.easeOut(duration: 0.2)) {
+            showRovekeView = true
+        }
+    }
+    
+    func revokeKeyAction() {
+        Task {
+            guard let address = WalletManager.shared.getPrimaryWalletAddress(), let model = self.revokeModel else {
+                HUD.info(title: "account_key_fail_tips".localized)
+                return
+            }
+            do {
+                _ = try await FlowNetwork.revokeAccountKey(by: model.accountKey.index, at: Flow.Address(hex: address))
+                DispatchQueue.main.async {
+                    self.showRovekeView = false
+                }
+                fetch()
+            }catch {
+                HUD.error(title: "account_key_fail_tips".localized)
+                log.error("revoke key: \(error)")
+            }
+        }
+    }
+    
+    func cancelRevoke() {
+        DispatchQueue.main.async {
+            self.revokeModel = nil
+            self.showRovekeView = false
         }
     }
 }

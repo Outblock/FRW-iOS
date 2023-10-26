@@ -6,10 +6,13 @@
 //
 
 import SwiftUI
+import Flow
 
 struct AccountKeysView: RouteableView {
     
     @StateObject private var vm = AccountKeyViewModel()
+    
+    
     
     var title: String {
         "wallet_account_key".localized.capitalized
@@ -19,21 +22,35 @@ struct AccountKeysView: RouteableView {
         ScrollView {
             ForEach(0..<vm.allKeys.count, id: \.self) { index in
                 let model = vm.allKeys[index]
-                AccountKeysView.Cell(model: model)
+                AccountKeysView.Cell(model: model){ model in
+                    self.onRevokeKey(at: model)
+                }
             }
             
         }
         .backgroundFill(.Theme.Background.grey)
-        .applyRouteable(self)
         .mockPlaceholder(vm.status == PageStatus.loading)
+        .halfSheet(showSheet: $vm.showRovekeView) {
+            AccountKeyRevokeView()
+                .environmentObject(vm)
+        }
+        .applyRouteable(self)
     }
     
+    func onRevokeKey(at model: AccountKeyModel) {
+        guard !model.isCurrent() else {
+            HUD.info(title: "account_key_current_tips".localized)
+            return
+        }
+        vm.revokeKey(at: model)
+    }
 }
 
 extension AccountKeysView {
     struct Cell: View {
         
         var model: AccountKeyModel
+        var onRevoke: ((AccountKeyModel) -> ())?
         @State var isExpanding = false
         @State var isShowRevoke = false
         
@@ -96,15 +113,12 @@ extension AccountKeysView {
                 
             }
             .onViewSwipe(title: "Revoke") {
-                onRevoke()
+                onRevokeAction()
             }
         }
         
-        func onRevoke() {
-            if model.isCurrent() {
-                HUD.info(title: "account_key_current_tips".localized)
-            }
-            //TODO: revoke
+        func onRevokeAction() {
+            onRevoke?(model)
         }
     }
 }
@@ -114,16 +128,14 @@ extension AccountKeysView {
         var model: AccountKeyModel
         
         var body: some View {
-            HStack(spacing: 0) {
-                Color.clear
+            ZStack() {
+                model.weightBG()
                     .frame(width: model.weightPadding())
+                    .cornerRadius(2)
                 Text(model.weightDes())
                     .font(.inter(size: 9, weight: .bold))
-                    .frame(width: 72-model.weightPadding(),height: 16)
+                    .frame(width: 72,height: 16)
                     .foregroundStyle(Color.Theme.Text.white9)
-                    .background(model.weightBG())
-                    .cornerRadius(2)
-                
             }
             .frame(width: 72, height: 16)
             .background(.Theme.Text.black1)

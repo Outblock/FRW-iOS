@@ -842,3 +842,31 @@ extension Flow.TransactionResult {
         return !errorMessage.isEmpty
     }
 }
+
+
+// MARK: - Account Key
+extension FlowNetwork {
+    static func revokeAccountKey(by index: Int, at address: Flow.Address) async throws -> Flow.ID {
+        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+            cadence {
+                CadenceTemplate.revokeAccountKey
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            
+            proposer {
+                address
+            }
+            
+            authorizers {
+                address
+            }
+            
+            arguments {
+                [.int(index)]
+            }
+        })
+    }
+}

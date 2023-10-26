@@ -843,3 +843,6 @@
 "account_key_hash" = "Hash";
 "account_key_number" = "Sequence Number";
 "account_key_current_tips" = "Can't revoke current device key";
+"account_key_fail_tips" = "Revoke device key fail";
+"account_key_revoke_title" = "Are you sure you want to revoke this key?";
+"account_key_revoke_content" = "Once you revoke this key,there is no way to re-activate this key.";
