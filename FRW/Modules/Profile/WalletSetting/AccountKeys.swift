@@ -128,7 +128,7 @@ extension AccountKeysView {
         var model: AccountKeyModel
         
         var body: some View {
-            ZStack() {
+            ZStack(alignment:.leading) {
                 model.weightBG()
                     .frame(width: model.weightPadding())
                     .cornerRadius(2)
@@ -138,7 +138,7 @@ extension AccountKeysView {
                     .foregroundStyle(Color.Theme.Text.white9)
             }
             .frame(width: 72, height: 16)
-            .background(.Theme.Text.black1)
+            .background(.Theme.Text.black3)
             .cornerRadius(2)
         }
     }

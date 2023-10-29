@@ -20,15 +20,13 @@ struct AccountKeyRevokeView: View {
                     .font(.inter(size: 14))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(Color.Theme.Accent.red)
-                
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundStyle(Color.Theme.Accent.red)
-                
-                
+                Image("icon_key_revoke")
+                    .frame(width: 64, height: 64)
+                    .padding(.top, 24)
                 
                 Spacer()
                 
-                WalletSendButtonView(allowEnable: .constant(true)) {
+                WalletSendButtonView(allowEnable: .constant(true), buttonText: "hold_to_revoke".localized, activeColor: Color.Theme.Accent.red) {
                     vm.revokeKeyAction()
                 }
                     .padding(.bottom, 10)

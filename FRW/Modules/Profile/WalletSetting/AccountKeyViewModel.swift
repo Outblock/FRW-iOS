@@ -164,7 +164,7 @@ struct AccountKeyModel {
     }
     
     func weightPadding() -> Double {
-        let res = 72.0 - Double(accountKey.weight)/1000.0 * 72.0
+        let res = Double(accountKey.weight)/1000.0 * 72.0
         return min(72.0, res)
     }
     
