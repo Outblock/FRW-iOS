@@ -315,6 +315,7 @@ extension ProfileView {
         
         enum Row {
             case walletConnect
+            case devices
         }
         
         var body: some View {
@@ -330,28 +331,61 @@ extension ProfileView {
                             desc: Row.walletConnect.desc,
                             imageName: Row.walletConnect.imageName,
                             sysImageColor: Row.walletConnect.sysImageColor)
-                        .contentShape(Rectangle())
+                        
                     }
                     .buttonStyle(ScaleButtonStyle())
+                    
+                    Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
+                    //TODO: diveces
+                    Button {
+                        Router.route(to: RouteMap.Profile.devices)
+                    } label: {
+                        ProfileView.SettingItemCell(
+                            iconName: Row.devices.iconName,
+                            title: Row.devices.title,
+                            style: Row.devices.style,
+                            desc: Row.devices.desc,
+                            imageName: Row.devices.imageName,
+                            sysImageColor: Row.devices.sysImageColor)
+                    }
                 }
-                .background(RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.LL.bgForIcon))
+                
             }
+            .background(RoundedRectangle(cornerRadius: 16)
+                .fill(Color.LL.bgForIcon))
         }
     }
 }
 
 extension ProfileView.WalletConnectView.Row {
     var iconName: String {
-        "walletconnect"
+        switch self {
+        case .walletConnect:
+            return "walletconnect"
+        case .devices:
+            return "devices"
+        }
+        
     }
     
     var title: String {
-        "walletconnect".localized
+        switch self {
+        case .walletConnect:
+            "walletconnect".localized
+        case .devices:
+            "devices".localized
+        }
+        
     }
     
     var style: ProfileView.SettingItemCell.Style {
-        return .arrow
+        switch self {
+        case .walletConnect:
+            return .arrow
+        case .devices:
+            return .arrow
+        }
+        
     }
     
     var desc: String {
@@ -872,3 +906,6 @@ extension ProfileView {
         }
     }
 }
+
+
+

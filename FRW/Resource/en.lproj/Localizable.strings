@@ -847,3 +847,12 @@
 "account_key_revoke_title" = "Are you sure you want\nto revoke this key?";
 "account_key_revoke_content" = "Once you revoke this key,\nthere is no way to re-activate this key.";
 "hold_to_revoke" = "Hold to Revoke";
+"devices" = "Devices";
+"Scan_to_Sync_Extension_Wallet"="Scan to Sync Extension Wallet";
+"Scan_sync_detal"="Scan QR code shown by the Flow Reference Browser\nextension to sync your wallet.";
+"add_other_device" = "Add Other Device";
+"current_device" = "Current Device";
+"other_device" = "Other Devices";
+"device_info" = "Device Info";
+"revoke_device" = "Revoke Device";
+"device_info" = "Device Info";

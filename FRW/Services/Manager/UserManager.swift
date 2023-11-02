@@ -9,6 +9,7 @@ import Firebase
 import FirebaseAuth
 import Foundation
 import Combine
+import Flow
 
 class UserManager: ObservableObject {
     static let shared = UserManager()
@@ -137,7 +138,10 @@ extension UserManager {
         }
 
         let key = hdWallet.flowAccountKey
-        let request = RegisterRequest(username: username, accountKey: key.toCodableModel())
+        if IPManager.shared.info == nil {
+            await IPManager.shared.fetch()
+        }
+        let request = RegisterRequest(username: username, accountKey: key.toCodableModel(), deviceInfo: IPManager.shared.toParams())
         let model: RegisterResponse = try await Network.request(FRWAPI.User.register(request))
 
         try await finishLogin(mnemonic: hdWallet.mnemonic, customToken: model.customToken)
@@ -206,8 +210,15 @@ extension UserManager {
         guard let signature = hdWallet.sign(token) else {
             throw LLError.restoreLoginFailed
         }
-
-        let request = LoginRequest(publicKey: publicKey, signature: signature)
+        
+        await IPManager.shared.fetch()
+        
+        let key = AccountKey(hashAlgo: WalletManager.shared.hashAlgo.index,
+                             publicKey: publicKey,
+                             signAlgo: WalletManager.shared.signatureAlgo.index)
+        
+        
+        let request = LoginRequest(signature: signature, accountKey: key, deviceInfo: IPManager.shared.toParams())
         let response: Network.Response<LoginResponse> = try await Network.requestWithRawModel(FRWAPI.User.login(request))
         if response.httpCode == 404 {
             throw LLError.accountNotFound

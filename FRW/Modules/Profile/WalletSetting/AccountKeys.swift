@@ -205,15 +205,20 @@ struct ViewSwipe: ViewModifier {
         content
             .background(
                 GeometryReader { geometry in
-                    ZStack {
-                        Rectangle()
-                            .cornerRadius(16, style: .continuous)
-                            .foregroundColor(Color.Theme.Accent.red)
-                        Text(title)
-                            .font(.inter(size: 16, weight: .semibold))
-                            .foregroundStyle(Color.Theme.Text.white9)
-                            .frame(width: 89,height: 52)
-                            .layoutPriority(-1)
+                    
+                    HStack {
+                        ZStack {
+                            Rectangle()
+                                .cornerRadius(16, style: .continuous)
+                                .foregroundColor(Color.Theme.Accent.red)
+                            Text(title)
+                                .font(.inter(size: 16, weight: .semibold))
+                                .foregroundStyle(Color.Theme.Text.white9)
+                                .frame(width: 89,height: 52)
+                                .layoutPriority(-1)
+                        }
+                        Color.clear
+                            .frame(width: 18)
                     }
                     .frame(width: -offset.width)
                     .clipShape(Rectangle() )
@@ -275,7 +280,7 @@ struct ViewSwipe: ViewModifier {
     
     let deletionDistance = CGFloat(200)
     let halfDeletionDistance = CGFloat(50)
-    let tappableDeletionWidth = CGFloat(89)
+    let tappableDeletionWidth = CGFloat(89+18)
 }
 
 extension View {

@@ -839,7 +839,7 @@ extension Flow.AccountKey {
     func toCodableModel() -> AccountKey {
         return AccountKey(hashAlgo: hashAlgo.index,
                           publicKey: publicKey.hex,
-                          sign_algo: signAlgo.index,
+                          signAlgo: signAlgo.index,
                           weight: weight)
     }
 }

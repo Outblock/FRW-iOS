@@ -29,8 +29,19 @@ class AccountKeyViewModel: ObservableObject {
                 }
                 let address = WalletManager.shared.getPrimaryWalletAddress() ?? ""
                 let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
+                let devices: KeyResponse = try await Network.request(FRWAPI.AccountKey.keys)
                 DispatchQueue.main.async {
                     self.allKeys = account.keys.map { AccountKeyModel(accountKey: $0) }
+                    self.allKeys = self.allKeys.map({ model in
+                        var model = model
+                        let devicesInfo = devices.result.first { response in
+                            response.pubkey.publicKey == model.accountKey.publicKey.description
+                        }
+                        if let info = devicesInfo {
+                            model.name = info.device.deviceName ?? ""
+                        }
+                        return model;
+                    })
                     self.status = self.allKeys.count == 0 ? .empty : .finished
                 }
                 
@@ -39,6 +50,10 @@ class AccountKeyViewModel: ObservableObject {
                 status = .error
             }
         }
+    }
+    
+    private func fetchDeviceAndKey() {
+        
     }
     
     func revokeKey(at model: AccountKeyModel) {
@@ -60,10 +75,11 @@ class AccountKeyViewModel: ObservableObject {
                 return
             }
             do {
-                _ = try await FlowNetwork.revokeAccountKey(by: model.accountKey.index, at: Flow.Address(hex: address))
+                let flowId = try await FlowNetwork.revokeAccountKey(by: model.accountKey.index, at: Flow.Address(hex: address))
                 DispatchQueue.main.async {
                     self.showRovekeView = false
                 }
+                log.debug("revoke flow id:\(flowId)")
                 fetch()
             }catch {
                 HUD.error(title: "account_key_fail_tips".localized)
@@ -88,6 +104,7 @@ struct AccountKeyModel {
     
     let accountKey: Flow.AccountKey
     var expanding: Bool = false
+    var name: String = ""
     
     init(accountKey: Flow.AccountKey) {
         self.accountKey = accountKey
@@ -98,13 +115,11 @@ struct AccountKeyModel {
         if accountKey.revoked {
             return "Revoked"
         }
-        
+        //TODO: #six revoking
         if isCurrent() {
             return "Current Device"
         }
-        
-        //TODO: #six
-        return ""
+        return name
     }
     
     func deviceStyle() -> (Color, Color) {

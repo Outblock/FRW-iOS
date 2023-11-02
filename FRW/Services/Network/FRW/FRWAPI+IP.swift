@@ -1,20 +1,20 @@
 //
-//  FRWAPI+AccountKey.swift
+//  FRWAPI+IP.swift
 //  FRW
 //
-//  Created by cat on 2023/10/20.
+//  Created by cat on 2023/10/26.
 //
 
 import Foundation
 import Moya
 
 extension FRWAPI {
-    enum AccountKey {
-        case keys
+    enum IP {
+        case info
     }
 }
 
-extension FRWAPI.AccountKey: TargetType, AccessTokenAuthorizable {
+extension FRWAPI.IP: TargetType, AccessTokenAuthorizable {
     
     var authorizationType: AuthorizationType? {
         return .bearer
@@ -26,8 +26,8 @@ extension FRWAPI.AccountKey: TargetType, AccessTokenAuthorizable {
     
     var path: String {
         switch self {
-        case .keys:
-            return "/v1/user/keys"
+        case .info:
+            return "/v1/user/location"
         }
     }
     
@@ -37,7 +37,7 @@ extension FRWAPI.AccountKey: TargetType, AccessTokenAuthorizable {
     
     var task: Task {
         switch self {
-        case .keys:
+        case .info: 
             return .requestParameters(parameters: [:], encoding: URLEncoding.queryString)
         }
     }

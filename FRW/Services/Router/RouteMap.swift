@@ -217,6 +217,8 @@ extension RouteMap {
         
         case linkedAccount
         case accountKeys
+        case devices
+        case deviceInfo(DeviceInfoModel)
     }
 }
 
@@ -286,7 +288,12 @@ extension RouteMap.Profile: RouterTarget {
             navi.push(content: LinkedAccountView())
         case .accountKeys:
             navi.push(content: AccountKeysView())
+        case .devices:
+            navi.push(content: DevicesView())
+        case .deviceInfo(let model):
+            navi.push(content: DevicesInfoView(info: model))
         }
+        
     }
 }
 

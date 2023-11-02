@@ -42,6 +42,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         let console = ConsoleDestination()
         console.format = "$DHH:mm:ss.SSS$d $C$L$c $N.$F:$l - $M - $X"
         log.addDestination(console)
+        Task {
+            await IPManager.shared.fetch()
+            IPManager.shared.toParams()
+        }
+        
 #endif
         
         FirebaseApp.configure()
