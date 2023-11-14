@@ -10,6 +10,7 @@ import FirebaseAuth
 import Foundation
 import Combine
 import Flow
+import FlowWalletCore
 
 class UserManager: ObservableObject {
     static let shared = UserManager()
@@ -137,7 +138,17 @@ extension UserManager {
             }
         }
 
-        let key = hdWallet.flowAccountKey
+//        let key = hdWallet.flowAccountKey
+        
+        let sec = try WallectSecureEnclave()
+        guard let publickeyValue = sec.key.publickeyValue else {
+            log.error("\(username): \(mnemonic ?? ""): generate private key empty")
+            throw LLError.signFailed
+        }
+        
+        let publicKey = Flow.PublicKey(hex: publickeyValue)
+        let key = Flow.AccountKey(publicKey: publicKey, signAlgo: .ECDSA_P256, hashAlgo: .SHA3_256, weight: 1000)
+
         if IPManager.shared.info == nil {
             await IPManager.shared.fetch()
         }
@@ -146,6 +157,9 @@ extension UserManager {
 
         try await finishLogin(mnemonic: hdWallet.mnemonic, customToken: model.customToken)
         WalletManager.shared.asyncCreateWalletAddressFromServer()
+        
+        try WallectSecureEnclave.Store.store(key: model.id , value: sec.key.privateKey!.dataRepresentation)
+        
     }
 }
 
@@ -173,7 +187,7 @@ extension UserManager {
         
         Task {
             do {
-                try await UserManager.shared.restoreLogin(withMnemonic: mnemonic)
+                try await UserManager.shared.restoreLogin(withMnemonic: mnemonic, userId: uid)
                 HUD.dismissLoading()
                 HUD.success(title: "login_success".localized)
             } catch {
@@ -188,7 +202,7 @@ extension UserManager {
         }
     }
     
-    func restoreLogin(withMnemonic mnemonic: String) async throws {
+    func restoreLogin(withMnemonic mnemonic: String, userId: String) async throws {
         guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) else {
             throw LLError.incorrectPhrase
         }
@@ -206,11 +220,20 @@ extension UserManager {
             throw LLError.restoreLoginFailed
         }
 
-        let publicKey = hdWallet.getPublicKey()
+        var publicKey = hdWallet.getPublicKey()
         guard let signature = hdWallet.sign(token) else {
             throw LLError.restoreLoginFailed
         }
         
+        if let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+            let sec = try WallectSecureEnclave(privateKey: data)
+            let signature = try sec.sign(text: token/*, prefix: Flow.DomainTag.user.normalize*/)
+            let newKey = sec.key.publickeyValue ?? ""
+            if !newKey.isEmpty {
+                publicKey = newKey
+            }
+        }
+
         await IPManager.shared.fetch()
         
         let key = AccountKey(hashAlgo: WalletManager.shared.hashAlgo.index,
@@ -246,7 +269,7 @@ extension UserManager {
             return
         }
         
-        try await restoreLogin(withMnemonic: mnemonic)
+        try await restoreLogin(withMnemonic: mnemonic, userId: uid)
     }
 }
 

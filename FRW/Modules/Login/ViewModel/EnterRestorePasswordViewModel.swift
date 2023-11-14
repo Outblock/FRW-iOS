@@ -33,7 +33,7 @@ class EnterRestorePasswordViewModel: ObservableObject {
         
         Task {
             do {
-                try await UserManager.shared.restoreLogin(withMnemonic: mnemonic)
+                try await UserManager.shared.restoreLogin(withMnemonic: mnemonic,userId: "")
                 
                 DispatchQueue.main.async {
                     if let uid = UserManager.shared.activatedUID, MultiAccountStorage.shared.getBackupType(uid) == .none {
