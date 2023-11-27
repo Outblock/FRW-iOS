@@ -42,7 +42,7 @@ class WalletConnectManager: ObservableObject {
     var currentRequestInfo: RequestInfo?
     var currentMessageInfo: RequestMessageInfo?
     
-    //TODO: rebranding @Hao @six
+    
     let metadata = AppMetadata(
         name: "Flow Core",
         description: "Digital wallet created for everyone.",

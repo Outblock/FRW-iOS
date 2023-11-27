@@ -11,6 +11,7 @@ import Foundation
 import KeychainAccess
 import WalletCore
 import Kingfisher
+import FlowWalletCore
 
 // MARK: - Define
 
@@ -42,6 +43,7 @@ class WalletManager: ObservableObject {
     private var childAccountInited: Bool = false
 
     private var hdWallet: HDWallet?
+    private var flowAccountKey: Flow.AccountKey?
 
     var mainKeychain = Keychain(service: Bundle.main.bundleIdentifier ?? defaultBundleID)
         .label("Lilico app backup")
@@ -513,6 +515,8 @@ extension WalletManager {
         try await fetchBalance()
         try await fetchAccessible()
         ChildAccountManager.shared.refresh()
+        flowAccountKey = nil
+        try await findFlowAccount()
     }
 
     private func fetchSupportedCoins() throws {
@@ -693,20 +697,31 @@ extension WalletManager: FlowSigner {
     
     public var hashAlgo: Flow.HashAlgorithm {
         // TODO: FIX ME, make it dynamic
-        .SHA2_256
+        flowAccountKey?.hashAlgo ?? .SHA2_256
     }
     
     public var signatureAlgo: Flow.SignatureAlgorithm {
         // TODO: FIX ME, make it dynamic
-        .ECDSA_SECP256k1
+        flowAccountKey?.signAlgo ?? .ECDSA_SECP256k1
     }
     
     public var keyIndex: Int {
         // TODO: FIX ME, make it dynamic
-        0
+        flowAccountKey?.index ?? 0
     }
     
     public func sign(transaction: Flow.Transaction, signableData: Data) async throws -> Data {
+        
+        if flowAccountKey == nil {
+            try await findFlowAccount()
+        }
+        
+        if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+            let sec = try WallectSecureEnclave(privateKey: data)
+            var signature = try sec.sign(data: signableData)
+            return signature
+        }
+        
         guard let hdWallet = hdWallet else {
             throw LLError.emptyWallet
         }
@@ -765,6 +780,24 @@ extension WalletManager: FlowSigner {
         }
         signature.removeLast()
         return signature
+    }
+    
+    func findFlowAccount() async throws {
+        
+        guard let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) else {
+            return
+        }
+        let sec = try WallectSecureEnclave(privateKey: data)
+        guard let publicKey = sec.key.publickeyValue else {
+            return
+        }
+        
+        let address = getPrimaryWalletAddress() ?? ""
+        let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
+        let sortedAccount = account.keys.sorted { $0.weight > $1.weight}
+        flowAccountKey = sortedAccount.filter{
+            $0.publicKey.description == publicKey
+        }.first
     }
 }
 

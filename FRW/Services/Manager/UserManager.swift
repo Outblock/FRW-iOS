@@ -145,9 +145,8 @@ extension UserManager {
             log.error("\(username): \(mnemonic ?? ""): generate private key empty")
             throw LLError.signFailed
         }
-        
         let publicKey = Flow.PublicKey(hex: publickeyValue)
-        let key = Flow.AccountKey(publicKey: publicKey, signAlgo: .ECDSA_P256, hashAlgo: .SHA3_256, weight: 1000)
+        let key = Flow.AccountKey(publicKey: publicKey, signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 1000)
 
         if IPManager.shared.info == nil {
             await IPManager.shared.fetch()
@@ -221,17 +220,20 @@ extension UserManager {
         }
 
         var publicKey = hdWallet.getPublicKey()
-        guard let signature = hdWallet.sign(token) else {
+        guard var signature = hdWallet.sign(token) else {
             throw LLError.restoreLoginFailed
         }
         
-        if let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+        if let data = try WallectSecureEnclave.Store.fetch(by: userId), !data.isEmpty {
             let sec = try WallectSecureEnclave(privateKey: data)
-            let signature = try sec.sign(text: token/*, prefix: Flow.DomainTag.user.normalize*/)
-            let newKey = sec.key.publickeyValue ?? ""
-            if !newKey.isEmpty {
-                publicKey = newKey
+            guard let sig = try sec.sign(text: token, prefix: Flow.DomainTag.user.normalize),
+                  let newKey = sec.key.publickeyValue, 
+                    !newKey.isEmpty
+            else {
+                throw LLError.signFailed
             }
+            signature = sig
+            publicKey = newKey
         }
 
         await IPManager.shared.fetch()

@@ -32,6 +32,7 @@ enum WalletError: Error {
     case existingMnemonicMismatch
     case storeAndActiveMnemonicFailed
     case mnemonicMissing
+    case emptyPublicKey
 }
 
 enum BackupError: Error {
