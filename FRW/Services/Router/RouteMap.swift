@@ -23,6 +23,9 @@ extension RouteMap {
         case restoreManual
         case chooseAccount([BackupManager.DriveItem], BackupManager.BackupType)
         case enterRestorePwd(BackupManager.DriveItem, BackupManager.BackupType)
+        case syncQC
+        case syncAccount([String: String])
+        case syncDevice(RegisterRequest)
     }
 }
 
@@ -37,6 +40,13 @@ extension RouteMap.RestoreLogin: RouterTarget {
             navi.push(content: ChooseAccountView(driveItems: items, backupType: backupType))
         case .enterRestorePwd(let item, let backupType):
             navi.push(content: EnterRestorePasswordView(driveItem: item, backupType: backupType))
+        case .syncQC:
+            navi.push(content: SyncAccountView())
+        case .syncAccount(let info):
+            navi.push(content: SyncConfirmView(user: info))
+        case .syncDevice(let request):
+            let vc = CustomHostingController(rootView: SyncAddDeviceView(model: request))
+            Router.topPresentedController().present(vc, animated: true, completion: nil)
         }
     }
 }

@@ -59,4 +59,8 @@ class EmptyWalletViewModel: ObservableObject {
     func loginAccountAction() {
         Router.route(to: RouteMap.RestoreLogin.root)
     }
+    
+    func syncAccountAction() {
+        Router.route(to: RouteMap.RestoreLogin.syncQC)
+    }
 }

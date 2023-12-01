@@ -29,7 +29,7 @@ class AccountKeyViewModel: ObservableObject {
                 }
                 let address = WalletManager.shared.getPrimaryWalletAddress() ?? ""
                 let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
-                let devices: KeyResponse = try await Network.request(FRWAPI.AccountKey.keys)
+                let devices: KeyResponse = try await Network.request(FRWAPI.User.keys)
                 DispatchQueue.main.async {
                     self.allKeys = account.keys.map { AccountKeyModel(accountKey: $0) }
                     self.allKeys = self.allKeys.map({ model in

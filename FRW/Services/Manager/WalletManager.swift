@@ -718,7 +718,7 @@ extension WalletManager: FlowSigner {
         
         if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
             let sec = try WallectSecureEnclave(privateKey: data)
-            var signature = try sec.sign(data: signableData)
+            let signature = try sec.sign(data: signableData)
             return signature
         }
         

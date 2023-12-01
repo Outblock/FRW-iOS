@@ -117,6 +117,9 @@ public enum FCLWalletConnectMethod: String, Codable {
     case userSignature = "flow_user_sign"
     case accountProof = "flow_account_proof"
     
+    case accountInfo = "frw_account_info"
+    case addDeviceInfo = "frw_add_device_key"
+    
     public init?(type: FCLServiceType) {
         switch type {
         case .preAuthz:

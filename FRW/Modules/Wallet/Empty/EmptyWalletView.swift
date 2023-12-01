@@ -100,6 +100,31 @@ struct EmptyWalletView: View {
                 )
 //                .shadow(color: Color.black.opacity(0.08), x: 0, y: 4, blur: 24)
             }
+            
+            Button {
+                vm.syncAccountAction()
+            } label: {
+                ZStack {
+                    HStack(spacing: 8) {
+                        Image("wallet-sync-icon")
+                            .frame(width: 24, height: 24)
+                        
+                        Text("sync_wallet".localized)
+                            .font(.inter(size: 17, weight: .bold))
+                            .foregroundColor(Color(hex: "#333333"))
+                    }
+                }
+                .frame(height: 58)
+                .frame(maxWidth: .infinity)
+                .background(.white)
+                .contentShape(Rectangle())
+                .cornerRadius(29)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 28)
+                        .stroke(Color.black, lineWidth: 1.5)
+                )
+            }
+            
         }
     }
     

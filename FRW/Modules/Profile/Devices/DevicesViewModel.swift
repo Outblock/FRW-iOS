@@ -27,7 +27,7 @@ class DevicesViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self.status = .loading
                 }
-                let list: [DeviceInfoModel] = try await Network.request(FRWAPI.Device.list(UUIDManager.appUUID()))
+                let list: [DeviceInfoModel] = try await Network.request(FRWAPI.User.devices(UUIDManager.appUUID()))
                 DispatchQueue.main.async {
                     self.devices = list.filter({ model in
                         model.id != UUIDManager.appUUID()

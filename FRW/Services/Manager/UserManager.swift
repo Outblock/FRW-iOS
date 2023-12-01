@@ -5,12 +5,12 @@
 //  Created by Hao Fu on 30/12/21.
 //
 
+import Combine
 import Firebase
 import FirebaseAuth
-import Foundation
-import Combine
 import Flow
 import FlowWalletCore
+import Foundation
 
 class UserManager: ObservableObject {
     static let shared = UserManager()
@@ -51,8 +51,8 @@ class UserManager: ObservableObject {
         
         if let activatedUID = activatedUID {
             self.userInfo = MultiAccountStorage.shared.getUserInfo(activatedUID)
-            self.uploadUserNameIfNeeded()
-            self.initRefreshUserInfo()
+            uploadUserNameIfNeeded()
+            initRefreshUserInfo()
         }
         
         loginAnonymousIfNeeded()
@@ -141,12 +141,8 @@ extension UserManager {
 //        let key = hdWallet.flowAccountKey
         
         let sec = try WallectSecureEnclave()
-        guard let publickeyValue = sec.key.publickeyValue else {
-            log.error("\(username): \(mnemonic ?? ""): generate private key empty")
-            throw LLError.signFailed
-        }
-        let publicKey = Flow.PublicKey(hex: publickeyValue)
-        let key = Flow.AccountKey(publicKey: publicKey, signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 1000)
+        let key = try sec.accountKey()
+        
 
         if IPManager.shared.info == nil {
             await IPManager.shared.fetch()
@@ -157,8 +153,7 @@ extension UserManager {
         try await finishLogin(mnemonic: hdWallet.mnemonic, customToken: model.customToken)
         WalletManager.shared.asyncCreateWalletAddressFromServer()
         
-        try WallectSecureEnclave.Store.store(key: model.id , value: sec.key.privateKey!.dataRepresentation)
-        
+        try WallectSecureEnclave.Store.store(key: model.id, value: sec.key.privateKey!.dataRepresentation)
     }
 }
 
@@ -192,16 +187,14 @@ extension UserManager {
             } catch {
                 HUD.dismissLoading()
                 
-                HUD.showAlert(title: "", msg: "restore_account_failed".localized, cancelAction: {
-                    
-                }, confirmTitle: "retry".localized) {
+                HUD.showAlert(title: "", msg: "restore_account_failed".localized, cancelAction: {}, confirmTitle: "retry".localized) {
                     self.tryToRestoreOldAccountOnFirstLaunch()
                 }
             }
         }
     }
     
-    func restoreLogin(withMnemonic mnemonic: String, userId: String) async throws {
+    func restoreLogin(withMnemonic mnemonic: String, userId: String? = nil) async throws {
         guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) else {
             throw LLError.incorrectPhrase
         }
@@ -224,11 +217,11 @@ extension UserManager {
             throw LLError.restoreLoginFailed
         }
         
-        if let data = try WallectSecureEnclave.Store.fetch(by: userId), !data.isEmpty {
+        if let data = try WallectSecureEnclave.Store.fetch(by: userId ?? "" ), !data.isEmpty {
             let sec = try WallectSecureEnclave(privateKey: data)
             guard let sig = try sec.sign(text: token, prefix: Flow.DomainTag.user.normalize),
-                  let newKey = sec.key.publickeyValue, 
-                    !newKey.isEmpty
+                  let newKey = sec.key.publickeyValue,
+                  !newKey.isEmpty
             else {
                 throw LLError.signFailed
             }
@@ -237,11 +230,10 @@ extension UserManager {
         }
 
         await IPManager.shared.fetch()
-        
+        //TODO: hash & sign algo
         let key = AccountKey(hashAlgo: WalletManager.shared.hashAlgo.index,
                              publicKey: publicKey,
                              signAlgo: WalletManager.shared.signatureAlgo.index)
-        
         
         let request = LoginRequest(signature: signature, accountKey: key, deviceInfo: IPManager.shared.toParams())
         let response: Network.Response<LoginResponse> = try await Network.requestWithRawModel(FRWAPI.User.login(request))
@@ -254,6 +246,54 @@ extension UserManager {
         }
 
         try await finishLogin(mnemonic: hdWallet.mnemonic, customToken: customToken)
+    }
+    
+    func restoreLogin(userId: String) async throws {
+        
+        
+        if Auth.auth().currentUser?.isAnonymous != true {
+            try await Auth.auth().signInAnonymously()
+            DispatchQueue.main.async {
+                self.activatedUID = nil
+                self.userInfo = nil
+            }
+        }
+
+        guard let token = try? await getIDToken(), !token.isEmpty else {
+            loginAnonymousIfNeeded()
+            throw LLError.restoreLoginFailed
+        }
+        
+        guard let publicData = try WallectSecureEnclave.Store.fetch(by: userId), !publicData.isEmpty else {
+            throw LLError.restoreLoginFailed
+        }
+        
+        let sec = try WallectSecureEnclave(privateKey: publicData)
+        guard let signature = try sec.sign(text: token, prefix: Flow.DomainTag.user.normalize),
+              let publicKey = sec.key.publickeyValue,
+              !publicKey.isEmpty
+        else {
+            throw LLError.signFailed
+        }
+        
+
+        await IPManager.shared.fetch()
+        //TODO: hash & sign algo
+        let key = AccountKey(hashAlgo: Flow.HashAlgorithm.SHA2_256.index,
+                             publicKey: publicKey,
+                             signAlgo: Flow.SignatureAlgorithm.ECDSA_P256.index)
+        
+        let request = LoginRequest(signature: signature, accountKey: key, deviceInfo: IPManager.shared.toParams())
+        let response: Network.Response<LoginResponse> = try await Network.requestWithRawModel(FRWAPI.User.login(request))
+        if response.httpCode == 404 {
+            throw LLError.accountNotFound
+        }
+
+        guard let customToken = response.data?.customToken, !customToken.isEmpty else {
+            throw LLError.restoreLoginFailed
+        }
+
+        try await finishLogin(mnemonic: "", customToken: customToken)
     }
 }
 
@@ -408,7 +448,7 @@ extension UserManager {
         }
 
         let newUserInfo = UserInfo(avatar: current.avatar, nickname: name, username: current.username, private: current.private, address: nil)
-        self.userInfo = newUserInfo
+        userInfo = newUserInfo
     }
 
     func updatePrivate(_ isPrivate: Bool) {
@@ -417,7 +457,7 @@ extension UserManager {
         }
 
         let newUserInfo = UserInfo(avatar: current.avatar, nickname: current.nickname, username: current.username, private: isPrivate ? 2 : 1, address: nil)
-        self.userInfo = newUserInfo
+        userInfo = newUserInfo
     }
 
     func updateAvatar(_ avatar: String) {
@@ -426,6 +466,7 @@ extension UserManager {
         }
 
         let newUserInfo = UserInfo(avatar: avatar, nickname: current.nickname, username: current.username, private: current.private, address: nil)
-        self.userInfo = newUserInfo
+        userInfo = newUserInfo
     }
 }
+

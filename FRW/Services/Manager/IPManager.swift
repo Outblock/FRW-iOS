@@ -17,7 +17,6 @@ class IPManager {
     func fetch() async  {
         do {
             self.info = try await Network.request(FRWAPI.IP.info)
-            log.info(self.info?.isp)
         }catch {
             log.error("Fetch IP \(error)")
         }
