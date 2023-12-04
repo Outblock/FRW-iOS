@@ -8,7 +8,7 @@
 import Foundation
 
 struct RegisterRequest: Codable {
-    let username: String
+    let username: String?
     let accountKey: AccountKey
     let deviceInfo: DeviceInfoRequest
 }
@@ -33,7 +33,7 @@ struct DeviceInfoRequest: Codable {
     let name: String
     let type: String
     let userAgent: String
-    
+
     let continent: String?
     let continentCode: String?
     let country: String?
@@ -48,5 +48,4 @@ struct DeviceInfoRequest: Codable {
     let currency: String?
     let isp: String?
     let org: String?
-
 }

@@ -5,19 +5,19 @@
 //  Created by Hao Fu on 30/7/2022.
 //
 
+import Combine
+import Flow
 import Foundation
+import Gzip
+import Starscream
+import UIKit
+import WalletConnectNetworking
+import WalletConnectPairing
+import WalletConnectRelay
+import WalletConnectRouter
 import WalletConnectSign
 import WalletConnectUtils
-import WalletConnectRelay
-import Flow
-import Starscream
-import Combine
 import WalletCore
-import UIKit
-import WalletConnectPairing
-import WalletConnectNetworking
-import WalletConnectRouter
-import Gzip
 
 class WalletConnectManager: ObservableObject {
     static let shared = WalletConnectManager()
@@ -35,7 +35,6 @@ class WalletConnectManager: ObservableObject {
     private var publishers = [AnyCancellable]()
     private var pendingRequestCheckTimer: Timer?
     
-    
     var currentProposal: Session.Proposal?
     var currentRequest: WalletConnectSign.Request?
     var currentSessionInfo: SessionInfo?
@@ -44,7 +43,7 @@ class WalletConnectManager: ObservableObject {
     
     private var syncAccountFlag: Bool = false
     
-    //TODO: rebranding @Hao @six redirect
+    // TODO: rebranding @Hao @six redirect
     let metadata = AppMetadata(
         name: "Flow Core",
         description: "Digital wallet created for everyone.",
@@ -89,8 +88,9 @@ class WalletConnectManager: ObservableObject {
         Task {
             do {
                 if let removedLink = link.removingPercentEncoding,
-                    let uri = WalletConnectURI.init(string: removedLink) {
-                    //TODO: commit
+                   let uri = WalletConnectURI(string: removedLink)
+                {
+                    // TODO: commit
                     #if DEBUG
 //                                        if Sign.instance.getPairings().contains(where: { $0.topic == uri.topic }) {
 //                                            try await Sign.instance.disconnect(topic: uri.topic)
@@ -105,7 +105,6 @@ class WalletConnectManager: ObservableObject {
         }
         onClientConnected = nil
     }
-    
     
     func reloadActiveSessions() {
         let settledSessions = Sign.instance.getSessions()
@@ -122,7 +121,6 @@ class WalletConnectManager: ObservableObject {
             print(error)
             HUD.error(title: "Disconnect failed")
         }
-        
     }
     
     func reloadPairing() {
@@ -157,7 +155,7 @@ class WalletConnectManager: ObservableObject {
         
         Sign.instance.sessionsPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [unowned self] (sessions: [Session]) in
+            .sink { [unowned self] (_: [Session]) in
                 // reload UI
                 print("[RESPONDER] WC: Did session")
 
@@ -187,11 +185,13 @@ class WalletConnectManager: ObservableObject {
                     chains: requiredNamespaces["flow"]?.chains ?? [],
                     methods: requiredNamespaces["flow"]?.methods ?? [],
                     pendingRequests: [],
-                    data: "")
+                    data: ""
+                )
                 self?.currentSessionInfo = info
                 
                 guard let chains = requiredNamespaces["flow"]?.chains,
-                      let reference = chains.first(where: { $0.namespace == "flow" })?.reference else {
+                      let reference = chains.first(where: { $0.namespace == "flow" })?.reference
+                else {
                     self?.rejectSession(proposal: sessionProposal)
                     return
                 }
@@ -202,7 +202,8 @@ class WalletConnectManager: ObservableObject {
                                                     url: info.dappURL,
                                                     logo: info.iconURL,
                                                     walletAddress: WalletManager.shared.getPrimaryWalletAddress(),
-                                                    network: network ) { result in
+                                                    network: network)
+                { result in
                     if result {
                         // TODO: Handle network mismatch
                         self?.approveSession(proposal: sessionProposal)
@@ -223,12 +224,11 @@ class WalletConnectManager: ObservableObject {
         
         Sign.instance.sessionResponsePublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] data  in
+            .sink { [weak self] data in
                 log.info("[RESPONDER] WC: Did receive session response")
                 self?.handleResponse(data)
                 print(data)
             }.store(in: &publishers)
-        
         
         Sign.instance.sessionRequestPublisher
             .receive(on: DispatchQueue.main)
@@ -241,37 +241,35 @@ class WalletConnectManager: ObservableObject {
         
         Sign.instance.sessionDeletePublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] sessionRequest in
+            .sink { [weak self] _ in
                 self?.reloadActiveSessions()
             }.store(in: &publishers)
         
         Sign.instance.sessionExtendPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] sessionRequest in
+            .sink { [weak self] _ in
                 print("[RESPONDER] WC: sessionExtendPublisher")
             }.store(in: &publishers)
         
         Sign.instance.sessionEventPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] sessionRequest in
+            .sink { [weak self] _ in
                 print("[RESPONDER] WC: sessionEventPublisher")
                 //                self?.showSessionRequest(sessionRequest)
             }.store(in: &publishers)
         
         Sign.instance.sessionUpdatePublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] sessionRequest in
+            .sink { [weak self] _ in
                 print("[RESPONDER] WC: sessionUpdatePublisher")
                 //                self?.showSessionRequest(sessionRequest)
             }.store(in: &publishers)
-        
-        
     }
     
     private func navigateBackTodApp(topic: String) {
-        //TODO: #six
+        // TODO: #six
 //        WalletConnectRouter.Router.goBack()
-        if let session = findSession(topic: topic),let url = session.peer.redirect?.native {
+        if let session = findSession(topic: topic), let url = session.peer.redirect?.native {
             WalletConnectRouter.goBack(uri: url)
         }
     }
@@ -286,21 +284,21 @@ extension WalletConnectManager {
         let timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(reloadPendingRequests), userInfo: nil, repeats: true)
         RunLoop.main.add(timer, forMode: .common)
         
-        self.pendingRequestCheckTimer = timer
+        pendingRequestCheckTimer = timer
     }
     
     private func stopPendingRequestCheckTimer() {
-        if let timer = self.pendingRequestCheckTimer {
+        if let timer = pendingRequestCheckTimer {
             timer.invalidate()
-            self.pendingRequestCheckTimer = nil
+            pendingRequestCheckTimer = nil
         }
     }
     
     @objc func reloadPendingRequests() {
         if UserManager.shared.isLoggedIn {
-            self.pendingRequests = Sign.instance.getPendingRequests().map({ (request: Request, context: VerifyContext?) in
-                return request
-            })
+            pendingRequests = Sign.instance.getPendingRequests().map { (request: Request, _: VerifyContext?) in
+                request
+            }
         }
     }
 }
@@ -332,8 +330,8 @@ extension WalletConnectManager {
                        let nonce = model.accountProofNonce,
                        let appIdentifier = model.appIdentifier,
                        let data = self.encodeAccountProof(address: address, nonce: nonce, appIdentifier: appIdentifier),
-                       let signedData = try? await WalletManager.shared.sign(signableData: data) {
-                        
+                       let signedData = try? await WalletManager.shared.sign(signableData: data)
+                    {
                         services.append(accountProofServiceDefinition(address: address, keyId: keyId, nonce: nonce, signature: signedData.hexValue))
                     }
                     
@@ -357,9 +355,8 @@ extension WalletConnectManager {
                                                        services: nil,
                                                        proposer: serviceDefinition(address: address, keyId: keyId, type: .authz),
                                                        payer:
-                                                        [serviceDefinition(address: RemoteConfigManager.shared.payer, keyId: RemoteConfigManager.shared.keyIndex, type: .authz)],
-                                                       authorization:[serviceDefinition(address: address, keyId: keyId, type: .authz)]
-                                                      ),
+                                                       [serviceDefinition(address: RemoteConfigManager.shared.payer, keyId: RemoteConfigManager.shared.keyIndex, type: .authz)],
+                                                       authorization: [serviceDefinition(address: address, keyId: keyId, type: .authz)]),
                                        reason: nil,
                                        compositeSignature: nil)
             
@@ -375,17 +372,18 @@ extension WalletConnectManager {
         case FCLWalletConnectMethod.authz.rawValue:
             
             do {
-                self.currentRequest = sessionRequest
+                currentRequest = sessionRequest
                 let jsonString = try sessionRequest.params.get([String].self)
                 
                 guard let json = jsonString.first else {
                     throw LLError.decodeFailed
                 }
                 
-                var model: Signable? = nil
+                var model: Signable?
                 if let data = Data(base64Encoded: json),
                    data.isGzipped,
-                   let uncompressData = try? data.gunzipped() {
+                   let uncompressData = try? data.gunzipped()
+                {
                     model = try JSONDecoder().decode(Signable.self, from: uncompressData)
                 } else if let data = json.data(using: .utf8) {
                     model = try JSONDecoder().decode(Signable.self, from: data)
@@ -395,16 +393,16 @@ extension WalletConnectManager {
                     throw LLError.decodeFailed
                 }
                 
-                if model.roles.payer && !model.roles.proposer && !model.roles.authorizer {
-                    self.approvePayerRequest(request: sessionRequest, model: model, message: model.message)
-                    self.navigateBackTodApp(topic: sessionRequest.topic)
+                if model.roles.payer, !model.roles.proposer, !model.roles.authorizer {
+                    approvePayerRequest(request: sessionRequest, model: model, message: model.message)
+                    navigateBackTodApp(topic: sessionRequest.topic)
                     return
                 }
                 
-                if let session = self.activeSessions.first(where: { $0.topic == sessionRequest.topic }) {
+                if let session = activeSessions.first(where: { $0.topic == sessionRequest.topic }) {
                     let request = RequestInfo(cadence: model.cadence ?? "", agrument: model.args, name: session.peer.name, descriptionText: session.peer.description, dappURL: session.peer.url, iconURL: session.peer.icons.first ?? "", chains: Set(arrayLiteral: sessionRequest.chainId), methods: nil, pendingRequests: [], message: model.message)
                     
-                    self.currentRequestInfo = request
+                    currentRequestInfo = request
                     
                     let authzVM = BrowserAuthzViewModel(title: request.name, url: request.dappURL, logo: request.iconURL, cadence: request.cadence) { result in
                         if result {
@@ -418,9 +416,8 @@ extension WalletConnectManager {
                 }
                 
                 if model.roles.payer {
-                    self.navigateBackTodApp(topic: sessionRequest.topic)
+                    navigateBackTodApp(topic: sessionRequest.topic)
                 }
-                
                 
             } catch {
                 print("[WALLET] Respond Error: \(error.localizedDescription)")
@@ -430,13 +427,13 @@ extension WalletConnectManager {
         case FCLWalletConnectMethod.userSignature.rawValue:
             
             do {
-                self.currentRequest = sessionRequest
+                currentRequest = sessionRequest
                 let jsonString = try sessionRequest.params.get([String].self)
                 let data = jsonString[0].data(using: .utf8)!
                 let model = try JSONDecoder().decode(SignableMessage.self, from: data)
-                if let session = self.activeSessions.first(where: { $0.topic == sessionRequest.topic }) {
+                if let session = activeSessions.first(where: { $0.topic == sessionRequest.topic }) {
                     let request = RequestMessageInfo(name: session.peer.name, descriptionText: session.peer.description, dappURL: session.peer.url, iconURL: session.peer.icons.first ?? "", chains: Set(arrayLiteral: sessionRequest.chainId), methods: nil, pendingRequests: [], message: model.message)
-                    self.currentMessageInfo = request
+                    currentMessageInfo = request
                     
                     let vm = BrowserSignMessageViewModel(title: request.name, url: request.dappURL, logo: request.iconURL, cadence: request.message) { result in
                         if result {
@@ -456,7 +453,6 @@ extension WalletConnectManager {
         case FCLWalletConnectMethod.accountInfo.rawValue:
             Task {
                 do {
-                    
                     guard let account = UserManager.shared.userInfo else { throw LLError.accountNotFound }
                     let userInfo: [String: String] = [
                         "userAvatar": account.avatar,
@@ -480,21 +476,35 @@ extension WalletConnectManager {
             Task {
                 do {
                     let result = try sessionRequest.params.get([String: String].self)
-                    guard let status = result["status"] else { return  }
-                    guard let json = result["data"] else { return  }
-                    
-                    
-                    if(status == "3") {
-                        NotificationCenter.default.post(name: .syncDeviceStatusDidChanged, object: result)
-                        try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable("")))
-                        return
-                    }
+                    guard let status = result["status"] else { return }
+                    guard let json = result["data"] else { return }
                     
                     let jsonDecoder = JSONDecoder()
                     jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
                     let register = try jsonDecoder.decode(RegisterRequest.self, from: Data(json.utf8))
-                    try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable("")))
-                    Router.route(to: RouteMap.RestoreLogin.syncDevice(register))
+                    
+                    let viewModel = SyncAddDeviceViewModel(with: register) { result in
+                        if result {
+                            Task {
+                                do {
+                                    let res = [
+                                        "method": FCLWalletConnectMethod.addDeviceInfo.rawValue,
+                                        "data": "",
+                                        "status": "1",
+                                        "message": ""
+                                    ]
+                                    try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable(res)))
+                                } catch {
+                                    print("[WALLET] Respond Error: [addDeviceInfo] \(error.localizedDescription)")
+                                }
+                            }
+                            
+                        } else {
+                            self.rejectRequest(request: sessionRequest)
+                        }
+                    }
+                    
+                    Router.route(to: RouteMap.RestoreLogin.syncDevice(viewModel))
                 } catch {
                     print("[WALLET] Respond Error: [addDeviceInfo] \(error.localizedDescription)")
                     rejectRequest(request: sessionRequest)
@@ -508,7 +518,7 @@ extension WalletConnectManager {
     func handleResponse(_ response: WalletConnectSign.Response) {
         switch response.result {
         case .response(let data):
-            guard let result = try? data.get([String: String].self), let method = result["method"], let json = result["data"]  else { return }
+            guard let result = try? data.get([String: String].self), let method = result["method"], let json = result["data"] else { return }
             if method == FCLWalletConnectMethod.accountInfo.rawValue {
                 let jsonDecoder = JSONDecoder()
                 jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -516,7 +526,10 @@ extension WalletConnectManager {
                 if let userInfo = userInfo {
                     Router.route(to: RouteMap.RestoreLogin.syncAccount(userInfo))
                 }
+            } else if method == FCLWalletConnectMethod.addDeviceInfo.rawValue {
+                NotificationCenter.default.post(name: .syncDeviceStatusDidChanged, object: result)
             }
+            
         case .error(let error):
             print("[WALLET] Respond Error: [addDeviceInfo] \(error.localizedDescription)")
             HUD.error(title: "process_failed_text".localized)
@@ -527,9 +540,6 @@ extension WalletConnectManager {
 // MARK: - Action
 
 extension WalletConnectManager {
-    
-    
-    
     private func approveSession(proposal: Session.Proposal) {
         guard let account = WalletManager.shared.getPrimaryWalletAddress() else {
             return
@@ -539,8 +549,8 @@ extension WalletConnectManager {
         proposal.requiredNamespaces.forEach {
             let caip2Namespace = $0.key
             let proposalNamespace = $0.value
-            if let chains = proposalNamespace.chains  {
-                let accounts = Set(chains.compactMap { WalletConnectSign.Account($0.absoluteString + ":\(account)") } )
+            if let chains = proposalNamespace.chains {
+                let accounts = Set(chains.compactMap { WalletConnectSign.Account($0.absoluteString + ":\(account)") })
                 let sessionNamespace = SessionNamespace(accounts: accounts, methods: proposalNamespace.methods, events: proposalNamespace.events)
                 sessionNamespaces[caip2Namespace] = sessionNamespace
             }
@@ -662,9 +672,7 @@ extension WalletConnectManager {
     }
 }
 
-
 extension WalletConnectManager {
-    
     func prepareSyncAccount() {
         syncAccountFlag = true
     }
@@ -687,25 +695,23 @@ extension WalletConnectManager {
             do {
                 let request = Request(topic: session.topic, method: methods, params: params, chainId: blockchain)
                 try await Sign.instance.request(params: request)
-                
-            }
-            catch {
+            } catch {
                 print(error)
             }
-            
         }
     }
     
-    func findSession(method: String,at name: String = "flow") -> Session? {
+    func findSession(method: String, at name: String = "flow") -> Session? {
         log.info("Session =======")
-        let session = self.activeSessions.first { session in
+        let session = activeSessions.first { session in
             log.info("\(session.topic) : \(session.pairingTopic)")
             return session.namespaces[name]?.methods.contains(method) ?? false
         }
         log.info("Session =======")
         return session
     }
+
     func findSession(topic: String) -> Session? {
-        return self.activeSessions.first(where: { $0.topic == topic })
+        return activeSessions.first(where: { $0.topic == topic })
     }
 }

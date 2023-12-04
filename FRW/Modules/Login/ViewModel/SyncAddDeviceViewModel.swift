@@ -5,23 +5,28 @@
 //  Created by cat on 2023/11/30.
 //
 
-import Foundation
 import Flow
+import Foundation
 import WalletConnectSign
 import WalletConnectUtils
 
+extension SyncAddDeviceViewModel {
+    typealias Callback = (Bool) -> ()
+}
+
 class SyncAddDeviceViewModel: ObservableObject {
+    var model: RegisterRequest
+    private var callback: BrowserAuthzViewModel.Callback?
     
-    var requstParam: RegisterRequest?
     @Published var result: String = ""
     
-    init() {
+    init(with model: RegisterRequest, callback: @escaping SyncAddDeviceViewModel.Callback) {
+        self.model = model
+        self.callback = callback
         NotificationCenter.default.addObserver(self, selector: #selector(onTransactionManagerChanged), name: .transactionManagerDidChanged, object: nil)
-
     }
     
-    func addDevice(with model: RegisterRequest) {
-        self.requstParam = model
+    func addDevice() {
         Task {
             let address = WalletManager.shared.address
             let accountKey = Flow.AccountKey(publicKey: Flow.PublicKey(hex: model.accountKey.publicKey), signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 1000)
@@ -32,11 +37,10 @@ class SyncAddDeviceViewModel: ObservableObject {
                 }
                 let holder = TransactionManager.TransactionHolder(id: flowId, type: .addToken, data: data)
                 TransactionManager.shared.newTransaction(holder: holder)
-            }catch {
+            } catch {
                 HUD.dismissLoading()
                 HUD.error(title: "restore_account_failed".localized)
             }
-            
         }
     }
     
@@ -58,49 +62,31 @@ class SyncAddDeviceViewModel: ObservableObject {
     func sendSuccessStatus() {
         Task {
             do {
-                guard let apiParam = self.requstParam else { return  }
-                do {
-                    let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.syncDevice(apiParam))
-                    if response.httpCode != 200 {
-                        DispatchQueue.main.async {
-                            self.result = "add device failed."
-                        }
-                        return
+                let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.syncDevice(self.model))
+                if response.httpCode != 200 {
+                    log.info("[Sync Device] add device success. publicKey: \(self.model.accountKey.publicKey)")
+                    DispatchQueue.main.async {
+                        self.result = "add device failed."
                     }
-                }catch {
-                    print(error)
+                    callback?(false)
+                } else {
+                    DispatchQueue.main.async {
+                        self.dismiss()
+                    }
+                    callback?(true)
                 }
-                
-                
-                log.info("[Sync Device] add device success. publicKey: \(apiParam.accountKey.publicKey)")
-                guard let currentSession = WalletConnectManager.shared.findSession(method: FCLWalletConnectMethod.accountInfo.rawValue) else {
-                    return
-                }
-                let methods: String = FCLWalletConnectMethod.addDeviceInfo.rawValue
-                let blockchain = Sign.FlowWallet.blockchain
-
-                let dic = [
-                    "method": FCLWalletConnectMethod.addDeviceInfo.rawValue,
-                    "data": "",
-                    "status": "3",
-                    "message": ""
-                ]
-                let params = AnyCodable(dic)
-                let request = Request(topic: currentSession.topic, method: methods, params: params, chainId: blockchain)
-                try await Sign.instance.request(params: request)
-                DispatchQueue.main.async {
-                    self.dismiss()
-                    
-                }
-            }
-            catch {
+            } catch {
+                callback?(false)
                 log.error("[sync account] error \(error.localizedDescription)")
             }
         }
     }
     
     func sendFaildStatus() {
-        
+        callback?(false)
     }
     
+    deinit {
+        NotificationCenter().removeObserver(self)
+    }
 }

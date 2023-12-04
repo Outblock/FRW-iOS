@@ -5,16 +5,17 @@
 //  Created by cat on 2023/11/29.
 //
 
+import Flow
+import MapKit
 import SwiftUI
 import SwiftUIX
-import MapKit
-import Flow
 
 struct SyncAddDeviceView: View {
+    @StateObject var viewModel: SyncAddDeviceViewModel
     
-    let viewModel = SyncAddDeviceViewModel()
-    
-    let model: RegisterRequest
+    init(viewModel: SyncAddDeviceViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
     
     var body: some View {
         VStack {
@@ -52,17 +53,16 @@ struct SyncAddDeviceView: View {
                 .frame(height: 6)
             
             VStack {
-                DeviceInfoItem(title: "application_tag".localized, detail: model.deviceInfo.userAgent)
-                DeviceInfoItem(title: "ip_address_tag".localized, detail: model.deviceInfo.ip)
+                DeviceInfoItem(title: "application_tag".localized, detail: viewModel.model.deviceInfo.userAgent)
+                DeviceInfoItem(title: "ip_address_tag".localized, detail: viewModel.model.deviceInfo.ip)
                 DeviceInfoItem(title: "location".localized, detail: location)
             }
             .padding(.horizontal, 4)
             
-            
             Spacer()
             
             WalletSendButtonView(allowEnable: .constant(true), buttonText: "hold_to_sync".localized) {
-                viewModel.addDevice(with: model)
+                viewModel.addDevice()
             }
         }
         .padding(.horizontal, 12)
@@ -73,11 +73,11 @@ struct SyncAddDeviceView: View {
     
     var location: String {
         var res = ""
-        if model.deviceInfo.city != nil {
-            res += model.deviceInfo.city!
+        if viewModel.model.deviceInfo.city != nil {
+            res += viewModel.model.deviceInfo.city!
         }
-        if model.deviceInfo.country != nil {
-            res += ",\(model.deviceInfo.country!)"
+        if viewModel.model.deviceInfo.country != nil {
+            res += ",\(viewModel.model.deviceInfo.country!)"
         }
         return res
     }
@@ -94,15 +94,13 @@ struct SyncAddDeviceView: View {
     }
     
     func coordinate() -> CLLocationCoordinate2D {
-        guard let latitude = model.deviceInfo.lat, let longitude = model.deviceInfo.lon else {
+        guard let latitude = viewModel.model.deviceInfo.lat, let longitude = viewModel.model.deviceInfo.lon else {
             return CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
         }
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 }
 
-
-
-#Preview {
-    SyncAddDeviceView(model: RegisterRequest(username: "", accountKey: AccountKey(hashAlgo: 0, publicKey: "", signAlgo: 0), deviceInfo: DeviceInfoRequest(deviceId: "", ip: "192.168.0.1", name: "Flow Reference MacOS 8.4.1", type: "", userAgent: "Flow Reference MacOS 8.4.1", continent: "", continentCode: "", country: "US", countryCode: "", regionName: "", city: "New York ", district: "", zip: "", lat: 0, lon: 0, timezone: "", currency: "", isp: "", org: "")))
-}
+// #Preview {
+//    SyncAddDeviceView(model: RegisterRequest(username: "", accountKey: AccountKey(hashAlgo: 0, publicKey: "", signAlgo: 0), deviceInfo: DeviceInfoRequest(deviceId: "", ip: "192.168.0.1", name: "Flow Reference MacOS 8.4.1", type: "", userAgent: "Flow Reference MacOS 8.4.1", continent: "", continentCode: "", country: "US", countryCode: "", regionName: "", city: "New York ", district: "", zip: "", lat: 0, lon: 0, timezone: "", currency: "", isp: "", org: "")))
+// }
