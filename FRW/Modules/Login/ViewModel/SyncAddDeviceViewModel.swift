@@ -15,12 +15,12 @@ extension SyncAddDeviceViewModel {
 }
 
 class SyncAddDeviceViewModel: ObservableObject {
-    var model: RegisterRequest
+    var model: SyncInfo.DeviceInfo
     private var callback: BrowserAuthzViewModel.Callback?
     
     @Published var result: String = ""
     
-    init(with model: RegisterRequest, callback: @escaping SyncAddDeviceViewModel.Callback) {
+    init(with model: SyncInfo.DeviceInfo, callback: @escaping SyncAddDeviceViewModel.Callback) {
         self.model = model
         self.callback = callback
         NotificationCenter.default.addObserver(self, selector: #selector(onTransactionManagerChanged), name: .transactionManagerDidChanged, object: nil)

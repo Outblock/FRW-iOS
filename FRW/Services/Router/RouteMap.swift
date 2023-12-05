@@ -22,7 +22,7 @@ extension RouteMap {
         case chooseAccount([BackupManager.DriveItem], BackupManager.BackupType)
         case enterRestorePwd(BackupManager.DriveItem, BackupManager.BackupType)
         case syncQC
-        case syncAccount([String: String])
+        case syncAccount(SyncInfo.User)
         case syncDevice(SyncAddDeviceViewModel)
     }
 }

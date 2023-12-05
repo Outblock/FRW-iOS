@@ -109,7 +109,6 @@ struct DevicesInfoView: RouteableView {
     }
 }
 
-
 #Preview {
     DevicesInfoView(info: DeviceInfoModel.empty())
 }

@@ -855,6 +855,7 @@
 "other_device" = "Other Devices";
 "device_info" = "Device Info";
 "revoke_device" = "Revoke Device";
+"revoked" = "Revoked";
 "device_info" = "Device Info";
 "application_tag" = "Application";
 "ip_address_tag" = "IP Address";

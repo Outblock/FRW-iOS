@@ -5,18 +5,17 @@
 //  Created by cat on 2023/12/1.
 //
 
+import Flow
+import FlowWalletCore
 import Foundation
 import WalletConnectSign
 import WalletConnectUtils
-import FlowWalletCore
-import Flow
 
 enum SyncAccountStatus {
-    case idle,loading,success, syncSuccess
+    case idle, loading, success, syncSuccess
 }
 
 class SyncConfirmViewModel: ObservableObject {
-    
     @Published var status: SyncAccountStatus = .idle
     @Published var isPresented: Bool = false
     
@@ -24,14 +23,13 @@ class SyncConfirmViewModel: ObservableObject {
     
     init(userId: String) {
         self.userId = userId
-        NotificationCenter.default.addObserver(self, selector: #selector(onSyncStatusChanged), name: .syncDeviceStatusDidChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.onSyncStatusChanged), name: .syncDeviceStatusDidChanged, object: nil)
     }
     
-    func onAddDevice()  {
+    func onAddDevice() {
         self.isPresented = true
         self.status = .loading
         Task {
-            
             do {
                 guard let currentSession = WalletConnectManager.shared.findSession(method: FCLWalletConnectMethod.accountInfo.rawValue) else {
                     return
@@ -39,27 +37,10 @@ class SyncConfirmViewModel: ObservableObject {
                 let methods: String = FCLWalletConnectMethod.addDeviceInfo.rawValue
                 let blockchain = Sign.FlowWallet.blockchain
                 
-                let sec = try WallectSecureEnclave()
-                let key = try sec.accountKey()
-                
-                
-                if IPManager.shared.info == nil {
-                    await IPManager.shared.fetch()
-                }
-                let requestParam = RegisterRequest(username: "", accountKey: key.toCodableModel(), deviceInfo: IPManager.shared.toParams())
-                
-                let dic = [
-                    "method": FCLWalletConnectMethod.addDeviceInfo.rawValue,
-                    "data": try requestParam.asJSONEncodedString(),
-                    "status": "2",
-                    "message": ""
-                ]
-                let params = AnyCodable(dic)
+                let params = try await WalletConnectSyncDevice.packageDeviceInfo(userId: self.userId)
                 let request = Request(topic: currentSession.topic, method: methods, params: params, chainId: blockchain)
                 try await Sign.instance.request(params: request)
-
-                try WallectSecureEnclave.Store.store(key: userId, value: sec.key.privateKey!.dataRepresentation)
-
+                WalletConnectManager.shared.currentRequest = request
             }
             catch {
                 DispatchQueue.main.async {
@@ -72,20 +53,23 @@ class SyncConfirmViewModel: ObservableObject {
     }
     
     @objc private func onSyncStatusChanged(note: Notification) {
-        print(note)
+        guard let result = note.object as? WalletConnectSyncDevice.SyncResult else { return }
         // 登录
-        Task {
-            do {
-                try await UserManager.shared.restoreLogin(userId: self.userId)
-                DispatchQueue.main.async {
-                    self.status = .success
+        switch result {
+        case .success:
+            Task {
+                do {
+                    try await UserManager.shared.restoreLogin(userId: self.userId)
+                    DispatchQueue.main.async {
+                        self.status = .success
+                    }
+                }
+                catch {
+                    log.error("[Sync Device] login with \(self.userId) failed. reason:\(error.localizedDescription)")
                 }
             }
-            catch {
-                log.error("[Sync Device] login with \(self.userId) failed. reason:\(error.localizedDescription)")
-            }
-            
+        case .failed(let msg):
+            HUD.error(title: "sync_confirm_failed".localized)
         }
-        
     }
 }

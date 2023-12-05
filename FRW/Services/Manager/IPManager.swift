@@ -11,6 +11,11 @@ import Alamofire
 import DeviceGuru
 
 class IPManager {
+    
+    enum DeviceType: String {
+    case iOS = "1"
+    }
+    
     static let shared = IPManager()
     var info: IPResponse?
     
@@ -74,7 +79,7 @@ class IPManager {
     }
     
     private var deviceType: String {
-        return "1"
+        return DeviceType.iOS.rawValue
     }
     
     private let osNameVersion: String = {

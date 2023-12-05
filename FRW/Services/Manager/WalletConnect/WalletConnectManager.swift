@@ -226,6 +226,7 @@ class WalletConnectManager: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] data in
                 log.info("[RESPONDER] WC: Did receive session response")
+                log.info("[Session] response top:\(data.topic) ")
                 self?.handleResponse(data)
                 print(data)
             }.store(in: &publishers)
@@ -234,7 +235,7 @@ class WalletConnectManager: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] data in
                 print("[RESPONDER] WC: Did receive session request")
-
+                log.info("[Session] request top:\(data.request.topic) ")
                 self?.handleRequest(data.request)
 
             }.store(in: &publishers)
@@ -453,20 +454,8 @@ extension WalletConnectManager {
         case FCLWalletConnectMethod.accountInfo.rawValue:
             Task {
                 do {
-                    guard let account = UserManager.shared.userInfo else { throw LLError.accountNotFound }
-                    let userInfo: [String: String] = [
-                        "userAvatar": account.avatar,
-                        "userName": account.nickname,
-                        "walletAddress": address,
-                        "userId": UserManager.shared.activatedUID ?? ""
-                    ]
-                    let json = userInfo.toJSONString() ?? ""
-                    
-                    let param = [
-                        "method": FCLWalletConnectMethod.accountInfo.rawValue,
-                        "data": json
-                    ]
-                    try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable(param)))
+                    let param = try WalletConnectSyncDevice.packageUserInfo()
+                    try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(param))
                 } catch {
                     log.error("[WALLET] Respond Error: [accountInfo] \(error.localizedDescription)")
                     rejectRequest(request: sessionRequest)
@@ -475,35 +464,21 @@ extension WalletConnectManager {
         case FCLWalletConnectMethod.addDeviceInfo.rawValue:
             Task {
                 do {
-                    let result = try sessionRequest.params.get([String: String].self)
-                    guard let status = result["status"] else { return }
-                    guard let json = result["data"] else { return }
-                    
-                    let jsonDecoder = JSONDecoder()
-                    jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
-                    let register = try jsonDecoder.decode(RegisterRequest.self, from: Data(json.utf8))
-                    
-                    let viewModel = SyncAddDeviceViewModel(with: register) { result in
+                    let res = try sessionRequest.params.get(SyncInfo.SyncResponse<SyncInfo.DeviceInfo>.self)
+                    let viewModel = SyncAddDeviceViewModel(with: res.data!) { result in
                         if result {
                             Task {
                                 do {
-                                    let res = [
-                                        "method": FCLWalletConnectMethod.addDeviceInfo.rawValue,
-                                        "data": "",
-                                        "status": "1",
-                                        "message": ""
-                                    ]
-                                    try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable(res)))
+                                    try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable("")))
                                 } catch {
+                                    self.rejectRequest(request: sessionRequest)
                                     print("[WALLET] Respond Error: [addDeviceInfo] \(error.localizedDescription)")
                                 }
                             }
-                            
                         } else {
                             self.rejectRequest(request: sessionRequest)
                         }
                     }
-                    
                     Router.route(to: RouteMap.RestoreLogin.syncDevice(viewModel))
                 } catch {
                     print("[WALLET] Respond Error: [addDeviceInfo] \(error.localizedDescription)")
@@ -516,21 +491,30 @@ extension WalletConnectManager {
     }
     
     func handleResponse(_ response: WalletConnectSign.Response) {
+        guard let request = currentRequest else {
+            log.error("[WALLET] current request is empty")
+            return
+        }
+        
         switch response.result {
         case .response(let data):
-            guard let result = try? data.get([String: String].self), let method = result["method"], let json = result["data"] else { return }
-            if method == FCLWalletConnectMethod.accountInfo.rawValue {
-                let jsonDecoder = JSONDecoder()
-                jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
-                let userInfo = try? jsonDecoder.decode([String: String].self, from: Data(json.utf8))
-                if let userInfo = userInfo {
-                    Router.route(to: RouteMap.RestoreLogin.syncAccount(userInfo))
-                }
-            } else if method == FCLWalletConnectMethod.addDeviceInfo.rawValue {
-                NotificationCenter.default.post(name: .syncDeviceStatusDidChanged, object: result)
-            }
             
+            if WalletConnectSyncDevice.isAccount(request: request, with: response) {
+                do {
+                    let user = try WalletConnectSyncDevice.parseAccount(data: data)
+                    Router.route(to: RouteMap.RestoreLogin.syncAccount(user))
+                }catch {
+                    log.error("[WALLET] Respond Error: [account info] \(error.localizedDescription)")
+                }
+            }
+            else if WalletConnectSyncDevice.isDevice(request: request, with: response) {
+                NotificationCenter.default.post(name: .syncDeviceStatusDidChanged, object: WalletConnectSyncDevice.SyncResult.success)
+            }
         case .error(let error):
+            if WalletConnectSyncDevice.isDevice(request: request, with: response) {
+                let obj = WalletConnectSyncDevice.SyncResult.failed("process_failed_text".localized)
+                NotificationCenter.default.post(name: .syncDeviceStatusDidChanged, object: obj)
+            }
             print("[WALLET] Respond Error: [addDeviceInfo] \(error.localizedDescription)")
             HUD.error(title: "process_failed_text".localized)
         }
@@ -681,33 +665,33 @@ extension WalletConnectManager {
         syncAccountFlag = false
     }
     
+    func updateCurrentRequest(_ request: WalletConnectSign.Request?) {
+        self.currentRequest = request
+    }
+    
     func sendSyncAccount(in session: Session) {
         if !syncAccountFlag {
             return
         }
         syncAccountFlag = false
-        log.info("[sync account] send request for account info")
         
-        let methods: String = FCLWalletConnectMethod.accountInfo.rawValue
-        let blockchain = Sign.FlowWallet.blockchain
-        let params = AnyCodable([""])
         Task {
             do {
-                let request = Request(topic: session.topic, method: methods, params: params, chainId: blockchain)
-                try await Sign.instance.request(params: request)
-            } catch {
-                print(error)
+                self.currentRequest = try await WalletConnectSyncDevice.requestSyncAccount(in: session)
+            }catch {
+                //TODO:
+                log.error("[sync]-account: send sync account requst failed")
             }
         }
     }
     
     func findSession(method: String, at name: String = "flow") -> Session? {
-        log.info("Session =======")
+        
         let session = activeSessions.first { session in
             log.info("\(session.topic) : \(session.pairingTopic)")
             return session.namespaces[name]?.methods.contains(method) ?? false
         }
-        log.info("Session =======")
+        
         return session
     }
 

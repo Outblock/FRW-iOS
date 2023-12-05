@@ -153,7 +153,11 @@ extension UserManager {
         try await finishLogin(mnemonic: hdWallet.mnemonic, customToken: model.customToken)
         WalletManager.shared.asyncCreateWalletAddressFromServer()
         
-        try WallectSecureEnclave.Store.store(key: model.id, value: sec.key.privateKey!.dataRepresentation)
+        if let privateKey = sec.key.privateKey {
+            try WallectSecureEnclave.Store.store(key: model.id, value: privateKey.dataRepresentation)
+        }else {
+            log.error("store public key on iPhone failed")
+        }
     }
 }
 
@@ -217,7 +221,7 @@ extension UserManager {
             throw LLError.restoreLoginFailed
         }
         
-        if let data = try WallectSecureEnclave.Store.fetch(by: userId ?? "" ), !data.isEmpty {
+        if let data = try WallectSecureEnclave.Store.fetch(by: userId ?? "" ), !data.isEmpty, let userToken = token.AddUserMessage() {
             let sec = try WallectSecureEnclave(privateKey: data)
             guard let sig = try sec.sign(text: token, prefix: Flow.DomainTag.user.normalize),
                   let newKey = sec.key.publickeyValue,

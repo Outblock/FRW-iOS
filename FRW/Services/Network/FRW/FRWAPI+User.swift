@@ -21,7 +21,7 @@ extension FRWAPI {
         case sandboxnet
         case keys
         case devices(String)
-        case syncDevice(RegisterRequest)
+        case syncDevice(SyncInfo.DeviceInfo)
     }
 }
 

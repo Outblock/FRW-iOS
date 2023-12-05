@@ -16,9 +16,13 @@ class AccountKeyViewModel: ObservableObject {
     var revokeModel: AccountKeyModel?
     
     init() {
-        let model = Flow.AccountKey(publicKey: Flow.PublicKey(hex: "abc"), signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 1000)
-        allKeys = [AccountKeyModel(accountKey: model)]
+        addMock()
         fetch()
+    }
+    
+    func addMock() {
+        let model = Flow.AccountKey(publicKey: Flow.PublicKey(hex: "test"), signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 1000)
+        allKeys = [AccountKeyModel(accountKey: model)]
     }
     
     func fetch()  {
@@ -52,9 +56,6 @@ class AccountKeyViewModel: ObservableObject {
         }
     }
     
-    private func fetchDeviceAndKey() {
-        
-    }
     
     func revokeKey(at model: AccountKeyModel) {
         
@@ -113,11 +114,11 @@ struct AccountKeyModel {
     func deviceName() -> String {
         
         if accountKey.revoked {
-            return "Revoked"
+            return "revoked".localized
         }
         //TODO: #six revoking
         if isCurrent() {
-            return "Current Device"
+            return "current_device".localized
         }
         return name
     }

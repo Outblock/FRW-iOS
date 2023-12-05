@@ -15,18 +15,16 @@ struct SyncConfirmView: RouteableView {
     @StateObject var viewModel: SyncConfirmViewModel
     
     
-    var user: [String: String]
+    var user: SyncInfo.User
     
     var title: String {
         ""
     }
     
-    init(user: [String: String]) {
+    init(user: SyncInfo.User) {
         self.user = user
-       _viewModel = StateObject(wrappedValue: SyncConfirmViewModel(userId: user["userId"] ?? ""))
+        _viewModel = StateObject(wrappedValue: SyncConfirmViewModel(userId: user.userId ?? ""))
     }
-    
-    
     
     var body: some View {
         
@@ -76,7 +74,7 @@ struct SyncConfirmView: RouteableView {
     
     var userInfoView: some View {
         HStack(spacing: 12) {
-            KFImage.url(URL(string: (user["userAvatar"] ?? "").convertedAvatarString()))
+            KFImage.url(URL(string: (user.userAvatar ?? "").convertedAvatarString()))
                 .placeholder({
                     Image("placeholder")
                         .resizable()
@@ -86,11 +84,11 @@ struct SyncConfirmView: RouteableView {
                 .frame(width: 36, height: 36)
                 .cornerRadius(18)
             
-            Text("@\(user["userName"] ?? "")")
+            Text("@\(user.userName ?? "")")
                 .font(.inter(size: 12, weight: .bold))
                 .foregroundColor(Color(hex: "#333333"))
             
-            Text("\(user["walletAddress"] ?? "")")
+            Text("\(user.walletAddress ?? "")")
                 .font(.inter(size: 12, weight: .regular))
                 .foregroundColor(Color(hex: "#808080"))
             
@@ -113,7 +111,7 @@ struct SyncConfirmView: RouteableView {
 }
 
 #Preview {
-    SyncConfirmView(user: ["userAvatar":"aaa", "userName":"sic","walletAddress":"0x123454566"])
+    SyncConfirmView(user: SyncInfo.User(userAvatar: "",userName: "six", walletAddress: "0x1231231", userId: "123123"))
 }
 
 
