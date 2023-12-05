@@ -223,13 +223,10 @@ extension UserManager {
         
         if let data = try WallectSecureEnclave.Store.fetch(by: userId ?? "" ), !data.isEmpty, let userToken = token.AddUserMessage() {
             let sec = try WallectSecureEnclave(privateKey: data)
-            guard let sig = try sec.sign(text: token, prefix: Flow.DomainTag.user.normalize),
-                  let newKey = sec.key.publickeyValue,
-                  !newKey.isEmpty
-            else {
+            guard let newKey = sec.key.publickeyValue, !newKey.isEmpty else {
                 throw LLError.signFailed
             }
-            signature = sig
+            signature = try sec.sign(data: userToken).hexValue
             publicKey = newKey
         }
 
@@ -273,14 +270,14 @@ extension UserManager {
         }
         
         let sec = try WallectSecureEnclave(privateKey: publicData)
-        guard let signature = try sec.sign(text: token, prefix: Flow.DomainTag.user.normalize),
+    
+        guard let signData = token.AddUserMessage(),
               let publicKey = sec.key.publickeyValue,
               !publicKey.isEmpty
         else {
             throw LLError.signFailed
         }
-        
-
+        let signature = try sec.sign(data: signData).hexValue
         await IPManager.shared.fetch()
         //TODO: hash & sign algo
         let key = AccountKey(hashAlgo: Flow.HashAlgorithm.SHA2_256.index,
