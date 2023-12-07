@@ -5,6 +5,7 @@
 //  Created by Selina on 7/6/2022.
 //
 
+import React
 import SwiftUI
 
 struct DeveloperModeView_Previews: PreviewProvider {
@@ -15,7 +16,7 @@ struct DeveloperModeView_Previews: PreviewProvider {
 
 struct DeveloperModeView: RouteableView {
     @StateObject private var lud = LocalUserDefaults.shared
-    @StateObject private var vm: DeveloperModeViewModel = DeveloperModeViewModel()
+    @StateObject private var vm: DeveloperModeViewModel = .init()
     @StateObject private var walletManager = WalletManager.shared
     
     @AppStorage("isDeveloperMode") private var isDeveloperMode = false
@@ -25,7 +26,6 @@ struct DeveloperModeView: RouteableView {
     }
     
     var body: some View {
-        
         ScrollView {
             VStack {
                 HStack {
@@ -34,13 +34,23 @@ struct DeveloperModeView: RouteableView {
                 }
                 .frame(height: 64)
                 .padding(.horizontal, 16)
+                
+                if Config.get(.lilico).contains("dev") {
+                    HStack {
+                        Button {
+                            onReactNative()
+                        } label: {
+                            Text("React Native Test")
+                        }
+                    }
+                    .frame(height: 64)
+                }
             }
             .background(.LL.bgForIcon)
             .cornerRadius(16)
             .padding(.horizontal, 18)
             
             if isDeveloperMode {
-                
                 VStack {
                     Text("switch_network".localized)
                         .font(.LL.footnote)
@@ -132,7 +142,6 @@ struct DeveloperModeView: RouteableView {
                             }
                             .frame(height: 64)
                             .padding(.horizontal, 16)
-                            
                         }
                         .background(.LL.bgForIcon)
                     }
@@ -145,6 +154,26 @@ struct DeveloperModeView: RouteableView {
             Color.LL.Neutrals.background.ignoresSafeArea()
         )
         .applyRouteable(self)
+    }
+    
+    func onReactNative() {
+        NSLog("Hello")
+        let jsCodeLocation = URL(string: "http://localhost:8081/index.bundle?platform=ios")!
+        let mockData: NSDictionary = ["scores":
+            [
+                ["name": "Alex", "value": "42"],
+                ["name": "Joel", "value": "10"]
+            ]]
+
+        let rootView = RCTRootView(
+            bundleURL: jsCodeLocation,
+            moduleName: "RNHighScores",
+            initialProperties: mockData as [NSObject: AnyObject],
+            launchOptions: nil
+        )
+        let vc = UIViewController()
+        vc.view = rootView
+        Router.topNavigationController()?.pushViewController(vc)
     }
 }
 
