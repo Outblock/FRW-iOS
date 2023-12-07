@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import React
 
 struct DeveloperModeView_Previews: PreviewProvider {
     static var previews: some View {
@@ -34,6 +35,17 @@ struct DeveloperModeView: RouteableView {
                 }
                 .frame(height: 64)
                 .padding(.horizontal, 16)
+                
+                if Config.get(.lilico).contains("dev") {
+                    HStack {
+                        Button {
+                            onReactNative()
+                        } label: {
+                            Text("React Native Test")
+                        }
+                    }
+                    .frame(height: 64)
+                }
             }
             .background(.LL.bgForIcon)
             .cornerRadius(16)
@@ -145,6 +157,10 @@ struct DeveloperModeView: RouteableView {
             Color.LL.Neutrals.background.ignoresSafeArea()
         )
         .applyRouteable(self)
+    }
+    
+    func onReactNative() {
+        
     }
 }
 
