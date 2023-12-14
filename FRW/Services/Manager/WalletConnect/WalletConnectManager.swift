@@ -92,6 +92,9 @@ class WalletConnectManager: ObservableObject {
                 {
                     // TODO: commit
                     #if DEBUG
+                    if Pair.instance.getPairings().contains(where: { $0.topic == uri.topic }) {
+                        try await Pair.instance.disconnect(topic: uri.topic)
+                    }
 //                                        if Sign.instance.getPairings().contains(where: { $0.topic == uri.topic }) {
 //                                            try await Sign.instance.disconnect(topic: uri.topic)
 //                                        }

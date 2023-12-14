@@ -77,6 +77,8 @@ extension RouteMap {
         case chooseBackupMethod
         case backupToCloud(BackupManager.BackupType)
         case backupManual
+        
+        case multiBackup([BackupType])
     }
 }
 
@@ -98,6 +100,8 @@ extension RouteMap.Backup: RouterTarget {
             navi.push(content: BackupPasswordView(backupType: type))
         case .backupManual:
             navi.push(content: ManualBackupView())
+        case .multiBackup(let items):
+            navi.push(content: BackupSelectOptionsView(list: items))
         }
     }
 }
@@ -248,6 +252,10 @@ extension RouteMap.Profile: RouterTarget {
         case .editAvatar:
             navi.push(content: EditAvatarView())
         case .backupChange:
+            #if DEBUG
+            navi.push(content: BackupPatternView())
+            return 
+            #endif
             if let existVC = navi.viewControllers.first(where: { $0.navigationItem.title == "backup".localized }) {
                 navi.popToViewController(existVC, animated: true)
                 return

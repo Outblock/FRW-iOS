@@ -237,3 +237,10 @@ extension Color {
         }
     }
 }
+
+extension Color {
+    /// opacity is 0.16
+    func fixedOpacity() -> Color {
+        return self.opacity(0.16)
+    }
+}
