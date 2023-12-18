@@ -7,6 +7,7 @@
 
 import UIKit
 import Flow
+import SwiftUI
 
 class RemoteConfigManager {
     static let shared = RemoteConfigManager()
@@ -19,16 +20,23 @@ class RemoteConfigManager {
     var isFailed: Bool = false
     
     var freeGasEnabled: Bool {
+        if !remoteGreeGas {
+            return false
+        }
+        return localGreeGas
+    }
+    
+    @AppStorage(LocalUserDefaults.Keys.freeGas.rawValue) private var localGreeGas = true
+    private var remoteGreeGas: Bool {
         if let config = config {
             return config.features.freeGas
         }
-        
         return false
     }
     
     var payer: String {
         if !freeGasEnabled {
-            return emptyAddress
+            return WalletManager.shared.selectedAccountAddress
         }
         
         switch LocalUserDefaults.shared.flowNetwork.toFlowType() {
