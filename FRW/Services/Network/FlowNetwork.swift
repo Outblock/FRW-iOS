@@ -485,7 +485,7 @@ extension FlowNetwork {
         return true
     }
     
-    static func createDelegatorId(providerId: String) async throws -> Bool {
+    static func createDelegatorId(providerId: String, amount: Double = 0) async throws -> Flow.ID {
         let cadenceString = CadenceTemplate.createDelegatorId.replace(by: ScriptAddress.addressMap())
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         
@@ -507,22 +507,14 @@ extension FlowNetwork {
             }
             
             arguments {
-                [.string(providerId), .ufix64(0)]
+                [.string(providerId), .ufix64(Decimal(amount))]
             }
             
             gasLimit {
                 9999
             }
         })
-        
-        let result = try await txId.onceSealed()
-        
-        if result.isFailed {
-            debugPrint("FlowNetwork: createDelegatorId failed msg: \(result.errorMessage)")
-            return false
-        }
-        
-        return true
+        return txId
     }
     
     static func stakeFlow(providerId: String, delegatorId: Int, amount: Double) async throws -> Flow.ID {
