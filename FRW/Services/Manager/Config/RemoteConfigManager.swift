@@ -20,10 +20,11 @@ class RemoteConfigManager {
     var isFailed: Bool = false
     
     var freeGasEnabled: Bool {
-        if !remoteGreeGas {
-            return false
-        }
-        return localGreeGas
+        return remoteGreeGas
+//        if !remoteGreeGas {
+//            return false
+//        }
+//        return localGreeGas
     }
     
     @AppStorage(LocalUserDefaults.Keys.freeGas.rawValue) private var localGreeGas = true
