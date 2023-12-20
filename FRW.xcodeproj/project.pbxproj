@@ -5196,9 +5196,9 @@
 				15C58AAE2868A4EE00BD4FC6 /* Sources */,
 				15C58C3C2868A4EE00BD4FC6 /* Frameworks */,
 				15C58C5A2868A4EE00BD4FC6 /* Resources */,
+				4ED06E412ABABB9400F49A1A /* Embed Frameworks */,
 				6A9DFBD329519D9A00E10EAC /* Embed Foundation Extensions */,
 				6A04A4722961A5A900F069C4 /* dSYM Upload */,
-				4ED06E412ABABB9400F49A1A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
