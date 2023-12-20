@@ -30,9 +30,5 @@
 	<array>
 		<string>group.io.outblock.lilico.dev</string>
 	</array>
-	<key>keychain-access-groups</key>
-	<array>
-		<string>$(AppIdentifierPrefix)io.outblock.lilico.dev.sharedItem</string>
-	</array>
 </dict>
 </plist>

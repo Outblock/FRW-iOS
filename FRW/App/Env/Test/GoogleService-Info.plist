@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>246247206636-c876thhurb2nr2c5fvj0jm0n2krp3j5t.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.246247206636-c876thhurb2nr2c5fvj0jm0n2krp3j5t</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>246247206636-u3dlmtcms9u1jfl17j698kqs4d7cd3l9.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBgnWITrdGX0Xct0oL0DBVudQGW6p9nmNQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>246247206636</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.flow.wallet.test</string>
+	<key>PROJECT_ID</key>
+	<string>lilico-dev</string>
+	<key>STORAGE_BUCKET</key>
+	<string>lilico-dev.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:246247206636:ios:299d7098f88ff823f23fc9</string>
+	<key>DATABASE_URL</key>
+	<string>https://lilico-dev-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+</dict>
+</plist>

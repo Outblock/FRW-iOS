@@ -15,7 +15,7 @@ import UIKit
 import WalletCore
 import SwiftyBeaver
 import FirebaseMessaging
-
+import KeychainAccess
 #if DEBUG
 import Atlantis
 #endif
@@ -42,6 +42,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         let console = ConsoleDestination()
         console.format = "$DHH:mm:ss.SSS$d $C$L$c $N.$F:$l - $M - $X"
         log.addDestination(console)
+        
+        let keychain = Keychain(service:"io.outblock.lilico.dev", accessGroup: "C7CT739SU9.io.outblock.lilico.dev.sharedItem")
+        keychain[string: "test"] = "i am \( Bundle.main.bundleIdentifier ?? "")"
+        
 #endif
         
         FirebaseApp.configure()
