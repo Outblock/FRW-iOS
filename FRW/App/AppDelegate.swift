@@ -92,6 +92,18 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             }
         }
         
+        if url.scheme == "flowwallet" {
+            guard let str = parameters["data"], let data = Data(hexString: str) else {
+                return false
+            }
+            if let mnemonicData = try? WalletManager.decryptionChaChaPoly(key: LocalEnvManager.shared.backupAESKey, data: data), let mnemonic = String(data: mnemonicData, encoding: .utf8)  {
+              // handle mnemonic
+            }
+            
+//            return true
+        }
+        
+        
         return GIDSignIn.sharedInstance.handle(url)
     }
     
