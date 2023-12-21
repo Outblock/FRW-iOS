@@ -42,16 +42,20 @@ class WalletManager: ObservableObject {
     private var childAccountInited: Bool = false
 
     private var hdWallet: HDWallet?
-
-    var mainKeychain = Keychain(service: Bundle.main.bundleIdentifier ?? defaultBundleID)
-        .label("Lilico app backup")
-        .synchronizable(true)
-        .accessibility(.whenUnlocked)
+    
+    var mainKeychain: Keychain
 
     private var walletInfoRetryTimer: Timer?
     private var cancellableSet = Set<AnyCancellable>()
 
     init() {
+        let service = Bundle.main.bundleIdentifier ?? WalletManager.defaultBundleID
+        let group = "C7CT739SU9." + service + ".sharedItem"
+        mainKeychain = Keychain(service: service, accessGroup: group)
+            .label("Lilico app backup")
+            .synchronizable(true)
+            .accessibility(.whenUnlocked)
+        
         NotificationCenter.default.addObserver(self, selector: #selector(reset), name: .willResetWallet, object: nil)
         
         if UserManager.shared.activatedUID != nil {
