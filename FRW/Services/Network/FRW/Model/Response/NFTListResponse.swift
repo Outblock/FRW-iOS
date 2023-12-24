@@ -141,8 +141,12 @@ struct NFTTrait: Codable, Hashable {
             do {
                 value = try String(container.decode(Bool.self, forKey: .value))
             } catch DecodingError.typeMismatch {
-                value = try container.decode(String.self, forKey: .value)
+                value = try container.decode(String?.self, forKey: .value)
+            } catch {
+                value = ""
             }
+        } catch {
+            value = ""
         }
     }
 }
