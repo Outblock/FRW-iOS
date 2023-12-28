@@ -102,7 +102,7 @@ class UsernameViewModel: ViewModel {
             do {
                 let model: CheckUserResponse = try await Network.request(FRWAPI.User.checkUsername(username.lowercased()))
                 await MainActor.run {
-                    if model.username == currentText {
+                    if model.username == currentText.lowercased() {
                         self.state.status = model.unique ? .success() : .error("has_been_taken".localized)
                     }
                 }
