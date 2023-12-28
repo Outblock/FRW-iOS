@@ -49,7 +49,7 @@ struct AboutView: RouteableView {
                     }
                     
                     SocialButton(imageName: "twitter",
-                                 text: "Twitter") {
+                                 text: "X") {
                         UIApplication.shared.open(URL(string: "https://twitter.com/flow_blockchain")!)
                     }
 //                    
