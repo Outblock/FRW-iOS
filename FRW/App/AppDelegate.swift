@@ -53,6 +53,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             FirebaseConfig.start()
         }
         
+        ServiceConfig.configure()
+        
         appConfig()
         commonConfig()
         flowConfig()
