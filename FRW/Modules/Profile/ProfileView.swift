@@ -371,9 +371,9 @@ extension ProfileView.WalletConnectView.Row {
     var title: String {
         switch self {
         case .walletConnect:
-            "walletconnect".localized
+            return "walletconnect".localized
         case .devices:
-            "devices".localized
+            return "devices".localized
         }
         
     }
