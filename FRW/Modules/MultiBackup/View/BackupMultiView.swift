@@ -8,13 +8,10 @@
 import SwiftUI
 import SwiftUIX
 
-struct BackupSelectOptionsView: RouteableView {
+struct BackupMultiView: RouteableView {
     
-    @StateObject var viewModel: BackupSelectOptionsViewModel
-    
-    init(list: [BackupType]) {
-        _viewModel = StateObject(wrappedValue: BackupSelectOptionsViewModel(backups: list))
-    }
+    @StateObject var viewModel: BackupMultiViewModel = BackupMultiViewModel(backups: [])
+
     
     var title: String {
         return "multi_backup".localized
@@ -71,19 +68,19 @@ struct BackupSelectOptionsView: RouteableView {
         GridItem(.adaptive(minimum: width))]
     }
     
-    func onClick(item: BackupSelectOptionsViewModel.MultiItem) {
+    func onClick(item: BackupMultiViewModel.MultiItem) {
         viewModel.onClick(item: item)
     }
 }
 
 //MARK: ItemView
-extension BackupSelectOptionsView {
+extension BackupMultiView {
     struct ItemView: View {
-        @Binding var item: BackupSelectOptionsViewModel.MultiItem
-        var onClick:(BackupSelectOptionsViewModel.MultiItem) -> Void
+        @Binding var item: BackupMultiViewModel.MultiItem
+        var onClick:(BackupMultiViewModel.MultiItem) -> Void
         @Binding private var isSelected: Bool
         
-        init(item: Binding<BackupSelectOptionsViewModel.MultiItem>, onClick: @escaping (BackupSelectOptionsViewModel.MultiItem) -> Void) {
+        init(item: Binding<BackupMultiViewModel.MultiItem>, onClick: @escaping (BackupMultiViewModel.MultiItem) -> Void) {
             _item = item
             self.onClick = onClick
             _isSelected = item.isBackup
@@ -127,7 +124,7 @@ extension BackupSelectOptionsView {
 
 #Preview {
     
-    BackupSelectOptionsView(list: [.google])
+    BackupMultiView()
     
         
 }

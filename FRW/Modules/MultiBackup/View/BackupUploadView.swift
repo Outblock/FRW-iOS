@@ -19,6 +19,40 @@ struct BackupUploadView: RouteableView {
             BackupUploadView.ProgressView(items: viewModel.items,
                                           currentIndex: $viewModel.currentIndex
             )
+            .padding(.horizontal, 56)
+            
+            VStack(spacing: 24) {
+                Image(viewModel.currentIcon)
+                  .resizable()
+                  .aspectRatio(contentMode: .fill)
+                  .frame(width: 120, height: 120)
+                  .background(.Theme.Background.white)
+                  .cornerRadius(60)
+                  .clipped()
+                
+                Text(viewModel.currentTitle)
+                    .font(.inter(size: 20, weight: .bold))
+                    .foregroundStyle(Color.Theme.Text.black)
+
+                Text(viewModel.currentNote)
+                  .font(.inter(size: 12))
+                  .multilineTextAlignment(.center)
+                  .foregroundColor(.Theme.Accent.grey)
+                  .frame(alignment: .top)
+            }
+            .padding(.horizontal, 40)
+            
+            BackupUploadTimeline(backupType: viewModel.currentType, isError: viewModel.hasError, process: viewModel.process)
+            
+            Spacer()
+            
+            VPrimaryButton(model: ButtonStyle.primary,
+                           state: .enabled,
+                           action: {
+                
+            }, title: viewModel.currentButton)
+            .padding(.horizontal, 18)
+            .padding(.bottom)
         }
             .applyRouteable(self)
             .backgroundFill(Color.LL.Neutrals.background)
@@ -45,6 +79,7 @@ extension BackupUploadView {
                 
                 Image(currentIndex >= items.count ? "icon.finish.highlight" : "icon.finish.normal")
                     .resizable()
+                    .aspectRatio(contentMode: .fill)
                     .frame(width: 40, height: 40)
             }
         }
@@ -59,6 +94,7 @@ extension BackupUploadView {
                 Image(isSelected ? itemType.highlightIcon
                     : itemType.normalIcon)
                     .resizable()
+                    .aspectRatio(contentMode: .fill)
                     .frame(width: 40, height: 40)
             }
         }

@@ -286,7 +286,7 @@ extension ProfileView {
                     Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
                     
                     Button {
-                        Router.route(to: RouteMap.Profile.backupChange)
+                        Router.route(to: RouteMap.Backup.backupList)
                     } label: {
                         ProfileView.SettingItemCell(iconName: Row.backup(vm).iconName, title: Row.backup(vm).title, style: Row.backup(vm).style, desc: Row.backup(vm).desc, imageName: Row.backup(vm).imageName, sysImageColor: Row.backup(vm).sysImageColor)
                     }

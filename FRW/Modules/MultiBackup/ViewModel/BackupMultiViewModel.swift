@@ -7,8 +7,8 @@
 
 import Foundation
 
-class BackupSelectOptionsViewModel: ObservableObject {
-    @Published var list: [BackupSelectOptionsViewModel.MultiItem] = []
+class BackupMultiViewModel: ObservableObject {
+    @Published var list: [BackupMultiViewModel.MultiItem] = []
     @Published var nextable: Bool = false
     let selectedList: [BackupType]
     
@@ -16,11 +16,13 @@ class BackupSelectOptionsViewModel: ObservableObject {
         list = []
         selectedList = backups
         for type in BackupType.allCases {
-            list.append(MultiItem(type: type, isBackup: backups.contains(type)))
+            if type != .passkey {
+                list.append(MultiItem(type: type, isBackup: backups.contains(type)))
+            }
         }
     }
     
-    func onClick(item: BackupSelectOptionsViewModel.MultiItem) {
+    func onClick(item: BackupMultiViewModel.MultiItem) {
         let existItem = selectedList.first { $0 == item.type }
         guard existItem == nil else { return  }
         list = list.map { model in
@@ -57,7 +59,7 @@ enum BackupType: Int,CaseIterable {
     var title: String {
         switch self {
         case .google:
-            return "Google Drive"
+            return "google_drive".localized
         case .passkey:
             return "Passkey"
         case .icloud:
@@ -78,6 +80,10 @@ enum BackupType: Int,CaseIterable {
         case .phrase:
             return "icon.recovery"
         }
+    }
+    
+    var noteDes: String {
+        "backup_note_x".localized(title)
     }
     
     var normalIcon: String {
@@ -108,7 +114,7 @@ enum BackupType: Int,CaseIterable {
 }
 
 
-extension BackupSelectOptionsViewModel {
+extension BackupMultiViewModel {
     
     
     struct MultiItem: Hashable {
