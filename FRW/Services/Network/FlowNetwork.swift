@@ -5,12 +5,12 @@
 //  Created by Hao Fu on 30/4/2022.
 //
 
+import BigInt
 import Combine
 import Flow
 import Foundation
-import BigInt
 
-class FlowNetwork {
+enum FlowNetwork {
     static func setup() {
         let type = LocalUserDefaults.shared.flowNetwork.toFlowType()
         log.debug("did setup flow chainID to \(LocalUserDefaults.shared.flowNetwork.rawValue)")
@@ -22,7 +22,7 @@ class FlowNetwork {
 
 extension FlowNetwork {
     static func checkTokensEnable(address: Flow.Address, tokens: [TokenModel]) async throws -> [Bool] {
-        let cadence = TokenCadence.tokenEnable(with: tokens, at:flow.chainID)
+        let cadence = TokenCadence.tokenEnable(with: tokens, at: flow.chainID)
         return try await fetch(at: address, by: cadence)
     }
 
@@ -614,7 +614,7 @@ extension FlowNetwork {
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let replacedCadence = CadenceTemplate.getDelegatorInfo.replace(by: ScriptAddress.addressMap())
         let rawResponse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: replacedCadence),
-                                                                           arguments: [.address(address)])
+                                                                              arguments: [.address(address)])
         
         let response = try JSONDecoder().decode(StakingDelegatorInner.self, from: rawResponse.data)
         debugPrint("FlowNetwork -> getDelegatorInfo, response = \(response)")
@@ -638,6 +638,7 @@ extension FlowNetwork {
 }
 
 // MARK: - Child Account
+
 extension FlowNetwork {
     static func queryChildAccountList() async throws -> [String] {
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
@@ -682,7 +683,7 @@ extension FlowNetwork {
         let address = Flow.Address(hex: address)
         let replacedCadence = CadenceTemplate.queryChildAccountMeta.replace(by: ScriptAddress.addressMap())
         let rawResponse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: replacedCadence),
-                                                                           arguments: [.address(address)])
+                                                                              arguments: [.address(address)])
 
         guard let decode = rawResponse.decode() as? [String: Any?] else {
             return []
@@ -692,7 +693,8 @@ extension FlowNetwork {
             guard let value = decode[key],
                   let value = value,
                   let data = try? JSONSerialization.data(withJSONObject: value),
-                  var model = try? JSONDecoder().decode(ChildAccount.self, from: data) else {
+                  var model = try? JSONDecoder().decode(ChildAccount.self, from: data)
+            else {
                 return ChildAccount(address: key, name: nil, desc: nil, icon: nil, pinTime: 0)
             }
             
@@ -743,7 +745,7 @@ extension FlowNetwork {
         let response = try await flow.accessAPI
             .executeScriptAtLatestBlock(script: Flow.Script(text: cadenceString), arguments: [.address(parentAddress), .address(childAddress)])
             .decode([FlowModel.NFTCollection].self)
-        return response 
+        return response
     }
     
     static func fetchAccessibleFT(parent: String, child: String) async throws -> [FlowModel.TokenInfo] {
@@ -789,7 +791,7 @@ extension FlowNetwork {
         return account.keys.first?.index ?? 0
     }
     
-    static func checkStorageInfo() async throws -> Flow.StorageInfo  {
+    static func checkStorageInfo() async throws -> Flow.StorageInfo {
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         return try await flow.checkStorageInfo(address: address)
     }
@@ -832,19 +834,19 @@ extension Flow.TransactionResult {
     }
     
     var isFailed: Bool {
-        if isProcessing {
+        if self.isProcessing {
             return false
         }
         
-        if isExpired {
+        if self.isExpired {
             return true
         }
         return !errorMessage.isEmpty
     }
 }
 
-
 // MARK: - Account Key
+
 extension FlowNetwork {
     static func revokeAccountKey(by index: Int, at address: Flow.Address) async throws -> Flow.ID {
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
@@ -868,5 +870,59 @@ extension FlowNetwork {
                 [.int(index)]
             }
         })
+    }
+    
+    static func addKeyToAccount(address: Flow.Address, accountKey: Flow.AccountKey, signers: [FlowSigner]) async throws -> Flow.ID {
+        return try await flow.sendTransaction(signers: signers) {
+            cadence {
+                CadenceTemplate.addKeyToAccount
+            }
+            arguments {
+                [
+                    .string(accountKey.publicKey.hex),
+                    .uint8(UInt8(accountKey.signAlgo.index)),
+                    .uint8(UInt8(accountKey.hashAlgo.code)),
+                    .ufix64(Decimal(accountKey.weight)),
+                ]
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            
+            proposer {
+                address
+            }
+            authorizers {
+                address
+            }
+        }
+    }
+    
+    static func addKeyWithMulti(address: Flow.Address, keyIndex: Int, sequenceNum: Int64, accountKey: Flow.AccountKey, signers: [FlowSigner]) async throws -> Flow.ID {
+        return try await flow.sendTransaction(signers: signers) {
+            cadence {
+                CadenceTemplate.addKeyToAccount
+            }
+            arguments {
+                [
+                    .string(accountKey.publicKey.hex),
+                    .uint8(UInt8(accountKey.signAlgo.index)),
+                    .uint8(UInt8(accountKey.hashAlgo.code)),
+                    .ufix64(Decimal(accountKey.weight)),
+                ]
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            
+            proposer {
+                Flow.TransactionProposalKey(address: address, keyIndex: keyIndex, sequenceNumber: sequenceNum)
+            }
+            authorizers {
+                address
+            }
+        }
     }
 }

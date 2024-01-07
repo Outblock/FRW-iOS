@@ -47,7 +47,7 @@ extension MultiBackupManager {
         var userName: String
         var userAvatar: String?
         var publicKey: String
-        var key: String
+        var data: String
         var keyIndex: Int
         var signAlgo: Int
         var hashAlgo: Int
@@ -131,7 +131,6 @@ extension MultiBackupManager {
             item.userId == uid
         }
         
-        // TODO: debug
 //        if let existItem = existItem {
 //            return list
 //        }
@@ -146,7 +145,7 @@ extension MultiBackupManager {
         }
         let keyData = key.dataRepresentation
         
-        try await addDevice(key: publicKey)
+        try await addKey(key: publicKey)
         let keyIndex = try await fetchKeyIndex(publicKey: publicKey)
         
         let dataHexString = try encryptMnemonic(keyData, password: password)
@@ -165,7 +164,7 @@ extension MultiBackupManager {
             userId: uid,
             userName: username,
             publicKey: publicKey,
-            key: dataHexString,
+            data: dataHexString,
             keyIndex: keyIndex,
             signAlgo: Flow.SignatureAlgorithm.ECDSA_P256.index,
             hashAlgo: Flow.HashAlgorithm.SHA2_256.index,
@@ -233,6 +232,15 @@ extension MultiBackupManager {
         
         return mm
     }
+    
+    func descrpt(_ hexString: String, password: String) throws -> Data {
+        guard let encryptData = Data(hexString: hexString) else {
+            throw BackupError.hexStringToDataFailed
+        }
+        let iv = iv()
+        let decryptedData = try WalletManager.decryptionAES(key: password, iv: iv, data: encryptData)
+        return decryptedData
+    }
 }
 
 extension MultiBackupManager {
@@ -243,11 +251,11 @@ extension MultiBackupManager {
         }
     }
     
-    func addDevice(key: String) async throws {
+    func addKey(key: String) async throws {
         let address = WalletManager.shared.address
         let accountKey = Flow.AccountKey(publicKey: Flow.PublicKey(hex: key), signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 500)
         do {
-            let flowId = try await flow.addKeyToAccount(address: address, accountKey: accountKey, signers: [WalletManager.shared, RemoteConfigManager.shared])
+            let flowId = try await FlowNetwork.addKeyToAccount(address: address, accountKey: accountKey, signers: [WalletManager.shared, RemoteConfigManager.shared])
             guard let data = try? JSONEncoder().encode(key) else {
                 return
             }
@@ -283,4 +291,105 @@ extension MultiBackupManager {
     }
 }
 
-extension MultiBackupManager {}
+extension MultiBackupManager {
+    func addKeyToAccount(with list: [MultiBackupManager.StoreItem]) async throws {
+        guard list.count > 1 else {
+            return
+        }
+        
+        var firstItem = list[0]
+        var secondItem = list[1]
+        let addressDes = list[0].address
+        
+        let account = try await FlowNetwork.getAccountAtLatestBlock(address: addressDes)
+        var sequenNum: Int64 = 0
+        account.keys.forEach { accountKey in
+            let publicKey = accountKey.publicKey.description
+            if publicKey == firstItem.publicKey {
+                sequenNum = accountKey.sequenceNumber
+                firstItem.keyIndex = accountKey.index
+            }
+            if publicKey == secondItem.publicKey {
+                secondItem.keyIndex = accountKey.index
+            }
+        }
+        
+        let firstSigner = MultiBackupManager.Signer(provider: firstItem)
+        let secondSigner = MultiBackupManager.Signer(provider: secondItem)
+        
+        let address = Flow.Address(hex: addressDes)
+        
+        let sec = try WallectSecureEnclave()
+        let key = try sec.accountKey()
+        do {
+            HUD.loading()
+            let tx = try await FlowNetwork.addKeyWithMulti(address: address, keyIndex: firstItem.keyIndex, sequenceNum: sequenNum, accountKey: key, signers: [firstSigner, secondSigner, RemoteConfigManager.shared])
+            let firstKeySignature = AccountKeySignature(hashAlgo: firstSigner.hashAlgo.index, publicKey: firstSigner.provider.publicKey, signAlgo: firstSigner.signatureAlgo.index, signMessage: "", signature: firstSigner.signature!.hexValue, weight: firstSigner.provider.signAlgo)
+            let secondKeySignature = AccountKeySignature(hashAlgo: secondSigner.hashAlgo.index, publicKey: secondSigner.provider.publicKey, signAlgo: secondSigner.signatureAlgo.index, signMessage: "", signature: secondSigner.signature!.hexValue, weight: secondSigner.provider.signAlgo)
+            let request = SignedRequest(accountKey: AccountKey(hashAlgo: key.hashAlgo.index,
+                                                               publicKey: key.publicKey.description,
+                                                               signAlgo: key.signAlgo.index,
+                                                               weight: key.weight),
+                                        signatures: [firstKeySignature, secondKeySignature])
+            let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.addSigned(request))
+            if response.httpCode != 200 {
+                log.info("[Multi-backup] sync failed")
+            } else {
+                print("")
+                if let privateKey = sec.key.privateKey {
+                    try WallectSecureEnclave.Store.store(key: firstItem.userId, value: privateKey.dataRepresentation)
+                }
+                
+                try await UserManager.shared.restoreLogin(userId: firstItem.userId)
+                Router.popToRoot()
+            }
+            HUD.dismissLoading()
+            
+            print(tx)
+        } catch {
+            HUD.dismissLoading()
+            print(error)
+        }
+    }
+    
+    func syncKeyToService(first: MultiBackupManager.Signer, second: MultiBackupManager.Signer) async throws {}
+}
+
+// MARK: - Signer
+
+extension MultiBackupManager {
+    class Signer: FlowSigner {
+        let provider: MultiBackupManager.StoreItem
+        var signature: Data?
+        
+        init(provider: MultiBackupManager.StoreItem) {
+            self.provider = provider
+        }
+        
+        public var address: Flow.Address {
+            return Flow.Address(hex: provider.address)
+        }
+        
+        public var hashAlgo: Flow.HashAlgorithm {
+            .SHA2_256
+        }
+        
+        public var signatureAlgo: Flow.SignatureAlgorithm {
+            .ECDSA_P256
+        }
+        
+        public var keyIndex: Int {
+            provider.keyIndex
+        }
+        
+        public func sign(transaction: Flow.Transaction, signableData: Data) async throws -> Data {
+            let key = LocalEnvManager.shared.backupAESKey
+            let data = try MultiBackupManager.shared.descrpt(provider.data, password: key)
+
+            let sec = try WallectSecureEnclave(privateKey: data)
+            let signature = try sec.sign(data: signableData)
+            self.signature = signature
+            return signature
+        }
+    }
+}

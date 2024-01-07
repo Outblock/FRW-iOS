@@ -22,6 +22,7 @@ extension FRWAPI {
         case keys
         case devices(String)
         case syncDevice(SyncInfo.DeviceInfo)
+        case addSigned(SignedRequest)
     }
 }
 
@@ -60,6 +61,8 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
             return "/v1/user/device"
         case .syncDevice:
             return "/v3/sync"
+        case .addSigned:
+            return "/v3/signed"
         }
     }
 
@@ -67,14 +70,14 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
         switch self {
         case .checkUsername, .userInfo, .userWallet, .search, .keys, .devices:
             return .get
-        case .login, .register, .userAddress, .manualCheck, .sandboxnet, .syncDevice:
+        case .login, .register, .userAddress, .manualCheck, .sandboxnet, .syncDevice, .addSigned:
             return .post
         }
     }
 
     var task: Task {
         switch self {
-        case .userAddress, .userInfo, .userWallet, .manualCheck, .sandboxnet,.keys:
+        case .userAddress, .userInfo, .userWallet, .manualCheck, .sandboxnet, .keys:
             return .requestPlain
         case let .checkUsername(username):
             return .requestParameters(parameters: ["username": username], encoding: URLEncoding.queryString)
@@ -88,6 +91,8 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
             return .requestParameters(parameters: ["device_id": uuid], encoding: URLEncoding.queryString)
         case let .syncDevice(request):
             return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
+        case let .addSigned(request):
+            return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         }
     }
 
@@ -99,7 +104,7 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
         default:
             break
         }
-        
+
         return headers
     }
 }

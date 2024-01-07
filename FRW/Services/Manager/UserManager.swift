@@ -293,8 +293,8 @@ extension UserManager {
         guard let customToken = response.data?.customToken, !customToken.isEmpty else {
             throw LLError.restoreLoginFailed
         }
-
-        try await finishLogin(mnemonic: "", customToken: customToken)
+        let existingMnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: userId) ?? ""
+        try await finishLogin(mnemonic: existingMnemonic, customToken: customToken)
     }
 }
 

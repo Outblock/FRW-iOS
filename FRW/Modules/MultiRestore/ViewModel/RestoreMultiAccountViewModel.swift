@@ -22,8 +22,11 @@ class RestoreMultiAccountViewModel: ObservableObject {
         guard selectedUser.count > 1 else {
             return
         }
-        let firstItem = selectedUser[0]
-        let secondItem = selectedUser[1]
-        log.info(firstItem)
+        Task {
+            do {
+                try await MultiBackupManager.shared.addKeyToAccount(with: selectedUser)
+            }
+            catch {}
+        }
     }
 }
