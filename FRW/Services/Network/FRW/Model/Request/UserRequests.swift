@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import MapKit
+
 
 struct RegisterRequest: Codable {
     let username: String?
@@ -48,4 +50,34 @@ struct DeviceInfoRequest: Codable {
     let currency: String?
     let isp: String?
     let org: String?
+}
+
+extension DeviceInfoRequest {
+    
+    func showApp() -> String {
+        return userAgent
+    }
+    
+    func showIP() -> String {
+        return ip
+    }
+    
+    func showLocation() -> String {
+        var res = ""
+        if city != nil {
+            res += city!
+        }
+        if country != nil {
+            res += ",\(country!)"
+        }
+        return res
+    }
+    
+    func coordinate() -> CLLocationCoordinate2D {
+        
+        guard let latitude = lat, let longitude = lon else {
+            return CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
+        }
+        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
 }

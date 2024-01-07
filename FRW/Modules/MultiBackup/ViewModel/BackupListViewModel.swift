@@ -8,8 +8,7 @@
 import SwiftUI
 
 class BackupListViewModel: ObservableObject {
-    
-    @Published var muiltList: [String] = []
+    @Published var muiltList: [BackupListViewModel.Item] = []
     @Published var isLoading = true
     
     @Published var deviceList: [DeviceInfoModel] = []
@@ -29,43 +28,36 @@ class BackupListViewModel: ObservableObject {
             }
             
             await fetchDeviceBackup()
-            await fetchMuiltBackup()
+            await fetchMultiBackup()
             DispatchQueue.main.async {
                 self.isLoading = false
             }
         }
     }
-    
-    func fetchMuiltBackup() async {
-        
-    }
 }
 
 extension BackupListViewModel {
-    
     var showAllTagTitle: String {
-        return self.showAllDevices ? "view_all".localized : "hide".localized
+        return showAllDevices ? "view_all".localized : "hide".localized
     }
     
     func fetchDeviceBackup() async {
         do {
             let list: [DeviceInfoModel] = try await Network.request(FRWAPI.User.devices(UUIDManager.appUUID()))
             DispatchQueue.main.async {
-                self.deviceList = list.filter({ model in
+                self.deviceList = list.filter { model in
                     model.id != UUIDManager.appUUID()
-                })
-                self.current = list.filter({ model in
+                }
+                self.current = list.filter { model in
                     model.id == UUIDManager.appUUID()
-                }).first
+                }.first
                 self.showCurrent = (self.current != nil)
                 self.showOther = self.deviceList.count > 0
                 self.showAllDevices = false
                 self.showAllUITag = self.deviceList.count > self.showCount
                 self.showDevicesCount = min(self.showCount, self.deviceList.count)
-                
             }
-        }
-        catch {
+        } catch {
             DispatchQueue.main.async {
                 self.deviceList = []
                 self.current = nil
@@ -75,11 +67,43 @@ extension BackupListViewModel {
         }
     }
     
-    
-    
     func onShowAllDevices() {
         showAllDevices.toggle()
-        showDevicesCount = showAllDevices ? deviceList.count : min(self.showCount, self.deviceList.count)
+        showDevicesCount = showAllDevices ? deviceList.count : min(showCount, deviceList.count)
+    }
+}
+
+extension BackupListViewModel {
+    func fetchMultiBackup() async {
+        guard let uid = UserManager.shared.activatedUID, !uid.isEmpty else {
+            return
+        }
+        var currentUserList: [BackupListViewModel.Item] = []
+        for type in MultiBackupType.allCases {
+            do {
+                let list = try await MultiBackupManager.shared.getCloudDriveItems(from: type)
+                let current = list.filter { $0.userId == uid }.first
+                if let current = current {
+                    let item = BackupListViewModel.Item(store: current, backupType: type)
+                    currentUserList.append(item)
+                }
+            } catch {}
+        }
+        let list = currentUserList
+        DispatchQueue.main.async {
+            self.muiltList = []
+            self.muiltList.append(contentsOf: list)
+        }
     }
     
+    func currentMultiBackup() -> [MultiBackupType] {
+        return muiltList.map { $0.backupType }
+    }
+}
+
+extension BackupListViewModel {
+    struct Item {
+        let store: MultiBackupManager.StoreItem
+        let backupType: MultiBackupType
+    }
 }

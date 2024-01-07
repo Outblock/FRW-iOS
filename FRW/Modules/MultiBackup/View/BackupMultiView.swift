@@ -9,18 +9,19 @@ import SwiftUI
 import SwiftUIX
 
 struct BackupMultiView: RouteableView {
-    
-    @StateObject var viewModel: BackupMultiViewModel = BackupMultiViewModel(backups: [])
+    @StateObject var viewModel: BackupMultiViewModel
 
+    init(items: [MultiBackupType]) {
+        _viewModel = StateObject(wrappedValue: BackupMultiViewModel(backups: items))
+    }
     
     var title: String {
         return "multi_backup".localized
     }
     
-    
     var body: some View {
-        VStack(spacing: 15) {
-            VStack {
+        VStack {
+            VStack(spacing: 15) {
                 Text("multi_backup_guide_title".localized)
                     .font(.inter(size: 16))
                     .multilineTextAlignment(.center)
@@ -32,15 +33,13 @@ struct BackupMultiView: RouteableView {
             }
             .padding(.horizontal, 40)
             
-            
-            LazyVGrid(columns: columns(),spacing: 40){
-                ForEach(viewModel.list.indices, id:\.self) { index in
+            LazyVGrid(columns: columns(), spacing: 40) {
+                ForEach(viewModel.list.indices, id: \.self) { index in
                     let item = $viewModel.list[index]
                     ItemView(item: item) { item in
                         onClick(item: item)
                     }
                     .frame(height: 136)
-                    
                 }
             }
             .padding(.horizontal, 64)
@@ -51,33 +50,36 @@ struct BackupMultiView: RouteableView {
             VPrimaryButton(model: ButtonStyle.primary,
                            state: viewModel.nextable ? .enabled : .disabled,
                            action: {
-                
-            }, title: "next".localized)
-            .padding(.horizontal, 18)
-            .padding(.bottom)
-            
-            
+                               onNext()
+                           }, title: "next".localized)
+                .padding(.horizontal, 18)
+                .padding(.bottom)
         }
         .applyRouteable(self)
         .backgroundFill(Color.LL.Neutrals.background)
     }
     
     func columns() -> [GridItem] {
-        let width = (screenWidth - 64 * 2)/2;
-       return [GridItem(.adaptive(minimum: width)),
-        GridItem(.adaptive(minimum: width))]
+        let width = (screenWidth - 64 * 2) / 2
+        return [GridItem(.adaptive(minimum: width)),
+                GridItem(.adaptive(minimum: width))]
     }
     
     func onClick(item: BackupMultiViewModel.MultiItem) {
         viewModel.onClick(item: item)
     }
+    
+    func onNext() {
+        viewModel.onNext()
+    }
 }
 
-//MARK: ItemView
+// MARK: ItemView
+
 extension BackupMultiView {
     struct ItemView: View {
         @Binding var item: BackupMultiViewModel.MultiItem
-        var onClick:(BackupMultiViewModel.MultiItem) -> Void
+        var onClick: (BackupMultiViewModel.MultiItem) -> Void
         @Binding private var isSelected: Bool
         
         init(item: Binding<BackupMultiViewModel.MultiItem>, onClick: @escaping (BackupMultiViewModel.MultiItem) -> Void) {
@@ -87,15 +89,14 @@ extension BackupMultiView {
         }
         
         var body: some View {
-            
             VStack(alignment: .center, spacing: 16) {
                 ZStack(alignment: .topTrailing) {
                     ZStack(alignment: .center) {
-                        RoundedRectangle(cornerRadius: 24,style: .continuous)
-                                                .inset(by: 1)
-                                                .stroke(Color.Theme.Accent.green, lineWidth: isSelected ? 2 : 0)
-                                                .background(.Theme.Background.white)
-                                                .cornerRadius(24)
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .inset(by: 1)
+                            .stroke(Color.Theme.Accent.green, lineWidth: isSelected ? 2 : 0)
+                            .background(.Theme.Background.white)
+                            .cornerRadius(24)
                         Image(item.icon)
                             .frame(width: 68, height: 68)
                             .padding(.all, 14)
@@ -103,17 +104,16 @@ extension BackupMultiView {
 
                     Image("check_circle_border")
                         .resizable()
-                        .frame(width:24,height: 24)
-                        .offset(x: 6,y:-6)
+                        .frame(width: 24, height: 24)
+                        .offset(x: 6, y: -6)
                         .visibility(isSelected ? .visible : .gone)
-                        
                 }
                 .frame(width: 96, height: 96)
                 
                 Text(item.name)
                     .font(.inter(size: 14))
                     .foregroundStyle(Color.Theme.Text.black8)
-                    .frame(height:24)
+                    .frame(height: 24)
             }
             .onTapGesture {
                 onClick(item)
@@ -123,8 +123,5 @@ extension BackupMultiView {
 }
 
 #Preview {
-    
-    BackupMultiView()
-    
-        
+    BackupMultiView(items: [])
 }

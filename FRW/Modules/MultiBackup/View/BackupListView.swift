@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct BackupListView: RouteableView {
-    
     @StateObject var viewModel = BackupListViewModel()
     
     var title: String {
@@ -22,7 +21,7 @@ struct BackupListView: RouteableView {
             BackupPatternItem(style: .device) { _ in
                 onClickDeviceBackup()
             }
-            .visibility(viewModel.deviceList.count == 0 ? .visible : .gone )
+            .visibility(viewModel.deviceList.count == 0 ? .visible : .gone)
             .mockPlaceholder(viewModel.isLoading)
             
             BackupPatternItem(style: .multi) { _ in
@@ -34,16 +33,17 @@ struct BackupListView: RouteableView {
             Divider()
                 .foregroundStyle(.clear)
                 .background(Color.Theme.Line.line)
+                .visibility((viewModel.deviceList.count == 0 || viewModel.muiltList.count == 0) ? .visible : .gone)
             
             deviceListView
-                .visibility(viewModel.deviceList.count > 0 ? .visible : .gone )
+                .visibility(viewModel.deviceList.count > 0 ? .visible : .gone)
             
             multiListView
                 .visibility(viewModel.muiltList.count > 0 ? .visible : .gone)
             
             Spacer()
         }
-        .padding(.horizontal,18)
+        .padding(.horizontal, 18)
         .applyRouteable(self)
         .backgroundFill(Color.LL.Neutrals.background)
     }
@@ -59,6 +59,8 @@ struct BackupListView: RouteableView {
                     onAddDevice()
                 } label: {
                     Image("icon-wallet-coin-add")
+                        .renderingMode(.template)
+                        .foregroundColor(.LL.Neutrals.neutrals1)
                 }
             }
             .padding(.top, 24)
@@ -70,8 +72,8 @@ struct BackupListView: RouteableView {
             VStack(alignment: .leading) {
                 HStack {
                     Text("other_device".localized)
-                      .font(.inter(size: 14,weight: .bold))
-                      .foregroundColor(Color.Theme.Text.black3)
+                        .font(.inter(size: 14, weight: .bold))
+                        .foregroundColor(Color.Theme.Text.black3)
                     Spacer()
                     Button {
                         onShowAll()
@@ -83,7 +85,7 @@ struct BackupListView: RouteableView {
                     .visibility(viewModel.showAllUITag ? .visible : .gone)
                 }
                 
-                ForEach(0..<viewModel.showDevicesCount,id:\.self) { index in
+                ForEach(0..<viewModel.showDevicesCount, id: \.self) { index in
                     DevicesView.Cell(model: viewModel.deviceList[index])
                 }
             }
@@ -94,8 +96,6 @@ struct BackupListView: RouteableView {
     
     var multiListView: some View {
         VStack {
-            
-        
             HStack {
                 Text("multi_backup".localized)
                     .font(.inter(size: 16, weight: .semibold))
@@ -105,43 +105,38 @@ struct BackupListView: RouteableView {
                     onAddMulti()
                 } label: {
                     Image("icon-wallet-coin-add")
+                        .renderingMode(.template)
+                        .foregroundColor(.LL.Neutrals.neutrals1)
                 }
-
             }
             .padding(.top, 24)
-            
-            BackupListView.BackupFinishItem()
+            ForEach(0..<viewModel.muiltList.count, id: \.self) { index in
+                let item = viewModel.muiltList[index]
+                BackupListView.BackupFinishItem(item: item)
+            }
         }
     }
     
-    
-    
-    func onAddDevice() {
-        
-    }
+    func onAddDevice() {}
     
     func onShowAll() {
         viewModel.onShowAllDevices()
     }
     
-    func onClickDeviceBackup() {
-        
-        
-    }
+    func onClickDeviceBackup() {}
     
     func onClickMultiBackup() {
-        //TODO: 获取已备份的数据
         Router.route(to: RouteMap.Backup.multiBackup([]))
     }
     
-    
-    
     func onAddMulti() {
-        
+        let list = viewModel.currentMultiBackup()
+        Router.route(to: RouteMap.Backup.multiBackup(list))
     }
 }
 
-//MARK: Create Backup View
+// MARK: Create Backup View
+
 struct BackupPatternItem: View {
     enum ItemStyle {
         case device
@@ -173,7 +168,7 @@ struct BackupPatternItem: View {
                 .frame(width: 32, height: 32)
                 .padding(.bottom, 32)
         }
-        .frame(minWidth: 0,maxWidth: .infinity)
+        .frame(minWidth: 0, maxWidth: .infinity)
         .background(color.fixedOpacity())
         .cornerRadius(24, style: .continuous)
         .onTapGesture {
@@ -218,26 +213,26 @@ struct BackupPatternItem: View {
     }
 }
 
-//MARK: Finished Item View of Multi-Backup
+// MARK: Finished Item View of Multi-Backup
+
 extension BackupListView {
     struct BackupFinishItem: View {
+        var item: BackupListViewModel.Item
+        
         var body: some View {
             HStack(alignment: .top) {
-                Image("Google.Drive")
+                Image(item.backupType.iconName())
                     .resizable()
                     .frame(width: 24, height: 24)
                 VStack(alignment: .leading, spacing: 4) {
-                    // Body1
-                    Text("Google Drive Backup")
+                    Text("\(item.backupType.title) Backup")
                         .font(.inter(size: 16))
                         .foregroundStyle(Color.Theme.Text.black8)
-                      .foregroundColor(.black.opacity(0.8))
-                    // Body3
-                    Text("Flow Reference macOS 8.4.1")
+                        .foregroundColor(.black.opacity(0.8))
+                    Text(item.store.deviceInfo.showApp())
                         .font(.inter(size: 12))
                         .foregroundStyle(Color.Theme.Text.black3)
-                    // Body3
-                    Text("New York, US · Online")
+                    Text(item.store.deviceInfo.showLocation())
                         .font(.inter(size: 12))
                         .foregroundStyle(Color.Theme.Text.black3)
                 }
@@ -248,13 +243,15 @@ extension BackupListView {
                 }
                 .frame(width: 16)
                 .frame(minHeight: 0, maxHeight: .infinity)
-                
             }
             .padding(16)
-            .frame(minWidth: 0,maxWidth: .infinity)
+            .frame(minWidth: 0, maxWidth: .infinity)
             .frame(height: 96)
             .background(.Theme.Background.grey)
             .cornerRadius(16)
+            .onTapGesture {
+                Router.route(to: RouteMap.Backup.backupDetail(item))
+            }
         }
     }
 }

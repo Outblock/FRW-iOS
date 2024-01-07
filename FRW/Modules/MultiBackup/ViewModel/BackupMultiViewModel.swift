@@ -10,12 +10,12 @@ import Foundation
 class BackupMultiViewModel: ObservableObject {
     @Published var list: [BackupMultiViewModel.MultiItem] = []
     @Published var nextable: Bool = false
-    let selectedList: [BackupType]
+    let selectedList: [MultiBackupType]
     
-    init(backups:[BackupType]) {
+    init(backups: [MultiBackupType]) {
         list = []
         selectedList = backups
-        for type in BackupType.allCases {
+        for type in MultiBackupType.allCases {
             if type != .passkey {
                 list.append(MultiItem(type: type, isBackup: backups.contains(type)))
             }
@@ -24,7 +24,7 @@ class BackupMultiViewModel: ObservableObject {
     
     func onClick(item: BackupMultiViewModel.MultiItem) {
         let existItem = selectedList.first { $0 == item.type }
-        guard existItem == nil else { return  }
+        guard existItem == nil else { return }
         list = list.map { model in
             var model = model
             if model.type == item.type {
@@ -35,22 +35,21 @@ class BackupMultiViewModel: ObservableObject {
         nextable = (selectedList.count + waitingList().count) >= 2
     }
     
-    func waitingList() -> [BackupType] {
+    func waitingList() -> [MultiBackupType] {
         var waiting = list.filter { $0.isBackup }
         waiting = waiting.filter { !selectedList.contains($0.type) }
         return waiting.map { $0.type }
     }
     
     func onNext() {
-        
+        let list = waitingList()
+        Router.route(to: RouteMap.Backup.uploadMulti(list))
     }
 }
 
-
-
 // MARK: - MultiItem
 
-enum BackupType: Int,CaseIterable {
+enum MultiBackupType: Int, CaseIterable {
     case google = 0
     case passkey = 1
     case icloud = 2
@@ -69,10 +68,10 @@ enum BackupType: Int,CaseIterable {
         }
     }
     
-    func iconName()-> String {
+    func iconName() -> String {
         switch self {
         case .google:
-            return "Google.Drive"
+            return "icon.google.drive"
         case .passkey:
             return "icon.passkey"
         case .icloud:
@@ -113,14 +112,9 @@ enum BackupType: Int,CaseIterable {
     }
 }
 
-
 extension BackupMultiViewModel {
-    
-    
     struct MultiItem: Hashable {
-        
-        
-        let type: BackupType
+        let type: MultiBackupType
         var isBackup: Bool
         
         var name: String {

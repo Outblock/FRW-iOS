@@ -5,9 +5,9 @@
 //  Created by Hao Fu on 25/12/21.
 //
 
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 extension EmptyWalletViewModel {
     struct Placeholder {
@@ -17,7 +17,6 @@ extension EmptyWalletViewModel {
         let address: String
     }
 }
-
 
 class EmptyWalletViewModel: ObservableObject {
     @Published var placeholders: [EmptyWalletViewModel.Placeholder] = []
@@ -57,7 +56,8 @@ class EmptyWalletViewModel: ObservableObject {
     }
     
     func loginAccountAction() {
-        Router.route(to: RouteMap.RestoreLogin.root)
+        Router.route(to: RouteMap.RestoreLogin.restoreList)
+//        Router.route(to: RouteMap.RestoreLogin.root)
     }
     
     func syncAccountAction() {

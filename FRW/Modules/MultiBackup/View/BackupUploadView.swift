@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct BackupUploadView: RouteableView {
-    @StateObject var viewModel: BackupUploadViewModel = .init()
+    @StateObject var viewModel: BackupUploadViewModel
+    
+    init(items: [MultiBackupType]) {
+        _viewModel = StateObject(wrappedValue: BackupUploadViewModel(items: items))
+    }
     
     var title: String {
         return "multi_backup".localized
@@ -17,51 +21,54 @@ struct BackupUploadView: RouteableView {
     var body: some View {
         VStack {
             BackupUploadView.ProgressView(items: viewModel.items,
-                                          currentIndex: $viewModel.currentIndex
-            )
-            .padding(.horizontal, 56)
+                                          currentIndex: $viewModel.currentIndex)
+                .padding(.top, 24)
+                .padding(.horizontal, 56)
             
             VStack(spacing: 24) {
                 Image(viewModel.currentIcon)
-                  .resizable()
-                  .aspectRatio(contentMode: .fill)
-                  .frame(width: 120, height: 120)
-                  .background(.Theme.Background.white)
-                  .cornerRadius(60)
-                  .clipped()
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 120, height: 120)
+                    .background(.Theme.Background.white)
+                    .cornerRadius(60)
+                    .clipped()
                 
                 Text(viewModel.currentTitle)
                     .font(.inter(size: 20, weight: .bold))
                     .foregroundStyle(Color.Theme.Text.black)
 
                 Text(viewModel.currentNote)
-                  .font(.inter(size: 12))
-                  .multilineTextAlignment(.center)
-                  .foregroundColor(.Theme.Accent.grey)
-                  .frame(alignment: .top)
+                    .font(.inter(size: 12))
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.Theme.Accent.grey)
+                    .frame(alignment: .top)
             }
+            .padding(.top, 32)
             .padding(.horizontal, 40)
             
             BackupUploadTimeline(backupType: viewModel.currentType, isError: viewModel.hasError, process: viewModel.process)
+                .padding(.top, 64)
+                .visibility(viewModel.showTimeline() ? .visible : .gone)
             
             Spacer()
             
             VPrimaryButton(model: ButtonStyle.primary,
                            state: .enabled,
                            action: {
-                
-            }, title: viewModel.currentButton)
-            .padding(.horizontal, 18)
-            .padding(.bottom)
+                               viewModel.onClickButton()
+                           }, title: viewModel.currentButton)
+                .padding(.horizontal, 18)
+                .padding(.bottom)
         }
-            .applyRouteable(self)
-            .backgroundFill(Color.LL.Neutrals.background)
+        .applyRouteable(self)
+        .backgroundFill(Color.LL.Neutrals.background)
     }
 }
 
 extension BackupUploadView {
     struct ProgressView: View {
-        let items: [BackupType]
+        let items: [MultiBackupType]
         @Binding var currentIndex: Int
         var body: some View {
             HStack(spacing: 0) {
@@ -86,7 +93,7 @@ extension BackupUploadView {
     }
     
     struct ProgressItem: View {
-        let itemType: BackupType
+        let itemType: MultiBackupType
         var isSelected: Bool = false
 
         var body: some View {
@@ -102,5 +109,5 @@ extension BackupUploadView {
 }
 
 #Preview {
-    BackupUploadView()
+    BackupUploadView(items: [])
 }

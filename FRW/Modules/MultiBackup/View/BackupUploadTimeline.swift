@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct BackupUploadTimeline: View {
-    var backupType: BackupType
+    var backupType: MultiBackupType
     var isError: Bool
     var process: BackupProcess
     
@@ -16,9 +16,9 @@ struct BackupUploadTimeline: View {
         ZStack(alignment: .leading) {
             GeometryReader(content: { geometry in
                 Divider()
-                    .frame(width: 1,height: geometry.size.height - 24)
+                    .frame(width: 1, height: geometry.size.height - 24)
                     .overlay(lineColor)
-                    .offset(x:3, y: 12)
+                    .offset(x: 3, y: 12)
             })
             .layoutPriority(-1)
             
@@ -27,20 +27,16 @@ struct BackupUploadTimeline: View {
                                           backupType: backupType,
                                           isError: isError,
                                           process: .upload,
-                                          currentProcess: process
-                )
+                                          currentProcess: process)
                 Spacer()
                 BackupUploadTimeline.Item(title: "backup.register.key".localized,
                                           backupType: backupType,
                                           isError: isError,
                                           process: .regist,
-                                          currentProcess: process
-                )
+                                          currentProcess: process)
             }
         }
         .frame(height: 120)
-        
-        
     }
     
     var lineColor: Color {
@@ -49,10 +45,9 @@ struct BackupUploadTimeline: View {
 }
 
 extension BackupUploadTimeline {
-    
     struct Item: View {
         var title: String
-        var backupType: BackupType = .google
+        var backupType: MultiBackupType = .google
         var isError: Bool = true
         var process: BackupProcess
         var currentProcess: BackupProcess
@@ -68,20 +63,19 @@ extension BackupUploadTimeline {
                     .font(.inter(size: 14))
                     .lineLimit(1)
                     .foregroundColor(themeColor())
-                Image(isError ? "backup.status.error" : "backup.status.finish")
-                    .visibility( showIcon() ? .visible : .gone)
+                Image(isError && process == currentProcess ? "backup.status.error" : "backup.status.finish")
+                    .visibility(showIcon() ? .visible : .gone)
             }
         }
         
         func themeColor() -> Color {
-            if isError {
+            if isError && process == currentProcess {
                 return Color.Theme.Accent.red
             }
-            if process == currentProcess || process.next == currentProcess  {
+            if process == currentProcess || process.next == currentProcess {
                 return Color.Theme.Text.black8
             }
             return Color.Theme.Text.black3
-            
         }
         
         func showIcon() -> Bool {
@@ -91,6 +85,5 @@ extension BackupUploadTimeline {
 }
 
 #Preview {
-    BackupUploadTimeline(backupType: .google,isError: false, process: .regist)
-
+    BackupUploadTimeline(backupType: .google, isError: false, process: .regist)
 }

@@ -993,6 +993,28 @@
 		4EB17C8A28629DE200CA4DAE /* NFTCollectionStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB17C8828629DE200CA4DAE /* NFTCollectionStateManager.swift */; };
 		4EB2C6AB2B49017000EB899C /* BackupListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6AA2B49017000EB899C /* BackupListViewModel.swift */; };
 		4EB2C6AC2B49017000EB899C /* BackupListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6AA2B49017000EB899C /* BackupListViewModel.swift */; };
+		4EB2C6AE2B49446F00EB899C /* MultiBackupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6AD2B49446F00EB899C /* MultiBackupManager.swift */; };
+		4EB2C6AF2B49446F00EB899C /* MultiBackupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6AD2B49446F00EB899C /* MultiBackupManager.swift */; };
+		4EB2C6B32B4947C500EB899C /* MultiBackupGoogleDriveTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6B22B4947C500EB899C /* MultiBackupGoogleDriveTarget.swift */; };
+		4EB2C6B42B4947C500EB899C /* MultiBackupGoogleDriveTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6B22B4947C500EB899C /* MultiBackupGoogleDriveTarget.swift */; };
+		4EB2C6B62B4947DF00EB899C /* MultiBackupiCloudTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6B52B4947DF00EB899C /* MultiBackupiCloudTarget.swift */; };
+		4EB2C6B72B4947DF00EB899C /* MultiBackupiCloudTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6B52B4947DF00EB899C /* MultiBackupiCloudTarget.swift */; };
+		4EB2C6B92B49D1A500EB899C /* MultiBackupDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6B82B49D1A500EB899C /* MultiBackupDetailView.swift */; };
+		4EB2C6BA2B49D1A500EB899C /* MultiBackupDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6B82B49D1A500EB899C /* MultiBackupDetailView.swift */; };
+		4EB2C6BE2B4A3E9800EB899C /* RestoreListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6BD2B4A3E9800EB899C /* RestoreListView.swift */; };
+		4EB2C6BF2B4A3E9800EB899C /* RestoreListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6BD2B4A3E9800EB899C /* RestoreListView.swift */; };
+		4EB2C6C12B4A4BD100EB899C /* RestoreMultiBackupOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6C02B4A4BD100EB899C /* RestoreMultiBackupOptionView.swift */; };
+		4EB2C6C22B4A4BD100EB899C /* RestoreMultiBackupOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6C02B4A4BD100EB899C /* RestoreMultiBackupOptionView.swift */; };
+		4EB2C6C52B4A4E3B00EB899C /* RestoreMultiBackupOptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6C42B4A4E3B00EB899C /* RestoreMultiBackupOptionViewModel.swift */; };
+		4EB2C6C62B4A4E3B00EB899C /* RestoreMultiBackupOptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6C42B4A4E3B00EB899C /* RestoreMultiBackupOptionViewModel.swift */; };
+		4EB2C6C82B4A520200EB899C /* RestoreMultiConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6C72B4A520200EB899C /* RestoreMultiConnectView.swift */; };
+		4EB2C6C92B4A520200EB899C /* RestoreMultiConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6C72B4A520200EB899C /* RestoreMultiConnectView.swift */; };
+		4EB2C6CB2B4A529500EB899C /* RestoreMultiConnectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6CA2B4A529500EB899C /* RestoreMultiConnectViewModel.swift */; };
+		4EB2C6CC2B4A529500EB899C /* RestoreMultiConnectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6CA2B4A529500EB899C /* RestoreMultiConnectViewModel.swift */; };
+		4EB2C6CE2B4A7D5A00EB899C /* RestoreMultiAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6CD2B4A7D5A00EB899C /* RestoreMultiAccountView.swift */; };
+		4EB2C6CF2B4A7D5A00EB899C /* RestoreMultiAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6CD2B4A7D5A00EB899C /* RestoreMultiAccountView.swift */; };
+		4EB2C6D12B4A7DED00EB899C /* RestoreMultiAccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6D02B4A7DED00EB899C /* RestoreMultiAccountViewModel.swift */; };
+		4EB2C6D22B4A7DED00EB899C /* RestoreMultiAccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6D02B4A7DED00EB899C /* RestoreMultiAccountViewModel.swift */; };
 		4EB2DBCC2AE6253B00A421CE /* PageStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2DBCB2AE6253B00A421CE /* PageStatus.swift */; };
 		4EB2DBCD2AE6253B00A421CE /* PageStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2DBCB2AE6253B00A421CE /* PageStatus.swift */; };
 		4EB60F90286825960025DD72 /* ContextMenuPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB60F8E286825960025DD72 /* ContextMenuPreview.swift */; };
@@ -2083,6 +2105,17 @@
 		4EB17C852862947600CA4DAE /* NFTCollectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTCollectionModel.swift; sourceTree = "<group>"; };
 		4EB17C8828629DE200CA4DAE /* NFTCollectionStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTCollectionStateManager.swift; sourceTree = "<group>"; };
 		4EB2C6AA2B49017000EB899C /* BackupListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupListViewModel.swift; sourceTree = "<group>"; };
+		4EB2C6AD2B49446F00EB899C /* MultiBackupManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupManager.swift; sourceTree = "<group>"; };
+		4EB2C6B22B4947C500EB899C /* MultiBackupGoogleDriveTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupGoogleDriveTarget.swift; sourceTree = "<group>"; };
+		4EB2C6B52B4947DF00EB899C /* MultiBackupiCloudTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupiCloudTarget.swift; sourceTree = "<group>"; };
+		4EB2C6B82B49D1A500EB899C /* MultiBackupDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupDetailView.swift; sourceTree = "<group>"; };
+		4EB2C6BD2B4A3E9800EB899C /* RestoreListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreListView.swift; sourceTree = "<group>"; };
+		4EB2C6C02B4A4BD100EB899C /* RestoreMultiBackupOptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreMultiBackupOptionView.swift; sourceTree = "<group>"; };
+		4EB2C6C42B4A4E3B00EB899C /* RestoreMultiBackupOptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreMultiBackupOptionViewModel.swift; sourceTree = "<group>"; };
+		4EB2C6C72B4A520200EB899C /* RestoreMultiConnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreMultiConnectView.swift; sourceTree = "<group>"; };
+		4EB2C6CA2B4A529500EB899C /* RestoreMultiConnectViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreMultiConnectViewModel.swift; sourceTree = "<group>"; };
+		4EB2C6CD2B4A7D5A00EB899C /* RestoreMultiAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreMultiAccountView.swift; sourceTree = "<group>"; };
+		4EB2C6D02B4A7DED00EB899C /* RestoreMultiAccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreMultiAccountViewModel.swift; sourceTree = "<group>"; };
 		4EB2DBCB2AE6253B00A421CE /* PageStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageStatus.swift; sourceTree = "<group>"; };
 		4EB60F8E286825960025DD72 /* ContextMenuPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuPreview.swift; sourceTree = "<group>"; };
 		4EB9A7BF2AE9EF53004DA67F /* AccountKeyRevokeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountKeyRevokeView.swift; sourceTree = "<group>"; };
@@ -2675,6 +2708,7 @@
 		153C440427520811006D1E8D /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				4EB2C6BB2B4A3E6E00EB899C /* MultiRestore */,
 				4E7918422B214D4900DA832F /* MultiBackup */,
 				4EB2DBCA2AE6252400A421CE /* PageStatus */,
 				6A5908D12A6FADD4001C6512 /* PushAlert */,
@@ -4258,6 +4292,7 @@
 		4E7918422B214D4900DA832F /* MultiBackup */ = {
 			isa = PBXGroup;
 			children = (
+				4EB2C6B12B49466600EB899C /* Manager */,
 				4E7918442B214E8200DA832F /* ViewModel */,
 				4E7918432B214E7B00DA832F /* View */,
 			);
@@ -4271,6 +4306,7 @@
 				4E42DC5E2B22AEB700EF0A75 /* BackupListView.swift */,
 				4E3670032B2A8B32000F2693 /* BackupUploadView.swift */,
 				4E82C01E2B2AF85800A61439 /* BackupUploadTimeline.swift */,
+				4EB2C6B82B49D1A500EB899C /* MultiBackupDetailView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4304,6 +4340,54 @@
 				4EA820C5286354E200DF36A8 /* remote_config_defaults.plist */,
 			);
 			path = Json;
+			sourceTree = "<group>";
+		};
+		4EB2C6B02B49465D00EB899C /* Target */ = {
+			isa = PBXGroup;
+			children = (
+				4EB2C6B22B4947C500EB899C /* MultiBackupGoogleDriveTarget.swift */,
+				4EB2C6B52B4947DF00EB899C /* MultiBackupiCloudTarget.swift */,
+			);
+			path = Target;
+			sourceTree = "<group>";
+		};
+		4EB2C6B12B49466600EB899C /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				4EB2C6AD2B49446F00EB899C /* MultiBackupManager.swift */,
+				4EB2C6B02B49465D00EB899C /* Target */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
+		4EB2C6BB2B4A3E6E00EB899C /* MultiRestore */ = {
+			isa = PBXGroup;
+			children = (
+				4EB2C6C32B4A4E2300EB899C /* ViewModel */,
+				4EB2C6BC2B4A3E7C00EB899C /* Views */,
+			);
+			path = MultiRestore;
+			sourceTree = "<group>";
+		};
+		4EB2C6BC2B4A3E7C00EB899C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4EB2C6BD2B4A3E9800EB899C /* RestoreListView.swift */,
+				4EB2C6C02B4A4BD100EB899C /* RestoreMultiBackupOptionView.swift */,
+				4EB2C6C72B4A520200EB899C /* RestoreMultiConnectView.swift */,
+				4EB2C6CD2B4A7D5A00EB899C /* RestoreMultiAccountView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4EB2C6C32B4A4E2300EB899C /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				4EB2C6C42B4A4E3B00EB899C /* RestoreMultiBackupOptionViewModel.swift */,
+				4EB2C6CA2B4A529500EB899C /* RestoreMultiConnectViewModel.swift */,
+				4EB2C6D02B4A7DED00EB899C /* RestoreMultiAccountViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		4EB2DBCA2AE6252400A421CE /* PageStatus */ = {
@@ -5882,6 +5966,7 @@
 				6A49C19F2899364100C8FF05 /* ProfileBackupViewModel.swift in Sources */,
 				4EB17C872862947600CA4DAE /* NFTCollectionModel.swift in Sources */,
 				4ECB9966285B8FF600F59852 /* OffsetScrollViewWithAppBar.swift in Sources */,
+				4EB2C6BF2B4A3E9800EB899C /* RestoreListView.swift in Sources */,
 				6A98509928C6E81F00A07C2D /* BrowserAuthnView.swift in Sources */,
 				1570467027931F5100D1747B /* AlchemyEndpoint.swift in Sources */,
 				6A7D9DC628DD941700333954 /* SwapView.swift in Sources */,
@@ -5956,6 +6041,7 @@
 				15DC21E727819C57000B187A /* StateColorsAndOpacities_EFSEPD_PD.swift in Sources */,
 				6A7D9DD228E1923500333954 /* OtherResponses.swift in Sources */,
 				15CB4DF528CA15B10069ABB4 /* BuyProvderView.swift in Sources */,
+				4EB2C6BA2B49D1A500EB899C /* MultiBackupDetailView.swift in Sources */,
 				6A62122D28ACC592002046CA /* UIImage.swift in Sources */,
 				6AF1F35E2869977B0084DF3D /* AddTokenView.swift in Sources */,
 				6A4A235128365B31001F1FDE /* Image.swift in Sources */,
@@ -5997,6 +6083,7 @@
 				4EAF31BA2845E501002AF489 /* NFTSegmentControl.swift in Sources */,
 				15DC21A327819C56000B187A /* VBaseTextFieldActions.swift in Sources */,
 				6A43BCFF2872D19C003E9D16 /* Date.swift in Sources */,
+				4EB2C6CC2B4A529500EB899C /* RestoreMultiConnectViewModel.swift in Sources */,
 				15F2444928CB370D00C1090E /* ShrinkingCapsule.swift in Sources */,
 				15DC21A927819C56000B187A /* UIKitTextFieldCoordinator.swift in Sources */,
 				6AF4A6C228D46F1D00B12FAB /* ClaimDomainViewModel.swift in Sources */,
@@ -6128,6 +6215,7 @@
 				15ECAE3C28C4FCEB00B79453 /* WalletConnectViewModel.swift in Sources */,
 				15DC212127819C56000B187A /* VSpinnerModelDashed.swift in Sources */,
 				6A63F9F328C9C69100FE96C0 /* ImageAnimated.swift in Sources */,
+				4EB2C6AF2B49446F00EB899C /* MultiBackupManager.swift in Sources */,
 				6AE8821F288EB67A00ADF36E /* RouterExtensions.swift in Sources */,
 				6AD90069284717FC00B65CE6 /* AddAddressViewModel.swift in Sources */,
 				154866F428D0FE8900D012B8 /* ViewCondition.swift in Sources */,
@@ -6148,6 +6236,7 @@
 				1575A73128B26F3400ADC513 /* CardBackground.swift in Sources */,
 				6A5006D628A78CC8007FE3F5 /* NFTUIKitListTitleView.swift in Sources */,
 				4E1DD8CC2B1629560055E510 /* QRCodeView.swift in Sources */,
+				4EB2C6C22B4A4BD100EB899C /* RestoreMultiBackupOptionView.swift in Sources */,
 				6A18DDFA2A3AFFC6003232AB /* ChildAccountLinkViewModel.swift in Sources */,
 				15DC20C927819C56000B187A /* VNavigationViewBackButtonHidden.swift in Sources */,
 				1588331928943D1D00142B35 /* SPQRCodeData.swift in Sources */,
@@ -6263,6 +6352,7 @@
 				4E5885452A6FDF00007CACCC /* SPQRMaskView.swift in Sources */,
 				6A164F422840A1380026B31E /* TabBar.swift in Sources */,
 				6AE084242851D481003BEEF0 /* Logger.swift in Sources */,
+				4EB2C6C92B4A520200EB899C /* RestoreMultiConnectView.swift in Sources */,
 				6AEDD6112A42CB8D008BC5CD /* ChildAccountDetailView.swift in Sources */,
 				6A382E25289BDAFF00163564 /* SecurityManager.swift in Sources */,
 				15DC210127819C56000B187A /* VStepper.swift in Sources */,
@@ -6286,6 +6376,7 @@
 				15DC218527819C56000B187A /* VToggleModel.swift in Sources */,
 				6A164F6C2845F1CB0026B31E /* Indexable.swift in Sources */,
 				6AEF839C28647B830081E285 /* FRWAPI+Crypto.swift in Sources */,
+				4EB2C6B72B4947DF00EB899C /* MultiBackupiCloudTarget.swift in Sources */,
 				15DC216D27819C56000B187A /* VDialogButton.swift in Sources */,
 				6ABFE59D29A70E6700AA1688 /* LocalEnvManager.swift in Sources */,
 				15DC21EB27819C57000B187A /* StateOpacities_P.swift in Sources */,
@@ -6296,6 +6387,7 @@
 				6AEA374E28A4E3FD004545D4 /* NFTUIKitListView.swift in Sources */,
 				1570466D27930EB200D1747B /* NFTTabScreen.swift in Sources */,
 				15DC217B27819C56000B187A /* VModalModel.swift in Sources */,
+				4EB2C6B42B4947C500EB899C /* MultiBackupGoogleDriveTarget.swift in Sources */,
 				15D57752277C224300045E79 /* FRWAPI.swift in Sources */,
 				15DC218B27819C56000B187A /* VRadioButtonModel.swift in Sources */,
 				15BCFF1527770D76000B7863 /* EmptyWalletView.swift in Sources */,
@@ -6309,6 +6401,7 @@
 				15CB4DFD28CA298C0069ABB4 /* MoonPayRequest.swift in Sources */,
 				15DC20A527819C56000B187A /* VWebLinkType.swift in Sources */,
 				6ACFAB9C2939EC00004DE47F /* StakeAmountViewModel.swift in Sources */,
+				4EB2C6C62B4A4E3B00EB899C /* RestoreMultiBackupOptionViewModel.swift in Sources */,
 				6A204C652860236600D0D3A4 /* ViewExtensions.swift in Sources */,
 				15DC21E927819C57000B187A /* StateColors_OOD.swift in Sources */,
 				6AF4A6CB28D472F600B12FAB /* FlownsRequests.swift in Sources */,
@@ -6398,6 +6491,7 @@
 				6A66AAAD2923F36E00FA766A /* StakeGuideView.swift in Sources */,
 				15DE22E0277DF37D00B5EE03 /* RestoreWalletView.swift in Sources */,
 				6A8D2A3B283C7C880041100E /* AddressBookViewModel.swift in Sources */,
+				4EB2C6CF2B4A7D5A00EB899C /* RestoreMultiAccountView.swift in Sources */,
 				15DC21BB27819C56000B187A /* View.CornerRadius.swift in Sources */,
 				4E8394452A7153EB00DFC422 /* CalloutView.swift in Sources */,
 				6AE0842A2851E7B3003BEEF0 /* Published.swift in Sources */,
@@ -6474,6 +6568,7 @@
 				15F2444328CB370D00C1090E /* LikeView.swift in Sources */,
 				4ECA7E66284371CA0039A210 /* NFTBlurImageView.swift in Sources */,
 				4E3E5BE42875DC2000A5FA65 /* SearchBar.swift in Sources */,
+				4EB2C6D22B4A7DED00EB899C /* RestoreMultiAccountViewModel.swift in Sources */,
 				15DC20F127819C56000B187A /* VSectionListLayoutType.swift in Sources */,
 				15DC20C327819C56000B187A /* VCloseButtonModel.swift in Sources */,
 				15DC210D27819C56000B187A /* VRangeSliderModel.swift in Sources */,
@@ -6546,6 +6641,7 @@
 				6A49C19E2899364100C8FF05 /* ProfileBackupViewModel.swift in Sources */,
 				15C58AC62868A4EE00BD4FC6 /* NFTCollectionModel.swift in Sources */,
 				15C58AC72868A4EE00BD4FC6 /* OffsetScrollViewWithAppBar.swift in Sources */,
+				4EB2C6BE2B4A3E9800EB899C /* RestoreListView.swift in Sources */,
 				6A98509828C6E81F00A07C2D /* BrowserAuthnView.swift in Sources */,
 				15C58AC82868A4EE00BD4FC6 /* AlchemyEndpoint.swift in Sources */,
 				6A7D9DC528DD941700333954 /* SwapView.swift in Sources */,
@@ -6620,6 +6716,7 @@
 				15C58AF32868A4EE00BD4FC6 /* StateColorsAndOpacities_EFSEPD_PD.swift in Sources */,
 				6A7D9DD128E1923500333954 /* OtherResponses.swift in Sources */,
 				15CB4DF428CA15B10069ABB4 /* BuyProvderView.swift in Sources */,
+				4EB2C6B92B49D1A500EB899C /* MultiBackupDetailView.swift in Sources */,
 				6A62122C28ACC592002046CA /* UIImage.swift in Sources */,
 				6AF1F35D2869977B0084DF3D /* AddTokenView.swift in Sources */,
 				15C58AF42868A4EE00BD4FC6 /* Image.swift in Sources */,
@@ -6661,6 +6758,7 @@
 				15C58B062868A4EE00BD4FC6 /* VBaseTextFieldActions.swift in Sources */,
 				6A43BCFE2872D19C003E9D16 /* Date.swift in Sources */,
 				15F2444828CB370D00C1090E /* ShrinkingCapsule.swift in Sources */,
+				4EB2C6CB2B4A529500EB899C /* RestoreMultiConnectViewModel.swift in Sources */,
 				15C58B072868A4EE00BD4FC6 /* UIKitTextFieldCoordinator.swift in Sources */,
 				6AF4A6C128D46F1D00B12FAB /* ClaimDomainViewModel.swift in Sources */,
 				15F2444A28CB370D00C1090E /* CapusuleGroupView.swift in Sources */,
@@ -6792,6 +6890,7 @@
 				15C58B542868A4EE00BD4FC6 /* VSpinnerModelDashed.swift in Sources */,
 				6A63F9F228C9C69100FE96C0 /* ImageAnimated.swift in Sources */,
 				6AE8821E288EB67A00ADF36E /* RouterExtensions.swift in Sources */,
+				4EB2C6AE2B49446F00EB899C /* MultiBackupManager.swift in Sources */,
 				15C58B552868A4EE00BD4FC6 /* AddAddressViewModel.swift in Sources */,
 				154866F328D0FE8900D012B8 /* ViewCondition.swift in Sources */,
 				15C58B562868A4EE00BD4FC6 /* VPrimaryButtonState.swift in Sources */,
@@ -6812,6 +6911,7 @@
 				6A5006D528A78CC8007FE3F5 /* NFTUIKitListTitleView.swift in Sources */,
 				15C58B5D2868A4EE00BD4FC6 /* VNavigationViewBackButtonHidden.swift in Sources */,
 				4E1DD8CB2B1629560055E510 /* QRCodeView.swift in Sources */,
+				4EB2C6C12B4A4BD100EB899C /* RestoreMultiBackupOptionView.swift in Sources */,
 				6A18DDF92A3AFFC6003232AB /* ChildAccountLinkViewModel.swift in Sources */,
 				1588331828943D1D00142B35 /* SPQRCodeData.swift in Sources */,
 				15C58B5F2868A4EE00BD4FC6 /* VTextFieldModel.swift in Sources */,
@@ -6927,6 +7027,7 @@
 				4E5885442A6FDF00007CACCC /* SPQRMaskView.swift in Sources */,
 				15C58BA62868A4EE00BD4FC6 /* Logger.swift in Sources */,
 				6A382E24289BDAFF00163564 /* SecurityManager.swift in Sources */,
+				4EB2C6C82B4A520200EB899C /* RestoreMultiConnectView.swift in Sources */,
 				6AEDD6102A42CB8D008BC5CD /* ChildAccountDetailView.swift in Sources */,
 				15C58BA72868A4EE00BD4FC6 /* VStepper.swift in Sources */,
 				15C58BA82868A4EE00BD4FC6 /* NFTModel.swift in Sources */,
@@ -6950,6 +7051,7 @@
 				15C58BB42868A4EE00BD4FC6 /* Indexable.swift in Sources */,
 				15C58BB52868A4EE00BD4FC6 /* FRWAPI+Crypto.swift in Sources */,
 				15C58BB62868A4EE00BD4FC6 /* VDialogButton.swift in Sources */,
+				4EB2C6B62B4947DF00EB899C /* MultiBackupiCloudTarget.swift in Sources */,
 				15C58BB72868A4EE00BD4FC6 /* StateOpacities_P.swift in Sources */,
 				6ABFE59C29A70E6700AA1688 /* LocalEnvManager.swift in Sources */,
 				15C58BB82868A4EE00BD4FC6 /* StateColors_ED.swift in Sources */,
@@ -6960,6 +7062,7 @@
 				15C58BBA2868A4EE00BD4FC6 /* NFTTabScreen.swift in Sources */,
 				15C58BBB2868A4EE00BD4FC6 /* VModalModel.swift in Sources */,
 				15C58BBC2868A4EE00BD4FC6 /* FRWAPI.swift in Sources */,
+				4EB2C6B32B4947C500EB899C /* MultiBackupGoogleDriveTarget.swift in Sources */,
 				15C58BBD2868A4EE00BD4FC6 /* VRadioButtonModel.swift in Sources */,
 				15C58BBE2868A4EE00BD4FC6 /* EmptyWalletView.swift in Sources */,
 				15C58BBF2868A4EE00BD4FC6 /* Index.swift in Sources */,
@@ -6973,6 +7076,7 @@
 				15C58BC52868A4EE00BD4FC6 /* VWebLinkType.swift in Sources */,
 				15C58BC62868A4EE00BD4FC6 /* ViewExtensions.swift in Sources */,
 				6ACFAB9B2939EC00004DE47F /* StakeAmountViewModel.swift in Sources */,
+				4EB2C6C52B4A4E3B00EB899C /* RestoreMultiBackupOptionViewModel.swift in Sources */,
 				15C58BC72868A4EE00BD4FC6 /* StateColors_OOD.swift in Sources */,
 				6AF4A6CA28D472F600B12FAB /* FlownsRequests.swift in Sources */,
 				15C58BC82868A4EE00BD4FC6 /* BackupManager.swift in Sources */,
@@ -7062,6 +7166,7 @@
 				6A66AAAC2923F36E00FA766A /* StakeGuideView.swift in Sources */,
 				15C58C012868A4EE00BD4FC6 /* RestoreWalletView.swift in Sources */,
 				15C58C032868A4EE00BD4FC6 /* AddressBookViewModel.swift in Sources */,
+				4EB2C6CE2B4A7D5A00EB899C /* RestoreMultiAccountView.swift in Sources */,
 				15C58C042868A4EE00BD4FC6 /* View.CornerRadius.swift in Sources */,
 				4E8394442A7153EB00DFC422 /* CalloutView.swift in Sources */,
 				15C58C052868A4EE00BD4FC6 /* Published.swift in Sources */,
@@ -7138,6 +7243,7 @@
 				15F2444228CB370D00C1090E /* LikeView.swift in Sources */,
 				15C58C292868A4EE00BD4FC6 /* NFTBlurImageView.swift in Sources */,
 				4E3E5BE32875DC2000A5FA65 /* SearchBar.swift in Sources */,
+				4EB2C6D12B4A7DED00EB899C /* RestoreMultiAccountViewModel.swift in Sources */,
 				15C58C2A2868A4EE00BD4FC6 /* VSectionListLayoutType.swift in Sources */,
 				15C58C2B2868A4EE00BD4FC6 /* VCloseButtonModel.swift in Sources */,
 				15C58C2C2868A4EE00BD4FC6 /* VRangeSliderModel.swift in Sources */,

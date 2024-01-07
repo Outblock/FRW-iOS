@@ -24,6 +24,11 @@ extension RouteMap {
         case syncQC
         case syncAccount(SyncInfo.User)
         case syncDevice(SyncAddDeviceViewModel)
+        
+        case restoreList
+        case restoreMulti
+        case multiConnect([MultiBackupType])
+        case multiAccount([[MultiBackupManager.StoreItem]])
     }
 }
 
@@ -45,6 +50,15 @@ extension RouteMap.RestoreLogin: RouterTarget {
         case .syncDevice(let vm):
             let vc = CustomHostingController(rootView: SyncAddDeviceView(viewModel: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
+            
+        case .restoreList:
+            navi.push(content: RestoreListView())
+        case .restoreMulti:
+            navi.push(content: RestoreMultiBackupOptionView())
+        case .multiConnect(let item):
+            navi.push(content: RestoreMultiConnectView(items: item))
+        case .multiAccount(let list):
+            navi.push(content: RestoreMultiAccountView(list))
         }
     }
 }
@@ -79,7 +93,9 @@ extension RouteMap {
         case backupManual
         
         case backupList
-        case multiBackup([BackupType])
+        case multiBackup([MultiBackupType])
+        case uploadMulti([MultiBackupType])
+        case backupDetail(BackupListViewModel.Item)
     }
 }
 
@@ -105,7 +121,11 @@ extension RouteMap.Backup: RouterTarget {
         case .backupList:
             navi.push(content: BackupListView())
         case .multiBackup(let items):
-            navi.push(content: BackupMultiView())
+            navi.push(content: BackupMultiView(items: items))
+        case .uploadMulti(let items):
+            navi.push(content: BackupUploadView(items: items))
+        case .backupDetail(let item):
+            navi.push(content: MultiBackupDetailView(item: item))
         }
     }
 }
