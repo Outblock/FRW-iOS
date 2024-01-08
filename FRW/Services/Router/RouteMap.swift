@@ -95,6 +95,7 @@ extension RouteMap {
         case backupList
         case multiBackup([MultiBackupType])
         case uploadMulti([MultiBackupType])
+        case showPhrase(String)
         case backupDetail(BackupListViewModel.Item)
     }
 }
@@ -124,6 +125,8 @@ extension RouteMap.Backup: RouterTarget {
             navi.push(content: BackupMultiView(items: items))
         case .uploadMulti(let items):
             navi.push(content: BackupUploadView(items: items))
+        case .showPhrase(let mnemonic):
+            navi.push(content: MultiBackupPhraseView(mnemonic: mnemonic))
         case .backupDetail(let item):
             navi.push(content: MultiBackupDetailView(item: item))
         }

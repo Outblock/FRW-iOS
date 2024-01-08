@@ -971,6 +971,10 @@
 		4E82C0202B2AF85800A61439 /* BackupUploadTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E82C01E2B2AF85800A61439 /* BackupUploadTimeline.swift */; };
 		4E8394442A7153EB00DFC422 /* CalloutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8394432A7153EB00DFC422 /* CalloutView.swift */; };
 		4E8394452A7153EB00DFC422 /* CalloutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8394432A7153EB00DFC422 /* CalloutView.swift */; };
+		4E8CE6392B4BE0BA00E71A87 /* MultiBackupPhraseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8CE6382B4BE0BA00E71A87 /* MultiBackupPhraseView.swift */; };
+		4E8CE63A2B4BE0BA00E71A87 /* MultiBackupPhraseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8CE6382B4BE0BA00E71A87 /* MultiBackupPhraseView.swift */; };
+		4E8CE63C2B4BE77700E71A87 /* MultiBackupPhraseTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8CE63B2B4BE77700E71A87 /* MultiBackupPhraseTarget.swift */; };
+		4E8CE63D2B4BE77700E71A87 /* MultiBackupPhraseTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8CE63B2B4BE77700E71A87 /* MultiBackupPhraseTarget.swift */; };
 		4E8DD9FD282E52110016A931 /* JSONStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8DD9FB282E52110016A931 /* JSONStorage.swift */; };
 		4E90592F2B1792F10029FC66 /* SyncAddDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */; };
 		4E9059302B1792F10029FC66 /* SyncAddDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */; };
@@ -2090,6 +2094,8 @@
 		4E7DD2602858E74600052B21 /* FRWAPI+NFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FRWAPI+NFT.swift"; sourceTree = "<group>"; };
 		4E82C01E2B2AF85800A61439 /* BackupUploadTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupUploadTimeline.swift; sourceTree = "<group>"; };
 		4E8394432A7153EB00DFC422 /* CalloutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalloutView.swift; sourceTree = "<group>"; };
+		4E8CE6382B4BE0BA00E71A87 /* MultiBackupPhraseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupPhraseView.swift; sourceTree = "<group>"; };
+		4E8CE63B2B4BE77700E71A87 /* MultiBackupPhraseTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupPhraseTarget.swift; sourceTree = "<group>"; };
 		4E8DD9F7282E2FBB0016A931 /* NFTEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTEmptyView.swift; sourceTree = "<group>"; };
 		4E8DD9FB282E52110016A931 /* JSONStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONStorage.swift; sourceTree = "<group>"; };
 		4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncAddDeviceView.swift; sourceTree = "<group>"; };
@@ -4311,6 +4317,7 @@
 				4E3670032B2A8B32000F2693 /* BackupUploadView.swift */,
 				4E82C01E2B2AF85800A61439 /* BackupUploadTimeline.swift */,
 				4EB2C6B82B49D1A500EB899C /* MultiBackupDetailView.swift */,
+				4E8CE6382B4BE0BA00E71A87 /* MultiBackupPhraseView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4351,6 +4358,7 @@
 			children = (
 				4EB2C6B22B4947C500EB899C /* MultiBackupGoogleDriveTarget.swift */,
 				4EB2C6B52B4947DF00EB899C /* MultiBackupiCloudTarget.swift */,
+				4E8CE63B2B4BE77700E71A87 /* MultiBackupPhraseTarget.swift */,
 			);
 			path = Target;
 			sourceTree = "<group>";
@@ -5956,6 +5964,7 @@
 				6A3FFA802A283A5C00CB2B2C /* OnBoardingView.swift in Sources */,
 				6AE69EA528C0BCD4004D4709 /* UIViewController.swift in Sources */,
 				6A8D2A38283C7C790041100E /* AddressBookView.swift in Sources */,
+				4E8CE63A2B4BE0BA00E71A87 /* MultiBackupPhraseView.swift in Sources */,
 				15DC214327819C56000B187A /* VTabNavigationView.swift in Sources */,
 				6A2D35BE283B6B5A008293D9 /* ThemeChangeViewModel.swift in Sources */,
 				6AF95B402848B0B50012C837 /* AddressBookListResponse.swift in Sources */,
@@ -6305,6 +6314,7 @@
 				15DC215527819C56000B187A /* VMenuState.swift in Sources */,
 				15ECAE3A28C4FCE700B79453 /* WalletConnectView.swift in Sources */,
 				15DC210B27819C56000B187A /* VRangeSlider.swift in Sources */,
+				4E8CE63D2B4BE77700E71A87 /* MultiBackupPhraseTarget.swift in Sources */,
 				6ACDD17D28588B7D00F406EB /* ProfileRequests.swift in Sources */,
 				15DC208D27819C56000B187A /* VLazyScrollViewModelVertical.swift in Sources */,
 				15DC208F27819C56000B187A /* VSheetModel.swift in Sources */,
@@ -6632,6 +6642,7 @@
 				6A3FFA7F2A283A5C00CB2B2C /* OnBoardingView.swift in Sources */,
 				6AE69EA428C0BCD4004D4709 /* UIViewController.swift in Sources */,
 				15C58ABC2868A4EE00BD4FC6 /* AddressBookView.swift in Sources */,
+				4E8CE6392B4BE0BA00E71A87 /* MultiBackupPhraseView.swift in Sources */,
 				15C58ABD2868A4EE00BD4FC6 /* VTabNavigationView.swift in Sources */,
 				15C58ABE2868A4EE00BD4FC6 /* ThemeChangeViewModel.swift in Sources */,
 				15C58ABF2868A4EE00BD4FC6 /* AddressBookListResponse.swift in Sources */,
@@ -6981,6 +6992,7 @@
 				15ECAE3928C4FCE600B79453 /* WalletConnectView.swift in Sources */,
 				15C58B8C2868A4EE00BD4FC6 /* VRangeSlider.swift in Sources */,
 				15C58B8E2868A4EE00BD4FC6 /* ProfileRequests.swift in Sources */,
+				4E8CE63C2B4BE77700E71A87 /* MultiBackupPhraseTarget.swift in Sources */,
 				15C58B8F2868A4EE00BD4FC6 /* VLazyScrollViewModelVertical.swift in Sources */,
 				15C58B902868A4EE00BD4FC6 /* VSheetModel.swift in Sources */,
 				6A382E1E289BC93400163564 /* Shake.swift in Sources */,

@@ -28,8 +28,8 @@ class MultiBackupManager: ObservableObject {
 
     private let gdTarget = MultiBackupGoogleDriveTarget()
     private let iCloudTarget = MultiBackupiCloudTarget()
-    private var semaphore = DispatchSemaphore(value: 1)
-    // TODO: sync with android
+    private let phraseTarget = MultiBackupPhraseTarget()
+
     static let backupFileName = "outblock_multi_backup"
     
     var deviceInfo: SyncInfo.DeviceInfo?
@@ -81,7 +81,8 @@ extension MultiBackupManager {
         case .icloud:
             try await iCloudTarget.upload(password: password)
         case .phrase:
-            log.info("wait")
+            try await phraseTarget.upload(password: password)
+            
         }
     }
     
@@ -106,7 +107,6 @@ extension MultiBackupManager {
             log.info("not finished")
 
         case .icloud:
-            //            return try await iCloudTarget.getCurrentDriveItems()
             try await iCloudTarget.loginCloud()
             log.info("not finished")
         case .phrase:
@@ -133,6 +133,7 @@ extension MultiBackupManager {
 // MARK: - Helper
 
 extension MultiBackupManager {
+    
     /// append current user mnemonic to list with encrypt
     func addCurrentMnemonicToList(_ list: [MultiBackupManager.StoreItem], password: String) async throws -> [MultiBackupManager.StoreItem] {
         guard let username = UserManager.shared.userInfo?.username, !username.isEmpty else {
