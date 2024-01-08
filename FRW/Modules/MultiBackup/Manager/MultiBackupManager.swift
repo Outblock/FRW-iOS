@@ -82,7 +82,6 @@ extension MultiBackupManager {
             try await iCloudTarget.upload(password: password)
         case .phrase:
             try await phraseTarget.upload(password: password)
-            
         }
     }
     

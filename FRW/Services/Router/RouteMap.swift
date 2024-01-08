@@ -29,6 +29,7 @@ extension RouteMap {
         case restoreMulti
         case multiConnect([MultiBackupType])
         case multiAccount([[MultiBackupManager.StoreItem]])
+        case inputMnemonic( (String)->() )
     }
 }
 
@@ -59,6 +60,8 @@ extension RouteMap.RestoreLogin: RouterTarget {
             navi.push(content: RestoreMultiConnectView(items: item))
         case .multiAccount(let list):
             navi.push(content: RestoreMultiAccountView(list))
+        case .inputMnemonic(let callback):
+            navi.push(content: RestoreMultiInputMnemonicView(callback: callback))
         }
     }
 }

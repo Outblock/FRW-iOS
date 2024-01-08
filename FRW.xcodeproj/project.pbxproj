@@ -1023,6 +1023,10 @@
 		4EB2C6D52B4AEF6A00EB899C /* SignedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2C6D32B4AEF6900EB899C /* SignedRequest.swift */; };
 		4EB2DBCC2AE6253B00A421CE /* PageStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2DBCB2AE6253B00A421CE /* PageStatus.swift */; };
 		4EB2DBCD2AE6253B00A421CE /* PageStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB2DBCB2AE6253B00A421CE /* PageStatus.swift */; };
+		4EB397FC2B4C06D900704F8A /* RestoreMultiInputMnemonicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB397FB2B4C06D900704F8A /* RestoreMultiInputMnemonicView.swift */; };
+		4EB397FD2B4C06D900704F8A /* RestoreMultiInputMnemonicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB397FB2B4C06D900704F8A /* RestoreMultiInputMnemonicView.swift */; };
+		4EB397FF2B4C073B00704F8A /* RestoreMultiInputMnemonicViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB397FE2B4C073B00704F8A /* RestoreMultiInputMnemonicViewModel.swift */; };
+		4EB398002B4C073B00704F8A /* RestoreMultiInputMnemonicViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB397FE2B4C073B00704F8A /* RestoreMultiInputMnemonicViewModel.swift */; };
 		4EB60F90286825960025DD72 /* ContextMenuPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB60F8E286825960025DD72 /* ContextMenuPreview.swift */; };
 		4EB9A7C02AE9EF53004DA67F /* AccountKeyRevokeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB9A7BF2AE9EF53004DA67F /* AccountKeyRevokeView.swift */; };
 		4EB9A7C12AE9EF53004DA67F /* AccountKeyRevokeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB9A7BF2AE9EF53004DA67F /* AccountKeyRevokeView.swift */; };
@@ -2126,6 +2130,8 @@
 		4EB2C6D02B4A7DED00EB899C /* RestoreMultiAccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreMultiAccountViewModel.swift; sourceTree = "<group>"; };
 		4EB2C6D32B4AEF6900EB899C /* SignedRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignedRequest.swift; sourceTree = "<group>"; };
 		4EB2DBCB2AE6253B00A421CE /* PageStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageStatus.swift; sourceTree = "<group>"; };
+		4EB397FB2B4C06D900704F8A /* RestoreMultiInputMnemonicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreMultiInputMnemonicView.swift; sourceTree = "<group>"; };
+		4EB397FE2B4C073B00704F8A /* RestoreMultiInputMnemonicViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreMultiInputMnemonicViewModel.swift; sourceTree = "<group>"; };
 		4EB60F8E286825960025DD72 /* ContextMenuPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuPreview.swift; sourceTree = "<group>"; };
 		4EB9A7BF2AE9EF53004DA67F /* AccountKeyRevokeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountKeyRevokeView.swift; sourceTree = "<group>"; };
 		4EBE49252AA1B732000FFFFE /* AppUpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateManager.swift; sourceTree = "<group>"; };
@@ -4388,6 +4394,7 @@
 				4EB2C6C02B4A4BD100EB899C /* RestoreMultiBackupOptionView.swift */,
 				4EB2C6C72B4A520200EB899C /* RestoreMultiConnectView.swift */,
 				4EB2C6CD2B4A7D5A00EB899C /* RestoreMultiAccountView.swift */,
+				4EB397FB2B4C06D900704F8A /* RestoreMultiInputMnemonicView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -4398,6 +4405,7 @@
 				4EB2C6C42B4A4E3B00EB899C /* RestoreMultiBackupOptionViewModel.swift */,
 				4EB2C6CA2B4A529500EB899C /* RestoreMultiConnectViewModel.swift */,
 				4EB2C6D02B4A7DED00EB899C /* RestoreMultiAccountViewModel.swift */,
+				4EB397FE2B4C073B00704F8A /* RestoreMultiInputMnemonicViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -6089,6 +6097,7 @@
 				15BA24B228C7813B00755CBF /* ShareActivityItemSource.swift in Sources */,
 				15DC212327819C56000B187A /* VSpinnerDashed.swift in Sources */,
 				6A29114728CB377A003295BD /* TransactionListHandler.swift in Sources */,
+				4EB398002B4C073B00704F8A /* RestoreMultiInputMnemonicViewModel.swift in Sources */,
 				6A95CFB528B7747F00267F86 /* TransactionManager.swift in Sources */,
 				6A5F15F52A3182530035AC38 /* MultiAccountStorage.swift in Sources */,
 				152EEC7628E4F68100C37A67 /* Env.swift in Sources */,
@@ -6197,6 +6206,7 @@
 				4E1DD8D22B162F9B0055E510 /* SyncConfirmView.swift in Sources */,
 				6AE1817428C59B57009ADDDB /* JSModels.swift in Sources */,
 				15DC207F27819C56000B187A /* VBaseViewNavigationBarLeading.swift in Sources */,
+				4EB397FD2B4C06D900704F8A /* RestoreMultiInputMnemonicView.swift in Sources */,
 				6AEA374728A4AD7F004545D4 /* NFTUIKitCollectionItemCell.swift in Sources */,
 				15DC207B27819C56000B187A /* VBaseView.swift in Sources */,
 				15D9283327843DAD00382226 /* ManualBackupViewModel.swift in Sources */,
@@ -6767,6 +6777,7 @@
 				15C58B042868A4EE00BD4FC6 /* VSpinnerDashed.swift in Sources */,
 				6A29114628CB377A003295BD /* TransactionListHandler.swift in Sources */,
 				6A95CFB428B7747F00267F86 /* TransactionManager.swift in Sources */,
+				4EB397FF2B4C073B00704F8A /* RestoreMultiInputMnemonicViewModel.swift in Sources */,
 				15D3BA6428C393CB009AEA6E /* MatrixRainView.swift in Sources */,
 				6A5F15F42A3182530035AC38 /* MultiAccountStorage.swift in Sources */,
 				152EEC7528E4F68100C37A67 /* Env.swift in Sources */,
@@ -6875,6 +6886,7 @@
 				4E1DD8D12B162F9B0055E510 /* SyncConfirmView.swift in Sources */,
 				15C58B452868A4EE00BD4FC6 /* VBaseViewNavigationBarLeading.swift in Sources */,
 				6AEA374628A4AD7F004545D4 /* NFTUIKitCollectionItemCell.swift in Sources */,
+				4EB397FC2B4C06D900704F8A /* RestoreMultiInputMnemonicView.swift in Sources */,
 				15C58B462868A4EE00BD4FC6 /* VBaseView.swift in Sources */,
 				15C58B472868A4EE00BD4FC6 /* ManualBackupViewModel.swift in Sources */,
 				6A2772A528D329E8007E06E9 /* AppPrivateView.swift in Sources */,
