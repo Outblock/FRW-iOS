@@ -57,6 +57,28 @@ actor MultiBackupiCloudTarget: MultiBackupTarget {
         
         return try MultiBackupManager.shared.decryptHexString(hexString)
     }
+    
+    func removeItem(password: String) async throws {
+        try await prepare()
+        
+        var list = [MultiBackupManager.StoreItem]()
+        do {
+            list = try await getCurrentDriveItems()
+        } catch BackupError.fileIsNotExistOnCloud {
+            // it's ok
+        }
+        
+        let newList = try await MultiBackupManager.shared.removeCurrent(list, password: password)
+        let encrypedString = try MultiBackupManager.shared.encryptList(newList)
+        guard let data = encrypedString.data(using: .utf8), !data.isEmpty else {
+            throw BackupError.hexStringToDataFailed
+        }
+        
+        let result = try await api!.write(content: data)
+        if !result {
+            throw iCloudBackupError.saveToDataFailed
+        }
+    }
 }
 
 extension MultiBackupiCloudTarget {

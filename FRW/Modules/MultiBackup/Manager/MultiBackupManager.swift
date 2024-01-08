@@ -20,6 +20,7 @@ protocol MultiBackupTarget {
     func loginCloud() async throws
     func upload(password: String) async throws
     func getCurrentDriveItems() async throws -> [MultiBackupManager.StoreItem]
+    func removeItem(password: String) async throws
 }
 
 class MultiBackupManager: ObservableObject {
@@ -112,6 +113,21 @@ extension MultiBackupManager {
             log.info("not finished")
         }
     }
+    
+    func removeItem(with type: MultiBackupType) async throws {
+        let key = LocalEnvManager.shared.backupAESKey
+        let password = key
+        switch type {
+        case .google:
+            try await gdTarget.removeItem(password: password)
+        case .passkey:
+            log.info("not surport")
+        case .icloud:
+            try await iCloudTarget.removeItem(password: password)
+        case .phrase:
+            log.info("wait")
+        }
+    }
 }
 
 // MARK: - Helper
@@ -127,28 +143,28 @@ extension MultiBackupManager {
             throw BackupError.missingUid
         }
         
-        let existItem = list.first { item in
-            item.userId == uid
-        }
-        
-//        if let existItem = existItem {
-//            return list
-//        }
-        
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             throw BackupError.missingMnemonic
         }
         
-        let sec = try WallectSecureEnclave()
-        guard let key = sec.key.privateKey, let publicKey = sec.key.publickeyValue else {
-            throw BackupError.missingUid
+        let existItem = list.first { item in
+            item.userId == uid
         }
-        let keyData = key.dataRepresentation
+        
+        if existItem != nil {
+            return list
+        }
+        
+        guard let hdWallet = WalletManager.shared.createHDWallet(), let mnemonicData = hdWallet.mnemonic.data(using: .utf8) else {
+            HUD.error(title: "empty_wallet_key".localized)
+            throw BackupError.missingMnemonic
+        }
+        
+        let dataHexString = try encryptMnemonic(mnemonicData, password: password)
+        let publicKey = hdWallet.getPublicKey()
         
         try await addKey(key: publicKey)
         let keyIndex = try await fetchKeyIndex(publicKey: publicKey)
-        
-        let dataHexString = try encryptMnemonic(keyData, password: password)
         
         // fetch ip info
         if IPManager.shared.info == nil {
@@ -156,7 +172,7 @@ extension MultiBackupManager {
         }
         
         let flowPublicKey = Flow.PublicKey(hex: publicKey)
-        let flowKey = Flow.AccountKey(publicKey: flowPublicKey, signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 1000)
+        let flowKey = Flow.AccountKey(publicKey: flowPublicKey, signAlgo: .ECDSA_SECP256k1, hashAlgo: .SHA2_256, weight: 500)
         deviceInfo = SyncInfo.DeviceInfo(accountKey: flowKey.toCodableModel(), deviceInfo: IPManager.shared.toParams())
         
         let item = MultiBackupManager.StoreItem(
@@ -175,6 +191,20 @@ extension MultiBackupManager {
         var newList = [item]
         newList.append(contentsOf: list)
         return newList
+    }
+    
+    func removeCurrent(_ list: [MultiBackupManager.StoreItem], password: String) async throws -> [MultiBackupManager.StoreItem] {
+        guard let username = UserManager.shared.userInfo?.username, !username.isEmpty else {
+            throw BackupError.missingUserName
+        }
+        
+        guard let uid = UserManager.shared.activatedUID, !uid.isEmpty else {
+            throw BackupError.missingUid
+        }
+        let res = list.filter { item in
+            item.userId != uid && item.userName != username
+        }
+        return res
     }
     
     func iv() -> String {
@@ -232,15 +262,6 @@ extension MultiBackupManager {
         
         return mm
     }
-    
-    func descrpt(_ hexString: String, password: String) throws -> Data {
-        guard let encryptData = Data(hexString: hexString) else {
-            throw BackupError.hexStringToDataFailed
-        }
-        let iv = iv()
-        let decryptedData = try WalletManager.decryptionAES(key: password, iv: iv, data: encryptData)
-        return decryptedData
-    }
 }
 
 extension MultiBackupManager {
@@ -253,7 +274,7 @@ extension MultiBackupManager {
     
     func addKey(key: String) async throws {
         let address = WalletManager.shared.address
-        let accountKey = Flow.AccountKey(publicKey: Flow.PublicKey(hex: key), signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 500)
+        let accountKey = Flow.AccountKey(publicKey: Flow.PublicKey(hex: key), signAlgo: .ECDSA_SECP256k1, hashAlgo: .SHA2_256, weight: 500)
         do {
             let flowId = try await FlowNetwork.addKeyToAccount(address: address, accountKey: accountKey, signers: [WalletManager.shared, RemoteConfigManager.shared])
             guard let data = try? JSONEncoder().encode(key) else {
@@ -375,7 +396,7 @@ extension MultiBackupManager {
         }
         
         public var signatureAlgo: Flow.SignatureAlgorithm {
-            .ECDSA_P256
+            .ECDSA_SECP256k1
         }
         
         public var keyIndex: Int {
@@ -384,12 +405,32 @@ extension MultiBackupManager {
         
         public func sign(transaction: Flow.Transaction, signableData: Data) async throws -> Data {
             let key = LocalEnvManager.shared.backupAESKey
-            let data = try MultiBackupManager.shared.descrpt(provider.data, password: key)
-
-            let sec = try WallectSecureEnclave(privateKey: data)
-            let signature = try sec.sign(data: signableData)
-            self.signature = signature
+            let mnemonic = try MultiBackupManager.shared.decryptMnemonic(provider.data, password: key)
+            
+            guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) else {
+                throw BackupError.missingMnemonic
+            }
+            
+            var privateKey = hdWallet.getKeyByCurve(curve: .secp256k1, derivationPath: WalletManager.flowPath)
+            let hashedData = Hash.sha256(data: signableData)
+            
+            defer {
+                privateKey = PrivateKey()
+            }
+            
+            guard var signature = privateKey.sign(digest: hashedData, curve: .secp256k1) else {
+                throw LLError.signFailed
+            }
+            
+            signature.removeLast()
+            
             return signature
+            
+            
+//            let sec = try WallectSecureEnclave(privateKey: data)
+//            let signature = try sec.sign(data: signableData)
+//            self.signature = signature
+//            return signature
         }
     }
 }

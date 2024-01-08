@@ -910,3 +910,4 @@
 "restore_wallet" = "Restore Wallet";
 "find_matching_wallet_x" = "Find %@ Matching Wallet";
 "prepared_to_restore" = "Prepared to Restore Wallet";
+"revoke" = "Revoke";

@@ -78,6 +78,19 @@ extension MultiBackupGoogleDriveTarget {
         
         return try MultiBackupManager.shared.decryptHexString(fixedHexString)
     }
+    
+    func removeItem(password: String) async throws {
+        try await prepare()
+        
+        let list = try await getCurrentDriveItems()
+        let newList = try await MultiBackupManager.shared.removeCurrent(list, password: password)
+        let encrypedString = try MultiBackupManager.shared.encryptList(newList)
+        guard let data = encrypedString.data(using: .utf8), !data.isEmpty else {
+            throw BackupError.hexStringToDataFailed
+        }
+        
+        try await api?.write(content: data, to: MultiBackupManager.backupFileName)
+    }
 }
 
 extension MultiBackupGoogleDriveTarget {

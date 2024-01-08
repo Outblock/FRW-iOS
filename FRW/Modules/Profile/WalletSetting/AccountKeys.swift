@@ -112,7 +112,7 @@ extension AccountKeysView {
                 .visibility(isExpanding ? .visible : .gone)
                 
             }
-            .onViewSwipe(title: "Revoke") {
+            .onViewSwipe(title: "revoke".localized) {
                 onRevokeAction()
             }
         }

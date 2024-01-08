@@ -112,7 +112,9 @@ struct BackupListView: RouteableView {
             .padding(.top, 24)
             ForEach(0..<viewModel.muiltList.count, id: \.self) { index in
                 let item = viewModel.muiltList[index]
-                BackupListView.BackupFinishItem(item: item)
+                BackupListView.BackupFinishItem(item: item) { type in
+                    viewModel.onDelete(type: type)
+                }
             }
         }
     }
@@ -218,6 +220,7 @@ struct BackupPatternItem: View {
 extension BackupListView {
     struct BackupFinishItem: View {
         var item: BackupListViewModel.Item
+        var onDelete: (MultiBackupType) -> Void
         
         var body: some View {
             HStack(alignment: .top) {
@@ -251,6 +254,9 @@ extension BackupListView {
             .cornerRadius(16)
             .onTapGesture {
                 Router.route(to: RouteMap.Backup.backupDetail(item))
+            }
+            .onViewSwipe(title: "delete".localized) {
+                onDelete(item.backupType)
             }
         }
     }

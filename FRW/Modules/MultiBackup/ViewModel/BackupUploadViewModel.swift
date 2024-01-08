@@ -164,6 +164,7 @@ class BackupUploadViewModel: ObservableObject {
             }
             log.info("not suport")
         case .end:
+            Router.popToRoot()
             log.info("not suport")
         }
     }

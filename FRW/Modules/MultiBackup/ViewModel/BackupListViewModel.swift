@@ -34,6 +34,15 @@ class BackupListViewModel: ObservableObject {
             }
         }
     }
+    
+    func onDelete(type: MultiBackupType) {
+        Task {
+            HUD.loading()
+            try await MultiBackupManager.shared.removeItem(with: type)
+            await fetchMultiBackup()
+            HUD.dismissLoading()
+        }
+    }
 }
 
 extension BackupListViewModel {
