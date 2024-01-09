@@ -46,6 +46,16 @@ struct BackupListView: RouteableView {
         .padding(.horizontal, 18)
         .applyRouteable(self)
         .backgroundFill(Color.LL.Neutrals.background)
+        .halfSheet(showSheet: $viewModel.showRemoveTipView) {
+            DangerousTipSheetView(title: "account_key_revoke_title".localized, detail: "account_key_revoke_content".localized, buttonTitle: "hold_to_revoke".localized) {
+                viewModel.removeMultiBackup()
+            } onCancel: {
+                viewModel.onCancelTip()
+            }
+        }
+        .onAppear {
+            viewModel.fetchData()
+        }
     }
     
     var deviceListView: some View {
@@ -110,22 +120,27 @@ struct BackupListView: RouteableView {
                 }
             }
             .padding(.top, 24)
+            
             ForEach(0..<viewModel.backupList.count, id: \.self) { index in
                 let item = viewModel.backupList[index]
-                BackupListView.BackupFinishItem(item: item) { type in
-                    viewModel.onDelete(type: type)
+                BackupListView.BackupFinishItem(item: item, index: index) { _, deleteIndex in
+                    viewModel.onDelete(index: deleteIndex)
                 }
             }
         }
     }
     
-    func onAddDevice() {}
+    func onAddDevice() {
+        Router.route(to: RouteMap.Profile.devices)
+    }
     
     func onShowAll() {
         viewModel.onShowAllDevices()
     }
     
-    func onClickDeviceBackup() {}
+    func onClickDeviceBackup() {
+        Router.route(to: RouteMap.Profile.devices)
+    }
     
     func onClickMultiBackup() {
         Router.route(to: RouteMap.Backup.multiBackup([]))
@@ -220,7 +235,8 @@ struct BackupPatternItem: View {
 extension BackupListView {
     struct BackupFinishItem: View {
         var item: KeyDeviceModel
-        var onDelete: (MultiBackupType) -> Void
+        var index: Int
+        var onDelete: (MultiBackupType, Int) -> Void
         
         var body: some View {
             HStack(alignment: .top) {
@@ -256,7 +272,7 @@ extension BackupListView {
                 Router.route(to: RouteMap.Backup.backupDetail(item))
             }
             .onViewSwipe(title: "delete".localized) {
-                onDelete(item.multiBackupType()!)
+                onDelete(item.multiBackupType()!, index)
             }
         }
     }

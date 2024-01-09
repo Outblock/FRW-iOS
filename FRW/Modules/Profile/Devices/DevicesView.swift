@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct DevicesView: RouteableView {
-    
     @StateObject private var vm = DevicesViewModel()
-    
     
     var title: String {
         return "devices".localized
@@ -18,40 +16,38 @@ struct DevicesView: RouteableView {
     
     var body: some View {
         ScrollView {
-//            Text("Scan_to_Sync_Extension_Wallet".localized)
-//                .font(.inter(size: 16,weight: .semibold))
-//                .foregroundStyle(Color.Theme.Text.black3)
-//            Text("Scan_sync_detal".localized)
-//                .font(.inter(size: 12))
-//                .multilineTextAlignment(.center)
-//                .foregroundStyle(Color.Theme.Text.black8)
-//                .padding(.top, 16)
-//            Button {
-//                
-//            } label: {
-//                HStack(spacing: 8) {
-//                    Image("scan-stroke")
-//                        .frame(width: 24,height: 24)
-//                    Text("add_other_device".localized)
-//                        .font(.inter(size:16,weight: .semibold))
-//                        .foregroundStyle(Color.Theme.Text.white9)
-//                }
-//            }
-//            .frame(width: 339,height: 54)
-//            .background(Color.Theme.Accent.blue)
-//            .cornerRadius(16)
-//            .padding(.top, 24)
-//
-//            Divider()
-//                .background(Color.LL.Neutrals.background)
-//                .padding(.horizontal, 18)
-//                .padding(.top, 24)
+            Text("Scan_to_Sync_Extension_Wallet".localized)
+                .font(.inter(size: 16, weight: .semibold))
+                .foregroundStyle(Color.Theme.Text.black3)
+            Text("Scan_sync_detal".localized)
+                .font(.inter(size: 12))
+                .multilineTextAlignment(.center)
+                .foregroundStyle(Color.Theme.Text.black8)
+                .padding(.top, 16)
+            Button {} label: {
+                HStack(spacing: 8) {
+                    Image("scan-stroke")
+                        .frame(width: 24, height: 24)
+                    Text("add_other_device".localized)
+                        .font(.inter(size: 16, weight: .semibold))
+                        .foregroundStyle(Color.Theme.Text.white9)
+                }
+            }
+            .frame(width: 339, height: 54)
+            .background(Color.Theme.Accent.blue)
+            .cornerRadius(16)
+            .padding(.top, 24)
+
+            Divider()
+                .background(Color.LL.Neutrals.background)
+                .padding(.horizontal, 18)
+                .padding(.top, 24)
             
             LazyVStack(alignment: .leading) {
                 VStack(alignment: .leading) {
                     Text("current_device".localized)
-                      .font(.inter(size: 14,weight: .bold))
-                      .foregroundColor(Color.Theme.Text.black3)
+                        .font(.inter(size: 14, weight: .bold))
+                        .foregroundColor(Color.Theme.Text.black3)
                       
                     DevicesView.Cell(model: vm.current ?? DeviceInfoModel.empty(), isCurrent: true)
                 }
@@ -59,25 +55,20 @@ struct DevicesView: RouteableView {
                 
                 VStack(alignment: .leading) {
                     Text("other_device".localized)
-                      .font(.inter(size: 14,weight: .bold))
-                      .foregroundColor(Color.Theme.Text.black3)
+                        .font(.inter(size: 14, weight: .bold))
+                        .foregroundColor(Color.Theme.Text.black3)
                     ForEach(vm.devices) { model in
                         DevicesView.Cell(model: model)
                     }
-                    
                 }
                 .visibility(vm.showOther ? .visible : .gone)
-                
-                
             }
             .padding(.horizontal, 18)
             .padding(.top, 24)
-            
         }
         .backgroundFill(Color.LL.Neutrals.background)
         .mockPlaceholder(vm.status == PageStatus.loading)
         .applyRouteable(self)
-        
     }
 }
 
@@ -107,12 +98,10 @@ extension DevicesView {
                     Spacer()
                     if isCurrent {
                         Image("check_fill_1")
-                    }else {
+                    } else {
                         Image("device_arrow_right")
                     }
-                    
                 }
-                
             }
             .padding(.all, 16)
             .frame(height: 96)

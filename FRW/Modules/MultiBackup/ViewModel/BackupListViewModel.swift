@@ -5,6 +5,7 @@
 //  Created by cat on 2024/1/6.
 //
 
+import Flow
 import SwiftUI
 
 class BackupListViewModel: ObservableObject {
@@ -20,28 +21,68 @@ class BackupListViewModel: ObservableObject {
     @Published var showAllDevices = false
     @Published var showDevicesCount = 0
     
+    @Published var showRemoveTipView = false
+    var removeIndex: Int?
+    
     private let showCount = 2
     
-    init() {
+    init() {}
+    
+    func fetchData() {
         Task {
-            DispatchQueue.main.async {
-                self.isLoading = true
-            }
+            self.isLoading = true
             
             await fetchDeviceBackup()
             await fetchMultiBackup()
-            DispatchQueue.main.async {
-                self.isLoading = false
-            }
+            self.isLoading = false
         }
     }
     
-    func onDelete(type: MultiBackupType) {
+    func onDelete(index: Int) {
+        if showRemoveTipView {
+            showRemoveTipView = false
+        }
+        
+        removeIndex = index
+        withAnimation(.easeOut(duration: 0.2)) {
+            showRemoveTipView = true
+        }
+    }
+    
+    func onCancelTip() {
+        showRemoveTipView = false
+    }
+    
+    func removeMultiBackup() {
+        guard let index = removeIndex, backupList.count > index else { return }
+        let item = backupList[index]
+        guard let type = item.multiBackupType(), let keyIndex = item.backupInfo?.keyIndex else { return }
+        if keyIndex == 0 {
+            log.error("[Flow] don't revoke key at index 0")
+            return
+        }
         Task {
             HUD.loading()
+            await revokeKey(at: keyIndex)
             try await MultiBackupManager.shared.removeItem(with: type)
             await fetchMultiBackup()
+            showRemoveTipView = false
             HUD.dismissLoading()
+        }
+    }
+    
+    private func revokeKey(at index: Int) async {
+        guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
+            HUD.info(title: "account_key_fail_tips".localized)
+            return
+        }
+        do {
+            let flowId = try await FlowNetwork.revokeAccountKey(by: index, at: Flow.Address(hex: address))
+            log.debug("revoke flow id:\(flowId)")
+            
+        } catch {
+            HUD.error(title: "account_key_fail_tips".localized)
+            log.error("revoke key: \(error)")
         }
     }
 }
@@ -84,8 +125,6 @@ extension BackupListViewModel {
 }
 
 extension BackupListViewModel {
-    
-    
     func fetchMultiBackup() async {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             HUD.error(title: "invalid_address".localized)
@@ -103,7 +142,7 @@ extension BackupListViewModel {
                 return false
             }
             
-            let validBackupList = allBackupList.filter({ model in
+            let validBackupList = allBackupList.filter { model in
                 
                 let flowAccount = account.keys.first { accountkey in
                     model.pubkey.publicKey == accountkey.publicKey.description
@@ -112,16 +151,20 @@ extension BackupListViewModel {
                     return !flowAccount.revoked
                 }
                 return false
-            })
+            }
+            let fixBackupList = validBackupList.map { model in
+                var item = model
+                let flowAccount = account.keys.first { accountkey in
+                    model.pubkey.publicKey == accountkey.publicKey.description
+                }
+                item.backupInfo?.keyIndex = flowAccount?.index
+                return item
+            }
             DispatchQueue.main.async {
-                self.backupList = validBackupList
+                self.backupList = fixBackupList
             }
             
-            
-        }catch {
-            
-        }
-        
+        } catch {}
     }
     
 //    func fetchMultiBackup() async {
@@ -147,14 +190,13 @@ extension BackupListViewModel {
 //    }
     
     func currentMultiBackup() -> [MultiBackupType] {
-        
-        return backupList.compactMap{ $0.multiBackupType()}
+        return backupList.compactMap { $0.multiBackupType() }
     }
 }
 
 extension KeyDeviceModel {
     func multiBackupType() -> MultiBackupType? {
-        switch self.backupInfo?.type {
+        switch backupInfo?.type {
         case .google:
             return MultiBackupType.google
         case .iCloud:
@@ -169,9 +211,9 @@ extension KeyDeviceModel {
     }
 }
 
-//extension BackupListViewModel {
+// extension BackupListViewModel {
 //    struct Item {
 //        let store: MultiBackupManager.StoreItem
 //        let backupType: MultiBackupType
 //    }
-//}
+// }

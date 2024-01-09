@@ -844,7 +844,7 @@
 "account_key_number" = "Sequence Number";
 "account_key_current_tips" = "Can't revoke current device key";
 "account_key_fail_tips" = "Revoke device key fail";
-"account_key_revoke_title" = "Are you sure you want\nto revoke this key?";
+"account_key_revoke_title" = "Are you sure \n you want to revoke this key?";
 "account_key_revoke_content" = "Once you revoke this key,\nthere is no way to re-activate this key.";
 "hold_to_revoke" = "Hold to Revoke";
 "devices" = "Devices";
@@ -911,3 +911,6 @@
 "find_matching_wallet_x" = "Find %@ Matching Wallet";
 "prepared_to_restore" = "Prepared to Restore Wallet";
 "revoke" = "Revoke";
+"scan_to_extension" = "Scan to Sync Extension Wallet";
+"scan_to_extension_detail" = "Scan QR code shown by the Flow Reference Browser extension to sync your wallet.";
+"delete_backup" = "Delete Backup";

@@ -1027,6 +1027,8 @@
 		4EB397FD2B4C06D900704F8A /* RestoreMultiInputMnemonicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB397FB2B4C06D900704F8A /* RestoreMultiInputMnemonicView.swift */; };
 		4EB397FF2B4C073B00704F8A /* RestoreMultiInputMnemonicViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB397FE2B4C073B00704F8A /* RestoreMultiInputMnemonicViewModel.swift */; };
 		4EB398002B4C073B00704F8A /* RestoreMultiInputMnemonicViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB397FE2B4C073B00704F8A /* RestoreMultiInputMnemonicViewModel.swift */; };
+		4EB398022B4CDB7D00704F8A /* DangerousTipSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB398012B4CDB7D00704F8A /* DangerousTipSheetView.swift */; };
+		4EB398032B4CDF5B00704F8A /* DangerousTipSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB398012B4CDB7D00704F8A /* DangerousTipSheetView.swift */; };
 		4EB60F90286825960025DD72 /* ContextMenuPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB60F8E286825960025DD72 /* ContextMenuPreview.swift */; };
 		4EB9A7C02AE9EF53004DA67F /* AccountKeyRevokeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB9A7BF2AE9EF53004DA67F /* AccountKeyRevokeView.swift */; };
 		4EB9A7C12AE9EF53004DA67F /* AccountKeyRevokeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB9A7BF2AE9EF53004DA67F /* AccountKeyRevokeView.swift */; };
@@ -1089,6 +1091,8 @@
 		4EE8E49C283626D000DFEF59 /* NFTLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE8E49A283626D000DFEF59 /* NFTLoading.swift */; };
 		4EEC374F2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */; };
 		4EEC37502A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */; };
+		4EEDA38D2B4D788A0000D382 /* MultiBackupDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDA38C2B4D788A0000D382 /* MultiBackupDetailViewModel.swift */; };
+		4EEDA38E2B4D788A0000D382 /* MultiBackupDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDA38C2B4D788A0000D382 /* MultiBackupDetailViewModel.swift */; };
 		4EF3FAE02A7B8D8400D7B09B /* FlowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */; };
 		4EF3FAE12A7B8D8400D7B09B /* FlowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */; };
 		4EF5129A28329ADA0014F4EC /* NFTDetailPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF5129828329ADA0014F4EC /* NFTDetailPage.swift */; };
@@ -2132,6 +2136,7 @@
 		4EB2DBCB2AE6253B00A421CE /* PageStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageStatus.swift; sourceTree = "<group>"; };
 		4EB397FB2B4C06D900704F8A /* RestoreMultiInputMnemonicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreMultiInputMnemonicView.swift; sourceTree = "<group>"; };
 		4EB397FE2B4C073B00704F8A /* RestoreMultiInputMnemonicViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreMultiInputMnemonicViewModel.swift; sourceTree = "<group>"; };
+		4EB398012B4CDB7D00704F8A /* DangerousTipSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DangerousTipSheetView.swift; sourceTree = "<group>"; };
 		4EB60F8E286825960025DD72 /* ContextMenuPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuPreview.swift; sourceTree = "<group>"; };
 		4EB9A7BF2AE9EF53004DA67F /* AccountKeyRevokeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountKeyRevokeView.swift; sourceTree = "<group>"; };
 		4EBE49252AA1B732000FFFFE /* AppUpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateManager.swift; sourceTree = "<group>"; };
@@ -2167,6 +2172,7 @@
 		4EE8E4972835EAF100DFEF59 /* NFTFavoriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTFavoriteView.swift; sourceTree = "<group>"; };
 		4EE8E49A283626D000DFEF59 /* NFTLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTLoading.swift; sourceTree = "<group>"; };
 		4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CadenceTemplate+ChildAccount.swift"; sourceTree = "<group>"; };
+		4EEDA38C2B4D788A0000D382 /* MultiBackupDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupDetailViewModel.swift; sourceTree = "<group>"; };
 		4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowModel.swift; sourceTree = "<group>"; };
 		4EF5129828329ADA0014F4EC /* NFTDetailPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTDetailPage.swift; sourceTree = "<group>"; };
 		4EF5129B28333A230014F4EC /* NFTTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTTagsView.swift; sourceTree = "<group>"; };
@@ -4324,6 +4330,7 @@
 				4E82C01E2B2AF85800A61439 /* BackupUploadTimeline.swift */,
 				4EB2C6B82B49D1A500EB899C /* MultiBackupDetailView.swift */,
 				4E8CE6382B4BE0BA00E71A87 /* MultiBackupPhraseView.swift */,
+				4EB398012B4CDB7D00704F8A /* DangerousTipSheetView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4334,6 +4341,7 @@
 				4E7918482B21518300DA832F /* BackupMultiViewModel.swift */,
 				4E3670062B2A8BB6000F2693 /* BackupUploadViewModel.swift */,
 				4EB2C6AA2B49017000EB899C /* BackupListViewModel.swift */,
+				4EEDA38C2B4D788A0000D382 /* MultiBackupDetailViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -6160,6 +6168,7 @@
 				15DC20D127819C56000B187A /* VNavigationLinkType.swift in Sources */,
 				6A37AD9C28BE15700047E5F7 /* SendAmountTransactionProcessView.swift in Sources */,
 				4E9E21B3282644B200E1BACD /* WalletViewModel.swift in Sources */,
+				4EB398032B4CDF5B00704F8A /* DangerousTipSheetView.swift in Sources */,
 				152EEC6E28E4F2AB00C37A67 /* TxTemplateRequest.swift in Sources */,
 				15DC208527819C56000B187A /* VLazyScrollViewHorizontal.swift in Sources */,
 				6ACFAB982939DD0E004DE47F /* SelectProviderViewModel.swift in Sources */,
@@ -6527,6 +6536,7 @@
 				15DC20DF27819C56000B187A /* VListLayoutType.swift in Sources */,
 				154B8916276A1EEB00780E93 /* BackgroundModifer.swift in Sources */,
 				158CE8892782DAD7006A8394 /* UserResponses.swift in Sources */,
+				4EEDA38E2B4D788A0000D382 /* MultiBackupDetailViewModel.swift in Sources */,
 				6A63F9F028C9C48C00FE96C0 /* SwiftUIPullToRefresh.swift in Sources */,
 				15DC214B27819C56000B187A /* VBaseNaviationViewNavigationBar.swift in Sources */,
 				6A49C19C2899126B00C8FF05 /* ProfileBackupView.swift in Sources */,
@@ -6840,6 +6850,7 @@
 				6A37AD9B28BE15700047E5F7 /* SendAmountTransactionProcessView.swift in Sources */,
 				15C58B2B2868A4EE00BD4FC6 /* WalletViewModel.swift in Sources */,
 				15C58B2C2868A4EE00BD4FC6 /* VLazyScrollViewHorizontal.swift in Sources */,
+				4EB398022B4CDB7D00704F8A /* DangerousTipSheetView.swift in Sources */,
 				152EEC6D28E4F2AB00C37A67 /* TxTemplateRequest.swift in Sources */,
 				15C58B2D2868A4EE00BD4FC6 /* VPageIndicatorInfinite.swift in Sources */,
 				6ACFAB972939DD0E004DE47F /* SelectProviderViewModel.swift in Sources */,
@@ -7207,6 +7218,7 @@
 				15C58C092868A4EE00BD4FC6 /* VListLayoutType.swift in Sources */,
 				15C58C0B2868A4EE00BD4FC6 /* BackgroundModifer.swift in Sources */,
 				15C58C0C2868A4EE00BD4FC6 /* UserResponses.swift in Sources */,
+				4EEDA38D2B4D788A0000D382 /* MultiBackupDetailViewModel.swift in Sources */,
 				6A63F9EF28C9C48C00FE96C0 /* SwiftUIPullToRefresh.swift in Sources */,
 				15C58C0D2868A4EE00BD4FC6 /* VBaseNaviationViewNavigationBar.swift in Sources */,
 				6A49C19B2899126B00C8FF05 /* ProfileBackupView.swift in Sources */,

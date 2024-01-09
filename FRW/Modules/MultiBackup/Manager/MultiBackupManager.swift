@@ -82,7 +82,7 @@ extension MultiBackupManager {
             backupType = .passkey
             log.info("not surport")
         case .icloud:
-            backupType = .passkey
+            backupType = .iCloud
             try await iCloudTarget.upload(password: password)
         case .phrase:
             backupType = .manual
@@ -137,7 +137,6 @@ extension MultiBackupManager {
 // MARK: - Helper
 
 extension MultiBackupManager {
-    
     /// append current user mnemonic to list with encrypt
     func addCurrentMnemonicToList(_ list: [MultiBackupManager.StoreItem], password: String) async throws -> [MultiBackupManager.StoreItem] {
         guard let username = UserManager.shared.userInfo?.username, !username.isEmpty else {
@@ -151,7 +150,6 @@ extension MultiBackupManager {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             throw BackupError.missingMnemonic
         }
-        
         
         guard let hdWallet = WalletManager.shared.createHDWallet(), let mnemonicData = hdWallet.mnemonic.data(using: .utf8) else {
             HUD.error(title: "empty_wallet_key".localized)
@@ -347,8 +345,8 @@ extension MultiBackupManager {
         do {
             HUD.loading()
             let tx = try await FlowNetwork.addKeyWithMulti(address: address, keyIndex: firstItem.keyIndex, sequenceNum: sequenNum, accountKey: key, signers: [firstSigner, secondSigner, RemoteConfigManager.shared])
-            let firstKeySignature = AccountKeySignature(hashAlgo: firstSigner.hashAlgo.index, publicKey: firstSigner.provider.publicKey, signAlgo: firstSigner.signatureAlgo.index, signMessage: "", signature: firstSigner.signature!.hexValue, weight: firstSigner.provider.signAlgo)
-            let secondKeySignature = AccountKeySignature(hashAlgo: secondSigner.hashAlgo.index, publicKey: secondSigner.provider.publicKey, signAlgo: secondSigner.signatureAlgo.index, signMessage: "", signature: secondSigner.signature!.hexValue, weight: secondSigner.provider.signAlgo)
+            let firstKeySignature = AccountKeySignature(hashAlgo: firstSigner.hashAlgo.index, publicKey: firstSigner.provider.publicKey, signAlgo: firstSigner.signatureAlgo.index, signMessage: "", signature: firstSigner.signature?.hexValue ?? "", weight: firstSigner.provider.signAlgo)
+            let secondKeySignature = AccountKeySignature(hashAlgo: secondSigner.hashAlgo.index, publicKey: secondSigner.provider.publicKey, signAlgo: secondSigner.signatureAlgo.index, signMessage: "", signature: secondSigner.signature?.hexValue ?? "", weight: secondSigner.provider.signAlgo)
             let request = SignedRequest(accountKey: AccountKey(hashAlgo: key.hashAlgo.index,
                                                                publicKey: key.publicKey.description,
                                                                signAlgo: key.signAlgo.index,
@@ -427,7 +425,6 @@ extension MultiBackupManager {
             signature.removeLast()
             
             return signature
-            
             
 //            let sec = try WallectSecureEnclave(privateKey: data)
 //            let signature = try sec.sign(data: signableData)

@@ -14,7 +14,7 @@ struct KeyResponse: Codable {
 struct KeyDeviceModel: Codable {
     let device: DeviceInfoModel
     let pubkey: PubkeyModel
-    let backupInfo: BackupInfoModel?
+    var backupInfo: BackupInfoModel?
 }
 
 struct PubkeyModel: Codable {
@@ -32,7 +32,7 @@ struct BackupInfoModel: Codable {
     var keyIndex: Int? = 0
 }
 
-enum BackupType: Int,Codable {
+enum BackupType: Int, Codable {
     case google = 0
     case iCloud = 1
     case manual = 2
