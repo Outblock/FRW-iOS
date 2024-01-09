@@ -33,6 +33,10 @@ struct BackupUploadView: RouteableView {
                     .background(.Theme.Background.white)
                     .cornerRadius(60)
                     .clipped()
+                    .visibility(viewModel.process != .end ? .visible : .gone)
+                
+                BackupUploadView.CompletedView(items: viewModel.items)
+                    .visibility(viewModel.process == .end ? .visible : .gone)
                 
                 Text(viewModel.currentTitle)
                     .font(.inter(size: 20, weight: .bold))
@@ -108,6 +112,88 @@ extension BackupUploadView {
     }
 }
 
+extension BackupUploadView {
+    struct CompletedView: View {
+        let items: [MultiBackupType]
+        
+        var body: some View {
+            build()
+        }
+        
+        func build() -> some View {
+            return VStack {
+                if items.count == 1 {
+                    firstBuild()
+                }else if items.count == 2 {
+                    twoBuild()
+                }else {
+                    moreBuild()
+                }
+            }
+        }
+        
+        private func firstBuild() -> some View {
+            return icon(name: items.first!.iconName())
+        }
+        
+        private func twoBuild() -> some View {
+            return HStack {
+                if items.count == 2 {
+                    icon(name: items[0].iconName())
+                    linkIcon()
+                    icon(name: items[1].iconName())
+                }
+            }
+        }
+        
+        private func moreBuild() -> some View {
+            return VStack(spacing: 0) {
+                HStack {
+                    if items.count >= 2 {
+                        icon(name: items[0].iconName())
+                        Spacer()
+                        icon(name: items[1].iconName())
+                    }
+                }
+                linkIcon()
+                    .offset(y:-12)
+                    .rotationEffect( items.count > 3 ? Angle.init(degrees: 30) : .zero)
+                HStack {
+                    if items.count >= 3 {
+                        icon(name: items[2].iconName())
+                    }
+                    if items.count >= 4 {
+                        Spacer()
+                        icon(name: items[3].iconName())
+                    }
+                }
+                .padding(.top, 16)
+                
+            }
+        }
+        
+        
+        private func icon(name: String) -> some View {
+            return Image(name)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 80, height: 80)
+                .background(.Theme.Background.white)
+                .cornerRadius(40)
+                .clipped()
+        }
+        private func linkIcon() -> some View {
+            return Image("icon.backup.link")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 24, height: 24)
+                .cornerRadius(12)
+                .clipped()
+        }
+    }
+}
+
 #Preview {
-    BackupUploadView(items: [])
+//    BackupUploadView(items: [])
+    BackupUploadView.CompletedView(items: [.google,.passkey, .icloud, ])
 }
