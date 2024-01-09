@@ -33,6 +33,7 @@ class MultiBackupManager: ObservableObject {
     static let backupFileName = "outblock_multi_backup"
     
     var deviceInfo: SyncInfo.DeviceInfo?
+    var backupType: BackupType = .undefined
     
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(onTransactionManagerChanged), name: .transactionManagerDidChanged, object: nil)
@@ -75,12 +76,16 @@ extension MultiBackupManager {
         let password = key
         switch type {
         case .google:
+            backupType = .google
             try await gdTarget.upload(password: password)
         case .passkey:
+            backupType = .passkey
             log.info("not surport")
         case .icloud:
+            backupType = .passkey
             try await iCloudTarget.upload(password: password)
         case .phrase:
+            backupType = .manual
             try await phraseTarget.upload(password: password)
         }
     }
@@ -147,13 +152,6 @@ extension MultiBackupManager {
             throw BackupError.missingMnemonic
         }
         
-        let existItem = list.first { item in
-            item.userId == uid
-        }
-        
-        if existItem != nil {
-            return list
-        }
         
         guard let hdWallet = WalletManager.shared.createHDWallet(), let mnemonicData = hdWallet.mnemonic.data(using: .utf8) else {
             HUD.error(title: "empty_wallet_key".localized)
@@ -173,7 +171,7 @@ extension MultiBackupManager {
         
         let flowPublicKey = Flow.PublicKey(hex: publicKey)
         let flowKey = Flow.AccountKey(publicKey: flowPublicKey, signAlgo: .ECDSA_SECP256k1, hashAlgo: .SHA2_256, weight: 500)
-        deviceInfo = SyncInfo.DeviceInfo(accountKey: flowKey.toCodableModel(), deviceInfo: IPManager.shared.toParams())
+        deviceInfo = SyncInfo.DeviceInfo(accountKey: flowKey.toCodableModel(), deviceInfo: IPManager.shared.toParams(), backupInfo: BackupInfoModel(create_time: nil, name: nil, type: backupType))
         
         let item = MultiBackupManager.StoreItem(
             address: address,
@@ -188,8 +186,12 @@ extension MultiBackupManager {
             deviceInfo: IPManager.shared.toParams()
         )
         
-        var newList = [item]
-        newList.append(contentsOf: list)
+        var newList = list
+        if let i = list.firstIndex(where: { $0.userId == uid }) {
+            newList.remove(at: i)
+        }
+        
+        newList.append(item)
         return newList
     }
     

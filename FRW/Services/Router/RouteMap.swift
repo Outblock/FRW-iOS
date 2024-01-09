@@ -99,7 +99,7 @@ extension RouteMap {
         case multiBackup([MultiBackupType])
         case uploadMulti([MultiBackupType])
         case showPhrase(String)
-        case backupDetail(BackupListViewModel.Item)
+        case backupDetail(KeyDeviceModel)
     }
 }
 

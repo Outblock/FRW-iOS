@@ -27,5 +27,6 @@ struct SyncInfo {
     struct DeviceInfo: Codable {
         let accountKey: AccountKey
         let deviceInfo: DeviceInfoRequest
+        let backupInfo: BackupInfoModel?
     }
 }

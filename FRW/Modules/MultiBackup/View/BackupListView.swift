@@ -27,19 +27,19 @@ struct BackupListView: RouteableView {
             BackupPatternItem(style: .multi) { _ in
                 onClickMultiBackup()
             }
-            .visibility(viewModel.muiltList.count == 0 ? .visible : .gone)
+            .visibility(viewModel.backupList.count == 0 ? .visible : .gone)
             .mockPlaceholder(viewModel.isLoading)
             
             Divider()
                 .foregroundStyle(.clear)
                 .background(Color.Theme.Line.line)
-                .visibility((viewModel.deviceList.count == 0 || viewModel.muiltList.count == 0) ? .visible : .gone)
+                .visibility((viewModel.deviceList.count == 0 || viewModel.backupList.count == 0) ? .visible : .gone)
             
             deviceListView
                 .visibility(viewModel.deviceList.count > 0 ? .visible : .gone)
             
             multiListView
-                .visibility(viewModel.muiltList.count > 0 ? .visible : .gone)
+                .visibility(viewModel.backupList.count > 0 ? .visible : .gone)
             
             Spacer()
         }
@@ -110,8 +110,8 @@ struct BackupListView: RouteableView {
                 }
             }
             .padding(.top, 24)
-            ForEach(0..<viewModel.muiltList.count, id: \.self) { index in
-                let item = viewModel.muiltList[index]
+            ForEach(0..<viewModel.backupList.count, id: \.self) { index in
+                let item = viewModel.backupList[index]
                 BackupListView.BackupFinishItem(item: item) { type in
                     viewModel.onDelete(type: type)
                 }
@@ -219,23 +219,23 @@ struct BackupPatternItem: View {
 
 extension BackupListView {
     struct BackupFinishItem: View {
-        var item: BackupListViewModel.Item
+        var item: KeyDeviceModel
         var onDelete: (MultiBackupType) -> Void
         
         var body: some View {
             HStack(alignment: .top) {
-                Image(item.backupType.iconName())
+                Image(item.multiBackupType()?.iconName() ?? "")
                     .resizable()
                     .frame(width: 24, height: 24)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("\(item.backupType.title) Backup")
+                    Text("\(item.multiBackupType()?.title ?? "") Backup")
                         .font(.inter(size: 16))
                         .foregroundStyle(Color.Theme.Text.black8)
                         .foregroundColor(.black.opacity(0.8))
-                    Text(item.store.deviceInfo.showApp())
+                    Text(item.device.showApp())
                         .font(.inter(size: 12))
                         .foregroundStyle(Color.Theme.Text.black3)
-                    Text(item.store.deviceInfo.showLocation())
+                    Text(item.device.showLocation())
                         .font(.inter(size: 12))
                         .foregroundStyle(Color.Theme.Text.black3)
                 }
@@ -256,7 +256,7 @@ extension BackupListView {
                 Router.route(to: RouteMap.Backup.backupDetail(item))
             }
             .onViewSwipe(title: "delete".localized) {
-                onDelete(item.backupType)
+                onDelete(item.multiBackupType()!)
             }
         }
     }
