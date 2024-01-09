@@ -43,13 +43,13 @@ struct AboutView: RouteableView {
             Section {
                 VStack(spacing: 0) {
                     
-                    SocialButton(imageName: "disocrd",
-                                 text: "Disocrd") {
+                    SocialButton(imageName: "discord",
+                                 text: "discord") {
                         UIApplication.shared.open(URL(string: "https://discord.com/invite/J6fFnh2xx6")!)
                     }
                     
                     SocialButton(imageName: "twitter",
-                                 text: "Twitter") {
+                                 text: "X") {
                         UIApplication.shared.open(URL(string: "https://twitter.com/flow_blockchain")!)
                     }
 //                    

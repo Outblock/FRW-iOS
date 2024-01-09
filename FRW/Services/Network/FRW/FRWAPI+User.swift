@@ -19,6 +19,10 @@ extension FRWAPI {
         case search(String)
         case manualCheck
         case sandboxnet
+        case keys
+        case devices(String)
+        case syncDevice(SyncInfo.DeviceInfo)
+        case addSigned(SignedRequest)
     }
 }
 
@@ -34,11 +38,11 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
     var path: String {
         switch self {
         case .login:
-            return "/v2/login"
+            return "/v3/login"
         case .checkUsername:
             return "/v1/user/check"
         case .register:
-            return "/v1/register"
+            return "/v3/register"
         case .userAddress:
             return "/v1/user/address"
         case .userInfo:
@@ -51,21 +55,29 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
             return "/v1/user/manualaddress"
         case .sandboxnet:
             return "/v1/user/address/sandboxnet"
+        case .keys:
+            return "/v1/user/keys"
+        case .devices:
+            return "/v1/user/device"
+        case .syncDevice:
+            return "/v3/sync"
+        case .addSigned:
+            return "/v3/signed"
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .checkUsername, .userInfo, .userWallet, .search:
+        case .checkUsername, .userInfo, .userWallet, .search, .keys, .devices:
             return .get
-        case .login, .register, .userAddress, .manualCheck, .sandboxnet:
+        case .login, .register, .userAddress, .manualCheck, .sandboxnet, .syncDevice, .addSigned:
             return .post
         }
     }
 
     var task: Task {
         switch self {
-        case .userAddress, .userInfo, .userWallet, .manualCheck, .sandboxnet:
+        case .userAddress, .userInfo, .userWallet, .manualCheck, .sandboxnet, .keys:
             return .requestPlain
         case let .checkUsername(username):
             return .requestParameters(parameters: ["username": username], encoding: URLEncoding.queryString)
@@ -75,6 +87,12 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
             return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         case let .search(keyword):
             return .requestParameters(parameters: ["keyword": keyword], encoding: URLEncoding.queryString)
+        case let .devices(uuid):
+            return .requestParameters(parameters: ["device_id": uuid], encoding: URLEncoding.queryString)
+        case let .syncDevice(request):
+            return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
+        case let .addSigned(request):
+            return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         }
     }
 
@@ -86,7 +104,7 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
         default:
             break
         }
-        
+
         return headers
     }
 }

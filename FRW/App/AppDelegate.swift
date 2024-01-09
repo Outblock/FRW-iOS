@@ -42,6 +42,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         let console = ConsoleDestination()
         console.format = "$DHH:mm:ss.SSS$d $C$L$c $N.$F:$l - $M - $X"
         log.addDestination(console)
+        
 #endif
         
         FirebaseApp.configure()

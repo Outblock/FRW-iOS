@@ -28,7 +28,7 @@ extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
     var path: String {
         switch self {
         case .flowScanQuery:
-            return "/v1/account/query"
+            return "/v2/account/query"
         case .transfers:
             return "/v1/account/transfers"
         case .tokenTransfers:
@@ -39,7 +39,7 @@ extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
     var method: Moya.Method {
         switch self {
         case .flowScanQuery:
-            return .post
+            return .get
         case .transfers, .tokenTransfers:
             return .get
         }
