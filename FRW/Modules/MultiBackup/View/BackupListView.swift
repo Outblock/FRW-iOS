@@ -15,35 +15,37 @@ struct BackupListView: RouteableView {
     }
     
     var body: some View {
-        VStack(spacing: 16) {
-            Color.clear
-                .frame(width: 1, height: 24)
-            BackupPatternItem(style: .device) { _ in
-                onClickDeviceBackup()
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 16) {
+                Color.clear
+                    .frame(width: 1, height: 24)
+                BackupPatternItem(style: .device) { _ in
+                    onClickDeviceBackup()
+                }
+                .visibility(viewModel.deviceList.count == 0 ? .visible : .gone)
+                .mockPlaceholder(viewModel.isLoading)
+                
+                BackupPatternItem(style: .multi) { _ in
+                    onClickMultiBackup()
+                }
+                .visibility(viewModel.backupList.count == 0 ? .visible : .gone)
+                .mockPlaceholder(viewModel.isLoading)
+                
+                Divider()
+                    .foregroundStyle(.clear)
+                    .background(Color.Theme.Line.line)
+                    .visibility((viewModel.deviceList.count == 0 || viewModel.backupList.count == 0) ? .visible : .gone)
+                
+                deviceListView
+                    .visibility(viewModel.deviceList.count > 0 ? .visible : .gone)
+                
+                multiListView
+                    .visibility(viewModel.backupList.count > 0 ? .visible : .gone)
+                
+                Spacer()
             }
-            .visibility(viewModel.deviceList.count == 0 ? .visible : .gone)
-            .mockPlaceholder(viewModel.isLoading)
-            
-            BackupPatternItem(style: .multi) { _ in
-                onClickMultiBackup()
-            }
-            .visibility(viewModel.backupList.count == 0 ? .visible : .gone)
-            .mockPlaceholder(viewModel.isLoading)
-            
-            Divider()
-                .foregroundStyle(.clear)
-                .background(Color.Theme.Line.line)
-                .visibility((viewModel.deviceList.count == 0 || viewModel.backupList.count == 0) ? .visible : .gone)
-            
-            deviceListView
-                .visibility(viewModel.deviceList.count > 0 ? .visible : .gone)
-            
-            multiListView
-                .visibility(viewModel.backupList.count > 0 ? .visible : .gone)
-            
-            Spacer()
+            .padding(.horizontal, 18)
         }
-        .padding(.horizontal, 18)
         .applyRouteable(self)
         .backgroundFill(Color.LL.Neutrals.background)
         .halfSheet(showSheet: $viewModel.showRemoveTipView) {
