@@ -13,11 +13,9 @@ struct WalletSettingView: RouteableView {
         "wallet".localized.capitalized
     }
     
-    @State
-    var isOn: Bool = true
     
     @StateObject private var vm = WalletSettingViewModel()
-    
+    @AppStorage(LocalUserDefaults.Keys.freeGas.rawValue) private var localGreeGas = true
     var body: some View {
         
         ZStack(alignment: .bottom) {
@@ -87,12 +85,11 @@ struct WalletSettingView: RouteableView {
                             
                             Spacer()
                             
-                            Toggle(isOn: $isOn) {
+                            Toggle(isOn: $localGreeGas) {
                                 
                             }
                             .tint(.LL.Primary.salmonPrimary)
-                            .onChange(of: isOn) { value in
-                                //                        toggleAction?(value)
+                            .onChange(of: localGreeGas) { value in
                             }
                             
                         }

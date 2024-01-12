@@ -175,18 +175,7 @@ extension StakeAmountViewModel {
         if provider.delegatorId == nil {
             debugPrint("StakeAmountViewModel: provider.delegatorId is nil, will create delegator id")
             // create delegator id to stake (only first time)
-            if try await FlowNetwork.createDelegatorId(providerId: provider.id) == false {
-                debugPrint("StakeAmountViewModel: createDelegatorId failed")
-                throw StakingError.stakingCreateDelegatorIdFailed
-            }
-            
-            debugPrint("StakeAmountViewModel: create delegator id success, refresh delegator info after 2 seconds")
-            
-            // create delegator id success, delay 2 seconds then refresh delegatorIds
-            try? await Task.sleep(nanoseconds: 2 * 1_000_000_000)
-            try await StakingManager.shared.refreshDelegatorInfo()
-            
-            debugPrint("StakeAmountViewModel: refreshDelegatorInfo success")
+            return try await FlowNetwork.createDelegatorId(providerId: provider.id, amount: inputTextNum)
         }
         
         guard let delegatorId = provider.delegatorId else {
@@ -196,28 +185,13 @@ extension StakeAmountViewModel {
         }
         
         debugPrint("StakeAmountViewModel: provider.delegatorId now get, will stake flow")
-        
-        let txId = try await FlowNetwork.stakeFlow(providerId: provider.id, delegatorId: delegatorId, amount: inputTextNum)
-        return txId
+        return try await FlowNetwork.stakeFlow(providerId: provider.id, delegatorId: delegatorId, amount: inputTextNum)
         
     }
     
     private func unstake() async throws -> Flow.ID {
         if provider.delegatorId == nil {
             debugPrint("StakeAmountViewModel: provider.delegatorId is nil, will create delegator id")
-            // create delegator id to stake (only first time)
-            if try await FlowNetwork.createDelegatorId(providerId: provider.id) == false {
-                debugPrint("StakeAmountViewModel: createDelegatorId failed")
-                throw StakingError.stakingCreateDelegatorIdFailed
-            }
-            
-            debugPrint("StakeAmountViewModel: create delegator id success, refresh delegator info after 2 seconds")
-            
-            // create delegator id success, delay 2 seconds then refresh delegatorIds
-            try? await Task.sleep(nanoseconds: 2 * 1_000_000_000)
-            try await StakingManager.shared.refreshDelegatorInfo()
-            
-            debugPrint("StakeAmountViewModel: refreshDelegatorInfo success")
         }
         
         guard let delegatorId = provider.delegatorId else {

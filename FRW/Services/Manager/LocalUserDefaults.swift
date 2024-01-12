@@ -38,6 +38,7 @@ extension LocalUserDefaults {
         case loginUIDList
         case selectedChildAccount
         case switchProfileTipsFlag
+        case freeGas
     }
 
     enum FlowNetworkType: String, CaseIterable {
