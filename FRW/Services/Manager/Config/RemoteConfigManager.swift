@@ -45,8 +45,8 @@ class RemoteConfigManager {
             return config?.payer.mainnet.address ?? emptyAddress
         case .testnet:
             return config?.payer.testnet.address ?? emptyAddress
-        case .sandboxnet:
-            return config?.payer.sandboxnet.address ?? emptyAddress
+        case .crescendo:
+            return config?.payer.crescendo.address ?? emptyAddress
         default:
             return emptyAddress
         }
@@ -62,8 +62,8 @@ class RemoteConfigManager {
             return config?.payer.mainnet.keyID ?? 0
         case .testnet:
             return config?.payer.testnet.keyID ?? 0
-        case .sandboxnet:
-            return config?.payer.sandboxnet.keyID ?? 0
+        case .crescendo:
+            return config?.payer.crescendo.keyID ?? 0
         default:
             return 0
         }
@@ -75,8 +75,8 @@ class RemoteConfigManager {
             return contractAddress?.mainnet
         case .testnet:
             return contractAddress?.testnet
-        case .sandboxnet:
-            return contractAddress?.sandboxnet
+        case .crescendo:
+            return contractAddress?.crescendo
         }
     }
     

@@ -79,6 +79,10 @@
 		<string>e-Ukraine-Medium.ttf</string>
 		<string>e-Ukraine-Light.ttf</string>
 	</array>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Flow Ref-dev requires access to photo library</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Flow Ref-dev need camera to scan QR Code</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

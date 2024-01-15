@@ -266,8 +266,8 @@ extension WalletManager {
         return nil
     }
     
-    var isSandboxnetEnabled: Bool {
-        return walletInfo?.wallets?.first(where: { $0.chainId == LocalUserDefaults.FlowNetworkType.sandboxnet.rawValue })?.getAddress != nil
+    var isCrescendoEnabled: Bool {
+        return walletInfo?.wallets?.first(where: { $0.chainId == LocalUserDefaults.FlowNetworkType.crescendo.rawValue })?.getAddress != nil
     }
     
     func isTokenActivated(symbol: String) -> Bool {

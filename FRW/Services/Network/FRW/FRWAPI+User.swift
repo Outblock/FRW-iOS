@@ -18,7 +18,7 @@ extension FRWAPI {
         case userWallet
         case search(String)
         case manualCheck
-        case sandboxnet
+        case crescendo
         case keys
         case devices(String)
         case syncDevice(SyncInfo.DeviceInfo)
@@ -53,8 +53,8 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
             return "/v1/user/search"
         case .manualCheck:
             return "/v1/user/manualaddress"
-        case .sandboxnet:
-            return "/v1/user/address/sandboxnet"
+        case .crescendo:
+            return "/v1/user/address/crescendo"
         case .keys:
             return "/v1/user/keys"
         case .devices:
@@ -70,14 +70,14 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
         switch self {
         case .checkUsername, .userInfo, .userWallet, .search, .keys, .devices:
             return .get
-        case .login, .register, .userAddress, .manualCheck, .sandboxnet, .syncDevice, .addSigned:
+        case .login, .register, .userAddress, .manualCheck, .crescendo, .syncDevice, .addSigned:
             return .post
         }
     }
 
     var task: Task {
         switch self {
-        case .userAddress, .userInfo, .userWallet, .manualCheck, .sandboxnet, .keys:
+        case .userAddress, .userInfo, .userWallet, .manualCheck, .crescendo, .keys:
             return .requestPlain
         case let .checkUsername(username):
             return .requestParameters(parameters: ["username": username], encoding: URLEncoding.queryString)
@@ -99,8 +99,8 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
     var headers: [String: String]? {
         var headers = FRWAPI.commonHeaders
         switch self {
-        case .sandboxnet:
-            headers["Network"] = "sandboxnet"
+        case .crescendo:
+            headers["Network"] = "crescendo"
         default:
             break
         }

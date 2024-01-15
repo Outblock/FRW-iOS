@@ -11,7 +11,7 @@ extension RemoteConfigManager {
     struct ContractAddress: Codable {
         let mainnet: [String: String]?
         let testnet: [String: String]?
-        let sandboxnet: [String: String]?
+        let crescendo: [String: String]?
     }
     
     struct Config: Codable {
@@ -40,7 +40,7 @@ extension RemoteConfigManager {
     struct Payer: Codable {
         let mainnet: PayerInfo
         let testnet: PayerInfo
-        let sandboxnet: PayerInfo
+        let crescendo: PayerInfo
     }
 
     // MARK: - Net

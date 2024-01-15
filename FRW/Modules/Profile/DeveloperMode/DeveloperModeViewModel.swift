@@ -69,7 +69,7 @@ extension DeveloperModeViewModel {
         LocalUserDefaults.shared.customWatchAddress = address
     }
     
-    func enableSandboxnetAction() {
+    func enableCrescendoAction() {
         HUD.loading()
         
         let failedBlock = {
@@ -83,16 +83,16 @@ extension DeveloperModeViewModel {
         let successBlock = {
             DispatchQueue.main.async {
                 HUD.dismissLoading()
-                WalletManager.shared.changeNetwork(.sandboxnet)
+                WalletManager.shared.changeNetwork(.crescendo)
             }
         }
         
         Task {
             do {
-                let id: String = try await Network.request(FRWAPI.User.sandboxnet)
+                let id: String = try await Network.request(FRWAPI.User.crescendo)
                 let txId = Flow.ID(hex: id)
                 
-                flow.configure(chainID: .sandboxnet)
+                flow.configure(chainID: .crescendo)
                 
                 let result = try await txId.onceSealed()
                 if result.isFailed {
@@ -102,7 +102,7 @@ extension DeveloperModeViewModel {
                 
                 successBlock()
             } catch {
-                debugPrint("DeveloperModeViewModel -> enableSandboxnetAction failed: \(error)")
+                debugPrint("DeveloperModeViewModel -> enableCrescendoAction failed: \(error)")
                 failedBlock()
             }
         }
