@@ -12,7 +12,7 @@ class InstabugConfig {
     static func start(token: String) {
         Instabug.start(withToken: token, invocationEvents: [.shake, .screenshot])
         Instabug.trackUserSteps = true
-        Instabug.setReproStepsFor(.all, with: .enabledWithNoScreenshots)
+        Instabug.setReproStepsFor(.all, with: .enable)
         Instabug.welcomeMessageMode = .beta
     }
 }
