@@ -13,6 +13,6 @@
 	<key>dapp_build_number</key>
 	<string>{&quot;build&quot;:2}</string>
 	<key>free_gas_config</key>
-	<string>{&quot;features&quot;:{&quot;free_gas&quot;:true,&quot;wallet_connect&quot;:true,&quot;on_ramp&quot;:true,&quot;app_list&quot;:true,&quot;swap&quot;:false},&quot;payer&quot;:{&quot;mainnet&quot;:{&quot;address&quot;:&quot;0x319e67f2ef9d937f&quot;,&quot;keyId&quot;:0},&quot;testnet&quot;:{&quot;address&quot;:&quot;0xcb1cf3196916f9e2&quot;,&quot;keyId&quot;:0},&quot;sandboxnet&quot;:{&quot;address&quot;:&quot;0x41e6dda4c0240c16&quot;,&quot;keyId&quot;:0}}}</string>
+	<string>{&quot;features&quot;:{&quot;free_gas&quot;:true,&quot;wallet_connect&quot;:true,&quot;on_ramp&quot;:true,&quot;app_list&quot;:true,&quot;swap&quot;:false},&quot;payer&quot;:{&quot;mainnet&quot;:{&quot;address&quot;:&quot;0x319e67f2ef9d937f&quot;,&quot;keyId&quot;:0},&quot;testnet&quot;:{&quot;address&quot;:&quot;0xcb1cf3196916f9e2&quot;,&quot;keyId&quot;:0},&quot;sandboxnet&quot;:{&quot;address&quot;:&quot;0x41e6dda4c0240c16&quot;,&quot;keyId&quot;:0},&quot;crescendo&quot;:{&quot;address&quot;:&quot;0xcb1cf3196916f9e2&quot;,&quot;keyId&quot;:0}}}</string>
 </dict>
 </plist>
