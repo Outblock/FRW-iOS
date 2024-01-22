@@ -8,7 +8,7 @@
 import Foundation
 
 struct KeyResponse: Codable {
-    let result: [KeyDeviceModel]
+    let result: [KeyDeviceModel]?
 }
 
 struct KeyDeviceModel: Codable {

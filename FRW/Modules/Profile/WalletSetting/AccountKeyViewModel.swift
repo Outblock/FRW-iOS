@@ -38,7 +38,8 @@ class AccountKeyViewModel: ObservableObject {
                     self.allKeys = account.keys.map { AccountKeyModel(accountKey: $0) }
                     self.allKeys = self.allKeys.map({ model in
                         var model = model
-                        let devicesInfo = devices.result.first { response in
+                        let result = devices.result ?? []
+                        let devicesInfo = result.first { response in
                             response.pubkey.publicKey == model.accountKey.publicKey.description
                         }
                         if let info = devicesInfo {

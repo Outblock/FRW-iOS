@@ -30,11 +30,15 @@ class BackupListViewModel: ObservableObject {
     
     func fetchData() {
         Task {
-            self.isLoading = true
-            
+            DispatchQueue.main.async{
+                self.isLoading = true
+            }
             await fetchDeviceBackup()
             await fetchMultiBackup()
-            self.isLoading = false
+            
+            DispatchQueue.main.async{
+                self.isLoading = false
+            }
         }
     }
     
@@ -133,9 +137,12 @@ extension BackupListViewModel {
         do {
             let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
             let devices: KeyResponse = try await Network.request(FRWAPI.User.keys)
-            let deviceList = devices.result
+            let deviceList = devices.result ?? []
             
             let allBackupList = deviceList.filter { model in
+                if model.pubkey.weight >= 1000 {
+                    return false
+                }
                 if let info = model.backupInfo {
                     return info.type != .undefined
                 }
@@ -164,7 +171,9 @@ extension BackupListViewModel {
                 self.backupList = fixBackupList
             }
             
-        } catch {}
+        } catch {
+            log.error("[backup] fetch multi \(error.localizedDescription)")
+        }
     }
     
 //    func fetchMultiBackup() async {
