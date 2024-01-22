@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AboutView: RouteableView {
-    
     let version = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
     
     let buildVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
@@ -19,7 +18,6 @@ struct AboutView: RouteableView {
     
     var body: some View {
         VStack(alignment: .center) {
-            
             Image("logo")
                 .resizable()
                 .frame(width: 100, height: 100)
@@ -39,20 +37,21 @@ struct AboutView: RouteableView {
             .foregroundColor(.LL.note.opacity(0.5))
             .padding(.bottom, 50)
             
-            
             Section {
                 VStack(spacing: 0) {
-                    
                     SocialButton(imageName: "discord",
-                                 text: "Discord") {
+                                 text: "Discord")
+                    {
                         UIApplication.shared.open(URL(string: "https://discord.com/invite/J6fFnh2xx6")!)
                     }
                     
                     SocialButton(imageName: "twitter",
-                                 text: "X") {
+                                 text: "X",
+                                 showDivider: false)
+                    {
                         UIApplication.shared.open(URL(string: "https://twitter.com/flow_blockchain")!)
                     }
-//                    
+//
 //                    SocialButton(imageName: "email",
 //                                 text: "Email",
 //                                 showDivider: false) {
@@ -70,13 +69,13 @@ struct AboutView: RouteableView {
             
 //            Section {
 //                VStack(spacing: 0) {
-//                    
+//
 //                    SocialButton(imageName: "logo",
 //                                 text: "lilico".localized + " Extension",
 //                                 showDivider: false) {
 //                        UIApplication.shared.open(URL(string: "https://chrome.google.com/webstore/detail/lilico/hpclkefagolihohboafpheddmmgdffjm")!)
 //                    }
-//                    
+//
 //                }
 //                .cornerRadius(16)
 //            } header: {
@@ -88,7 +87,6 @@ struct AboutView: RouteableView {
 //                    .padding(.top, 20)
 //            }
             
-
             Spacer()
             
             Image("Flow")
@@ -97,11 +95,10 @@ struct AboutView: RouteableView {
                 .onTapGesture {
                     UIApplication.shared.open(URL(string: "https://flow.com")!)
                 }
-            
         }
         .padding(.horizontal, 24)
         .frame(maxWidth: .infinity)
-        .frame(maxHeight:.infinity, alignment: .top)
+        .frame(maxHeight: .infinity, alignment: .top)
         .backgroundFill(.LL.background)
         .applyRouteable(self)
     }
@@ -126,7 +123,6 @@ struct AboutView: RouteableView {
                             .font(.LL.body)
                             .foregroundColor(.LL.text)
                             
-                        
                         Spacer()
                         
                         Image(systemName: "arrow.up.right")
@@ -134,7 +130,6 @@ struct AboutView: RouteableView {
                             .foregroundColor(.LL.note)
                     }
                     .padding(18)
-                    
                 }
                 
                 if showDivider {
