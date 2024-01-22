@@ -25,12 +25,12 @@ struct SyncAddDeviceView: View {
                 Spacer()
                 Text("wallet_confirmation".localized)
                     .font(.inter(size: 18, weight: .bold))
-                    .foregroundStyle(Color.Theme.Text.black3)
+                    .foregroundStyle(Color.Theme.Text.black8)
                 Spacer()
                 Button {
                     Router.dismiss()
                 } label: {
-                    Image("icon-btn-close")
+                    Image("icon_close_circle_gray")
                         .renderingMode(.template)
                         .foregroundColor(.LL.Neutrals.note)
                 }
@@ -52,10 +52,13 @@ struct SyncAddDeviceView: View {
             Color.clear
                 .frame(height: 6)
             
-            VStack {
+            VStack(spacing: 8) {
                 DeviceInfoItem(title: "application_tag".localized, detail: viewModel.model.deviceInfo.userAgent)
+                    .frame(height: 24)
                 DeviceInfoItem(title: "ip_address_tag".localized, detail: viewModel.model.deviceInfo.ip)
+                    .frame(height: 24)
                 DeviceInfoItem(title: "location".localized, detail: location)
+                    .frame(height: 24)
             }
             .padding(.horizontal, 4)
             

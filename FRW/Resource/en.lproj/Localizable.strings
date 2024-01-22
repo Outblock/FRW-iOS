@@ -308,7 +308,7 @@
 "Transaction__created::message" = "Transaction created";
 "welcome_to_lilico" = "Welcome to Flow Ref!";
 "Search__Address__or__Flow__domain::message" = "Search, Address(0x) or Flow domain";
-"welcome_desc" = "Join us and unlock all brilliant & new experiences!";
+"welcome_desc" = "We will do our best to protect your assets!";
 "Search__the__ID::message" = "Search the ID: ";
 "addresses" = "Addresses";
 "Sorry__we__could__not__find__any__accounts::message" = "Sorry, we could not find any accounts. Please try again.";

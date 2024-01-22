@@ -5,11 +5,11 @@
 //  Created by Hao Fu on 25/12/21.
 //
 
+import Kingfisher
 import SceneKit
 import SPConfetti
 import SwiftUI
 import SwiftUIX
-import Kingfisher
 
 struct EmptyWalletView: View {
     @StateObject private var vm = EmptyWalletViewModel()
@@ -49,7 +49,6 @@ struct EmptyWalletView: View {
                     .font(.montserrat(size: 16, weight: .light))
                     .foregroundColor(.LL.note)
             }
-            
         }
     }
     
@@ -100,31 +99,6 @@ struct EmptyWalletView: View {
                 )
 //                .shadow(color: Color.black.opacity(0.08), x: 0, y: 4, blur: 24)
             }
-            
-            Button {
-                vm.syncAccountAction()
-            } label: {
-                ZStack {
-                    HStack(spacing: 8) {
-                        Image("wallet-sync-icon")
-                            .frame(width: 24, height: 24)
-                        
-                        Text("sync_wallet".localized)
-                            .font(.inter(size: 17, weight: .bold))
-                            .foregroundColor(Color(hex: "#333333"))
-                    }
-                }
-                .frame(height: 58)
-                .frame(maxWidth: .infinity)
-                .background(.white)
-                .contentShape(Rectangle())
-                .cornerRadius(29)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 28)
-                        .stroke(Color.black, lineWidth: 1.5)
-                )
-            }
-            
         }
     }
     
@@ -151,10 +125,10 @@ struct EmptyWalletView: View {
     func createRecentLoginCell(_ placeholder: EmptyWalletViewModel.Placeholder) -> some View {
         HStack(spacing: 16) {
             KFImage.url(URL(string: placeholder.avatar.convertedAvatarString()))
-                .placeholder({
+                .placeholder {
                     Image("placeholder")
                         .resizable()
-                })
+                }
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 36, height: 36)
