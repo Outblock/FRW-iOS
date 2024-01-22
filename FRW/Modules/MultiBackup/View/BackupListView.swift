@@ -141,16 +141,15 @@ struct BackupListView: RouteableView {
     }
     
     func onClickDeviceBackup() {
-        Router.route(to: RouteMap.Profile.devices)
+        viewModel.onShowDeviceBackup()
     }
     
     func onClickMultiBackup() {
-        Router.route(to: RouteMap.Backup.multiBackup([]))
+        viewModel.onShowMultiBackup()
     }
     
     func onAddMulti() {
-        let list = viewModel.currentMultiBackup()
-        Router.route(to: RouteMap.Backup.multiBackup(list))
+        viewModel.onAddMultiBackup()
     }
 }
 

@@ -30,16 +30,41 @@ class BackupListViewModel: ObservableObject {
     
     func fetchData() {
         Task {
-            DispatchQueue.main.async{
+            DispatchQueue.main.async {
                 self.isLoading = true
             }
             await fetchDeviceBackup()
             await fetchMultiBackup()
             
-            DispatchQueue.main.async{
+            DispatchQueue.main.async {
                 self.isLoading = false
             }
         }
+    }
+    
+    private func isValidAddress() -> Bool {
+        guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
+            HUD.error(title: "invalid_address".localized)
+            return false
+        }
+        return true
+    }
+    
+    func onShowMultiBackup() {
+        if isValidAddress() {
+            Router.route(to: RouteMap.Backup.multiBackup([]))
+        }
+    }
+    
+    func onShowDeviceBackup() {
+        if isValidAddress() {
+            Router.route(to: RouteMap.Profile.devices)
+        }
+    }
+    
+    func onAddMultiBackup() {
+        let list = currentMultiBackup()
+        Router.route(to: RouteMap.Backup.multiBackup(list))
     }
     
     func onDelete(index: Int) {
@@ -131,7 +156,6 @@ extension BackupListViewModel {
 extension BackupListViewModel {
     func fetchMultiBackup() async {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
-            HUD.error(title: "invalid_address".localized)
             return
         }
         do {
@@ -176,28 +200,6 @@ extension BackupListViewModel {
         }
     }
     
-//    func fetchMultiBackup() async {
-//        guard let uid = UserManager.shared.activatedUID, !uid.isEmpty else {
-//            return
-//        }
-//        var currentUserList: [BackupListViewModel.Item] = []
-//        for type in MultiBackupType.allCases {
-//            do {
-//                let list = try await MultiBackupManager.shared.getCloudDriveItems(from: type)
-//                let current = list.filter { $0.userId == uid }.first
-//                if let current = current {
-//                    let item = BackupListViewModel.Item(store: current, backupType: type)
-//                    currentUserList.append(item)
-//                }
-//            } catch {}
-//        }
-//        let list = currentUserList
-//        DispatchQueue.main.async {
-//            self.muiltList = []
-//            self.muiltList.append(contentsOf: list)
-//        }
-//    }
-    
     func currentMultiBackup() -> [MultiBackupType] {
         return backupList.compactMap { $0.multiBackupType() }
     }
@@ -219,10 +221,3 @@ extension KeyDeviceModel {
         }
     }
 }
-
-// extension BackupListViewModel {
-//    struct Item {
-//        let store: MultiBackupManager.StoreItem
-//        let backupType: MultiBackupType
-//    }
-// }
