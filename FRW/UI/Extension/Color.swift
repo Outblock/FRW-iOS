@@ -73,7 +73,7 @@ extension Color {
         static let background = Color("Background")
         static let rebackground = Color("Rebacground")
 //        static let primary = Color("Primary")
-        static let orange = Color("Orange")
+        static let orange = Color("accent.green")
         static let blue = Color("Blue")
         static let yellow = Color("Yellow")
 
