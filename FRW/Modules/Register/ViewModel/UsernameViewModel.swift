@@ -89,7 +89,7 @@ class UsernameViewModel: ViewModel {
             return false
         }
 
-        guard let _ = username.range(of: "^[A-Za-z0-9_]{3,15}$", options: .regularExpression) else {
+        guard let _ = username.range(of: "^[A-Za-z0-9]{3,15}$", options: .regularExpression) else {
             state.status = .error("username_valid_tips".localized)
             return false
         }

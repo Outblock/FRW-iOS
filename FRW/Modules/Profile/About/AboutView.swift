@@ -17,14 +17,15 @@ struct AboutView: RouteableView {
     }
     
     var body: some View {
-        VStack(alignment: .center) {
+        VStack(alignment: .center, spacing: 8) {
             Image("logo")
                 .resizable()
                 .frame(width: 100, height: 100)
                 .padding(.top, 20)
+                .padding(.bottom, 8)
             
-            Text("lilico".localized)
-                .font(.inter(size: 26, weight: .semibold))
+            Text("app_name_full".localized)
+                .font(.inter(size: 24, weight: .semibold))
             
             HStack {
                 Text("version")
@@ -36,6 +37,7 @@ struct AboutView: RouteableView {
             .font(.inter(size: 13, weight: .regular))
             .foregroundColor(.LL.note.opacity(0.5))
             .padding(.bottom, 50)
+
             
             Section {
                 VStack(spacing: 0) {
@@ -65,6 +67,7 @@ struct AboutView: RouteableView {
                     .font(.inter(size: 14, weight: .regular))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundColor(.LL.note)
+                    .padding(.bottom, 8)
             }
             
 //            Section {

@@ -914,3 +914,4 @@
 "scan_to_extension" = "Scan to Sync Extension Wallet";
 "scan_to_extension_detail" = "Scan QR code shown by the Flow Reference Browser extension to sync your wallet.";
 "delete_backup" = "Delete Backup";
+"app_name_full" = "Flow Reference Wallet";
