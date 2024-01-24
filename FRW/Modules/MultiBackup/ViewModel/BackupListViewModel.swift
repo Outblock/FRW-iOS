@@ -168,7 +168,7 @@ extension BackupListViewModel {
                     return false
                 }
                 if let info = model.backupInfo {
-                    return info.type != .undefined
+                    return info.backupType() != .undefined
                 }
                 return false
             }
@@ -207,7 +207,7 @@ extension BackupListViewModel {
 
 extension KeyDeviceModel {
     func multiBackupType() -> MultiBackupType? {
-        switch backupInfo?.type {
+        switch backupInfo?.backupType() {
         case .google:
             return MultiBackupType.google
         case .iCloud:
