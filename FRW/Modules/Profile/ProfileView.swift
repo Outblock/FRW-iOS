@@ -7,6 +7,7 @@
 
 import Kingfisher
 import SwiftUI
+import Instabug
 
 extension ProfileView: AppTabBarPageProtocol {
     
@@ -55,6 +56,9 @@ struct ProfileView: RouteableView {
                     }
 
                     GeneralSectionView()
+                    if Replies.hasChats() {
+                        FeedbackView()
+                    }
                     AboutSectionView()
 
                     if vm.state.isLogin {
@@ -613,6 +617,50 @@ extension ProfileView.GeneralSectionView.Row {
             return vm.state.colorScheme?.desc ?? "auto".localized
         default:
             return ""
+        }
+    }
+}
+
+
+extension ProfileView {
+    struct FeedbackView: View {
+        enum Row {
+            case instabug
+        }
+        var body: some View {
+            VStack {
+                Section {
+                    Button {
+                        Replies.show()
+                    } label: {
+                        ProfileView.SettingItemCell(iconName: Row.instabug.iconName, title: Row.instabug.title, style: Row.instabug.style)
+                    }
+                }
+            }
+            .background(RoundedRectangle(cornerRadius: 16)
+                .fill(Color.LL.bgForIcon))
+        }
+    }
+}
+
+extension ProfileView.FeedbackView.Row {
+    var iconName: String {
+        switch self {
+        case .instabug:
+            return "icon-plugin"
+        }
+    }
+    
+    var title: String {
+        switch self {
+        case .instabug:
+            return "feedback".localized
+        }
+    }
+    var style: ProfileView.SettingItemCell.Style {
+        switch self {
+        case .instabug:
+            return .none
         }
     }
 }

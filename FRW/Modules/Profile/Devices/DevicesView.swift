@@ -24,7 +24,9 @@ struct DevicesView: RouteableView {
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.Theme.Text.black8)
                 .padding(.top, 16)
-            Button {} label: {
+            Button {
+                ScanHandler.scan()
+            } label: {
                 HStack(spacing: 8) {
                     Image("scan-stroke")
                         .frame(width: 24, height: 24)

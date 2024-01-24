@@ -28,7 +28,7 @@ struct RestoreMultiBackupOptionView: RouteableView {
                 .font(.LL.largeTitle)
 
                 Text("from_multi_backup".localized)
-                    .foregroundColor(Color.Theme.Accent.green)
+                    .foregroundColor(Color.Theme.Text.black8)
                     .font(.LL.largeTitle)
                     .bold()
                 
