@@ -18,7 +18,7 @@
 "Mnemonic::message" = "Mnemonic";
 "too_long" = "Too long";
 "Unlock::message" = "Unlock";
-"username_valid_tips" = "Your username can only contain letters, numbers and '_'";
+"username_valid_tips" = "Your username can only contain letters, numbers";
 "Address::message" = "Address";
 "has_been_taken" = "It's taken";
 "Description::message" = "Description";

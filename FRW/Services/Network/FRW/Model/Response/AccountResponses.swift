@@ -21,6 +21,24 @@ struct FlowScanAccountTransferCountResponse: Codable {
     let data: FlowScanAccountTransferCountResponse.Data?
 }
 
+
+struct FlowTransferCountResponse: Codable {
+    let data: FlowTransferCountResponse.Data?
+}
+
+extension FlowTransferCountResponse {
+    struct Data: Codable {
+        let participationsAggregate: FlowTransferCountResponse.Participation?
+    }
+    
+    struct Participation: Codable {
+        let aggregate: Aggregate?
+    }
+    struct Aggregate: Codable {
+        let count: Int
+    }
+}
+
 // MARK: -
 
 extension FlowScanTokenTransferResponse {

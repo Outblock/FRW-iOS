@@ -48,7 +48,7 @@ extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
     var task: Task {
         switch self {
         case .flowScanQuery(let query):
-            return .requestJSONEncodable(["query": query])
+            return .requestParameters(parameters: ["address": query], encoding: URLEncoding.queryString)
         case .transfers(let request):
             return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding.queryString)
         case .tokenTransfers(let request):
@@ -67,16 +67,8 @@ extension FRWAPI.Account {
             return 0
         }
         
-        let script = """
-            query TransfersNumber {
-                account(id: "\(address)") {
-                    transactionCount
-                }
-            }
-        """
-        
-        let response: FlowScanAccountTransferCountResponse = try await Network.request(FRWAPI.Account.flowScanQuery(script))
-        return response.data?.account?.transactionCount ?? 0
+        let response: FlowTransferCountResponse = try await Network.request(FRWAPI.Account.flowScanQuery(address))
+        return response.data?.participationsAggregate?.aggregate?.count ?? 0
     }
     
     static func fetchAccountTransfers() async throws -> ([FlowScanTransaction], Int) {
