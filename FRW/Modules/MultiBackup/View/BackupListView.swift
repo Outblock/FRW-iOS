@@ -22,7 +22,7 @@ struct BackupListView: RouteableView {
                 BackupPatternItem(style: .device) { _ in
                     onClickDeviceBackup()
                 }
-                .visibility(viewModel.deviceList.count == 0 ? .visible : .gone)
+                .visibility(viewModel.deviceList.count == 0 && !viewModel.showCurrent ? .visible : .gone)
                 .mockPlaceholder(viewModel.isLoading)
                 
                 BackupPatternItem(style: .multi) { _ in
@@ -37,7 +37,7 @@ struct BackupListView: RouteableView {
                     .visibility((viewModel.deviceList.count == 0 || viewModel.backupList.count == 0) ? .visible : .gone)
                 
                 deviceListView
-                    .visibility(viewModel.deviceList.count > 0 ? .visible : .gone)
+                    .visibility(viewModel.deviceList.count > 0 || viewModel.showCurrent ? .visible : .gone)
                 
                 multiListView
                     .visibility(viewModel.backupList.count > 0 ? .visible : .gone)
