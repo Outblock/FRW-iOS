@@ -43,7 +43,11 @@ class AccountKeyViewModel: ObservableObject {
                             response.pubkey.publicKey == model.accountKey.publicKey.description
                         }
                         if let info = devicesInfo {
-                            model.name = info.device.deviceName ?? ""
+                            if let backupInfo = info.backupInfo {
+                                model.name = "backup".localized + " - " + backupInfo.backupType().title
+                            }else {
+                                model.name = info.device.deviceName ?? ""
+                            }
                         }
                         return model;
                     })
@@ -117,7 +121,6 @@ struct AccountKeyModel {
         if accountKey.revoked {
             return "revoked".localized
         }
-        //TODO: #six revoking
         if isCurrent() {
             return "current_device".localized
         }
