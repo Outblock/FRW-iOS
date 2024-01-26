@@ -13,6 +13,10 @@ import SwiftUI
 import UIKit
 
 class MultiBackupGoogleDriveTarget: MultiBackupTarget {
+    var uploadedItem: MultiBackupManager.StoreItem?
+    
+    var registeredDeviceInfo: SyncInfo.DeviceInfo?
+    
     private var clientID = ""
     private lazy var config: GIDConfiguration = .init(clientID: clientID)
 

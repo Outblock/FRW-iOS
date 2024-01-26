@@ -22,25 +22,25 @@ struct BackupListView: RouteableView {
                 BackupPatternItem(style: .device) { _ in
                     onClickDeviceBackup()
                 }
-                .visibility(viewModel.deviceList.count == 0 && !viewModel.showCurrent ? .visible : .gone)
+                .visibility(viewModel.hasDeviceBackup ? .gone : .visible)
                 .mockPlaceholder(viewModel.isLoading)
                 
                 BackupPatternItem(style: .multi) { _ in
                     onClickMultiBackup()
                 }
-                .visibility(viewModel.backupList.count == 0 ? .visible : .gone)
+                .visibility(viewModel.hasMultiBackup ? .gone : .visible)
                 .mockPlaceholder(viewModel.isLoading)
                 
                 Divider()
                     .foregroundStyle(.clear)
                     .background(Color.Theme.Line.line)
-                    .visibility((viewModel.deviceList.count == 0 || viewModel.backupList.count == 0) ? .visible : .gone)
+                    .visibility((viewModel.hasDeviceBackup && viewModel.hasMultiBackup) ? .gone : .visible)
                 
                 deviceListView
-                    .visibility(viewModel.deviceList.count > 0 || viewModel.showCurrent ? .visible : .gone)
+                    .visibility(viewModel.hasDeviceBackup ? .visible : .gone)
                 
                 multiListView
-                    .visibility(viewModel.backupList.count > 0 ? .visible : .gone)
+                    .visibility(viewModel.hasMultiBackup ? .visible : .gone)
                 
                 Spacer()
             }

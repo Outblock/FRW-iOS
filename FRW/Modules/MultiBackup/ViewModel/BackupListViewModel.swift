@@ -116,6 +116,17 @@ class BackupListViewModel: ObservableObject {
     }
 }
 
+// MARK: - UI
+extension BackupListViewModel {
+    var hasDeviceBackup: Bool {
+        return deviceList.count > 0 || showCurrent
+    }
+    
+    var hasMultiBackup: Bool {
+        return backupList.count > 0
+    }
+}
+
 extension BackupListViewModel {
     var showAllTagTitle: String {
         return showAllDevices ? "view_all".localized : "hide".localized

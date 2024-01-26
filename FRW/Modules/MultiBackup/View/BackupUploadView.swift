@@ -68,6 +68,10 @@ struct BackupUploadView: RouteableView {
         .applyRouteable(self)
         .backgroundFill(Color.LL.Neutrals.background)
     }
+    
+    func backButtonAction() {
+        Router.popToRoot()
+    }
 }
 
 extension BackupUploadView {

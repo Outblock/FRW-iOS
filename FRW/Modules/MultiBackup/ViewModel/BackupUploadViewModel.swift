@@ -58,7 +58,9 @@ class BackupUploadViewModel: ObservableObject {
     
     @Published var currentIndex: Int = 0 {
         didSet {
-            currentType = items[currentIndex]
+            if currentIndex < items.count {
+                currentType = items[currentIndex]
+            }
         }
     }
 
@@ -157,6 +159,7 @@ class BackupUploadViewModel: ObservableObject {
         case .finish:
             let nextIndex = currentIndex + 1
             if items.count <= nextIndex {
+                currentIndex = nextIndex
                 toggleProcess(process: .end)
             } else {
                 currentIndex = nextIndex

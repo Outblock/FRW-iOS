@@ -10,7 +10,11 @@ import Foundation
 import SwiftUI
 import UIKit
 
-actor MultiBackupiCloudTarget: MultiBackupTarget {
+class MultiBackupiCloudTarget: MultiBackupTarget {
+    
+    var uploadedItem: MultiBackupManager.StoreItem?
+    var registeredDeviceInfo: SyncInfo.DeviceInfo?
+    
     private var api: iCloudAPI?
     
     var isPrepared: Bool {

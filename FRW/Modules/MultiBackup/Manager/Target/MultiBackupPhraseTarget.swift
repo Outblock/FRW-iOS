@@ -8,6 +8,10 @@
 import Foundation
 
 class MultiBackupPhraseTarget: MultiBackupTarget {
+    var uploadedItem: MultiBackupManager.StoreItem?
+    
+    var registeredDeviceInfo: SyncInfo.DeviceInfo?
+    
     func loginCloud() async throws {}
     
     var isPrepared: Bool {
