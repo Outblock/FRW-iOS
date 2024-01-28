@@ -33,7 +33,7 @@ class MultiBackupiCloudTarget: MultiBackupTarget {
             // it's ok
         }
         
-        let newList = try await MultiBackupManager.shared.addCurrentMnemonicToList(list, password: password)
+        let newList = try await MultiBackupManager.shared.addNewMnemonic(on: .icloud, list: list, password: password)
         let encrypedString = try MultiBackupManager.shared.encryptList(newList)
         guard let data = encrypedString.data(using: .utf8), !data.isEmpty else {
             throw BackupError.hexStringToDataFailed

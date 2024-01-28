@@ -54,7 +54,7 @@ extension MultiBackupGoogleDriveTarget {
         try await prepare()
         
         let list = try await getCurrentDriveItems()
-        let newList = try await MultiBackupManager.shared.addCurrentMnemonicToList(list, password: password)
+        let newList = try await MultiBackupManager.shared.addNewMnemonic(on: .google, list: list, password: password)
         let encrypedString = try MultiBackupManager.shared.encryptList(newList)
         guard let data = encrypedString.data(using: .utf8), !data.isEmpty else {
             throw BackupError.hexStringToDataFailed

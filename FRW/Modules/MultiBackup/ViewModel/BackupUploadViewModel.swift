@@ -117,24 +117,29 @@ class BackupUploadViewModel: ObservableObject {
         return process == .upload || process == .regist
     }
     
-    // MARK: backup on Goodle Drive
-    
-    func prepareGoodle() {}
-    
     func onClickButton() {
         switch process {
         case .idle:
             Task {
                 do {
                     try await MultiBackupManager.shared.login(from: currentType)
-                    toggleProcess(process: .upload)
-                } catch {}
+                    HUD.loading()
+                    let result = try await MultiBackupManager.shared.registerKeyToChain(on: currentType)
+                    HUD.dismissLoading()
+                    if result {
+                        toggleProcess(process: .upload)
+                    } else {
+                        HUD.error(title: "create error on chain")
+                    }
+                } catch {
+                    HUD.dismissLoading()
+                }
             }
         case .upload:
             Task {
                 do {
                     HUD.loading()
-                    try await MultiBackupManager.shared.uploadPublicKey(to: currentType)
+                    try await MultiBackupManager.shared.backupKey(on: currentType)
                     toggleProcess(process: .regist)
                     HUD.dismissLoading()
                 } catch {
@@ -147,7 +152,7 @@ class BackupUploadViewModel: ObservableObject {
             Task {
                 do {
                     HUD.loading()
-                    try await MultiBackupManager.shared.syncDeviceToService()
+                    try await MultiBackupManager.shared.syncKeyToServer(on: currentType)
                     toggleProcess(process: .finish)
                     HUD.dismissLoading()
                 } catch {
@@ -155,7 +160,6 @@ class BackupUploadViewModel: ObservableObject {
                     log.error(error)
                 }
             }
-            log.info("not suport")
         case .finish:
             let nextIndex = currentIndex + 1
             if items.count <= nextIndex {
@@ -165,10 +169,8 @@ class BackupUploadViewModel: ObservableObject {
                 currentIndex = nextIndex
                 toggleProcess(process: .idle)
             }
-            log.info("not suport")
         case .end:
             Router.popToRoot()
-            log.info("not suport")
         }
     }
     

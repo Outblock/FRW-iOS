@@ -20,10 +20,9 @@ class MultiBackupPhraseTarget: MultiBackupTarget {
     
     func upload(password: String) async throws {
         let list:[MultiBackupManager.StoreItem] = []
-        let newList = try await MultiBackupManager.shared.addCurrentMnemonicToList(list, password: password)
+        let newList = try await MultiBackupManager.shared.addNewMnemonic(on: .phrase, list: list, password: password)
         if let model = newList.first {
-            let key = LocalEnvManager.shared.backupAESKey
-            let mnemonic = try MultiBackupManager.shared.decryptMnemonic(model.data, password: key)
+            let mnemonic = try MultiBackupManager.shared.decryptMnemonic(model.data, password: password)
             Router.route(to: RouteMap.Backup.showPhrase(mnemonic))
         }
     }

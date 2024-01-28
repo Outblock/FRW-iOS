@@ -27,14 +27,10 @@ class DevicesViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self.status = .loading
                 }
-                let list: [DeviceInfoModel] = try await Network.request(FRWAPI.User.devices(UUIDManager.appUUID()))
+                let result = try await DeviceManager.shared.fetch()
                 DispatchQueue.main.async {
-                    self.devices = list.filter({ model in
-                        model.id != UUIDManager.appUUID()
-                    })
-                    self.current = list.filter({ model in
-                        model.id == UUIDManager.appUUID()
-                    }).first
+                    self.devices = result.1
+                    self.current = result.0
                     self.showCurrent = (self.current != nil)
                     self.showOther = self.devices.count > 0
                     self.status = .finished

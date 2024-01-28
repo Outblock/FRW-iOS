@@ -12,12 +12,20 @@ import Flow
 import FlowWalletCore
 import Foundation
 
+extension UserManager {
+    enum UserType {
+        case phrase
+        case secure
+    }
+}
+
 class UserManager: ObservableObject {
     static let shared = UserManager()
 
     @Published var activatedUID: String? = LocalUserDefaults.shared.activatedUID {
         didSet {
             LocalUserDefaults.shared.activatedUID = activatedUID
+            verifyUserType(by: activatedUID ?? "")
         }
     }
     
@@ -40,6 +48,8 @@ class UserManager: ObservableObject {
     
     @Published var isMeowDomainEnabled: Bool = false
     
+    var userType: UserManager.UserType = .phrase
+    
     var isLoggedIn: Bool {
         return activatedUID != nil
     }
@@ -53,6 +63,7 @@ class UserManager: ObservableObject {
             self.userInfo = MultiAccountStorage.shared.getUserInfo(activatedUID)
             uploadUserNameIfNeeded()
             initRefreshUserInfo()
+            verifyUserType(by: activatedUID)
         }
         
         loginAnonymousIfNeeded()
@@ -90,6 +101,18 @@ class UserManager: ObservableObject {
         if !hasOldAccount() {
             LocalUserDefaults.shared.tryToRestoreAccountFlag = true
             return
+        }
+    }
+    
+    private func verifyUserType(by userId: String) {
+        if userId.isEmpty {
+            userType = .phrase
+            return
+        }
+        Task {
+            if let publicData = try WallectSecureEnclave.Store.fetch(by: userId), !publicData.isEmpty {
+                userType = .secure
+            }
         }
     }
 }

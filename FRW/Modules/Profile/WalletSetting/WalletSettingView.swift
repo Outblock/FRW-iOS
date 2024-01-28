@@ -62,6 +62,7 @@ struct WalletSettingView: RouteableView {
                     }
                     .padding(.horizontal, 16)
                     .roundedBg()
+                    .visibility( UserManager.shared.userType == .phrase ? .visible : .gone)
                     
                     VStack(spacing: 0) {
                         Button {

@@ -126,3 +126,23 @@ extension BackupMultiViewModel {
         }
     }
 }
+
+extension MultiBackupType {
+    func toBackupType() -> BackupType {
+        switch self {
+        case .google:
+            return .google
+        case .passkey:
+            return .passkey
+        case .icloud:
+            return .iCloud
+        case .phrase:
+            return .manual
+        }
+    }
+    
+    func showName() -> String {
+        let type = self.toBackupType()
+        return "backup".localized + " - " + type.title
+    }
+}

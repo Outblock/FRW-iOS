@@ -134,14 +134,11 @@ extension BackupListViewModel {
     
     func fetchDeviceBackup() async {
         do {
-            let list: [DeviceInfoModel] = try await Network.request(FRWAPI.User.devices(UUIDManager.appUUID()))
+            
+            let result = try await DeviceManager.shared.fetch()
             DispatchQueue.main.async {
-                self.deviceList = list.filter { model in
-                    model.id != UUIDManager.appUUID()
-                }
-                self.current = list.filter { model in
-                    model.id == UUIDManager.appUUID()
-                }.first
+                self.deviceList = result.1
+                self.current = result.0
                 self.showCurrent = (self.current != nil)
                 self.showOther = self.deviceList.count > 0
                 self.showAllDevices = false
