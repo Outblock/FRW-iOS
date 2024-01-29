@@ -114,9 +114,9 @@ extension BrowserViewController {
             log.error("primary address is nil")
             return
         }
-        
+        let keyIndex = WalletManager.shared.keyIndex
         log.debug("will post pre authz response")
-        postMessage(FCLScripts.generatePreAuthzResponse(address: address))
+        postMessage(FCLScripts.generatePreAuthzResponse(address: address,keyIndex: keyIndex))
         log.debug("did post pre authz response")
     }
     
@@ -134,8 +134,8 @@ extension BrowserViewController {
            let sign = WalletManager.shared.signSync(signableData: proofSign) {
             accountProofSign = sign.hexValue
         }
-        
-        let message = try await FCLScripts.generateAuthnResponse(accountProofSign: accountProofSign, nonce: response.body.nonce ?? "", address: address)
+        let keyIndex = WalletManager.shared.keyIndex
+        let message = try await FCLScripts.generateAuthnResponse(accountProofSign: accountProofSign, nonce: response.body.nonce ?? "", address: address, keyId: keyIndex)
         
         DispatchQueue.syncOnMain {
             log.debug("will post authn view ready response")
@@ -153,8 +153,7 @@ extension BrowserViewController {
         let data = Data(hex: response.body.message)
         let signData = try await WalletManager.shared.sign(signableData: data)
         
-        // TODO: Make it dynamic when there is mutiple keys
-         let keyId = 0
+        let keyId = WalletManager.shared.keyIndex
 //        let keyId = try await FlowNetwork.getLastBlockAccountKeyId(address: address)
         
         let message = FCLScripts.generateAuthzResponse(address: address, signature: signData.hexValue, keyId: keyId)
@@ -179,9 +178,10 @@ extension BrowserViewController {
     }
     
     func postSignMessageResponse(_ response: FCLSignMessageResponse) {
+        let keyIndex = WalletManager.shared.keyIndex
         guard let address = WalletManager.shared.getPrimaryWalletAddress(),
               let message = response.body?.message,
-              let js = FCLScripts.generateSignMessageResponse(message: message, address: address) else {
+              let js = FCLScripts.generateSignMessageResponse(message: message, address: address,keyId: keyIndex) else {
             log.error("generate js failed")
             return
         }

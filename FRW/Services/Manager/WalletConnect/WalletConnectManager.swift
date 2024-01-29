@@ -312,7 +312,7 @@ extension WalletConnectManager {
 extension WalletConnectManager {
     func handleRequest(_ sessionRequest: WalletConnectSign.Request) {
         let address = WalletManager.shared.address.hex.addHexPrefix()
-        let keyId = 0 // TODO: FIX ME with dynmaic keyIndex
+        let keyId = WalletManager.shared.keyIndex // TODO: FIX ME with dynmaic keyIndex
         
         switch sessionRequest.method {
         case FCLWalletConnectMethod.authn.rawValue:
