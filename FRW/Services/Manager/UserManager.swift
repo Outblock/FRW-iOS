@@ -175,7 +175,7 @@ extension UserManager {
 
         try await finishLogin(mnemonic: hdWallet.mnemonic, customToken: model.customToken)
         WalletManager.shared.asyncCreateWalletAddressFromServer()
-        
+        verifyUserType(by: model.id)
         if let privateKey = sec.key.privateKey {
             try WallectSecureEnclave.Store.store(key: model.id, value: privateKey.dataRepresentation)
         }else {

@@ -43,7 +43,7 @@ class AccountKeyViewModel: ObservableObject {
                             response.pubkey.publicKey == model.accountKey.publicKey.description
                         }
                         if let info = devicesInfo {
-                            if let backupInfo = info.backupInfo {
+                            if let backupInfo = info.backupInfo, backupInfo.backupType() != .undefined  {
                                 model.name = "backup".localized + " - " + backupInfo.backupType().title
                             }else {
                                 model.name = info.device.deviceName ?? ""
@@ -76,21 +76,18 @@ class AccountKeyViewModel: ObservableObject {
     
     func revokeKeyAction() {
         Task {
-            guard let address = WalletManager.shared.getPrimaryWalletAddress(), let model = self.revokeModel else {
-                HUD.info(title: "account_key_fail_tips".localized)
+            guard let model = self.revokeModel else {
                 return
             }
-            do {
-                let flowId = try await FlowNetwork.revokeAccountKey(by: model.accountKey.index, at: Flow.Address(hex: address))
+            HUD.loading()
+            let res = try await AccountKeyManager.revokeKey(at: model.accountKey.index)
+            if res {
                 DispatchQueue.main.async {
                     self.showRovekeView = false
                 }
-                log.debug("revoke flow id:\(flowId)")
                 fetch()
-            }catch {
-                HUD.error(title: "account_key_fail_tips".localized)
-                log.error("revoke key: \(error)")
             }
+            HUD.dismissLoading()
         }
     }
     

@@ -92,26 +92,14 @@ class BackupListViewModel: ObservableObject {
         }
         Task {
             HUD.loading()
-            await revokeKey(at: keyIndex)
-            try await MultiBackupManager.shared.removeItem(with: type)
-            await fetchMultiBackup()
-            showRemoveTipView = false
-            HUD.dismissLoading()
-        }
-    }
-    
-    private func revokeKey(at index: Int) async {
-        guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
-            HUD.info(title: "account_key_fail_tips".localized)
-            return
-        }
-        do {
-            let flowId = try await FlowNetwork.revokeAccountKey(by: index, at: Flow.Address(hex: address))
-            log.debug("revoke flow id:\(flowId)")
+            let res = try await AccountKeyManager.revokeKey(at: keyIndex)
+            if res {
+                try await MultiBackupManager.shared.removeItem(with: type)
+                await fetchMultiBackup()
+                showRemoveTipView = false
+            }
             
-        } catch {
-            HUD.error(title: "account_key_fail_tips".localized)
-            log.error("revoke key: \(error)")
+            HUD.dismissLoading()
         }
     }
 }

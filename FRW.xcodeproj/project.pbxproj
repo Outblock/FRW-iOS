@@ -979,6 +979,8 @@
 		4E8394452A7153EB00DFC422 /* CalloutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8394432A7153EB00DFC422 /* CalloutView.swift */; };
 		4E8A96552B66D807007C95E8 /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8A96542B66D807007C95E8 /* DeviceManager.swift */; };
 		4E8A96562B66D807007C95E8 /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8A96542B66D807007C95E8 /* DeviceManager.swift */; };
+		4E8A96582B67143D007C95E8 /* AccountKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8A96572B67143D007C95E8 /* AccountKeyManager.swift */; };
+		4E8A96592B67143D007C95E8 /* AccountKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8A96572B67143D007C95E8 /* AccountKeyManager.swift */; };
 		4E8CE6392B4BE0BA00E71A87 /* MultiBackupPhraseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8CE6382B4BE0BA00E71A87 /* MultiBackupPhraseView.swift */; };
 		4E8CE63A2B4BE0BA00E71A87 /* MultiBackupPhraseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8CE6382B4BE0BA00E71A87 /* MultiBackupPhraseView.swift */; };
 		4E8CE63C2B4BE77700E71A87 /* MultiBackupPhraseTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8CE63B2B4BE77700E71A87 /* MultiBackupPhraseTarget.swift */; };
@@ -2118,6 +2120,7 @@
 		4E82C01E2B2AF85800A61439 /* BackupUploadTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupUploadTimeline.swift; sourceTree = "<group>"; };
 		4E8394432A7153EB00DFC422 /* CalloutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalloutView.swift; sourceTree = "<group>"; };
 		4E8A96542B66D807007C95E8 /* DeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceManager.swift; sourceTree = "<group>"; };
+		4E8A96572B67143D007C95E8 /* AccountKeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountKeyManager.swift; sourceTree = "<group>"; };
 		4E8CE6382B4BE0BA00E71A87 /* MultiBackupPhraseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupPhraseView.swift; sourceTree = "<group>"; };
 		4E8CE63B2B4BE77700E71A87 /* MultiBackupPhraseTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupPhraseTarget.swift; sourceTree = "<group>"; };
 		4E8DD9F7282E2FBB0016A931 /* NFTEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTEmptyView.swift; sourceTree = "<group>"; };
@@ -4206,6 +4209,7 @@
 				4EC626082AE8A28100318720 /* UUIDManager.swift */,
 				4EFF94BD2AEEDB2D00365EF7 /* IPManager.swift */,
 				4E8A96542B66D807007C95E8 /* DeviceManager.swift */,
+				4E8A96572B67143D007C95E8 /* AccountKeyManager.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -6003,6 +6007,7 @@
 				158C9CA027871E030062E0C6 /* ConfirmPinCodeView.swift in Sources */,
 				4EE8E4992835EAF500DFEF59 /* NFTFavoriteView.swift in Sources */,
 				6AE95D522A2EDB25009F9AA4 /* BackupTipsView.swift in Sources */,
+				4E8A96592B67143D007C95E8 /* AccountKeyManager.swift in Sources */,
 				4E3670052B2A8B32000F2693 /* BackupUploadView.swift in Sources */,
 				6AEDD60E2A429E22008BC5CD /* AccountSettingView.swift in Sources */,
 				6A164F742845F1CB0026B31E /* EnvironmentValues+IndexBarInsets.swift in Sources */,
@@ -6689,6 +6694,7 @@
 				15C58AB62868A4EE00BD4FC6 /* ConfirmPinCodeView.swift in Sources */,
 				15C58AB72868A4EE00BD4FC6 /* NFTFavoriteView.swift in Sources */,
 				6AE95D512A2EDB25009F9AA4 /* BackupTipsView.swift in Sources */,
+				4E8A96582B67143D007C95E8 /* AccountKeyManager.swift in Sources */,
 				4E3670042B2A8B32000F2693 /* BackupUploadView.swift in Sources */,
 				6AEDD60D2A429E22008BC5CD /* AccountSettingView.swift in Sources */,
 				15C58AB82868A4EE00BD4FC6 /* EnvironmentValues+IndexBarInsets.swift in Sources */,
