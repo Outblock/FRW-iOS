@@ -175,6 +175,7 @@ class BackupUploadViewModel: ObservableObject {
     }
     
     func toggleProcess(process: BackupProcess) {
+        hasError = false
         self.process = process
 //        switch self.process {
 //        case .idle:

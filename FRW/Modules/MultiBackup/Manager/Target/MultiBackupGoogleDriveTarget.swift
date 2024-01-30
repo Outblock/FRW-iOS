@@ -37,6 +37,7 @@ class MultiBackupGoogleDriveTarget: MultiBackupTarget {
     }
     
     func loginCloud() async throws {
+        GIDSignIn.sharedInstance.signOut()
         if !GIDSignIn.sharedInstance.hasPreviousSignIn() {
             return
         }

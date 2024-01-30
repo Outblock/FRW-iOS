@@ -133,6 +133,7 @@ extension MultiBackupManager {
         switch type {
         case .google:
             backupType = .google
+            try await gdTarget.loginCloud()
             try await gdTarget.upload(password: password)
         case .passkey:
             backupType = .passkey
