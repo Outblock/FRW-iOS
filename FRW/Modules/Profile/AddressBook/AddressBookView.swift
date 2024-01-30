@@ -80,13 +80,13 @@ struct AddressBookView: RouteableView {
                             
                     }
                     
-                    Button {
-                        debugPrint("scan btn click")
-                    } label: {
-                        Image("btn-scan")
-                            .renderingMode(.template)
-                            .foregroundColor(.LL.Primary.salmonPrimary)
-                    }
+//                    Button {
+//                        debugPrint("scan btn click")
+//                    } label: {
+//                        Image("btn-scan")
+//                            .renderingMode(.template)
+//                            .foregroundColor(.LL.Primary.salmonPrimary)
+//                    }
                 })
                 .alert("contact_delete_alert".localized, isPresented: $showAlert) {
                     Button("delete".localized, role: .destructive) {
