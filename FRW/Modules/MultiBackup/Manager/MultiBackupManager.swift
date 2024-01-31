@@ -56,9 +56,9 @@ extension MultiBackupManager {
         var keyIndex: Int
         var signAlgo: Int
         var hashAlgo: Int
-        var weight: Int
+        var weight: Int?
         var updatedTime: Double? = Date.now.timeIntervalSince1970
-        let deviceInfo: DeviceInfoRequest
+        let deviceInfo: DeviceInfoRequest?
         
         func showDate() -> String {
             guard let updatedTime = updatedTime else { return "" }
@@ -200,8 +200,10 @@ extension MultiBackupManager {
 extension MultiBackupManager {
     
     func getCloudDriveItems(from type: MultiBackupType) async throws -> [MultiBackupManager.StoreItem] {
+        
         switch type {
         case .google:
+            try await login(from: type)
             return try await gdTarget.getCurrentDriveItems()
         case .passkey:
             return []
@@ -228,10 +230,12 @@ extension MultiBackupManager {
     }
     
     func removeItem(with type: MultiBackupType) async throws {
+        
         let key = LocalEnvManager.shared.backupAESKey
         let password = key
         switch type {
         case .google:
+            try await login(from: type)
             try await gdTarget.removeItem(password: password)
         case .passkey:
             log.info("not surport")

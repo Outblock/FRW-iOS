@@ -38,15 +38,23 @@ class MultiBackupGoogleDriveTarget: MultiBackupTarget {
     
     func loginCloud() async throws {
         GIDSignIn.sharedInstance.signOut()
-        if !GIDSignIn.sharedInstance.hasPreviousSignIn() {
-            return
-        }
-        let user = try await googleRestoreLogin()
-        
-        if !checkUserScopes(user: user) {
-            return
-        }
+        var user = try await googleUserLogin()
+        user = try await addScopesIfNeeded(user: user)
         createGoogleDriveService(user: user)
+        #if DEBUG
+//        try await clearCloud()
+        #endif
+    }
+    
+    func clearCloud() async throws {
+        try await prepare()
+        let list = try await getCurrentDriveItems()
+        let encrypedString = try MultiBackupManager.shared.encryptList([])
+        guard let data = encrypedString.data(using: .utf8), !data.isEmpty else {
+            throw BackupError.hexStringToDataFailed
+        }
+        
+        try await api?.write(content: data, to: MultiBackupManager.backupFileName)
     }
 }
 

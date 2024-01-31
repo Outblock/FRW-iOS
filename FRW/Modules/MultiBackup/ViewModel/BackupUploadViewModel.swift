@@ -122,7 +122,7 @@ class BackupUploadViewModel: ObservableObject {
         case .idle:
             Task {
                 do {
-                    try await MultiBackupManager.shared.login(from: currentType)
+                    
                     HUD.loading()
                     let result = try await MultiBackupManager.shared.registerKeyToChain(on: currentType)
                     HUD.dismissLoading()
@@ -143,6 +143,10 @@ class BackupUploadViewModel: ObservableObject {
                     toggleProcess(process: .regist)
                     HUD.dismissLoading()
                 } catch {
+                    //TODO:
+                    let str = "error:\(error)"
+                    UIPasteboard.general.string = str
+                    
                     HUD.dismissLoading()
                     hasError = true
                     log.error(error)
