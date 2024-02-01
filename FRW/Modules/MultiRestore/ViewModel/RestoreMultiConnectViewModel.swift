@@ -128,30 +128,6 @@ extension RestoreMultiConnectViewModel {
         result = result.filter { $0.count > 1 }
         return result
         
-//        let count = storeItems.count
-//        var result: [String: [MultiBackupManager.StoreItem]] = [:]
-//        for index in 0..<count {
-//            let preList = storeItems[index]
-//            for nextIndex in (index + 1)..<count {
-//                let nextList = storeItems[nextIndex]
-//                preList.forEach { preItem in
-//                    nextList.forEach { nextItem in
-//                        if preItem.userId == nextItem.userId {
-//                            if var exitList = result[preItem.userId] {
-//                                exitList.append(preItem)
-//                                exitList.append(nextItem)
-//                                result[preItem.userId] = exitList
-//                            }
-//                            else {
-//                                result[preItem.userId] = [preItem, nextItem]
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        let res = result.values.map { $0 }
-//        return res
     }
 }
 

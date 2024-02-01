@@ -19,6 +19,29 @@ class RestoreMultiAccountViewModel: ObservableObject {
             return
         }
         let selectedUser = items[index]
+        
+        
+        // If it is the current user, do nothing and return directly.
+        if let userId = UserManager.shared.activatedUID, let selectedUser = selectedUser.first, userId == selectedUser.userId {
+            Router.popToRoot()
+            return
+        }
+        // If it is in the login list, switch user
+        if let userId = UserManager.shared.activatedUID, UserManager.shared.loginUIDList.contains(userId) {
+            Task {
+                do {
+                    HUD.loading()
+                    try await UserManager.shared.switchAccount(withUID: userId)
+                    HUD.dismissLoading()
+                } catch {
+                    log.error("switch account failed", context: error)
+                    HUD.dismissLoading()
+                    HUD.error(title: error.localizedDescription)
+                }
+            }
+            return
+        }
+         
         guard selectedUser.count > 1 else {
             return
         }
@@ -29,4 +52,5 @@ class RestoreMultiAccountViewModel: ObservableObject {
             catch {}
         }
     }
+    
 }
