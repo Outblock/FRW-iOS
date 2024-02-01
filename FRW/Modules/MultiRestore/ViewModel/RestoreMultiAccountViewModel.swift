@@ -27,7 +27,7 @@ class RestoreMultiAccountViewModel: ObservableObject {
             return
         }
         // If it is in the login list, switch user
-        if let userId = UserManager.shared.activatedUID, UserManager.shared.loginUIDList.contains(userId) {
+        if let userId = selectedUser.first?.userId, UserManager.shared.loginUIDList.contains(userId) {
             Task {
                 do {
                     HUD.loading()
@@ -47,9 +47,16 @@ class RestoreMultiAccountViewModel: ObservableObject {
         }
         Task {
             do {
+                HUD.loading()
                 try await MultiBackupManager.shared.addKeyToAccount(with: selectedUser)
+                HUD.dismissLoading()
             }
-            catch {}
+            catch {
+                log.error("add new device failed", context: error)
+                HUD.dismissLoading()
+                //TODO: des
+                HUD.error(title: "restore failed")
+            }
         }
     }
     
