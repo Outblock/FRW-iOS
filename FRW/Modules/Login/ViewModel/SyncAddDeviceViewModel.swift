@@ -23,7 +23,6 @@ class SyncAddDeviceViewModel: ObservableObject {
     init(with model: SyncInfo.DeviceInfo, callback: @escaping SyncAddDeviceViewModel.Callback) {
         self.model = model
         self.callback = callback
-        NotificationCenter.default.addObserver(self, selector: #selector(onTransactionManagerChanged), name: .transactionManagerDidChanged, object: nil)
     }
     
     func addDevice() {
@@ -32,26 +31,25 @@ class SyncAddDeviceViewModel: ObservableObject {
             let accountKey = Flow.AccountKey(publicKey: Flow.PublicKey(hex: model.accountKey.publicKey), signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 1000)
             do {
                 let flowId = try await flow.addKeyToAccount(address: address, accountKey: accountKey, signers: [WalletManager.shared, RemoteConfigManager.shared])
+                
                 guard let data = try? JSONEncoder().encode(model) else {
                     return
                 }
                 let holder = TransactionManager.TransactionHolder(id: flowId, type: .addToken, data: data)
                 TransactionManager.shared.newTransaction(holder: holder)
+                
+                HUD.loading()
+                let result = try await flowId.onceSealed()
+                if result.isComplete {
+                    sendSuccessStatus()
+                }else {
+                    sendFaildStatus()
+                }
+                HUD.dismissLoading()
             } catch {
                 HUD.dismissLoading()
                 HUD.error(title: "restore_account_failed".localized)
             }
-        }
-    }
-    
-    @objc private func onTransactionManagerChanged() {
-        refreshPanelHolder()
-    }
-    
-    func refreshPanelHolder() {
-        if TransactionManager.shared.holders.isEmpty {
-            sendSuccessStatus()
-            return
         }
     }
     
