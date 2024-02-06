@@ -96,10 +96,13 @@ extension RestoreMultiConnectViewModel {
             do {
                 _ = try MultiBackupManager.shared.decryptMnemonic(item.data, password: pinCode)
                 var newItem = item
+                
                 newItem.code = pin
                 result.append(newItem)
             }
-            catch {}
+            catch {
+                log.error(error)
+            }
         }
         return result
     }
@@ -113,7 +116,7 @@ extension RestoreMultiConnectViewModel {
         do {
             let dataHexString = try MultiBackupManager.shared.encryptMnemonic(mnemonicData, password: key)
             let publicKey = hdWallet.getPublicKey()
-            var item = MultiBackupManager.StoreItem(address: "", userId: "", userName: "", publicKey: publicKey, data: dataHexString, keyIndex: 0, signAlgo: Flow.SignatureAlgorithm.ECDSA_P256.index, hashAlgo: Flow.HashAlgorithm.SHA2_256.index, weight: 500, deviceInfo: IPManager.shared.toParams())
+            let item = MultiBackupManager.StoreItem(address: "", userId: "", userName: "", publicKey: publicKey, data: dataHexString, keyIndex: 0, signAlgo: Flow.SignatureAlgorithm.ECDSA_P256.index, hashAlgo: Flow.HashAlgorithm.SHA2_256.index, weight: 500, deviceInfo: IPManager.shared.toParams())
             phraseItem = item
             let nextIndex = currentIndex + 1
             if items.count <= nextIndex {
@@ -143,7 +146,8 @@ extension RestoreMultiConnectViewModel {
         }
         var result = items.values.map { list in
             var res = list
-            if let phraseItem = self.phraseItem {
+            if var phraseItem = self.phraseItem, let firstItem = list.first {
+                phraseItem.address = firstItem.address
                 res.append(phraseItem)
             }
             return res

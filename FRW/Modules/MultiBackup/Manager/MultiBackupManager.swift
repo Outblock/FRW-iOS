@@ -316,7 +316,9 @@ extension MultiBackupManager {
     
     /// encrypt mnemonic data to hex string
     func encryptMnemonic(_ mnemonicData: Data, password: String) throws -> String {
-        let iv = iv()
+        guard let iv = password.toPassword() else {
+            throw BackupError.decryptMnemonicFailed
+        }
         let dataHexString = try WalletManager.encryptionAES(key: password, iv: iv, data: mnemonicData).hexString
         return dataHexString
     }
@@ -326,7 +328,9 @@ extension MultiBackupManager {
         guard let encryptData = Data(hexString: hexString) else {
             throw BackupError.hexStringToDataFailed
         }
-        let iv = iv()
+        guard let iv = password.toPassword() else {
+            throw BackupError.decryptMnemonicFailed
+        }
         let decryptedData = try WalletManager.decryptionAES(key: password, iv: iv, data: encryptData)
         guard let mm = String(data: decryptedData, encoding: .utf8), !mm.isEmpty else {
             throw BackupError.decryptMnemonicFailed
@@ -390,6 +394,9 @@ extension MultiBackupManager {
             }
             if publicKey == secondItem.publicKey {
                 secondItem.keyIndex = accountKey.index
+                if secondItem.address.isEmpty {
+                    secondItem.address = firstItem.address
+                }
             }
         }
         
@@ -493,11 +500,6 @@ extension MultiBackupManager {
             signature.removeLast()
             
             return signature
-            
-//            let sec = try WallectSecureEnclave(privateKey: data)
-//            let signature = try sec.sign(data: signableData)
-//            self.signature = signature
-//            return signature
         }
     }
 }

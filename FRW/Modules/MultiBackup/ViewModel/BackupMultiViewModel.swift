@@ -45,7 +45,7 @@ class BackupMultiViewModel: ObservableObject {
         MultiBackupManager.shared.backupList = []
         let list = waitingList()
         let needPin = list.filter { $0.needPin }
-        let hasPin = !SecurityManager.shared.currentPinCode.isEmpty
+        let hasPin = SecurityManager.shared.currentPinCode.count > 0
         MultiBackupManager.shared.backupList = list
         if needPin.count > 0 {
             if hasPin {
