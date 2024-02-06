@@ -17,8 +17,8 @@ import GTMSessionFetcherCore
 import WalletCore
 
 protocol MultiBackupTarget {
-    var uploadedItem: MultiBackupManager.StoreItem? {get set}
-    var registeredDeviceInfo: SyncInfo.DeviceInfo? {get set}
+    var uploadedItem: MultiBackupManager.StoreItem? { get set }
+    var registeredDeviceInfo: SyncInfo.DeviceInfo? { get set }
     func loginCloud() async throws
     func upload(password: String) async throws
     func getCurrentDriveItems() async throws -> [MultiBackupManager.StoreItem]
@@ -37,6 +37,7 @@ class MultiBackupManager: ObservableObject {
     
     var deviceInfo: SyncInfo.DeviceInfo?
     var backupType: BackupType = .undefined
+    var backupList: [MultiBackupType] = []
     
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(onTransactionManagerChanged), name: .transactionManagerDidChanged, object: nil)
@@ -59,7 +60,7 @@ extension MultiBackupManager {
         var weight: Int?
         var updatedTime: Double? = Date.now.timeIntervalSince1970
         let deviceInfo: DeviceInfoRequest?
-        
+        var code: String?
         func showDate() -> String {
             guard let updatedTime = updatedTime else { return "" }
             let date = Date(timeIntervalSince1970: updatedTime)
@@ -74,9 +75,9 @@ extension MultiBackupManager {
 // MARK: - Public
 
 // MARK: - Steps to create a backup
+
 extension MultiBackupManager {
     func registerKeyToChain(on type: MultiBackupType) async throws -> Bool {
-        
         guard let username = UserManager.shared.userInfo?.username, !username.isEmpty else {
             throw BackupError.missingUserName
         }
@@ -94,10 +95,14 @@ extension MultiBackupManager {
             throw BackupError.missingMnemonic
         }
         
-        let dataHexString = try encryptMnemonic(mnemonicData, password: password)
+        guard let pinCode = SecurityManager.shared.currentPinCode.toPassword() else {
+            throw BackupError.hexStringToDataFailed
+        }
+        
+        let dataHexString = try encryptMnemonic(mnemonicData, password: type.needPin ? pinCode : password)
         let publicKey = hdWallet.getPublicKey()
         
-        let result =  try await addKeyToFlow(key: publicKey)
+        let result = try await addKeyToFlow(key: publicKey)
         if !result {
             return false
         }
@@ -163,6 +168,7 @@ extension MultiBackupManager {
 }
 
 // MARK: - Private,
+
 extension MultiBackupManager {
     private func getTarget(with type: MultiBackupType) -> MultiBackupTarget {
         switch type {
@@ -177,7 +183,7 @@ extension MultiBackupManager {
         }
     }
     
-    private func updateTarget(on type:MultiBackupType, item: MultiBackupManager.StoreItem, deviceInfo: SyncInfo.DeviceInfo) {
+    private func updateTarget(on type: MultiBackupType, item: MultiBackupManager.StoreItem, deviceInfo: SyncInfo.DeviceInfo) {
         switch type {
         case .google:
             gdTarget.uploadedItem = item
@@ -193,14 +199,10 @@ extension MultiBackupManager {
             phraseTarget.registeredDeviceInfo = deviceInfo
         }
     }
-    
-    
 }
 
 extension MultiBackupManager {
-    
     func getCloudDriveItems(from type: MultiBackupType) async throws -> [MultiBackupManager.StoreItem] {
-        
         switch type {
         case .google:
             try await login(from: type)
@@ -230,9 +232,7 @@ extension MultiBackupManager {
     }
     
     func removeItem(with type: MultiBackupType) async throws {
-        
-        let key = LocalEnvManager.shared.backupAESKey
-        let password = key
+        let password = LocalEnvManager.shared.backupAESKey
         switch type {
         case .google:
             try await login(from: type)
@@ -250,7 +250,6 @@ extension MultiBackupManager {
 // MARK: - Helper
 
 extension MultiBackupManager {
-    
     /// append current user mnemonic to list
     func addNewMnemonic(on type: MultiBackupType, list: [MultiBackupManager.StoreItem], password: String) async throws -> [MultiBackupManager.StoreItem] {
         guard let uid = UserManager.shared.activatedUID, !uid.isEmpty else {
@@ -267,7 +266,6 @@ extension MultiBackupManager {
         newList.append(item)
         return newList
     }
-    
     
     func removeCurrent(_ list: [MultiBackupManager.StoreItem], password: String) async throws -> [MultiBackupManager.StoreItem] {
         guard let username = UserManager.shared.userInfo?.username, !username.isEmpty else {
@@ -286,12 +284,10 @@ extension MultiBackupManager {
     func iv() -> String {
         let key = LocalEnvManager.shared.backupAESKey
         let oldIV = LocalEnvManager.shared.aesIV
-        guard let keyData = key.data(using: .utf8) else {
+        guard let result = key.toPassword() else {
             return oldIV
         }
-        let hashedKey = SHA256.hash(data: keyData).prefix(16)
-        let hashData = Data(hashedKey)
-        return String(data: hashData, encoding: .utf8) ?? oldIV
+        return result
     }
     
     /// encrypt list to hex string
@@ -340,7 +336,6 @@ extension MultiBackupManager {
     }
 }
 
-
 extension MultiBackupManager {
     @objc private func onTransactionManagerChanged() {
         if TransactionManager.shared.holders.isEmpty {
@@ -373,7 +368,6 @@ extension MultiBackupManager {
         }
         return accountModel.index
     }
-    
 }
 
 extension MultiBackupManager {
@@ -430,11 +424,10 @@ extension MultiBackupManager {
                     try await UserManager.shared.restoreLogin(userId: firstItem.userId)
                     Router.popToRoot()
                 }
-            }else {
+            } else {
                 HUD.error(title: "Incorrect signature information")
             }
             HUD.dismissLoading()
-            
             
             print(tx)
         } catch {
@@ -472,7 +465,14 @@ extension MultiBackupManager {
         }
         
         public func sign(transaction: Flow.Transaction, signableData: Data) async throws -> Data {
-            let key = LocalEnvManager.shared.backupAESKey
+            var key = LocalEnvManager.shared.backupAESKey
+            if let code = provider.code {
+                guard let pinCode = code.toPassword() else {
+                    throw BackupError.hexStringToDataFailed
+                }
+                key = pinCode
+            }
+            
             let mnemonic = try MultiBackupManager.shared.decryptMnemonic(provider.data, password: key)
             
             guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) else {
@@ -499,5 +499,29 @@ extension MultiBackupManager {
 //            self.signature = signature
 //            return signature
         }
+    }
+}
+
+extension MultiBackupManager {
+    func clearCloud() {
+        Task {
+            do {
+                try await gdTarget.clearCloud()
+                try await iCloudTarget.clearCloud()
+            }
+        }
+    }
+}
+
+extension String {
+    func toPassword() -> String? {
+        guard let input = data(using: .utf8) else {
+            return nil
+        }
+        let digest = SHA256.hash(data: input)
+        let hashString = digest
+            .compactMap { String(format: "%02x", $0) }
+            .joined()
+        return String(hashString.prefix(16))
     }
 }

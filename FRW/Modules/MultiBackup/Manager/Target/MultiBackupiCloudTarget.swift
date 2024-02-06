@@ -11,7 +11,6 @@ import SwiftUI
 import UIKit
 
 class MultiBackupiCloudTarget: MultiBackupTarget {
-    
     var uploadedItem: MultiBackupManager.StoreItem?
     var registeredDeviceInfo: SyncInfo.DeviceInfo?
     
@@ -22,6 +21,16 @@ class MultiBackupiCloudTarget: MultiBackupTarget {
     }
     
     func loginCloud() async throws {}
+    
+    func clearCloud() async throws {
+        try await prepare()
+        let encrypedString = try MultiBackupManager.shared.encryptList([])
+        guard let data = encrypedString.data(using: .utf8), !data.isEmpty else {
+            throw BackupError.hexStringToDataFailed
+        }
+        
+        let result = try await api!.write(content: data)
+    }
     
     func upload(password: String) async throws {
         try await prepare()

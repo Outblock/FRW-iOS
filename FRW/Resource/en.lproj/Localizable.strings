@@ -916,3 +916,8 @@
 "delete_backup" = "Delete Backup";
 "app_name_full" = "Flow Reference Wallet";
 "feedback" = "feedback";
+"multi_backup_create_pin" = "So we will secure your backup with your pin.";
+"verify" = "Verify";
+"restore_phrase_you_created_desc" = "This is a 15 word phrase you were given when you created your previous wallet.";
+"restore_enter_rp_placeholder" = "Enter your Recovery Phrase (15 words)";
+

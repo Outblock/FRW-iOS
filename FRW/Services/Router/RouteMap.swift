@@ -24,12 +24,12 @@ extension RouteMap {
         case syncQC
         case syncAccount(SyncInfo.User)
         case syncDevice(SyncAddDeviceViewModel)
-        
+
         case restoreList
         case restoreMulti
         case multiConnect([MultiBackupType])
         case multiAccount([[MultiBackupManager.StoreItem]])
-        case inputMnemonic( (String)->() )
+        case inputMnemonic((String) -> ())
     }
 }
 
@@ -51,7 +51,7 @@ extension RouteMap.RestoreLogin: RouterTarget {
         case .syncDevice(let vm):
             let vc = CustomHostingController(rootView: SyncAddDeviceView(viewModel: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
-            
+
         case .restoreList:
             navi.push(content: RestoreListView())
         case .restoreMulti:
@@ -94,12 +94,16 @@ extension RouteMap {
         case chooseBackupMethod
         case backupToCloud(BackupManager.BackupType)
         case backupManual
-        
+
         case backupList
         case multiBackup([MultiBackupType])
         case uploadMulti([MultiBackupType])
         case showPhrase(String)
         case backupDetail(KeyDeviceModel)
+
+        case createPin
+        case confirmPin(String)
+        case verityPin(MultiBackupVerifyPinViewModel.From, MultiBackupVerifyPinViewModel.VerifyCallback)
     }
 }
 
@@ -121,7 +125,7 @@ extension RouteMap.Backup: RouterTarget {
             navi.push(content: BackupPasswordView(backupType: type))
         case .backupManual:
             navi.push(content: ManualBackupView())
-            
+
         case .backupList:
             navi.push(content: BackupListView())
         case .multiBackup(let items):
@@ -132,6 +136,12 @@ extension RouteMap.Backup: RouterTarget {
             navi.push(content: MultiBackupPhraseView(mnemonic: mnemonic))
         case .backupDetail(let item):
             navi.push(content: MultiBackupDetailView(item: item))
+        case .createPin:
+            navi.push(content: MultiBackupCreatePinView())
+        case .confirmPin(let pin):
+            navi.push(content: MultiBackupConfirmPinView(lastPin: pin))
+        case .verityPin(let from, let callback):
+            navi.push(content: MultiBackupVerifyPinView(from: from, callback: callback))
         }
     }
 }
@@ -284,7 +294,7 @@ extension RouteMap.Profile: RouterTarget {
         case .backupChange:
             #if DEBUG
 //            navi.push(content: BackupPatternView())
-//            return 
+//            return
             #endif
             if let existVC = navi.viewControllers.first(where: { $0.navigationItem.title == "backup".localized }) {
                 navi.popToViewController(existVC, animated: true)

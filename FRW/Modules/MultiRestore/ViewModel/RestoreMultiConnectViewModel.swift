@@ -5,8 +5,8 @@
 //  Created by cat on 2024/1/7.
 //
 
-import Foundation
 import Flow
+import Foundation
 
 class RestoreMultiConnectViewModel: ObservableObject {
     let items: [MultiBackupType]
@@ -45,27 +45,25 @@ extension RestoreMultiConnectViewModel {
             return
         }
         if currentType == .phrase {
-            Router.route(to: RouteMap.RestoreLogin.inputMnemonic({ str in
+            Router.route(to: RouteMap.RestoreLogin.inputMnemonic { str in
                 self.createStoreItem(with: str)
-            }))
-            return 
+            })
+            return
         }
         enable = false
         Task {
             do {
                 let list = try await MultiBackupManager.shared.getCloudDriveItems(from: currentType)
-                
-                DispatchQueue.main.async {
-                    self.storeItems.append(list)
-                    let nextIndex = self.currentIndex + 1
-                    if self.items.count <= nextIndex {
-                        self.currentIndex = nextIndex
-                        self.isEnd = true
-                    }
-                    else {
-                        self.currentIndex = nextIndex
-                    }
-                    self.enable = true
+                if currentType.needPin {
+                    Router.route(to: RouteMap.Backup.verityPin(.restore) { allow, pin in
+                        if allow {
+                            let verifyList = self.verify(list: list, with: pin)
+                            self.storeItem(list: verifyList)
+                        }
+                    })
+                }
+                else {
+                    storeItem(list: list)
                 }
             }
             catch {
@@ -74,6 +72,36 @@ extension RestoreMultiConnectViewModel {
                 }
             }
         }
+    }
+    
+    private func storeItem(list: [MultiBackupManager.StoreItem]) {
+        DispatchQueue.main.async {
+            self.storeItems.append(list)
+            let nextIndex = self.currentIndex + 1
+            if self.items.count <= nextIndex {
+                self.currentIndex = nextIndex
+                self.isEnd = true
+            }
+            else {
+                self.currentIndex = nextIndex
+            }
+            self.enable = true
+        }
+    }
+    
+    private func verify(list: [MultiBackupManager.StoreItem], with pin: String) -> [MultiBackupManager.StoreItem] {
+        let pinCode = pin.toPassword() ?? pin
+        var result: [MultiBackupManager.StoreItem] = []
+        for item in list {
+            do {
+                _ = try MultiBackupManager.shared.decryptMnemonic(item.data, password: pinCode)
+                var newItem = item
+                newItem.code = pin
+                result.append(newItem)
+            }
+            catch {}
+        }
+        return result
     }
     
     private func createStoreItem(with mnemonic: String) {
@@ -86,34 +114,29 @@ extension RestoreMultiConnectViewModel {
             let dataHexString = try MultiBackupManager.shared.encryptMnemonic(mnemonicData, password: key)
             let publicKey = hdWallet.getPublicKey()
             var item = MultiBackupManager.StoreItem(address: "", userId: "", userName: "", publicKey: publicKey, data: dataHexString, keyIndex: 0, signAlgo: Flow.SignatureAlgorithm.ECDSA_P256.index, hashAlgo: Flow.HashAlgorithm.SHA2_256.index, weight: 500, deviceInfo: IPManager.shared.toParams())
-            self.phraseItem = item
-            let nextIndex = self.currentIndex + 1
-            if self.items.count <= nextIndex {
-                self.currentIndex = nextIndex
-                self.isEnd = true
+            phraseItem = item
+            let nextIndex = currentIndex + 1
+            if items.count <= nextIndex {
+                currentIndex = nextIndex
+                isEnd = true
             }
             else {
-                self.currentIndex = nextIndex
+                currentIndex = nextIndex
             }
-            self.enable = true
+            enable = true
         }
-        catch {
-            
-        }
-        
-        
-       
+        catch {}
     }
     
     func checkValidUser() -> [[MultiBackupManager.StoreItem]] {
-        
         var items: [String: [MultiBackupManager.StoreItem]] = [:]
         storeItems.forEach { list in
             list.forEach { storeItem in
                 if var exitList = items[storeItem.userId] {
                     exitList.append(storeItem)
                     items[storeItem.userId] = exitList
-                }else {
+                }
+                else {
                     items[storeItem.userId] = [storeItem]
                 }
             }
@@ -127,7 +150,6 @@ extension RestoreMultiConnectViewModel {
         }
         result = result.filter { $0.count > 1 }
         return result
-        
     }
 }
 

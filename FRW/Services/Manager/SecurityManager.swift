@@ -5,9 +5,9 @@
 //  Created by Selina on 4/8/2022.
 //
 
-import SwiftUI
-import KeychainAccess
 import BiometricAuthentication
+import KeychainAccess
+import SwiftUI
 
 extension SecurityManager {
     enum SecurityType: Int {
@@ -81,20 +81,20 @@ extension SecurityManager {
         }
         
         isLocked = true
-        Router.route(to: RouteMap.PinCode.verify(false, false, { [weak self] result in
+        Router.route(to: RouteMap.PinCode.verify(false, false) { [weak self] result in
             if result {
                 self?.isLocked = false
                 Router.dismiss()
             }
-        }))
+        })
     }
     
     func inAppVerify() async -> Bool {
         await withCheckedContinuation { continuation in
-            Router.route(to: RouteMap.PinCode.verify(true, true, { result in
+            Router.route(to: RouteMap.PinCode.verify(true, true) { result in
                 Router.dismiss()
                 continuation.resume(returning: result)
-            }))
+            })
         }
     }
 }
@@ -106,7 +106,7 @@ extension SecurityManager {
         return securityType == .pin || securityType == .both
     }
     
-    private var currentPinCode: String {
+    var currentPinCode: String {
         guard let code = try? WalletManager.shared.mainKeychain.getString(PinCodeKey) else {
             return ""
         }
@@ -192,7 +192,7 @@ extension SecurityManager {
     }
     
     func authBionic() async -> Bool {
-        await withCheckedContinuation({ continuation in
+        await withCheckedContinuation { continuation in
             BioMetricAuthenticator.authenticateWithBioMetrics(reason: "") { result in
                 switch result {
                 case .success:
@@ -202,7 +202,7 @@ extension SecurityManager {
                     continuation.resume(returning: false)
                 }
             }
-        })
+        }
     }
 }
 

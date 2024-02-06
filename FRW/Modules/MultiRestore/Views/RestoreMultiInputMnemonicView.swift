@@ -8,10 +8,8 @@
 import SwiftUI
 
 struct RestoreMultiInputMnemonicView: RouteableView {
-    
-    
     @StateObject private var viewModel = RestoreMultiInputMnemonicViewModel()
-    var callback:(String)->Void
+    var callback: (String) -> Void
     
     var title: String {
         return ""
@@ -42,7 +40,6 @@ struct RestoreMultiInputMnemonicView: RouteableView {
     var body: some View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
-               
                 Text("recovery_phrase".localized)
                     .foregroundColor(Color.LL.orange)
                     .bold()
@@ -51,7 +48,7 @@ struct RestoreMultiInputMnemonicView: RouteableView {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .minimumScaleFactor(0.5)
                 
-                Text("phrase_you_created_desc".localized)
+                Text("restore_phrase_you_created_desc".localized)
                     .lineSpacing(5)
                     .font(.inter(size: 14, weight: .regular))
                     .foregroundColor(.LL.note)
@@ -63,7 +60,7 @@ struct RestoreMultiInputMnemonicView: RouteableView {
             
             ZStack(alignment: .topLeading) {
                 if viewModel.text.isEmpty {
-                    Text("enter_rp_placeholder".localized)
+                    Text("restore_enter_rp_placeholder".localized)
                         .font(.LL.body)
                         .foregroundColor(.LL.note)
                         .padding(.all, 10)
@@ -110,10 +107,10 @@ struct RestoreMultiInputMnemonicView: RouteableView {
             VPrimaryButton(model: ButtonStyle.primary,
                            state: viewModel.nextEnable ? .enabled : .disabled,
                            action: {
-                callback(viewModel.getRawMnemonic())
-                Router.pop()
-            }, title: "confirm_tag".localized)
-            .padding(.horizontal, 28)
+                               callback(viewModel.getRawMnemonic())
+                               Router.pop()
+                           }, title: "confirm_tag".localized)
+                .padding(.horizontal, 28)
             
             Spacer()
             
@@ -146,14 +143,11 @@ struct RestoreMultiInputMnemonicView: RouteableView {
         }
         .backgroundFill(Color.LL.background)
         .applyRouteable(self)
-        .customAlertView(isPresented: $viewModel.isAlertViewPresented, title: "account_not_found".localized, attributedDesc: accountNotFoundDesc, buttons: [AlertView.ButtonItem(type: .confirm, title: "create_wallet".localized, action: {
-            
-        })])
+        .customAlertView(isPresented: $viewModel.isAlertViewPresented, title: "account_not_found".localized, attributedDesc: accountNotFoundDesc, buttons: [AlertView.ButtonItem(type: .confirm, title: "create_wallet".localized, action: {})])
     }
 }
 
 #Preview {
-    RestoreMultiInputMnemonicView { str in
-        
+    RestoreMultiInputMnemonicView { _ in
     }
 }

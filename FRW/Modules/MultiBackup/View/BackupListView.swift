@@ -55,6 +55,18 @@ struct BackupListView: RouteableView {
                 viewModel.onCancelTip()
             }
         }
+        .navigationBarItems(trailing: HStack(spacing: 6) {
+            if isDevModel {
+                Button {
+                    MultiBackupManager.shared.clearCloud()
+                } label: {
+                    Image(systemName: "xmark.circle")
+                        .renderingMode(.template)
+                        .foregroundColor(.LL.Primary.salmonPrimary)
+                }
+            }
+            
+        })
         .onAppear {
             viewModel.fetchData()
         }

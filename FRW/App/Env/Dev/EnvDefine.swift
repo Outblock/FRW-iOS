@@ -8,6 +8,7 @@
 import Foundation
 
 let AppGroupName = "group.io.outblock.lilico.dev"
+let isDevModel = true
 
 let FirstFavNFTImageURL = "FirstFavNFTImageURL"
 

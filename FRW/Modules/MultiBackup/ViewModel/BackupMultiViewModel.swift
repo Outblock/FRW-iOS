@@ -42,8 +42,24 @@ class BackupMultiViewModel: ObservableObject {
     }
     
     func onNext() {
+        MultiBackupManager.shared.backupList = []
         let list = waitingList()
-        Router.route(to: RouteMap.Backup.uploadMulti(list))
+        let needPin = list.filter { $0.needPin }
+        let hasPin = !SecurityManager.shared.currentPinCode.isEmpty
+        MultiBackupManager.shared.backupList = list
+        if needPin.count > 0 {
+            if hasPin {
+                Router.route(to: RouteMap.Backup.verityPin(.backup) { allow, _ in
+                    if allow {
+                        Router.route(to: RouteMap.Backup.uploadMulti(list))
+                    }
+                })
+            } else {
+                Router.route(to: RouteMap.Backup.createPin)
+            }
+        } else {
+            Router.route(to: RouteMap.Backup.uploadMulti(list))
+        }
     }
 }
 
@@ -110,6 +126,15 @@ enum MultiBackupType: Int, CaseIterable {
             return "icon.recovery.highlight"
         }
     }
+    
+    var needPin: Bool {
+        switch self {
+        case .google, .icloud:
+            return true
+        default:
+            return false
+        }
+    }
 }
 
 extension BackupMultiViewModel {
@@ -142,7 +167,7 @@ extension MultiBackupType {
     }
     
     func showName() -> String {
-        let type = self.toBackupType()
+        let type = toBackupType()
         return "backup".localized + " - " + type.title
     }
 }

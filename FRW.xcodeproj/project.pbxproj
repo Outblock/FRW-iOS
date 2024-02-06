@@ -923,6 +923,18 @@
 		4E0D34A42A8B4E2900BC6E43 /* e-Ukraine-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349D2A8B4E2900BC6E43 /* e-Ukraine-Light.ttf */; };
 		4E0D34A52A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349E2A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf */; };
 		4E0D34A62A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349E2A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf */; };
+		4E1A8B662B71A47A00485EDE /* MultiBackupCreatePinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B652B71A47A00485EDE /* MultiBackupCreatePinView.swift */; };
+		4E1A8B672B71A47A00485EDE /* MultiBackupCreatePinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B652B71A47A00485EDE /* MultiBackupCreatePinView.swift */; };
+		4E1A8B692B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B682B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift */; };
+		4E1A8B6A2B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B682B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift */; };
+		4E1A8B6C2B71A7B500485EDE /* MultiBackupConfirmPinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B6B2B71A7B500485EDE /* MultiBackupConfirmPinView.swift */; };
+		4E1A8B6D2B71A7B500485EDE /* MultiBackupConfirmPinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B6B2B71A7B500485EDE /* MultiBackupConfirmPinView.swift */; };
+		4E1A8B6F2B71A7FA00485EDE /* MultiBackupConfirmPinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B6E2B71A7FA00485EDE /* MultiBackupConfirmPinViewModel.swift */; };
+		4E1A8B702B71A7FA00485EDE /* MultiBackupConfirmPinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B6E2B71A7FA00485EDE /* MultiBackupConfirmPinViewModel.swift */; };
+		4E1A8B722B71AADE00485EDE /* MultiBackupVerifyPinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B712B71AADE00485EDE /* MultiBackupVerifyPinView.swift */; };
+		4E1A8B732B71AADE00485EDE /* MultiBackupVerifyPinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B712B71AADE00485EDE /* MultiBackupVerifyPinView.swift */; };
+		4E1A8B752B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B742B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift */; };
+		4E1A8B762B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B742B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift */; };
 		4E1DD8C72B1622030055E510 /* Instabug in Frameworks */ = {isa = PBXBuildFile; productRef = 4E1DD8C62B1622030055E510 /* Instabug */; };
 		4E1DD8C92B16222A0055E510 /* Instabug in Frameworks */ = {isa = PBXBuildFile; productRef = 4E1DD8C82B16222A0055E510 /* Instabug */; };
 		4E1DD8CB2B1629560055E510 /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1DD8CA2B1629560055E510 /* QRCodeView.swift */; };
@@ -2091,6 +2103,12 @@
 		4E0D349C2A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "e-Ukraine-Regular.ttf"; sourceTree = "<group>"; };
 		4E0D349D2A8B4E2900BC6E43 /* e-Ukraine-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "e-Ukraine-Light.ttf"; sourceTree = "<group>"; };
 		4E0D349E2A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "e-Ukraine-Medium.ttf"; sourceTree = "<group>"; };
+		4E1A8B652B71A47A00485EDE /* MultiBackupCreatePinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupCreatePinView.swift; sourceTree = "<group>"; };
+		4E1A8B682B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupCreatePinViewModel.swift; sourceTree = "<group>"; };
+		4E1A8B6B2B71A7B500485EDE /* MultiBackupConfirmPinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupConfirmPinView.swift; sourceTree = "<group>"; };
+		4E1A8B6E2B71A7FA00485EDE /* MultiBackupConfirmPinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupConfirmPinViewModel.swift; sourceTree = "<group>"; };
+		4E1A8B712B71AADE00485EDE /* MultiBackupVerifyPinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupVerifyPinView.swift; sourceTree = "<group>"; };
+		4E1A8B742B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupVerifyPinViewModel.swift; sourceTree = "<group>"; };
 		4E1DD8CA2B1629560055E510 /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
 		4E1DD8D02B162F9B0055E510 /* SyncConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncConfirmView.swift; sourceTree = "<group>"; };
 		4E2380FD2B186A6000756874 /* WalletConnect+Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WalletConnect+Tools.swift"; sourceTree = "<group>"; };
@@ -4362,6 +4380,9 @@
 				4EB2C6B82B49D1A500EB899C /* MultiBackupDetailView.swift */,
 				4E8CE6382B4BE0BA00E71A87 /* MultiBackupPhraseView.swift */,
 				4EB398012B4CDB7D00704F8A /* DangerousTipSheetView.swift */,
+				4E1A8B652B71A47A00485EDE /* MultiBackupCreatePinView.swift */,
+				4E1A8B6B2B71A7B500485EDE /* MultiBackupConfirmPinView.swift */,
+				4E1A8B712B71AADE00485EDE /* MultiBackupVerifyPinView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4373,6 +4394,9 @@
 				4E3670062B2A8BB6000F2693 /* BackupUploadViewModel.swift */,
 				4EB2C6AA2B49017000EB899C /* BackupListViewModel.swift */,
 				4EEDA38C2B4D788A0000D382 /* MultiBackupDetailViewModel.swift */,
+				4E1A8B682B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift */,
+				4E1A8B6E2B71A7FA00485EDE /* MultiBackupConfirmPinViewModel.swift */,
+				4E1A8B742B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -6140,6 +6164,7 @@
 				6AF2ED962836539E00F06AD3 /* BaseDivider.swift in Sources */,
 				6A11596F288E7134005EF797 /* RouteMap.swift in Sources */,
 				4EB60F90286825960025DD72 /* ContextMenuPreview.swift in Sources */,
+				4E1A8B672B71A47A00485EDE /* MultiBackupCreatePinView.swift in Sources */,
 				15DC20E327819C56000B187A /* VList.swift in Sources */,
 				15BA24B228C7813B00755CBF /* ShareActivityItemSource.swift in Sources */,
 				15DC212327819C56000B187A /* VSpinnerDashed.swift in Sources */,
@@ -6207,6 +6232,7 @@
 				15DC20D127819C56000B187A /* VNavigationLinkType.swift in Sources */,
 				6A37AD9C28BE15700047E5F7 /* SendAmountTransactionProcessView.swift in Sources */,
 				4E9E21B3282644B200E1BACD /* WalletViewModel.swift in Sources */,
+				4E1A8B732B71AADE00485EDE /* MultiBackupVerifyPinView.swift in Sources */,
 				4EB398032B4CDF5B00704F8A /* DangerousTipSheetView.swift in Sources */,
 				152EEC6E28E4F2AB00C37A67 /* TxTemplateRequest.swift in Sources */,
 				15DC208527819C56000B187A /* VLazyScrollViewHorizontal.swift in Sources */,
@@ -6359,6 +6385,7 @@
 				1599F774278894E00094B196 /* String.swift in Sources */,
 				15DC20F527819C56000B187A /* VBaseListModel.swift in Sources */,
 				15B1F62D2786ABE400847BB5 /* BackupPasswordView.swift in Sources */,
+				4E1A8B6A2B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift in Sources */,
 				15DC21AF27819C56000B187A /* UINavigationBar.NavigationBarHeight.swift in Sources */,
 				15DC216327819C56000B187A /* _VSideBar.swift in Sources */,
 				4EC4EF392B10386800217618 /* SyncAccountView.swift in Sources */,
@@ -6433,11 +6460,13 @@
 				15DC216727819C56000B187A /* VHalfModal.swift in Sources */,
 				6A99342E28C89D0400E4EF59 /* BrowserSignMessageView.swift in Sources */,
 				15CB4DFA28CA29650069ABB4 /* PayAsSignerModel.swift in Sources */,
+				4E1A8B6D2B71A7B500485EDE /* MultiBackupConfirmPinView.swift in Sources */,
 				4E9E21DB282A5B9400E1BACD /* SecureView.swift in Sources */,
 				4EB17C8A28629DE200CA4DAE /* NFTCollectionStateManager.swift in Sources */,
 				15DE22D0277DBDF800B5EE03 /* WalletManager.swift in Sources */,
 				6A06CB1128AA54A600C81BE1 /* NFTUIKitGridStyleHandler.swift in Sources */,
 				6AC476ED28F40E50008503E6 /* BrowserBookmarkView.swift in Sources */,
+				4E1A8B702B71A7FA00485EDE /* MultiBackupConfirmPinViewModel.swift in Sources */,
 				6A8FA4B4285B192900EE5BE3 /* ScrollView+SnappableModifier.swift in Sources */,
 				6A3FFA862A28A91F00CB2B2C /* AnimationModifier.swift in Sources */,
 				15DC214F27819C56000B187A /* VNavigationViewNavigationBar.swift in Sources */,
@@ -6636,6 +6665,7 @@
 				4EFF94C82AEEE5DD00365EF7 /* DevicesViewModel.swift in Sources */,
 				15D6D8E628CB44F800CBA152 /* DOFavoriteButton.swift in Sources */,
 				15DC21C927819C56000B187A /* LayoutGroup_LTTB.swift in Sources */,
+				4E1A8B762B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift in Sources */,
 				6AD9EC26286C4E4C0062A9CE /* CadenceTemplate.swift in Sources */,
 				152EEC6A28E4F26300C37A67 /* FRWWebEndpoint.swift in Sources */,
 				6A62123128ACE029002046CA /* NFTUIKitFavContainerView.swift in Sources */,
@@ -6827,6 +6857,7 @@
 				6A11596E288E7134005EF797 /* RouteMap.swift in Sources */,
 				15C58B022868A4EE00BD4FC6 /* ContextMenuPreview.swift in Sources */,
 				15C58B032868A4EE00BD4FC6 /* VList.swift in Sources */,
+				4E1A8B662B71A47A00485EDE /* MultiBackupCreatePinView.swift in Sources */,
 				15BA24B128C7813B00755CBF /* ShareActivityItemSource.swift in Sources */,
 				15C58B042868A4EE00BD4FC6 /* VSpinnerDashed.swift in Sources */,
 				6A29114628CB377A003295BD /* TransactionListHandler.swift in Sources */,
@@ -6894,6 +6925,7 @@
 				6A37AD9B28BE15700047E5F7 /* SendAmountTransactionProcessView.swift in Sources */,
 				15C58B2B2868A4EE00BD4FC6 /* WalletViewModel.swift in Sources */,
 				15C58B2C2868A4EE00BD4FC6 /* VLazyScrollViewHorizontal.swift in Sources */,
+				4E1A8B722B71AADE00485EDE /* MultiBackupVerifyPinView.swift in Sources */,
 				4EB398022B4CDB7D00704F8A /* DangerousTipSheetView.swift in Sources */,
 				152EEC6D28E4F2AB00C37A67 /* TxTemplateRequest.swift in Sources */,
 				15C58B2D2868A4EE00BD4FC6 /* VPageIndicatorInfinite.swift in Sources */,
@@ -7046,6 +7078,7 @@
 				15C58B7F2868A4EE00BD4FC6 /* BackupPasswordView.swift in Sources */,
 				15C58B802868A4EE00BD4FC6 /* UINavigationBar.NavigationBarHeight.swift in Sources */,
 				15C58B812868A4EE00BD4FC6 /* _VSideBar.swift in Sources */,
+				4E1A8B692B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift in Sources */,
 				15C58B822868A4EE00BD4FC6 /* NFTCollectionCard.swift in Sources */,
 				4EC4EF382B10386800217618 /* SyncAccountView.swift in Sources */,
 				15C58B832868A4EE00BD4FC6 /* VLazyScrollViewVertical.swift in Sources */,
@@ -7120,11 +7153,13 @@
 				15CB4DF928CA29650069ABB4 /* PayAsSignerModel.swift in Sources */,
 				15C58BAA2868A4EE00BD4FC6 /* SecureView.swift in Sources */,
 				15C58BAB2868A4EE00BD4FC6 /* NFTCollectionStateManager.swift in Sources */,
+				4E1A8B6C2B71A7B500485EDE /* MultiBackupConfirmPinView.swift in Sources */,
 				15C58BAC2868A4EE00BD4FC6 /* WalletManager.swift in Sources */,
 				6A06CB1028AA54A600C81BE1 /* NFTUIKitGridStyleHandler.swift in Sources */,
 				15C58BAD2868A4EE00BD4FC6 /* ScrollView+SnappableModifier.swift in Sources */,
 				6AC476EC28F40E50008503E6 /* BrowserBookmarkView.swift in Sources */,
 				15C58BAE2868A4EE00BD4FC6 /* VNavigationViewNavigationBar.swift in Sources */,
+				4E1A8B6F2B71A7FA00485EDE /* MultiBackupConfirmPinViewModel.swift in Sources */,
 				6A3FFA852A28A91F00CB2B2C /* AnimationModifier.swift in Sources */,
 				15C58BAF2868A4EE00BD4FC6 /* IndexBarBackground.swift in Sources */,
 				6AE1817928C5A457009ADDDB /* FCLScripts.swift in Sources */,
@@ -7323,6 +7358,7 @@
 				4EFF94C72AEEE5DD00365EF7 /* DevicesViewModel.swift in Sources */,
 				15D6D8E528CB44F800CBA152 /* DOFavoriteButton.swift in Sources */,
 				15C58C272868A4EE00BD4FC6 /* LayoutGroup_LTTB.swift in Sources */,
+				4E1A8B752B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift in Sources */,
 				6AD9EC25286C4E4C0062A9CE /* CadenceTemplate.swift in Sources */,
 				152EEC6928E4F26300C37A67 /* FRWWebEndpoint.swift in Sources */,
 				6A62123028ACE029002046CA /* NFTUIKitFavContainerView.swift in Sources */,

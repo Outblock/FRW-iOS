@@ -41,14 +41,10 @@ class MultiBackupGoogleDriveTarget: MultiBackupTarget {
         var user = try await googleUserLogin()
         user = try await addScopesIfNeeded(user: user)
         createGoogleDriveService(user: user)
-        #if DEBUG
-//        try await clearCloud()
-        #endif
     }
     
     func clearCloud() async throws {
         try await prepare()
-        let list = try await getCurrentDriveItems()
         let encrypedString = try MultiBackupManager.shared.encryptList([])
         guard let data = encrypedString.data(using: .utf8), !data.isEmpty else {
             throw BackupError.hexStringToDataFailed

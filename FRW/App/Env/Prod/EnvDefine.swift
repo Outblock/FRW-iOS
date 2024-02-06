@@ -8,7 +8,7 @@
 import Foundation
 
 let AppGroupName = "group.io.outblock.lilico"
-
+let isDevModel = false
 let FirstFavNFTImageURL = "FirstFavNFTImageURL"
 
 func groupUserDefaults() -> UserDefaults? {
