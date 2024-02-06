@@ -80,7 +80,7 @@
 "CONTACT__US::message" = "お問い合わせ";
 "collections" = "コレクション";
 "Need__Help::message" = "助けが必要？";
-"from_name" = "から ％@";
+"from_name" = "から %@";
 "Cancel::message" = "キャンセル";
 "shared_via" = "共有する";
 "Backup::message" = "バックアップ";
@@ -166,7 +166,7 @@
 "Removing__the__wallet__from__Lilico__does__not__remove__the__wallet__from__Flow__blockchain::message" = "Flow Ref からウォレットを削除しても、Flow ブロックチェーンからウォレットは削除されません。リカバリフレーズまたはGoogleドライブバックアップを使用してウォレットを再度インポートできます。";
 "select_word_by_order" = "語順を参考に、一つ一つ選んでください。";
 "Reset::message" = "リセット";
-"switch_to_x" = "切り替える ％@";
+"switch_to_x" = "切り替える %@";
 "Recovery__Phrase::message" = "リカバリーフレーズ";
 "face_id" = "顔認証";
 "Confirm__Password::message" = "パスワードを認証する";
@@ -176,7 +176,7 @@
 "Current__Password::message" = "現在のパスワード";
 "pin_code" = "ピンコード";
 "Change__111e__Password::message" = "111e パスワードを変更する";
-"verify_x" = "確認 ％@";
+"verify_x" = "確認 %@";
 "Security::message" = "安全";
 "recovery" = "回復";
 "Allow__lilico__to__pay__the__gas__fee::message" = "Flow Ref が私のすべての取引のガス料金を支払うことを許可します。";
@@ -534,9 +534,9 @@
 "Add_Token::message" = "トークンの追加";
 "transaction_error" = "間違い";
 "Search_Token::message" = "検索トークン";
-"transfer_to_x" = "到着 ％@";
+"transfer_to_x" = "到着 %@";
 "unlocked::message" = "ロック解除された";
-"transfer_from_x" = "から ％@";
+"transfer_from_x" = "から %@";
 "Enter::message" = "入力";
 "transaction_request_failed" = "取引リクエストに失敗しました";
 "Unlock_Wallet::message" = "ウォレットのロックを解除する";

@@ -80,7 +80,7 @@
 "CONTACT__US::message" = "联系我们";
 "collections" = "收藏品";
 "Need__Help::message" = "需要帮忙？";
-"from_name" = "从 ％@";
+"from_name" = "从 %@";
 "Cancel::message" = "取消";
 "shared_via" = "分享通过";
 "Backup::message" = "备份";
@@ -176,7 +176,7 @@
 "Current__Password::message" = "当前密码";
 "pin_code" = "PIN码";
 "Change__111e__Password::message" = "更改111e密码";
-"verify_x" = "核实 ％@";
+"verify_x" = "核实 %@";
 "Security::message" = "安全";
 "recovery" = "恢复";
 "Allow__lilico__to__pay__the__gas__fee::message" = "允许 Flow Ref 支付我所有交易的汽油费。";
