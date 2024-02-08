@@ -226,6 +226,12 @@ extension UserManager {
             throw LLError.incorrectPhrase
         }
         
+        if let uid = userId {
+            let address = MultiAccountStorage.shared.getWalletInfo(uid)?.currentNetworkWalletModel?.getAddress ?? "0x"
+            try await WalletManager.shared.findFlowAccount(with: uid, at: address)
+        }
+        
+        
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
             DispatchQueue.main.async {

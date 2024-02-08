@@ -400,6 +400,7 @@ extension MultiBackupManager {
             }
         }
         
+        
         let firstSigner = MultiBackupManager.Signer(provider: firstItem)
         let secondSigner = MultiBackupManager.Signer(provider: secondItem)
         
@@ -412,8 +413,28 @@ extension MultiBackupManager {
             let tx = try await FlowNetwork.addKeyWithMulti(address: address, keyIndex: firstItem.keyIndex, sequenceNum: sequenNum, accountKey: key, signers: [firstSigner, secondSigner, RemoteConfigManager.shared])
             let result = try await tx.onceSealed()
             if result.isComplete {
-                let firstKeySignature = AccountKeySignature(hashAlgo: firstSigner.hashAlgo.index, publicKey: firstSigner.provider.publicKey, signAlgo: firstSigner.signatureAlgo.index, signMessage: "", signature: firstSigner.signature?.hexValue ?? "", weight: firstSigner.provider.signAlgo)
-                let secondKeySignature = AccountKeySignature(hashAlgo: secondSigner.hashAlgo.index, publicKey: secondSigner.provider.publicKey, signAlgo: secondSigner.signatureAlgo.index, signMessage: "", signature: secondSigner.signature?.hexValue ?? "", weight: secondSigner.provider.signAlgo)
+                let userId = firstSigner.provider.userId
+                
+                let firstSignature =  firstSigner.sign(userId) ?? ""
+                let firstKeySignature = AccountKeySignature(
+                    hashAlgo: firstSigner.hashAlgo.index,
+                    publicKey: firstSigner.provider.publicKey,
+                    signAlgo: firstSigner.signatureAlgo.index, 
+                    signMessage: userId,
+                    signature: firstSignature,
+                    weight: firstSigner.provider.weight ?? 500
+                )
+                
+                let secondSignature =  secondSigner.sign(userId) ?? ""
+
+                let secondKeySignature = AccountKeySignature(
+                    hashAlgo: secondSigner.hashAlgo.index,
+                    publicKey: secondSigner.provider.publicKey,
+                    signAlgo: secondSigner.signatureAlgo.index,
+                    signMessage: userId,
+                    signature: secondSignature,
+                    weight: secondSigner.provider.weight ?? 500
+                )
                 let request = SignedRequest(accountKey: AccountKey(hashAlgo: key.hashAlgo.index,
                                                                    publicKey: key.publicKey.description,
                                                                    signAlgo: key.signAlgo.index,
@@ -450,6 +471,7 @@ extension MultiBackupManager {
     class Signer: FlowSigner {
         let provider: MultiBackupManager.StoreItem
         var signature: Data?
+        var hdWallet: HDWallet?
         
         init(provider: MultiBackupManager.StoreItem) {
             self.provider = provider
@@ -471,7 +493,10 @@ extension MultiBackupManager {
             provider.keyIndex
         }
         
-        public func sign(transaction: Flow.Transaction, signableData: Data) async throws -> Data {
+        private func createHDWallet() async throws  {
+            if hdWallet != nil {
+                return
+            }
             var key = LocalEnvManager.shared.backupAESKey
             if let code = provider.code {
                 guard let pinCode = code.toPassword() else {
@@ -485,7 +510,16 @@ extension MultiBackupManager {
             guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) else {
                 throw BackupError.missingMnemonic
             }
+            self.hdWallet = hdWallet
+        }
+        
+        public func sign(transaction: Flow.Transaction, signableData: Data) async throws -> Data {
             
+            _ = try await createHDWallet()
+            
+            guard let hdWallet = self.hdWallet else {
+                throw BackupError.missingMnemonic
+            }
             var privateKey = hdWallet.getKeyByCurve(curve: .nist256p1, derivationPath: WalletManager.flowPath)
             let hashedData = Hash.sha256(data: signableData)
             
@@ -498,8 +532,36 @@ extension MultiBackupManager {
             }
             
             signature.removeLast()
-            
             return signature
+        }
+        
+        func sign(_ text: String) -> String? {
+            guard let textData = text.data(using: .utf8) else {
+                return nil
+            }
+
+            let data = Flow.DomainTag.user.normalize + textData
+            return sign(data)
+        }
+
+        func sign(_ data: Data) -> String? {
+            guard let hdWallet = self.hdWallet else {
+                return nil
+            }
+            
+            var privateKey = hdWallet.getKeyByCurve(curve: .nist256p1, derivationPath: WalletManager.flowPath)
+            
+            defer {
+                privateKey = PrivateKey()
+            }
+            
+            let hashedData = Hash.sha256(data: data)
+            guard var signature = privateKey.sign(digest: hashedData, curve: .nist256p1) else {
+                return nil
+            }
+
+            signature.removeLast()
+            return signature.hexValue
         }
     }
 }

@@ -17,6 +17,9 @@ class AccountKeyManager {
         guard let data = try? JSONEncoder().encode(index) else {
             return false
         }
+        guard index != WalletManager.shared.keyIndex else {
+            return false
+        }
         let flowId = try await FlowNetwork.revokeAccountKey(by: index, at: Flow.Address(hex: address))
         let holder = TransactionManager.TransactionHolder(id: flowId, type: .addToken, data: data)
         TransactionManager.shared.newTransaction(holder: holder)

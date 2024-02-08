@@ -784,14 +784,22 @@ extension WalletManager: FlowSigner {
     }
     
     func findFlowAccount() async throws {
-        guard let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) else {
+        guard let userId = walletInfo?.id else {
             return
         }
+        let address = getPrimaryWalletAddress() ?? ""
+        try await findFlowAccount(with: userId,at: address)
+    }
+    
+    func findFlowAccount(with userId: String,at address: String)  async throws{
+        guard let data = try WallectSecureEnclave.Store.fetch(by: userId) else {
+            return
+        }
+        
         let sec = try WallectSecureEnclave(privateKey: data)
         guard let publicKey = sec.key.publickeyValue else {
             return
         }
-        
         let address = getPrimaryWalletAddress() ?? ""
         let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
         let sortedAccount = account.keys.sorted { $0.weight > $1.weight }
