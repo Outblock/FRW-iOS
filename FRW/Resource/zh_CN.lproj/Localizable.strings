@@ -779,7 +779,7 @@
 "staking_collection_upgrade" = "质押合约升级";
 "setup_stake_desc" = "如果您有现有的节点和委托，它们是安全的，并且会在交易期间迁移到您的新 Staking Collection。";
 "staking_setup_failed" = "设置股权失败";
-"enable_sandbox_failed" = "启用Sandbox失败";
+"enable_sandbox_failed" = "启用crescendo失败";
 "widget_name" = "Flow Ref 小部件";
 "widget_desc" = "展示你最喜欢的 nft。";
 "scan" = "扫描";

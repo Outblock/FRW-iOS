@@ -75,6 +75,7 @@ extension BackupManager {
     func getCloudDriveItems(from type: BackupManager.BackupType) async throws -> [BackupManager.DriveItem] {
         switch type {
         case .googleDrive:
+            try await gdTarget.relogin()
             return try await gdTarget.getCurrentDriveItems()
         case .icloud:
             return try await iCloudTarget.getCurrentDriveItems()

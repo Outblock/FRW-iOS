@@ -41,7 +41,7 @@ struct RestoreListView: RouteableView {
                 }
 
                 RestoreListView.CardView(icon: "restore.icon.phrase", title: "restore_phrase_title".localized, des: "restore_phrase_desc".localized) {
-                    Router.route(to: RouteMap.RestoreLogin.restoreManual)
+                    Router.route(to: RouteMap.RestoreLogin.root)
                 }
             }
             .padding(.top, 46)

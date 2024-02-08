@@ -102,6 +102,8 @@ class BackupUploadViewModel: ObservableObject {
         }
     }
     
+    @Published var buttonState: VPrimaryButtonState = .enabled
+    
     var currentNote: String {
         currentType.noteDes
     }
@@ -122,32 +124,28 @@ class BackupUploadViewModel: ObservableObject {
         case .idle:
             Task {
                 do {
-                    
-                    HUD.loading()
+                    buttonState = .loading
                     let result = try await MultiBackupManager.shared.registerKeyToChain(on: currentType)
-                    HUD.dismissLoading()
                     if result {
                         toggleProcess(process: .upload)
+                        onClickButton()
                     } else {
+                        buttonState = .enabled
                         HUD.error(title: "create error on chain")
                     }
                 } catch {
-                    HUD.dismissLoading()
+                    buttonState = .enabled
                 }
             }
         case .upload:
             Task {
                 do {
-                    HUD.loading()
+                    buttonState = .loading
                     try await MultiBackupManager.shared.backupKey(on: currentType)
                     toggleProcess(process: .regist)
-                    HUD.dismissLoading()
+                    onClickButton()
                 } catch {
-                    //TODO:
-                    let str = "error:\(error)"
-                    UIPasteboard.general.string = str
-                    
-                    HUD.dismissLoading()
+                    buttonState = .enabled
                     hasError = true
                     log.error(error)
                 }
@@ -155,11 +153,13 @@ class BackupUploadViewModel: ObservableObject {
         case .regist:
             Task {
                 do {
-                    HUD.loading()
+                    buttonState = .loading
                     try await MultiBackupManager.shared.syncKeyToServer(on: currentType)
                     toggleProcess(process: .finish)
-                    HUD.dismissLoading()
+                    onClickButton()
+                    buttonState = .enabled
                 } catch {
+                    buttonState = .enabled
                     HUD.dismissLoading()
                     log.error(error)
                 }

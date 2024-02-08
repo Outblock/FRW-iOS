@@ -115,7 +115,7 @@ extension RestoreMultiConnectViewModel {
         let key = LocalEnvManager.shared.backupAESKey
         do {
             let dataHexString = try MultiBackupManager.shared.encryptMnemonic(mnemonicData, password: key)
-            let publicKey = hdWallet.getPublicKey()
+            let publicKey = hdWallet.flowAccountP256Key.publicKey.description
             let item = MultiBackupManager.StoreItem(address: "", userId: "", userName: "", publicKey: publicKey, data: dataHexString, keyIndex: 0, signAlgo: Flow.SignatureAlgorithm.ECDSA_P256.index, hashAlgo: Flow.HashAlgorithm.SHA2_256.index, weight: 500, deviceInfo: IPManager.shared.toParams())
             phraseItem = item
             let nextIndex = currentIndex + 1

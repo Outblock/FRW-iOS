@@ -226,6 +226,9 @@ extension WalletManager {
     }
     
     func getCurrentPublicKey() -> String? {
+        if let accountkey = flowAccountKey {
+            return accountkey.publicKey.description
+        }
         return hdWallet?.getPublicKey()
     }
     

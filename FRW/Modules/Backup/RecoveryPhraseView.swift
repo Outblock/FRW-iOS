@@ -206,6 +206,7 @@ struct WordListView: View {
                         .minimumScaleFactor(0.5)
                 }.frame(maxWidth: .infinity, alignment: .leading)
             }
+            Spacer()
         }
         .frame(minWidth: 0, maxWidth: .infinity)
     }

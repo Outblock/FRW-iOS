@@ -779,7 +779,7 @@
 "staking_collection_upgrade" = "Staking Collection Upgrade";
 "setup_stake_desc" = "If you have existing nodes and delegations, they are safe, and will be migrated to your new Staking Collection during the transaction.";
 "staking_setup_failed" = "Set Up Stake failed";
-"enable_sandbox_failed" = "Enable Sandbox failed";
+"enable_sandbox_failed" = "Enable crescendo failed";
 "widget_name" = "Flow Ref Widget";
 "widget_desc" = "Show your favorite nft.";
 "scan" = "Scan";
@@ -920,4 +920,7 @@
 "verify" = "Verify";
 "restore_phrase_you_created_desc" = "This is a 15 word phrase you were given when you created your previous wallet.";
 "restore_enter_rp_placeholder" = "Enter your Recovery Phrase (15 words)";
-
+"bug_report" = "Bug Report";
+"wrong_network_title" = "Wrong Network";
+"switch_to_mainnet" = "Swicth to Mainnet";
+"wrong_network_des" = "You can only create backup on mainnet.";

@@ -18,7 +18,7 @@ extension FRWAPI {
         case userWallet
         case search(String)
         case manualCheck
-        case crescendo
+        case crescendo(NetworkRequest)
         case keys
         case devices(String)
         case syncDevice(SyncInfo.DeviceInfo)
@@ -54,7 +54,7 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
         case .manualCheck:
             return "/v1/user/manualaddress"
         case .crescendo:
-            return "/v1/user/address/crescendo"
+            return "/v1/user/address/network"
         case .keys:
             return "/v1/user/keys"
         case .devices:
@@ -77,7 +77,7 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
 
     var task: Task {
         switch self {
-        case .userAddress, .userInfo, .userWallet, .manualCheck, .crescendo, .keys:
+        case .userAddress, .userInfo, .userWallet, .manualCheck, .keys:
             return .requestPlain
         case let .checkUsername(username):
             return .requestParameters(parameters: ["username": username], encoding: URLEncoding.queryString)
@@ -92,6 +92,8 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
         case let .syncDevice(request):
             return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         case let .addSigned(request):
+            return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
+        case let .crescendo(request):
             return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         }
     }

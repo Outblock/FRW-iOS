@@ -100,7 +100,7 @@ extension MultiBackupManager {
         }
         
         let dataHexString = try encryptMnemonic(mnemonicData, password: type.needPin ? pinCode : password)
-        let publicKey = hdWallet.getPublicKey()
+        let publicKey = hdWallet.flowAccountP256Key.publicKey.description
         
         let result = try await addKeyToFlow(key: publicKey)
         if !result {
@@ -114,7 +114,7 @@ extension MultiBackupManager {
         }
         
         let flowPublicKey = Flow.PublicKey(hex: publicKey)
-        let flowKey = Flow.AccountKey(publicKey: flowPublicKey, signAlgo: .ECDSA_SECP256k1, hashAlgo: .SHA2_256, weight: 500)
+        let flowKey = Flow.AccountKey(publicKey: flowPublicKey, signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 500)
         let backupName = type.showName()
         let deviceInfo = SyncInfo.DeviceInfo(accountKey: flowKey.toCodableModel(), deviceInfo: IPManager.shared.toParams(), backupInfo: BackupInfoModel(create_time: nil, name: backupName, type: type.toBackupType().rawValue))
         
@@ -349,7 +349,7 @@ extension MultiBackupManager {
     
     private func addKeyToFlow(key: String) async throws -> Bool {
         let address = WalletManager.shared.address
-        let accountKey = Flow.AccountKey(publicKey: Flow.PublicKey(hex: key), signAlgo: .ECDSA_SECP256k1, hashAlgo: .SHA2_256, weight: 500)
+        let accountKey = Flow.AccountKey(publicKey: Flow.PublicKey(hex: key), signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 500)
         let flowId = try await FlowNetwork.addKeyToAccount(address: address, accountKey: accountKey, signers: [WalletManager.shared, RemoteConfigManager.shared])
         guard let data = try? JSONEncoder().encode(key) else {
             return false
@@ -464,7 +464,7 @@ extension MultiBackupManager {
         }
         
         public var signatureAlgo: Flow.SignatureAlgorithm {
-            .ECDSA_SECP256k1
+            .ECDSA_P256
         }
         
         public var keyIndex: Int {
@@ -486,14 +486,14 @@ extension MultiBackupManager {
                 throw BackupError.missingMnemonic
             }
             
-            var privateKey = hdWallet.getKeyByCurve(curve: .secp256k1, derivationPath: WalletManager.flowPath)
+            var privateKey = hdWallet.getKeyByCurve(curve: .nist256p1, derivationPath: WalletManager.flowPath)
             let hashedData = Hash.sha256(data: signableData)
             
             defer {
                 privateKey = PrivateKey()
             }
             
-            guard var signature = privateKey.sign(digest: hashedData, curve: .secp256k1) else {
+            guard var signature = privateKey.sign(digest: hashedData, curve: .nist256p1) else {
                 throw LLError.signFailed
             }
             

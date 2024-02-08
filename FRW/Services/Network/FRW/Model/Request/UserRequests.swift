@@ -81,3 +81,8 @@ extension DeviceInfoRequest {
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 }
+
+struct NetworkRequest: Codable {
+    let accountKey: AccountKey
+    let network: String
+}

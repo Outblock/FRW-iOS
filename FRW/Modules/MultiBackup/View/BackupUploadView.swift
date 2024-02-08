@@ -58,7 +58,7 @@ struct BackupUploadView: RouteableView {
             Spacer()
             
             VPrimaryButton(model: ButtonStyle.primary,
-                           state: .enabled,
+                           state: viewModel.buttonState,
                            action: {
                                viewModel.onClickButton()
                            }, title: viewModel.currentButton)

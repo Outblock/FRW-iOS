@@ -34,6 +34,13 @@ class BackupGDTarget: BackupTarget {
         return api != nil
     }
     
+    func relogin() async throws {
+        GIDSignIn.sharedInstance.signOut()
+        var user = try await googleUserLogin()
+        user = try await addScopesIfNeeded(user: user)
+        createGoogleDriveService(user: user)
+    }
+    
     private func tryToRestoreLogin() {
         if !GIDSignIn.sharedInstance.hasPreviousSignIn() {
             return

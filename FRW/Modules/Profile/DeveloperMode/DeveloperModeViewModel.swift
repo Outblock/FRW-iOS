@@ -89,7 +89,9 @@ extension DeveloperModeViewModel {
         
         Task {
             do {
-                let id: String = try await Network.request(FRWAPI.User.crescendo)
+                
+                let request = NetworkRequest(accountKey: AccountKey(hashAlgo: WalletManager.shared.hashAlgo.index, publicKey: WalletManager.shared.getCurrentPublicKey() ?? "", signAlgo: WalletManager.shared.signatureAlgo.index, weight: 1000), network: "crescendo")
+                let id: String = try await Network.request(FRWAPI.User.crescendo(request))
                 let txId = Flow.ID(hex: id)
                 
                 flow.configure(chainID: .crescendo)
