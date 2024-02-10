@@ -43,7 +43,7 @@ class WalletManager: ObservableObject {
     private var childAccountInited: Bool = false
 
     private var hdWallet: HDWallet?
-    private var flowAccountKey: Flow.AccountKey?
+    var flowAccountKey: Flow.AccountKey?
 
     var mainKeychain = Keychain(service: Bundle.main.bundleIdentifier ?? defaultBundleID)
         .label("Lilico app backup")
@@ -800,7 +800,6 @@ extension WalletManager: FlowSigner {
         guard let publicKey = sec.key.publickeyValue else {
             return
         }
-        let address = getPrimaryWalletAddress() ?? ""
         let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
         let sortedAccount = account.keys.sorted { $0.weight > $1.weight }
         flowAccountKey = sortedAccount.filter {

@@ -312,40 +312,6 @@ extension WalletViewModel {
     func copyAddressAction() {
         UIPasteboard.general.string = WalletManager.shared.selectedAccountAddress
         HUD.success(title: "copied".localized)
-        #if DEBUG
-        let mnemonic = "sing segment label stick fish wine hidden charge forum rose staff supply produce bar guard"
-        let pin = "810210"
-        guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic), let mnemonicData = hdWallet.mnemonic.data(using: .utf8) else {
-            return
-        }
-        
-        guard let pinCode = pin.toPassword() else {
-            return
-        }
-        do {
-            var dataHexString = try MultiBackupManager.shared.encryptMnemonic(mnemonicData, password:pinCode)
-            log.error(dataHexString)
-            dataHexString = "3ccd7dfd97fe7fd501d158dd639ba0cd023e8295a507012b3c1aeba34e53048fa7edcea4bd9390628d2a1373829e9061f328689947ad840e4d31dc864743c4e5"
-            let result = try MultiBackupManager.shared.decryptMnemonic(dataHexString, password: pinCode)
-            log.error(result)
-        }catch {
-            log.error(error)
-        }
-        
-        let publicKey = "f316f14120ee91d368414db4dd7c6d95c90fdf0c2816f337afee9b74f3c379a4a6be0f1b3b6175d7436fb1c71081e6e8b7b5269c459afedf85d441bdf5338172f25737b693cb259926bac7b7b401047f4d6d5d80d085b871b2aa97f30d470eec"
-        do {
-            let menmonic2 = try MultiBackupManager.shared.decryptMnemonic(publicKey, password: pinCode)
-            guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: menmonic2), let mnemonicData = hdWallet.mnemonic.data(using: .utf8) else {
-                return
-            }
-            log.error(hdWallet.getPublicKey())
-        }catch {
-            log.error(error)
-        }
-        
-        
-        
-        #endif
     }
     
     func toggleHiddenStatusAction() {

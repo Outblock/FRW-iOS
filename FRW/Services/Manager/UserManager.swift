@@ -222,9 +222,7 @@ extension UserManager {
     }
     
     func restoreLogin(withMnemonic mnemonic: String, userId: String? = nil) async throws {
-        guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) else {
-            throw LLError.incorrectPhrase
-        }
+        
         
         if let uid = userId {
             let address = MultiAccountStorage.shared.getWalletInfo(uid)?.currentNetworkWalletModel?.getAddress ?? "0x"
@@ -244,10 +242,16 @@ extension UserManager {
             loginAnonymousIfNeeded()
             throw LLError.restoreLoginFailed
         }
-
-        var publicKey = hdWallet.getPublicKey()
-        guard var signature = hdWallet.sign(token) else {
-            throw LLError.restoreLoginFailed
+        var publicKey = ""
+        var signature = ""
+        var mnemonicStr = ""
+        if let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) {
+            publicKey = hdWallet.getPublicKey()
+            guard var signToken = hdWallet.sign(token) else {
+                throw LLError.restoreLoginFailed
+            }
+            signature = signToken
+            mnemonicStr = hdWallet.mnemonic
         }
         
         if let data = try WallectSecureEnclave.Store.fetch(by: userId ?? "" ), !data.isEmpty, let userToken = token.AddUserMessage() {
@@ -275,7 +279,7 @@ extension UserManager {
             throw LLError.restoreLoginFailed
         }
 
-        try await finishLogin(mnemonic: hdWallet.mnemonic, customToken: customToken)
+        try await finishLogin(mnemonic: mnemonicStr, customToken: customToken)
     }
     
     func restoreLogin(userId: String) async throws {
