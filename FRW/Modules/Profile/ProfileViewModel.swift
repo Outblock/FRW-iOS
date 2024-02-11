@@ -53,13 +53,13 @@ extension ProfileView {
                 .receive(on: DispatchQueue.main)
                 .map { $0 }
                 .sink { [weak self] activatedUID in
-                    self?.refreshBackupState()
+//                    self?.refreshBackupState()
                 }.store(in: &cancelSets)
             
             NotificationCenter.default.publisher(for: .backupTypeDidChanged)
                 .receive(on: DispatchQueue.main)
                 .sink { _ in
-                    self.refreshBackupState()
+//                    self.refreshBackupState()
                 }.store(in: &cancelSets)
             
             PushHandler.shared.$isPushEnabled

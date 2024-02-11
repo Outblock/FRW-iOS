@@ -46,7 +46,7 @@ class RemoteConfigManager {
         case .testnet:
             return config?.payer.testnet.address ?? emptyAddress
         case .crescendo:
-            return config?.payer.crescendo.address ?? emptyAddress
+            return config?.payer.crescendo?.address ?? emptyAddress
         default:
             return emptyAddress
         }
@@ -63,7 +63,7 @@ class RemoteConfigManager {
         case .testnet:
             return config?.payer.testnet.keyID ?? 0
         case .crescendo:
-            return config?.payer.crescendo.keyID ?? 0
+            return config?.payer.crescendo?.keyID ?? 0
         default:
             return 0
         }

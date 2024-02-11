@@ -40,7 +40,7 @@ extension RemoteConfigManager {
     struct Payer: Codable {
         let mainnet: PayerInfo
         let testnet: PayerInfo
-        let crescendo: PayerInfo
+        let crescendo: PayerInfo?
     }
 
     // MARK: - Net

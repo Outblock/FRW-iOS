@@ -429,14 +429,7 @@ extension ProfileView.ActionSectionView.Row {
     var style: ProfileView.SettingItemCell.Style {
         switch self {
         case .backup(let vm):
-            switch vm.state.backupFetchingState {
-            case .manually, .none:
-                return .desc
-            case .fetching:
-                return .progress
-            case .synced, .failed:
-                return .sysImage
-            }
+            return .arrow
         case .security:
             return .arrow
         case .linkedAccount:
@@ -449,7 +442,7 @@ extension ProfileView.ActionSectionView.Row {
         case .backup(let vm):
             switch vm.state.backupFetchingState {
             case .manually:
-                return "manually".localized
+                return ""
             case .none:
                 return ""
             default:
@@ -465,14 +458,7 @@ extension ProfileView.ActionSectionView.Row {
     var imageName: String {
         switch self {
         case .backup(let vm):
-            switch vm.state.backupFetchingState {
-            case .synced:
-                return .checkmarkSelected
-            case .failed:
-                return .warning
-            default:
-                return ""
-            }
+            return ""
 
         default:
             return ""
@@ -482,15 +468,7 @@ extension ProfileView.ActionSectionView.Row {
     var sysImageColor: Color {
         switch self {
         case .backup(let vm):
-            switch vm.state.backupFetchingState {
-            case .synced:
-                return Color.LL.Success.success2
-            case .failed:
-                return Color.LL.Warning.warning2
-            default:
-                return .clear
-            }
-
+            return .clear
         default:
             return .clear
         }

@@ -449,7 +449,7 @@ extension WalletManager {
     
     private func restoreMnemonicForCurrentUser() {
         if let uid = UserManager.shared.activatedUID {
-            if !restoreMnemonicFromKeychain(uid: uid) {
+            if !restoreMnemonicFromKeychain(uid: uid) && UserManager.shared.userType == .phrase{
                 HUD.error(title: "no_private_key".localized)
             }
         }
