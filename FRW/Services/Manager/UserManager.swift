@@ -335,6 +335,9 @@ extension UserManager {
 
 extension UserManager {
     func switchAccount(withUID uid: String) async throws {
+        if !currentNetwork.isMainnet {
+            WalletManager.shared.changeNetwork(.mainnet)
+        }
         guard let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid) else {
             log.error("\(uid) mnemonic is missing")
             throw WalletError.mnemonicMissing
