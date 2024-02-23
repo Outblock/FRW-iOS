@@ -526,7 +526,7 @@
 "USD::message" = "米ドル";
 "transaction_list_transaction_x" = "トランザクション (%d)";
 "Deposit::message" = "デポジット";
-"transaction_list_transfer_x" = "アセットの変更 (%d)";
+"transaction_list_transfer_x" = "アセットの変更";
 "Enable_token::message" = "トークンを有効にする";
 "transaction_exec" = "トランザクションを実行する";
 "Working_on_it::message" = "取り組んでいます...";

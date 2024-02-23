@@ -526,7 +526,7 @@
 "USD::message" = "USD";
 "transaction_list_transaction_x" = "Transaction (%d)";
 "Deposit::message" = "Deposit";
-"transaction_list_transfer_x" = "Transfer (%d)";
+"transaction_list_transfer_x" = "Transfer";
 "Enable_token::message" = "Enable token";
 "transaction_exec" = "Exec Transaction";
 "Working_on_it::message" = "Working on it...";

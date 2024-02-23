@@ -526,7 +526,7 @@
 "USD::message" = "美元";
 "transaction_list_transaction_x" = "交易（%d）";
 "Deposit::message" = "订金";
-"transaction_list_transfer_x" = "资产变动（%d）";
+"transaction_list_transfer_x" = "资产变动";
 "Enable_token::message" = "启用令牌";
 "transaction_exec" = "执行交易";
 "Working_on_it::message" = "正在努力...";

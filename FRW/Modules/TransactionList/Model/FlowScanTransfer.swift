@@ -56,7 +56,7 @@ struct FlowScanTransfer: Codable {
     }
     
     var statusText: String {
-        if status != "Sealed" {
+        if status?.lowercased() != "Sealed".lowercased() {
             return "transaction_pending".localized
         }
         

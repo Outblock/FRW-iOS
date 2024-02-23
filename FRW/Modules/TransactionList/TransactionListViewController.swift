@@ -24,7 +24,7 @@ class TransactionListViewController: UIViewController {
     
     private lazy var segmentDataSource: JXSegmentedTitleDataSource = {
         let ds = JXSegmentedTitleDataSource()
-        ds.titles = [ "transaction_list_transfer_x".localized(transferHandler.totalCount)]
+        ds.titles = [ "transaction_list_transfer_x".localized()]
         let textColor = UIColor(named: "text.black.8")!
         ds.titleNormalColor = textColor
         ds.titleSelectedColor = textColor
@@ -111,7 +111,7 @@ class TransactionListViewController: UIViewController {
 
 extension TransactionListViewController {
     private func reloadCounts() {
-        segmentDataSource.titles = ["transaction_list_transfer_x".localized(transferHandler.totalCount)]
+        segmentDataSource.titles = ["transaction_list_transfer_x".localized()]
         segmentView.reloadData()
     }
 }

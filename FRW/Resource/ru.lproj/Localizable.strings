@@ -526,7 +526,7 @@
 "USD::message" = "доллар США";
 "transaction_list_transaction_x" = "Транзакция (%d)";
 "Deposit::message" = "Депозит";
-"transaction_list_transfer_x" = "Перевод (%d)";
+"transaction_list_transfer_x" = "Перевод";
 "Enable_token::message" = "Включить токен";
 "transaction_exec" = "Выполнить транзакцию";
 "Working_on_it::message" = "Работаю над этим...";

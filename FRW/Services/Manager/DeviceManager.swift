@@ -23,10 +23,7 @@ class DeviceManager: ObservableObject {
         let validAccount = account.keys.filter { !$0.revoked }
         
         let filterList = list.filter { infoModel in
-            let keys = keyList.filter { keyModel in
-                keyModel.device.id == infoModel.id
-            }
-            let accounts = keys.filter { keyModel in
+            let accounts = keyList.filter { keyModel in
                 let result = validAccount.filter { $0.publicKey.description == keyModel.pubkey.publicKey }
                 return result.count > 0
             }
