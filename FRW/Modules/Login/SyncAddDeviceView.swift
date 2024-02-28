@@ -76,10 +76,10 @@ struct SyncAddDeviceView: View {
     
     var location: String {
         var res = ""
-        if viewModel.model.deviceInfo.city != nil {
+        if viewModel.model.deviceInfo.city != nil && !viewModel.model.deviceInfo.city!.isEmpty {
             res += viewModel.model.deviceInfo.city!
         }
-        if viewModel.model.deviceInfo.country != nil {
+        if viewModel.model.deviceInfo.country != nil && !viewModel.model.deviceInfo.country!.isEmpty {
             res += ",\(viewModel.model.deviceInfo.country!)"
         }
         return res

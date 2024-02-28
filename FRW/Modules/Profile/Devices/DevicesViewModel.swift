@@ -96,10 +96,10 @@ struct DeviceInfoModel: Codable,Identifiable {
     
     func showLocation() -> String {
         var res = ""
-        if city != nil {
+        if city != nil && !city!.isEmpty {
             res += city!
         }
-        if country != nil {
+        if country != nil && !country!.isEmpty {
             res += ",\(country!)"
         }
         return res
