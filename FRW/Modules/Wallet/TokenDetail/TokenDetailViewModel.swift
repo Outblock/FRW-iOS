@@ -5,10 +5,9 @@
 //  Created by Selina on 1/7/2022.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 import SwiftUICharts
-
 
 extension TokenDetailView {
     struct Quote: Codable {
@@ -162,7 +161,7 @@ extension TokenDetailViewModel {
     
     var hasRateAndChartData: Bool {
         if let token = ListedToken(rawValue: token.symbol ?? "") {
-            if case .query(_) = token.priceAction {
+            if case .query = token.priceAction {
                 return true
             }
         }
@@ -179,7 +178,7 @@ extension TokenDetailViewModel {
     }
     
     func receiveAction() {
-        Router.route(to: RouteMap.Wallet.receive)
+        Router.route(to: RouteMap.Wallet.receiveQR)
     }
     
     func changeSelectRangeTypeAction(_ type: TokenDetailView.ChartRangeType) {
@@ -200,7 +199,7 @@ extension TokenDetailViewModel {
     }
     
     func moreTransfersAction() {
-        Router.route(to: RouteMap.Wallet.transactionList(self.token.contractId))
+        Router.route(to: RouteMap.Wallet.transactionList(token.contractId))
     }
     
     func transferDetailAction(_ model: FlowScanTransfer) {
@@ -211,6 +210,11 @@ extension TokenDetailViewModel {
     
     func stakeDetailAction() {
         StakingManager.shared.goStakingAction()
+    }
+
+    // move token
+    func onMoveToken() {
+        Router.route(to: RouteMap.Wallet.moveToken)
     }
 }
 
@@ -289,7 +293,7 @@ extension TokenDetailViewModel {
     }
     
     var transactionsCacheKey: String {
-        return "token_detail_transaction_cache_\(self.token.contractId)"
+        return "token_detail_transaction_cache_\(token.contractId)"
     }
     
     private func fetchTransactionsData() {

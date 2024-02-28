@@ -924,3 +924,9 @@
 "wrong_network_title" = "Wrong Network";
 "switch_to_mainnet" = "Swicth to Mainnet";
 "wrong_network_des" = "You can only create backup on mainnet.";
+"enable_path" = "Enable the path to ";
+"enable_evm_tip" = "Manage multi-chain assets seamlessly.";
+"receiving_qr" = "Receiving QR Code";
+"current_chain" = "Current Chain";
+"move" = "Move";
+"choose_account" = "";

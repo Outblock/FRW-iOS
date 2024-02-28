@@ -169,6 +169,8 @@ extension RouteMap {
         case backToTokenDetail
         case jailbreakAlert
         case pushAlert
+        case receiveQR
+        case moveToken
     }
 }
 
@@ -237,6 +239,10 @@ extension RouteMap.Wallet: RouterTarget {
             contentNavi.modalPresentationCapturesStatusBarAppearance = true
             contentNavi.modalPresentationStyle = .fullScreen
             Router.topPresentedController().present(contentNavi, animated: true)
+        case .receiveQR:
+            navi.present(content: ReceiveQRView())
+        case .moveToken:
+            navi.present(content: MoveTokenView())
         }
     }
 }

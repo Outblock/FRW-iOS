@@ -5,9 +5,9 @@
 //  Created by Selina on 4/1/2023.
 //
 
-import SwiftUI
-import Kingfisher
 import Combine
+import Kingfisher
+import SwiftUI
 
 private let SideOffset: CGFloat = 65
 
@@ -22,12 +22,14 @@ class SideMenuViewModel: ObservableObject {
     @Published var nftCount: Int = 0
     @Published var accountPlaceholders: [AccountPlaceholder] = []
     
+    @Published var enableEVM: Bool = false
+    
     private var cancelSets = Set<AnyCancellable>()
     
     init() {
         nftCount = LocalUserDefaults.shared.nftCount
         
-        NotificationCenter.default.publisher(for: .nftCountChanged).sink { [weak self] noti in
+        NotificationCenter.default.publisher(for: .nftCountChanged).sink { [weak self] _ in
             DispatchQueue.main.async {
                 self?.nftCount = LocalUserDefaults.shared.nftCount
             }
@@ -39,10 +41,10 @@ class SideMenuViewModel: ObservableObject {
             .sink { [weak self] uidList in
                 guard let self = self else { return }
                 
-                self.accountPlaceholders = Array(uidList.dropFirst().prefix(2)).map({ uid in
+                self.accountPlaceholders = Array(uidList.dropFirst().prefix(2)).map { uid in
                     let avatar = MultiAccountStorage.shared.getUserInfo(uid)?.avatar.convertedAvatarString() ?? ""
                     return AccountPlaceholder(uid: uid, avatar: avatar)
-                })
+                }
             }.store(in: &cancelSets)
     }
     
@@ -70,6 +72,8 @@ class SideMenuViewModel: ObservableObject {
     func switchAccountMoreAction() {
         Router.route(to: RouteMap.Profile.switchProfile)
     }
+    
+    func onClickEnableEVM() {}
 }
 
 struct SideMenuView: View {
@@ -84,6 +88,11 @@ struct SideMenuView: View {
             ScrollView {
                 VStack {
                     cardView
+                    
+                    enableEVMView
+                        .padding(.top, 24)
+                        .visibility(vm.enableEVM ? .gone : .visible)
+                    
                     scanView
                         .padding(.top, 24)
                     addressListView
@@ -95,11 +104,9 @@ struct SideMenuView: View {
             .background(Color.LL.background)
             
             // placeholder, do not use this
-            VStack {
-                
-            }
-            .frame(width: SideOffset)
-            .frame(maxHeight: .infinity)
+            VStack {}
+                .frame(width: SideOffset)
+                .frame(maxHeight: .infinity)
         }
     }
     
@@ -107,10 +114,10 @@ struct SideMenuView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 KFImage.url(URL(string: um.userInfo?.avatar.convertedAvatarString() ?? ""))
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 72, height: 72)
@@ -142,6 +149,36 @@ struct SideMenuView: View {
         }
     }
     
+    var enableEVMView: some View {
+        return VStack(alignment: .leading, spacing: 0) {
+            Image("icon_planet")
+                .resizable()
+                .frame(width: 36, height: 36)
+            HStack(spacing: 0) {
+                Text("enable_path".localized)
+                    .font(.inter(size: 16, weight: .semibold))
+                    .foregroundStyle(Color.Theme.Text.black8)
+                Text("FlowEVM")
+                    .font(.inter(size: 16, weight: .semibold))
+                    .foregroundStyle(Color.Theme.Text.black8)
+                Text(" !")
+                    .font(.inter(size: 16, weight: .semibold))
+                    .foregroundStyle(Color.Theme.Text.black8)
+                Spacer()
+                Image("right-arrow-stroke")
+                    .resizable()
+                    .frame(width: 20, height: 20)
+            }
+            Text("enable_evm_tip".localized)
+                .font(.inter(size: 14))
+                .foregroundStyle(Color.Theme.Text.black3)
+        }
+        .cornerRadius([.bottomLeading, .bottomTrailing], 16)
+        .onTapGesture {
+            vm.onClickEnableEVM()
+        }
+    }
+    
     var multiAccountView: some View {
         HStack(spacing: 15) {
             ForEach(vm.accountPlaceholders, id: \.uid) { placeholder in
@@ -149,10 +186,10 @@ struct SideMenuView: View {
                     vm.switchAccountAction(placeholder.uid)
                 } label: {
                     KFImage.url(URL(string: placeholder.avatar))
-                        .placeholder({
+                        .placeholder {
                             Image("placeholder")
                                 .resizable()
-                        })
+                        }
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 28, height: 28)
@@ -260,10 +297,10 @@ struct SideMenuView: View {
         } label: {
             HStack(spacing: 15) {
                 KFImage.url(URL(string: childAccount.icon))
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 24, height: 24)
@@ -274,12 +311,21 @@ struct SideMenuView: View {
                         Text("@\(childAccount.aName)")
                             .foregroundColor(Color.LL.Neutrals.text)
                             .font(.inter(size: 14, weight: .semibold))
+                        
+                        Text("EVM")
+                            .font(.inter(size: 9))
+                            .foregroundStyle(Color.Theme.Text.white9)
+                            .frame(width: 36, height: 16)
+                            .background(Color.Theme.Accent.blue)
+                            .cornerRadius(8)
+                            .visibility(childAccount.isEvm ? .visible : .gone)
                     }
                     .frame(alignment: .leading)
                     
                     Text(childAccount.addr ?? "")
                         .foregroundColor(Color.LL.Neutrals.text3)
                         .font(.inter(size: 12))
+                        .lineBreakMode(.byTruncatingMiddle)
                 }
                 .frame(alignment: .leading)
                 
@@ -381,7 +427,7 @@ struct SideContainerView: View {
                 dragOffset = value.translation
                 debugPrint("dragging: \(dragOffset)")
             }
-            .onEnded { value in
+            .onEnded { _ in
                 if !vm.isOpen && dragOffset.width > 20 {
                     vm.isOpen = true
                 }

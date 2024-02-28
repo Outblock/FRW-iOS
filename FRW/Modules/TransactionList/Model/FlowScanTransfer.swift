@@ -5,8 +5,8 @@
 //  Created by Selina on 9/9/2022.
 //
 
-import UIKit
 import SwiftUI
+import UIKit
 
 extension FlowScanTransfer {
     enum TransferType: Int, Codable {
@@ -44,7 +44,7 @@ struct FlowScanTransfer: Codable {
     }
     
     var swiftUIStatusColor: Color {
-        if status != "Sealed" {
+        if status?.lowercased() != "Sealed".lowercased() {
             return Color.LL.Neutrals.text3
         }
         
@@ -74,10 +74,10 @@ struct FlowScanTransfer: Codable {
         }
         
         var targetStr = ""
-        if self.transferType == TransferType.send {
-            targetStr = "transfer_to_x".localized(self.receiver ?? "")
-        } else if self.sender != nil {
-            targetStr = "transfer_from_x".localized(self.sender ?? "")
+        if transferType == TransferType.send {
+            targetStr = "transfer_to_x".localized(receiver ?? "")
+        } else if sender != nil {
+            targetStr = "transfer_from_x".localized(sender ?? "")
         }
         
         return "\(dateString) \(targetStr)"
@@ -88,7 +88,7 @@ struct FlowScanTransfer: Codable {
         f.maximumFractionDigits = 8
         f.minimumFractionDigits = 0
         f.roundingMode = .halfUp
-        if let amountString = self.amount, let doubleAmount = Double(amountString), let finalString = f.string(for: NSNumber(value: doubleAmount / 100000000.0).decimalValue) {
+        if let amountString = amount, let doubleAmount = Double(amountString), let finalString = f.string(for: NSNumber(value: doubleAmount / 100000000.0).decimalValue) {
             return finalString
         } else {
             return "-"
