@@ -29,6 +29,8 @@ struct DevicesView: RouteableView {
             } label: {
                 HStack(spacing: 8) {
                     Image("scan-stroke")
+                        .renderingMode(.template)
+                        .foregroundColor(Color.Theme.Text.white9)
                         .frame(width: 24, height: 24)
                     Text("add_other_device".localized)
                         .font(.inter(size: 16, weight: .semibold))
@@ -80,7 +82,7 @@ extension DevicesView {
         var isCurrent: Bool = false
         var body: some View {
             HStack(alignment: .top) {
-                Image("device_1")
+                Image("device_2")
                     .frame(width: 24, height: 24)
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
