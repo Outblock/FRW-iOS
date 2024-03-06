@@ -306,7 +306,7 @@
 "Your__address__is__currently__processing::message" = "Your address is currently processing another transaction";
 "developer_mode" = "Developer Mode";
 "Transaction__created::message" = "Transaction created";
-"welcome_to_lilico" = "Welcome to Flow Ref!";
+"welcome_to_lilico" = "Welcome to Flow Reference Wallet!";
 "Search__Address__or__Flow__domain::message" = "Search, Address(0x) or Flow domain";
 "welcome_desc" = "We will do our best to protect your assets!";
 "Search__the__ID::message" = "Search the ID: ";

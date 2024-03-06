@@ -306,7 +306,7 @@
 "Your__address__is__currently__processing::message" = "您的地址当前正在处理另一笔交易";
 "developer_mode" = "开发者模式";
 "Transaction__created::message" = "交易已创建";
-"welcome_to_lilico" = "欢迎来到流核！";
+"welcome_to_lilico" = "欢迎来到 Flow Reference Wallet！";
 "Search__Address__or__Flow__domain::message" = "搜索、地址(0x) 或流域";
 "welcome_desc" = "加入我们，解锁所有精彩的新体验！";
 "Search__the__ID::message" = "搜索ID：";
