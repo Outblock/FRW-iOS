@@ -35,6 +35,8 @@
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLIconFile</key>
+			<string></string>
 			<key>CFBundleURLName</key>
 			<string>io.outblock.lilico</string>
 			<key>CFBundleURLSchemes</key>
@@ -79,20 +81,20 @@
 		<string>_Proxyman._tcp</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>Flow Ref need camera to scan QR Code</string>
+	<string>Flow Wallet need camera to scan QR Code</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Flow Ref use Face ID to secure your assests</string>
+	<string>Flow Wallet use Face ID to secure your assests</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Atlantis would use Bonjour Service to discover Proxyman app from your local network.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Flow Ref requires access to Microphone</string>
+	<string>Flow Wallet requires access to Microphone</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Flow Ref requires access to photo library</string>
+	<string>Flow Wallet requires access to photo library</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Flow Ref requires access to photo library</string>
+	<string>Flow Wallet requires access to photo library</string>
 	<key>NSUbiquitousContainers</key>
 	<dict>
-		<key>iCloud.io.outblock.lilico</key>
+		<key>iCloud.com.flowfoundation.wallet</key>
 		<dict>
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>

@@ -56,7 +56,7 @@
 	</array>
 	<key>NSUbiquitousContainers</key>
 	<dict>
-		<key>iCloud.io.outblock.lilico.dev</key>
+		<key>iCloud.com.flowfoundation.wallet.dev</key>
 		<dict>
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>

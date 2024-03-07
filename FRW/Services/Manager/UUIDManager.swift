@@ -11,7 +11,7 @@ import KeychainAccess
 
 struct UUIDManager {
     static func appUUID() -> String {
-        var service = Bundle.main.bundleIdentifier ?? "io.outblock.lilico"
+        var service = Bundle.main.bundleIdentifier ?? "com.flowfoundation.wallet"
         service += ".uuid"
         let mainKeychain = Keychain(service:service)
             .label("Flow Core UUID")

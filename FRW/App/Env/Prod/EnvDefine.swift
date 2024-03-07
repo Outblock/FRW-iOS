@@ -7,7 +7,7 @@
 
 import Foundation
 
-let AppGroupName = "group.io.outblock.lilico"
+let AppGroupName = "group.com.flowfoundation.wallet"
 let isDevModel = false
 let FirstFavNFTImageURL = "FirstFavNFTImageURL"
 
