@@ -7544,7 +7544,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "FRW/App/Env/Dev/FRW-dev.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FRW/Resource/Preview Content\"";
 				DEVELOPMENT_TEAM = 444MY26W7F;
 				ENABLE_PREVIEWS = YES;
@@ -7571,7 +7571,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.4;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7589,7 +7589,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "FRW/App/Env/Dev/FRW-dev.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FRW/Resource/Preview Content\"";
 				DEVELOPMENT_TEAM = 444MY26W7F;
 				ENABLE_PREVIEWS = YES;
@@ -7613,7 +7613,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.4;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7847,7 +7847,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.LilicoNotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.NotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7875,7 +7875,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.LilicoNotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.NotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7903,7 +7903,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.LilicoDevNotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.DevNotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7931,7 +7931,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.LilicoDevNotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.DevNotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7961,7 +7961,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.LilicoDevWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.DevWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7991,7 +7991,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.LilicoDevWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.DevWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -8021,7 +8021,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.LilicoWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -8051,7 +8051,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.LilicoWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;

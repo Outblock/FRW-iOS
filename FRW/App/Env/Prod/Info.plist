@@ -21,7 +21,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0.4</string>
+	<string>1.0.0</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -29,7 +29,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.556216024625-sqgk4gaou6fc01qlv9ku9fr5i5o9bpif</string>
+				<string>com.googleusercontent.apps.556216024625-mrsokmoq04mgnm87q8rpqfseo6tac1ag</string>
 			</array>
 		</dict>
 		<dict>
@@ -38,11 +38,9 @@
 			<key>CFBundleURLIconFile</key>
 			<string></string>
 			<key>CFBundleURLName</key>
-			<string>io.outblock.lilico</string>
+			<string>com.flowfoundation.wallet</string>
 			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>lilico</string>
-			</array>
+			<array/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
@@ -64,7 +62,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>1</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>
