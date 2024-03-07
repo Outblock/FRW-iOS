@@ -1000,6 +1000,12 @@
 		4E8DD9FD282E52110016A931 /* JSONStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8DD9FB282E52110016A931 /* JSONStorage.swift */; };
 		4E90592F2B1792F10029FC66 /* SyncAddDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */; };
 		4E9059302B1792F10029FC66 /* SyncAddDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */; };
+		4E9621D52B984EF3006859AD /* CadenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D42B984EF3006859AD /* CadenceManager.swift */; };
+		4E9621D62B984EF3006859AD /* CadenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D42B984EF3006859AD /* CadenceManager.swift */; };
+		4E9621D82B9850CF006859AD /* FRWAPI+Cadence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */; };
+		4E9621D92B9850CF006859AD /* FRWAPI+Cadence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */; };
+		4E9621DB2B985BAB006859AD /* cloudfunctions.json in Resources */ = {isa = PBXBuildFile; fileRef = 4E9621DA2B985BAB006859AD /* cloudfunctions.json */; };
+		4E9621DC2B985BAB006859AD /* cloudfunctions.json in Resources */ = {isa = PBXBuildFile; fileRef = 4E9621DA2B985BAB006859AD /* cloudfunctions.json */; };
 		4E9BFF5D2867631300601339 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E9BFF5C2867631300601339 /* UIKit.framework */; };
 		4E9DCE452B50E845005DE911 /* InstabugConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9DCE442B50E845005DE911 /* InstabugConfig.swift */; };
 		4E9DCE472B50E8A0005DE911 /* InstabugConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9DCE462B50E8A0005DE911 /* InstabugConfig.swift */; };
@@ -2144,6 +2150,9 @@
 		4E8DD9F7282E2FBB0016A931 /* NFTEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTEmptyView.swift; sourceTree = "<group>"; };
 		4E8DD9FB282E52110016A931 /* JSONStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONStorage.swift; sourceTree = "<group>"; };
 		4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncAddDeviceView.swift; sourceTree = "<group>"; };
+		4E9621D42B984EF3006859AD /* CadenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CadenceManager.swift; sourceTree = "<group>"; };
+		4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FRWAPI+Cadence.swift"; sourceTree = "<group>"; };
+		4E9621DA2B985BAB006859AD /* cloudfunctions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cloudfunctions.json; sourceTree = "<group>"; };
 		4E9BFF5C2867631300601339 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		4E9DCE442B50E845005DE911 /* InstabugConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstabugConfig.swift; sourceTree = "<group>"; };
 		4E9DCE462B50E8A0005DE911 /* InstabugConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstabugConfig.swift; sourceTree = "<group>"; };
@@ -2708,6 +2717,7 @@
 				6A29113628CAE7FE003295BD /* FRWAPI+Account.swift */,
 				6AF4A6C328D46FAF00B12FAB /* FRWAPI+Flowns.swift */,
 				6A2C5610290BE9FF00306A6C /* FRWAPI+Utils.swift */,
+				4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */,
 			);
 			path = FRW;
 			sourceTree = "<group>";
@@ -4416,6 +4426,7 @@
 		4EA820C128634A9700DF36A8 /* Json */ = {
 			isa = PBXGroup;
 			children = (
+				4E9621DA2B985BAB006859AD /* cloudfunctions.json */,
 				6A998DA5293674FC00EF133B /* staking_provider.json */,
 				4EA820C5286354E200DF36A8 /* remote_config_defaults.plist */,
 			);
@@ -4509,6 +4520,7 @@
 				6AD9EC24286C4E4C0062A9CE /* CadenceTemplate.swift */,
 				4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */,
 				4ECE28C92AE20EC90035787D /* CadenceTemplate+AccountKeys.swift */,
+				4E9621D42B984EF3006859AD /* CadenceManager.swift */,
 			);
 			path = FlowCoin;
 			sourceTree = "<group>";
@@ -5831,6 +5843,7 @@
 				4E0D34A22A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf in Resources */,
 				1565FBB228B171BB0086A652 /* Copy.json in Resources */,
 				1565FB6628B14F140086A652 /* Saved.json in Resources */,
+				4E9621DC2B985BAB006859AD /* cloudfunctions.json in Resources */,
 				4E9E21E0282A71B500E1BACD /* Colors.xcassets in Resources */,
 				15D6D8EE28CB730800CBA152 /* inAR.json in Resources */,
 				1565FB9C28B1681F0086A652 /* Coin.json in Resources */,
@@ -5882,6 +5895,7 @@
 				4E0D34A12A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf in Resources */,
 				1565FB6528B14F140086A652 /* Saved.json in Resources */,
 				15C58C652868A4EE00BD4FC6 /* Colors.xcassets in Resources */,
+				4E9621DB2B985BAB006859AD /* cloudfunctions.json in Resources */,
 				152EEC7028E4F5EC00C37A67 /* config.plist in Resources */,
 				15D6D8ED28CB730800CBA152 /* inAR.json in Resources */,
 				1565FB9B28B1681F0086A652 /* Coin.json in Resources */,
@@ -6042,6 +6056,7 @@
 				6A3FFA802A283A5C00CB2B2C /* OnBoardingView.swift in Sources */,
 				6AE69EA528C0BCD4004D4709 /* UIViewController.swift in Sources */,
 				6A8D2A38283C7C790041100E /* AddressBookView.swift in Sources */,
+				4E9621D92B9850CF006859AD /* FRWAPI+Cadence.swift in Sources */,
 				4E8CE63A2B4BE0BA00E71A87 /* MultiBackupPhraseView.swift in Sources */,
 				15DC214327819C56000B187A /* VTabNavigationView.swift in Sources */,
 				6A2D35BE283B6B5A008293D9 /* ThemeChangeViewModel.swift in Sources */,
@@ -6294,6 +6309,7 @@
 				15DC21C127819C56000B187A /* DerivedButtonType.swift in Sources */,
 				15D6D8E928CB45BA00CBA152 /* DOFavoriteButtonView.swift in Sources */,
 				15DC217927819C56000B187A /* VModal.swift in Sources */,
+				4E9621D62B984EF3006859AD /* CadenceManager.swift in Sources */,
 				15DC21A127819C56000B187A /* UIKitTextFieldRepresentable.swift in Sources */,
 				15D874EB28C629430072C6EA /* FirebaseAPI.swift in Sources */,
 				15DC20BD27819C56000B187A /* VSquareButtonModel.swift in Sources */,
@@ -6735,6 +6751,7 @@
 				6A3FFA7F2A283A5C00CB2B2C /* OnBoardingView.swift in Sources */,
 				6AE69EA428C0BCD4004D4709 /* UIViewController.swift in Sources */,
 				15C58ABC2868A4EE00BD4FC6 /* AddressBookView.swift in Sources */,
+				4E9621D82B9850CF006859AD /* FRWAPI+Cadence.swift in Sources */,
 				4E8CE6392B4BE0BA00E71A87 /* MultiBackupPhraseView.swift in Sources */,
 				15C58ABD2868A4EE00BD4FC6 /* VTabNavigationView.swift in Sources */,
 				15C58ABE2868A4EE00BD4FC6 /* ThemeChangeViewModel.swift in Sources */,
@@ -6987,6 +7004,7 @@
 				15C58B4D2868A4EE00BD4FC6 /* VModal.swift in Sources */,
 				15C58B4E2868A4EE00BD4FC6 /* UIKitTextFieldRepresentable.swift in Sources */,
 				15D874EA28C629430072C6EA /* FirebaseAPI.swift in Sources */,
+				4E9621D52B984EF3006859AD /* CadenceManager.swift in Sources */,
 				15C58B4F2868A4EE00BD4FC6 /* VSquareButtonModel.swift in Sources */,
 				15C58B502868A4EE00BD4FC6 /* MMCQ.swift in Sources */,
 				15C58B512868A4EE00BD4FC6 /* FocusableTextField.swift in Sources */,
