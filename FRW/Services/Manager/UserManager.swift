@@ -1,6 +1,6 @@
 //
 //  UserManager.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 30/12/21.
 //

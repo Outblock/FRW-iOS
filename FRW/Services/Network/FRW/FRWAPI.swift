@@ -1,6 +1,6 @@
 //
-//  Flow Reference WalletAPI.swift
-//  Flow Reference Wallet
+//  Flow WalletAPI.swift
+//  Flow Wallet
 //
 //  Created by Hao Fu on 29/12/21.
 //

@@ -1,6 +1,6 @@
 //
 //  LocalUserDefaultsManager.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 7/6/2022.
 //

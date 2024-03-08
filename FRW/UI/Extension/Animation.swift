@@ -1,6 +1,6 @@
 //
 //  Animation.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 1/8/2022.
 //
