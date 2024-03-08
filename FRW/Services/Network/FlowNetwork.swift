@@ -59,7 +59,8 @@ extension FlowNetwork {
     
     static func transferToken(to address: Flow.Address, amount: Decimal, token: TokenModel) async throws -> Flow.ID {
         let cadenceString = TokenCadence.tokenTransfer(token: token, at: flow.chainID)
-        
+        let currentAdd = WalletManager.shared.getPrimaryWalletAddress() ?? ""
+        let keyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
                 cadenceString
@@ -70,7 +71,8 @@ extension FlowNetwork {
             }
             
             proposer {
-                WalletManager.shared.getPrimaryWalletAddress() ?? ""
+                Flow.TransactionProposalKey(address: Flow.Address(hex: currentAdd), keyIndex: keyIndex)
+                
             }
             
             authorizers {

@@ -744,6 +744,17 @@ extension WalletManager: FlowSigner {
     }
     
     public func sign(signableData: Data) async throws -> Data {
+        
+        if flowAccountKey == nil {
+            try await findFlowAccount()
+        }
+        
+        if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+            let sec = try WallectSecureEnclave(privateKey: data)
+            let signature = try sec.sign(data: signableData)
+            return signature
+        }
+        
         guard let hdWallet = hdWallet else {
             throw LLError.emptyWallet
         }
@@ -765,6 +776,18 @@ extension WalletManager: FlowSigner {
     }
     
     public func signSync(signableData: Data) -> Data? {
+        
+        do {
+            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+                let sec = try WallectSecureEnclave(privateKey: data)
+                let signature = try sec.sign(data: signableData)
+                return signature
+            }
+        } catch {
+            return nil
+        }
+        
+        
         guard let hdWallet = hdWallet else {
             return nil
         }
@@ -805,6 +828,7 @@ extension WalletManager: FlowSigner {
         flowAccountKey = sortedAccount.filter {
             $0.publicKey.description == publicKey
         }.first
+        log.error(flowAccountKey ?? "[Account] not find account")
     }
 }
 
