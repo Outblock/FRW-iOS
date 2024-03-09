@@ -105,13 +105,24 @@ class UserManager: ObservableObject {
     }
     
     private func verifyUserType(by userId: String) {
-        if userId.isEmpty {
-            userType = .phrase
+        Task {
+            if let publicData = try WallectSecureEnclave.Store.fetch(by: userId), !publicData.isEmpty {
+                userType = .secure
+            }else {
+                userType = .phrase
+            }
+        }
+    }
+    
+    func verityUserType() {
+        guard let userId = self.activatedUID else {
             return
         }
         Task {
             if let publicData = try WallectSecureEnclave.Store.fetch(by: userId), !publicData.isEmpty {
                 userType = .secure
+            }else {
+                userType = .phrase
             }
         }
     }
@@ -175,8 +186,9 @@ extension UserManager {
 
         try await finishLogin(mnemonic: hdWallet.mnemonic, customToken: model.customToken)
         WalletManager.shared.asyncCreateWalletAddressFromServer()
-        verifyUserType(by: model.id)
+        userType = .secure
         if let privateKey = sec.key.privateKey {
+            
             try WallectSecureEnclave.Store.store(key: model.id, value: privateKey.dataRepresentation)
         }else {
             log.error("store public key on iPhone failed")
