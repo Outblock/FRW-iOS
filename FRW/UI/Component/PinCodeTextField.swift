@@ -5,9 +5,9 @@
 //  Created by Selina on 4/8/2022.
 //
 
-import UIKit
-import SwiftUI
 import SnapKit
+import SwiftUI
+import UIKit
 
 private let ItemSize: CGFloat = 20
 
@@ -61,7 +61,9 @@ fileprivate class LLPinCodeItemView: UIView {
     }
 }
 
-class LLPinCodeView: UIView {
+class LLPinCodeView: UIView, UITextInputTraits {
+    public var keyboardType = UIKeyboardType.numberPad
+
     private let numberOfPin: Int = 6
     private let itemSpacing: CGFloat = 24
     private(set) var text: String = "" {
@@ -70,6 +72,7 @@ class LLPinCodeView: UIView {
             callback?(text)
         }
     }
+
     var callback: ((String) -> ())?
     
     private lazy var stackView: UIStackView = {
@@ -164,17 +167,11 @@ extension LLPinCodeView: UIKeyInput {
 }
 
 extension LLPinCodeView {
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-    }
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {}
     
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-    }
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {}
     
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-    }
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {}
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if !isFirstResponder {
@@ -184,10 +181,6 @@ extension LLPinCodeView {
     
     override var canBecomeFirstResponder: Bool {
         return true
-    }
-    
-    var keyboardType: UIKeyboardType {
-        return .numberPad
     }
 }
 
