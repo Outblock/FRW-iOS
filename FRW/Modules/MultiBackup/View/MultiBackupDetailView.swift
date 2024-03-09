@@ -32,7 +32,7 @@ struct MultiBackupDetailView: RouteableView {
                     .frame(maxWidth: .infinity)
                     .frame(height: 136)
                     .cornerRadius(16)
-                    Text(viewModel.item.multiBackupType()!.title + "backup".localized)
+                    Text(viewModel.item.multiBackupType()!.title + " " + "backup".localized)
                         .font(.inter(size: 16, weight: .bold))
                         .foregroundColor(Color.Theme.Text.black8)
                         .frame(height: 24)

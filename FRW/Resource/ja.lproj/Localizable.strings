@@ -850,7 +850,7 @@
 "application_tag" = "応用";
 "backup_detail" = "バックアップの詳細";
 "backup_info" = "バックアップ情報";
-"backup_note_x" = "注: %@ バックアップは Flow Wallet のサーバーを経由します。エンドツーエンドで暗号化されており、決して読み取ることはできません。";
+"backup_note_x" = "注: %@ が Flow Wallet のサーバーを通過することはありません。エンドツーエンドで暗号化されており、決して読み取ることはできません。";
 "backup.register.key" = "登録キーリスト";
 "backup.status.create" = "バックアップを作成する";
 "backup.status.end" = "わかりました";
@@ -864,9 +864,9 @@
 "confirm_tag" = "確認する";
 "connect" = "接続する";
 "connect_to_x" = "に接続します ％@";
-"create_device_backup_note" = "注: Google ドライブのバックアップは Flow Wallet のサーバーを経由します。エンドツーエンドで暗号化されており、決して読み取ることはできません。";
+"create_device_backup_note" = "注: Google ドライブのバックアップが Flow Wallet のサーバーを経由することはありません。エンドツーエンドで暗号化されており、決して読み取ることはできません。";
 "create_device_backup_title" = "デバイスのバックアップを作成する";
-"create_multi_backup_note" = "注: Google ドライブのバックアップは Flow Wallet のサーバーを経由します。エンドツーエンドで暗号化されており、決して読み取ることはできません。";
+"create_multi_backup_note" = "注: Google ドライブのバックアップが Flow Wallet のサーバーを経由することはありません。エンドツーエンドで暗号化されており、決して読み取ることはできません。";
 "create_multi_backup_title" = "マルチバックアップの作成";
 "current_device" = "現在のデバイス";
 "delete_backup" = "バックアップの削除";
@@ -887,7 +887,7 @@
 "location" = "位置";
 "multi_backup" = "マルチバックアップ";
 "multi_backup_create_pin" = "したがって、PIN を使用してバックアップを保護します。";
-"multi_backup_guide_note" = "注: すべてのバックアップは Flow Wallet のサーバーを経由します。エンドツーエンドで暗号化されており、決して読み取ることはできません。";
+"multi_backup_guide_note" = "注: すべてのバックアップが Flow Wallet のサーバーを経由することはありません。エンドツーエンドで暗号化されており、決して読み取ることはできません。";
 "multi_backup_guide_title" = "2 つ以上のバックアップ オプションを選択してください";
 "other_device" = "他のデバイス";
 "prepared_to_restore" = "ウォレットを復元する準備ができました";
@@ -913,7 +913,7 @@
 "sync_confirm_failed" = "同期に失敗しました";
 "sync_flow_reference" = "同期フローのリファレンス";
 "sync_qr_code_mobile" = "モバイルアプリでQRコードをスキャン";
-"sync_qr_code_mobile_note" = "注: リカバリ フレーズは Flow Wallet のサーバーを経由します。エンドツーエンドで暗号化されており、決して読み取ることはできません。";
+"sync_qr_code_mobile_note" = "注: 回復フレーズが Flow Wallet のサーバーを通過することはありません。エンドツーエンドで暗号化されており、決して読み取ることはできません。";
 "sync_top_hint" = "モバイル アプリでフロー リファレンスを開き、QR コードをスキャンしてウォレットを同期します。";
 "sync_wallet" = "ウォレットを同期する";
 "upload_again" = "再度アップロードする";

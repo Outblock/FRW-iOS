@@ -865,7 +865,7 @@
 "sync_flow_reference" = "Sync Flow Wallet";
 "sync_top_hint" = "Open your Flow Wallet on Mobile App and Scan the QR Code to Sync your Wallet.";
 "sync_qr_code_mobile" = "Scan QR Code with Mobile App";
-"sync_qr_code_mobile_note" = "Note: Your recovery phrase will go through Flow Wallet’s server. It is end-to-end encrypted and we can never read it.";
+"sync_qr_code_mobile_note" = "Note: Your recovery phrase will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
 "confirm_tag" = "Confirm";
 "importing_tag" = "Importing";
 "find_matching_wallet" = "Find Matching Wallet";
@@ -875,12 +875,12 @@
 "start_now" = "Start Now";
 "multi_backup" = "Multi-Backup";
 "multi_backup_guide_title" = "Please Select 2 or More Backup Options";
-"multi_backup_guide_note" = "Note: All Your Backup will go through Flow Wallet’s server. It is end-to-end encrypted and we can never read it.";
+"multi_backup_guide_note" = "Note: All Your Backup will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
 "create_device_backup_title" = "Create Device Backup";
-"create_device_backup_note" = "Note: Your Google Drive Backup will go through Flow Wallet’s server. It is end-to-end encrypted and we can never read it.";
+"create_device_backup_note" = "Note: Your Google Drive Backup will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
 "create_multi_backup_title" = "Create Multi-Backup";
-"create_multi_backup_note" = "Note: Your Google Drive Backup will go through Flow Wallet’s server. It is end-to-end encrypted and we can never read it.";
-"backup_note_x" = "Note: Your %@ Backup will go through Flow Wallet’s server. It is end-to-end encrypted and we can never read it.";
+"create_multi_backup_note" = "Note: Your Google Drive Backup will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
+"backup_note_x" = "Note: Your %@ will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
 "backup.status.create" = "Create Backup";
 "backup.status.upload" = "Upload Backup";
 "backup.status.regist" = "Registration Keylist";

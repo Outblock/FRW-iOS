@@ -47,7 +47,7 @@ class FCLScripts {
                         "method": "EXT/RPC",
                         "identity": {
                             "address": "$PAYER_ADDRESS_REPLACEMENT",
-                            "keyId": $KEY_ID_REPLACEMENT
+                            "keyId": 0
                         }
                     }
                 ],

@@ -865,7 +865,7 @@
 "sync_flow_reference" = "同步 Flow Wallet";
 "sync_top_hint" = "在移动应用程序上打开 Flow Wallet，然后扫描二维码以同步钱包。";
 "sync_qr_code_mobile" = "使用移动应用程序扫描二维码";
-"sync_qr_code_mobile_note" = "注意：您的恢复短语将通过 Flow Wallet 的服务器发送。它经过端到端加密，我们永远无法读取。";
+"sync_qr_code_mobile_note" = "注意：您的恢复短语永远不会通过 Flow Wallet 的服务器。它是端到端加密的，我们永远无法读取它。";
 "confirm_tag" = "确认";
 "importing_tag" = "导入";
 "find_matching_wallet" = "寻找匹配的钱包";
@@ -875,12 +875,12 @@
 "start_now" = "立即开始";
 "multi_backup" = "多重备份";
 "multi_backup_guide_title" = "请选择 2 个或更多备份选项";
-"multi_backup_guide_note" = "注意：您的所有备份都将通过 Flow Wallet 的服务器。它是端到端加密的，我们永远无法读取它。";
+"multi_backup_guide_note" = "注意：您的所有备份都不会经过 Flow Wallet 的服务器。它是端到端加密的，我们永远无法读取它。";
 "create_device_backup_title" = "创建设备备份";
-"create_device_backup_note" = "注意：您的 Google Drive 备份将通过 Flow Wallet 的服务器。它是端到端加密的，我们永远无法读取它。";
+"create_device_backup_note" = "注意：您的 Google 云端硬盘备份永远不会通过 Flow Wallet 的服务器。它是端到端加密的，我们永远无法读取它。";
 "create_multi_backup_title" = "创建多重备份";
-"create_multi_backup_note" = "注意：您的 Google Drive 备份将通过 Flow Wallet 的服务器。它是端到端加密的，我们永远无法读取它。";
-"backup_note_x" = "注意：您的 %@ 备份将通过 Flow Wallet 的服务器。它是端到端加密的，我们永远无法读取它。";
+"create_multi_backup_note" = "注意：您的 Google 云端硬盘备份永远不会通过 Flow Wallet 的服务器。它是端到端加密的，我们永远无法读取它。";
+"backup_note_x" = "注意：您的 %@ 永远不会通过 Flow Wallet 的服务器。它是端到端加密的，我们永远无法读取它。";
 "backup.status.create" = "创建备份";
 "backup.status.upload" = "上传备份";
 "backup.status.regist" = "注册密钥";
