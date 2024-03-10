@@ -8,6 +8,7 @@
 import UIKit
 import WebKit
 import Flow
+import TrustWeb3Provider
 
 enum JSMessageType: String {
     case ready = "FCL:VIEW:READY"
@@ -29,6 +30,12 @@ class JSMessageHandler: NSObject {
 extension JSMessageHandler: WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         log.debug("did receive message")
+        
+        if message.name == TrustWeb3Provider.scriptHandlerName {
+            
+            return
+        }
+        
         switch JSListenerType(rawValue: message.name) {
         case .message:
             guard let msgString = message.body as? String else {

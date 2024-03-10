@@ -11,12 +11,16 @@ import SnapKit
 import WebKit
 import Hero
 import Combine
+import TrustWeb3Provider
 
 class BrowserViewController: UIViewController {
     private var observation: NSKeyValueObservation?
     private var actionBarIsHiddenFlag: Bool = false
     public var shouldHideActionBar: Bool = false
     private var cancelSets = Set<AnyCancellable>()
+    
+    let trustProvider = TrustWeb3Provider.config()
+
     
     private lazy var contentView: UIView = {
         let view = UIView()
@@ -43,6 +47,12 @@ class BrowserViewController: UIViewController {
     
     lazy var jsHandler: JSMessageHandler = {
         let obj = JSMessageHandler()
+        obj.webVC = self
+        return obj
+    }()
+    
+    lazy var trustJSHandler: TrustJSMessageHandler = {
+        let obj = TrustJSMessageHandler()
         obj.webVC = self
         return obj
     }()
