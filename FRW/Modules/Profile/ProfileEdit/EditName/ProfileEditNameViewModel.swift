@@ -1,6 +1,6 @@
 //
 //  ProfileEditNameViewModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 14/6/2022.
 //

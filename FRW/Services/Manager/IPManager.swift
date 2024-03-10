@@ -75,7 +75,7 @@ class IPManager {
     }
     
     private var userAgent: String {
-        return "Flow Reference \(osNameVersion)"
+        return "Flow Wallet \(osNameVersion)"
     }
     
     private var deviceType: String {

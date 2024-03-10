@@ -1,6 +1,6 @@
 //
 //  DispatchQueue.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 5/8/2022.
 //

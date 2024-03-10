@@ -1,6 +1,6 @@
 //
 //  NFTUIKitCollectionRegularItemCell.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 13/8/2022.
 //

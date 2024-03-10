@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  Flow Reference Wallet-lite
+//  Flow Wallet-lite
 //
 //  Created by Hao Fu on 12/12/21.
 //

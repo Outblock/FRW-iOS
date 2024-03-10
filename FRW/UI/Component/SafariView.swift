@@ -1,6 +1,6 @@
 //
 //  SafariView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 9/9/2022.
 //

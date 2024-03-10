@@ -7515,12 +7515,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.test.LilicoTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.test.LilicoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -7538,12 +7538,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.test.LilicoTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.test.LilicoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -7562,9 +7562,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "FRW/App/Env/Dev/FRW-dev.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FRW/Resource/Preview Content\"";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				ENABLE_PREVIEWS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"SWIFT_PACKAGE=1",
@@ -7572,14 +7572,14 @@
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FRW/App/Env/Dev/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Flow Core-dev";
+				INFOPLIST_KEY_CFBundleDisplayName = "Flow Wallet-dev";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Ref-dev need camera to scan QR Code";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Reference Wallet(dev) use Face ID to secure your assests";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Wallet-dev need camera to scan QR Code";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Wallet(dev) use Face ID to secure your assests";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Flow Ref-dev requires access to microphone";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Flow Ref-dev requires access to photo library";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Flow Ref-dev requires access to photo library";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Flow Wallet-dev requires access to microphone";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Flow Wallet-dev requires access to photo library";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Flow Wallet-dev requires access to photo library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
@@ -7589,8 +7589,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.dev;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "FRW/App/FRW-Bridging-Header.h";
@@ -7607,21 +7607,21 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "FRW/App/Env/Dev/FRW-dev.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FRW/Resource/Preview Content\"";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				ENABLE_PREVIEWS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "SWIFT_PACKAGE=1";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FRW/App/Env/Dev/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Flow Core-dev";
+				INFOPLIST_KEY_CFBundleDisplayName = "Flow Wallet-dev";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Ref-dev need camera to scan QR Code";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Reference Wallet(dev) use Face ID to secure your assests";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Wallet-dev need camera to scan QR Code";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Wallet(dev) use Face ID to secure your assests";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Flow Ref-dev requires access to microphone";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Flow Ref-dev requires access to photo library";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Flow Ref-dev requires access to photo library";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Flow Wallet-dev requires access to microphone";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Flow Wallet-dev requires access to photo library";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Flow Wallet-dev requires access to photo library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
@@ -7631,8 +7631,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.dev;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "FRW/App/FRW-Bridging-Header.h";
@@ -7651,7 +7651,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
 				DEVELOPMENT_ASSET_PATHS = "\"FRW/Resource/Preview Content\"";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				ENABLE_PREVIEWS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"SWIFT_PACKAGE=1",
@@ -7659,7 +7659,7 @@
 				);
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FRW/App/Env/Prod/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Flow Core";
+				INFOPLIST_KEY_CFBundleDisplayName = "Flow Wallet";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Ref need camera to scan QR Code";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Ref use Face ID to secure your assests";
@@ -7675,7 +7675,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG LILICOPROD";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7695,12 +7695,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
 				DEVELOPMENT_ASSET_PATHS = "\"FRW/Resource/Preview Content\"";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				ENABLE_PREVIEWS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "SWIFT_PACKAGE=1";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FRW/App/Env/Prod/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Flow Core";
+				INFOPLIST_KEY_CFBundleDisplayName = "Flow Wallet";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Ref need camera to scan QR Code";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Ref use Face ID to secure your assests";
@@ -7716,7 +7716,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = LILICOPROD;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7853,7 +7853,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWNotificationServiceExtension/FRWNotificationServiceExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FRWNotificationServiceExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FRWNotificationServiceExtension;
@@ -7865,7 +7865,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.LilicoNotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.NotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7881,7 +7881,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWNotificationServiceExtension/FRWNotificationServiceExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FRWNotificationServiceExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FRWNotificationServiceExtension;
@@ -7893,7 +7893,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.LilicoNotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.NotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7909,7 +7909,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWDevNotificationServiceExtension/FRWDevNotificationServiceExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FRWDevNotificationServiceExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FRWDevNotificationServiceExtension;
@@ -7921,7 +7921,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.dev.LilicoDevNotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.DevNotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7937,7 +7937,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWDevNotificationServiceExtension/FRWDevNotificationServiceExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FRWDevNotificationServiceExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FRWDevNotificationServiceExtension;
@@ -7949,7 +7949,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.dev.LilicoDevNotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.DevNotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7967,7 +7967,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWDevWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FRWDevWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FlowRefDevWidgets;
@@ -7979,7 +7979,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.dev.LilicoDevWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.DevWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7997,7 +7997,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWDevWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FRWDevWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FlowRefDevWidgets;
@@ -8009,7 +8009,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.dev.LilicoDevWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.DevWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -8027,7 +8027,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FRWWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FRWWidgets;
@@ -8039,7 +8039,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.LilicoWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -8057,7 +8057,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FRWWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FRWWidgets;
@@ -8069,7 +8069,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.LilicoWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;

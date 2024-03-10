@@ -1,6 +1,6 @@
 //
 //  LLTextField.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 26/12/21.
 //

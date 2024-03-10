@@ -1,6 +1,6 @@
 //
 //  CoinRateCache.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 23/6/2022.
 //

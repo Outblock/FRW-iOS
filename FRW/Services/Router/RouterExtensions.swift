@@ -1,6 +1,6 @@
 //
 //  RouterExtensions.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 25/7/2022.
 //

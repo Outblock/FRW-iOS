@@ -1,6 +1,6 @@
 //
 //  Date.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 4/7/2022.
 //

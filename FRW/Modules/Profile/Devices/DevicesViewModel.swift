@@ -85,7 +85,7 @@ struct DeviceInfoModel: Codable,Identifiable {
     func showName() -> String {
         return deviceName ?? ""
     }
-    // like Flow Reference macOS 8.4.1
+    // like Flow Wallet macOS 8.4.1
     func showApp() -> String {
         return userAgent ?? ""
     }

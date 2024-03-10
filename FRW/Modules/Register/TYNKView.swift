@@ -1,6 +1,6 @@
 //
 //  TYNKView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 3/1/22.
 //

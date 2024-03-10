@@ -146,8 +146,10 @@ struct AccountKeyModel {
     }
     
     
-    func icon(at type: ContentType) -> Image {
+    func icon(at type: ContentType) -> some View {
         return Image("key.icon.\(type.rawValue)")
+                .renderingMode(.template)
+                .foregroundColor(Color.Theme.Text.black3)
     }
     
     func tag(at type: ContentType) -> String {
