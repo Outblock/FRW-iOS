@@ -27,7 +27,7 @@ extension FRWAPI.Cadence: TargetType, AccessTokenAuthorizable {
 #if LILICOPROD
             return .init(string: "https://us-central1-lilico-dev.cloudfunctions.net")!
 #else
-            return .init(string: "https://us-central1-lilico-dev.cloudfunctions.net")!
+            return .init(string: "https://test.lilico.app/")!
 #endif
         }
     }
@@ -35,7 +35,7 @@ extension FRWAPI.Cadence: TargetType, AccessTokenAuthorizable {
     var path: String {
         switch self {
         case .list:
-            return "/fetchScripts"
+            return "api/scripts"
         }
     }
     
@@ -51,6 +51,8 @@ extension FRWAPI.Cadence: TargetType, AccessTokenAuthorizable {
     }
     
     var headers: [String: String]? {
-        return FRWAPI.commonHeaders
+        var headers = FRWAPI.commonHeaders
+        headers["version"] = CadenceManager.shared.version
+        return headers
     }
 }

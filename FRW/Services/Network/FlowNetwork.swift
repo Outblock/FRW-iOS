@@ -33,7 +33,7 @@ extension FlowNetwork {
     
     static func enableToken(at address: Flow.Address, token: TokenModel) async throws -> Flow.ID {
 
-        let originCadence = CadenceManager.shared.current.ft.addToken.toFunc()
+        let originCadence = CadenceManager.shared.current.ft?.addToken?.toFunc() ?? ""
         let cadenceString = token.formatCadence(cadence: originCadence)
         let fromKeyIndex = WalletManager.shared.keyIndex
 
@@ -102,7 +102,7 @@ extension FlowNetwork {
     }
     
     static func addCollection(at address: Flow.Address, collection: NFTCollectionInfo) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.collection.enableNFTStorage.toFunc()
+        let originCadence = CadenceManager.shared.current.collection?.enableNFTStorage?.toFunc() ?? ""
         let cadenceString = collection.formatCadence(script: originCadence)
         let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
@@ -141,8 +141,8 @@ extension FlowNetwork {
             throw NFTError.invalidTokenId
         }
         
-        let nftTransfer = CadenceManager.shared.current.domain.sendInboxNFT.toFunc()
-        let nbaNFTTransfer = CadenceManager.shared.current.collection.sendNbaNFT.toFunc()
+        let nftTransfer = CadenceManager.shared.current.domain?.sendInboxNFT?.toFunc() ?? ""
+        let nbaNFTTransfer = CadenceManager.shared.current.collection?.sendNbaNFT?.toFunc() ?? ""
         let cadenceString = collection.formatCadence(script: nft.isNBA ? nbaNFTTransfer : nftTransfer)
         let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
@@ -179,12 +179,12 @@ extension FlowNetwork {
 
 extension FlowNetwork {
     static func queryAddressByDomainFind(domain: String) async throws -> String {
-        let cadence = CadenceManager.shared.current.basic.getFindAddress.toFunc()
+        let cadence = CadenceManager.shared.current.basic?.getFindAddress?.toFunc() ?? ""
         return try await fetch(cadence: cadence, arguments: [.string(domain)])
     }
     
     static func queryAddressByDomainFlowns(domain: String, root: String = "fn") async throws -> String {
-        let cadence = CadenceManager.shared.current.basic.getFlownsAddress.toFunc()
+        let cadence = CadenceManager.shared.current.basic?.getFlownsAddress?.toFunc() ?? ""
         
         let realDomain = domain
             .replacingOccurrences(of: ".fn", with: "")
@@ -200,7 +200,7 @@ extension FlowNetwork {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
         }
-        let cadenceString = coin.formatCadence(cadence: CadenceManager.shared.current.domain.claimFTFromInbox.toFunc())
+        let cadenceString = coin.formatCadence(cadence: CadenceManager.shared.current.domain?.claimFTFromInbox?.toFunc() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
@@ -235,7 +235,7 @@ extension FlowNetwork {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
         }
-        let cadenceString = collection.formatCadence(script: CadenceManager.shared.current.domain.claimNFTFromInbox.toFunc())
+        let cadenceString = collection.formatCadence(script: CadenceManager.shared.current.domain?.claimNFTFromInbox?.toFunc() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
@@ -276,8 +276,8 @@ extension FlowNetwork {
         let tokenName = String(swapPaths.last?.split(separator: ".").last ?? "")
         let tokenAddress = String(swapPaths.last?.split(separator: ".")[1] ?? "").addHexPrefix()
         
-        let fromCadence = CadenceManager.shared.current.swap.SwapExactTokensForTokens.toFunc()
-        let toCadence = CadenceManager.shared.current.swap.SwapTokensForExactTokens.toFunc()
+        let fromCadence = CadenceManager.shared.current.swap?.SwapExactTokensForTokens?.toFunc() ?? "" ?? ""
+        let toCadence = CadenceManager.shared.current.swap?.SwapTokensForExactTokens?.toFunc() ?? "" ?? ""
         var cadenceString = isFrom ? fromCadence : toCadence
         cadenceString = cadenceString
             .replace(by: ["Token1Name": tokenName, "Token1Addr": tokenAddress])
@@ -336,12 +336,12 @@ enum LilicoError: Error {
 
 extension FlowNetwork {
     static func stakingIsEnabled() async throws -> Bool {
-        let cadence = CadenceManager.shared.current.staking.checkSetup.toFunc()
+        let cadence = CadenceManager.shared.current.staking?.checkSetup?.toFunc() ?? ""
         return try await self.fetch(cadence: cadence, arguments: [])
     }
     
     static func accountStakingIsSetup() async throws -> Bool {
-        let cadence = CadenceManager.shared.current.staking.checkSetup.toFunc()
+        let cadence = CadenceManager.shared.current.staking?.checkSetup?.toFunc() ?? ""
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         return try await self.fetch(cadence: cadence, arguments: [.address(address)])
     }
@@ -352,7 +352,7 @@ extension FlowNetwork {
         }
         
         let address = Flow.Address(hex: walletAddress)
-        let cadenceOrigin = CadenceManager.shared.current.staking.withdrawUnstaked.toFunc()
+        let cadenceOrigin = CadenceManager.shared.current.staking?.withdrawUnstaked?.toFunc() ?? ""
         let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
             cadence {
@@ -383,7 +383,7 @@ extension FlowNetwork {
         }
         
         let address = Flow.Address(hex: walletAddress)
-        let cadenceOrigin = CadenceManager.shared.current.staking.restakeUnstaked.toFunc()
+        let cadenceOrigin = CadenceManager.shared.current.staking?.restakeUnstaked?.toFunc() ?? ""
         let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
             cadence {
@@ -414,7 +414,7 @@ extension FlowNetwork {
         }
         
         let address = Flow.Address(hex: walletAddress)
-        let cadenceOrigin = CadenceManager.shared.current.staking.withdrawReward.toFunc()
+        let cadenceOrigin = CadenceManager.shared.current.staking?.withdrawReward?.toFunc() ?? ""
         let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
             cadence {
@@ -445,7 +445,7 @@ extension FlowNetwork {
         }
         
         let address = Flow.Address(hex: walletAddress)
-        let cadenceOrigin = CadenceManager.shared.current.staking.restakeReward.toFunc()
+        let cadenceOrigin = CadenceManager.shared.current.staking?.restakeReward?.toFunc() ?? ""
         let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
             cadence {
@@ -471,7 +471,7 @@ extension FlowNetwork {
     }
     
     static func setupAccountStaking() async throws -> Bool {
-        let cadenceOrigin = CadenceManager.shared.current.staking.setup.toFunc()
+        let cadenceOrigin = CadenceManager.shared.current.staking?.setup?.toFunc() ?? ""
         let cadenceString = cadenceOrigin.replace(by: ScriptAddress.addressMap())
         
         guard let walletAddress = WalletManager.shared.getPrimaryWalletAddress() else {
@@ -508,7 +508,7 @@ extension FlowNetwork {
     }
     
     static func createDelegatorId(providerId: String, amount: Double = 0) async throws -> Flow.ID {
-        let cadenceOrigin = CadenceManager.shared.current.staking.createDelegator.toFunc()
+        let cadenceOrigin = CadenceManager.shared.current.staking?.createDelegator?.toFunc() ?? ""
         let cadenceString = cadenceOrigin.replace(by: ScriptAddress.addressMap())
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
@@ -541,7 +541,7 @@ extension FlowNetwork {
     }
     
     static func stakeFlow(providerId: String, delegatorId: Int, amount: Double) async throws -> Flow.ID {
-        let cadenceOrigin = CadenceManager.shared.current.staking.createStake.toFunc()
+        let cadenceOrigin = CadenceManager.shared.current.staking?.createStake?.toFunc() ?? ""
         let cadenceString = cadenceOrigin.replace(by: ScriptAddress.addressMap())
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
@@ -575,7 +575,7 @@ extension FlowNetwork {
     }
     
     static func unstakeFlow(providerId: String, delegatorId: Int, amount: Double) async throws -> Flow.ID {
-        let cadenceOrigin = CadenceManager.shared.current.staking.unstake.toFunc()
+        let cadenceOrigin = CadenceManager.shared.current.staking?.unstake?.toFunc() ?? ""
         let cadenceString = cadenceOrigin.replace(by: ScriptAddress.addressMap())
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
@@ -610,21 +610,21 @@ extension FlowNetwork {
     
     static func queryStakeInfo() async throws -> [StakingNode]? {
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
-        let cadence = CadenceManager.shared.current.staking.getDelegatesInfoArray.toFunc()
+        let cadence = CadenceManager.shared.current.staking?.getDelegatesInfoArray?.toFunc() ?? ""
         let response: [StakingNode] = try await self.fetch(at: address, by: cadence)
         debugPrint("FlowNetwork -> queryStakeInfo, response = \(response)")
         return response
     }
     
     static func getStakingApyByWeek() async throws -> Double {
-        let candence = CadenceManager.shared.current.staking.getApyWeekly
+        let candence = CadenceManager.shared.current.staking?.getApyWeekly?.toFunc() ?? ""
         let result: Decimal = try await fetch(cadence: candence, arguments: [])
         
         return result.doubleValue
     }
     
     static func getStakingApyByYear() async throws -> Double {
-        let candence = CadenceManager.shared.current.staking.getApr.toFunc()
+        let candence = CadenceManager.shared.current.staking?.getApr?.toFunc() ?? ""
         let result: Decimal = try await fetch(cadence: candence, arguments: [])
 
         return result.doubleValue
@@ -632,7 +632,7 @@ extension FlowNetwork {
     
     static func getDelegatorInfo() async throws -> [String: Int]? {
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
-        let cadence = CadenceManager.shared.current.staking.getDelegatesIndo.toFunc()
+        let cadence = CadenceManager.shared.current.staking?.getDelegatesIndo?.toFunc() ?? ""
         let replacedCadence = cadence.replace(by: ScriptAddress.addressMap())
         let rawResponse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: replacedCadence),
                                                                               arguments: [.address(address)])
@@ -663,13 +663,13 @@ extension FlowNetwork {
 extension FlowNetwork {
     static func queryChildAccountList() async throws -> [String] {
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
-        let cadence = CadenceManager.shared.current.hybridCustody.getChildAccount.toFunc()
+        let cadence = CadenceManager.shared.current.hybridCustody?.getChildAccount?.toFunc() ?? ""
         let response: [String] = try await self.fetch(at: address, by: cadence)
         return response
     }
     
     static func unlinkChildAccount(_ address: String) async throws -> Flow.ID {
-        let cadenceOrigin = CadenceManager.shared.current.hybridCustody.unlinkChildAccount.toFunc()
+        let cadenceOrigin = CadenceManager.shared.current.hybridCustody?.unlinkChildAccount?.toFunc() ?? ""
         let cadenceString = cadenceOrigin.replace(by: ScriptAddress.addressMap())
         let walletAddress = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
@@ -704,7 +704,7 @@ extension FlowNetwork {
     
     static func queryChildAccountMeta(_ address: String) async throws -> [ChildAccount] {
         let address = Flow.Address(hex: address)
-        let cadence = CadenceManager.shared.current.hybridCustody.getChildAccountMeta.toFunc()
+        let cadence = CadenceManager.shared.current.hybridCustody?.getChildAccountMeta?.toFunc() ?? ""
         let replacedCadence = cadence.replace(by: ScriptAddress.addressMap())
         let rawResponse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: replacedCadence),
                                                                               arguments: [.address(address)])
@@ -730,7 +730,7 @@ extension FlowNetwork {
     }
     
     static func editChildAccountMeta(_ address: String, name: String, desc: String, thumbnail: String) async throws -> Flow.ID {
-        let editChildAccount = CadenceManager.shared.current.hybridCustody.editChildAccount.toFunc()
+        let editChildAccount = CadenceManager.shared.current.hybridCustody?.editChildAccount?.toFunc() ?? ""
         let cadenceString = editChildAccount.replace(by: ScriptAddress.addressMap())
         let walletAddress = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
@@ -764,7 +764,7 @@ extension FlowNetwork {
     }
     
     static func fetchAccessibleCollection(parent: String, child: String) async throws -> [FlowModel.NFTCollection] {
-        let cadence = CadenceManager.shared.current.hybridCustody.getAccessibleCollectionAndIdsDisplay.toFunc()
+        let cadence = CadenceManager.shared.current.hybridCustody?.getAccessibleCollectionAndIdsDisplay?.toFunc() ?? ""
         let cadenceString = cadence.replace(by: ScriptAddress.addressMap())
         let parentAddress = Flow.Address(hex: parent)
         let childAddress = Flow.Address(hex: child)
@@ -775,7 +775,7 @@ extension FlowNetwork {
     }
     
     static func fetchAccessibleFT(parent: String, child: String) async throws -> [FlowModel.TokenInfo] {
-        let accessible = CadenceManager.shared.current.hybridCustody.getAccessibleCoinInfo.toFunc()
+        let accessible = CadenceManager.shared.current.hybridCustody?.getAccessibleCoinInfo?.toFunc() ?? ""
         let cadenceString = accessible.replace(by: ScriptAddress.addressMap())
         let parentAddress = Flow.Address(hex: parent)
         let childAddress = Flow.Address(hex: child)
@@ -879,7 +879,7 @@ extension FlowNetwork {
         let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
-                CadenceManager.shared.current.basic.revokeKey.toFunc()
+                CadenceManager.shared.current.basic?.revokeKey?.toFunc() ?? ""
             }
             
             payer {
@@ -901,7 +901,7 @@ extension FlowNetwork {
     }
     
     static func addKeyToAccount(address: Flow.Address, accountKey: Flow.AccountKey, signers: [FlowSigner]) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.basic.addKey.toFunc()
+        let originCadence = CadenceManager.shared.current.basic?.addKey?.toFunc() ?? ""
         let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: signers) {
             cadence {
@@ -930,7 +930,7 @@ extension FlowNetwork {
     }
     
     static func addKeyWithMulti(address: Flow.Address, keyIndex: Int, sequenceNum: Int64, accountKey: Flow.AccountKey, signers: [FlowSigner]) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.basic.addKey.toFunc()
+        let originCadence = CadenceManager.shared.current.basic?.addKey?.toFunc() ?? ""
         return try await flow.sendTransaction(signers: signers) {
             cadence {
                 originCadence
