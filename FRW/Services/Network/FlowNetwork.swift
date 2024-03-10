@@ -33,7 +33,7 @@ extension FlowNetwork {
     
     static func enableToken(at address: Flow.Address, token: TokenModel) async throws -> Flow.ID {
         let cadenceString = token.formatCadence(cadence: CadenceTemplate.addToken)
-        
+        let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
             cadence {
                 cadenceString
@@ -44,7 +44,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                address
+                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
             }
             
             authorizers {
@@ -100,7 +100,7 @@ extension FlowNetwork {
     
     static func addCollection(at address: Flow.Address, collection: NFTCollectionInfo) async throws -> Flow.ID {
         let cadenceString = collection.formatCadence(script: CadenceTemplate.nftCollectionEnable)
-        
+        let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
                 cadenceString
@@ -111,7 +111,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                address
+                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
             }
             
             authorizers {
@@ -138,7 +138,7 @@ extension FlowNetwork {
         }
         
         let cadenceString = collection.formatCadence(script: nft.isNBA ? CadenceTemplate.nbaNFTTransfer : CadenceTemplate.nftTransfer)
-        
+        let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
                 cadenceString
@@ -149,7 +149,9 @@ extension FlowNetwork {
             }
             
             proposer {
-                Flow.Address(hex: fromAddress)
+                
+                Flow.TransactionProposalKey(address: Flow.Address(hex: fromAddress), keyIndex: fromKeyIndex)
+
             }
             
             authorizers {
@@ -193,6 +195,8 @@ extension FlowNetwork {
         }
         
         let cadenceString = coin.formatCadence(cadence: CadenceTemplate.claimInboxToken)
+        let fromKeyIndex = WalletManager.shared.keyIndex
+
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
                 cadenceString
@@ -203,7 +207,9 @@ extension FlowNetwork {
             }
             
             proposer {
-                Flow.Address(hex: address)
+                
+                Flow.TransactionProposalKey(address: Flow.Address(hex: address), keyIndex: fromKeyIndex)
+
             }
             
             authorizers {
@@ -226,6 +232,7 @@ extension FlowNetwork {
         }
         
         let cadenceString = collection.formatCadence(script: CadenceTemplate.claimInboxNFT)
+        let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
                 cadenceString
@@ -236,7 +243,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                Flow.Address(hex: address)
+                Flow.TransactionProposalKey(address: Flow.Address(hex: address), keyIndex: fromKeyIndex)
             }
             
             authorizers {
@@ -286,7 +293,7 @@ extension FlowNetwork {
         args.append(.path(Flow.Argument.Path(domain: "storage", identifier: tokenOutVaultPath)))
         args.append(.path(Flow.Argument.Path(domain: "public", identifier: tokenOutReceiverPath)))
         args.append(.path(Flow.Argument.Path(domain: "public", identifier: tokenOutBalancePath)))
-        
+        let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
                 cadenceString
@@ -297,7 +304,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                Flow.Address(hex: address)
+                Flow.TransactionProposalKey(address: Flow.Address(hex: address), keyIndex: fromKeyIndex)
             }
             
             authorizers {
@@ -337,6 +344,7 @@ extension FlowNetwork {
         }
         
         let address = Flow.Address(hex: walletAddress)
+        let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
             cadence {
                 CadenceTemplate.Stake.claimUnstake
@@ -352,7 +360,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                address
+                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
             }
             
             authorizers {
@@ -367,6 +375,7 @@ extension FlowNetwork {
         }
         
         let address = Flow.Address(hex: walletAddress)
+        let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
             cadence {
                 CadenceTemplate.Stake.restakeUnstake
@@ -382,7 +391,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                address
+                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
             }
             
             authorizers {
@@ -397,6 +406,7 @@ extension FlowNetwork {
         }
         
         let address = Flow.Address(hex: walletAddress)
+        let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
             cadence {
                 CadenceTemplate.Stake.claimReward
@@ -412,7 +422,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                address
+                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
             }
             
             authorizers {
@@ -427,6 +437,7 @@ extension FlowNetwork {
         }
         
         let address = Flow.Address(hex: walletAddress)
+        let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
             cadence {
                 CadenceTemplate.Stake.reSatkeReward
@@ -442,7 +453,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                address
+                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
             }
             
             authorizers {
@@ -458,7 +469,7 @@ extension FlowNetwork {
             throw LilicoError.emptyWallet
         }
         let address = Flow.Address(hex: walletAddress)
-        
+        let fromKeyIndex = WalletManager.shared.keyIndex
         let txId = try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
                 cadenceString
@@ -469,7 +480,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                address
+                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
             }
             
             authorizers {
@@ -490,7 +501,7 @@ extension FlowNetwork {
     static func createDelegatorId(providerId: String, amount: Double = 0) async throws -> Flow.ID {
         let cadenceString = CadenceTemplate.createDelegatorId.replace(by: ScriptAddress.addressMap())
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
-        
+        let fromKeyIndex = WalletManager.shared.keyIndex
         let txId = try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
                 cadenceString
@@ -501,7 +512,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                address
+                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
             }
             
             authorizers {
@@ -522,7 +533,7 @@ extension FlowNetwork {
     static func stakeFlow(providerId: String, delegatorId: Int, amount: Double) async throws -> Flow.ID {
         let cadenceString = CadenceTemplate.stakeFlow.replace(by: ScriptAddress.addressMap())
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
-        
+        let fromKeyIndex = WalletManager.shared.keyIndex
         let txId = try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
                 cadenceString
@@ -533,7 +544,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                address
+                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
             }
             
             authorizers {
@@ -555,7 +566,7 @@ extension FlowNetwork {
     static func unstakeFlow(providerId: String, delegatorId: Int, amount: Double) async throws -> Flow.ID {
         let cadenceString = CadenceTemplate.unstakeFlow.replace(by: ScriptAddress.addressMap())
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
-        
+        let fromKeyIndex = WalletManager.shared.keyIndex
         let txId = try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
                 cadenceString
@@ -566,7 +577,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                address
+                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
             }
             
             authorizers {
@@ -643,7 +654,7 @@ extension FlowNetwork {
     static func unlinkChildAccount(_ address: String) async throws -> Flow.ID {
         let cadenceString = CadenceTemplate.unlinkChildAccount.replace(by: ScriptAddress.addressMap())
         let walletAddress = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
-        
+        let fromKeyIndex = WalletManager.shared.keyIndex
         let txId = try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
                 cadenceString
@@ -654,7 +665,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                walletAddress
+                Flow.TransactionProposalKey(address: walletAddress, keyIndex: fromKeyIndex)
             }
             
             authorizers {
@@ -702,7 +713,7 @@ extension FlowNetwork {
     static func editChildAccountMeta(_ address: String, name: String, desc: String, thumbnail: String) async throws -> Flow.ID {
         let cadenceString = CadenceTemplate.editChildAccount.replace(by: ScriptAddress.addressMap())
         let walletAddress = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
-        
+        let fromKeyIndex = WalletManager.shared.keyIndex
         let txId = try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
                 cadenceString
@@ -713,7 +724,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                walletAddress
+                Flow.TransactionProposalKey(address: walletAddress, keyIndex: fromKeyIndex)
             }
             
             authorizers {
@@ -843,6 +854,7 @@ extension Flow.TransactionResult {
 
 extension FlowNetwork {
     static func revokeAccountKey(by index: Int, at address: Flow.Address) async throws -> Flow.ID {
+        let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
                 CadenceTemplate.revokeAccountKey
@@ -853,7 +865,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                address
+                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
             }
             
             authorizers {
@@ -867,6 +879,7 @@ extension FlowNetwork {
     }
     
     static func addKeyToAccount(address: Flow.Address, accountKey: Flow.AccountKey, signers: [FlowSigner]) async throws -> Flow.ID {
+        let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: signers) {
             cadence {
                 CadenceTemplate.addKeyToAccount
@@ -885,7 +898,7 @@ extension FlowNetwork {
             }
             
             proposer {
-                address
+                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
             }
             authorizers {
                 address
