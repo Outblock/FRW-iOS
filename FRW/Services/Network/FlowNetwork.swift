@@ -32,7 +32,8 @@ extension FlowNetwork {
     }
     
     static func enableToken(at address: Flow.Address, token: TokenModel) async throws -> Flow.ID {
-        let cadenceString = token.formatCadence(cadence: CadenceTemplate.addToken)
+        let originCadence = CadenceManager.shared.current.ft.addToken.toFunc()
+        let cadenceString = token.formatCadence(cadence: originCadence)
         
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
             cadence {
@@ -97,7 +98,8 @@ extension FlowNetwork {
     }
     
     static func addCollection(at address: Flow.Address, collection: NFTCollectionInfo) async throws -> Flow.ID {
-        let cadenceString = collection.formatCadence(script: CadenceTemplate.nftCollectionEnable)
+        let originCadence = CadenceManager.shared.current.collection.enableNFTStorage.toFunc()
+        let cadenceString = collection.formatCadence(script: originCadence)
         
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
@@ -136,7 +138,8 @@ extension FlowNetwork {
         }
         
         let nftTransfer = CadenceManager.shared.current.domain.sendInboxNFT.toFunc()
-        let cadenceString = collection.formatCadence(script: nft.isNBA ? CadenceTemplate.nbaNFTTransfer : nftTransfer)
+        let nbaNFTTransfer = CadenceManager.shared.current.collection.sendNbaNFT.toFunc()
+        let cadenceString = collection.formatCadence(script: nft.isNBA ? nbaNFTTransfer : nftTransfer)
         
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
             cadence {
@@ -326,7 +329,8 @@ enum LilicoError: Error {
 
 extension FlowNetwork {
     static func stakingIsEnabled() async throws -> Bool {
-        return try await self.fetch(cadence: CadenceTemplate.checkStakingIsEnabled, arguments: [])
+        let cadence = CadenceManager.shared.current.staking.checkSetup.toFunc()
+        return try await self.fetch(cadence: cadence, arguments: [])
     }
     
     static func accountStakingIsSetup() async throws -> Bool {
@@ -595,13 +599,15 @@ extension FlowNetwork {
     
     static func queryStakeInfo() async throws -> [StakingNode]? {
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
-        let response: [StakingNode] = try await self.fetch(at: address, by: CadenceTemplate.queryStakeInfo)
+        let cadence = CadenceManager.shared.current.staking.getDelegatesInfoArray.toFunc()
+        let response: [StakingNode] = try await self.fetch(at: address, by: cadence)
         debugPrint("FlowNetwork -> queryStakeInfo, response = \(response)")
         return response
     }
     
     static func getStakingApyByWeek() async throws -> Double {
-        let result: Decimal = try await fetch(cadence: CadenceTemplate.getApyByWeek, arguments: [])
+        let candence = CadenceManager.shared.current.staking.getApyWeekly
+        let result: Decimal = try await fetch(cadence: candence, arguments: [])
         
         return result.doubleValue
     }
@@ -883,9 +889,10 @@ extension FlowNetwork {
     }
     
     static func addKeyToAccount(address: Flow.Address, accountKey: Flow.AccountKey, signers: [FlowSigner]) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.basic.addKey.toFunc()
         return try await flow.sendTransaction(signers: signers) {
             cadence {
-                CadenceTemplate.addKeyToAccount
+                originCadence
             }
             arguments {
                 [
@@ -910,9 +917,10 @@ extension FlowNetwork {
     }
     
     static func addKeyWithMulti(address: Flow.Address, keyIndex: Int, sequenceNum: Int64, accountKey: Flow.AccountKey, signers: [FlowSigner]) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.basic.addKey.toFunc()
         return try await flow.sendTransaction(signers: signers) {
             cadence {
-                CadenceTemplate.addKeyToAccount
+                originCadence
             }
             arguments {
                 [

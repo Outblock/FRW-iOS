@@ -85,6 +85,7 @@ struct CadenceModel: Codable {
 
 extension CadenceModel {
     struct Basic: Codable {
+        let addKey: String
         let getAccountInfo: String
         let getFindAddress: String
         let getFindDomainByAddress: String
@@ -137,6 +138,10 @@ extension CadenceModel {
     }
     
     struct FlowToken: Codable {
+        let addToken: String
+        let enableTokenStorage: String
+        let transferTokens: String
+        
         let isTokenListEnabled: String
         let getTokenListBalance: String
     }
@@ -168,6 +173,8 @@ extension CadenceModel {
         let getNodeInfo: String
         let getNodesInfo: String
         
+        let getDelegatesInfoArray: String
+        let getApyWeekly: String
         
         let getStakeInfo: String
         let getStakingInfo: String
