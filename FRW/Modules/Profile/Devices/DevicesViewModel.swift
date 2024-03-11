@@ -122,7 +122,7 @@ struct DeviceInfoModel: Codable,Identifiable {
     }
     
     func showDate() -> String {
-        guard let created = createdAt else { return "" }
+        guard let created = updatedAt else { return "" }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSZ"
         let date = dateFormatter.date(from: created)

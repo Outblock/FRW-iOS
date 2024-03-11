@@ -23,7 +23,7 @@ class SyncAccountViewModel: ObservableObject {
         do {
             let uri = try await WalletConnectSyncDevice.createAndPair()
             WalletConnectManager.shared.prepareSyncAccount()
-            log.info("[sync device] connect to topic: \(uri.topic)")
+            log.info("[sync device] connect to topic: \(uri)")
             DispatchQueue.main.async {
                 self.uriString = uri.absoluteString
             }

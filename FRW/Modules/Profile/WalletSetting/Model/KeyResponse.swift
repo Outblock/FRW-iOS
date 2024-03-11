@@ -26,11 +26,11 @@ struct PubkeyModel: Codable {
 }
 
 struct BackupInfoModel: Codable {
-    let create_time: String?
+    let createTime: String?
     let name: String?
     var type: Int
     var keyIndex: Int? = 0
-    
+
     func backupType() -> BackupType {
         switch type {
         case 0:
@@ -45,6 +45,17 @@ struct BackupInfoModel: Codable {
             return .undefined
         }
     }
+
+    func showDate() -> String {
+        guard let created = createTime else { return "" }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSZ"
+        let date = dateFormatter.date(from: created)
+        guard let date = date else { return "" }
+        dateFormatter.dateFormat = "MMMM dd,yyyy"
+        let res = dateFormatter.string(from: date)
+        return res
+    }
 }
 
 enum BackupType: Int, Codable {
@@ -53,7 +64,7 @@ enum BackupType: Int, Codable {
     case iCloud = 1
     case manual = 2
     case passkey = 3
-    
+
     var title: String {
         switch self {
         case .google:

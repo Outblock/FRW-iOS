@@ -105,6 +105,7 @@ class BackupListViewModel: ObservableObject {
 }
 
 // MARK: - UI
+
 extension BackupListViewModel {
     var hasDeviceBackup: Bool {
         return deviceList.count > 0 || showCurrent
@@ -122,7 +123,6 @@ extension BackupListViewModel {
     
     func fetchDeviceBackup() async {
         do {
-            
             let result = try await DeviceManager.shared.fetch()
             DispatchQueue.main.async {
                 self.deviceList = result.1
@@ -157,7 +157,7 @@ extension BackupListViewModel {
         do {
             let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
             let devices: KeyResponse = try await Network.request(FRWAPI.User.keys)
-            let deviceList = devices.result ?? []
+            let deviceList = devices.result?.reversed() ?? []
             
             let allBackupList = deviceList.filter { model in
                 if model.pubkey.weight >= 1000 {
