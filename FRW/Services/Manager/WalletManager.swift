@@ -411,7 +411,7 @@ extension WalletManager {
             encodedData = Data()
         }
         
-        if let existingMnemonic = getMnemonicFromKeychain(uid: uid) {
+        if let existingMnemonic = getMnemonicFromKeychain(uid: uid), !existingMnemonic.isEmpty {
             if existingMnemonic != mnemonic {
                 log.error("existingMnemonic should equal the current")
                 throw WalletError.existingMnemonicMismatch
