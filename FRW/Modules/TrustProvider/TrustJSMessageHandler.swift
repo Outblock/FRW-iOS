@@ -8,6 +8,7 @@
 import Foundation
 import TrustWeb3Provider
 import WebKit
+import Flow
 
 class TrustJSMessageHandler: NSObject {
     weak var webVC: BrowserViewController?
@@ -75,24 +76,35 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
 
 extension TrustJSMessageHandler {
     private func handleRequestAccounts(network: ProviderNetwork, id: Int64) {
-        let alert = UIAlertController(
-            title: webVC?.webView.title,
-            message: "\(webVC?.webView.url?.host! ?? "Website") would like to connect your account",
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { [weak webView = webVC?.webView] _ in
-            webView?.tw.send(network: network, error: "Canceled", to: id)
-        }))
-        alert.addAction(UIAlertAction(title: "Connect", style: .default, handler: { [weak webView = webVC?.webView] _ in
-            switch network {
-            case .ethereum:
-                let address = self.webVC?.trustProvider.config.ethereum.address ?? "0x123456"
-                webView?.tw.set(network: network.rawValue, address: address)
-                webView?.tw.send(network: network, results: [address], to: id)
-            default:
-                print("not support")
+        
+        let title = webVC?.webView.title ?? "unknown"
+        let chainID = LocalUserDefaults.shared.flowNetwork.toFlowType()
+        let url = webVC?.webView.url
+        let vm = BrowserAuthnViewModel(title: title,
+                                       url: url?.host ?? "unknown",
+                                       logo: url?.absoluteString.toFavIcon()?.absoluteString,
+                                       walletAddress: WalletManager.shared.getPrimaryWalletAddress(),
+                                       network: chainID) { [weak self] result in
+            guard let self = self else {
+                return
             }
-        }))
-        webVC?.present(alert, animated: true, completion: nil)
+            
+            if result {
+                switch network {
+                case .ethereum:
+                    let address = self.webVC?.trustProvider.config.ethereum.address ?? "0x123456"
+                    webVC?.webView.tw.set(network: network.rawValue, address: address)
+                    webVC?.webView.tw.send(network: network, results: [address], to: id)
+                default:
+                    print("not support")
+                }
+            } else {
+                webVC?.webView.tw.send(network: network, error: "Canceled", to: id)
+                log.debug("handle authn cancelled")
+            }
+            
+        }
+        
+        Router.route(to: RouteMap.Explore.authn(vm))
     }
 }
