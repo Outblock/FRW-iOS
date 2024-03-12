@@ -97,7 +97,8 @@ class DevicesInfoViewModel: ObservableObject {
 
 extension DevicesInfoViewModel {
     var keyIcon: String {
-        return userKey?.backupInfo?.backupType().smallIcon ?? ""
+        let deviceType = DeviceType(value: userKey?.device.deviceType ?? 1)
+        return deviceType.smallIcon
     }
     
     var showKeyTitle: String {

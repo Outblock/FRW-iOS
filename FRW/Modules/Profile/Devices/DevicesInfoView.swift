@@ -49,35 +49,38 @@ struct DevicesInfoView: RouteableView {
                     Color.clear
                         .frame(height: 24)
                     
-                    HStack(spacing: 0) {
-                        Text("device_info".localized)
-                            .font(.inter(size: 14, weight: .bold))
-                            .foregroundColor(Color.Theme.Text.black3)
-                        Spacer()
-                    }
-                    
                     keyView
                         .padding(.top, 16)
                     
                     VStack {
-                        DeviceInfoItem(title: "application_tag".localized, detail: info.showApp())
-                        Divider()
-                            .background(Color.Theme.Line.line)
-                            .padding(.vertical, 16)
-                        DeviceInfoItem(title: "ip_address_tag".localized, detail: info.showIP())
-                        Divider()
-                            .background(Color.Theme.Line.line)
-                            .padding(.vertical, 16)
-                        DeviceInfoItem(title: "location".localized, detail: info.showLocation())
-                        Divider()
-                            .background(Color.Theme.Line.line)
-                            .padding(.vertical, 16)
-                        DeviceInfoItem(title: "entry_date_tag".localized, detail: info.showDate())
+                        HStack(spacing: 0) {
+                            Text("device_info".localized)
+                                .font(.inter(size: 14, weight: .bold))
+                                .foregroundColor(Color.Theme.Text.black3)
+                            Spacer()
+                        }
+                        
+                        VStack {
+                            DeviceInfoItem(title: "application_tag".localized, detail: info.showApp())
+                            Divider()
+                                .background(Color.Theme.Line.line)
+                                .padding(.vertical, 16)
+                            DeviceInfoItem(title: "ip_address_tag".localized, detail: info.showIP())
+                            Divider()
+                                .background(Color.Theme.Line.line)
+                                .padding(.vertical, 16)
+                            DeviceInfoItem(title: "location".localized, detail: info.showLocation())
+                            Divider()
+                                .background(Color.Theme.Line.line)
+                                .padding(.vertical, 16)
+                            DeviceInfoItem(title: "entry_date_tag".localized, detail: info.showDate())
+                        }
+                        .padding(.all, 16)
+                        .background(.Theme.Background.grey)
+                        .cornerRadius(16)
                     }
                     .padding(.top, 24)
-                    .padding(.all, 16)
-                    .background(.Theme.Background.grey)
-                    .cornerRadius(16)
+                    
                 }
                 .padding(.horizontal, 18)
                 .frame(maxHeight: .infinity)
