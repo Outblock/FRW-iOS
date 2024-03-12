@@ -16,9 +16,15 @@ extension CLLocationCoordinate2D: Identifiable {
 
 struct DevicesInfoView: RouteableView {
     var info: DeviceInfoModel
+    @StateObject var viewModel: DevicesInfoViewModel
     
     var title: String {
         return "device_info".localized
+    }
+    
+    init(info: DeviceInfoModel) {
+        self.info = info
+        _viewModel = StateObject(wrappedValue: DevicesInfoViewModel(model: info))
     }
     
     var body: some View {
@@ -78,23 +84,32 @@ struct DevicesInfoView: RouteableView {
             
             Spacer()
             
-//            VStack {
-//                Button {
-//
-//                } label: {
-//                    Text("revoke_device".localized)
-//                        .font(.inter(size: 16,weight: .semibold))
-//                        .foregroundStyle(Color.Theme.Text.white9)
-//                }
-//                .frame(height: 54)
-//                .frame(maxWidth: .infinity)
-//                .background(Color.Theme.Accent.red)
-//                .cornerRadius(16)
-//            }
-//            .padding(.horizontal, 18)
+            VStack {
+                Button {
+                    viewModel.onRevoke()
+                } label: {
+                    Text("revoke_device".localized)
+                        .font(.inter(size: 16,weight: .semibold))
+                        .foregroundStyle(Color.Theme.Text.white9)
+                }
+                .frame(height: 54)
+                .frame(maxWidth: .infinity)
+                .background(Color.Theme.Accent.red)
+                .cornerRadius(16)
+            }
+            .padding(.horizontal, 18)
+            .visibility(viewModel.showRevokeButton ? .visible : .gone)
         }
-        
         .applyRouteable(self)
+        .halfSheet(showSheet: $viewModel.showRemoveTipView) {
+            DangerousTipSheetView(title: "account_key_revoke_title".localized,
+                                  detail: "account_key_revoke_content".localized,
+                                  buttonTitle: "hold_to_revoke".localized) {
+                viewModel.revokeAction()
+            } onCancel: {
+                viewModel.onCancel()
+            }
+        }
     }
     
     func region() -> MKCoordinateRegion {

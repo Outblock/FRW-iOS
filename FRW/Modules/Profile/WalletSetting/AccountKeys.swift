@@ -42,6 +42,10 @@ struct AccountKeysView: RouteableView {
             HUD.info(title: "account_key_current_tips".localized)
             return
         }
+        guard !model.accountKey.revoked else {
+            HUD.info(title: "account_key_done_revoked_tips".localized)
+            return
+        }
         vm.revokeKey(at: model)
     }
 }

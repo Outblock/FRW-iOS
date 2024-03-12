@@ -49,7 +49,9 @@ struct BackupListView: RouteableView {
         .applyRouteable(self)
         .backgroundFill(Color.LL.Neutrals.background)
         .halfSheet(showSheet: $viewModel.showRemoveTipView) {
-            DangerousTipSheetView(title: "account_key_revoke_title".localized, detail: "account_key_revoke_content".localized, buttonTitle: "hold_to_revoke".localized) {
+            DangerousTipSheetView(title: "account_key_revoke_title".localized, 
+                                  detail: "account_key_revoke_content".localized,
+                                  buttonTitle: "hold_to_revoke".localized) {
                 viewModel.removeMultiBackup()
             } onCancel: {
                 viewModel.onCancelTip()
