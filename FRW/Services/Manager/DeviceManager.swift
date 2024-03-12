@@ -26,10 +26,19 @@ class DeviceManager: ObservableObject {
         let keyResponse: KeyResponse = try await Network.request(FRWAPI.User.keys)
         let keyList = keyResponse.result ?? []
         
+        // filter unrevoke key
         let validAccount = account.keys.filter { !$0.revoked }
-        let validKeys = keyList.filter { keyModel in
+        // filter valid key
+        let validUserKeys = keyList.filter { keyModel in
             let result = validAccount.filter { $0.publicKey.description == keyModel.pubkey.publicKey }
             return result.count > 0
+        }
+        // filter device backup
+        let validKeys = validUserKeys.filter { keyModel in
+            if let type = keyModel.backupInfo?.type {
+                return type < 0
+            }
+            return false
         }
         let filterList = list.filter { infoModel in
             let validDevices = validKeys.filter { deviceModel in
@@ -39,7 +48,7 @@ class DeviceManager: ObservableObject {
         }
         
         let validDevices = filterList.filter { $0.id != uuid }
-        let current = filterList.first { $0.id == uuid }
+        let current = filterList.last { $0.id == uuid }
         
         self.validAccounts = validAccount
         self.validKeys = validKeys
@@ -50,14 +59,12 @@ class DeviceManager: ObservableObject {
     }
     
     func findFlowAccount(deviceId: String) -> Flow.AccountKey? {
-        let key = self.validKeys.first { model in
-            model.device.id == deviceId
-        }
+        let key = findUserKey(deviceId: deviceId)
         guard let keyModel = key else {
             return nil
         }
         
-        let accountKey = self.validAccounts.first { model in
+        let accountKey = self.validAccounts.last { model in
             model.publicKey.description == keyModel.pubkey.publicKey
         }
         guard let accountKeyModel = accountKey else {
@@ -65,6 +72,13 @@ class DeviceManager: ObservableObject {
         }
         
         return accountKeyModel
+    }
+    
+    func findUserKey(deviceId: String) -> KeyDeviceModel? {
+        let key = self.validKeys.last { model in
+            model.device.id == deviceId
+        }
+        return key
     }
     
     func isCurrent(deviceId: String) -> Bool {

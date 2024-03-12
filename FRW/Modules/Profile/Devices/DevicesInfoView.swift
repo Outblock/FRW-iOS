@@ -56,8 +56,8 @@ struct DevicesInfoView: RouteableView {
                         Spacer()
                     }
                     
-                    Color.clear
-                        .frame(height: 8)
+                    keyView
+                        .padding(.top, 16)
                     
                     VStack {
                         DeviceInfoItem(title: "application_tag".localized, detail: info.showApp())
@@ -74,6 +74,7 @@ struct DevicesInfoView: RouteableView {
                             .padding(.vertical, 16)
                         DeviceInfoItem(title: "entry_date_tag".localized, detail: info.showDate())
                     }
+                    .padding(.top, 24)
                     .padding(.all, 16)
                     .background(.Theme.Background.grey)
                     .cornerRadius(16)
@@ -108,6 +109,58 @@ struct DevicesInfoView: RouteableView {
                 viewModel.revokeAction()
             } onCancel: {
                 viewModel.onCancel()
+            }
+        }
+    }
+    
+    var keyView: some View {
+        VStack(spacing: 8) {
+            HStack(spacing: 0) {
+                Text("key_location".localized)
+                    .font(.inter(size: 14, weight: .bold))
+                    .foregroundColor(Color.Theme.Text.black3)
+                Spacer()
+            }
+            
+            HStack(spacing: 8) {
+                HStack(alignment: .center, spacing: 8) {
+                    Image(viewModel.keyIcon)
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                        .padding(.trailing, 8)
+                    
+                    Text(viewModel.showKeyTitle)
+                        .padding(.horizontal, 8)
+                        .frame(height: 20)
+                        .font(.inter(size: 10, weight: .bold))
+                        .foregroundStyle(Color.Theme.Text.black3)
+                        .background(Color.Theme.Text.black3.fixedOpacity())
+                        .cornerRadius(4)
+                    
+                    Spacer()
+                    
+                    Text("full_access".localized)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .frame(height: 20)
+                        .font(.inter(size: 9,weight: .bold))
+                        .foregroundStyle(Color.Theme.Text.black3)
+                        .background(Color.Theme.Text.black3.fixedOpacity())
+                        .cornerRadius(4)
+                    
+                    Image("icon-account-arrow-right")
+                        .renderingMode(.template)
+                        .foregroundColor(.LL.Neutrals.text)
+                        .frame(width: 16, height: 16)
+                        .padding(.leading, 16)
+                }
+                .frame(height: 52)
+                .padding(.horizontal, 16)
+                .background(.Theme.Background.grey)
+                .cornerRadius(16)
+            }
+            .onTapGesture {
+                Router.route(to: RouteMap.Profile.accountKeys)
             }
         }
     }

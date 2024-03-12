@@ -63,17 +63,17 @@ struct DeveloperModeView: RouteableView {
                                     walletManager.changeNetwork(.testnet)
                                 }
                             
-                            Divider()
-                            Cell(sysImageTuple: (isCrescendo ? .checkmarkSelected : .checkmarkUnselected, isCrescendo ? LocalUserDefaults.FlowNetworkType.crescendo.color : .LL.Neutrals.neutrals1), title: "Crescendo", desc: isCrescendo ? "Selected" : "", btnTitle: walletManager.isCrescendoEnabled ? nil : "Enable", btnAction: {
-                                if !walletManager.isCrescendoEnabled {
-                                    vm.enableCrescendoAction()
-                                }
-                            }, titleAlpha: walletManager.isCrescendoEnabled ? 1 : 0.5)
-                                .onTapGestureOnBackground {
-                                    if walletManager.isCrescendoEnabled {
-                                        walletManager.changeNetwork(.crescendo)
-                                    }
-                                }
+//                            Divider()
+//                            Cell(sysImageTuple: (isCrescendo ? .checkmarkSelected : .checkmarkUnselected, isCrescendo ? LocalUserDefaults.FlowNetworkType.crescendo.color : .LL.Neutrals.neutrals1), title: "Crescendo", desc: isCrescendo ? "Selected" : "", btnTitle: walletManager.isCrescendoEnabled ? nil : "Enable", btnAction: {
+//                                if !walletManager.isCrescendoEnabled {
+//                                    vm.enableCrescendoAction()
+//                                }
+//                            }, titleAlpha: walletManager.isCrescendoEnabled ? 1 : 0.5)
+//                                .onTapGestureOnBackground {
+//                                    if walletManager.isCrescendoEnabled {
+//                                        walletManager.changeNetwork(.crescendo)
+//                                    }
+//                                }
                         }
                         .background(.LL.bgForIcon)
                     }

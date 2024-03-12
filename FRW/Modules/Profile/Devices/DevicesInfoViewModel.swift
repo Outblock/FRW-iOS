@@ -6,18 +6,23 @@
 //
 
 import SwiftUI
+import Flow
 
 class DevicesInfoViewModel: ObservableObject {
     @Published var showRemoveTipView = false
     @Published var showRevokeButton = false
     var model: DeviceInfoModel
+    var accountKey: Flow.AccountKey?
+    var userKey: KeyDeviceModel?
     
     init(model: DeviceInfoModel) {
         self.model = model
         if let deviceId = self.model.id {
+            self.accountKey = DeviceManager.shared.findFlowAccount(deviceId: deviceId)
+            self.userKey = DeviceManager.shared.findUserKey(deviceId: deviceId)
             if DeviceManager.shared.isCurrent(deviceId: deviceId) {
                 self.showRevokeButton = false
-            } else if let accountkey = DeviceManager.shared.findFlowAccount(deviceId: deviceId) {
+            } else if self.accountKey != nil {
                 self.showRevokeButton = true
             }else {
                 self.showRevokeButton = false
@@ -78,12 +83,27 @@ class DevicesInfoViewModel: ObservableObject {
         Task {
             HUD.loading()
             let res = try await AccountKeyManager.revokeKey(at: accountKey.index)
-            withAnimation(.easeOut(duration: 0.2)) {
-                showRemoveTipView = false
-                showRevokeButton = false
+            if res {
+                withAnimation(.easeOut(duration: 0.2)) {
+                    showRemoveTipView = false
+                    showRevokeButton = false
+                }
+                Router.pop()
+                HUD.dismissLoading()
             }
-            Router.pop()
-            HUD.dismissLoading()
         }
+    }
+}
+
+extension DevicesInfoViewModel {
+    var keyIcon: String {
+        return userKey?.backupInfo?.backupType().smallIcon ?? ""
+    }
+    
+    var showKeyTitle: String {
+        if DeviceManager.shared.isCurrent(deviceId: model.id ?? "") {
+            return "current_device".localized
+        }
+        return model.deviceName ?? ""
     }
 }
