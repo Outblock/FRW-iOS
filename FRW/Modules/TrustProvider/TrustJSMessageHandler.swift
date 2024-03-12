@@ -77,13 +77,15 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
 extension TrustJSMessageHandler {
     private func handleRequestAccounts(network: ProviderNetwork, id: Int64) {
         
+        let address = self.webVC?.trustProvider.config.ethereum.address ?? ""
+
         let title = webVC?.webView.title ?? "unknown"
         let chainID = LocalUserDefaults.shared.flowNetwork.toFlowType()
         let url = webVC?.webView.url
         let vm = BrowserAuthnViewModel(title: title,
                                        url: url?.host ?? "unknown",
                                        logo: url?.absoluteString.toFavIcon()?.absoluteString,
-                                       walletAddress: WalletManager.shared.getPrimaryWalletAddress(),
+                                       walletAddress: address,
                                        network: chainID) { [weak self] result in
             guard let self = self else {
                 return
@@ -92,7 +94,6 @@ extension TrustJSMessageHandler {
             if result {
                 switch network {
                 case .ethereum:
-                    let address = self.webVC?.trustProvider.config.ethereum.address ?? "0x123456"
                     webVC?.webView.tw.set(network: network.rawValue, address: address)
                     webVC?.webView.tw.send(network: network, results: [address], to: id)
                 default:
