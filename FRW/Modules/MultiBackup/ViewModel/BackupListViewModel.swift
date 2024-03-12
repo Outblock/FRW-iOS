@@ -189,6 +189,9 @@ extension BackupListViewModel {
             }
             DispatchQueue.main.async {
                 self.backupList = fixBackupList
+                if fixBackupList.count >= 2, let uid = UserManager.shared.activatedUID {
+                    MultiAccountStorage.shared.setBackupType(.multi, uid: uid)
+                }
             }
             
         } catch {
