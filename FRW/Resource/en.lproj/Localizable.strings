@@ -924,3 +924,7 @@
 "wrong_network_title" = "Wrong Network";
 "switch_to_mainnet" = "Swicth to Mainnet";
 "wrong_network_des" = "You can only create backup on mainnet.";
+"full_access" = "Full Access";
+"multi_sign" = "Multi-sign";
+"account_key_weight" = "Weight";
+"account_key_index" = "Key Index";

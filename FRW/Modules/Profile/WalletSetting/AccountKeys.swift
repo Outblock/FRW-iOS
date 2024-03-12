@@ -28,7 +28,7 @@ struct AccountKeysView: RouteableView {
             }
             
         }
-        .backgroundFill(.Theme.Background.grey)
+        .backgroundFill(.Theme.Background.white)
         .mockPlaceholder(vm.status == PageStatus.loading)
         .halfSheet(showSheet: $vm.showRovekeView) {
             AccountKeyRevokeView()
@@ -58,30 +58,37 @@ extension AccountKeysView {
             VStack(spacing: -8) {
                 HStack(spacing: 8) {
                     HStack(alignment: .center, spacing: 8) {
-                        Text("Key \(model.accountKey.index)")
-                            .padding(.trailing, 8)
+//                        Text("Key \(model.accountKey.index)")
+//                            .padding(.trailing, 8)
+                        Image(model.titleIcon())
+                            .resizable()
+                            .frame(width: 24, height: 24)
                         
                         Text(model.deviceName())
-                            .padding(.horizontal, 8)
-                            .frame(height: 20)
-                            .font(.inter(size: 10,weight: .bold))
-                            .foregroundStyle(model.deviceStyle().0)
-                            .background(model.deviceStyle().1)
-                            .cornerRadius(4)
+                            .font(.inter(size: 12))
+                            .foregroundStyle(model.deviceNameColor())
                             .hidden(model.deviceName().isEmpty)
                         
                         Spacer()
-                        Image("key.lock")
-                            .frame(width: 16, height: 16)
+//                        AccountKeysView.ProgressView(model: model)
                         
-                        AccountKeysView.ProgressView(model: model)
+                        Text(model.statusText())
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .frame(height: 20)
+                            .font(.inter(size: 9,weight: .bold))
+                            .foregroundStyle(model.statusColor())
+                            .background(model.statusColor().fixedOpacity())
+                            .cornerRadius(4)
+                            .visibility(model.statusText().isEmpty ? .gone : .visible)
+                        
                         Image(isExpanding ? "arrow.up" : "arrow.down")
                             .frame(width: 16, height: 16)
                             .padding(.leading, 16)
                     }
                     .frame(height: 52)
                     .padding(.horizontal, 16)
-                    .background(.Theme.Background.white)
+                    .background(ThemeManager.shared.style == .light ? Color.Theme.Background.pureWhite : Color.Theme.Background.grey)
                     .cornerRadius(16)
                     .padding(.horizontal, 18)
                     .zIndex(100)
@@ -97,15 +104,18 @@ extension AccountKeysView {
                 HStack {
                     VStack {
                         CopyInfoView(model: model)
-                        TextInfoView(model: model,contentType: .curve)
+                        WeightView(model: model, contentType: .weight)
                         TextInfoView(model: model,contentType: .hash)
                         TextInfoView(model: model,contentType: .number)
+                        TextInfoView(model: model,contentType: .curve)
+                        TextInfoView(model: model,contentType: .keyIndex)
+                        
                         
                     }
                     .padding(.top,24)
                     .padding(.bottom, 16)
                     .padding(.horizontal, 16)
-                    .background(Color.LL.Neutrals.background.opacity(0.75))
+                    .background(Color.Theme.Background.grey.opacity(0.75))
                     .cornerRadius([.bottomLeading, .bottomTrailing], 16)
                 }
                 .padding(.horizontal, 24)
@@ -135,10 +145,10 @@ extension AccountKeysView {
                 Text(model.weightDes())
                     .font(.inter(size: 9, weight: .bold))
                     .frame(width: 72,height: 16)
-                    .foregroundStyle(Color.Theme.Text.white9)
+                    .foregroundStyle(Color.Theme.Text.black3)
             }
             .frame(width: 72, height: 16)
-            .background(.Theme.Text.black3)
+            .background(.Theme.Background.white)
             .cornerRadius(2)
         }
     }
@@ -160,7 +170,7 @@ extension AccountKeysView {
                             UIPasteboard.general.string = model.accountKey.publicKey.description
                             HUD.success(title: "copied".localized)
                         } label: {
-                            Image("icon-copy")
+                            Image("icon_copy")
                         }
                     }
                     
@@ -186,6 +196,23 @@ extension AccountKeysView {
                 Text(model.content(at: contentType))
                     .font(.inter(size: 10,weight: .bold))
                     .foregroundStyle(Color.Theme.Text.black3)
+            }
+            
+        }
+    }
+    
+    struct WeightView: View {
+        var model: AccountKeyModel
+        var contentType: AccountKeyModel.ContentType
+        var body: some View {
+            HStack {
+                model.icon(at: contentType)
+                    .frame(width: 16, height: 16)
+                Text(model.tag(at: contentType))
+                    .font(.inter(size: 10))
+                    .foregroundStyle(Color.Theme.Text.black8)
+                Spacer()
+                AccountKeysView.ProgressView(model: model)
             }
             
         }

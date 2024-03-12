@@ -43,7 +43,9 @@ class AccountKeyViewModel: ObservableObject {
                             response.pubkey.publicKey == model.accountKey.publicKey.description
                         }
                         if let info = devicesInfo {
+                            model.deviceType = DeviceType(value: info.device.deviceType)
                             if let backupInfo = info.backupInfo, backupInfo.backupType() != .undefined  {
+                                model.backupType = backupInfo.backupType()
                                 model.name = "backup".localized + " - " + backupInfo.backupType().title
                             }else {
                                 model.name = info.device.deviceName ?? ""
@@ -102,12 +104,14 @@ class AccountKeyViewModel: ObservableObject {
 struct AccountKeyModel {
     
     enum ContentType: Int {
-        case publicKey,curve,hash,number
+        case publicKey,curve,hash,number,weight,keyIndex
     }
     
     let accountKey: Flow.AccountKey
     var expanding: Bool = false
     var name: String = ""
+    var backupType: BackupType = .undefined
+    var deviceType: DeviceType = .iOS
     
     init(accountKey: Flow.AccountKey) {
         self.accountKey = accountKey
@@ -115,27 +119,44 @@ struct AccountKeyModel {
     
     func deviceName() -> String {
         
-        if accountKey.revoked {
-            return "revoked".localized
+        if backupType != .undefined {
+            return "backup".localized + " - " + backupType.title
         }
+        
         if isCurrent() {
             return "current_device".localized
         }
+        
         return name
     }
     
-    func deviceStyle() -> (Color, Color) {
-        if accountKey.revoked {
-            return (Color.Theme.Accent.red, Color.Theme.Accent.red.opacity(0.16))
-        }
-        
+    func deviceNameColor() -> Color {
         if isCurrent() {
-            return (Color.Theme.Accent.blue, Color.Theme.Accent.blue.opacity(0.16))
+            return Color.Theme.Accent.blue
         }
         
-        return (Color.Theme.Text.black3, Color.Theme.Text.black3.opacity(0.16))
+        return Color.Theme.Text.black3
     }
     
+    func statusText() -> String {
+        if accountKey.revoked {
+            return "revoked".localized
+        }
+        if accountKey.weight >= 1000 {
+            return "full_access".localized
+        }
+        return "multi_sign".localized
+    }
+    
+    func statusColor() -> Color {
+        if accountKey.revoked {
+            return Color.Theme.Accent.red
+        }
+        if accountKey.weight >= 1000 {
+            return Color.Theme.Accent.green
+        }
+        return Color.Theme.Text.black3
+    }
     
     func isCurrent() -> Bool {
         guard let cur = WalletManager.shared.getCurrentPublicKey() else {
@@ -145,6 +166,12 @@ struct AccountKeyModel {
         return cur == accountKey.publicKey.description
     }
     
+    func titleIcon() -> String {
+        if backupType != .undefined {
+            return backupType.smallIcon
+        }
+        return deviceType.smallIcon
+    }
     
     func icon(at type: ContentType) -> some View {
         return Image("key.icon.\(type.rawValue)")
@@ -162,6 +189,10 @@ struct AccountKeyModel {
             return "account_key_hash".localized
         case .number:
             return "account_key_number".localized
+        case .weight:
+            return "account_key_weight".localized
+        case .keyIndex:
+            return "account_key_index".localized
         }
     }
     
@@ -175,6 +206,10 @@ struct AccountKeyModel {
             accountKey.hashAlgo.rawValue
         case .number:
             String(accountKey.sequenceNumber)
+        case .weight:
+            String(accountKey.weight)
+        case .keyIndex:
+            String(format: "%02d", accountKey.index)
         }
     }
 
@@ -188,8 +223,6 @@ struct AccountKeyModel {
     }
     
     func weightBG() -> Color {
-       return accountKey.weight >= 1000
-        ? Color.Theme.Accent.green
-        : Color.Theme.Text.black3
+        return Color.Theme.Background.silver
     }
 }

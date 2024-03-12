@@ -79,4 +79,19 @@ enum BackupType: Int, Codable {
             return "Undefined"
         }
     }
+    
+    var smallIcon: String {
+        switch self {
+        case .google:
+            return "icon_key_google"
+        case .iCloud:
+            return "icon_key_icloud"
+        case .manual:
+            return "icon_key_manual"
+        case .passkey:
+            return ""
+        case .undefined:
+            return ""
+        }
+    }
 }

@@ -5,30 +5,47 @@
 //  Created by cat on 2023/10/30.
 //
 
-import Foundation
-import UIKit
 import Alamofire
 import DeviceGuru
+import Foundation
+import UIKit
 
-class IPManager {
+enum DeviceType: String {
     
-    enum DeviceType: String {
     case iOS = "1"
+    case chrome = "2"
+    
+    init(value: Int?) {
+        if value == 2 {
+            self = .chrome
+        }else {
+            self = .iOS
+        }
     }
     
+    var smallIcon: String {
+        switch self {
+        case .chrome:
+            return "device_1"
+        default:
+            return "icon_key_phone"
+        }
+    }
+}
+
+class IPManager {
     static let shared = IPManager()
     var info: IPResponse?
     
-    func fetch() async  {
+    func fetch() async {
         do {
-            self.info = try await Network.request(FRWAPI.IP.info)
-        }catch {
+            info = try await Network.request(FRWAPI.IP.info)
+        } catch {
             log.error("Fetch IP \(error)")
         }
     }
     
     func toParams() -> DeviceInfoRequest {
-        
         let info = DeviceInfoRequest(deviceId: UUIDManager.appUUID(),
                                      ip: ip,
                                      name: name,
@@ -51,9 +68,6 @@ class IPManager {
         
         return info
     }
-    
-    
-    
     
     private var ip: String {
         guard let str = info?.query else {
