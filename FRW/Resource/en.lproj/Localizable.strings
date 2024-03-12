@@ -929,3 +929,4 @@
 "account_key_weight" = "Weight";
 "account_key_index" = "Key Index";
 "account_key_done_revoked_tips" = "The key has been revoked";
+"other_key" = "Other Key";

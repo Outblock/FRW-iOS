@@ -12,23 +12,29 @@ import UIKit
 
 enum DeviceType: String {
     
+    case other = ""
     case iOS = "1"
     case chrome = "2"
     
     init(value: Int?) {
-        if value == 2 {
-            self = .chrome
-        }else {
+        switch value {
+        case 1:
             self = .iOS
+        case 2:
+            self = .chrome
+        default:
+            self = .other
         }
     }
     
     var smallIcon: String {
         switch self {
+        case .other:
+            return "icon_key_manual"
+        case .iOS:
+            return "icon_key_phone"
         case .chrome:
             return "device_1"
-        default:
-            return "icon_key_phone"
         }
     }
 }

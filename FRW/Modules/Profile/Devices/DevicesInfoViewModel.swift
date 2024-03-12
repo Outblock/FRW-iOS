@@ -102,9 +102,17 @@ extension DevicesInfoViewModel {
     }
     
     var showKeyTitle: String {
-        if DeviceManager.shared.isCurrent(deviceId: model.id ?? "") {
+        if isCurrent {
             return "current_device".localized
         }
         return model.deviceName ?? ""
+    }
+    
+    var showKeyTitleColor: Color {
+        return isCurrent ? Color.Theme.Accent.blue : Color.Theme.Text.black3
+    }
+    
+    var isCurrent: Bool {
+        return DeviceManager.shared.isCurrent(deviceId: model.id ?? "") 
     }
 }

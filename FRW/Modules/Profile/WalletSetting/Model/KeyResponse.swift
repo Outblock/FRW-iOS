@@ -87,7 +87,7 @@ enum BackupType: Int, Codable {
         case .iCloud:
             return "icon_key_icloud"
         case .manual:
-            return "icon_key_manual"
+            return "icon_key_phrase"
         case .passkey:
             return ""
         case .undefined:

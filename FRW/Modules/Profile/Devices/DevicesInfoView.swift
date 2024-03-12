@@ -135,10 +135,8 @@ struct DevicesInfoView: RouteableView {
                     Text(viewModel.showKeyTitle)
                         .padding(.horizontal, 8)
                         .frame(height: 20)
-                        .font(.inter(size: 10, weight: .bold))
-                        .foregroundStyle(Color.Theme.Text.black3)
-                        .background(Color.Theme.Text.black3.fixedOpacity())
-                        .cornerRadius(4)
+                        .font(.inter(size: 12, weight: .bold))
+                        .foregroundStyle(viewModel.showKeyTitleColor)
                     
                     Spacer()
                     

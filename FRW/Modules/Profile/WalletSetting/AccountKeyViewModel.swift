@@ -126,7 +126,9 @@ struct AccountKeyModel {
         if isCurrent() {
             return "current_device".localized
         }
-        
+        if name.isEmpty {
+            return "other_key".localized
+        }
         return name
     }
     
