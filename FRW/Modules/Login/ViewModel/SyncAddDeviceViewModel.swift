@@ -28,8 +28,12 @@ class SyncAddDeviceViewModel: ObservableObject {
     func addDevice() {
         Task {
             let address = WalletManager.shared.address
-            let accountKey = Flow.AccountKey(publicKey: Flow.PublicKey(hex: model.accountKey.publicKey), signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 1000)
+            let accountKey = Flow.AccountKey(publicKey: Flow.PublicKey(hex: model.accountKey.publicKey),
+                                             signAlgo: Flow.SignatureAlgorithm(index: model.accountKey.signAlgo),
+                                             hashAlgo: Flow.HashAlgorithm(cadence: model.accountKey.hashAlgo),
+                                             weight: 1000)
             do {
+                try await WalletManager.shared.findFlowAccount()
                 let sequenceNumber = WalletManager.shared.flowAccountKey?.sequenceNumber ?? 0
                 let flowId = try await FlowNetwork.addKeyWithMulti(address: address, keyIndex: WalletManager.shared.keyIndex, sequenceNum: sequenceNumber, accountKey: accountKey, signers: [WalletManager.shared, RemoteConfigManager.shared])
                 guard let data = try? JSONEncoder().encode(model) else {
@@ -42,7 +46,7 @@ class SyncAddDeviceViewModel: ObservableObject {
                 let result = try await flowId.onceSealed()
                 if result.isComplete {
                     sendSuccessStatus()
-                }else {
+                } else {
                     sendFaildStatus()
                 }
                 HUD.dismissLoading()

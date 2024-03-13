@@ -219,9 +219,14 @@ extension Color {
         }
         
         enum Background {
+            ///BG
             static let white = Color("bg.white")
+            ///BG2
             static let grey = Color("bg.grey")
+            ///BG3
             static let silver = Color("bg.silver")
+            /// White
+            static let pureWhite = Color("bg.0")
         }
         
         enum Line {

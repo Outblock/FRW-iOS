@@ -935,6 +935,10 @@
 		4E1A8B732B71AADE00485EDE /* MultiBackupVerifyPinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B712B71AADE00485EDE /* MultiBackupVerifyPinView.swift */; };
 		4E1A8B752B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B742B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift */; };
 		4E1A8B762B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B742B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift */; };
+		4E1B2FE32BA038C000F30379 /* DevicesInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1B2FE22BA038C000F30379 /* DevicesInfoViewModel.swift */; };
+		4E1B2FE42BA038C000F30379 /* DevicesInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1B2FE22BA038C000F30379 /* DevicesInfoViewModel.swift */; };
+		4E1B2FE62BA061F700F30379 /* QRCodeEyeShareFillCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1B2FE52BA061F700F30379 /* QRCodeEyeShareFillCircle.swift */; };
+		4E1B2FE72BA061F700F30379 /* QRCodeEyeShareFillCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1B2FE52BA061F700F30379 /* QRCodeEyeShareFillCircle.swift */; };
 		4E1DD8C72B1622030055E510 /* Instabug in Frameworks */ = {isa = PBXBuildFile; productRef = 4E1DD8C62B1622030055E510 /* Instabug */; };
 		4E1DD8C92B16222A0055E510 /* Instabug in Frameworks */ = {isa = PBXBuildFile; productRef = 4E1DD8C82B16222A0055E510 /* Instabug */; };
 		4E1DD8CB2B1629560055E510 /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1DD8CA2B1629560055E510 /* QRCodeView.swift */; };
@@ -2115,6 +2119,8 @@
 		4E1A8B6E2B71A7FA00485EDE /* MultiBackupConfirmPinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupConfirmPinViewModel.swift; sourceTree = "<group>"; };
 		4E1A8B712B71AADE00485EDE /* MultiBackupVerifyPinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupVerifyPinView.swift; sourceTree = "<group>"; };
 		4E1A8B742B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupVerifyPinViewModel.swift; sourceTree = "<group>"; };
+		4E1B2FE22BA038C000F30379 /* DevicesInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesInfoViewModel.swift; sourceTree = "<group>"; };
+		4E1B2FE52BA061F700F30379 /* QRCodeEyeShareFillCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeEyeShareFillCircle.swift; sourceTree = "<group>"; };
 		4E1DD8CA2B1629560055E510 /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
 		4E1DD8D02B162F9B0055E510 /* SyncConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncConfirmView.swift; sourceTree = "<group>"; };
 		4E2380FD2B186A6000756874 /* WalletConnect+Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WalletConnect+Tools.swift"; sourceTree = "<group>"; };
@@ -4197,6 +4203,7 @@
 				4E8394432A7153EB00DFC422 /* CalloutView.swift */,
 				4EA0D0A22A7A357E004C6A19 /* LLSegmenControl.swift */,
 				4E1DD8CA2B1629560055E510 /* QRCodeView.swift */,
+				4E1B2FE52BA061F700F30379 /* QRCodeEyeShareFillCircle.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -4581,6 +4588,7 @@
 			children = (
 				4EFF94B72AEEC76B00365EF7 /* DevicesView.swift */,
 				4EFF94BA2AEED15300365EF7 /* DevicesInfoView.swift */,
+				4E1B2FE22BA038C000F30379 /* DevicesInfoViewModel.swift */,
 				4E2381002B186FD600756874 /* DeviceInfoItem.swift */,
 				4EFF94C62AEEE5DD00365EF7 /* DevicesViewModel.swift */,
 			);
@@ -6083,6 +6091,7 @@
 				6A35EADA2859BD36005A85B8 /* EditAvatarView.swift in Sources */,
 				15DC20C727819C56000B187A /* VCloseButtonState.swift in Sources */,
 				15DC214927819C56000B187A /* VTabNavigationViewModel.swift in Sources */,
+				4E1B2FE42BA038C000F30379 /* DevicesInfoViewModel.swift in Sources */,
 				15DC20FF27819C56000B187A /* VStepperModel.swift in Sources */,
 				6AA78E0428A0BF2C00FF6CF9 /* ScanHandler.swift in Sources */,
 				6A164F462840A1380026B31E /* TabBarView.swift in Sources */,
@@ -6425,6 +6434,7 @@
 				15DC209B27819C56000B187A /* VBaseHeaderFooterView.swift in Sources */,
 				15DC213327819C56000B187A /* VSegmentedPickerModel.swift in Sources */,
 				4EBE49272AA1B732000FFFFE /* AppUpdateManager.swift in Sources */,
+				4E1B2FE72BA061F700F30379 /* QRCodeEyeShareFillCircle.swift in Sources */,
 				6A9CFE4D2A69331100AEA847 /* JailbreakAlertView.swift in Sources */,
 				15DC21E327819C56000B187A /* StateColors_EFD.swift in Sources */,
 				15DC20E727819C56000B187A /* VAccordionModel.swift in Sources */,
@@ -6778,6 +6788,7 @@
 				15C58ACA2868A4EE00BD4FC6 /* EditAvatarView.swift in Sources */,
 				15C58ACB2868A4EE00BD4FC6 /* VCloseButtonState.swift in Sources */,
 				15C58ACC2868A4EE00BD4FC6 /* VTabNavigationViewModel.swift in Sources */,
+				4E1B2FE32BA038C000F30379 /* DevicesInfoViewModel.swift in Sources */,
 				15C58ACD2868A4EE00BD4FC6 /* VStepperModel.swift in Sources */,
 				6AA78E0328A0BF2C00FF6CF9 /* ScanHandler.swift in Sources */,
 				15C58ACE2868A4EE00BD4FC6 /* TabBarView.swift in Sources */,
@@ -7120,6 +7131,7 @@
 				15C58B942868A4EE00BD4FC6 /* StateColors_EFD.swift in Sources */,
 				4EBE49262AA1B732000FFFFE /* AppUpdateManager.swift in Sources */,
 				6A9CFE4C2A69331100AEA847 /* JailbreakAlertView.swift in Sources */,
+				4E1B2FE62BA061F700F30379 /* QRCodeEyeShareFillCircle.swift in Sources */,
 				15C58B952868A4EE00BD4FC6 /* VAccordionModel.swift in Sources */,
 				15C58B962868A4EE00BD4FC6 /* SnapAlignmentEnvironmentKey.swift in Sources */,
 				15C58B972868A4EE00BD4FC6 /* CoinRateCache.swift in Sources */,

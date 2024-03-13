@@ -32,6 +32,7 @@ class RestoreMultiAccountViewModel: ObservableObject {
                 do {
                     HUD.loading()
                     try await UserManager.shared.switchAccount(withUID: userId)
+                    MultiAccountStorage.shared.setBackupType(.multi, uid: userId)
                     HUD.dismissLoading()
                 } catch {
                     log.error("switch account failed", context: error)
