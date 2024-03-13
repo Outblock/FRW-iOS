@@ -43,11 +43,12 @@ struct QRCodeView: View {
         }
         
         d.design.backgroundColor(UIColor(hex: "#FFFFFF").cgColor)
-        d.design.shape.eye = QRCode.EyeShape.FillCircle()
+        d.design.shape.eye = QRCode.EyeShape.Circle()
         d.design.shape.onPixels = QRCode.PixelShape.Circle()
         
         let color = Color.Theme.Text.black8.toUIColor()
         d.design.style.eye = QRCode.FillStyle.Solid(color!.cgColor)
+//        d.design.style.eyeBackground = color!.cgColor
         d.design.style.pupil = QRCode.FillStyle.Solid(eyeColor.cgColor)
         d.design.style.onPixels = QRCode.FillStyle.Solid(color!.cgColor)
         return d

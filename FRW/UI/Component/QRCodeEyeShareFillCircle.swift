@@ -30,12 +30,26 @@ public extension QRCode.EyeShape {
         }
 
         public func eyePath() -> CGPath {
-            let circlePath = UIBezierPath(arcCenter: CGPoint(x: 33, y: 33), radius: CGFloat(27), startAngle: CGFloat(0), endAngle: CGFloat(Double.pi * 2), clockwise: true)
-            return circlePath.cgPath
+            let circleEyePath = CGMutablePath()
+            circleEyePath.move(to: CGPoint(x: 45, y: 20))
+            circleEyePath.curve(to: CGPoint(x: 20, y: 45), controlPoint1: CGPoint(x: 31.19, y: 20), controlPoint2: CGPoint(x: 20, y: 31.19))
+            circleEyePath.curve(to: CGPoint(x: 21.28, y: 52.92), controlPoint1: CGPoint(x: 20, y: 47.77), controlPoint2: CGPoint(x: 20.45, y: 50.43))
+            circleEyePath.curve(to: CGPoint(x: 45, y: 70), controlPoint1: CGPoint(x: 24.59, y: 62.85), controlPoint2: CGPoint(x: 33.96, y: 70))
+            circleEyePath.curve(to: CGPoint(x: 70, y: 45), controlPoint1: CGPoint(x: 58.81, y: 70), controlPoint2: CGPoint(x: 70, y: 58.81))
+            circleEyePath.curve(to: CGPoint(x: 45, y: 20), controlPoint1: CGPoint(x: 70, y: 31.19), controlPoint2: CGPoint(x: 58.81, y: 20))
+            circleEyePath.close()
+            circleEyePath.move(to: CGPoint(x: 80, y: 45))
+            circleEyePath.curve(to: CGPoint(x: 45, y: 80), controlPoint1: CGPoint(x: 80, y: 64.33), controlPoint2: CGPoint(x: 64.33, y: 80))
+            circleEyePath.curve(to: CGPoint(x: 11.64, y: 55.61), controlPoint1: CGPoint(x: 29.37, y: 80), controlPoint2: CGPoint(x: 16.13, y: 69.76))
+            circleEyePath.curve(to: CGPoint(x: 10, y: 45), controlPoint1: CGPoint(x: 10.57, y: 52.27), controlPoint2: CGPoint(x: 10, y: 48.7))
+            circleEyePath.curve(to: CGPoint(x: 45, y: 10), controlPoint1: CGPoint(x: 10, y: 25.67), controlPoint2: CGPoint(x: 25.67, y: 10))
+            circleEyePath.curve(to: CGPoint(x: 80, y: 45), controlPoint1: CGPoint(x: 64.33, y: 10), controlPoint2: CGPoint(x: 80, y: 25.67))
+            circleEyePath.close()
+            return circleEyePath
         }
 
         @objc public func eyeBackgroundPath() -> CGPath {
-            CGPath(ellipseIn: CGRect(origin: .zero, size: CGSize(width: 66, height: 66)), transform: nil)
+            CGPath(ellipseIn: CGRect(origin: .zero, size: CGSize(width: 90, height: 90)), transform: nil)
         }
 
         private static let _defaultPupil = QRCode.PupilShape.FillCircle()
@@ -54,11 +68,11 @@ public extension QRCode.PupilShape {
         @objc public static var Title: String { "FillCircle" }
 
         @objc public static func Create(_ settings: [String : Any]?) -> QRCodePupilShapeGenerator {
-            Circle()
+            FillCircle()
         }
 
         /// Make a copy of the object
-        @objc public func copyShape() -> QRCodePupilShapeGenerator { Circle() }
+        @objc public func copyShape() -> QRCodePupilShapeGenerator { FillCircle() }
 
         @objc public func settings() -> [String : Any] { [:] }
         @objc public func supportsSettingValue(forKey key: String) -> Bool { false }
@@ -66,7 +80,20 @@ public extension QRCode.PupilShape {
 
         /// The pupil centered in the 90x90 square
         @objc public func pupilPath() -> CGPath {
-            return CGPath(ellipseIn: CGRect(x: 21, y: 21, width: 24, height: 24), transform: nil)
+            return CGPath(ellipseIn: CGRect(x: 30, y: 30, width: 30, height: 30), transform: nil)
         }
     }
+}
+
+extension CGMutablePath {
+    @inlinable @inline(__always) func curve(
+        to endPoint: CGPoint,
+        controlPoint1: CGPoint,
+        controlPoint2: CGPoint
+    ) {
+        addCurve(to: endPoint, control1: controlPoint1, control2: controlPoint2)
+    }
+
+    @inlinable @inline(__always) func line(to point: CGPoint) { addLine(to: point) }
+    @inlinable @inline(__always) func close() { closeSubpath() }
 }
