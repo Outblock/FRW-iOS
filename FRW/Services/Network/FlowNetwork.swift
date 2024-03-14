@@ -98,7 +98,7 @@ extension FlowNetwork {
 
 extension FlowNetwork {
     static func checkCollectionEnable(address: Flow.Address, list: [NFTCollectionInfo]) async throws -> [Bool] {
-        //TODO: #six 
+        //TODO: #six
         let cadence = NFTCadence.collectionListCheckEnabled(with: list, on: flow.chainID)
         return try await fetch(at: address, by: cadence)
     }
@@ -822,7 +822,9 @@ extension FlowNetwork {
     
     static func checkStorageInfo() async throws -> Flow.StorageInfo {
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
-        return try await flow.checkStorageInfo(address: address)
+        let cadence = CadenceManager.shared.current.basic?.getStorageInfo?.toFunc() ?? ""
+        let response = try await flow.accessAPI.executeScriptAtLatestBlock(cadence: cadence, arguments: [.address(address)]).decode(Flow.StorageInfo.self)
+        return response
     }
 }
 

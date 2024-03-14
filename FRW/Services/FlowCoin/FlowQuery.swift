@@ -23,24 +23,7 @@ struct LLCadence<T> {}
 
 //MARK: Check Token vault is enabled
 extension LLCadence where T == LLCadenceAction.token {
-    static func tokenEnable(with tokens: [TokenModel], at network: Flow.ChainID) -> String {
-        
-        let cadence =
-            """
-              import FungibleToken from 0xFungibleToken
-              <TokenImports>
-              <TokenFunctions>
-              pub fun main(address: Address) : [Bool] {
-                return [<TokenCall>]
-              }
-            """
-            
-            .replacingOccurrences(of: "<TokenImports>", with: importRow(with: tokens, at: network))
-            .replacingOccurrences(of: "<TokenFunctions>", with: tokenEnableFunc(with: tokens, at: network))
-            .replacingOccurrences(of: "<TokenCall>", with: tokenEnableCalls(with: tokens, at: network))
-
-        return cadence
-    }
+    
     
     static func tokenTransfer(token: TokenModel, at network: Flow.ChainID) -> String {
         
@@ -52,85 +35,15 @@ extension LLCadence where T == LLCadenceAction.token {
             .buildTokenInfo(token, chainId: network)
     }
 
-    static private func tokenEnableFunc(with tokens: [TokenModel], at network: Flow.ChainID) -> String {
-        let tokenFunctions = tokens.map { token in
-            """
-              pub fun check<Token>Vault(address: Address) : Bool {
-                let receiver: Bool = getAccount(address) \
-                .getCapability<&<Token>.Vault{FungibleToken.Receiver}>(<TokenReceiverPath>) \
-                .check()
-                let balance: Bool = getAccount(address) \
-                 .getCapability<&<Token>.Vault{FungibleToken.Balance}>(<TokenBalancePath>) \
-                 .check()
-                 return receiver && balance
-              }
+    
 
-            """
-            .buildTokenInfo(token, chainId: network)
-        }.joined(separator: "\n")
-        return tokenFunctions
-    }
-
-    static private func tokenEnableCalls(with tokens: [TokenModel], at network: Flow.ChainID) -> String {
-        let tokenCalls = tokens.map { token in
-            """
-            check<Token>Vault(address: address)
-            """
-            .buildTokenInfo(token, chainId: network)
-        }
-        .joined(separator: ",")
-        return tokenCalls
-    }
+    
 }
 
 //MARK: Get Token Balance
 extension LLCadence where T == LLCadenceAction.balance {
     
-    static func balance(with tokens: [TokenModel], at network: Flow.ChainID) -> String {
-        let cadence =
-            """
-            import FungibleToken from 0xFungibleToken
-            <TokenImports>
-            <TokenFunctions>
-            pub fun main(address: Address) : [UFix64] {
-              return [<TokenCall>]
-            }
-            """
-            .replace(by: ScriptAddress.addressMap())
-            .replacingOccurrences(of: "<TokenImports>", with: importRow(with: tokens, at: network))
-            .replacingOccurrences(of: "<TokenFunctions>", with: balanceFunc(with: tokens, at: network))
-            .replacingOccurrences(of: "<TokenCall>", with: balanceCalls(with: tokens, at: network))
-        return cadence
-    }
     
-    static private func balanceFunc(with tokens: [TokenModel], at network: Flow.ChainID) -> String {
-        let balanceFunctions = tokens.map { token in
-            """
-              pub fun balance<Token>Func(address: Address) : UFix64 {
-                let account = getAccount(address)
-                let vaultRef = account \
-                .getCapability(<TokenBalancePath>) \
-                .borrow<&<Token>.Vault{FungibleToken.Balance}>() \
-                ?? panic("Could not borrow Balance capability")
-                return vaultRef.balance
-              }
-            """
-                .buildTokenInfo(token, chainId: network)
-        }
-            .joined(separator: "\n")
-        return balanceFunctions
-    }
-    
-    static private func balanceCalls(with tokens: [TokenModel], at network: Flow.ChainID) -> String {
-        let balanceCalls =  tokens.map { token in
-            """
-            balance<Token>Func(address: address)
-            """
-                .buildTokenInfo(token, chainId: network)
-        }
-            .joined(separator: ",")
-        return balanceCalls
-    }
     
 }
 
@@ -199,41 +112,7 @@ extension LLCadence where T == LLCadenceAction.nft {
         return cadence
     }
     
-    static func collectionListIdCheck(with list: [NFTCollectionInfo], on network: Flow.ChainID) -> String {
-        let tokenImports = list.map {
-            $0.formatCadence(script: "import <NFT> from <NFTAddress>")
-        }.joined(separator: "\r\n")
-
-        let tokenFunctions = list.map {
-            $0.formatCadence(script:
-                """
-                if let col = owner.getCapability(<CollectionPublicPath>)
-                        .borrow<&{<CollectionPublic>}>() {
-                            ids[<CollectionName>] = col.getIDs()
-                }
-                """
-            )
-        }.joined(separator: "\r\n")
-
-        let cadence =
-            """
-            import NonFungibleToken from 0xNonFungibleToken
-            <TokenImports>
-            
-            pub fun main(address: Address) : {String: [UInt64]}  {
-                let owner = getAccount(ownerAddress)
-                let ids: {String: [UInt64]} = {}
-            
-                <TokenFunctions>
-            
-                return ids
-            }
-            """
-            .replace(by: ScriptAddress.addressMap())
-            .replacingOccurrences(of: "<TokenFunctions>", with: tokenFunctions)
-            .replacingOccurrences(of: "<TokenImports>", with: tokenImports)
-        return cadence
-    }
+    
 }
 
 
