@@ -1,6 +1,6 @@
 //
 //  PrivateKeyScreen.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 7/9/2022.
 //
@@ -94,7 +94,7 @@ struct PrivateKeyView: RouteableView {
                             Text("Hash Algotithm")
                                 .font(.LL.footnote)
                                 .foregroundColor(.LL.Neutrals.neutrals4)
-                            Text("SHA2_256")
+                            Text(WalletManager.shared.hashAlgo.algorithm)
                                 .font(.LL.body)
                                 .foregroundColor(.LL.Neutrals.neutrals1)
                         }
@@ -108,7 +108,7 @@ struct PrivateKeyView: RouteableView {
                             Text("Sign Algotithm")
                                 .font(.LL.footnote)
                                 .foregroundColor(.LL.Neutrals.neutrals4)
-                            Text("ECDSA_secp256k1")
+                            Text(WalletManager.shared.signatureAlgo.id)
                                 .font(.LL.body)
                                 .foregroundColor(.LL.Neutrals.neutrals1)
                         }

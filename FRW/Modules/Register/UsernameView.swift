@@ -1,6 +1,6 @@
 //
 //  UsernameView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 26/12/21.
 //
@@ -85,7 +85,7 @@ struct UsernameView: RouteableView {
                 Text("username".localized)
                     .font(.largeTitle)
                     .bold()
-                    .foregroundColor(Color.LL.orange)
+                    .foregroundColor(Color.Theme.Accent.green)
                 Text("username_desc".localized)
                     .font(.LL.body)
                     .foregroundColor(.LL.note)

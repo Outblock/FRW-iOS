@@ -1,6 +1,6 @@
 //
 //  RegisterResponse.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 3/1/22.
 //
@@ -48,11 +48,11 @@ struct UserWalletResponse: Codable {
 //    }
     
     var currentNetworkWalletModel: WalletResponse? {
-        return wallets?.first(where: { $0.chainId == LocalUserDefaults.shared.flowNetwork.rawValue })
+        return wallets?.first(where: { $0.chainId == LocalUserDefaults.shared.flowNetwork.rawValue && $0.blockchain != nil })
     }
     
     func getNetworkWalletModel(network: LocalUserDefaults.FlowNetworkType) -> WalletResponse? {
-        return wallets?.first(where: { $0.chainId == network.rawValue })
+        return wallets?.first(where: { $0.chainId == network.rawValue && $0.blockchain != nil })
     }
 }
 

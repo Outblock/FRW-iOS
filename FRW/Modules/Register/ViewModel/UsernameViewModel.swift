@@ -1,6 +1,6 @@
 //
 //  UsernameViewModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 29/12/21.
 //
@@ -89,7 +89,7 @@ class UsernameViewModel: ViewModel {
             return false
         }
 
-        guard let _ = username.range(of: "^[A-Za-z0-9_]{3,15}$", options: .regularExpression) else {
+        guard let _ = username.range(of: "^[A-Za-z0-9]{3,15}$", options: .regularExpression) else {
             state.status = .error("username_valid_tips".localized)
             return false
         }
@@ -102,7 +102,7 @@ class UsernameViewModel: ViewModel {
             do {
                 let model: CheckUserResponse = try await Network.request(FRWAPI.User.checkUsername(username.lowercased()))
                 await MainActor.run {
-                    if model.username == currentText {
+                    if model.username == currentText.lowercased() {
                         self.state.status = model.unique ? .success() : .error("has_been_taken".localized)
                     }
                 }

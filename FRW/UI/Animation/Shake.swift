@@ -1,6 +1,6 @@
 //
 //  Shake.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 4/8/2022.
 //

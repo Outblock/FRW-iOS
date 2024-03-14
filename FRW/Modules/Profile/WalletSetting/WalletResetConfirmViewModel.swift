@@ -1,6 +1,6 @@
 //
 //  WalletResetConfirmViewModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 25/10/2022.
 //

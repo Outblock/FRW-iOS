@@ -1,6 +1,6 @@
 //
 //  LottieButton.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 22/8/2022.
 //

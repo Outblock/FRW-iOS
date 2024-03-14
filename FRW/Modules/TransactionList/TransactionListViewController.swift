@@ -1,6 +1,6 @@
 //
 //  TransactionListViewController.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 9/9/2022.
 //
@@ -13,13 +13,6 @@ import JXSegmentedView
 class TransactionListViewController: UIViewController {
     private(set) var contractId: String?
     
-    private lazy var transactionHandler: TransactionListHandler = {
-        let handler = TransactionListHandler(contractId: contractId)
-        handler.countChangeCallback = { [weak self] in
-            self?.reloadCounts()
-        }
-        return handler
-    }()
     
     private lazy var transferHandler: TransferListHandler = {
         let handler = TransferListHandler(contractId: contractId)
@@ -31,8 +24,7 @@ class TransactionListViewController: UIViewController {
     
     private lazy var segmentDataSource: JXSegmentedTitleDataSource = {
         let ds = JXSegmentedTitleDataSource()
-        ds.titles = [ "transaction_list_transfer_x".localized(transferHandler.totalCount),
-                      "transaction_list_transaction_x".localized(transactionHandler.totalCount)]
+        ds.titles = [ "transaction_list_transfer_x".localized()]
         let textColor = UIColor(named: "text.black.8")!
         ds.titleNormalColor = textColor
         ds.titleSelectedColor = textColor
@@ -40,7 +32,7 @@ class TransactionListViewController: UIViewController {
         ds.titleSelectedFont = .interMedium(size: 14)
         ds.isTitleColorGradientEnabled = true
         ds.itemSpacing = 0
-        ds.itemWidth = Router.coordinator.window.bounds.size.width / 2.0
+        ds.itemWidth = Router.coordinator.window.bounds.size.width
         return ds
     }()
     
@@ -119,19 +111,18 @@ class TransactionListViewController: UIViewController {
 
 extension TransactionListViewController {
     private func reloadCounts() {
-        segmentDataSource.titles = ["transaction_list_transfer_x".localized(transferHandler.totalCount),
-                                    "transaction_list_transaction_x".localized(transactionHandler.totalCount)]
+        segmentDataSource.titles = ["transaction_list_transfer_x".localized()]
         segmentView.reloadData()
     }
 }
 
 extension TransactionListViewController: JXSegmentedListContainerViewDataSource {
     func numberOfLists(in listContainerView: JXSegmentedListContainerView) -> Int {
-        return 2
+        return 1
     }
     
     func listContainerView(_ listContainerView: JXSegmentedListContainerView, initListAt index: Int) -> JXSegmentedListContainerViewListDelegate {
-        return index == 0 ? transferHandler : transactionHandler
+        return transferHandler
     }
 }
 

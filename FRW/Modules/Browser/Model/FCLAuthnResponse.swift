@@ -1,6 +1,6 @@
 //
 //  FCLAuthnResponse.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 5/9/2022.
 //

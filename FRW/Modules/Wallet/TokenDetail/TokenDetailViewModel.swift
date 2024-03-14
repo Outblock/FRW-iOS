@@ -1,6 +1,6 @@
 //
 //  TokenDetailViewModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 1/7/2022.
 //

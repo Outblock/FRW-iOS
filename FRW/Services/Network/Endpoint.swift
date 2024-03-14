@@ -1,6 +1,6 @@
 //
 //  Endpoint.swift
-//  Flow Reference Wallet-lite
+//  Flow Wallet-lite
 //
 //  Created by Hao Fu on 28/11/21.
 //

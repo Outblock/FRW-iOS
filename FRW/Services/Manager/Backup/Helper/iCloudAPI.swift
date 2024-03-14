@@ -1,12 +1,12 @@
 //
 //  iCloudAPI.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 28/7/2022.
 //
 
-import UIKit
 import Combine
+import UIKit
 
 class iCloudAPI: UIDocument {
     private(set) var data: Data?
@@ -15,6 +15,7 @@ class iCloudAPI: UIDocument {
         queue.maxConcurrentOperationCount = 1
         return queue
     }()
+
     private var cancelSets = Set<AnyCancellable>()
     
     override func load(fromContents contents: Any, ofType typeName: String?) throws {
@@ -53,10 +54,52 @@ class iCloudAPI: UIDocument {
         
         cancelSets.removeAll()
         
-        query.operationQueue?.addOperation({
+        query.operationQueue?.addOperation {
             debugPrint("iCloudAPI -> isExist: query.start()")
             query.start()
-        })
+        }
+        
+        return try await withCheckedThrowingContinuation { config in
+            NotificationCenter.default.publisher(for: .NSMetadataQueryDidFinishGathering).sink { [weak self] _ in
+                debugPrint("iCloudAPI -> isExist: query callback, resultCount = \(query.resultCount)")
+                query.disableUpdates()
+                query.stop()
+                self?.cancelSets.removeAll()
+                
+                guard let results = query.results as? [NSMetadataItem], let item = results.first else {
+                    debugPrint("iCloudAPI -> isExist: results or item is nil")
+                    config.resume(returning: false)
+                    return
+                }
+                
+                guard let isUploaded = item.value(forAttribute: NSMetadataUbiquitousItemIsUploadedKey) as? Bool else {
+                    debugPrint("iCloudAPI -> isExist: checkFileUploadedStatusError")
+                    config.resume(throwing: iCloudBackupError.checkFileUploadedStatusError)
+                    return
+                }
+                
+                debugPrint("iCloudAPI -> isExist: isUploaded = \(isUploaded)")
+                config.resume(returning: isUploaded)
+            }.store(in: &cancelSets)
+        }
+    }
+    
+    func isExist(name: String = BackupManager.backupFileName) async throws -> Bool {
+        debugPrint("iCloudAPI -> isExist")
+        
+        let query = NSMetadataQuery()
+        query.operationQueue = workingQueue
+        query.predicate = NSPredicate(format: "%K == %@", NSMetadataItemFSNameKey, name)
+        query.searchScopes = [
+            NSMetadataQueryUbiquitousDocumentsScope
+        ]
+        
+        cancelSets.removeAll()
+        
+        query.operationQueue?.addOperation {
+            debugPrint("iCloudAPI -> isExist: query.start()")
+            query.start()
+        }
         
         return try await withCheckedThrowingContinuation { config in
             NotificationCenter.default.publisher(for: .NSMetadataQueryDidFinishGathering).sink { [weak self] _ in
@@ -88,7 +131,7 @@ extension iCloudAPI {
     func getFileData() async throws -> Data {
         debugPrint("iCloudAPI -> getFileData")
         
-        let result = await self.open()
+        let result = await open()
         if !result {
             debugPrint("iCloudAPI -> getFileData: openFileError")
             throw iCloudBackupError.openFileError
@@ -106,9 +149,9 @@ extension iCloudAPI {
     func write(content: Data) async throws -> Bool {
         debugPrint("iCloudAPI -> write")
         let isExist = try await isExist()
-        self.data = content
+        data = content
         
-        let result = await self.save(to: self.fileURL, for: isExist ? .forOverwriting : .forCreating)
+        let result = await save(to: fileURL, for: isExist ? .forOverwriting : .forCreating)
         debugPrint("iCloudAPI -> write: result = \(result)")
         
         return result

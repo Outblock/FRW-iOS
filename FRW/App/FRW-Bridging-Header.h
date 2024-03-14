@@ -1,6 +1,6 @@
 //
-//  Flow Reference Wallet-Bridging-Header.h
-//  Flow Reference Wallet
+//  Flow Wallet-Bridging-Header.h
+//  Flow Wallet
 //
 //  Created by Hao Fu on 1/1/22.
 //

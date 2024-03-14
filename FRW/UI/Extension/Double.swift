@@ -1,6 +1,6 @@
 //
 //  Double.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 24/6/2022.
 //

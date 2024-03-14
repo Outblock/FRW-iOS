@@ -1,6 +1,6 @@
 //
 //  TokenModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 30/4/2022.
 //
@@ -98,8 +98,8 @@ struct TokenModel: Codable, Identifiable, Mockable {
             addressString = address.testnet ?? ""
         case .mainnet:
             addressString = address.mainnet ?? ""
-        case .sandboxnet:
-            addressString = address.sandboxnet ?? ""
+        case .crescendo:
+            addressString = address.crescendo ?? ""
         }
         
         addressString = addressString.stripHexPrefix()
@@ -135,7 +135,7 @@ struct TokenModel: Codable, Identifiable, Mockable {
     
     static func mock() -> TokenModel {
         return TokenModel(name: "mockname",
-                          address: FlowNetworkModel(mainnet: nil, testnet: nil, sandboxnet: nil),
+                          address: FlowNetworkModel(mainnet: nil, testnet: nil, crescendo: nil),
                           contractName: "contractname",
                           storagePath: FlowTokenStoragePath(balance: "", vault: "", receiver: ""),
                           decimal: 999,
@@ -148,7 +148,7 @@ struct TokenModel: Codable, Identifiable, Mockable {
 struct FlowNetworkModel: Codable {
     let mainnet: String?
     let testnet: String?
-    let sandboxnet: String?
+    let crescendo: String?
 
     func addressByNetwork(_ network: Flow.ChainID) -> String? {
         switch network {
@@ -156,8 +156,8 @@ struct FlowNetworkModel: Codable {
             return mainnet
         case .testnet:
             return testnet
-        case .sandboxnet:
-            return sandboxnet
+        case .crescendo:
+            return crescendo
         default:
             return nil
         }

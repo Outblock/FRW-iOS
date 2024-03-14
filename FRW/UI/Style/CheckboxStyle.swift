@@ -1,6 +1,6 @@
 //
 //  CheckboxStyle.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 6/1/22.
 //

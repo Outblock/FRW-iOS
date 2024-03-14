@@ -1,12 +1,13 @@
 //
 //  GasManager.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 5/9/2022.
 //
 
 import UIKit
 import Flow
+import SwiftUI
 
 class RemoteConfigManager {
     static let shared = RemoteConfigManager()
@@ -19,16 +20,24 @@ class RemoteConfigManager {
     var isFailed: Bool = false
     
     var freeGasEnabled: Bool {
+        return remoteGreeGas
+//        if !remoteGreeGas {
+//            return false
+//        }
+//        return localGreeGas
+    }
+    
+    @AppStorage(LocalUserDefaults.Keys.freeGas.rawValue) private var localGreeGas = true
+    private var remoteGreeGas: Bool {
         if let config = config {
             return config.features.freeGas
         }
-        
         return false
     }
     
     var payer: String {
         if !freeGasEnabled {
-            return emptyAddress
+            return WalletManager.shared.selectedAccountAddress
         }
         
         switch LocalUserDefaults.shared.flowNetwork.toFlowType() {
@@ -36,8 +45,8 @@ class RemoteConfigManager {
             return config?.payer.mainnet.address ?? emptyAddress
         case .testnet:
             return config?.payer.testnet.address ?? emptyAddress
-        case .sandboxnet:
-            return config?.payer.sandboxnet.address ?? emptyAddress
+        case .crescendo:
+            return config?.payer.crescendo?.address ?? emptyAddress
         default:
             return emptyAddress
         }
@@ -53,8 +62,8 @@ class RemoteConfigManager {
             return config?.payer.mainnet.keyID ?? 0
         case .testnet:
             return config?.payer.testnet.keyID ?? 0
-        case .sandboxnet:
-            return config?.payer.sandboxnet.keyID ?? 0
+        case .crescendo:
+            return config?.payer.crescendo?.keyID ?? 0
         default:
             return 0
         }
@@ -66,8 +75,8 @@ class RemoteConfigManager {
             return contractAddress?.mainnet
         case .testnet:
             return contractAddress?.testnet
-        case .sandboxnet:
-            return contractAddress?.sandboxnet
+        case .crescendo:
+            return contractAddress?.crescendo
         }
     }
     

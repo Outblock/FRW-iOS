@@ -1,15 +1,15 @@
 //
 //  EmptyWalletView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 25/12/21.
 //
 
+import Kingfisher
 import SceneKit
 import SPConfetti
 import SwiftUI
 import SwiftUIX
-import Kingfisher
 
 struct EmptyWalletView: View {
     @StateObject private var vm = EmptyWalletViewModel()
@@ -41,15 +41,14 @@ struct EmptyWalletView: View {
                 .padding(15)
                 .frame(width: 160, height: 160)
             VStack(spacing: 12) {
-                Text("lilico".localized)
-                    .font(.montserrat(size: 36, weight: .bold))
+                Text("app_name_full".localized)
+                    .font(.montserrat(size: 24, weight: .bold))
                     .foregroundColor(Color.LL.text)
                 
                 Text("welcome_sub_desc".localized)
                     .font(.montserrat(size: 16, weight: .light))
                     .foregroundColor(.LL.note)
             }
-            
         }
     }
     
@@ -126,10 +125,10 @@ struct EmptyWalletView: View {
     func createRecentLoginCell(_ placeholder: EmptyWalletViewModel.Placeholder) -> some View {
         HStack(spacing: 16) {
             KFImage.url(URL(string: placeholder.avatar.convertedAvatarString()))
-                .placeholder({
+                .placeholder {
                     Image("placeholder")
                         .resizable()
-                })
+                }
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 36, height: 36)

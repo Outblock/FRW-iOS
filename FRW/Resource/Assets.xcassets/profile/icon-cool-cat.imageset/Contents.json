@@ -5,12 +5,11 @@
       "scale" : "1x"
     },
     {
-      "filename" : "icon_iphone_60.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "icon_ipad_76.png",
+      "filename" : "appicon 300_300.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

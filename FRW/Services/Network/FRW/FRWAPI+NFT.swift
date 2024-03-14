@@ -1,6 +1,6 @@
 //
-//  Flow Reference WalletAPI+NFT.swift
-//  Flow Reference Wallet
+//  Flow WalletAPI+NFT.swift
+//  Flow Wallet
 //
 //  Created by cat on 2022/6/14.
 //

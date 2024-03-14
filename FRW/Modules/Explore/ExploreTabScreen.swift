@@ -1,6 +1,6 @@
 //
 //  ExploreTabScreen.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 21/8/2022.
 //

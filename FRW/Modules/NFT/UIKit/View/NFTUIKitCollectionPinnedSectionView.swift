@@ -1,6 +1,6 @@
 //
 //  NFTUIKitCollectionPinnedSectionView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 11/8/2022.
 //

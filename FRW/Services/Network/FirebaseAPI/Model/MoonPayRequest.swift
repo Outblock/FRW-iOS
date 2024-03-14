@@ -1,6 +1,6 @@
 //
 //  MoonPayRequest.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 8/9/2022.
 //

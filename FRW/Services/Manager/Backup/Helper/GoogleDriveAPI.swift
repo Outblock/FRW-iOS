@@ -1,6 +1,6 @@
 //
 //  GoogleDriveAPI.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 20/7/2022.
 //

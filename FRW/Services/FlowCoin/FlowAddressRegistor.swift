@@ -1,6 +1,6 @@
 //
 //  FlowAddressRegistor.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 26/6/2022.
 //

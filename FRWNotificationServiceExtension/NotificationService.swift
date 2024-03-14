@@ -1,6 +1,6 @@
 //
 //  NotificationService.swift
-//  Flow Reference WalletNotificationServiceExtension
+//  Flow WalletNotificationServiceExtension
 //
 //  Created by Selina on 18/7/2023.
 //

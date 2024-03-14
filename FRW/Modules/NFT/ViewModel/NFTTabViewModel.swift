@@ -1,6 +1,6 @@
 //
 //  NFTTabViewModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 16/1/22.
 //

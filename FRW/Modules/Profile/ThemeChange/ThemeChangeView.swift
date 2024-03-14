@@ -1,6 +1,6 @@
 //
 //  ThemeChangeView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 18/5/2022.
 //

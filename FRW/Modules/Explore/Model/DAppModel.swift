@@ -1,6 +1,6 @@
 //
 //  DAppModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 29/8/2022.
 //
@@ -12,6 +12,7 @@ struct DAppModel: Codable, Identifiable {
     let url: URL
     let testnetURL: URL?
     let sandboxnetURL: URL?
+    let crescendoURL: URL?
     let description: String
     let logo: URL
     let category: String
@@ -25,8 +26,8 @@ struct DAppModel: Codable, Identifiable {
             return url
         case .testnet:
             return testnetURL
-        case .sandboxnet:
-            return sandboxnetURL
+        case .crescendo:
+            return crescendoURL
         }
     }
     
@@ -42,6 +43,7 @@ struct DAppModel: Codable, Identifiable {
         case name, url
         case testnetURL = "testnet_url"
         case sandboxnetURL = "sandboxnet_url"
+        case crescendoURL = "crescendo_url"
         case description
         case logo, category
     }

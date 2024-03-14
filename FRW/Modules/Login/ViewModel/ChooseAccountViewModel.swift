@@ -1,6 +1,6 @@
 //
 //  ChooseAccountViewModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 9/1/22.
 //

@@ -1,6 +1,6 @@
 //
 //  PushHandler.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 17/7/2023.
 //

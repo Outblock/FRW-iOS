@@ -1,6 +1,6 @@
 //
-//  Flow Reference WalletAPI+ChildAccount.swift
-//  Flow Reference Wallet
+//  Flow WalletAPI+ChildAccount.swift
+//  Flow Wallet
 //
 //  Created by cat on 2023/8/2.
 //

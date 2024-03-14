@@ -1,6 +1,6 @@
 //
 //  RecoveryPhraseView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 3/1/22.
 //
@@ -206,6 +206,7 @@ struct WordListView: View {
                         .minimumScaleFactor(0.5)
                 }.frame(maxWidth: .infinity, alignment: .leading)
             }
+            Spacer()
         }
         .frame(minWidth: 0, maxWidth: .infinity)
     }

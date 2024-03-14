@@ -1,6 +1,6 @@
 //
 //  EventLoop+Future.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 30/4/2022.
 //

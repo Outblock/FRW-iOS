@@ -1,6 +1,6 @@
 //
 //  StakeGuideView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 10/11/2022.
 //

@@ -1,6 +1,6 @@
 //
 //  BackupTipsView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 6/6/2023.
 //

@@ -1,6 +1,6 @@
 //
 //  WalletSettingView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 7/9/2022.
 //
@@ -13,55 +13,68 @@ struct WalletSettingView: RouteableView {
         "wallet".localized.capitalized
     }
     
-    @State
-    var isOn: Bool = true
     
     @StateObject private var vm = WalletSettingViewModel()
-    
+    @AppStorage(LocalUserDefaults.Keys.freeGas.rawValue) private var localGreeGas = true
     var body: some View {
         
         ZStack(alignment: .bottom) {
             
             ScrollView {
                 VStack(spacing: 16) {
-                        VStack(spacing: 0) {
-                            Button {
-                                if SecurityManager.shared.securityType == .none {
-                                    Router.route(to: RouteMap.Profile.privateKey(true))
-                                    return
-                                }
-                                
-                                Task {
-                                    let result = await SecurityManager.shared.inAppVerify()
-                                    if result {
-                                        Router.route(to: RouteMap.Profile.privateKey(false))
-                                    }
-                                }
-                            } label: {
-                                ProfileSecureView.ItemCell(title: "private_key".localized, style: .arrow, isOn: false, toggleAction: nil)
+                    VStack(spacing: 0) {
+                        Button {
+                            if SecurityManager.shared.securityType == .none {
+                                Router.route(to: RouteMap.Profile.privateKey(true))
+                                return
                             }
                             
-                            Divider().foregroundColor(.LL.Neutrals.background)
-                            
-                            Button {
-                                if SecurityManager.shared.securityType == .none {
-                                    Router.route(to: RouteMap.Profile.manualBackup(true))
-                                    return
+                            Task {
+                                let result = await SecurityManager.shared.inAppVerify()
+                                if result {
+                                    Router.route(to: RouteMap.Profile.privateKey(false))
                                 }
-                                
-                                Task {
-                                    let result = await SecurityManager.shared.inAppVerify()
-                                    if result {
-                                        Router.route(to: RouteMap.Profile.manualBackup(false))
-                                    }
-                                }
-                            } label: {
-                                ProfileSecureView.ItemCell(title: "recovery_phrase".localized, style: .arrow, isOn: false, toggleAction: nil)
-                                    .contentShape(Rectangle())
                             }
+                        } label: {
+                            ProfileSecureView.ItemCell(title: "private_key".localized, style: .arrow, isOn: false, toggleAction: nil)
                         }
-                        .padding(.horizontal, 16)
-                        .roundedBg()
+                        
+                        Divider().foregroundColor(.LL.Neutrals.background)
+                        
+                        Button {
+                            if SecurityManager.shared.securityType == .none {
+                                Router.route(to: RouteMap.Profile.manualBackup(true))
+                                return
+                            }
+                            
+                            Task {
+                                let result = await SecurityManager.shared.inAppVerify()
+                                if result {
+                                    Router.route(to: RouteMap.Profile.manualBackup(false))
+                                }
+                            }
+                        } label: {
+                            ProfileSecureView.ItemCell(title: "recovery_phrase".localized, style: .arrow, isOn: false, toggleAction: nil)
+                                .contentShape(Rectangle())
+                        }
+                        
+                        
+                    }
+                    .padding(.horizontal, 16)
+                    .roundedBg()
+                    .visibility( UserManager.shared.userType == .phrase ? .visible : .gone)
+                    
+                    VStack(spacing: 0) {
+                        Button {
+                            Router.route(to: RouteMap.Profile.accountKeys)
+                        } label: {
+                            ProfileSecureView.ItemCell(title: "wallet_account_key".localized, style: .arrow, isOn: false, toggleAction: nil)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 64)
+                    .padding(.horizontal, 16)
+                    .roundedBg()
                     
                     VStack(spacing: 0) {
                         
@@ -73,12 +86,11 @@ struct WalletSettingView: RouteableView {
                             
                             Spacer()
                             
-                            Toggle(isOn: $isOn) {
+                            Toggle(isOn: $localGreeGas) {
                                 
                             }
                             .tint(.LL.Primary.salmonPrimary)
-                            .onChange(of: isOn) { value in
-        //                        toggleAction?(value)
+                            .onChange(of: localGreeGas) { value in
                             }
                             
                         }
@@ -87,8 +99,8 @@ struct WalletSettingView: RouteableView {
                             .font(.inter(size: 12, weight: .regular))
                             .foregroundColor(Color.LL.Neutrals.neutrals7)
                             .frame(maxWidth: .infinity, alignment: .leading)
-
-
+                        
+                        
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 80)
@@ -106,7 +118,7 @@ struct WalletSettingView: RouteableView {
             }
             
             VStack(alignment: .trailing) {
-
+                
                 Button {
                     vm.resetWalletAction()
                 } label: {
@@ -120,7 +132,7 @@ struct WalletSettingView: RouteableView {
                 }
                 .padding(.horizontal, 18)
             }
-                        
+            
         }
         .backgroundFill(.LL.background)
         .applyRouteable(self)

@@ -1,6 +1,6 @@
 //
 //  FileManager.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 9/10/2022.
 //

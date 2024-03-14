@@ -1,6 +1,6 @@
 //
 //  CalloutView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by cat on 2023/7/26.
 //
@@ -36,7 +36,7 @@ struct CalloutView: View {
             .padding(.horizontal,16)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.Theme.Accent.warning)
+        .background(Color.Theme.Accent.red)
         .cornerRadius(corners, 8)
         .hidden((content == nil) ? true : false)
     }

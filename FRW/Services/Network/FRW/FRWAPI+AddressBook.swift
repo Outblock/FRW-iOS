@@ -1,6 +1,6 @@
 //
-//  Flow Reference WalletAPI+AddressBook.swift
-//  Flow Reference Wallet
+//  Flow WalletAPI+AddressBook.swift
+//  Flow Wallet
 //
 //  Created by Hao Fu on 19/5/2022.
 //

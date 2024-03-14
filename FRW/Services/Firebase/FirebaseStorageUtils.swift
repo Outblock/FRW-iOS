@@ -1,6 +1,6 @@
 //
 //  FirebaseStorageUtils.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 20/6/2022.
 //

@@ -1,6 +1,6 @@
 //
 //  RestoreWalletViewModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 1/1/22.
 //

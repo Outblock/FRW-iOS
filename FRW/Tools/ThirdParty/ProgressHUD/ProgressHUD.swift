@@ -10,6 +10,7 @@
 // THE SOFTWARE.
 
 import UIKit
+import Lottie
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 public enum AnimationType {
@@ -25,6 +26,7 @@ public enum AnimationType {
 	case lineSpinFade
 	case circleRotateChase
 	case circleStrokeSpin
+    case lottie
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -430,6 +432,7 @@ public class ProgressHUD: UIView {
 		if (animationType == .lineSpinFade)					{ animationLineSpinFade(viewAnimation!)					}
 		if (animationType == .circleRotateChase)			{ animationCircleRotateChase(viewAnimation!)			}
 		if (animationType == .circleStrokeSpin)				{ animationCircleStrokeSpin(viewAnimation!)				}
+        if (animationType == .lottie)                       { animationLottie(viewAnimation!)                       }
 	}
 
 	//-------------------------------------------------------------------------------------------------------------------------------------------
@@ -1063,6 +1066,15 @@ public class ProgressHUD: UIView {
 		view.layer.addSublayer(layer)
 	}
 
+    private func animationLottie(_ view: UIView) {
+        let width = view.frame.size.width * 2
+        let height = view.frame.size.height * 2
+        let animationView = LottieAnimationView(name: "Loading_animation", bundle: .main)
+        animationView.loopMode = .loop
+        animationView.frame = CGRect(x: 0, y: 0, width: width, height: height)
+        view.superview?.addSubview(animationView)
+        animationView.play()
+    }
 	// MARK: - Animated Icon
 	//-------------------------------------------------------------------------------------------------------------------------------------------
 	private func animatedIconSucceed(_ view: UIView) {

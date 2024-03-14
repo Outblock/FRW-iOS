@@ -1,6 +1,6 @@
 //
 //  FadeAnimationBackground.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 9/8/2022.
 //

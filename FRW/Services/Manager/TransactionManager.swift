@@ -1,6 +1,6 @@
 //
 //  TransactionManager.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 25/8/2022.
 //
@@ -33,8 +33,8 @@ extension Flow.ID {
             return URL(string: "https://testnet.flowdiver.io/tx/\(self.hex)")
         case .mainnet:
             return URL(string: "https://flowdiver.io/tx/\(self.hex)")
-        case .sandboxnet:
-            return URL(string: "https://sandboxnet.flowscan.org/transaction/\(self.hex)")
+        case .crescendo:
+            return URL(string: "https://crescendo.flowscan.org/transaction/\(self.hex)")
         }
     }
 }

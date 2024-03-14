@@ -1,6 +1,6 @@
 //
 //  Error.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 8/6/2022.
 //
@@ -32,6 +32,7 @@ enum WalletError: Error {
     case existingMnemonicMismatch
     case storeAndActiveMnemonicFailed
     case mnemonicMissing
+    case emptyPublicKey
 }
 
 enum BackupError: Error {

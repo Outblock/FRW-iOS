@@ -1,6 +1,6 @@
 //
 //  LLCadence.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by cat on 2022/5/2.
 //
@@ -43,7 +43,7 @@ extension LLCadence where T == LLCadenceAction.token {
     }
     
     static func tokenTransfer(token: TokenModel, at network: Flow.ChainID) -> String {
-        let script = network == .sandboxnet ?
+        let script = network == .crescendo ?
         CadenceTemplate.transferToken : CadenceTemplate.transferTokenWithInbox
         return script
             .replace(by: ScriptAddress.addressMap())

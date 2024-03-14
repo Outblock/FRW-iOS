@@ -1,6 +1,6 @@
 //
 //  AccountSwitchViewModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 13/6/2023.
 //
@@ -41,7 +41,7 @@ class AccountSwitchViewModel: ObservableObject {
     }
     
     func loginAccountAction() {
-        Router.route(to: RouteMap.RestoreLogin.root)
+        Router.route(to: RouteMap.RestoreLogin.restoreList)
     }
     
     func switchAccountAction(_ uid: String) {

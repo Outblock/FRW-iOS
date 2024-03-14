@@ -1,6 +1,6 @@
 //
 //  TxTemplateRequest.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 29/9/2022.
 //

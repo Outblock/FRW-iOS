@@ -1,6 +1,6 @@
 //
 //  AddAddressViewModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 1/6/2022.
 //
