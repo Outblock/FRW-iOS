@@ -972,6 +972,8 @@
 		4E3E5BE42875DC2000A5FA65 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E5BE22875DC2000A5FA65 /* SearchBar.swift */; };
 		4E42DC5F2B22AEB700EF0A75 /* BackupListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E42DC5E2B22AEB700EF0A75 /* BackupListView.swift */; };
 		4E42DC602B22AEB700EF0A75 /* BackupListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E42DC5E2B22AEB700EF0A75 /* BackupListView.swift */; };
+		4E47D6622BA2D3C600C504C2 /* TokenEnableResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E47D6612BA2D3C600C504C2 /* TokenEnableResponse.swift */; };
+		4E47D6632BA2D3C600C504C2 /* TokenEnableResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E47D6612BA2D3C600C504C2 /* TokenEnableResponse.swift */; };
 		4E4F794C2831FCB700ED027C /* ImageName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4F794A2831FCB700ED027C /* ImageName.swift */; };
 		4E4F794F2831FF0F00ED027C /* NFTSquareCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4F794D2831FF0F00ED027C /* NFTSquareCard.swift */; };
 		4E51B4FC2854A76500EDE4FE /* CaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E51B4FA2854A76500EDE4FE /* CaptureView.swift */; };
@@ -2137,6 +2139,7 @@
 		4E3670062B2A8BB6000F2693 /* BackupUploadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupUploadViewModel.swift; sourceTree = "<group>"; };
 		4E3E5BE22875DC2000A5FA65 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		4E42DC5E2B22AEB700EF0A75 /* BackupListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupListView.swift; sourceTree = "<group>"; };
+		4E47D6612BA2D3C600C504C2 /* TokenEnableResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenEnableResponse.swift; sourceTree = "<group>"; };
 		4E4F794A2831FCB700ED027C /* ImageName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageName.swift; sourceTree = "<group>"; };
 		4E4F794D2831FF0F00ED027C /* NFTSquareCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTSquareCard.swift; sourceTree = "<group>"; };
 		4E51B4FA2854A76500EDE4FE /* CaptureView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaptureView.swift; sourceTree = "<group>"; };
@@ -3105,6 +3108,7 @@
 				6AF4A6C628D4725300B12FAB /* FlownsResponses.swift */,
 				6A7D9DD028E1923500333954 /* OtherResponses.swift */,
 				4EFF94C32AEEDD0A00365EF7 /* IPResponse.swift */,
+				4E47D6612BA2D3C600C504C2 /* TokenEnableResponse.swift */,
 			);
 			path = Response;
 			sourceTree = "<group>";
@@ -6631,6 +6635,7 @@
 				1586873B28A170330037635B /* FadeAnimationBackground.swift in Sources */,
 				15DC217727819C56000B187A /* _VDialog.swift in Sources */,
 				15DC20DF27819C56000B187A /* VListLayoutType.swift in Sources */,
+				4E47D6632BA2D3C600C504C2 /* TokenEnableResponse.swift in Sources */,
 				154B8916276A1EEB00780E93 /* BackgroundModifer.swift in Sources */,
 				158CE8892782DAD7006A8394 /* UserResponses.swift in Sources */,
 				4EEDA38E2B4D788A0000D382 /* MultiBackupDetailViewModel.swift in Sources */,
@@ -7328,6 +7333,7 @@
 				15C58C082868A4EE00BD4FC6 /* _VDialog.swift in Sources */,
 				15C58C092868A4EE00BD4FC6 /* VListLayoutType.swift in Sources */,
 				15C58C0B2868A4EE00BD4FC6 /* BackgroundModifer.swift in Sources */,
+				4E47D6622BA2D3C600C504C2 /* TokenEnableResponse.swift in Sources */,
 				15C58C0C2868A4EE00BD4FC6 /* UserResponses.swift in Sources */,
 				4EEDA38D2B4D788A0000D382 /* MultiBackupDetailViewModel.swift in Sources */,
 				4E9DCE452B50E845005DE911 /* InstabugConfig.swift in Sources */,

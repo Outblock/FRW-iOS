@@ -21,7 +21,9 @@ class CadenceManager {
         case .mainnet:
             return scripts.mainnet
         case .crescendo:
-            return scripts.crescendo
+            return scripts.crescendo ?? scripts.testnet
+        case .previewnet:
+            return scripts.previewnet ?? scripts.testnet
         }
     }
     
@@ -74,7 +76,8 @@ struct CadenceResponse: Codable {
 
 struct CadenceScript: Codable {
     let testnet: CadenceModel
-    let crescendo: CadenceModel
+    let previewnet: CadenceModel?
+    let crescendo: CadenceModel?
     let mainnet: CadenceModel
 }
 

@@ -274,6 +274,10 @@ extension WalletManager {
         return walletInfo?.wallets?.first(where: { $0.chainId == LocalUserDefaults.FlowNetworkType.crescendo.rawValue })?.getAddress != nil
     }
     
+    var isPreviewEnabled: Bool {
+        return walletInfo?.wallets?.first(where: { $0.chainId == LocalUserDefaults.FlowNetworkType.previewnet.rawValue })?.getAddress != nil
+    }
+    
     func isTokenActivated(symbol: String) -> Bool {
         for token in activatedCoins {
             if token.symbol == symbol {
@@ -547,16 +551,19 @@ extension WalletManager {
             }
             return
         }
-
-        let enabledList = try await FlowNetwork.checkTokensEnable(address: Flow.Address(hex: address), tokens: supportedCoins)
+        
+        let enabledList = try await FlowNetwork.checkTokensEnable(address: Flow.Address(hex: address))
         if enabledList.count != supportedCoins.count {
             throw WalletError.fetchFailed
         }
 
         var list = [TokenModel]()
-        for (index, value) in enabledList.enumerated() {
-            if value == true {
-                list.append(supportedCoins[index])
+        for (_, value) in enabledList.enumerated() {
+            if value.value {
+                let model = supportedCoins.first { $0.name.lowercased() == value.key.lowercased() }
+                if let model = model {
+                    list.append(model)
+                }
             }
         }
 
@@ -578,21 +585,22 @@ extension WalletManager {
             throw WalletError.fetchBalanceFailed
         }
 
-        let balanceList = try await FlowNetwork.fetchBalance(at: Flow.Address(hex: address), with: activatedCoins)
+        let balanceList = try await FlowNetwork.fetchBalance(at: Flow.Address(hex: address))
         if activatedCoins.count != balanceList.count {
             throw WalletError.fetchBalanceFailed
         }
 
         var newBalanceMap: [String: Double] = [:]
 
-        for (index, value) in activatedCoins.enumerated() {
-            let balance = balanceList[index]
-
+        for (_, value) in activatedCoins.enumerated() {
+            
             guard let symbol = value.symbol else {
                 continue
             }
-
-            newBalanceMap[symbol] = balance
+            let model = balanceList.first { $0.key.lowercased() == value.name.lowercased() }
+            if let model = model {
+                newBalanceMap[symbol] = model.value
+            }
         }
 
         DispatchQueue.main.sync {

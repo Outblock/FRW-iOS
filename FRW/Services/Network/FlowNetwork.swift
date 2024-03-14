@@ -21,13 +21,14 @@ enum FlowNetwork {
 // MARK: - Token
 
 extension FlowNetwork {
-    static func checkTokensEnable(address: Flow.Address, tokens: [TokenModel]) async throws -> [Bool] {
-        let cadence = TokenCadence.tokenEnable(with: tokens, at: flow.chainID)
+    
+    static func checkTokensEnable(address: Flow.Address) async throws -> [String: Bool] {
+        let cadence = CadenceManager.shared.current.ft?.isTokenListEnabled?.toFunc() ?? ""
         return try await fetch(at: address, by: cadence)
     }
-
-    static func fetchBalance(at address: Flow.Address, with tokens: [TokenModel]) async throws -> [Double] {
-        let cadence = BalanceCadence.balance(with: tokens, at: flow.chainID)
+    
+    static func fetchBalance(at address: Flow.Address) async throws -> [String: Double] {
+        let cadence = CadenceManager.shared.current.ft?.getTokenListBalance?.toFunc() ?? ""
         return try await fetch(at: address, by: cadence)
     }
     
@@ -97,6 +98,7 @@ extension FlowNetwork {
 
 extension FlowNetwork {
     static func checkCollectionEnable(address: Flow.Address, list: [NFTCollectionInfo]) async throws -> [Bool] {
+        //TODO: #six 
         let cadence = NFTCadence.collectionListCheckEnabled(with: list, on: flow.chainID)
         return try await fetch(at: address, by: cadence)
     }
@@ -276,8 +278,8 @@ extension FlowNetwork {
         let tokenName = String(swapPaths.last?.split(separator: ".").last ?? "")
         let tokenAddress = String(swapPaths.last?.split(separator: ".")[1] ?? "").addHexPrefix()
         
-        let fromCadence = CadenceManager.shared.current.swap?.SwapExactTokensForTokens?.toFunc() ?? "" ?? ""
-        let toCadence = CadenceManager.shared.current.swap?.SwapTokensForExactTokens?.toFunc() ?? "" ?? ""
+        let fromCadence = CadenceManager.shared.current.swap?.SwapExactTokensForTokens?.toFunc() ?? ""
+        let toCadence = CadenceManager.shared.current.swap?.SwapTokensForExactTokens?.toFunc() ?? ""
         var cadenceString = isFrom ? fromCadence : toCadence
         cadenceString = cadenceString
             .replace(by: ["Token1Name": tokenName, "Token1Addr": tokenAddress])

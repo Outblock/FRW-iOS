@@ -45,6 +45,7 @@ extension LocalUserDefaults {
         case testnet
         case mainnet
         case crescendo
+        case previewnet
         
         var color: Color {
             switch self {
@@ -53,6 +54,8 @@ extension LocalUserDefaults {
             case .testnet:
                 return Color(hex: "#FF8A00")
             case .crescendo:
+                return Color(hex: "#CCAF21")
+            case .previewnet:
                 return Color(hex: "#CCAF21")
             }
         }
@@ -69,6 +72,8 @@ extension LocalUserDefaults {
                 return Flow.ChainID.mainnet
             case .crescendo:
                 return Flow.ChainID.crescendo
+            case .previewnet:
+                return Flow.ChainID.custom(name: "previewnet", transport: Flow.Transport.HTTP(URL(string: "https://rest-previewnet.onflow.org/")!))
             }
         }
         
@@ -80,6 +85,12 @@ extension LocalUserDefaults {
                 self = .mainnet
             case .crescendo:
                 self = .crescendo
+            case .custom(let name, _):
+                if name == "previewnet" {
+                    self = .previewnet
+                }else {
+                    return nil
+                }
             default:
                 return nil
             }
