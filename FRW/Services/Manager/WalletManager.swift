@@ -553,14 +553,11 @@ extension WalletManager {
         }
         
         let enabledList = try await FlowNetwork.checkTokensEnable(address: Flow.Address(hex: address))
-        if enabledList.count != supportedCoins.count {
-            throw WalletError.fetchFailed
-        }
 
         var list = [TokenModel]()
         for (_, value) in enabledList.enumerated() {
             if value.value {
-                let model = supportedCoins.first { $0.name.lowercased() == value.key.lowercased() }
+                let model = supportedCoins.first { $0.contractId.lowercased() == value.key.lowercased() }
                 if let model = model {
                     list.append(model)
                 }
@@ -576,19 +573,12 @@ extension WalletManager {
     }
 
     func fetchBalance() async throws {
-        guard activatedCoins.count > 0 else {
-            return
-        }
-
         let address = selectedAccountAddress
         if address.isEmpty {
             throw WalletError.fetchBalanceFailed
         }
 
         let balanceList = try await FlowNetwork.fetchBalance(at: Flow.Address(hex: address))
-        if activatedCoins.count != balanceList.count {
-            throw WalletError.fetchBalanceFailed
-        }
 
         var newBalanceMap: [String: Double] = [:]
 
@@ -597,7 +587,7 @@ extension WalletManager {
             guard let symbol = value.symbol else {
                 continue
             }
-            let model = balanceList.first { $0.key.lowercased() == value.name.lowercased() }
+            let model = balanceList.first { $0.key.lowercased() == value.contractId.lowercased() }
             if let model = model {
                 newBalanceMap[symbol] = model.value
             }
