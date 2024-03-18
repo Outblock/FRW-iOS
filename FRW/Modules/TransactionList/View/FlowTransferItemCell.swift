@@ -1,6 +1,6 @@
 //
 //  FlowTransferItemCell.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 9/9/2022.
 //
@@ -98,7 +98,7 @@ class FlowTransferItemCell: UICollectionViewCell {
         stackView1.snp.makeConstraints { make in
             make.left.equalTo(iconImageView.snp.right).offset(8)
             make.centerY.equalToSuperview()
-            make.right.equalToSuperview().offset(-18)
+            
         }
         
         let stackView2 = UIStackView(arrangedSubviews: [amountlabel, statusLabel])
@@ -107,7 +107,9 @@ class FlowTransferItemCell: UICollectionViewCell {
         contentView.addSubview(stackView2)
         stackView2.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
+            make.left.greaterThanOrEqualTo(stackView1.snp.right).offset(8)
             make.right.equalToSuperview().offset(-18)
+            make.width.greaterThanOrEqualTo(60)
         }
     }
     
@@ -116,7 +118,7 @@ class FlowTransferItemCell: UICollectionViewCell {
         
         let config = UIImage.SymbolConfiguration(scale: .large)
         typeImageView.image = model.transferType == .send ? UIImage(systemName: "arrow.up.right", withConfiguration: config) : UIImage(systemName: "arrow.down.left", withConfiguration: config)
-        titleLabel.text = model.token?.replaceBeforeLast(".", replacement: "").removePrefix(".")
+        titleLabel.text = model.title ?? ""
         
         amountlabel.text = model.amountString
         amountlabel.isHidden = amountlabel.text == "-"
@@ -125,5 +127,6 @@ class FlowTransferItemCell: UICollectionViewCell {
         statusLabel.text = model.statusText
         
         descLabel.text = model.transferDesc
+        
     }
 }

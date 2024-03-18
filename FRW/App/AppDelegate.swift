@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  Flow Reference Wallet-lite
+//  Flow Wallet-lite
 //
 //  Created by Hao Fu on 12/12/21.
 //
@@ -153,6 +153,7 @@ extension AppDelegate {
         _ = ChildAccountManager.shared
         WalletManager.shared.bindChildAccountManager()
         NFTCatalogCache.cache.fetchIfNeed()
+        _ = CadenceManager.shared
     }
     
     private func commonConfig() {

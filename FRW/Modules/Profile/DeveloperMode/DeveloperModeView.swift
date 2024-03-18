@@ -1,6 +1,6 @@
 //
 //  DeveloperModeView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 7/6/2022.
 //
@@ -51,6 +51,7 @@ struct DeveloperModeView: RouteableView {
                             let isMainnet = lud.flowNetwork == .mainnet
                             let isTestnet = lud.flowNetwork == .testnet
                             let isCrescendo = lud.flowNetwork == .crescendo
+                            let isPreviewnet = lud.flowNetwork == .previewnet
                             
                             Cell(sysImageTuple: (isMainnet ? .checkmarkSelected : .checkmarkUnselected, isMainnet ? .LL.Primary.salmonPrimary : .LL.Neutrals.neutrals1), title: "Mainnet", desc: isMainnet ? "Selected" : "")
                                 .onTapGestureOnBackground {
@@ -63,17 +64,29 @@ struct DeveloperModeView: RouteableView {
                                     walletManager.changeNetwork(.testnet)
                                 }
                             
-                            Divider()
-                            Cell(sysImageTuple: (isCrescendo ? .checkmarkSelected : .checkmarkUnselected, isCrescendo ? LocalUserDefaults.FlowNetworkType.crescendo.color : .LL.Neutrals.neutrals1), title: "Crescendo", desc: isCrescendo ? "Selected" : "", btnTitle: walletManager.isCrescendoEnabled ? nil : "Enable", btnAction: {
-                                if !walletManager.isCrescendoEnabled {
-                                    vm.enableCrescendoAction()
-                                }
-                            }, titleAlpha: walletManager.isCrescendoEnabled ? 1 : 0.5)
-                                .onTapGestureOnBackground {
-                                    if walletManager.isCrescendoEnabled {
-                                        walletManager.changeNetwork(.crescendo)
-                                    }
-                                }
+//                            Divider()
+//                            Cell(sysImageTuple: (isCrescendo ? .checkmarkSelected : .checkmarkUnselected, isCrescendo ? LocalUserDefaults.FlowNetworkType.crescendo.color : .LL.Neutrals.neutrals1), title: "Crescendo", desc: isCrescendo ? "Selected" : "", btnTitle: walletManager.isCrescendoEnabled ? nil : "Enable", btnAction: {
+//                                if !walletManager.isCrescendoEnabled {
+//                                    vm.enableCrescendoAction()
+//                                }
+//                            }, titleAlpha: walletManager.isCrescendoEnabled ? 1 : 0.5)
+//                                .onTapGestureOnBackground {
+//                                    if walletManager.isCrescendoEnabled {
+//                                        walletManager.changeNetwork(.crescendo)
+//                                    }
+//                                }
+                            
+                                                        Divider()
+                                                        Cell(sysImageTuple: (isPreviewnet ? .checkmarkSelected : .checkmarkUnselected, isPreviewnet ? LocalUserDefaults.FlowNetworkType.previewnet.color : .LL.Neutrals.neutrals1), title: "Previewnet", desc: isPreviewnet ? "Selected" : "", btnTitle: walletManager.isPreviewEnabled ? nil : "Enable", btnAction: {
+                                                            if !walletManager.isPreviewEnabled {
+                                                                vm.enablePreviewnetAction()
+                                                            }
+                                                        }, titleAlpha: walletManager.isPreviewEnabled ? 1 : 0.5)
+                                                            .onTapGestureOnBackground {
+                                                                if walletManager.isPreviewEnabled {
+                                                                    walletManager.changeNetwork(.previewnet)
+                                                                }
+                                                            }
                         }
                         .background(.LL.bgForIcon)
                     }

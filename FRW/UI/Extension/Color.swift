@@ -1,6 +1,6 @@
 //
 //  Color.swift
-//  Flow Reference Wallet-lite
+//  Flow Wallet-lite
 //
 //  Created by Hao Fu on 27/11/21.
 //
@@ -215,11 +215,16 @@ extension Color {
         }
 
         enum Background {
+            ///BG
             static let white = Color("bg.white")
+            ///BG2
             static let grey = Color("bg.grey")
+            ///BG3
             static let silver = Color("bg.silver")
             static let white8 = Color("bg.white8")
             static let black3 = Color("bg.black3")
+            /// White
+            static let pureWhite = Color("bg.0")
         }
 
         enum Line {

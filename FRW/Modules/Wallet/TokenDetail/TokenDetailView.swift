@@ -1,6 +1,6 @@
 //
 //  TokenDetailView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 30/6/2022.
 //
@@ -224,7 +224,8 @@ struct TokenDetailView: RouteableView {
             
             // transfer list
             VStack(spacing: 8) {
-                ForEach(vm.recentTransfers, id: \.txid) { transfer in
+                ForEach(0..<vm.recentTransfers.count, id:\.self) { index in
+                    let transfer = vm.recentTransfers[index]
                     Button {
                         vm.transferDetailAction(transfer)
                     } label: {

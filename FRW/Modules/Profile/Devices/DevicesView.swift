@@ -29,6 +29,8 @@ struct DevicesView: RouteableView {
             } label: {
                 HStack(spacing: 8) {
                     Image("scan-stroke")
+                        .renderingMode(.template)
+                        .foregroundColor(Color.Theme.Text.white9)
                         .frame(width: 24, height: 24)
                     Text("add_other_device".localized)
                         .font(.inter(size: 16, weight: .semibold))
@@ -79,39 +81,41 @@ extension DevicesView {
         var model: DeviceInfoModel
         var isCurrent: Bool = false
         var body: some View {
-            HStack(alignment: .top) {
-                Image("device_1")
-                    .frame(width: 24, height: 24)
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(model.showName())
-                            .font(.inter(size: 16))
-                            .foregroundColor(Color.Theme.Text.black8)
-                            .frame(height: 24)
-                        Text(model.showApp())
-                            .font(.inter(size: 12))
-                            .foregroundColor(Color.Theme.Text.black3)
-                            .frame(height: 16)
-                        Text(model.showLocationAndDate())
-                            .font(.inter(size: 12))
-                            .foregroundColor(Color.Theme.Text.black3)
-                            .frame(height: 16)
-                    }
-                    Spacer()
-                    if isCurrent {
-                        Image("check_fill_1")
-                    } else {
-                        Image("device_arrow_right")
+            Button {
+                Router.route(to: RouteMap.Profile.deviceInfo(model))
+            } label: {
+                HStack(alignment: .top) {
+                    Image("device_2")
+                        .frame(width: 24, height: 24)
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(model.showName())
+                                .font(.inter(size: 16))
+                                .foregroundColor(Color.Theme.Text.black8)
+                                .frame(height: 24)
+                            Text(model.showApp())
+                                .font(.inter(size: 12))
+                                .foregroundColor(Color.Theme.Text.black3)
+                                .frame(height: 16)
+                            Text(model.showLocationAndDate())
+                                .font(.inter(size: 12))
+                                .foregroundColor(Color.Theme.Text.black3)
+                                .frame(height: 16)
+                        }
+                        Spacer()
+                        if isCurrent {
+                            Image("check_fill_1")
+                        } else {
+                            Image("device_arrow_right")
+                        }
                     }
                 }
+                .padding(.all, 16)
+                .frame(height: 96)
+                .background(.Theme.Background.grey)
+                .cornerRadius(16)
             }
-            .padding(.all, 16)
-            .frame(height: 96)
-            .background(.Theme.Background.grey)
-            .cornerRadius(16)
-            .onTapGesture {
-                Router.route(to: RouteMap.Profile.deviceInfo(model))
-            }
+            .buttonStyle(ScaleButtonStyle())
         }
     }
 }

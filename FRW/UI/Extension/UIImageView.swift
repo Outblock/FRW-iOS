@@ -1,6 +1,6 @@
 //
 //  UIImageView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 8/10/2022.
 //

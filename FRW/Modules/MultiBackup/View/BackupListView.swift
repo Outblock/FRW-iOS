@@ -49,7 +49,9 @@ struct BackupListView: RouteableView {
         .applyRouteable(self)
         .backgroundFill(Color.LL.Neutrals.background)
         .halfSheet(showSheet: $viewModel.showRemoveTipView) {
-            DangerousTipSheetView(title: "account_key_revoke_title".localized, detail: "account_key_revoke_content".localized, buttonTitle: "hold_to_revoke".localized) {
+            DangerousTipSheetView(title: "account_key_revoke_title".localized, 
+                                  detail: "account_key_revoke_content".localized,
+                                  buttonTitle: "hold_to_revoke".localized) {
                 viewModel.removeMultiBackup()
             } onCancel: {
                 viewModel.onCancelTip()
@@ -252,41 +254,44 @@ extension BackupListView {
         var onDelete: (MultiBackupType, Int) -> Void
         
         var body: some View {
-            HStack(alignment: .top) {
-                Image(item.multiBackupType()?.iconName() ?? "")
-                    .resizable()
-                    .frame(width: 24, height: 24)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("\(item.multiBackupType()?.title ?? "") Backup")
-                        .font(.inter(size: 16))
-                        .foregroundStyle(Color.Theme.Text.black8)
-                        .foregroundColor(.black.opacity(0.8))
-                    Text(item.device.showApp())
-                        .font(.inter(size: 12))
-                        .foregroundStyle(Color.Theme.Text.black3)
-                    Text(item.device.showLocation())
-                        .font(.inter(size: 12))
-                        .foregroundStyle(Color.Theme.Text.black3)
-                }
-                Spacer()
-                HStack {
-                    Image("check_fill_1")
-                        .frame(width: 16, height: 16)
-                }
-                .frame(width: 16)
-                .frame(minHeight: 0, maxHeight: .infinity)
-            }
-            .padding(16)
-            .frame(minWidth: 0, maxWidth: .infinity)
-            .frame(height: 96)
-            .background(.Theme.Background.grey)
-            .cornerRadius(16)
-            .onTapGesture {
+            Button {
                 Router.route(to: RouteMap.Backup.backupDetail(item))
+            } label: {
+                HStack(alignment: .top) {
+                    Image(item.multiBackupType()?.iconName() ?? "")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("\(item.multiBackupType()?.title ?? "") Backup")
+                            .font(.inter(size: 16))
+                            .foregroundStyle(Color.Theme.Text.black8)
+                            .foregroundColor(.black.opacity(0.8))
+                        Text(item.device.showApp())
+                            .font(.inter(size: 12))
+                            .foregroundStyle(Color.Theme.Text.black3)
+                        Text(item.device.showLocation())
+                            .font(.inter(size: 12))
+                            .foregroundStyle(Color.Theme.Text.black3)
+                    }
+                    Spacer()
+                    HStack {
+                        Image("check_fill_1")
+                            .frame(width: 16, height: 16)
+                    }
+                    .frame(width: 16)
+                    .frame(minHeight: 0, maxHeight: .infinity)
+                }
+                .padding(16)
+                .frame(minWidth: 0, maxWidth: .infinity)
+                .frame(height: 96)
+                .background(.Theme.Background.grey)
+                .cornerRadius(16)
+                .onViewSwipe(title: "delete".localized) {
+                    onDelete(item.multiBackupType()!, index)
+                }
             }
-            .onViewSwipe(title: "delete".localized) {
-                onDelete(item.multiBackupType()!, index)
-            }
+            .buttonStyle(ScaleButtonStyle())
+            
         }
     }
 }

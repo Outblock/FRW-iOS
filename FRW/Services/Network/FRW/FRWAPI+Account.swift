@@ -1,6 +1,6 @@
 //
-//  Flow Reference WalletAPI+Account.swift
-//  Flow Reference Wallet
+//  Flow WalletAPI+Account.swift
+//  Flow Wallet
 //
 //  Created by Selina on 9/9/2022.
 //

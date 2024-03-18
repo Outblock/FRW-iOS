@@ -32,7 +32,7 @@ struct MultiBackupDetailView: RouteableView {
                     .frame(maxWidth: .infinity)
                     .frame(height: 136)
                     .cornerRadius(16)
-                    Text(viewModel.item.multiBackupType()!.title + "backup".localized)
+                    Text(viewModel.item.multiBackupType()!.title + " " + "backup".localized)
                         .font(.inter(size: 16, weight: .bold))
                         .foregroundColor(Color.Theme.Text.black8)
                         .frame(height: 24)
@@ -83,7 +83,9 @@ struct MultiBackupDetailView: RouteableView {
             
             HStack(spacing: 8) {
                 HStack(alignment: .center, spacing: 8) {
-                    Text("Key \(viewModel.item.backupInfo?.keyIndex ?? 0)")
+                    Image(viewModel.item.backupInfo?.backupType().smallIcon ?? "")
+                        .resizable()
+                        .frame(width: 24, height: 24)
                         .padding(.trailing, 8)
                     
                     Text("backup".localized + " - " + viewModel.item.multiBackupType()!.title)
@@ -95,21 +97,15 @@ struct MultiBackupDetailView: RouteableView {
                         .cornerRadius(4)
                     
                     Spacer()
-                    Image("key.lock")
-                        .frame(width: 16, height: 16)
                     
-                    ZStack(alignment: .leading) {
-                        Color.Theme.Text.black3
-                            .frame(width: 36)
-                            .cornerRadius(2)
-                        Text("500/1000")
-                            .font(.inter(size: 9, weight: .bold))
-                            .frame(width: 72, height: 16)
-                            .foregroundStyle(Color.Theme.Text.white9)
-                    }
-                    .frame(width: 72, height: 16)
-                    .background(.Theme.Text.black3)
-                    .cornerRadius(2)
+                    Text("multi_sign".localized)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .frame(height: 20)
+                        .font(.inter(size: 9,weight: .bold))
+                        .foregroundStyle(Color.Theme.Text.black3)
+                        .background(Color.Theme.Text.black3.fixedOpacity())
+                        .cornerRadius(4)
                     
                     Image("icon-account-arrow-right")
                         .renderingMode(.template)

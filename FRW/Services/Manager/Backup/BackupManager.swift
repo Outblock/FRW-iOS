@@ -1,6 +1,6 @@
 //
 //  BackupManager.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 2/1/22.
 //
@@ -24,7 +24,7 @@ extension BackupManager {
         case icloud = 0
         case googleDrive
         case manual
-        
+        case multi
         var descLocalizedString: String {
             switch self {
             case .none:
@@ -35,6 +35,8 @@ extension BackupManager {
                 return "google_drive".localized
             case .manual:
                 return "manually".localized
+            case .multi:
+                return "multi_backup".localized
             }
         }
     }

@@ -13,18 +13,16 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.246247206636-srqmvc5l0fievp3ui5oshvsaml5a9pnb</string>
+				<string>com.googleusercontent.apps.246247206636-n8pmortbotjn222o2o2s5mleda0tujho</string>
 			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>io.outblock.lilico.dev</string>
+			<string>com.flowfoundation.wallet.dev</string>
 			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>lilico</string>
-			</array>
+			<array/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
@@ -42,6 +40,14 @@
 				<string>frw</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string></string>
+			<key>CFBundleURLSchemes</key>
+			<array/>
+		</dict>
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
@@ -56,7 +62,7 @@
 	</array>
 	<key>NSUbiquitousContainers</key>
 	<dict>
-		<key>iCloud.io.outblock.lilico.dev</key>
+		<key>iCloud.com.flowfoundation.wallet.dev</key>
 		<dict>
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>

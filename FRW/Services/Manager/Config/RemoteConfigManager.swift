@@ -1,6 +1,6 @@
 //
 //  GasManager.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 5/9/2022.
 //
@@ -47,6 +47,13 @@ class RemoteConfigManager {
             return config?.payer.testnet.address ?? emptyAddress
         case .crescendo:
             return config?.payer.crescendo?.address ?? emptyAddress
+        case .custom(let name, _):
+            if name == "previewnet" {
+                return config?.payer.previewnet?.address ?? emptyAddress
+            }
+            else {
+                return emptyAddress
+            }
         default:
             return emptyAddress
         }
@@ -77,6 +84,8 @@ class RemoteConfigManager {
             return contractAddress?.testnet
         case .crescendo:
             return contractAddress?.crescendo
+        case .previewnet:
+            return contractAddress?.previewnet
         }
     }
     

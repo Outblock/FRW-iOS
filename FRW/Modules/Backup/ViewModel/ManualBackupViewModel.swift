@@ -1,6 +1,6 @@
 //
 //  ManualBackupViewModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 4/1/22.
 //

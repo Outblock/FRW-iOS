@@ -1,6 +1,6 @@
 //
 //  SettingView.swift
-//  Flow Reference Wallet-lite
+//  Flow Wallet-lite
 //
 //  Created by Hao Fu on 30/11/21.
 //
@@ -229,6 +229,7 @@ extension ProfileView {
                 }
 
                 ProfileView.InfoActionButton(iconName: "icon-wallet", title: "wallets".localized) {
+                    UserManager.shared.verityUserType() 
                     Router.route(to: RouteMap.Profile.walletSetting(true))
                 }
 

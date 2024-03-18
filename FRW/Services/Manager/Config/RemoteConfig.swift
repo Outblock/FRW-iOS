@@ -1,6 +1,6 @@
 //
 //  RemoteConfig.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 5/9/2022.
 //
@@ -12,6 +12,7 @@ extension RemoteConfigManager {
         let mainnet: [String: String]?
         let testnet: [String: String]?
         let crescendo: [String: String]?
+        let previewnet: [String: String]?
     }
     
     struct Config: Codable {
@@ -41,6 +42,7 @@ extension RemoteConfigManager {
         let mainnet: PayerInfo
         let testnet: PayerInfo
         let crescendo: PayerInfo?
+        let previewnet: PayerInfo?
     }
 
     // MARK: - Net

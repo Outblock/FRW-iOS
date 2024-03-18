@@ -1,6 +1,6 @@
 //
 //  NFTCollectionModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by cat on 2022/6/22.
 //

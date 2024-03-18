@@ -85,7 +85,7 @@ struct DeviceInfoModel: Codable,Identifiable {
     func showName() -> String {
         return deviceName ?? ""
     }
-    // like Flow Reference macOS 8.4.1
+    // like Flow Wallet macOS 8.4.1
     func showApp() -> String {
         return userAgent ?? ""
     }
@@ -96,10 +96,10 @@ struct DeviceInfoModel: Codable,Identifiable {
     
     func showLocation() -> String {
         var res = ""
-        if city != nil {
+        if city != nil && !city!.isEmpty {
             res += city!
         }
-        if country != nil {
+        if country != nil && !country!.isEmpty {
             res += ",\(country!)"
         }
         return res
@@ -122,7 +122,7 @@ struct DeviceInfoModel: Codable,Identifiable {
     }
     
     func showDate() -> String {
-        guard let created = createdAt else { return "" }
+        guard let created = updatedAt else { return "" }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSZ"
         let date = dateFormatter.date(from: created)

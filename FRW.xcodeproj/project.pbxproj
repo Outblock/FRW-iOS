@@ -935,6 +935,10 @@
 		4E1A8B732B71AADE00485EDE /* MultiBackupVerifyPinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B712B71AADE00485EDE /* MultiBackupVerifyPinView.swift */; };
 		4E1A8B752B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B742B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift */; };
 		4E1A8B762B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B742B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift */; };
+		4E1B2FE32BA038C000F30379 /* DevicesInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1B2FE22BA038C000F30379 /* DevicesInfoViewModel.swift */; };
+		4E1B2FE42BA038C000F30379 /* DevicesInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1B2FE22BA038C000F30379 /* DevicesInfoViewModel.swift */; };
+		4E1B2FE62BA061F700F30379 /* QRCodeEyeShareFillCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1B2FE52BA061F700F30379 /* QRCodeEyeShareFillCircle.swift */; };
+		4E1B2FE72BA061F700F30379 /* QRCodeEyeShareFillCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1B2FE52BA061F700F30379 /* QRCodeEyeShareFillCircle.swift */; };
 		4E1DD8C72B1622030055E510 /* Instabug in Frameworks */ = {isa = PBXBuildFile; productRef = 4E1DD8C62B1622030055E510 /* Instabug */; };
 		4E1DD8C92B16222A0055E510 /* Instabug in Frameworks */ = {isa = PBXBuildFile; productRef = 4E1DD8C82B16222A0055E510 /* Instabug */; };
 		4E1DD8CB2B1629560055E510 /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1DD8CA2B1629560055E510 /* QRCodeView.swift */; };
@@ -1016,6 +1020,12 @@
 		4E8DD9FD282E52110016A931 /* JSONStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8DD9FB282E52110016A931 /* JSONStorage.swift */; };
 		4E90592F2B1792F10029FC66 /* SyncAddDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */; };
 		4E9059302B1792F10029FC66 /* SyncAddDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */; };
+		4E9621D52B984EF3006859AD /* CadenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D42B984EF3006859AD /* CadenceManager.swift */; };
+		4E9621D62B984EF3006859AD /* CadenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D42B984EF3006859AD /* CadenceManager.swift */; };
+		4E9621D82B9850CF006859AD /* FRWAPI+Cadence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */; };
+		4E9621D92B9850CF006859AD /* FRWAPI+Cadence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */; };
+		4E9621DB2B985BAB006859AD /* cloudfunctions.json in Resources */ = {isa = PBXBuildFile; fileRef = 4E9621DA2B985BAB006859AD /* cloudfunctions.json */; };
+		4E9621DC2B985BAB006859AD /* cloudfunctions.json in Resources */ = {isa = PBXBuildFile; fileRef = 4E9621DA2B985BAB006859AD /* cloudfunctions.json */; };
 		4E9BFF5D2867631300601339 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E9BFF5C2867631300601339 /* UIKit.framework */; };
 		4E9DCE452B50E845005DE911 /* InstabugConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9DCE442B50E845005DE911 /* InstabugConfig.swift */; };
 		4E9DCE472B50E8A0005DE911 /* InstabugConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9DCE462B50E8A0005DE911 /* InstabugConfig.swift */; };
@@ -1100,8 +1110,6 @@
 		4ECE28C52ADF6D170035787D /* AccountKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECE28C32ADF6D170035787D /* AccountKeys.swift */; };
 		4ECE28C72AE20DBF0035787D /* AccountKeyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECE28C62AE20DBF0035787D /* AccountKeyViewModel.swift */; };
 		4ECE28C82AE20DC30035787D /* AccountKeyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECE28C62AE20DBF0035787D /* AccountKeyViewModel.swift */; };
-		4ECE28CA2AE20EC90035787D /* CadenceTemplate+AccountKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECE28C92AE20EC90035787D /* CadenceTemplate+AccountKeys.swift */; };
-		4ECE28CB2AE20EC90035787D /* CadenceTemplate+AccountKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECE28C92AE20EC90035787D /* CadenceTemplate+AccountKeys.swift */; };
 		4ED06E372ABABABA00F49A1A /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */; };
 		4ED06E382ABABABA00F49A1A /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */; };
 		4ED06E3B2ABABABA00F49A1A /* WalletCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E342ABABABA00F49A1A /* WalletCore.xcframework */; };
@@ -1131,8 +1139,6 @@
 		4EE8E4962834DC7100DFEF59 /* NFTModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE8E4942834DC7100DFEF59 /* NFTModel.swift */; };
 		4EE8E4992835EAF500DFEF59 /* NFTFavoriteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE8E4972835EAF100DFEF59 /* NFTFavoriteView.swift */; };
 		4EE8E49C283626D000DFEF59 /* NFTLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE8E49A283626D000DFEF59 /* NFTLoading.swift */; };
-		4EEC374F2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */; };
-		4EEC37502A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */; };
 		4EEDA38D2B4D788A0000D382 /* MultiBackupDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDA38C2B4D788A0000D382 /* MultiBackupDetailViewModel.swift */; };
 		4EEDA38E2B4D788A0000D382 /* MultiBackupDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDA38C2B4D788A0000D382 /* MultiBackupDetailViewModel.swift */; };
 		4EF3FAE02A7B8D8400D7B09B /* FlowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */; };
@@ -2125,6 +2131,8 @@
 		4E1A8B6E2B71A7FA00485EDE /* MultiBackupConfirmPinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupConfirmPinViewModel.swift; sourceTree = "<group>"; };
 		4E1A8B712B71AADE00485EDE /* MultiBackupVerifyPinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupVerifyPinView.swift; sourceTree = "<group>"; };
 		4E1A8B742B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupVerifyPinViewModel.swift; sourceTree = "<group>"; };
+		4E1B2FE22BA038C000F30379 /* DevicesInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesInfoViewModel.swift; sourceTree = "<group>"; };
+		4E1B2FE52BA061F700F30379 /* QRCodeEyeShareFillCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeEyeShareFillCircle.swift; sourceTree = "<group>"; };
 		4E1DD8CA2B1629560055E510 /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
 		4E1DD8D02B162F9B0055E510 /* SyncConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncConfirmView.swift; sourceTree = "<group>"; };
 		4E2380FD2B186A6000756874 /* WalletConnect+Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WalletConnect+Tools.swift"; sourceTree = "<group>"; };
@@ -2141,6 +2149,7 @@
 		4E3670062B2A8BB6000F2693 /* BackupUploadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupUploadViewModel.swift; sourceTree = "<group>"; };
 		4E3E5BE22875DC2000A5FA65 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		4E42DC5E2B22AEB700EF0A75 /* BackupListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupListView.swift; sourceTree = "<group>"; };
+		4E47D6612BA2D3C600C504C2 /* TokenEnableResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenEnableResponse.swift; sourceTree = "<group>"; };
 		4E4F794A2831FCB700ED027C /* ImageName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageName.swift; sourceTree = "<group>"; };
 		4E4F794D2831FF0F00ED027C /* NFTSquareCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTSquareCard.swift; sourceTree = "<group>"; };
 		4E51B4FA2854A76500EDE4FE /* CaptureView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaptureView.swift; sourceTree = "<group>"; };
@@ -2168,6 +2177,9 @@
 		4E8DD9F7282E2FBB0016A931 /* NFTEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTEmptyView.swift; sourceTree = "<group>"; };
 		4E8DD9FB282E52110016A931 /* JSONStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONStorage.swift; sourceTree = "<group>"; };
 		4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncAddDeviceView.swift; sourceTree = "<group>"; };
+		4E9621D42B984EF3006859AD /* CadenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CadenceManager.swift; sourceTree = "<group>"; };
+		4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FRWAPI+Cadence.swift"; sourceTree = "<group>"; };
+		4E9621DA2B985BAB006859AD /* cloudfunctions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cloudfunctions.json; sourceTree = "<group>"; };
 		4E9BFF5C2867631300601339 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		4E9DCE442B50E845005DE911 /* InstabugConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstabugConfig.swift; sourceTree = "<group>"; };
 		4E9DCE462B50E8A0005DE911 /* InstabugConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstabugConfig.swift; sourceTree = "<group>"; };
@@ -2219,7 +2231,6 @@
 		4ECB9964285B8D6A00F59852 /* OffsetScrollViewWithAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffsetScrollViewWithAppBar.swift; sourceTree = "<group>"; };
 		4ECE28C32ADF6D170035787D /* AccountKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountKeys.swift; sourceTree = "<group>"; };
 		4ECE28C62AE20DBF0035787D /* AccountKeyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountKeyViewModel.swift; sourceTree = "<group>"; };
-		4ECE28C92AE20EC90035787D /* CadenceTemplate+AccountKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CadenceTemplate+AccountKeys.swift"; sourceTree = "<group>"; };
 		4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = FRW/Library/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
 		4ED06E342ABABABA00F49A1A /* WalletCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WalletCore.xcframework; path = FRW/Library/WalletCore.xcframework; sourceTree = "<group>"; };
 		4ED21F36284E2E6E00320AD0 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
@@ -2235,7 +2246,6 @@
 		4EE8E4942834DC7100DFEF59 /* NFTModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTModel.swift; sourceTree = "<group>"; };
 		4EE8E4972835EAF100DFEF59 /* NFTFavoriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTFavoriteView.swift; sourceTree = "<group>"; };
 		4EE8E49A283626D000DFEF59 /* NFTLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTLoading.swift; sourceTree = "<group>"; };
-		4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CadenceTemplate+ChildAccount.swift"; sourceTree = "<group>"; };
 		4EEDA38C2B4D788A0000D382 /* MultiBackupDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupDetailViewModel.swift; sourceTree = "<group>"; };
 		4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowModel.swift; sourceTree = "<group>"; };
 		4EF5129828329ADA0014F4EC /* NFTDetailPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTDetailPage.swift; sourceTree = "<group>"; };
@@ -2732,6 +2742,7 @@
 				6A29113628CAE7FE003295BD /* FRWAPI+Account.swift */,
 				6AF4A6C328D46FAF00B12FAB /* FRWAPI+Flowns.swift */,
 				6A2C5610290BE9FF00306A6C /* FRWAPI+Utils.swift */,
+				4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */,
 			);
 			path = FRW;
 			sourceTree = "<group>";
@@ -3115,6 +3126,7 @@
 				6AF4A6C628D4725300B12FAB /* FlownsResponses.swift */,
 				6A7D9DD028E1923500333954 /* OtherResponses.swift */,
 				4EFF94C32AEEDD0A00365EF7 /* IPResponse.swift */,
+				4E47D6612BA2D3C600C504C2 /* TokenEnableResponse.swift */,
 			);
 			path = Response;
 			sourceTree = "<group>";
@@ -4213,6 +4225,7 @@
 				4E8394432A7153EB00DFC422 /* CalloutView.swift */,
 				4EA0D0A22A7A357E004C6A19 /* LLSegmenControl.swift */,
 				4E1DD8CA2B1629560055E510 /* QRCodeView.swift */,
+				4E1B2FE52BA061F700F30379 /* QRCodeEyeShareFillCircle.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -4478,6 +4491,7 @@
 		4EA820C128634A9700DF36A8 /* Json */ = {
 			isa = PBXGroup;
 			children = (
+				4E9621DA2B985BAB006859AD /* cloudfunctions.json */,
 				6A998DA5293674FC00EF133B /* staking_provider.json */,
 				4EA820C5286354E200DF36A8 /* remote_config_defaults.plist */,
 			);
@@ -4569,8 +4583,7 @@
 				4EC56B2F281FC57900246878 /* FlowQuery.swift */,
 				15832D58286816ED0066046D /* FlowAddressRegistor.swift */,
 				6AD9EC24286C4E4C0062A9CE /* CadenceTemplate.swift */,
-				4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */,
-				4ECE28C92AE20EC90035787D /* CadenceTemplate+AccountKeys.swift */,
+				4E9621D42B984EF3006859AD /* CadenceManager.swift */,
 			);
 			path = FlowCoin;
 			sourceTree = "<group>";
@@ -4631,6 +4644,7 @@
 			children = (
 				4EFF94B72AEEC76B00365EF7 /* DevicesView.swift */,
 				4EFF94BA2AEED15300365EF7 /* DevicesInfoView.swift */,
+				4E1B2FE22BA038C000F30379 /* DevicesInfoViewModel.swift */,
 				4E2381002B186FD600756874 /* DeviceInfoItem.swift */,
 				4EFF94C62AEEE5DD00365EF7 /* DevicesViewModel.swift */,
 			);
@@ -5895,6 +5909,7 @@
 				4E0D34A22A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf in Resources */,
 				1565FBB228B171BB0086A652 /* Copy.json in Resources */,
 				1565FB6628B14F140086A652 /* Saved.json in Resources */,
+				4E9621DC2B985BAB006859AD /* cloudfunctions.json in Resources */,
 				4E9E21E0282A71B500E1BACD /* Colors.xcassets in Resources */,
 				15D6D8EE28CB730800CBA152 /* inAR.json in Resources */,
 				1565FB9C28B1681F0086A652 /* Coin.json in Resources */,
@@ -5946,6 +5961,7 @@
 				4E0D34A12A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf in Resources */,
 				1565FB6528B14F140086A652 /* Saved.json in Resources */,
 				15C58C652868A4EE00BD4FC6 /* Colors.xcassets in Resources */,
+				4E9621DB2B985BAB006859AD /* cloudfunctions.json in Resources */,
 				152EEC7028E4F5EC00C37A67 /* config.plist in Resources */,
 				15D6D8ED28CB730800CBA152 /* inAR.json in Resources */,
 				1565FB9B28B1681F0086A652 /* Coin.json in Resources */,
@@ -6106,6 +6122,7 @@
 				6A3FFA802A283A5C00CB2B2C /* OnBoardingView.swift in Sources */,
 				6AE69EA528C0BCD4004D4709 /* UIViewController.swift in Sources */,
 				6A8D2A38283C7C790041100E /* AddressBookView.swift in Sources */,
+				4E9621D92B9850CF006859AD /* FRWAPI+Cadence.swift in Sources */,
 				4E8CE63A2B4BE0BA00E71A87 /* MultiBackupPhraseView.swift in Sources */,
 				15DC214327819C56000B187A /* VTabNavigationView.swift in Sources */,
 				6A2D35BE283B6B5A008293D9 /* ThemeChangeViewModel.swift in Sources */,
@@ -6134,6 +6151,7 @@
 				15DC20C727819C56000B187A /* VCloseButtonState.swift in Sources */,
 				15DC214927819C56000B187A /* VTabNavigationViewModel.swift in Sources */,
 				4E63A5822B8D76AD00BBD15F /* MoveChooseAccountView.swift in Sources */,
+				4E1B2FE42BA038C000F30379 /* DevicesInfoViewModel.swift in Sources */,
 				15DC20FF27819C56000B187A /* VStepperModel.swift in Sources */,
 				6AA78E0428A0BF2C00FF6CF9 /* ScanHandler.swift in Sources */,
 				6A164F462840A1380026B31E /* TabBarView.swift in Sources */,
@@ -6362,6 +6380,7 @@
 				15DC21C127819C56000B187A /* DerivedButtonType.swift in Sources */,
 				15D6D8E928CB45BA00CBA152 /* DOFavoriteButtonView.swift in Sources */,
 				15DC217927819C56000B187A /* VModal.swift in Sources */,
+				4E9621D62B984EF3006859AD /* CadenceManager.swift in Sources */,
 				15DC21A127819C56000B187A /* UIKitTextFieldRepresentable.swift in Sources */,
 				15D874EB28C629430072C6EA /* FirebaseAPI.swift in Sources */,
 				15DC20BD27819C56000B187A /* VSquareButtonModel.swift in Sources */,
@@ -6372,7 +6391,6 @@
 				6A98509C28C71B5D00A07C2D /* BrowserAuthnViewModel.swift in Sources */,
 				4EE6FA8A2B19677B006A827B /* SyncConfirmViewModel.swift in Sources */,
 				6A73BF5328C59029004B836A /* JSMessageHandler.swift in Sources */,
-				4ECE28CB2AE20EC90035787D /* CadenceTemplate+AccountKeys.swift in Sources */,
 				6A16F19428B8B1AC0055936E /* TransactionHolderView.swift in Sources */,
 				154B8908276A1EEB00780E93 /* ColorBook.swift in Sources */,
 				1565FB9028B15D890086A652 /* LottieView.swift in Sources */,
@@ -6479,6 +6497,7 @@
 				15DC209B27819C56000B187A /* VBaseHeaderFooterView.swift in Sources */,
 				15DC213327819C56000B187A /* VSegmentedPickerModel.swift in Sources */,
 				4EBE49272AA1B732000FFFFE /* AppUpdateManager.swift in Sources */,
+				4E1B2FE72BA061F700F30379 /* QRCodeEyeShareFillCircle.swift in Sources */,
 				6A9CFE4D2A69331100AEA847 /* JailbreakAlertView.swift in Sources */,
 				15DC21E327819C56000B187A /* StateColors_EFD.swift in Sources */,
 				15DC20E727819C56000B187A /* VAccordionModel.swift in Sources */,
@@ -6774,7 +6793,6 @@
 				6AB5FBA328926C9100FA2261 /* iCloudAPI.swift in Sources */,
 				4EE6FA8D2B196B16006A827B /* Dictionary+Add.swift in Sources */,
 				4EC31183284508F200F711F5 /* NFTListView.swift in Sources */,
-				4EEC37502A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift in Sources */,
 				154866F128D0EEF000D012B8 /* FlowTransactionTemplate.swift in Sources */,
 				6A6C410528D849A000074DE9 /* InboxView.swift in Sources */,
 				154866ED28D0ECE400D012B8 /* FlixAuditEndpoint.swift in Sources */,
@@ -6807,6 +6825,7 @@
 				6A3FFA7F2A283A5C00CB2B2C /* OnBoardingView.swift in Sources */,
 				6AE69EA428C0BCD4004D4709 /* UIViewController.swift in Sources */,
 				15C58ABC2868A4EE00BD4FC6 /* AddressBookView.swift in Sources */,
+				4E9621D82B9850CF006859AD /* FRWAPI+Cadence.swift in Sources */,
 				4E8CE6392B4BE0BA00E71A87 /* MultiBackupPhraseView.swift in Sources */,
 				15C58ABD2868A4EE00BD4FC6 /* VTabNavigationView.swift in Sources */,
 				15C58ABE2868A4EE00BD4FC6 /* ThemeChangeViewModel.swift in Sources */,
@@ -6835,6 +6854,7 @@
 				15C58ACB2868A4EE00BD4FC6 /* VCloseButtonState.swift in Sources */,
 				15C58ACC2868A4EE00BD4FC6 /* VTabNavigationViewModel.swift in Sources */,
 				4E63A5812B8D76AD00BBD15F /* MoveChooseAccountView.swift in Sources */,
+				4E1B2FE32BA038C000F30379 /* DevicesInfoViewModel.swift in Sources */,
 				15C58ACD2868A4EE00BD4FC6 /* VStepperModel.swift in Sources */,
 				6AA78E0328A0BF2C00FF6CF9 /* ScanHandler.swift in Sources */,
 				15C58ACE2868A4EE00BD4FC6 /* TabBarView.swift in Sources */,
@@ -7063,6 +7083,7 @@
 				15C58B4D2868A4EE00BD4FC6 /* VModal.swift in Sources */,
 				15C58B4E2868A4EE00BD4FC6 /* UIKitTextFieldRepresentable.swift in Sources */,
 				15D874EA28C629430072C6EA /* FirebaseAPI.swift in Sources */,
+				4E9621D52B984EF3006859AD /* CadenceManager.swift in Sources */,
 				15C58B4F2868A4EE00BD4FC6 /* VSquareButtonModel.swift in Sources */,
 				15C58B502868A4EE00BD4FC6 /* MMCQ.swift in Sources */,
 				15C58B512868A4EE00BD4FC6 /* FocusableTextField.swift in Sources */,
@@ -7072,7 +7093,6 @@
 				6A73BF5228C59028004B836A /* JSMessageHandler.swift in Sources */,
 				4EE6FA892B19677B006A827B /* SyncConfirmViewModel.swift in Sources */,
 				6A16F19328B8B1AC0055936E /* TransactionHolderView.swift in Sources */,
-				4ECE28CA2AE20EC90035787D /* CadenceTemplate+AccountKeys.swift in Sources */,
 				15C58B532868A4EE00BD4FC6 /* ColorBook.swift in Sources */,
 				1565FB8F28B15D890086A652 /* LottieView.swift in Sources */,
 				15D874E328C5D37F0072C6EA /* MatrixView.swift in Sources */,
@@ -7180,6 +7200,7 @@
 				15C58B942868A4EE00BD4FC6 /* StateColors_EFD.swift in Sources */,
 				4EBE49262AA1B732000FFFFE /* AppUpdateManager.swift in Sources */,
 				6A9CFE4C2A69331100AEA847 /* JailbreakAlertView.swift in Sources */,
+				4E1B2FE62BA061F700F30379 /* QRCodeEyeShareFillCircle.swift in Sources */,
 				15C58B952868A4EE00BD4FC6 /* VAccordionModel.swift in Sources */,
 				15C58B962868A4EE00BD4FC6 /* SnapAlignmentEnvironmentKey.swift in Sources */,
 				15C58B972868A4EE00BD4FC6 /* CoinRateCache.swift in Sources */,
@@ -7475,7 +7496,6 @@
 				6AB5FBA228926C9100FA2261 /* iCloudAPI.swift in Sources */,
 				4EE6FA8C2B196B16006A827B /* Dictionary+Add.swift in Sources */,
 				15C58C3B2868A4EE00BD4FC6 /* NFTListView.swift in Sources */,
-				4EEC374F2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift in Sources */,
 				154866F028D0EEF000D012B8 /* FlowTransactionTemplate.swift in Sources */,
 				6A6C410428D849A000074DE9 /* InboxView.swift in Sources */,
 				154866EC28D0ECE400D012B8 /* FlixAuditEndpoint.swift in Sources */,
@@ -7577,12 +7597,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.test.LilicoTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.test.LilicoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -7600,12 +7620,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.test.LilicoTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.test.LilicoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -7624,9 +7644,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "FRW/App/Env/Dev/FRW-dev.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FRW/Resource/Preview Content\"";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				ENABLE_PREVIEWS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"SWIFT_PACKAGE=1",
@@ -7634,14 +7654,14 @@
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FRW/App/Env/Dev/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Flow Core-dev";
+				INFOPLIST_KEY_CFBundleDisplayName = "Flow Wallet-dev";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Ref-dev need camera to scan QR Code";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Reference Wallet(dev) use Face ID to secure your assests";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Wallet-dev need camera to scan QR Code";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Wallet(dev) use Face ID to secure your assests";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Flow Ref-dev requires access to microphone";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Flow Ref-dev requires access to photo library";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Flow Ref-dev requires access to photo library";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Flow Wallet-dev requires access to microphone";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Flow Wallet-dev requires access to photo library";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Flow Wallet-dev requires access to photo library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
@@ -7651,8 +7671,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.dev;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "FRW/App/FRW-Bridging-Header.h";
@@ -7669,21 +7689,21 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "FRW/App/Env/Dev/FRW-dev.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FRW/Resource/Preview Content\"";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				ENABLE_PREVIEWS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "SWIFT_PACKAGE=1";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FRW/App/Env/Dev/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Flow Core-dev";
+				INFOPLIST_KEY_CFBundleDisplayName = "Flow Wallet-dev";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Ref-dev need camera to scan QR Code";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Reference Wallet(dev) use Face ID to secure your assests";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Wallet-dev need camera to scan QR Code";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Wallet(dev) use Face ID to secure your assests";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Flow Ref-dev requires access to microphone";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Flow Ref-dev requires access to photo library";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Flow Ref-dev requires access to photo library";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Flow Wallet-dev requires access to microphone";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Flow Wallet-dev requires access to photo library";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Flow Wallet-dev requires access to photo library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
@@ -7693,8 +7713,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.dev;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "FRW/App/FRW-Bridging-Header.h";
@@ -7713,7 +7733,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
 				DEVELOPMENT_ASSET_PATHS = "\"FRW/Resource/Preview Content\"";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				ENABLE_PREVIEWS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"SWIFT_PACKAGE=1",
@@ -7721,7 +7741,7 @@
 				);
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FRW/App/Env/Prod/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Flow Core";
+				INFOPLIST_KEY_CFBundleDisplayName = "Flow Wallet";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Ref need camera to scan QR Code";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Ref use Face ID to secure your assests";
@@ -7737,7 +7757,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG LILICOPROD";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7757,12 +7777,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
 				DEVELOPMENT_ASSET_PATHS = "\"FRW/Resource/Preview Content\"";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				ENABLE_PREVIEWS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "SWIFT_PACKAGE=1";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FRW/App/Env/Prod/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Flow Core";
+				INFOPLIST_KEY_CFBundleDisplayName = "Flow Wallet";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Flow Ref need camera to scan QR Code";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Flow Ref use Face ID to secure your assests";
@@ -7778,7 +7798,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = LILICOPROD;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7915,7 +7935,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWNotificationServiceExtension/FRWNotificationServiceExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FRWNotificationServiceExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FRWNotificationServiceExtension;
@@ -7927,7 +7947,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.LilicoNotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.NotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7943,7 +7963,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWNotificationServiceExtension/FRWNotificationServiceExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FRWNotificationServiceExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FRWNotificationServiceExtension;
@@ -7955,7 +7975,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.LilicoNotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.NotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7971,7 +7991,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWDevNotificationServiceExtension/FRWDevNotificationServiceExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FRWDevNotificationServiceExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FRWDevNotificationServiceExtension;
@@ -7983,7 +8003,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.dev.LilicoDevNotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.DevNotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7999,7 +8019,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWDevNotificationServiceExtension/FRWDevNotificationServiceExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FRWDevNotificationServiceExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FRWDevNotificationServiceExtension;
@@ -8011,7 +8031,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.dev.LilicoDevNotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.DevNotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -8029,7 +8049,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWDevWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FRWDevWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FlowRefDevWidgets;
@@ -8041,7 +8061,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.dev.LilicoDevWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.DevWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -8059,7 +8079,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWDevWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FRWDevWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FlowRefDevWidgets;
@@ -8071,7 +8091,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.dev.LilicoDevWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev.DevWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -8089,7 +8109,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FRWWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FRWWidgets;
@@ -8101,7 +8121,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.LilicoWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -8119,7 +8139,7 @@
 				CODE_SIGN_ENTITLEMENTS = FRWWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
-				DEVELOPMENT_TEAM = C7CT739SU9;
+				DEVELOPMENT_TEAM = 444MY26W7F;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FRWWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FRWWidgets;
@@ -8131,7 +8151,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = "$(CFBundleShortVersionString)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.outblock.lilico.LilicoWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;

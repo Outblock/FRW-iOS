@@ -76,10 +76,10 @@ struct SyncAddDeviceView: View {
     
     var location: String {
         var res = ""
-        if viewModel.model.deviceInfo.city != nil {
+        if viewModel.model.deviceInfo.city != nil && !viewModel.model.deviceInfo.city!.isEmpty {
             res += viewModel.model.deviceInfo.city!
         }
-        if viewModel.model.deviceInfo.country != nil {
+        if viewModel.model.deviceInfo.country != nil && !viewModel.model.deviceInfo.country!.isEmpty {
             res += ",\(viewModel.model.deviceInfo.country!)"
         }
         return res
@@ -105,5 +105,5 @@ struct SyncAddDeviceView: View {
 }
 
 // #Preview {
-//    SyncAddDeviceView(model: RegisterRequest(username: "", accountKey: AccountKey(hashAlgo: 0, publicKey: "", signAlgo: 0), deviceInfo: DeviceInfoRequest(deviceId: "", ip: "192.168.0.1", name: "Flow Reference MacOS 8.4.1", type: "", userAgent: "Flow Reference MacOS 8.4.1", continent: "", continentCode: "", country: "US", countryCode: "", regionName: "", city: "New York ", district: "", zip: "", lat: 0, lon: 0, timezone: "", currency: "", isp: "", org: "")))
+//    SyncAddDeviceView(model: RegisterRequest(username: "", accountKey: AccountKey(hashAlgo: 0, publicKey: "", signAlgo: 0), deviceInfo: DeviceInfoRequest(deviceId: "", ip: "192.168.0.1", name: "Flow Wallet MacOS 8.4.1", type: "", userAgent: "Flow Wallet MacOS 8.4.1", continent: "", continentCode: "", country: "US", countryCode: "", regionName: "", city: "New York ", district: "", zip: "", lat: 0, lon: 0, timezone: "", currency: "", isp: "", org: "")))
 // }

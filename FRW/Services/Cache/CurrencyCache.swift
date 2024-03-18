@@ -1,6 +1,6 @@
 //
 //  CurrencyCache.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 28/10/2022.
 //

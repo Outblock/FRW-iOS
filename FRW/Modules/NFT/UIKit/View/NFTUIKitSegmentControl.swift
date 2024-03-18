@@ -1,6 +1,6 @@
 //
 //  NFTUIKitSegmentControl.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 16/8/2022.
 //

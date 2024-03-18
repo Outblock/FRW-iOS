@@ -16,9 +16,15 @@ extension CLLocationCoordinate2D: Identifiable {
 
 struct DevicesInfoView: RouteableView {
     var info: DeviceInfoModel
+    @StateObject var viewModel: DevicesInfoViewModel
     
     var title: String {
         return "device_info".localized
+    }
+    
+    init(info: DeviceInfoModel) {
+        self.info = info
+        _viewModel = StateObject(wrappedValue: DevicesInfoViewModel(model: info))
     }
     
     var body: some View {
@@ -43,34 +49,38 @@ struct DevicesInfoView: RouteableView {
                     Color.clear
                         .frame(height: 24)
                     
-                    HStack(spacing: 0) {
-                        Text("device_info".localized)
-                            .font(.inter(size: 14, weight: .bold))
-                            .foregroundColor(Color.Theme.Text.black3)
-                        Spacer()
-                    }
-                    
-                    Color.clear
-                        .frame(height: 8)
+                    keyView
+                        .padding(.top, 16)
                     
                     VStack {
-                        DeviceInfoItem(title: "application_tag".localized, detail: info.showApp())
-                        Divider()
-                            .background(Color.Theme.Line.line)
-                            .padding(.vertical, 16)
-                        DeviceInfoItem(title: "ip_address_tag".localized, detail: info.showIP())
-                        Divider()
-                            .background(Color.Theme.Line.line)
-                            .padding(.vertical, 16)
-                        DeviceInfoItem(title: "location".localized, detail: info.showLocation())
-                        Divider()
-                            .background(Color.Theme.Line.line)
-                            .padding(.vertical, 16)
-                        DeviceInfoItem(title: "entry_date_tag".localized, detail: info.showDate())
+                        HStack(spacing: 0) {
+                            Text("device_info".localized)
+                                .font(.inter(size: 14, weight: .bold))
+                                .foregroundColor(Color.Theme.Text.black3)
+                            Spacer()
+                        }
+                        
+                        VStack {
+                            DeviceInfoItem(title: "application_tag".localized, detail: info.showApp())
+                            Divider()
+                                .background(Color.Theme.Line.line)
+                                .padding(.vertical, 16)
+                            DeviceInfoItem(title: "ip_address_tag".localized, detail: info.showIP())
+                            Divider()
+                                .background(Color.Theme.Line.line)
+                                .padding(.vertical, 16)
+                            DeviceInfoItem(title: "location".localized, detail: info.showLocation())
+                            Divider()
+                                .background(Color.Theme.Line.line)
+                                .padding(.vertical, 16)
+                            DeviceInfoItem(title: "entry_date_tag".localized, detail: info.showDate())
+                        }
+                        .padding(.all, 16)
+                        .background(.Theme.Background.grey)
+                        .cornerRadius(16)
                     }
-                    .padding(.all, 16)
-                    .background(.Theme.Background.grey)
-                    .cornerRadius(16)
+                    .padding(.top, 24)
+                    
                 }
                 .padding(.horizontal, 18)
                 .frame(maxHeight: .infinity)
@@ -78,23 +88,82 @@ struct DevicesInfoView: RouteableView {
             
             Spacer()
             
-//            VStack {
-//                Button {
-//
-//                } label: {
-//                    Text("revoke_device".localized)
-//                        .font(.inter(size: 16,weight: .semibold))
-//                        .foregroundStyle(Color.Theme.Text.white9)
-//                }
-//                .frame(height: 54)
-//                .frame(maxWidth: .infinity)
-//                .background(Color.Theme.Accent.red)
-//                .cornerRadius(16)
-//            }
-//            .padding(.horizontal, 18)
+            VStack {
+                Button {
+                    viewModel.onRevoke()
+                } label: {
+                    Text("revoke_device".localized)
+                        .font(.inter(size: 16,weight: .semibold))
+                        .foregroundStyle(Color.Theme.Text.white9)
+                }
+                .frame(height: 54)
+                .frame(maxWidth: .infinity)
+                .background(Color.Theme.Accent.red)
+                .cornerRadius(16)
+            }
+            .padding(.horizontal, 18)
+            .visibility(viewModel.showRevokeButton ? .visible : .gone)
         }
-        
         .applyRouteable(self)
+        .halfSheet(showSheet: $viewModel.showRemoveTipView) {
+            DangerousTipSheetView(title: "account_key_revoke_title".localized,
+                                  detail: "account_key_revoke_content".localized,
+                                  buttonTitle: "hold_to_revoke".localized) {
+                viewModel.revokeAction()
+            } onCancel: {
+                viewModel.onCancel()
+            }
+        }
+    }
+    
+    var keyView: some View {
+        VStack(spacing: 8) {
+            HStack(spacing: 0) {
+                Text("key_location".localized)
+                    .font(.inter(size: 14, weight: .bold))
+                    .foregroundColor(Color.Theme.Text.black3)
+                Spacer()
+            }
+            
+            HStack(spacing: 8) {
+                HStack(alignment: .center, spacing: 8) {
+                    Image(viewModel.keyIcon)
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                        .padding(.trailing, 8)
+                    
+                    Text(viewModel.showKeyTitle)
+                        .padding(.horizontal, 8)
+                        .frame(height: 20)
+                        .font(.inter(size: 12, weight: .bold))
+                        .foregroundStyle(viewModel.showKeyTitleColor)
+                    
+                    Spacer()
+                    
+                    Text("full_access".localized)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .frame(height: 20)
+                        .font(.inter(size: 9,weight: .bold))
+                        .foregroundStyle(Color.Theme.Text.black3)
+                        .background(Color.Theme.Text.black3.fixedOpacity())
+                        .cornerRadius(4)
+                    
+                    Image("icon-account-arrow-right")
+                        .renderingMode(.template)
+                        .foregroundColor(.LL.Neutrals.text)
+                        .frame(width: 16, height: 16)
+                        .padding(.leading, 16)
+                }
+                .frame(height: 52)
+                .padding(.horizontal, 16)
+                .background(.Theme.Background.grey)
+                .cornerRadius(16)
+            }
+            .onTapGesture {
+                Router.route(to: RouteMap.Profile.accountKeys)
+            }
+        }
     }
     
     func region() -> MKCoordinateRegion {

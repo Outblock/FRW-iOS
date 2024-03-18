@@ -1,6 +1,6 @@
 //
 //  TransactionUIHandler.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 26/8/2022.
 //

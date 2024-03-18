@@ -116,7 +116,7 @@ extension MultiBackupManager {
         let flowPublicKey = Flow.PublicKey(hex: publicKey)
         let flowKey = Flow.AccountKey(publicKey: flowPublicKey, signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 500)
         let backupName = type.showName()
-        let deviceInfo = SyncInfo.DeviceInfo(accountKey: flowKey.toCodableModel(), deviceInfo: IPManager.shared.toParams(), backupInfo: BackupInfoModel(create_time: nil, name: backupName, type: type.toBackupType().rawValue))
+        let deviceInfo = SyncInfo.DeviceInfo(accountKey: flowKey.toCodableModel(), deviceInfo: IPManager.shared.toParams(), backupInfo: BackupInfoModel(createTime: nil, name: backupName, type: type.toBackupType().rawValue))
         
         let item = MultiBackupManager.StoreItem(
             address: address,

@@ -1,6 +1,6 @@
 //
 //  DeveloperModeViewModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 15/9/2022.
 //
@@ -102,6 +102,45 @@ extension DeveloperModeViewModel {
                     return
                 }
                 
+                successBlock()
+            } catch {
+                debugPrint("DeveloperModeViewModel -> enableCrescendoAction failed: \(error)")
+                failedBlock()
+            }
+        }
+    }
+    
+    func enablePreviewnetAction() {
+        HUD.loading()
+        
+        let failedBlock = {
+            DispatchQueue.main.async {
+                HUD.dismissLoading()
+                HUD.error(title: "enable_previewnet_failed".localized)
+                FlowNetwork.setup()
+            }
+        }
+        
+        let successBlock = {
+            DispatchQueue.main.async {
+                HUD.dismissLoading()
+                WalletManager.shared.changeNetwork(.previewnet)
+            }
+        }
+        
+        Task {
+            do {
+                
+                let request = NetworkRequest(accountKey: AccountKey(hashAlgo: WalletManager.shared.hashAlgo.index, publicKey: WalletManager.shared.getCurrentPublicKey() ?? "", signAlgo: WalletManager.shared.signatureAlgo.index, weight: 1000), network: "previewnet")
+                let id: String = try await Network.request(FRWAPI.User.previewnet(request))
+                let txId = Flow.ID(hex: id)
+                flow.configure(chainID: LocalUserDefaults.FlowNetworkType.previewnet.toFlowType())
+
+                let result = try await txId.onceSealed()
+                if result.isFailed {
+                    failedBlock()
+                    return
+                }
                 successBlock()
             } catch {
                 debugPrint("DeveloperModeViewModel -> enableCrescendoAction failed: \(error)")

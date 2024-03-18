@@ -1,6 +1,6 @@
 //
 //  UIImage.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 17/8/2022.
 //

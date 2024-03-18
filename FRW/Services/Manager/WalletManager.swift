@@ -1,6 +1,6 @@
 //
 //  WalletManager.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 30/12/21.
 //
@@ -18,7 +18,7 @@ import WalletCore
 extension WalletManager {
     static let flowPath = "m/44'/539'/0'/0/0"
     static let mnemonicStrength: Int32 = 160
-    private static let defaultBundleID = "io.outblock.lilico"
+    private static let defaultBundleID = "com.flowfoundation.wallet"
     private static let mnemonicStoreKeyPrefix = "lilico.mnemonic"
     private static let walletFetchInterval: TimeInterval = 20
     
@@ -274,6 +274,10 @@ extension WalletManager {
         return walletInfo?.wallets?.first(where: { $0.chainId == LocalUserDefaults.FlowNetworkType.crescendo.rawValue })?.getAddress != nil
     }
     
+    var isPreviewEnabled: Bool {
+        return walletInfo?.wallets?.first(where: { $0.chainId == LocalUserDefaults.FlowNetworkType.previewnet.rawValue })?.getAddress != nil
+    }
+    
     func isTokenActivated(symbol: String) -> Bool {
         for token in activatedCoins {
             if token.symbol == symbol {
@@ -411,7 +415,7 @@ extension WalletManager {
             encodedData = Data()
         }
         
-        if let existingMnemonic = getMnemonicFromKeychain(uid: uid) {
+        if let existingMnemonic = getMnemonicFromKeychain(uid: uid), !existingMnemonic.isEmpty {
             if existingMnemonic != mnemonic {
                 log.error("existingMnemonic should equal the current")
                 throw WalletError.existingMnemonicMismatch
@@ -547,16 +551,16 @@ extension WalletManager {
             }
             return
         }
-
-        let enabledList = try await FlowNetwork.checkTokensEnable(address: Flow.Address(hex: address), tokens: supportedCoins)
-        if enabledList.count != supportedCoins.count {
-            throw WalletError.fetchFailed
-        }
+        
+        let enabledList = try await FlowNetwork.checkTokensEnable(address: Flow.Address(hex: address))
 
         var list = [TokenModel]()
-        for (index, value) in enabledList.enumerated() {
-            if value == true {
-                list.append(supportedCoins[index])
+        for (_, value) in enabledList.enumerated() {
+            if value.value {
+                let model = supportedCoins.first { $0.contractId.lowercased() == value.key.lowercased() }
+                if let model = model {
+                    list.append(model)
+                }
             }
         }
 
@@ -569,30 +573,24 @@ extension WalletManager {
     }
 
     func fetchBalance() async throws {
-        guard activatedCoins.count > 0 else {
-            return
-        }
-
         let address = selectedAccountAddress
         if address.isEmpty {
             throw WalletError.fetchBalanceFailed
         }
 
-        let balanceList = try await FlowNetwork.fetchBalance(at: Flow.Address(hex: address), with: activatedCoins)
-        if activatedCoins.count != balanceList.count {
-            throw WalletError.fetchBalanceFailed
-        }
+        let balanceList = try await FlowNetwork.fetchBalance(at: Flow.Address(hex: address))
 
         var newBalanceMap: [String: Double] = [:]
 
-        for (index, value) in activatedCoins.enumerated() {
-            let balance = balanceList[index]
-
+        for (_, value) in activatedCoins.enumerated() {
+            
             guard let symbol = value.symbol else {
                 continue
             }
-
-            newBalanceMap[symbol] = balance
+            let model = balanceList.first { $0.key.lowercased() == value.contractId.lowercased() }
+            if let model = model {
+                newBalanceMap[symbol] = model.value
+            }
         }
 
         DispatchQueue.main.sync {
@@ -744,6 +742,17 @@ extension WalletManager: FlowSigner {
     }
     
     public func sign(signableData: Data) async throws -> Data {
+        
+        if flowAccountKey == nil {
+            try await findFlowAccount()
+        }
+        
+        if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+            let sec = try WallectSecureEnclave(privateKey: data)
+            let signature = try sec.sign(data: signableData)
+            return signature
+        }
+        
         guard let hdWallet = hdWallet else {
             throw LLError.emptyWallet
         }
@@ -765,6 +774,18 @@ extension WalletManager: FlowSigner {
     }
     
     public func signSync(signableData: Data) -> Data? {
+        
+        do {
+            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+                let sec = try WallectSecureEnclave(privateKey: data)
+                let signature = try sec.sign(data: signableData)
+                return signature
+            }
+        } catch {
+            return nil
+        }
+        
+        
         guard let hdWallet = hdWallet else {
             return nil
         }
@@ -805,6 +826,7 @@ extension WalletManager: FlowSigner {
         flowAccountKey = sortedAccount.filter {
             $0.publicKey.description == publicKey
         }.first
+        log.error(flowAccountKey ?? "[Account] not find account")
     }
 }
 

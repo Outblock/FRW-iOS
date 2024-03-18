@@ -74,14 +74,16 @@ extension RestoreMultiAccountView {
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 36, height: 36)
                     .cornerRadius(18)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("@\(user.userName)")
+                        .font(.inter(size: 12, weight: .bold))
+                        .foregroundColor(Color.Theme.Text.black8)
+                    
+                    Text("\(user.address)")
+                        .font(.inter(size: 12))
+                        .foregroundColor(Color.Theme.Text.black3)
+                }
                 
-                Text("@\(user.userName)")
-                    .font(.inter(size: 12, weight: .bold))
-                    .foregroundColor(Color.Theme.Text.black8)
-                
-                Text("\(user.address)")
-                    .font(.inter(size: 12))
-                    .foregroundColor(Color.Theme.Text.black3)
                 
                 Spacer()
             }

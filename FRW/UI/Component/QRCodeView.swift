@@ -19,10 +19,12 @@ struct QRCodeView: View {
             QRCodeDocumentUIView(document: doc(text: content,
                                                eyeColor: eyeColor ?? (currentNetwork.isMainnet ?
                                                    UIColor.LL.Primary.salmonPrimary : UIColor(hex: "#333333"))))
+            .padding(12)
         }
-        .cornerRadius(25)
+        .background(Color.white)
+        .cornerRadius(32)
         .overlay(
-            RoundedRectangle(cornerRadius: 25)
+            RoundedRectangle(cornerRadius: 32)
                 .stroke(currentNetwork.isMainnet ? Color.LL.Neutrals.background : currentNetwork.color, lineWidth: 1)
                 .colorScheme(.light)
         )
@@ -37,16 +39,19 @@ struct QRCodeView: View {
             d.logoTemplate = QRCode.LogoTemplate(image: logo, path: path, inset: 6)
         }
         
-        d.design.backgroundColor(UIColor(hex: "#FAFAFA").cgColor)
-        d.design.shape.eye = QRCode.EyeShape.Squircle()
+        d.design.backgroundColor(UIColor(hex: "#FFFFFF").cgColor)
+        d.design.shape.eye = QRCode.EyeShape.Circle()
+        d.design.shape.onPixels = QRCode.PixelShape.Circle()
+        
+        let color = Color.Theme.Text.black8.toUIColor()
+        d.design.style.eye = QRCode.FillStyle.Solid(color!.cgColor)
+//        d.design.style.eyeBackground = color!.cgColor
         d.design.style.pupil = QRCode.FillStyle.Solid(eyeColor.cgColor)
-        d.design.shape.onPixels = QRCode.PixelShape.Circle(insetFraction: 0.1)
-        d.design.style.onPixels = QRCode.FillStyle.Solid(UIColor(hex: "#333333").cgColor)
+        d.design.style.onPixels = QRCode.FillStyle.Solid(color!.cgColor)
         return d
     }
 }
 
 #Preview {
-    QRCodeView(eyeColor: currentNetwork.isMainnet ?
-        UIColor.LL.Primary.salmonPrimary : UIColor(hex: "#333333"))
+    QRCodeView(content: "abc")
 }
