@@ -961,3 +961,60 @@ extension FlowNetwork {
         }
     }
 }
+
+// MARK: - EVM
+
+extension FlowNetwork {
+    static func createEVM() async throws -> Flow.ID {
+        guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
+        }
+        let originCadence = CadenceManager.shared.current.evm?.createCoa?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        let fromKeyIndex = WalletManager.shared.keyIndex
+
+        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+            cadence {
+                cadenceStr
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            arguments {
+                [
+                    .ufix64(0)
+                ]
+            }
+            proposer {
+                Flow.TransactionProposalKey(address: Flow.Address(hex: fromAddress), keyIndex: fromKeyIndex)
+            }
+            
+            authorizers {
+                Flow.Address(hex: fromAddress)
+            }
+            
+            gasLimit {
+                9999
+            }
+        }
+    }
+    
+    static func findEVMAddress() async throws -> String {
+        guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
+        }
+        let  originCadence = CadenceManager.shared.current.evm?.getCoaAddr?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: cadenceStr), arguments: [.address(Flow.Address(hex: fromAddress))]).decode(String.self)
+        return resonpse
+    }
+    
+    static func fetchEVMBalance(address: String) async throws -> UInt {
+        let originCadence = CadenceManager.shared.current.evm?.getBalance?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        let hexAddr =  address
+        let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: cadenceStr), arguments: [.string(hexAddr)]).decode(UInt.self)
+        return resonpse
+    }
+}

@@ -96,6 +96,8 @@ struct CadenceModel: Codable {
     let switchboard: CadenceModel.Switchboard?
     let nft: CadenceModel.NFT?
     let swap: CadenceModel.Swap?
+    
+    let evm: CadenceModel.EVM?
 }
 
 extension CadenceModel {
@@ -247,6 +249,19 @@ extension CadenceModel {
         let QueryVaultBalanceBatched: String?
         let QueryTokenPathPrefix: String?
         let CenterTokens: [String]?
+    }
+}
+
+extension CadenceModel {
+    struct EVM: Codable {
+        let call: String?
+        let createCoa: String?
+        let deployContract: String?
+        let estimateGas: String?
+        let fundEvmAddr: String?
+        let getBalance: String?
+        let getCoaAddr: String?
+        let getCode: String?
     }
 }
 

@@ -38,6 +38,8 @@ class WalletManager: ObservableObject {
     @Published var activatedCoins: [TokenModel] = []
     @Published var coinBalances: [String: Double] = [:]
     @Published var childAccount: ChildAccount? = nil
+    @Published var evmAccount: EVMAccountManager.Account? = nil
+    
     var accessibleManager: ChildAccountManager.AccessibleManager = .init()
     
     private var childAccountInited: Bool = false
@@ -86,6 +88,16 @@ class WalletManager: ObservableObject {
                 self.childAccountInited = true
                 NotificationCenter.default.post(name: .childAccountChanged)
             }).store(in: &cancellableSet)
+        
+        EVMAccountManager.shared.$selectedAccount
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { account in
+                log.info("[EVM] account did changed to \(account?.address ?? "")")
+                self.evmAccount = account
+                //TODO: #six send changed?
+            }
+            .store(in: &cancellableSet)
     }
     
     private func loadCacheData() {
@@ -120,9 +132,17 @@ extension WalletManager {
         return childAccount != nil
     }
     
+    var isSelectedEVMAccount: Bool {
+        return evmAccount != nil
+    }
+    
     var selectedAccountIcon: String {
         if let childAccount = childAccount {
             return childAccount.icon
+        }
+        
+        if let evmAccount = evmAccount {
+            return evmAccount.showIcon
         }
         
         return UserManager.shared.userInfo?.avatar.convertedAvatarString() ?? ""
@@ -133,12 +153,20 @@ extension WalletManager {
             return childAccount.aName
         }
         
+        if let evmAccount = evmAccount {
+            return evmAccount.showName
+        }
+        
         return UserManager.shared.userInfo?.nickname ?? "lilico".localized
     }
     
     var selectedAccountWalletName: String {
         if let childAccount = childAccount {
             return "\(childAccount.aName) Wallet"
+        }
+        
+        if let evmAccount = evmAccount {
+            return evmAccount.showName
         }
         
         if let walletInfo = walletInfo?.currentNetworkWalletModel {
@@ -153,6 +181,10 @@ extension WalletManager {
             return childAccount.addr ?? ""
         }
         
+        if let evmAccount = evmAccount {
+            return evmAccount.address
+        }
+        
         if let walletInfo = walletInfo?.currentNetworkWalletModel {
             return walletInfo.getAddress ?? "0x"
         }
@@ -164,6 +196,9 @@ extension WalletManager {
         if LocalUserDefaults.shared.flowNetwork == type {
             if isSelectedChildAccount {
                 ChildAccountManager.shared.select(nil)
+            }
+            if isSelectedEVMAccount {
+                EVMAccountManager.shared.select(nil)
             }
             return
         }
@@ -261,6 +296,10 @@ extension WalletManager {
         
         if let childAccount = childAccount {
             return childAccount.addr
+        }
+        
+        if let evmAccount = evmAccount {
+            return evmAccount.address
         }
         
         if let walletInfo = walletInfo?.currentNetworkWalletModel {
@@ -453,7 +492,7 @@ extension WalletManager {
     
     private func restoreMnemonicForCurrentUser() {
         if let uid = UserManager.shared.activatedUID {
-            if !restoreMnemonicFromKeychain(uid: uid) && UserManager.shared.userType == .phrase{
+            if !restoreMnemonicFromKeychain(uid: uid), UserManager.shared.userType == .phrase {
                 HUD.error(title: "no_private_key".localized)
             }
         }
@@ -583,7 +622,6 @@ extension WalletManager {
         var newBalanceMap: [String: Double] = [:]
 
         for (_, value) in activatedCoins.enumerated() {
-            
             guard let symbol = value.symbol else {
                 continue
             }
@@ -742,7 +780,6 @@ extension WalletManager: FlowSigner {
     }
     
     public func sign(signableData: Data) async throws -> Data {
-        
         if flowAccountKey == nil {
             try await findFlowAccount()
         }
@@ -774,7 +811,6 @@ extension WalletManager: FlowSigner {
     }
     
     public func signSync(signableData: Data) -> Data? {
-        
         do {
             if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
                 let sec = try WallectSecureEnclave(privateKey: data)
@@ -784,7 +820,6 @@ extension WalletManager: FlowSigner {
         } catch {
             return nil
         }
-        
         
         guard let hdWallet = hdWallet else {
             return nil
@@ -809,10 +844,10 @@ extension WalletManager: FlowSigner {
             return
         }
         let address = getPrimaryWalletAddress() ?? ""
-        try await findFlowAccount(with: userId,at: address)
+        try await findFlowAccount(with: userId, at: address)
     }
     
-    func findFlowAccount(with userId: String,at address: String)  async throws{
+    func findFlowAccount(with userId: String, at address: String) async throws {
         guard let data = try WallectSecureEnclave.Store.fetch(by: userId) else {
             return
         }

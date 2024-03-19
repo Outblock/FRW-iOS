@@ -22,8 +22,6 @@ class SideMenuViewModel: ObservableObject {
     @Published var nftCount: Int = 0
     @Published var accountPlaceholders: [AccountPlaceholder] = []
     
-    @Published var enableEVM: Bool = false
-    
     private var cancelSets = Set<AnyCancellable>()
     
     init() {
@@ -73,7 +71,18 @@ class SideMenuViewModel: ObservableObject {
         Router.route(to: RouteMap.Profile.switchProfile)
     }
     
-    func onClickEnableEVM() {}
+    func onClickEnableEVM()  {
+        Task {
+            do {
+                HUD.loading()
+                try await EVMAccountManager.shared.enableEVM()
+                HUD.dismissLoading()
+            }catch {
+                HUD.dismissLoading()
+                HUD.error(title: "Enable EVM failed.")
+            }
+        }
+    }
 }
 
 struct SideMenuView: View {
@@ -81,6 +90,7 @@ struct SideMenuView: View {
     @StateObject private var um = UserManager.shared
     @StateObject private var wm = WalletManager.shared
     @StateObject private var cm = ChildAccountManager.shared
+    @StateObject private var evmManager = EVMAccountManager.shared
     @AppStorage("isDeveloperMode") private var isDeveloperMode = false
     
     var body: some View {
@@ -91,7 +101,7 @@ struct SideMenuView: View {
                     
                     enableEVMView
                         .padding(.top, 24)
-                        .visibility(vm.enableEVM ? .gone : .visible)
+                        .visibility(evmManager.hasAccount ? .gone : .visible)
                     
                     scanView
                         .padding(.top, 24)
@@ -269,21 +279,28 @@ struct SideMenuView: View {
                 }
             }
             
-            if let sandboxAddress = wm.getFlowNetworkTypeAddress(network: .crescendo), isDeveloperMode {
+            if let previewnetAddress = wm.getFlowNetworkTypeAddress(network: .previewnet), isDeveloperMode {
                 Button {
-                    WalletManager.shared.changeNetwork(.crescendo)
+                    WalletManager.shared.changeNetwork(.previewnet)
                     NotificationCenter.default.post(name: .toggleSideMenu)
                 } label: {
-                    addressCell(type: .crescendo, address: sandboxAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .crescendo)
+                    addressCell(type: .crescendo, address: previewnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .previewnet)
                 }
                 
-//                if LocalUserDefaults.shared.flowNetwork == .crescendo {
-//                    LazyVStack(spacing: 0) {
-//                        ForEach(cm.childAccounts, id: \.address) { childAccount in
-//                            childAccountCell(childAccount, isSelected: false)
-//                        }
-//                    }
-//                }
+                if LocalUserDefaults.shared.flowNetwork == .previewnet {
+                    LazyVStack(spacing: 0) {
+                        ForEach(evmManager.accounts, id: \.address) { account in
+                            ChildAccountSideCell(item: account, isSelected: account.isSelected) { address in
+                                
+                            }
+                        }
+                    }
+                    LazyVStack(spacing: 0) {
+                        ForEach(cm.childAccounts, id: \.addr) { childAccount in
+                            childAccountCell(childAccount, isSelected: childAccount.isSelected)
+                        }
+                    }
+                }
             }
         }
         .background(Color.LL.Neutrals.neutrals6)
@@ -291,6 +308,10 @@ struct SideMenuView: View {
     }
     
     func childAccountCell(_ childAccount: ChildAccount, isSelected: Bool) -> some View {
+//        ChildAccountSideCell(item: childAccount) { add in
+//            ChildAccountManager.shared.select(childAccount)
+//            NotificationCenter.default.post(name: .toggleSideMenu)
+//        }
         Button {
             ChildAccountManager.shared.select(childAccount)
             NotificationCenter.default.post(name: .toggleSideMenu)
@@ -318,7 +339,7 @@ struct SideMenuView: View {
                             .frame(width: 36, height: 16)
                             .background(Color.Theme.Accent.blue)
                             .cornerRadius(8)
-                            .visibility(childAccount.isEvm ? .visible : .gone)
+                            .visibility(evmManager.hasAccount ? .visible : .gone)
                     }
                     .frame(alignment: .leading)
                     

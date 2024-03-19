@@ -37,7 +37,6 @@ struct ChildAccount: Codable {
         return pinTime > 0
     }
     
-    var isEvm: Bool = false
 
     struct Thumbnail: Codable {
         let url: String?
@@ -58,6 +57,28 @@ struct ChildAccount: Codable {
         
         return false
     }
+}
+
+extension ChildAccount: ChildAccountSideCellItem {
+    
+    
+    var showAddress: String {
+        return self.addr ?? ""
+    }
+    
+    var showIcon: String {
+        icon
+    }
+    
+    var showName: String {
+        aName
+    }
+    
+    var isEVM: Bool {
+        false
+    }
+    
+    
 }
 
 class ChildAccountManager: ObservableObject {
