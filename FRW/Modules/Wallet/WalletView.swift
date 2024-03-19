@@ -453,6 +453,8 @@ extension WalletView {
                                 Text(vm.isHidden ? "******************" : WalletManager.shared.selectedAccountAddress)
                                     .foregroundColor(Color(hex: "#FDFBF9"))
                                     .font(.inter(size: 15, weight: .bold))
+                                    .lineLimit(1)
+                                    .truncationMode(.middle)
                                 Image("icon-address-copy")
                                     .frame(width: 25, height: 25)
                             }

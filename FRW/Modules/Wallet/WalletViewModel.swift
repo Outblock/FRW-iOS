@@ -312,8 +312,6 @@ extension WalletViewModel {
     func copyAddressAction() {
         UIPasteboard.general.string = WalletManager.shared.selectedAccountAddress
         HUD.success(title: "copied".localized)
-        
-        EVMAccountManager.shared.refresh()
     }
     
     func toggleHiddenStatusAction() {

@@ -182,7 +182,7 @@ extension WalletManager {
         }
         
         if let evmAccount = evmAccount {
-            return evmAccount.address
+            return evmAccount.showAddress
         }
         
         if let walletInfo = walletInfo?.currentNetworkWalletModel {

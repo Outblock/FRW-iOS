@@ -21,7 +21,11 @@ class EVMAccountManager: ObservableObject {
     
     private var cancelSets = Set<AnyCancellable>()
     
-    @Published var selectedAccount: EVMAccountManager.Account? = nil
+    @Published var selectedAccount: EVMAccountManager.Account? = LocalUserDefaults.shared.selectedEVMAccount {
+        didSet {
+            LocalUserDefaults.shared.selectedEVMAccount = selectedAccount
+        }
+    }
     
     init() {
         refresh()
@@ -144,10 +148,10 @@ extension EVMAccountManager {
 }
 
 extension EVMAccountManager {
-    struct Account: ChildAccountSideCellItem {
+    struct Account: ChildAccountSideCellItem, Codable {
         var address: String
         var balance: UInt = 0
-        var isSelected: Bool = false
+        
         var showAddress: String {
             if address.hasPrefix("0x") {
                 return address
@@ -166,5 +170,14 @@ extension EVMAccountManager {
         var isEVM: Bool {
             true
         }
+        
+        var isSelected: Bool {
+            if let selectedAccount = EVMAccountManager.shared.selectedAccount,
+               selectedAccount.address == address, !address.isEmpty {
+                return true
+            }
+            return false
+        }
+        
     }
 }

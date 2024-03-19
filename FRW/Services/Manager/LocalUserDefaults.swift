@@ -39,6 +39,7 @@ extension LocalUserDefaults {
         case selectedChildAccount
         case switchProfileTipsFlag
         case freeGas
+        case selectedEVMAccount
     }
 
     enum FlowNetworkType: String, CaseIterable {
@@ -237,6 +238,23 @@ class LocalUserDefaults: ObservableObject {
         }
         get {
             if let data = UserDefaults.standard.data(forKey: Keys.selectedChildAccount.rawValue), let model = try? JSONDecoder().decode(ChildAccount.self, from: data) {
+                return model
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    var selectedEVMAccount: EVMAccountManager.Account? {
+        set {
+            if let value = newValue, let data = try? JSONEncoder().encode(value) {
+                UserDefaults.standard.set(data, forKey: Keys.selectedEVMAccount.rawValue)
+            } else {
+                UserDefaults.standard.removeObject(forKey: Keys.selectedEVMAccount.rawValue)
+            }
+        }
+        get {
+            if let data = UserDefaults.standard.data(forKey: Keys.selectedEVMAccount.rawValue), let model = try? JSONDecoder().decode(EVMAccountManager.Account.self, from: data) {
                 return model
             } else {
                 return nil

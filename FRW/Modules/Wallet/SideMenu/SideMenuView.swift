@@ -8,6 +8,7 @@
 import Combine
 import Kingfisher
 import SwiftUI
+import SwiftUIX
 
 private let SideOffset: CGFloat = 65
 
@@ -284,14 +285,15 @@ struct SideMenuView: View {
                     WalletManager.shared.changeNetwork(.previewnet)
                     NotificationCenter.default.post(name: .toggleSideMenu)
                 } label: {
-                    addressCell(type: .crescendo, address: previewnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .previewnet)
+                    addressCell(type: .crescendo, address: previewnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .previewnet && !wm.isSelectedChildAccount && !wm.isSelectedEVMAccount)
                 }
                 
                 if LocalUserDefaults.shared.flowNetwork == .previewnet {
                     LazyVStack(spacing: 0) {
                         ForEach(evmManager.accounts, id: \.address) { account in
                             ChildAccountSideCell(item: account, isSelected: account.isSelected) { address in
-                                
+                                EVMAccountManager.shared.select(account)
+                                NotificationCenter.default.post(name: .toggleSideMenu)
                             }
                         }
                     }

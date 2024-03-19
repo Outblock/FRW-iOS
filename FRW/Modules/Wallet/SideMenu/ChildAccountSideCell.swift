@@ -57,7 +57,7 @@ struct ChildAccountSideCell: View {
                         .foregroundColor(Color.LL.Neutrals.text3)
                         .font(.inter(size: 12))
                         .lineLimit(1)
-                        .lineBreakMode(.byTruncatingMiddle)
+                        .truncationMode(.middle)
                 }
                 .frame(alignment: .leading)
                 

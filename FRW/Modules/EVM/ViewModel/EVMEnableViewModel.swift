@@ -13,7 +13,7 @@ class EVMEnableViewModel: ObservableObject {
     func onClickEnable() {
         Task {
             do {
-                try await EVMManager.shared.enableEVM()
+                try await EVMAccountManager.shared.enableEVM()
             }
             catch {
                 log.error("Enable EVM failer: \(error)")
