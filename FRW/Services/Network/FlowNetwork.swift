@@ -1013,7 +1013,10 @@ extension FlowNetwork {
     static func fetchEVMBalance(address: String) async throws -> UInt {
         let originCadence = CadenceManager.shared.current.evm?.getBalance?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
-        let hexAddr =  address
+        var hexAddr =  address
+        if hexAddr.hasPrefix("0x") {
+            hexAddr = hexAddr.removedPrefix("0x")
+        }
         let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: cadenceStr), arguments: [.string(hexAddr)]).decode(UInt.self)
         return resonpse
     }

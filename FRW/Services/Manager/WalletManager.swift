@@ -95,6 +95,9 @@ class WalletManager: ObservableObject {
             .sink { account in
                 log.info("[EVM] account did changed to \(account?.address ?? "")")
                 self.evmAccount = account
+                Task {
+                    try? await self.fetchWalletDatas()
+                }
                 //TODO: #six send changed?
             }
             .store(in: &cancellableSet)
@@ -616,6 +619,11 @@ extension WalletManager {
         if address.isEmpty {
             throw WalletError.fetchBalanceFailed
         }
+        
+        if isSelectedEVMAccount {
+            try await fetchEVMBalance()
+            return
+        }
 
         let balanceList = try await FlowNetwork.fetchBalance(at: Flow.Address(hex: address))
 
@@ -637,6 +645,18 @@ extension WalletManager {
         
         PageCache.cache.set(value: newBalanceMap, forKey: CacheKeys.coinBalances.rawValue)
     }
+    
+    private func fetchEVMBalance() async throws {
+        let address = evmAccount?.address ?? ""
+        if address.isEmpty {
+            throw WalletError.fetchBalanceFailed
+        }
+        let balance = try await FlowNetwork.fetchEVMBalance(address: address)
+        DispatchQueue.main.sync {
+            self.coinBalances = ["FLOW": Double(balance)]
+        }
+    }
+    
     
     func fetchAccessible() async throws {
         try await accessibleManager.fetchFT()

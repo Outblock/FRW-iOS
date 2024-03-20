@@ -116,7 +116,6 @@ struct WalletView: View {
                         .listRowBackground(Color.LL.Neutrals.background)
                         .visibility(vm.walletState == .idle || vm.needShowPlaceholder ? .visible : .gone)
                     }
-                    
                 }
                 .listStyle(.plain)
             }
