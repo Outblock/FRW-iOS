@@ -12,7 +12,7 @@ import SwiftUI
 class EVMAccountManager: ObservableObject {
     static let shared = EVMAccountManager()
     
-    @Published var hasAccount: Bool = true
+    @Published var hasAccount: Bool = false
     @Published var accounts: [EVMAccountManager.Account] = [] {
         didSet {
 //            validSelectedChildAccount()
@@ -98,7 +98,7 @@ extension EVMAccountManager {
         Task {
             do {
                 let address = try await fetchAddress()
-                if let address = address {
+                if let address = address, !address.isEmpty {
                     let balance = try await fetchBalance(address)
                     DispatchQueue.main.async {
                         let account = EVMAccountManager.Account(address: address, balance: balance)

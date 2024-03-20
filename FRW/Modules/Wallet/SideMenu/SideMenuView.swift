@@ -112,7 +112,7 @@ struct SideMenuView: View {
                 .padding(.top, 25)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.LL.background)
+            .background(.Theme.Background.pureWhite)
             
             // placeholder, do not use this
             VStack {}
@@ -161,30 +161,50 @@ struct SideMenuView: View {
     }
     
     var enableEVMView: some View {
-        return VStack(alignment: .leading, spacing: 0) {
-            Image("icon_planet")
-                .resizable()
-                .frame(width: 36, height: 36)
-            HStack(spacing: 0) {
-                Text("enable_path".localized)
-                    .font(.inter(size: 16, weight: .semibold))
-                    .foregroundStyle(Color.Theme.Text.black8)
-                Text("FlowEVM")
-                    .font(.inter(size: 16, weight: .semibold))
-                    .foregroundStyle(Color.Theme.Text.black8)
-                Text(" !")
-                    .font(.inter(size: 16, weight: .semibold))
-                    .foregroundStyle(Color.Theme.Text.black8)
-                Spacer()
-                Image("right-arrow-stroke")
+        return VStack {
+            ZStack(alignment: .topLeading) {
+                Image("icon_planet")
                     .resizable()
-                    .frame(width: 20, height: 20)
+                    .frame(width: 36, height: 36)
+                    .zIndex(1)
+                    .offset(x: 8,y: -8)
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(spacing: 0) {
+                        Text("enable_path".localized)
+                            .font(.inter(size: 16, weight: .semibold))
+                            .foregroundStyle(Color.Theme.Text.black8)
+                        Text("FlowEVM")
+                            .font(.inter(size: 16, weight: .semibold))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [Color(hex: "#00EF8B"), Color(hex: "#BE9FFF")],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                        Text(" !")
+                            .font(.inter(size: 16, weight: .semibold))
+                            .foregroundStyle(Color.Theme.Text.black8)
+                        Spacer()
+                        Image("right-arrow-stroke")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                    }
+                    .frame(height: 24)
+                    Text("enable_evm_tip".localized)
+                        .font(.inter(size: 14))
+                        .foregroundStyle(Color.Theme.Text.black3)
+                        .frame(height: 24)
+                }
+                .frame(height: 72)
+                .padding(.horizontal, 18)
+                .background(.Theme.Background.white)
+                .cornerRadius(16)
+                .shadow(color: Color.Theme.Background.white.opacity(0.08), radius: 16, y: 4)
+                .offset(y: 8)
+                
             }
-            Text("enable_evm_tip".localized)
-                .font(.inter(size: 14))
-                .foregroundStyle(Color.Theme.Text.black3)
         }
-        .cornerRadius([.bottomLeading, .bottomTrailing], 16)
         .onTapGesture {
             vm.onClickEnableEVM()
         }
@@ -239,7 +259,7 @@ struct SideMenuView: View {
             }
             .padding(.horizontal, 20)
             .frame(height: 48)
-            .background(Color.LL.Neutrals.neutrals6)
+            .background(.Theme.Background.white)
             .cornerRadius(12)
         }
     }
@@ -305,7 +325,7 @@ struct SideMenuView: View {
                 }
             }
         }
-        .background(Color.LL.Neutrals.neutrals6)
+        .background(.Theme.Background.white)
         .cornerRadius(12)
     }
     

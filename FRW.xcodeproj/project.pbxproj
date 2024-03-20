@@ -915,6 +915,7 @@
 		15F517FB28C6574C00504FDC /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = 15F517FA28C6574C00504FDC /* Atlantis */; };
 		15F517FD28C6577000504FDC /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = 15F517FC28C6577000504FDC /* Atlantis */; };
 		4E0A75AF2868929C00527D08 /* AddCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0A75AE2868929C00527D08 /* AddCollectionViewModel.swift */; };
+		4E0CA7592BAA866C007F5E5F /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0CA7582BAA866C007F5E5F /* SwiftUIView.swift */; };
 		4E0D349F2A8B4E2900BC6E43 /* e-Ukraine-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349B2A8B4E2800BC6E43 /* e-Ukraine-Bold.ttf */; };
 		4E0D34A02A8B4E2900BC6E43 /* e-Ukraine-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349B2A8B4E2800BC6E43 /* e-Ukraine-Bold.ttf */; };
 		4E0D34A12A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349C2A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf */; };
@@ -2123,6 +2124,7 @@
 		4E0860512AB8BB1D0037F582 /* FRW.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = FRW.entitlements; sourceTree = "<group>"; };
 		4E0860522AB8BB260037F582 /* FRW-dev.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "FRW-dev.entitlements"; sourceTree = "<group>"; };
 		4E0A75AE2868929C00527D08 /* AddCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCollectionViewModel.swift; sourceTree = "<group>"; };
+		4E0CA7582BAA866C007F5E5F /* SwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIView.swift; sourceTree = "<group>"; };
 		4E0D349B2A8B4E2800BC6E43 /* e-Ukraine-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "e-Ukraine-Bold.ttf"; sourceTree = "<group>"; };
 		4E0D349C2A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "e-Ukraine-Regular.ttf"; sourceTree = "<group>"; };
 		4E0D349D2A8B4E2900BC6E43 /* e-Ukraine-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "e-Ukraine-Light.ttf"; sourceTree = "<group>"; };
@@ -4706,6 +4708,7 @@
 			children = (
 				6A12173729659F5E00BA0C3B /* SideMenuView.swift */,
 				4E6ED48D2BA96DBB009906A5 /* ChildAccountSideCell.swift */,
+				4E0CA7582BAA866C007F5E5F /* SwiftUIView.swift */,
 			);
 			path = SideMenu;
 			sourceTree = "<group>";
@@ -6170,6 +6173,7 @@
 				156E84AE281CDF4F00415896 /* WalletModels.swift in Sources */,
 				4E777CB22B1EE69E00300A3E /* WalletConnect+SyncDevice.swift in Sources */,
 				15DC20C527819C56000B187A /* VCloseButton.swift in Sources */,
+				4E0CA7592BAA866C007F5E5F /* SwiftUIView.swift in Sources */,
 				4E8DD9FD282E52110016A931 /* JSONStorage.swift in Sources */,
 				4E2B704E2AF3727F004F00A0 /* KeyResponse.swift in Sources */,
 				155E371F28D37A7A00834C30 /* ExploreEmptyScreen.swift in Sources */,
