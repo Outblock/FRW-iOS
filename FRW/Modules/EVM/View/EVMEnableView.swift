@@ -14,6 +14,10 @@ struct EVMEnableView: RouteableView {
         return ""
     }
     
+    var isNavigationBarHidden: Bool {
+        return true
+    }
+    
     var body: some View {
         return VStack {
             HStack {
@@ -36,10 +40,27 @@ struct EVMEnableView: RouteableView {
             Image("evm_big_planet")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-            Text("Enable the path\n to FlowEVM")
+            Text("Enable the path")
                 .font(.inter(size: 30, weight: .w700))
                 .foregroundStyle(Color.Theme.Text.black8)
                 .multilineTextAlignment(.center)
+            HStack(spacing: 0) {
+                Text("to ")
+                    .font(.inter(size: 30, weight: .w700))
+                    .foregroundStyle(Color.Theme.Text.black8)
+                    .multilineTextAlignment(.center)
+                Text("FlowEVM")
+                    .font(.inter(size: 30, weight: .w700))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [Color(hex: "#00EF8B"), Color(hex: "#BE9FFF")],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+            }
+            
             Text("enable_evm_tip".localized)
                 .font(.inter(size: 14))
                 .foregroundStyle(Color.Theme.Text.black8)
@@ -67,6 +88,7 @@ struct EVMEnableView: RouteableView {
             .padding(.top)
             .padding(.bottom)
         }
+        .applyRouteable(self)
     }
 }
 

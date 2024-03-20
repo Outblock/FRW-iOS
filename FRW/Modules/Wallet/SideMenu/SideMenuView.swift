@@ -73,16 +73,7 @@ class SideMenuViewModel: ObservableObject {
     }
     
     func onClickEnableEVM()  {
-        Task {
-            do {
-                HUD.loading()
-                try await EVMAccountManager.shared.enableEVM()
-                HUD.dismissLoading()
-            }catch {
-                HUD.dismissLoading()
-                HUD.error(title: "Enable EVM failed.")
-            }
-        }
+        Router.route(to: RouteMap.Wallet.enableEVM)
     }
 }
 

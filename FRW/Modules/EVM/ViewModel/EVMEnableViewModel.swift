@@ -8,18 +8,27 @@
 import SwiftUI
 
 class EVMEnableViewModel: ObservableObject {
-    func onSkip() {}
+    func onSkip() {
+        Router.pop()
+    }
     
     func onClickEnable() {
+        
         Task {
             do {
+                HUD.loading()
                 try await EVMAccountManager.shared.enableEVM()
+                HUD.loading()
             }
             catch {
+                HUD.dismissLoading()
+                HUD.error(title: "Enable EVM failed.")
                 log.error("Enable EVM failer: \(error)")
             }
         }
     }
     
-    func onClickLearnMore() {}
+    func onClickLearnMore() {
+        
+    }
 }

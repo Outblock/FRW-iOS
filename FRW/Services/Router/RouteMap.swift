@@ -171,6 +171,7 @@ extension RouteMap {
         case pushAlert
         case receiveQR
         case moveToken
+        case enableEVM
     }
 }
 
@@ -243,6 +244,8 @@ extension RouteMap.Wallet: RouterTarget {
             navi.present(content: ReceiveQRView())
         case .moveToken:
             navi.present(content: MoveTokenView())
+        case .enableEVM:
+            navi.push(content: EVMEnableView())
         }
     }
 }
