@@ -15,8 +15,9 @@ extension TrustWeb3Provider {
     }
     
     static func config(at index: Int = 0) -> TrustWeb3Provider {
-        let hdWallet = HDWallet(strength: WalletManager.mnemonicStrength, passphrase: "")
-        let address = hdWallet!.getAddressForCoin(coin: .ethereum)
+//        let hdWallet = HDWallet(strength: WalletManager.mnemonicStrength, passphrase: "")
+//        let address = hdWallet!.getAddressForCoin(coin: .ethereum)
+        let address = EVMAccountManager.shared.accounts.first?.address ?? ""
         let config = TrustWeb3Provider.Config.EthereumConfig(address: address, chainId: 1, rpcUrl: "https://cloudflare-eth.com")
         return TrustWeb3Provider(config: .init(ethereum: config))
     }

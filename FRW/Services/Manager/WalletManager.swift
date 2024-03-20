@@ -564,6 +564,8 @@ extension WalletManager {
         try await fetchBalance()
         try await fetchAccessible()
         ChildAccountManager.shared.refresh()
+        EVMAccountManager.shared.refresh()
+        loadEVMBalance()
         flowAccountKey = nil
         try await findFlowAccount()
     }
@@ -620,10 +622,6 @@ extension WalletManager {
             throw WalletError.fetchBalanceFailed
         }
         
-        if isSelectedEVMAccount {
-            try await fetchEVMBalance()
-            return
-        }
 
         let balanceList = try await FlowNetwork.fetchBalance(at: Flow.Address(hex: address))
 
@@ -646,14 +644,13 @@ extension WalletManager {
         PageCache.cache.set(value: newBalanceMap, forKey: CacheKeys.coinBalances.rawValue)
     }
     
-    private func fetchEVMBalance() async throws {
-        let address = evmAccount?.address ?? ""
-        if address.isEmpty {
-            throw WalletError.fetchBalanceFailed
-        }
-        let balance = try await FlowNetwork.fetchEVMBalance(address: address)
+    private func loadEVMBalance() {
+        guard let model = EVMAccountManager.shared.accounts.first else { return  }
+        let tokenModel = self.supportedCoins?.first{ $0.name.lowercased() == "flow" }
+        guard let tokenModel = tokenModel, let symbol = tokenModel.symbol else { return }
         DispatchQueue.main.sync {
-            self.coinBalances = ["FLOW": Double(balance)]
+            self.activatedCoins = [tokenModel]
+            self.coinBalances = [symbol: Double(model.balance)]
         }
     }
     
