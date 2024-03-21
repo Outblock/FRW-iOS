@@ -18,6 +18,7 @@ class EVMEnableViewModel: ObservableObject {
             do {
                 HUD.loading()
                 try await EVMAccountManager.shared.enableEVM()
+                EVMAccountManager.shared.refresh()
                 HUD.dismissLoading()
                 Router.pop()
             }

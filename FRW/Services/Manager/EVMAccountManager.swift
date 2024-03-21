@@ -73,6 +73,7 @@ class EVMAccountManager: ObservableObject {
     private func clean() {
         log.debug("cleaned")
         accounts = []
+        hasAccount = false
     }
     
     @objc private func willReset() {

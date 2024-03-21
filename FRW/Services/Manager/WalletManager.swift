@@ -196,13 +196,14 @@ extension WalletManager {
     }
     
     func changeNetwork(_ type: LocalUserDefaults.FlowNetworkType) {
+        if isSelectedEVMAccount {
+            EVMAccountManager.shared.select(nil)
+        }
         if LocalUserDefaults.shared.flowNetwork == type {
             if isSelectedChildAccount {
                 ChildAccountManager.shared.select(nil)
             }
-            if isSelectedEVMAccount {
-                EVMAccountManager.shared.select(nil)
-            }
+            
             return
         }
         
@@ -645,12 +646,14 @@ extension WalletManager {
     }
     
     private func loadEVMBalance() {
-        guard let model = EVMAccountManager.shared.accounts.first else { return  }
+        log.info("[EVM] load balance")
+        guard let evmAccount = EVMAccountManager.shared.selectedAccount else { return  }
         let tokenModel = self.supportedCoins?.first{ $0.name.lowercased() == "flow" }
         guard let tokenModel = tokenModel, let symbol = tokenModel.symbol else { return }
         DispatchQueue.main.sync {
+            log.info("[EVM] load balance success")
             self.activatedCoins = [tokenModel]
-            self.coinBalances = [symbol: Double(model.balance)]
+            self.coinBalances = [symbol: Double(evmAccount.balance)]
         }
     }
     

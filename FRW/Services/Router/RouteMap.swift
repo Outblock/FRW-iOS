@@ -170,7 +170,6 @@ extension RouteMap {
         case jailbreakAlert
         case pushAlert
         case receiveQR
-        case moveToken
         case enableEVM
     }
 }
@@ -242,8 +241,6 @@ extension RouteMap.Wallet: RouterTarget {
             Router.topPresentedController().present(contentNavi, animated: true)
         case .receiveQR:
             navi.present(content: ReceiveQRView())
-        case .moveToken:
-            navi.present(content: MoveTokenView())
         case .enableEVM:
             navi.push(content: EVMEnableView())
         }

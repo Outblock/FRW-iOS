@@ -73,6 +73,7 @@ class SideMenuViewModel: ObservableObject {
     }
     
     func onClickEnableEVM()  {
+        NotificationCenter.default.post(name: .toggleSideMenu)
         Router.route(to: RouteMap.Wallet.enableEVM)
     }
 }
@@ -296,7 +297,7 @@ struct SideMenuView: View {
                     WalletManager.shared.changeNetwork(.previewnet)
                     NotificationCenter.default.post(name: .toggleSideMenu)
                 } label: {
-                    addressCell(type: .crescendo, address: previewnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .previewnet && !wm.isSelectedChildAccount && !wm.isSelectedEVMAccount)
+                    addressCell(type: .previewnet, address: previewnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .previewnet && !wm.isSelectedChildAccount && !wm.isSelectedEVMAccount)
                 }
                 
                 if LocalUserDefaults.shared.flowNetwork == .previewnet {

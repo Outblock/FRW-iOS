@@ -5,15 +5,16 @@
 //  Created by cat on 2024/2/27.
 //
 
+import Kingfisher
 import SwiftUI
+import SwiftUIX
 
-struct MoveTokenView: RouteableView {
+struct MoveTokenView: View {
     @StateObject var viewModel = MoveTokenViewModel()
     
-    var title: String {
-        ""
-    }
-
+    var tokenModel: TokenModel
+    
+    
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -34,20 +35,24 @@ struct MoveTokenView: RouteableView {
             
             Color.clear
                 .frame(height: 20)
-            
-            ZStack {
-                VStack(spacing: 8) {
-                    MoveUserView()
-                    MoveUserView()
+            VStack(spacing: 8){
+                ZStack {
+                    VStack(spacing: 8) {
+                        MoveUserView(icon: viewModel.showFromIcon, name: viewModel.showFromName, address: viewModel.showFromAddress, isEVM: viewModel.fromEVM)
+                        MoveUserView(placeholder: "To")
+                    }
+                    
+                    Image("icon_move_exchange")
+                        .resizable()
+                        .frame(width: 32, height: 32)
                 }
                 
-                Image("icon_move_exchange")
-                    .resizable()
-                    .frame(width: 32, height: 32)
+                MoveTokenView.AccountView(tokenModel: self.tokenModel) { _ in
+                    
+                }
             }
             
-            MoveTokenView.AccountView { _ in
-            }
+            
             
             Button {} label: {
                 ZStack {
@@ -61,30 +66,45 @@ struct MoveTokenView: RouteableView {
                 .cornerRadius(16)
             }
             .disabled(!viewModel.isReadyForSend)
+            .padding(.top, 12)
         }
-        .padding(.horizontal, 18)
-        .applyRouteable(self)
+        .frame(width: .infinity, height: .infinity)
+        .padding(18)
+        .background(Color.Theme.Background.grey)
+        .cornerRadius([.topLeading, .topTrailing], 16)
     }
 }
 
 // MARK: - MoveUserView
 
 struct MoveUserView: View {
+    var icon: String?
+    var name: String?
+    var address: String?
+    var isEVM: Bool = false
+    var placeholder: String?
+    
     var body: some View {
         HStack {
-            Text("From")
+            Text(placeholder ?? "From")
                 .font(.inter(size: 16, weight: .w600))
                 .foregroundStyle(Color.Theme.Text.black3)
-                .visibility(.visible)
+                .visibility(name != nil ? .gone : .visible)
             
             HStack {
-                Image("flow")
+                KFImage.url(URL(string: icon ?? ""))
+                    .placeholder {
+                        Image("placeholder")
+                            .resizable()
+                    }
                     .resizable()
+                    .aspectRatio(contentMode: .fill)
                     .frame(width: 40, height: 40)
+                    .cornerRadius(20)
                 
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
-                        Text("My Wallet")
+                        Text(name ?? "")
                             .foregroundColor(Color.LL.Neutrals.text)
                             .font(.inter(size: 14, weight: .semibold))
                         
@@ -94,25 +114,29 @@ struct MoveUserView: View {
                             .frame(width: 36, height: 16)
                             .background(Color.Theme.Accent.blue)
                             .cornerRadius(8)
-//                            .visibility(childAccount.isEvm ? .visible : .gone)
+                            .visibility(isEVM ? .visible : .gone)
                     }
                     .frame(alignment: .leading)
                     
-                    Text("address")
+                    Text(address ?? "")
                         .foregroundColor(Color.Theme.Text.black3)
                         .font(.inter(size: 12))
                 }
                 .frame(alignment: .leading)
             }
+            .visibility(name == nil ? .gone : .visible)
             
             Spacer()
-            Image("icon_arrow_bottom_16")
-                .resizable()
-                .frame(width: 16, height: 16)
+            Button {} label: {
+                Image("icon_arrow_bottom_16")
+                    .resizable()
+                    .frame(width: 16, height: 16)
+                    .visibility(name == nil ? .visible : .gone)
+            }
         }
         .frame(height: 74)
         .padding(.horizontal, 16)
-        .background(Color.LL.Neutrals.background)
+        .background(Color.Theme.Background.white)
         .cornerRadius(16)
     }
 }
@@ -121,6 +145,7 @@ struct MoveUserView: View {
 
 extension MoveTokenView {
     struct AccountView: View {
+        var tokenModel: TokenModel
         @State var inputText: String = ""
         @FocusState private var isAmountFocused: Bool
         var textDidChanged: (String) -> Void
@@ -143,19 +168,31 @@ extension MoveTokenView {
                             }
                         }
                         .focused($isAmountFocused)
-                    
-                    HStack(spacing: 4) {
-                        Circle()
-                            .frame(width: 32, height: 32)
-                        Text("Select")
-                            .font(.inter(size: 14, weight: .w500))
-                        Image("icon_arrow_bottom_16")
-                            .resizable()
-                            .frame(width: 16, height: 16)
+                    Button {
+                        
+                    } label: {
+                        HStack(spacing: 4) {
+                            KFImage.url(tokenModel.icon)
+                                .placeholder {
+                                    Image("placeholder")
+                                        .resizable()
+                                }
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 32, height: 32)
+                                .cornerRadius(16)
+                                
+                            Text(tokenModel.name)
+                                .font(.inter(size: 14, weight: .medium))
+                                .foregroundStyle(Color.LL.Neutrals.text2)
+                            Image("icon_arrow_bottom_16")
+                                .resizable()
+                                .frame(width: 16, height: 16)
+                        }
+                        .padding(8)
+                        .background(Color.Theme.Line.line)
+                        .cornerRadius(16)
                     }
-                    .padding(8)
-                    .background(Color.Theme.Line.line)
-                    .cornerRadius(16)
                 }
                 
                 HStack {
@@ -176,14 +213,14 @@ extension MoveTokenView {
                     }
                 }
             }
-            .background(Color.Theme.Background.white)
             .padding(20)
+            .background(Color.Theme.Background.white)
+            .cornerRadius(16)
         }
     }
 }
 
-#Preview {
-    MoveTokenView()
-//    MoveTokenView.AccountView { _ in
-//    }
-}
+ #Preview {
+    MoveTokenView(tokenModel: TokenModel(name: "Flow", address: FlowNetworkModel(mainnet: "", testnet: "", crescendo: "", previewnet: ""), contractName: "", storagePath: FlowTokenStoragePath(balance: "100", vault: "a", receiver: ""), decimal: 30, icon: nil, symbol: nil, website: nil))
+//
+ }

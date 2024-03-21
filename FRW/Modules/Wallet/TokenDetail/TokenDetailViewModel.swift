@@ -94,6 +94,13 @@ extension TokenDetailView {
     }
 }
 
+extension TokenDetailViewModel {
+    enum Action {
+        case none
+        case move
+    }
+}
+
 class TokenDetailViewModel: ObservableObject {
     @Published var token: TokenModel
     @Published var market: QuoteMarket = LocalUserDefaults.shared.market
@@ -104,6 +111,9 @@ class TokenDetailViewModel: ObservableObject {
     @Published var changePercent: Double = 0
     @Published var rate: Double = 0
     @Published var recentTransfers: [FlowScanTransfer] = []
+    
+    @Published var showSheet: Bool = false
+    var buttonAction: TokenDetailViewModel.Action = .none
     
     private var cancelSets = Set<AnyCancellable>()
     
@@ -214,7 +224,17 @@ extension TokenDetailViewModel {
 
     // move token
     func onMoveToken() {
-        Router.route(to: RouteMap.Wallet.moveToken)
+        buttonAction = .move
+        showSheetAction()
+    }
+    
+    func showSheetAction() {
+        if showSheet {
+            showSheet = false
+        }
+        withAnimation(.easeOut(duration: 0.2)) {
+            showSheet = true
+        }
     }
 }
 

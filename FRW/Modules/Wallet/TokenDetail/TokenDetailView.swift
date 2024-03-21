@@ -8,6 +8,7 @@
 import Kingfisher
 import SwiftUI
 import SwiftUICharts
+import SwiftUIX
 
 // struct TokenDetailView_Previews: PreviewProvider {
 //    static var previews: some View {
@@ -60,6 +61,11 @@ struct TokenDetailView: RouteableView {
         .buttonStyle(.plain)
         .backgroundFill(.LL.deepBg)
         .applyRouteable(self)
+        .halfSheet(showSheet: $vm.showSheet) {
+            if vm.buttonAction == .move {
+                MoveTokenView(tokenModel: vm.token)
+            }
+        }
     }
     
     var summaryView: some View {
@@ -107,11 +113,24 @@ struct TokenDetailView: RouteableView {
                 Spacer()
                 
                 Button {
+                    if vm.balance == 0 {
+                        HUD.error(title: "There is not an adequate balance")
+                    }
                     vm.onMoveToken()
                 } label: {
-                    Image("button_move_double")
-                        .resizable()
-                        .frame(width: 24, height: 24)
+                    HStack {
+                        Text("move".localized)
+                            .font(.inter(size: 14))
+                            .foregroundStyle(Color.Theme.Accent.green)
+                        Image("button_move_double")
+                            .resizable()
+                            .frame(width: 12, height: 12)
+                    }
+                    .frame(height: 24)
+                    .padding(.horizontal, 9)
+                    .background(Color.Theme.Accent.green.fixedOpacity())
+                    .cornerRadius(8)
+                    
                 }
             }
             
