@@ -10,10 +10,15 @@ import SwiftUI
 import SwiftUIX
 
 struct MoveTokenView: View {
-    @StateObject var viewModel = MoveTokenViewModel()
+    @StateObject var viewModel: MoveTokenViewModel
     
-    var tokenModel: TokenModel
+    init(tokenModel: TokenModel) {
+        _viewModel = StateObject(wrappedValue: MoveTokenViewModel(token: tokenModel))
+    }
     
+//    init(tokenModel: TokenModel) {
+//        _viewModel =
+//    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -35,11 +40,17 @@ struct MoveTokenView: View {
             
             Color.clear
                 .frame(height: 20)
-            VStack(spacing: 8){
+            VStack(spacing: 8) {
                 ZStack {
                     VStack(spacing: 8) {
-                        MoveUserView(icon: viewModel.showFromIcon, name: viewModel.showFromName, address: viewModel.showFromAddress, isEVM: viewModel.fromEVM)
-                        MoveUserView(placeholder: "To")
+                        MoveUserView(icon: viewModel.showFromIcon,
+                                     name: viewModel.showFromName,
+                                     address: viewModel.showFromAddress,
+                                     isEVM: viewModel.fromEVM)
+                        MoveUserView(icon: viewModel.showToIcon,
+                                     name: viewModel.showToName,
+                                     address: viewModel.showToAddress,
+                                     isEVM: !viewModel.fromEVM)
                     }
                     
                     Image("icon_move_exchange")
@@ -47,14 +58,14 @@ struct MoveTokenView: View {
                         .frame(width: 32, height: 32)
                 }
                 
-                MoveTokenView.AccountView(tokenModel: self.tokenModel) { _ in
-                    
+                MoveTokenView.AccountView { _ in
                 }
             }
             
-            
-            
-            Button {} label: {
+            Button {
+                UIApplication.shared.endEditing()
+                viewModel.onNext()
+            } label: {
                 ZStack {
                     Text("move".localized)
                         .foregroundColor(Color.LL.Button.text)
@@ -68,10 +79,10 @@ struct MoveTokenView: View {
             .disabled(!viewModel.isReadyForSend)
             .padding(.top, 12)
         }
-        .frame(width: .infinity, height: .infinity)
         .padding(18)
         .background(Color.Theme.Background.grey)
         .cornerRadius([.topLeading, .topTrailing], 16)
+        .environmentObject(viewModel)
     }
 }
 
@@ -121,6 +132,8 @@ struct MoveUserView: View {
                     Text(address ?? "")
                         .foregroundColor(Color.Theme.Text.black3)
                         .font(.inter(size: 12))
+                        .lineLimit(1)
+                        .truncationMode(.middle)
                 }
                 .frame(alignment: .leading)
             }
@@ -145,34 +158,29 @@ struct MoveUserView: View {
 
 extension MoveTokenView {
     struct AccountView: View {
-        var tokenModel: TokenModel
-        @State var inputText: String = ""
+        @EnvironmentObject private var viewModel: MoveTokenViewModel
+        
         @FocusState private var isAmountFocused: Bool
         var textDidChanged: (String) -> Void
         
         var body: some View {
             VStack(spacing: 12) {
                 HStack {
-                    TextField("", text: $inputText)
+                    TextField("", text: $viewModel.inputText)
                         .keyboardType(.decimalPad)
                         .disableAutocorrection(true)
-                        .modifier(PlaceholderStyle(showPlaceHolder: inputText.isEmpty,
+                        .modifier(PlaceholderStyle(showPlaceHolder: viewModel.inputText.isEmpty,
                                                    placeholder: "0.00",
                                                    font: .inter(size: 30, weight: .w700),
                                                    color: Color.Theme.Text.black3))
                         .font(.inter(size: 30, weight: .w700))
-                        .onChange(of: inputText) { text in
-                            withAnimation {
-                                textDidChanged(text)
-//                                vm.inputTextDidChangeAction(text: text)
-                            }
+                        .onChange(of: viewModel.inputText) { text in
+                            viewModel.inputTextDidChangeAction(text: text)
                         }
                         .focused($isAmountFocused)
-                    Button {
-                        
-                    } label: {
+                    Button {} label: {
                         HStack(spacing: 4) {
-                            KFImage.url(tokenModel.icon)
+                            KFImage.url(viewModel.token.icon)
                                 .placeholder {
                                     Image("placeholder")
                                         .resizable()
@@ -182,7 +190,7 @@ extension MoveTokenView {
                                 .frame(width: 32, height: 32)
                                 .cornerRadius(16)
                                 
-                            Text(tokenModel.name)
+                            Text(viewModel.token.name)
                                 .font(.inter(size: 14, weight: .medium))
                                 .foregroundStyle(Color.LL.Neutrals.text2)
                             Image("icon_arrow_bottom_16")
@@ -196,13 +204,15 @@ extension MoveTokenView {
                 }
                 
                 HStack {
-                    Text("$ 0.00")
+                    Text("$ \(viewModel.inputDollarNum.formatCurrencyString())")
                         .font(.inter(size: 16))
                         .foregroundStyle(Color.LL.Neutrals.text2)
                     
                     Spacer()
                     
-                    Button {} label: {
+                    Button {
+                        viewModel.maxAction()
+                    } label: {
                         Text("max".localized)
                             .font(.inter(size: 12, weight: .w500))
                             .foregroundStyle(Color.Theme.Accent.grey)
@@ -214,13 +224,13 @@ extension MoveTokenView {
                 }
             }
             .padding(20)
-            .background(Color.Theme.Background.white)
+            .backgroundFill(Color.Theme.Background.white)
             .cornerRadius(16)
         }
     }
 }
 
- #Preview {
+#Preview {
     MoveTokenView(tokenModel: TokenModel(name: "Flow", address: FlowNetworkModel(mainnet: "", testnet: "", crescendo: "", previewnet: ""), contractName: "", storagePath: FlowTokenStoragePath(balance: "100", vault: "a", receiver: ""), decimal: 30, icon: nil, symbol: nil, website: nil))
 //
- }
+}

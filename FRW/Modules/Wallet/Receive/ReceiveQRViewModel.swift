@@ -18,6 +18,10 @@ class ReceiveQRViewModel: ObservableObject {
         name = flowName()
     }
     
+    var hasEVM: Bool {
+        return EVMAccountManager.shared.hasAccount
+    }
+    
     func onClickCopy() {
         UIPasteboard.general.string = address
         HUD.success(title: "copied".localized)

@@ -260,8 +260,10 @@ extension CadenceModel {
         let estimateGas: String?
         let fundEvmAddr: String?
         let getBalance: String?
+        let getCoaBalance: String?
         let getCoaAddr: String?
         let getCode: String?
+        let withdrawCoa: String?
     }
 }
 

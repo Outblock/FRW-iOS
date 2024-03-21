@@ -5,9 +5,9 @@
 //  Created by Selina on 6/7/2022.
 //
 
-import SwiftUI
-import QRCode
 import LinkPresentation
+import QRCode
+import SwiftUI
 
 struct WalletReceiveView_Previews: PreviewProvider {
     static var previews: some View {
@@ -29,8 +29,8 @@ struct WalletReceiveView: RouteableView {
     }
     
     @State var isDismissing: Bool = false
-    @State var dragOffset: CGSize = CGSize.zero
-    @State var dragOffsetPredicted: CGSize = CGSize.zero
+    @State var dragOffset: CGSize = .zero
+    @State var dragOffsetPredicted: CGSize = .zero
     
     @State var isShowing: Bool = false
     
@@ -51,25 +51,23 @@ struct WalletReceiveView: RouteableView {
                     
                     shareButton
                 }
-                .transition(.offset(CGSize(width: 0, height: UIScreen.screenHeight/2)))
+                .transition(.offset(CGSize(width: 0, height: UIScreen.screenHeight / 2)))
             }
             
             Spacer()
-            
-                        
         }
         .animation(.alertViewSpring, value: isShowing)
-        .offset(x: 0, y: self.dragOffset.height > 0 ?  self.dragOffset.height : 0)
+        .offset(x: 0, y: self.dragOffset.height > 0 ? self.dragOffset.height : 0)
         .gesture(DragGesture()
             .onChanged { value in
                 self.dragOffset = value.translation
                 self.dragOffsetPredicted = value.predictedEndTranslation
             }
-            .onEnded { value in
-                if((self.dragOffset.height > 100) || (self.dragOffsetPredicted.height / (self.dragOffset.height)) > 2) {
+            .onEnded { _ in
+                if (self.dragOffset.height > 100) || (self.dragOffsetPredicted.height / (self.dragOffset.height)) > 2 {
                     withAnimation(.spring()) {
                         //                        self.dragOffset = self.dragOffsetPredicted
-                        self.dragOffset = CGSize(width: 0, height: UIScreen.screenHeight/2)
+                        self.dragOffset = CGSize(width: 0, height: UIScreen.screenHeight / 2)
                     }
                     
                     self.isDismissing = true
@@ -91,14 +89,13 @@ struct WalletReceiveView: RouteableView {
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
         .background(
             Color(hex: "#333333")
-                .opacity(isShowing ? (1.0 - ( Double(max(0,self.dragOffset.height)) / 1000)) : 0)
+                .opacity(isShowing ? (1.0 - (Double(max(0, self.dragOffset.height)) / 1000)) : 0)
                 .edgesIgnoringSafeArea(.all)
                 .animation(.alertViewSpring, value: isShowing)
-            
         )
         .edgesIgnoringSafeArea(.all)
         .applyRouteable(self)
-        .onAppear{
+        .onAppear {
             isShowing = true
             dragOffset = .zero
             dragOffsetPredicted = .zero
@@ -136,9 +133,9 @@ struct WalletReceiveView: RouteableView {
 //                    .padding(5)
 //                    .background(
 //                        Color.LL.Neutrals.background
-////                        .thickMaterial
-////                            .opacity(0.95)
-////                            .blur(radius: 2)
+                ////                        .thickMaterial
+                ////                            .opacity(0.95)
+                ////                            .blur(radius: 2)
 //                    )
 //                    .colorScheme(.light)
 //                    .cornerRadius(30)
@@ -150,20 +147,17 @@ struct WalletReceiveView: RouteableView {
                     .colorScheme(.light)
             )
             .aspectRatio(1, contentMode: .fit)
-            
         }
         .frame(width: min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) * 0.75)
         .aspectRatio(1, contentMode: .fill)
     }
     
     var copyButton: some View {
-        
         Button {
             vm.copyAddressAction()
             UIImpactFeedbackGenerator(style: .soft).impactOccurred()
         } label: {
             VStack(spacing: 12) {
-                
                 HStack {
                     Text("Flow Address".localized)
                         .font(.LL.mindTitle)
@@ -192,6 +186,7 @@ struct WalletReceiveView: RouteableView {
                         .foregroundColor(.LL.Neutrals.neutrals6)
                         .padding(.bottom, 20)
                         .colorScheme(.light)
+                        .lineLimit(1)
                 } icon: {
                     Image("Copy")
                 }
@@ -202,7 +197,6 @@ struct WalletReceiveView: RouteableView {
     }
     
     var shareButton: some View {
-        
         Button {
             UIImpactFeedbackGenerator(style: .soft).impactOccurred()
             
@@ -215,7 +209,6 @@ struct WalletReceiveView: RouteableView {
             UIApplication.shared.windows.first?.rootViewController?.presentedViewController?.present(activityController, animated: true, completion: nil)
             
         } label: {
-
             Label {
                 Text("Share".localized)
                     .font(.LL.subheadline)
@@ -236,13 +229,12 @@ struct WalletReceiveView: RouteableView {
 }
 
 extension WalletReceiveView {
-    
     func doc(text: String, eyeColor: UIColor) -> QRCode.Document {
         let d = QRCode.Document(generator: QRCodeGenerator_External())
         d.utf8String = text
         if let logo = UIImage(named: "lilico-app-icon")?.cgImage {
             let path = CGPath(ellipseIn: CGRect(x: 0.38, y: 0.38, width: 0.24, height: 0.24), transform: nil)
-            d.logoTemplate = QRCode.LogoTemplate(image: logo , path: path, inset: 6)
+            d.logoTemplate = QRCode.LogoTemplate(image: logo, path: path, inset: 6)
         }
         
         d.design.backgroundColor(UIColor(hex: "#FAFAFA").cgColor)
@@ -255,7 +247,7 @@ extension WalletReceiveView {
 
     var eyeColor: UIColor {
         currentNetwork.isMainnet ?
-        UIColor.LL.Primary.salmonPrimary : UIColor(hex: "#333333")
+            UIColor.LL.Primary.salmonPrimary : UIColor(hex: "#333333")
     }
 
     var qrCodeView: some View {

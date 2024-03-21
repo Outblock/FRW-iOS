@@ -98,7 +98,7 @@ class WalletManager: ObservableObject {
                 Task {
                     try? await self.fetchWalletDatas()
                 }
-                //TODO: #six send changed?
+                // TODO: #six send changed?
             }
             .store(in: &cancellableSet)
     }
@@ -566,7 +566,7 @@ extension WalletManager {
         try await fetchAccessible()
         ChildAccountManager.shared.refresh()
         EVMAccountManager.shared.refresh()
-        loadEVMBalance()
+
         flowAccountKey = nil
         try await findFlowAccount()
     }
@@ -622,7 +622,10 @@ extension WalletManager {
         if address.isEmpty {
             throw WalletError.fetchBalanceFailed
         }
-        
+        if isSelectedEVMAccount {
+            try await fetchEVMBalance()
+            return
+        }
 
         let balanceList = try await FlowNetwork.fetchBalance(at: Flow.Address(hex: address))
 
@@ -645,18 +648,19 @@ extension WalletManager {
         PageCache.cache.set(value: newBalanceMap, forKey: CacheKeys.coinBalances.rawValue)
     }
     
-    private func loadEVMBalance() {
+    private func fetchEVMBalance() async throws {
         log.info("[EVM] load balance")
-        guard let evmAccount = EVMAccountManager.shared.selectedAccount else { return  }
-        let tokenModel = self.supportedCoins?.first{ $0.name.lowercased() == "flow" }
+        guard let evmAccount = EVMAccountManager.shared.accounts.first else { return }
+        try await EVMAccountManager.shared.refreshBalance(address: evmAccount.address)
+        let tokenModel = supportedCoins?.first { $0.name.lowercased() == "flow" }
+        let balance = EVMAccountManager.shared.balance
         guard let tokenModel = tokenModel, let symbol = tokenModel.symbol else { return }
         DispatchQueue.main.sync {
-            log.info("[EVM] load balance success")
+            log.info("[EVM] load balance success \(balance)")
             self.activatedCoins = [tokenModel]
-            self.coinBalances = [symbol: Double(evmAccount.balance)]
+            self.coinBalances = [symbol: balance.doubleValue]
         }
     }
-    
     
     func fetchAccessible() async throws {
         try await accessibleManager.fetchFT()

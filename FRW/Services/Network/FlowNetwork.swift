@@ -1010,14 +1010,55 @@ extension FlowNetwork {
         return resonpse
     }
     
-    static func fetchEVMBalance(address: String) async throws -> UInt {
-        let originCadence = CadenceManager.shared.current.evm?.getBalance?.toFunc() ?? ""
-        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
-        var hexAddr =  address
-        if hexAddr.hasPrefix("0x") {
-            hexAddr = hexAddr.removedPrefix("0x")
+    static func fetchEVMBalance(address: String) async throws -> Decimal {
+        guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
         }
-        let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: cadenceStr), arguments: [.string(hexAddr)]).decode(UInt.self)
-        return resonpse
+        let originCadence = CadenceManager.shared.current.evm?.getCoaBalance?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        
+        let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: cadenceStr), arguments: [.address(Flow.Address(hex: fromAddress))])
+         let result =  try resonpse.decode(Decimal.self)
+        return result
     }
+    
+    static func withdrawCoa(amount: Decimal) async throws -> Flow.ID {
+        guard let toAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
+        }
+        let originCadence = CadenceManager.shared.current.evm?.withdrawCoa?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        let toKeyIndex = WalletManager.shared.keyIndex
+        
+
+        
+        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+            cadence {
+                cadenceStr
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            arguments {
+                [
+                    .ufix64(amount),
+                    .address(Flow.Address(hex: toAddress))
+                ]
+            }
+            proposer {
+                Flow.TransactionProposalKey(address: Flow.Address(hex: toAddress), keyIndex: toKeyIndex)
+            }
+            
+            authorizers {
+                Flow.Address(hex: toAddress)
+            }
+            
+            gasLimit {
+                9999
+            }
+        }
+    }
+    
+    
 }

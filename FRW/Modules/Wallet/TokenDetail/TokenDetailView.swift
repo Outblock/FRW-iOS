@@ -130,8 +130,8 @@ struct TokenDetailView: RouteableView {
                     .padding(.horizontal, 9)
                     .background(Color.Theme.Accent.green.fixedOpacity())
                     .cornerRadius(8)
-                    
                 }
+                .visibility(vm.movable ? .visible : .gone)
             }
             
             HStack(alignment: .bottom, spacing: 6) {

@@ -5,8 +5,8 @@
 //  Created by cat on 2024/3/19.
 //
 
-import Foundation
 import Combine
+import Foundation
 import SwiftUI
 
 class EVMAccountManager: ObservableObject {
@@ -18,6 +18,8 @@ class EVMAccountManager: ObservableObject {
 //            validSelectedChildAccount()
         }
     }
+
+    var balance: Decimal = 0
     
     private var cancelSets = Set<AnyCancellable>()
     
@@ -28,8 +30,6 @@ class EVMAccountManager: ObservableObject {
     }
     
     init() {
-        refresh()
-        
         UserManager.shared.$activatedUID
             .receive(on: DispatchQueue.main)
             .map { $0 }
@@ -100,27 +100,37 @@ extension EVMAccountManager {
             do {
                 let address = try await fetchAddress()
                 if let address = address, !address.isEmpty {
-                    let balance = try await fetchBalance(address)
                     DispatchQueue.main.async {
-                        let account = EVMAccountManager.Account(address: address, balance: balance)
+                        let account = EVMAccountManager.Account(address: address)
                         self.accounts = []
                         self.accounts.append(account)
                         self.hasAccount = true
                     }
-                }else {
+                    try await refreshBalance(address: address)
+                } else {
                     DispatchQueue.main.async {
                         self.accounts = []
                         self.hasAccount = false
+                        self.selectedAccount = nil
                     }
                 }
-            }
-            catch {
+            } catch {
                 log.error("[EVM] get address failed.\(error)")
             }
         }
     }
     
-    func select(_ account: EVMAccountManager.Account?){
+    func refreshBalance(address: String) async throws {
+        log.info("[EVM] refresh balance at \(address)")
+        let balance = try await fetchBalance(address)
+        DispatchQueue.main.async {
+            log.info("[EVM] refresh balance success")
+            self.hasAccount = true
+            self.balance = balance
+        }
+    }
+    
+    func select(_ account: EVMAccountManager.Account?) {
         if selectedAccount?.address == account?.address {
             return
         }
@@ -143,7 +153,7 @@ extension EVMAccountManager {
         return address
     }
     
-    func fetchBalance(_ address: String) async throws -> UInt {
+    func fetchBalance(_ address: String) async throws -> Decimal {
         return try await FlowNetwork.fetchEVMBalance(address: address)
     }
 }
@@ -151,7 +161,6 @@ extension EVMAccountManager {
 extension EVMAccountManager {
     struct Account: ChildAccountSideCellItem, Codable {
         var address: String
-        var balance: UInt = 0
         
         var showAddress: String {
             if address.hasPrefix("0x") {
@@ -174,11 +183,11 @@ extension EVMAccountManager {
         
         var isSelected: Bool {
             if let selectedAccount = EVMAccountManager.shared.selectedAccount,
-               selectedAccount.address == address, !address.isEmpty {
+               selectedAccount.address == address, !address.isEmpty
+            {
                 return true
             }
             return false
         }
-        
     }
 }

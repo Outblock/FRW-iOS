@@ -23,15 +23,16 @@ struct ReceiveQRView: RouteableView {
         VStack(spacing: 0) {
             Color.clear
                 .frame(width: 1, height: 72)
-            
-            Text("current_chain".localized)
-                .font(.inter(size: 14))
-                .foregroundStyle(Color.Theme.Text.black8)
-                
-            ReceiveQRView.SwitchText { isOn in
-                viewModel.onChangeChain(isEvm: isOn)
+            VStack(spacing: 8) {
+                Text("current_chain".localized)
+                    .font(.inter(size: 14))
+                    .foregroundStyle(Color.Theme.Text.black8)
+                    
+                ReceiveQRView.SwitchText { isOn in
+                    viewModel.onChangeChain(isEvm: isOn)
+                }
             }
-            .padding(.top, 8)
+            .visibility(viewModel.hasEVM ? .visible : .gone)
             
             qrCodeView
                 .padding(.top, 32)
@@ -47,8 +48,8 @@ struct ReceiveQRView: RouteableView {
                 HStack {
                     Text(viewModel.address)
                         .font(.inter(size: 16))
+                        .truncationMode(.middle)
                         .foregroundStyle(Color.Theme.Text.black8)
-                        .lineBreakMode(.byTruncatingMiddle)
                         .lineLimit(1)
                         
                     Spacer()

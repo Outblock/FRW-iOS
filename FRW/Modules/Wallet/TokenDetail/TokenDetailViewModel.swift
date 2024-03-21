@@ -177,6 +177,10 @@ extension TokenDetailViewModel {
         }
         return false
     }
+    
+    var movable: Bool {
+        EVMAccountManager.shared.hasAccount
+    }
 }
 
 // MARK: - Action
