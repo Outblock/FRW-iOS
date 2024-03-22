@@ -1022,6 +1022,7 @@ extension FlowNetwork {
         return result
     }
     
+    /// evm to cadence
     static func withdrawCoa(amount: Decimal) async throws -> Flow.ID {
         guard let toAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
@@ -1029,9 +1030,6 @@ extension FlowNetwork {
         let originCadence = CadenceManager.shared.current.evm?.withdrawCoa?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         let toKeyIndex = WalletManager.shared.keyIndex
-        
-
-        
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
             cadence {
                 cadenceStr
@@ -1044,6 +1042,41 @@ extension FlowNetwork {
                 [
                     .ufix64(amount),
                     .address(Flow.Address(hex: toAddress))
+                ]
+            }
+            proposer {
+                Flow.TransactionProposalKey(address: Flow.Address(hex: toAddress), keyIndex: toKeyIndex)
+            }
+            
+            authorizers {
+                Flow.Address(hex: toAddress)
+            }
+            
+            gasLimit {
+                9999
+            }
+        }
+    }
+    /// cadence to evm
+    static func fundCoa(amount: Decimal) async throws -> Flow.ID {
+        guard let toAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
+        }
+        let originCadence = CadenceManager.shared.current.evm?.fundCoa?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        let toKeyIndex = WalletManager.shared.keyIndex
+        
+        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+            cadence {
+                cadenceStr
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            arguments {
+                [
+                    .ufix64(amount),
                 ]
             }
             proposer {

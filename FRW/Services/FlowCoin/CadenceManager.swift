@@ -264,6 +264,7 @@ extension CadenceModel {
         let getCoaAddr: String?
         let getCode: String?
         let withdrawCoa: String?
+        let fundCoa: String?
     }
 }
 

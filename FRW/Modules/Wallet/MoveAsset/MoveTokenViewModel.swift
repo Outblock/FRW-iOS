@@ -137,16 +137,39 @@ extension MoveTokenViewModel {
 extension MoveTokenViewModel {
     func onNext() {
         if WalletManager.shared.isSelectedEVMAccount {
-            moveToken()
+            withdrawCoa()
+        }else {
+            fundCoa()
         }
     }
     
-    private func moveToken() {
+    private func withdrawCoa() {
         Task {
             do {
+                log.info("[EVM] withdraw Coa balance")
                 HUD.loading()
                 let amount = self.inputTokenNum.decimalValue
                 let txid = try await FlowNetwork.withdrawCoa(amount: amount)
+                let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
+                TransactionManager.shared.newTransaction(holder: holder)
+                HUD.dismissLoading()
+                Router.dismiss()
+                WalletManager.shared.reloadWalletInfo()
+            }
+            catch {
+                HUD.dismissLoading()
+                log.error("[EVM] move transation failed \(error)")
+            }
+        }
+    }
+    
+    private func fundCoa() {
+        Task {
+            do {
+                log.info("[EVM] fund Coa balance")
+                HUD.loading()
+                let amount = self.inputTokenNum.decimalValue
+                let txid = try await FlowNetwork.fundCoa(amount: amount)
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
                 HUD.dismissLoading()
