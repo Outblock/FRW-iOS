@@ -31,6 +31,8 @@ class EVMEnableViewModel: ObservableObject {
     }
     
     func onClickLearnMore() {
-        
+        let evmUrl = "https://flow.com/upgrade/crescendo/evm"
+        guard let url = URL(string: evmUrl) else { return }
+        UIApplication.shared.open(url)
     }
 }
