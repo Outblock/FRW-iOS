@@ -5575,6 +5575,7 @@
 				158CEFBE277DB3FF004EF2C7 /* Embed Frameworks */,
 				6A0C6E2C29542DFE005F0EF6 /* Embed Foundation Extensions */,
 				6A04A4732961A71000F069C4 /* dSYM Upload */,
+				4ECF45322BB258AC00F5B3B7 /* Swift Lint */,
 			);
 			buildRules = (
 			);
@@ -6076,6 +6077,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\n# Not workimg well with SwiftUI\n#if [ `uname -m` == 'arm64' ] && [ -d /opt/homebrew/bin/ ]; then\n#  export PATH=/opt/homebrew/bin:$PATH\n#fi\n\n#if which rswift >/dev/null; then\n#    rswift generate \"$SRCROOT/R.generated.swift\"\n#else\n#  echo \"warning: Rswift not installed, download from https://github.com/mac-cain13/R.swift/releases/tag/v6.0.0\"\n#fi\n";
+		};
+		4ECF45322BB258AC00F5B3B7 /* Swift Lint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Swift Lint";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 		6A04A4722961A5A900F069C4 /* dSYM Upload */ = {
 			isa = PBXShellScriptBuildPhase;
