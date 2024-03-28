@@ -31,7 +31,7 @@ class CoinRateCache {
     static let cache = CoinRateCache()
 
     private var queue = DispatchQueue(label: "CoinRateCache.cache")
-       
+    private var addPrices: [CryptoSummaryResponse.AddPrice] = []
     private var _summarys = Set<CoinRateModel>()
     var summarys: Set<CoinRateModel> {
         queue.sync {
@@ -104,6 +104,12 @@ extension CoinRateCache {
         debugPrint("CoinRateCache -> start refreshing")
         isRefreshing = true
         Task {
+            do {
+                addPrices = try await Network.request(FRWAPI.Crypto.prices)
+            }catch {
+                log.error("[Wallet] CoinRateCache -> fetch add price")
+            }
+            
             await withTaskGroup(of: Void.self) { group in
                 supportedCoins.forEach { coin in
                     group.addTask { [weak self] in
@@ -156,10 +162,23 @@ extension CoinRateCache {
             }
             
             await set(summary: mirrorResponse, forSymbol: symbol)
-        case let .fixed(price):
-            let response = CryptoSummaryResponse.createFixedRateResponse(fixedRate: price)
+        case let .fixed(price): 
+            let response = createFixedRateResponse(fixedRate: price, for: coin)
             await set(summary: response, forSymbol: symbol)
         }
+    }
+    
+    private func createFixedRateResponse(fixedRate: Decimal, for token: TokenModel) -> CryptoSummaryResponse {
+        
+        let model = addPrices.first { $0.contractAddress == token.getAddress() && $0.contractName == token.contractName }
+        
+        let change = CryptoSummaryResponse.Change(absolute: 0, percentage: 0)
+        let price = CryptoSummaryResponse.Price(last: model?.rateToUSD ?? fixedRate.doubleValue,
+                                                low: fixedRate.doubleValue,
+                                                high: fixedRate.doubleValue,
+                                                change: change)
+        let result = CryptoSummaryResponse.Result(price: price)
+        return CryptoSummaryResponse(result: result)
     }
 
     @MainActor
