@@ -27,10 +27,10 @@ struct EVMEnableView: RouteableView {
                 } label: {
                     Text("skip".localized)
                         .font(.inter(size: 14))
-                        .foregroundStyle(Color.Theme.Text.black)
+                        .foregroundStyle(ThemeManager.shared.style == .light ? Color.Theme.Text.black : Color.Theme.Text.black8)
                         .padding(.horizontal, 16)
                         .frame(height: 32)
-                        .background(Color.Theme.Background.black3)
+                        .background(ThemeManager.shared.style == .light ? Color.Theme.Text.black3 : Color.Theme.Text.black8)
                         .cornerRadius(24)
                 }
                 .transition(.opacity)
