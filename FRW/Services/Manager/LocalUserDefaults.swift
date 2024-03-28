@@ -74,7 +74,7 @@ extension LocalUserDefaults {
             case .crescendo:
                 return Flow.ChainID.crescendo
             case .previewnet:
-                return Flow.ChainID.custom(name: "previewnet", transport: Flow.Transport.HTTP(URL(string: "https://rest-previewnet.onflow.org/")!))
+                return Flow.ChainID.previewnet
             }
         }
         
@@ -86,12 +86,8 @@ extension LocalUserDefaults {
                 self = .mainnet
             case .crescendo:
                 self = .crescendo
-            case .custom(let name, _):
-                if name == "previewnet" {
-                    self = .previewnet
-                }else {
-                    return nil
-                }
+            case .previewnet:
+                self = .previewnet
             default:
                 return nil
             }

@@ -114,7 +114,7 @@ extension WalletSendAmountViewModel {
         Task {
             if let address = targetContact.address {
                 let list = try await FlowNetwork.checkTokensEnable(address: Flow.Address(hex: address))
-                let model = list.first { $0.key.lowercased() == token.name.lowercased() }
+                let model = list.first { $0.key.lowercased() == token.contractId.lowercased() }
                 let isValid = model?.value
                 DispatchQueue.main.async {
                     self.isValidToken = isValid ?? false

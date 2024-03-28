@@ -47,13 +47,8 @@ class RemoteConfigManager {
             return config?.payer.testnet.address ?? emptyAddress
         case .crescendo:
             return config?.payer.crescendo?.address ?? emptyAddress
-        case .custom(let name, _):
-            if name == "previewnet" {
-                return config?.payer.previewnet?.address ?? emptyAddress
-            }
-            else {
-                return emptyAddress
-            }
+        case .previewnet:
+            return config?.payer.previewnet?.address ?? emptyAddress
         default:
             return emptyAddress
         }
@@ -71,7 +66,7 @@ class RemoteConfigManager {
             return config?.payer.testnet.keyID ?? 0
         case .crescendo:
             return config?.payer.crescendo?.keyID ?? 0
-        case .custom:
+        case .previewnet:
             return config?.payer.previewnet?.keyID ?? 0
         default:
             return 0

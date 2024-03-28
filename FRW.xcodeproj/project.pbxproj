@@ -998,6 +998,8 @@
 		4E6ED48C2BA9258D009906A5 /* EVMAccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6ED48A2BA9258D009906A5 /* EVMAccountManager.swift */; };
 		4E6ED48E2BA96DBB009906A5 /* ChildAccountSideCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6ED48D2BA96DBB009906A5 /* ChildAccountSideCell.swift */; };
 		4E6ED48F2BA96DBB009906A5 /* ChildAccountSideCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6ED48D2BA96DBB009906A5 /* ChildAccountSideCell.swift */; };
+		4E6ED4912BAA79F6009906A5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4E6ED4902BAA79F6009906A5 /* PrivacyInfo.xcprivacy */; };
+		4E6ED4932BAA7CB6009906A5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4E6ED4922BAA7CB6009906A5 /* PrivacyInfo.xcprivacy */; };
 		4E777CAE2B1ECF8900300A3E /* SyncInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E777CAD2B1ECF8900300A3E /* SyncInfo.swift */; };
 		4E777CAF2B1ECF8900300A3E /* SyncInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E777CAD2B1ECF8900300A3E /* SyncInfo.swift */; };
 		4E777CB12B1EE69E00300A3E /* WalletConnect+SyncDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E777CB02B1EE69E00300A3E /* WalletConnect+SyncDevice.swift */; };
@@ -2175,6 +2177,8 @@
 		4E63A5802B8D76AD00BBD15F /* MoveChooseAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveChooseAccountView.swift; sourceTree = "<group>"; };
 		4E6ED48A2BA9258D009906A5 /* EVMAccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EVMAccountManager.swift; sourceTree = "<group>"; };
 		4E6ED48D2BA96DBB009906A5 /* ChildAccountSideCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildAccountSideCell.swift; sourceTree = "<group>"; };
+		4E6ED4902BAA79F6009906A5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		4E6ED4922BAA7CB6009906A5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		4E777CAD2B1ECF8900300A3E /* SyncInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncInfo.swift; sourceTree = "<group>"; };
 		4E777CB02B1EE69E00300A3E /* WalletConnect+SyncDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WalletConnect+SyncDevice.swift"; sourceTree = "<group>"; };
 		4E7918452B214EEF00DA832F /* BackupMultiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupMultiView.swift; sourceTree = "<group>"; };
@@ -3181,6 +3185,7 @@
 				15EC9DF1274FD1FD00F70CD9 /* FRW_App.swift */,
 				154B88852765F33400780E93 /* AppDelegate.swift */,
 				156AC7AE2780427900ED5E3E /* FRW-Bridging-Header.h */,
+				4E6ED4902BAA79F6009906A5 /* PrivacyInfo.xcprivacy */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -5217,6 +5222,7 @@
 				6A9DFBCB29519D9800E10EAC /* FlowReferenceWalletWidgets.swift */,
 				6A9DFBCD29519D9A00E10EAC /* Assets.xcassets */,
 				6A9DFBCF29519D9A00E10EAC /* Info.plist */,
+				4E6ED4922BAA7CB6009906A5 /* PrivacyInfo.xcprivacy */,
 			);
 			path = FRWWidgets;
 			sourceTree = "<group>";
@@ -5958,6 +5964,7 @@
 				1565FB6928B14F140086A652 /* Notification.json in Resources */,
 				15C58C5B2868A4EE00BD4FC6 /* Montserrat-Regular.ttf in Resources */,
 				4E0D349F2A8B4E2900BC6E43 /* e-Ukraine-Bold.ttf in Resources */,
+				4E6ED4912BAA79F6009906A5 /* PrivacyInfo.xcprivacy in Resources */,
 				15C58C5C2868A4EE00BD4FC6 /* Preview Assets.xcassets in Resources */,
 				15D3BA7A28C4D2A4009AEA6E /* LaunchScreen.storyboard in Resources */,
 				1575A72628B26B9600ADC513 /* index.html in Resources */,
@@ -6031,6 +6038,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E6ED4932BAA7CB6009906A5 /* PrivacyInfo.xcprivacy in Resources */,
 				6A9DFBCE29519D9A00E10EAC /* Assets.xcassets in Resources */,
 				6A9DFBDC2951C31200E10EAC /* Localizable.strings in Resources */,
 			);
@@ -8715,7 +8723,7 @@
 			repositoryURL = "https://github.com/outblock/flow-swift";
 			requirement = {
 				kind = exactVersion;
-				version = 0.3.5;
+				version = 0.3.6;
 			};
 		};
 		15F517F928C6574C00504FDC /* XCRemoteSwiftPackageReference "atlantis" */ = {

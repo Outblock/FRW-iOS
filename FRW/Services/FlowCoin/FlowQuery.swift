@@ -29,7 +29,7 @@ extension LLCadence where T == LLCadenceAction.token {
         
         let transferTokenWithInbox = CadenceManager.shared.current.domain?.transferInboxTokens?.toFunc() ?? ""
         let transferTokenCadence = CadenceManager.shared.current.ft?.transferTokens?.toFunc() ?? ""
-        let script = network == .crescendo ? transferTokenCadence : transferTokenWithInbox
+        let script = network == .previewnet ? transferTokenCadence : transferTokenWithInbox
         return script
             .replace(by: ScriptAddress.addressMap())
             .buildTokenInfo(token, chainId: network)

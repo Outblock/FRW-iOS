@@ -897,7 +897,7 @@
 "restore_from_backup" = "バックアップ履歴からウォレットを復元します。";
 "restore_multi_desc" = "Googleドライブ/パスキー/iCloud/リカバリフレーズ";
 "restore_multi_title" = "マルチバックアップから";
-"restore_phrase_desc" = "2ofNバージョンの違い";
+"restore_phrase_desc" = "マルチバックアップバージョンの違い";
 "restore_phrase_title" = "リカバリーフレーズより（旧）";
 "restore_phrase_you_created_desc" = "これは、以前のウォレットを作成したときに与えられた 15 語のフレーズです。";
 "restore_wallet" = "ウォレットを復元する";

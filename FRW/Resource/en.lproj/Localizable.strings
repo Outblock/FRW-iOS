@@ -902,7 +902,7 @@
 "restore_multi_title" = "From Multi Backup";
 "restore_multi_desc" = "Google Drive/ Passkey/ iCloud/ Recovery Phrase";
 "restore_phrase_title" = "From Recovery Phrase (Old)";
-"restore_phrase_desc" = "The difference between 2ofN version";
+"restore_phrase_desc" = "The difference between Multi-Backup version";
 "from_multi_backup" = "From Multi-Backup";
 "from_multi_backup_desc" = "Please Select 2 or More Backup Options";
 "connect_to_x" = "Connect to %@";

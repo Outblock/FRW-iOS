@@ -897,7 +897,7 @@
 "restore_from_backup" = "Восстановите кошелек из истории резервных копий.";
 "restore_multi_desc" = "Google Диск/пароль/iCloud/фраза восстановления";
 "restore_multi_title" = "Из мультирезервной копии";
-"restore_phrase_desc" = "Разница между версией 2ofN";
+"restore_phrase_desc" = "Разница между версией Multi-Backup";
 "restore_phrase_title" = "Из фразы восстановления (старой)";
 "restore_phrase_you_created_desc" = "Это фраза из 15 слов, которую вы получили при создании предыдущего кошелька.";
 "restore_wallet" = "Восстановить кошелек";

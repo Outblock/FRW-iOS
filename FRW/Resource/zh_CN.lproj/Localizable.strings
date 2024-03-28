@@ -902,7 +902,7 @@
 "restore_multi_title" = "来自多重备份";
 "restore_multi_desc" = "Google Drive/密钥/iCloud/恢复短语";
 "restore_phrase_title" = "来自恢复短语（旧）";
-"restore_phrase_desc" = "多版本的区别";
+"restore_phrase_desc" = "多备份版本的区别";
 "from_multi_backup" = "来自多重备份";
 "from_multi_backup_desc" = "请选择 2 个或更多备份选项";
 "connect_to_x" = "连接到 %@";

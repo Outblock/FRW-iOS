@@ -16,6 +16,18 @@ class DeviceManager: ObservableObject {
     private var validDevice: [DeviceInfoModel] = []
     private var currentDevice: DeviceInfoModel?
     
+    func updateDevice() {
+        Task {
+            do {
+                let uuid = UUIDManager.appUUID()
+                let _: Network.EmptyResponse = try await Network.request(FRWAPI.User.updateDevice(uuid))
+            }
+            catch {
+                log.error("[Start] upload device")
+            }
+        }
+    }
+    
     func fetch() async throws -> (DeviceInfoModel?, [DeviceInfoModel]) {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress

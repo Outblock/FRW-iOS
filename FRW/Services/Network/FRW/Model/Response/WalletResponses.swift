@@ -30,6 +30,13 @@ extension CryptoSummaryResponse {
         let absolute: Double?
         let percentage: Double
     }
+    
+    struct AddPrice: Codable {
+        let contractAddress: String
+        let contractName: String
+        var rateToFLOW: Double = 0
+        var rateToUSD: Double = 0
+    }
 }
 
 struct CryptoSummaryResponse: Codable {

@@ -161,11 +161,8 @@ struct FlowNetworkModel: Codable {
             return testnet
         case .crescendo:
             return crescendo
-        case .custom(let name, _):
-            if name == "previewnet" {
-                return previewnet
-            }
-            return nil
+        case .previewnet:
+            return previewnet
         default:
             return nil
         }

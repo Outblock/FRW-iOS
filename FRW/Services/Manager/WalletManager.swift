@@ -885,7 +885,9 @@ extension WalletManager: FlowSigner {
         flowAccountKey = sortedAccount.filter {
             $0.publicKey.description == publicKey
         }.first
-        log.error(flowAccountKey ?? "[Account] not find account")
+        if flowAccountKey == nil {
+            log.error("[Account] not find account")
+        }
     }
 }
 
