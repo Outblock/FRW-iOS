@@ -153,6 +153,9 @@ extension AppDelegate {
         _ = ChildAccountManager.shared
         WalletManager.shared.bindChildAccountManager()
         NFTCatalogCache.cache.fetchIfNeed()
+        if UserManager.shared.isLoggedIn {
+            DeviceManager.shared.updateDevice()
+        }
     }
     
     private func commonConfig() {

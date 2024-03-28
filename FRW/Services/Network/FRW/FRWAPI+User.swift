@@ -23,6 +23,7 @@ extension FRWAPI {
         case devices(String)
         case syncDevice(SyncInfo.DeviceInfo)
         case addSigned(SignedRequest)
+        case updateDevice(String)
     }
 }
 
@@ -63,6 +64,8 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
             return "/v3/sync"
         case .addSigned:
             return "/v3/signed"
+        case .updateDevice:
+            return "/v1/user/device"
         }
     }
 
@@ -70,7 +73,7 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
         switch self {
         case .checkUsername, .userInfo, .userWallet, .search, .keys, .devices:
             return .get
-        case .login, .register, .userAddress, .manualCheck, .crescendo, .syncDevice, .addSigned:
+        case .login, .register, .userAddress, .manualCheck, .crescendo, .syncDevice, .addSigned,.updateDevice:
             return .post
         }
     }
@@ -95,6 +98,8 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
             return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         case let .crescendo(request):
             return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
+        case let .updateDevice(uuid):
+            return .requestJSONEncodable(["device_id": uuid])
         }
     }
 
