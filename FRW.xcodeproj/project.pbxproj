@@ -968,6 +968,7 @@
 		4E3670052B2A8B32000F2693 /* BackupUploadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3670032B2A8B32000F2693 /* BackupUploadView.swift */; };
 		4E3670072B2A8BB6000F2693 /* BackupUploadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3670062B2A8BB6000F2693 /* BackupUploadViewModel.swift */; };
 		4E3670082B2A8BB6000F2693 /* BackupUploadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3670062B2A8BB6000F2693 /* BackupUploadViewModel.swift */; };
+		4E3682C72BB6A59100B24785 /* web3swift in Frameworks */ = {isa = PBXBuildFile; productRef = 4E3682C62BB6A59100B24785 /* web3swift */; };
 		4E3E5BE32875DC2000A5FA65 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E5BE22875DC2000A5FA65 /* SearchBar.swift */; };
 		4E3E5BE42875DC2000A5FA65 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E5BE22875DC2000A5FA65 /* SearchBar.swift */; };
 		4E42DC5F2B22AEB700EF0A75 /* BackupListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E42DC5E2B22AEB700EF0A75 /* BackupListView.swift */; };
@@ -2592,6 +2593,7 @@
 				6A19A74E2A612FAB00B84F09 /* FirebaseMessaging in Frameworks */,
 				6AE1D48E287690E7000FA0B7 /* SwiftUIPager in Frameworks */,
 				6AADFB54293CB7F800E5D6B2 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
+				4E3682C72BB6A59100B24785 /* web3swift in Frameworks */,
 				15D6D8F628CBAEE000CBA152 /* FancyScrollView in Frameworks */,
 				152BB09628AE900C00B2A2AA /* Lottie in Frameworks */,
 				6AEA375A28A51792004545D4 /* MJRefresh in Frameworks */,
@@ -5642,6 +5644,7 @@
 				4E1DD8D32B16443B0055E510 /* WalletConnectAuth */,
 				4E1DD8C82B16222A0055E510 /* Instabug */,
 				4E9D98DE2B9DEAEF00A70879 /* TrustWeb3Provider */,
+				4E3682C62BB6A59100B24785 /* web3swift */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 154B8928276A1EEB00780E93 /* FRW-dev.app */;
@@ -5881,6 +5884,7 @@
 				4EC8524F2B0AD88D00C5CD52 /* XCRemoteSwiftPackageReference "Flow-Wallet-Core" */,
 				4E1DD8C52B1622030055E510 /* XCRemoteSwiftPackageReference "Instabug-SP" */,
 				4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */,
+				4E3682C52BB6A59100B24785 /* XCRemoteSwiftPackageReference "web3swift" */,
 			);
 			productRefGroup = 15EC9DEF274FD1FC00F70CD9 /* Products */;
 			projectDirPath = "";
@@ -8743,6 +8747,14 @@
 				minimumVersion = 12.6.0;
 			};
 		};
+		4E3682C52BB6A59100B24785 /* XCRemoteSwiftPackageReference "web3swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/web3swift-team/web3swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.2.0;
+			};
+		};
 		4E5D4FAA2AEF9A5A00DC419B /* XCRemoteSwiftPackageReference "DeviceGuru" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/InderKumarRathore/DeviceGuru";
@@ -9218,6 +9230,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 158832C82894262B00142B35 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
 			productName = WalletConnectAuth;
+		};
+		4E3682C62BB6A59100B24785 /* web3swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E3682C52BB6A59100B24785 /* XCRemoteSwiftPackageReference "web3swift" */;
+			productName = web3swift;
 		};
 		4E5D4FAB2AEF9A5A00DC419B /* DeviceGuru */ = {
 			isa = XCSwiftPackageProductDependency;
