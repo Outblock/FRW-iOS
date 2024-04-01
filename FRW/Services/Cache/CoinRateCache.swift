@@ -170,7 +170,7 @@ extension CoinRateCache {
     
     private func createFixedRateResponse(fixedRate: Decimal, for token: TokenModel) -> CryptoSummaryResponse {
         
-        let model = addPrices.first { $0.contractAddress == token.getAddress() && $0.contractName == token.contractName }
+        let model = addPrices.first { $0.contractName == token.contractName }
         
         let change = CryptoSummaryResponse.Change(absolute: 0, percentage: 0)
         let price = CryptoSummaryResponse.Price(last: model?.rateToUSD ?? fixedRate.doubleValue,
