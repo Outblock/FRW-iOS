@@ -15,10 +15,17 @@ extension TrustWeb3Provider {
     }
     
     static func config(at index: Int = 0) -> TrustWeb3Provider {
-        var address = EVMAccountManager.shared.accounts.first?.address ?? ""
-        address = "0x0000000000000000000000029a9d22fe53a8fc9f"
-        let config = TrustWeb3Provider.Config.EthereumConfig(address: address, chainId: 646, rpcUrl: "https://previewnet.evm.nodes.onflow.org")
+        let address = EVMAccountManager.shared.accounts.first?.address ?? ""
+        let config = TrustWeb3Provider.Config.EthereumConfig(address: address, chainId: chainId(), rpcUrl: rpcUrl())
         return TrustWeb3Provider(config: .init(ethereum: config))
+    }
+    
+    static private func chainId() -> Int {
+        return 646
+    }
+    
+    static private func rpcUrl() -> String {
+        return "https://previewnet.evm.nodes.onflow.org"
     }
     
 }

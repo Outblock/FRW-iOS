@@ -43,6 +43,7 @@ enum ListedToken: String, CaseIterable {
     case fusd
     case stFlow
     case usdc
+    case other
     
     enum PriceAction {
         case fixed(price: Decimal)
@@ -60,6 +61,8 @@ enum ListedToken: String, CaseIterable {
             return .mirror(.flow)
         case .usdc:
             return .fixed(price: 1.0)
+        case .other:
+            return .fixed(price: 1.0)
         }
     }
     
@@ -67,7 +70,7 @@ enum ListedToken: String, CaseIterable {
         if let item = ListedToken.allCases.first(where: { $0.rawValue.lowercased() == rawValue.lowercased() }) {
             self = item
         } else {
-            return nil
+            self = .other
         }
     }
 }
@@ -123,7 +126,7 @@ struct TokenModel: Codable, Identifiable, Mockable {
         case .usdc:
             return market.usdcPricePair
         default:
-            return ""
+            return market.flowPricePair //TODO: #six Need to confirm
         }
     }
     

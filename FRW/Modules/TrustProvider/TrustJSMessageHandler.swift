@@ -16,23 +16,6 @@ import WebKit
 
 class TrustJSMessageHandler: NSObject {
     weak var webVC: BrowserViewController?
-    
-    /*
-    var provider: Web3HttpProvider!
-    var web3: Web3!
-    var hdWallet: HDWallet!
-    let address = Flow.Address(hex: "0xd962e1938ab387c8")
-    var ethAddress: EthereumAddress!
-    
-    func setup() {
-        Task {
-            self.provider = try! await Web3HttpProvider(url: URL(string: "https://previewnet.evm.nodes.onflow.org")!, network: Networks.Custom(networkID: 646))
-            self.web3 = Web3(provider: provider)
-            self.hdWallet = HDWallet(mnemonic: "kiwi erosion weather slam harvest move crumble zero juice steel start hotel", passphrase: "")!
-            self.ethAddress = EthereumAddress("0x0000000000000000000000029a9d22fe53a8fc9f")!
-        }
-    }
-     */
 }
 
 // MARK: - helper
@@ -147,52 +130,33 @@ extension TrustJSMessageHandler {
     }
     
     private func handleSignPersonal(network: ProviderNetwork, id: Int64, data: Data, addPrefix: Bool) {
-        let msg = "this is a message"
-        let address = Flow.Address(hex: "0xd962e1938ab387c8")
-
-        guard let textData = msg.data(using: .utf8) else {
+        
+        guard let addrStr = WalletManager.shared.getPrimaryWalletAddress() else {
+            HUD.error(title: "invalid_address".localized)
             return
         }
         
-//        let hashedData = Hash.sha256(data: textData)
-        let hashedData = Utilities.hashPersonalMessage(textData)!
+        let address = Flow.Address(hex: addrStr)
+
+        let hashedData = Utilities.hashPersonalMessage(data)!
         let joinData = Flow.DomainTag.user.normalize + hashedData
-        let signableData = Hash.sha256(data: joinData)
-        let sig = signWithHD(data: signableData)
+        let signableData = Hash.sha256(data: joinData) //TODO: #future by user type In the future
+        guard let sig = signWithHD(data: signableData) else {
+            HUD.error(title: "sign failed")
+            return
+        }
         
         let proof = COAOwnershipProof(keyIninces: [0], address: address.data, capabilityPath: "evm", signatures: [sig])
         let encoded = RLP.encode(proof.rlpList)!
         
-        /*
-        print("message data ===> \(textData.hexString)")
-        print("hashed message ===> \(hashedData.hexString)")
-        print("signableData message ===> \(signableData.hexString)")
-        print("sig ===> \(sig.hexString)")
-        print("encoded ===> \(encoded.hexString)")
-        
-        Task {
-            self.provider = try! await Web3HttpProvider(url: URL(string: "https://previewnet.evm.nodes.onflow.org")!, network: Networks.Custom(networkID: 646))
-            self.web3 = Web3(provider: provider)
-            self.hdWallet = HDWallet(mnemonic: "kiwi erosion weather slam harvest move crumble zero juice steel start hotel", passphrase: "")!
-            self.ethAddress = EthereumAddress("0x0000000000000000000000029a9d22fe53a8fc9f")!
-            let contract = web3.contract(coaABI, at: ethAddress)!
-            let read = contract.createReadOperation("isValidSignature", parameters: [hashedData, encoded])!
-            let response = try await read.callContractMethod()
-            guard let data = response["0"] as? Data else {
-                return
-            }
-            print(response)
-            print(data.hexValue) // 1626ba7e
-        }
-        */
         
         // show alert
         let title = webVC?.webView.title ?? "unknown"
         let url = webVC?.webView.url
         let vm = BrowserSignMessageViewModel(title: title,
-                                             url: url?.host ?? "unknown",
+                                             url: url?.absoluteString ?? "unknown",
                                              logo: url?.absoluteString.toFavIcon()?.absoluteString,
-                                             cadence: "")
+                                             cadence: data.hexString)
         { [weak self] result in
             guard let self = self else {
                 return
@@ -210,10 +174,9 @@ extension TrustJSMessageHandler {
         Router.route(to: RouteMap.Explore.signMessage(vm))
     }
     
-    private func signWithHD(data: Data) -> Data {
-        let hdWallet = HDWallet(mnemonic: "kiwi erosion weather slam harvest move crumble zero juice steel start hotel", passphrase: "")!
-        let pk = hdWallet.getKeyByCurve(curve: .secp256k1, derivationPath: WalletManager.flowPath)
-        print("pk  ===> \(pk.data.hexValue)")
-        return pk.sign(digest: data, curve: .secp256k1)!.dropLast()
+    
+    
+    private func signWithHD(data: Data) -> Data? {
+        return WalletManager.shared.signSync(signableData: data)
     }
 }
