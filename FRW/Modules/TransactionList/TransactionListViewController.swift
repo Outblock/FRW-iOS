@@ -24,7 +24,7 @@ class TransactionListViewController: UIViewController {
     
     private lazy var segmentDataSource: JXSegmentedTitleDataSource = {
         let ds = JXSegmentedTitleDataSource()
-        ds.titles = [ "transaction_list_transfer_x".localized()]
+//        ds.titles = [ "transaction_list_transfer_x".localized()]
         let textColor = UIColor(named: "text.black.8")!
         ds.titleNormalColor = textColor
         ds.titleSelectedColor = textColor
@@ -92,7 +92,7 @@ class TransactionListViewController: UIViewController {
         segmentView.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
-            make.height.equalTo(50)
+            make.height.equalTo(0)
         }
         
         view.addSubview(listContainer)
@@ -111,7 +111,7 @@ class TransactionListViewController: UIViewController {
 
 extension TransactionListViewController {
     private func reloadCounts() {
-        segmentDataSource.titles = ["transaction_list_transfer_x".localized()]
+//        segmentDataSource.titles = ["transaction_list_transfer_x".localized()]
         segmentView.reloadData()
     }
 }
