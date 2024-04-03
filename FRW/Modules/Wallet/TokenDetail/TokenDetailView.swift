@@ -491,7 +491,8 @@ extension TokenDetailView {
                             .frame(width: 12, height: 12)
                             .aspectRatio(contentMode: .fit)
                         
-                        Text(model.token?.replaceBeforeLast(".", replacement: "").removePrefix(".") ?? "")
+                        
+                        Text(model.title ?? "")
                             .font(.inter(size: 14, weight: .semibold))
                             .foregroundColor(Color.LL.Neutrals.text)
                             .lineLimit(1)
