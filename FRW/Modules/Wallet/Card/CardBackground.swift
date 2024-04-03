@@ -74,7 +74,7 @@ enum CardBackground: CaseIterable {
         case .fade:
             switch cardStyle {
             case .evm:
-                return Color.Theme.Accent.purple
+                return Color.Theme.Accent.blue
             default:
                 return Color.Theme.Accent.green
             }
