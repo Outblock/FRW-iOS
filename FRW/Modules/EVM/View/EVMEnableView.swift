@@ -30,7 +30,7 @@ struct EVMEnableView: RouteableView {
                         .foregroundStyle(ThemeManager.shared.style == .light ? Color.Theme.Text.black : Color.Theme.Text.black8)
                         .padding(.horizontal, 16)
                         .frame(height: 32)
-                        .background(ThemeManager.shared.style == .light ? Color.Theme.Text.black3 : Color.Theme.Text.black8)
+                        .background(ThemeManager.shared.style == .light ? Color.Theme.Text.black3.opacity(0.24) : Color.Theme.Text.black8.opacity(0.24))
                         .cornerRadius(24)
                 }
                 .transition(.opacity)
@@ -67,16 +67,13 @@ struct EVMEnableView: RouteableView {
                 .multilineTextAlignment(.center)
             Spacer()
             
-            Button {
+            VPrimaryButton(model: ButtonStyle.evmEnable,
+                           state: viewModel.state,
+                           action: {
                 viewModel.onClickEnable()
-            } label: {
-                Text("enable".localized)
-                    .font(.inter(size: 16, weight: .w600))
-                    .foregroundStyle(Color.Theme.Text.white9)
-                    .frame(width: 115, height: 48)
-                    .background(Color.Theme.Accent.green)
-                    .cornerRadius(16)
-            }
+                           }, title: "enable".localized)
+                .frame(width: 115)
+                
             
             Button {
                 viewModel.onClickLearnMore()

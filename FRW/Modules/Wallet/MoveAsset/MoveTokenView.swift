@@ -53,9 +53,9 @@ struct MoveTokenView: View {
                                      isEVM: !viewModel.fromEVM)
                     }
                     
-                    Image("icon_move_exchange")
-                        .resizable()
-                        .frame(width: 32, height: 32)
+//                    Image("icon_move_exchange")
+//                        .resizable()
+//                        .frame(width: 32, height: 32)
                 }
                 
                 MoveTokenView.AccountView { _ in

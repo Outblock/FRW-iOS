@@ -8,6 +8,7 @@
 import SwiftUI
 
 class EVMEnableViewModel: ObservableObject {
+    @Published var state: VPrimaryButtonState = .enabled
     func onSkip() {
         Router.pop()
     }
@@ -16,14 +17,14 @@ class EVMEnableViewModel: ObservableObject {
         
         Task {
             do {
-                HUD.loading()
+                state = .loading
                 try await EVMAccountManager.shared.enableEVM()
                 EVMAccountManager.shared.refresh()
-                HUD.dismissLoading()
+                state = .enabled
                 Router.pop()
             }
             catch {
-                HUD.dismissLoading()
+                state = .enabled
                 HUD.error(title: "Enable EVM failed.")
                 log.error("Enable EVM failer: \(error)")
             }
