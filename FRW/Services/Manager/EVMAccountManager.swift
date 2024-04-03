@@ -174,7 +174,7 @@ extension EVMAccountManager {
         }
         
         var showName: String {
-            "Flow-EVM Wallet"
+            "EVM wallet"
         }
         
         var isEVM: Bool {
