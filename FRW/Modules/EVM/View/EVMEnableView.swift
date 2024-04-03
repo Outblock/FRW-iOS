@@ -49,12 +49,12 @@ struct EVMEnableView: RouteableView {
                     .font(.inter(size: 30, weight: .w700))
                     .foregroundStyle(Color.Theme.Text.black8)
                     .multilineTextAlignment(.center)
-                Text("FlowEVM")
+                Text("evm_on_flow".localized)
                     .font(.inter(size: 30, weight: .w700))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [Color(hex: "#00EF8B"), Color(hex: "#BE9FFF")],
+                            colors: [Color.Theme.Accent.blue, Color.Theme.Accent.green ],
                             startPoint: .leading,
                             endPoint: .trailing
                         )

@@ -146,7 +146,7 @@ extension ReceiveQRView {
                             .resizable()
                             .frame(width: 24, height: 24)
                         if isOn {
-                            Text("FlowEVM")
+                            Text("evm_on_flow".localized)
                                 .font(.inter(size: 14, weight: .w600))
                                 .foregroundStyle(Color.Theme.Text.black)
                         }

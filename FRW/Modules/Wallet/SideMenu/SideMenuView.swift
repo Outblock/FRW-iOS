@@ -165,11 +165,11 @@ struct SideMenuView: View {
                         Text("enable_path".localized)
                             .font(.inter(size: 16, weight: .semibold))
                             .foregroundStyle(Color.Theme.Text.black8)
-                        Text("FlowEVM")
+                        Text("evm_on_flow".localized)
                             .font(.inter(size: 16, weight: .semibold))
                             .foregroundStyle(
                                 LinearGradient(
-                                    colors: [Color(hex: "#00EF8B"), Color(hex: "#BE9FFF")],
+                                    colors: [Color.Theme.Accent.blue, Color.Theme.Accent.green ],
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )

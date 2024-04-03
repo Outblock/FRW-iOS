@@ -43,7 +43,7 @@ enum CardBackground: CaseIterable {
                     .aspectRatio(contentMode: .fill)
             }
         case let .fade(imageIndex):
-            FadeAnimationBackground(image: fadeList[safe: imageIndex] ?? fadeList[0])
+            FadeAnimationBackground(image: fadeList[safe: imageIndex] ?? fadeList[0], color: fadeColor)
         case let .image(imageIndex):
             (imageList[safe: imageIndex] ?? imageList[0])
                 .resizable()
@@ -66,6 +66,20 @@ enum CardBackground: CaseIterable {
             }
         default:
             return [Image("flow-line")]
+        }
+    }
+    
+    var fadeColor: Color {
+        switch self {
+        case .fade:
+            switch cardStyle {
+            case .evm:
+                return Color.Theme.Accent.purple
+            default:
+                return Color.Theme.Accent.green
+            }
+        default:
+            return Color.Theme.Accent.green
         }
     }
     
