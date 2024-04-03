@@ -53,31 +53,24 @@ struct MoveTokenView: View {
                                      isEVM: !viewModel.fromEVM)
                     }
                     
-//                    Image("icon_move_exchange")
-//                        .resizable()
-//                        .frame(width: 32, height: 32)
+                    Image("icon_move_exchange")
+                        .resizable()
+                        .frame(width: 32, height: 32)
                 }
                 
                 MoveTokenView.AccountView { _ in
                 }
             }
             
-            Button {
+            VPrimaryButton(model: ButtonStyle.primary,
+                           state: viewModel.state,
+                           action: {
                 UIApplication.shared.endEditing()
                 viewModel.onNext()
-            } label: {
-                ZStack {
-                    Text("move".localized)
-                        .foregroundColor(Color.LL.Button.text)
-                        .font(.inter(size: 14, weight: .bold))
-                }
-                .frame(height: 54)
-                .frame(maxWidth: .infinity)
-                .background(Color.LL.Button.color)
-                .cornerRadius(16)
-            }
-            .disabled(!viewModel.isReadyForSend)
-            .padding(.top, 12)
+                           }, title: "move".localized)
+                .padding(.top, 12)
+                .padding(.bottom)
+            
         }
         .padding(18)
         .background(Color.Theme.Background.grey)
@@ -193,9 +186,9 @@ extension MoveTokenView {
                             Text(viewModel.token.name)
                                 .font(.inter(size: 14, weight: .medium))
                                 .foregroundStyle(Color.LL.Neutrals.text2)
-                            Image("icon_arrow_bottom_16")
-                                .resizable()
-                                .frame(width: 16, height: 16)
+//                            Image("icon_arrow_bottom_16")
+//                                .resizable()
+//                                .frame(width: 16, height: 16)
                         }
                         .padding(8)
                         .background(Color.Theme.Line.line)

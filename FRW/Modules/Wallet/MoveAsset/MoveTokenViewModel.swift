@@ -16,6 +16,8 @@ class MoveTokenViewModel: ObservableObject {
     @Published var coinRate: Double = 0
     @Published var errorType: WalletSendAmountView.ErrorType = .none
 
+    @Published var state: VPrimaryButtonState = .disabled
+    
     var token: TokenModel
     
     init(token: TokenModel) {
@@ -30,6 +32,7 @@ class MoveTokenViewModel: ObservableObject {
     
     func inputTextDidChangeAction(text: String) {
         refreshSummary()
+        updateState()
     }
     
     func refreshSummary() {
@@ -57,15 +60,20 @@ class MoveTokenViewModel: ObservableObject {
             errorType = .belowMinimum
             return
         }
+        
     }
     
     func maxAction() {
         let num = max(amountBalance - 0.001, 0)
         inputText = num.formatCurrencyString()
         refreshSummary()
+        updateState()
     }
     
-    var isReadyForSend: Bool {
+    private func updateState() {
+        state = isReadyForSend ? .enabled : .disabled
+    }
+     var isReadyForSend: Bool {
         return errorType == .none && inputText.isNumber && !inputText.isEmpty
     }
 }
@@ -147,7 +155,9 @@ extension MoveTokenViewModel {
         Task {
             do {
                 log.info("[EVM] withdraw Coa balance")
-                HUD.loading()
+                DispatchQueue.main.async {
+                    self.state = .loading
+                }
                 let amount = self.inputTokenNum.decimalValue
                 let txid = try await FlowNetwork.withdrawCoa(amount: amount)
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
@@ -155,9 +165,14 @@ extension MoveTokenViewModel {
                 HUD.dismissLoading()
                 Router.dismiss()
                 WalletManager.shared.reloadWalletInfo()
+                DispatchQueue.main.async {
+                    self.state = .enabled
+                }
             }
             catch {
-                HUD.dismissLoading()
+                DispatchQueue.main.async {
+                    self.state = .enabled
+                }
                 log.error("[EVM] move transation failed \(error)")
             }
         }
@@ -167,17 +182,24 @@ extension MoveTokenViewModel {
         Task {
             do {
                 log.info("[EVM] fund Coa balance")
-                HUD.loading()
+                DispatchQueue.main.async {
+                    self.state = .loading
+                }
                 let amount = self.inputTokenNum.decimalValue
                 let txid = try await FlowNetwork.fundCoa(amount: amount)
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
-                HUD.dismissLoading()
+                
                 Router.dismiss()
                 WalletManager.shared.reloadWalletInfo()
+                DispatchQueue.main.async {
+                    self.state = .enabled
+                }
             }
             catch {
-                HUD.dismissLoading()
+                DispatchQueue.main.async {
+                    self.state = .enabled
+                }
                 log.error("[EVM] move transation failed \(error)")
             }
         }
