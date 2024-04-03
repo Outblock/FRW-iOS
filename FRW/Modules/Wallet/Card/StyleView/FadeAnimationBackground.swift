@@ -69,7 +69,7 @@ struct FadeAnimationBackground: View {
 
 struct FadeAnimationBackground_Previews: PreviewProvider {
     static var previews: some View {
-        FadeAnimationBackground(image: Image("flow-line"))
+        FadeAnimationBackground(image: Image("evm-line"))
         
 //        NewEmptyWalletBackgroundView().colorScheme(.dark)
     }
