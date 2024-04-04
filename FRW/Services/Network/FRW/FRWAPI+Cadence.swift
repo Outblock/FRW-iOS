@@ -24,18 +24,14 @@ extension FRWAPI.Cadence: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
         switch self {
         case .list:
-#if LILICOPROD
-            return .init(string: "https://us-central1-lilico-dev.cloudfunctions.net")!
-#else
-            return .init(string: "https://test.lilico.app/")!
-#endif
+            return Config.get(.lilicoWeb)
         }
     }
     
     var path: String {
         switch self {
         case .list:
-            return "api/scripts"
+            return "scripts"
         }
     }
     
