@@ -1025,6 +1025,7 @@
 		4E8DD9FD282E52110016A931 /* JSONStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8DD9FB282E52110016A931 /* JSONStorage.swift */; };
 		4E90592F2B1792F10029FC66 /* SyncAddDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */; };
 		4E9059302B1792F10029FC66 /* SyncAddDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */; };
+		4E947C922BBEB2E300E87A85 /* web3swift in Frameworks */ = {isa = PBXBuildFile; productRef = 4E947C912BBEB2E300E87A85 /* web3swift */; };
 		4E9621D52B984EF3006859AD /* CadenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D42B984EF3006859AD /* CadenceManager.swift */; };
 		4E9621D62B984EF3006859AD /* CadenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D42B984EF3006859AD /* CadenceManager.swift */; };
 		4E9621D82B9850CF006859AD /* FRWAPI+Cadence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */; };
@@ -2673,6 +2674,7 @@
 				15C58C482868A4EE00BD4FC6 /* Resolver in Frameworks */,
 				15C58C492868A4EE00BD4FC6 /* KeychainAccess in Frameworks */,
 				15C58C4A2868A4EE00BD4FC6 /* Haneke in Frameworks */,
+				4E947C922BBEB2E300E87A85 /* web3swift in Frameworks */,
 				15CC8A6128C4E0FD001D2696 /* RiveRuntime in Frameworks */,
 				15C58C4B2868A4EE00BD4FC6 /* GoogleAPIClientForRESTCore in Frameworks */,
 				155E372E28D3AD4700834C30 /* Highlightr in Frameworks */,
@@ -5722,6 +5724,7 @@
 				4E1DD8D52B1644480055E510 /* WalletConnectAuth */,
 				4E1DD8C62B1622030055E510 /* Instabug */,
 				4E9D98DC2B9DEAE300A70879 /* TrustWeb3Provider */,
+				4E947C912BBEB2E300E87A85 /* web3swift */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 15C58C6D2868A4EE00BD4FC6 /* FRW.app */;
@@ -9245,6 +9248,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4E5D4FAA2AEF9A5A00DC419B /* XCRemoteSwiftPackageReference "DeviceGuru" */;
 			productName = DeviceGuru;
+		};
+		4E947C912BBEB2E300E87A85 /* web3swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E3682C52BB6A59100B24785 /* XCRemoteSwiftPackageReference "web3swift" */;
+			productName = web3swift;
 		};
 		4E9D98DC2B9DEAE300A70879 /* TrustWeb3Provider */ = {
 			isa = XCSwiftPackageProductDependency;
