@@ -259,7 +259,7 @@ extension UserManager {
         var mnemonicStr = ""
         if let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) {
             publicKey = hdWallet.getPublicKey()
-            guard var signToken = hdWallet.sign(token) else {
+            guard let signToken = hdWallet.sign(token) else {
                 throw LLError.restoreLoginFailed
             }
             signature = signToken
@@ -273,13 +273,15 @@ extension UserManager {
             }
             signature = try sec.sign(data: userToken).hexValue
             publicKey = newKey
+            userType = .secure
         }
 
         await IPManager.shared.fetch()
-        //TODO: hash & sign algo
-        let key = AccountKey(hashAlgo: WalletManager.shared.hashAlgo.index,
+        let hashAlgo = userType == .secure ? Flow.HashAlgorithm.SHA2_256.index : Flow.HashAlgorithm.SHA2_256.index
+        let signAlgo = userType == .secure ? Flow.SignatureAlgorithm.ECDSA_P256.index : Flow.SignatureAlgorithm.ECDSA_SECP256k1.index
+        let key = AccountKey(hashAlgo: hashAlgo,
                              publicKey: publicKey,
-                             signAlgo: WalletManager.shared.signatureAlgo.index)
+                             signAlgo: signAlgo)
         
         let request = LoginRequest(signature: signature, accountKey: key, deviceInfo: IPManager.shared.toParams())
         let response: Network.Response<LoginResponse> = try await Network.requestWithRawModel(FRWAPI.User.login(request))
