@@ -1,6 +1,6 @@
 //
 //  WalletView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 31/12/21.
 //
@@ -394,7 +394,7 @@ extension WalletView {
                     .padding(.horizontal, 6)
                     .background(Color.LL.Other.bg1)
                     .cornerRadius(12)
-                    .visibility(vm.transactionCount == 0 ? .gone : .visible)
+                    .visibility(.gone)
                 
                 Image("icon-account-arrow-right")
                     .renderingMode(.template)

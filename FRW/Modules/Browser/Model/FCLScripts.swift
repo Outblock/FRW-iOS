@@ -1,6 +1,6 @@
 //
 //  FCLScripts.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 5/9/2022.
 //
@@ -18,6 +18,7 @@ class FCLScripts {
     private static let AccountProofReplacement = "$ACCOUNT_PROOF_REPLACEMENT"
     private static let NonceReplacement = "$NONCE_REPLACEMENT"
     
+    
     private static let preAuthzResponse = """
         {
             "status": "APPROVED",
@@ -33,7 +34,7 @@ class FCLScripts {
                     "method": "EXT/RPC",
                     "identity": {
                         "address": "$ADDRESS_REPLACEMENT",
-                        "keyId": 0
+                        "keyId": $KEY_ID_REPLACEMENT
                     }
                 },
                 "payer": [
@@ -60,7 +61,7 @@ class FCLScripts {
                         "method": "EXT/RPC",
                         "identity": {
                             "address": "$ADDRESS_REPLACEMENT",
-                            "keyId": 0
+                            "keyId": $KEY_ID_REPLACEMENT
                         }
                     }
                 ]
@@ -109,7 +110,7 @@ class FCLScripts {
                 "method": "EXT/RPC",
                 "identity": {
                   "address": "$ADDRESS_REPLACEMENT",
-                  "keyId": 0
+                  "keyId": $KEY_ID_REPLACEMENT
                 }
               }
             ],
@@ -129,7 +130,7 @@ class FCLScripts {
             "f_type": "CompositeSignature",
             "f_vsn": "1.0.0",
             "addr": "$ADDRESS_REPLACEMENT",
-            "keyId": 0,
+            "keyId": $KEY_ID_REPLACEMENT,
             "signature": "$SIGNATURE_REPLACEMENT"
           },
           "type": "FCL:VIEW:RESPONSE"
@@ -165,7 +166,7 @@ class FCLScripts {
                   "f_type": "CompositeSignature",
                   "f_vsn": "1.0.0",
                   "addr": "$ADDRESS_REPLACEMENT",
-                  "keyId": 0,
+                  "keyId": $KEY_ID_REPLACEMENT,
                   "signature": "$SIGNATURE_REPLACEMENT"
                 }
               ]
@@ -219,38 +220,47 @@ extension FCLScripts {
         }
     }
     
-    private static func generateAuthnAccountProof(accountProofSign: String, address: String, nonce: String) -> String {
-        let dict = [AddressReplacement: address, SignatureReplacement: accountProofSign, NonceReplacement: nonce]
+    private static func generateAuthnAccountProof(accountProofSign: String, address: String, nonce: String, keyId: Int = 0) -> String {
+        let dict = [AddressReplacement: address, SignatureReplacement: accountProofSign, NonceReplacement: nonce, KeyIDReplacement: "\(keyId)"]
         return FCLScripts.authnResponseAccountProof.replace(by: dict)
     }
 }
 
 extension FCLScripts {
-    static func generatePreAuthzResponse(address: String) -> String {
-        let dict = [AddressReplacement: address, PayerAddressReplacement: RemoteConfigManager.shared.payer]
+    static func generatePreAuthzResponse(address: String, keyIndex: Int = 0) -> String {
+        let dict = [
+            AddressReplacement: address,
+            PayerAddressReplacement: RemoteConfigManager.shared.payer,
+            KeyIDReplacement: String(keyIndex)
+        ]
         return FCLScripts.preAuthzResponse.replace(by: dict)
     }
     
-    static func generateSignMessageResponse(message: String, address: String) -> String? {
+    static func generateSignMessageResponse(message: String, address: String, keyId: Int = 0) -> String? {
         let data = Flow.DomainTag.user.normalize + Data(hex: message)
         guard let signedData = WalletManager.shared.signSync(signableData: data) else {
             return nil
         }
         
         let hex = signedData.hexString
-        let dict = [AddressReplacement: address, SignatureReplacement: hex]
+        let dict = [AddressReplacement: address, SignatureReplacement: hex, KeyIDReplacement: "\(keyId)"]
         return FCLScripts.signMessageResponse.replace(by: dict)
     }
     
-    static func generateAuthnResponse(accountProofSign: String = "", nonce: String = "", address: String) async throws -> String {
+    static func generateAuthnResponse(accountProofSign: String = "", nonce: String = "", address: String, keyId: Int = 0) async throws -> String {
         let authz = try await generateAuthnPreAuthz()
         
         var confirmedAccountProofSign = accountProofSign
         if !accountProofSign.isEmpty {
-            confirmedAccountProofSign = generateAuthnAccountProof(accountProofSign: accountProofSign, address: address, nonce: nonce)
+            confirmedAccountProofSign = generateAuthnAccountProof(accountProofSign: accountProofSign, address: address, nonce: nonce,keyId: keyId)
         }
         
-        let dict = [AddressReplacement: address, PreAuthzReplacement: authz, UserSignatureReplacement: authnResponseUserSignature, AccountProofReplacement: confirmedAccountProofSign]
+        let dict = [AddressReplacement: address, 
+                   PreAuthzReplacement: authz,
+              UserSignatureReplacement: authnResponseUserSignature,
+               AccountProofReplacement: confirmedAccountProofSign,
+                      KeyIDReplacement: "\(keyId)"
+        ]
         return FCLScripts.authnResponse.replace(by: dict)
     }
     

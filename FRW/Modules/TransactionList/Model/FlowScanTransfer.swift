@@ -1,6 +1,6 @@
 //
 //  FlowScanTransfer.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 9/9/2022.
 //
@@ -56,7 +56,7 @@ struct FlowScanTransfer: Codable {
     }
     
     var statusText: String {
-        if status != "Sealed" {
+        if status?.lowercased() != "Sealed".lowercased() {
             return "transaction_pending".localized
         }
         
@@ -84,12 +84,8 @@ struct FlowScanTransfer: Codable {
     }
     
     var amountString: String {
-        let f = NumberFormatter()
-        f.maximumFractionDigits = 8
-        f.minimumFractionDigits = 0
-        f.roundingMode = .halfUp
-        if let amountString = self.amount, let doubleAmount = Double(amountString), let finalString = f.string(for: NSNumber(value: doubleAmount / 100000000.0).decimalValue) {
-            return finalString
+        if let amountString = self.amount, !amountString.isEmpty {
+            return amountString
         } else {
             return "-"
         }

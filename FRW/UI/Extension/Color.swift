@@ -1,6 +1,6 @@
 //
 //  Color.swift
-//  Flow Reference Wallet-lite
+//  Flow Wallet-lite
 //
 //  Created by Hao Fu on 27/11/21.
 //
@@ -73,7 +73,7 @@ extension Color {
         static let background = Color("Background")
         static let rebackground = Color("Rebacground")
 //        static let primary = Color("Primary")
-        static let orange = Color("Orange")
+        static let orange = Color("accent.green")
         static let blue = Color("Blue")
         static let yellow = Color("Yellow")
 
@@ -208,7 +208,44 @@ extension Color {
 extension Color {
     enum Theme {
         enum Accent {
-        static let warning = Color("accent.red")
+            static let green = Color("accent.green")
+            static let grey = Color("accent.grey")
+            static let red = Color("accent.red")
+            static let blue = Color("accent.blue")
+            static let yellow = Color("accent.yellow")
+            static let purple = Color("accent.purple")
+            static let orange = Color("accent.orange")
+            
         }
+        
+        enum Background {
+            ///BG
+            static let white = Color("bg.white")
+            ///BG2
+            static let grey = Color("bg.grey")
+            ///BG3
+            static let silver = Color("bg.silver")
+            /// White
+            static let pureWhite = Color("bg.0")
+        }
+        
+        enum Line {
+            static let line = Color("line.black")
+        }
+        
+        enum Text {
+            static let black = Color("text.black")
+            static let black1 = Color("text.black.1")
+            static let black3 = Color("text.black.3")
+            static let black8 = Color("text.black.8")
+            static let white9 = Color("text.white.9")
+        }
+    }
+}
+
+extension Color {
+    /// opacity is 0.16
+    func fixedOpacity() -> Color {
+        return self.opacity(0.16)
     }
 }

@@ -304,7 +304,7 @@ public struct VTextField: View {
             RoundedRectangle(cornerRadius: 12)
                 .aspectRatio(1, contentMode: .fit)
                 .height(model.layout.height - 20)
-                .foregroundColor(Color.LL.orange)
+                .foregroundColor(Color.Theme.Accent.green)
                 .overlay {
                     Text("@")
                         .font(.title)

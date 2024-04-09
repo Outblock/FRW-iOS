@@ -1,6 +1,6 @@
 //
 //  WalletResponses.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 23/6/2022.
 //
@@ -29,6 +29,13 @@ extension CryptoSummaryResponse {
     struct Change: Codable {
         let absolute: Double?
         let percentage: Double
+    }
+    
+    struct AddPrice: Codable {
+        let contractAddress: String
+        let contractName: String
+        var rateToFLOW: Double = 0
+        var rateToUSD: Double = 0
     }
 }
 

@@ -1,6 +1,6 @@
 //
 //  DeveloperModeView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 7/6/2022.
 //
@@ -50,7 +50,7 @@ struct DeveloperModeView: RouteableView {
                         Section {
                             let isMainnet = lud.flowNetwork == .mainnet
                             let isTestnet = lud.flowNetwork == .testnet
-                            let isSandboxnet = lud.flowNetwork == .sandboxnet
+                            let isCrescendo = lud.flowNetwork == .crescendo
                             
                             Cell(sysImageTuple: (isMainnet ? .checkmarkSelected : .checkmarkUnselected, isMainnet ? .LL.Primary.salmonPrimary : .LL.Neutrals.neutrals1), title: "Mainnet", desc: isMainnet ? "Selected" : "")
                                 .onTapGestureOnBackground {
@@ -63,17 +63,17 @@ struct DeveloperModeView: RouteableView {
                                     walletManager.changeNetwork(.testnet)
                                 }
                             
-                            Divider()
-                            Cell(sysImageTuple: (isSandboxnet ? .checkmarkSelected : .checkmarkUnselected, isSandboxnet ? LocalUserDefaults.FlowNetworkType.sandboxnet.color : .LL.Neutrals.neutrals1), title: "Sandbox", desc: isSandboxnet ? "Selected" : "", btnTitle: walletManager.isSandboxnetEnabled ? nil : "Enable", btnAction: {
-                                if !walletManager.isSandboxnetEnabled {
-                                    vm.enableSandboxnetAction()
-                                }
-                            }, titleAlpha: walletManager.isSandboxnetEnabled ? 1 : 0.5)
-                                .onTapGestureOnBackground {
-                                    if walletManager.isSandboxnetEnabled {
-                                        walletManager.changeNetwork(.sandboxnet)
-                                    }
-                                }
+//                            Divider()
+//                            Cell(sysImageTuple: (isCrescendo ? .checkmarkSelected : .checkmarkUnselected, isCrescendo ? LocalUserDefaults.FlowNetworkType.crescendo.color : .LL.Neutrals.neutrals1), title: "Crescendo", desc: isCrescendo ? "Selected" : "", btnTitle: walletManager.isCrescendoEnabled ? nil : "Enable", btnAction: {
+//                                if !walletManager.isCrescendoEnabled {
+//                                    vm.enableCrescendoAction()
+//                                }
+//                            }, titleAlpha: walletManager.isCrescendoEnabled ? 1 : 0.5)
+//                                .onTapGestureOnBackground {
+//                                    if walletManager.isCrescendoEnabled {
+//                                        walletManager.changeNetwork(.crescendo)
+//                                    }
+//                                }
                         }
                         .background(.LL.bgForIcon)
                     }

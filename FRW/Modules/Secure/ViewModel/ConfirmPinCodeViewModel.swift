@@ -1,6 +1,6 @@
 //
 //  ConfirmPinCodeViewModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 10/1/22.
 //

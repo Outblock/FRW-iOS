@@ -1,6 +1,6 @@
 //
 //  LocalUserDefaultsManager.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 7/6/2022.
 //
@@ -38,12 +38,13 @@ extension LocalUserDefaults {
         case loginUIDList
         case selectedChildAccount
         case switchProfileTipsFlag
+        case freeGas
     }
 
     enum FlowNetworkType: String, CaseIterable {
         case testnet
         case mainnet
-        case sandboxnet
+        case crescendo
         
         var color: Color {
             switch self {
@@ -51,7 +52,7 @@ extension LocalUserDefaults {
                 return Color.LL.Primary.salmonPrimary
             case .testnet:
                 return Color(hex: "#FF8A00")
-            case .sandboxnet:
+            case .crescendo:
                 return Color(hex: "#CCAF21")
             }
         }
@@ -66,8 +67,8 @@ extension LocalUserDefaults {
                 return Flow.ChainID.testnet
             case .mainnet:
                 return Flow.ChainID.mainnet
-            case .sandboxnet:
-                return Flow.ChainID.sandboxnet
+            case .crescendo:
+                return Flow.ChainID.crescendo
             }
         }
         
@@ -77,8 +78,8 @@ extension LocalUserDefaults {
                 self = .testnet
             case .mainnet:
                 self = .mainnet
-            case .sandboxnet:
-                self = .sandboxnet
+            case .crescendo:
+                self = .crescendo
             default:
                 return nil
             }

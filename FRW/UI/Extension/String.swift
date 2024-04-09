@@ -1,6 +1,6 @@
 //
 //  String.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 8/1/22.
 //
@@ -300,8 +300,8 @@ extension String {
         var string = "https://flowscan.org/account/\(self)"
         if LocalUserDefaults.shared.flowNetwork == .testnet {
             string = "https://testnet.flowscan.org/account/\(self)"
-        } else if LocalUserDefaults.shared.flowNetwork == .sandboxnet {
-            string = "https://sandboxnet.flowscan.org/account/\(self)"
+        } else if LocalUserDefaults.shared.flowNetwork == .crescendo {
+            string = "https://crescendo.flowscan.org/account/\(self)"
         }
         
         return URL(string: string)
@@ -311,8 +311,8 @@ extension String {
         var string = "https://flowdiver.io/tx/\(self)"
         if LocalUserDefaults.shared.flowNetwork == .testnet {
             string = "https://testnet.flowdiver.io/tx/\(self)"
-        } else if LocalUserDefaults.shared.flowNetwork == .sandboxnet {
-            string = "https://sandboxnet.flowscan.org/transaction/\(self)"
+        } else if LocalUserDefaults.shared.flowNetwork == .crescendo {
+            string = "https://crescendo.flowscan.org/transaction/\(self)"
         }
         
         return URL(string: string)

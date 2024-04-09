@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  Flow Reference Wallet-lite
+//  Flow Wallet-lite
 //
 //  Created by Hao Fu on 12/12/21.
 //
@@ -42,6 +42,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         let console = ConsoleDestination()
         console.format = "$DHH:mm:ss.SSS$d $C$L$c $N.$F:$l - $M - $X"
         log.addDestination(console)
+        
 #endif
         
         FirebaseApp.configure()
@@ -52,6 +53,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         if !AppDelegate.isUnitTest {
             FirebaseConfig.start()
         }
+        
+        ServiceConfig.configure()
         
         appConfig()
         commonConfig()
@@ -150,6 +153,9 @@ extension AppDelegate {
         _ = ChildAccountManager.shared
         WalletManager.shared.bindChildAccountManager()
         NFTCatalogCache.cache.fetchIfNeed()
+        if UserManager.shared.isLoggedIn {
+            DeviceManager.shared.updateDevice()
+        }
     }
     
     private func commonConfig() {

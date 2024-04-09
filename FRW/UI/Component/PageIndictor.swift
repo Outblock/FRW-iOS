@@ -1,6 +1,6 @@
 //
 //  PageIndictor.swift
-//  Flow Reference Wallet-lite
+//  Flow Wallet-lite
 //
 //  Created by Hao Fu on 29/11/21.
 //

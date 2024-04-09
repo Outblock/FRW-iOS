@@ -1,15 +1,15 @@
 //
 //  SettingView.swift
-//  Flow Reference Wallet-lite
+//  Flow Wallet-lite
 //
 //  Created by Hao Fu on 30/11/21.
 //
 
+import Instabug
 import Kingfisher
 import SwiftUI
 
 extension ProfileView: AppTabBarPageProtocol {
-    
     static func tabTag() -> AppTabType {
         return .profile
     }
@@ -31,11 +31,11 @@ struct ProfileView: RouteableView {
     @StateObject private var vm = ProfileViewModel()
     @StateObject private var lud = LocalUserDefaults.shared
     @StateObject private var userManager = UserManager.shared
-    
+
     var title: String {
         return ""
     }
-    
+
     var isNavigationBarHidden: Bool {
         return true
     }
@@ -55,17 +55,17 @@ struct ProfileView: RouteableView {
                     }
 
                     GeneralSectionView()
+                    FeedbackView()
                     AboutSectionView()
 
                     if vm.state.isLogin {
                         MoreSectionView()
                     }
-                    
+
                     Text("Version \(vm.buildVersion ?? "") (\(vm.version ?? ""))")
                         .font(.inter(size: 13, weight: .regular))
                         .foregroundColor(.LL.note.opacity(0.5))
                         .frame(maxWidth: .infinity, alignment: .center)
-                    
                 }
                 .padding(.horizontal, 18)
                 .padding(.bottom, 18)
@@ -82,7 +82,7 @@ struct ProfileView: RouteableView {
     }
 }
 
-//struct ProfileView_Previews: PreviewProvider {
+// struct ProfileView_Previews: PreviewProvider {
 //    static var previews: some View {
 ////        ProfileView.NoLoginTipsView()
 ////        ProfileView.GeneralSectionView()
@@ -91,7 +91,7 @@ struct ProfileView: RouteableView {
 ////        ProfileView.InfoView()
 ////        ProfileView.InfoActionView()
 //    }
-//}
+// }
 
 // MARK: - Section login tips
 
@@ -135,7 +135,7 @@ extension ProfileView {
 extension ProfileView {
     struct InfoContainerView: View {
         @EnvironmentObject private var vm: ProfileViewModel
-        
+
         var jailbreakTipsView: some View {
             Button {
                 Router.route(to: RouteMap.Wallet.jailbreakAlert)
@@ -144,13 +144,13 @@ extension ProfileView {
                     Image("icon-warning-mark")
                         .renderingMode(.template)
                         .foregroundColor(Color.LL.Warning.warning2)
-                    
+
                     Text("jailbreak_alert_msg".localized)
                         .font(.inter(size: 16, weight: .medium))
                         .foregroundColor(Color.LL.Warning.warning2)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .lineLimit(1)
-                    
+
                     Image("icon-account-arrow-right")
                         .renderingMode(.template)
                         .foregroundColor(Color.LL.Warning.warning2)
@@ -160,7 +160,7 @@ extension ProfileView {
                 .cornerRadius(16)
             }
         }
-        
+
         var body: some View {
             Section {
                 VStack(spacing: 24) {
@@ -170,10 +170,10 @@ extension ProfileView {
                         ProfileView.InfoView()
                             .contentShape(Rectangle())
                     }
-                    
+
                     jailbreakTipsView
                         .visibility(UIDevice.isJailbreak ? .visible : .gone)
-                    
+
                     ProfileView.InfoActionView()
                 }
             }
@@ -187,10 +187,10 @@ extension ProfileView {
         var body: some View {
             HStack(spacing: 16) {
                 KFImage.url(URL(string: userManager.userInfo?.avatar.convertedAvatarString() ?? ""))
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 82, height: 82)
@@ -201,11 +201,11 @@ extension ProfileView {
                         Text(userManager.userInfo?.nickname ?? "")
                             .foregroundColor(.LL.Neutrals.text)
                             .font(.inter(weight: .semibold))
-                        
+
                         Image("icon-switch-profile")
                             .renderingMode(.template)
                     }
-                    
+
 //                    Text("@\(userManager.userInfo?.username ?? "")").foregroundColor(.LL.Neutrals.text).font(.inter(size: 14, weight: .medium))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -224,12 +224,12 @@ extension ProfileView {
     struct InfoActionView: View {
         var body: some View {
             HStack(alignment: .center, spacing: 0) {
-                
                 ProfileView.InfoActionButton(iconName: "icon-address", title: "addresses".localized) {
                     Router.route(to: RouteMap.Profile.addressBook)
                 }
 
                 ProfileView.InfoActionButton(iconName: "icon-wallet", title: "wallets".localized) {
+                    UserManager.shared.verityUserType() 
                     Router.route(to: RouteMap.Profile.walletSetting(true))
                 }
 
@@ -268,7 +268,7 @@ extension ProfileView {
 extension ProfileView {
     struct ActionSectionView: View {
         @EnvironmentObject private var vm: ProfileViewModel
-        
+        @State private var showAlert = false
         enum Row {
             case backup(ProfileViewModel)
             case security
@@ -284,24 +284,33 @@ extension ProfileView {
                         ProfileView.SettingItemCell(iconName: Row.linkedAccount.iconName, title: Row.linkedAccount.title, style: Row.linkedAccount.style, desc: Row.linkedAccount.desc)
                     }
                     Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
-                    
+
                     Button {
-                        Router.route(to: RouteMap.Profile.backupChange)
+                        if !isDevModel && LocalUserDefaults.shared.flowNetwork != .mainnet {
+                            showAlert = true
+                        } else {
+                            Router.route(to: RouteMap.Backup.backupList)
+                        }
+
                     } label: {
                         ProfileView.SettingItemCell(iconName: Row.backup(vm).iconName, title: Row.backup(vm).title, style: Row.backup(vm).style, desc: Row.backup(vm).desc, imageName: Row.backup(vm).imageName, sysImageColor: Row.backup(vm).sysImageColor)
                     }
+                    .alert("wrong_network_title".localized, isPresented: $showAlert) {
+                        Button("switch_to_mainnet".localized) {
+                            WalletManager.shared.changeNetwork(.mainnet)
+                        }
+                        Button("action_cancel".localized, role: .cancel) {}
+                    } message: {
+                        Text("wrong_network_des".localized)
+                    }
 
                     Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
-                    
+
                     Button {
                         vm.securityAction()
                     } label: {
                         ProfileView.SettingItemCell(iconName: Row.security.iconName, title: Row.security.title, style: Row.security.style, desc: Row.security.desc)
                     }
-                    
-                    
-
-                    
                 }
             }
             .background(RoundedRectangle(cornerRadius: 16)
@@ -312,11 +321,11 @@ extension ProfileView {
 
 extension ProfileView {
     struct WalletConnectView: View {
-        
         enum Row {
             case walletConnect
+            case devices
         }
-        
+
         var body: some View {
             VStack {
                 Section {
@@ -330,44 +339,70 @@ extension ProfileView {
                             desc: Row.walletConnect.desc,
                             imageName: Row.walletConnect.imageName,
                             sysImageColor: Row.walletConnect.sysImageColor)
-                        .contentShape(Rectangle())
                     }
                     .buttonStyle(ScaleButtonStyle())
+
+                    Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
+                    // TODO: diveces
+                    Button {
+                        Router.route(to: RouteMap.Profile.devices)
+                    } label: {
+                        ProfileView.SettingItemCell(
+                            iconName: Row.devices.iconName,
+                            title: Row.devices.title,
+                            style: Row.devices.style,
+                            desc: Row.devices.desc,
+                            imageName: Row.devices.imageName,
+                            sysImageColor: Row.devices.sysImageColor)
+                    }
                 }
-                .background(RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.LL.bgForIcon))
             }
+            .background(RoundedRectangle(cornerRadius: 16)
+                .fill(Color.LL.bgForIcon))
         }
     }
 }
 
 extension ProfileView.WalletConnectView.Row {
     var iconName: String {
-        "walletconnect"
+        switch self {
+        case .walletConnect:
+            return "walletconnect"
+        case .devices:
+            return "devices"
+        }
     }
-    
+
     var title: String {
-        "walletconnect".localized
+        switch self {
+        case .walletConnect:
+            return "walletconnect".localized
+        case .devices:
+            return "devices".localized
+        }
     }
-    
+
     var style: ProfileView.SettingItemCell.Style {
-        return .arrow
+        switch self {
+        case .walletConnect:
+            return .arrow
+        case .devices:
+            return .arrow
+        }
     }
-    
+
     var desc: String {
         ""
     }
-    
+
     var sysImageColor: Color {
         .clear
     }
-    
+
     var imageName: String {
         ""
     }
 }
-    
-    
 
 extension ProfileView.ActionSectionView.Row {
     var iconName: String {
@@ -395,14 +430,7 @@ extension ProfileView.ActionSectionView.Row {
     var style: ProfileView.SettingItemCell.Style {
         switch self {
         case .backup(let vm):
-            switch vm.state.backupFetchingState {
-            case .manually, .none:
-                return .desc
-            case .fetching:
-                return .progress
-            case .synced, .failed:
-                return .sysImage
-            }
+            return .arrow
         case .security:
             return .arrow
         case .linkedAccount:
@@ -415,7 +443,7 @@ extension ProfileView.ActionSectionView.Row {
         case .backup(let vm):
             switch vm.state.backupFetchingState {
             case .manually:
-                return "manually".localized
+                return ""
             case .none:
                 return ""
             default:
@@ -426,38 +454,22 @@ extension ProfileView.ActionSectionView.Row {
         case .linkedAccount:
             return ""
         }
-        
     }
-    
+
     var imageName: String {
         switch self {
         case .backup(let vm):
-            switch vm.state.backupFetchingState {
-            case .synced:
-                return .checkmarkSelected
-            case .failed:
-                return .warning
-            default:
-                return ""
-            }
-            
+            return ""
+
         default:
             return ""
         }
     }
-    
+
     var sysImageColor: Color {
         switch self {
         case .backup(let vm):
-            switch vm.state.backupFetchingState {
-            case .synced:
-                return Color.LL.Success.success2
-            case .failed:
-                return Color.LL.Warning.warning2
-            default:
-                return .clear
-            }
-            
+            return .clear
         default:
             return .clear
         }
@@ -481,14 +493,14 @@ extension ProfileView {
                 Section {
                     // Hide notification
                     ForEach([Row.notification, Row.currency, Row.theme], id: \.self) { row in
-                        
+
                         if row == Row.notification {
                             HStack {
                                 Image("icon-notification")
                                 Text("notifications".localized).font(.inter()).frame(maxWidth: .infinity, alignment: .leading)
-                                
+
                                 Spacer()
-                                
+
                                 Toggle(isOn: $vm.state.isPushEnabled) {}
                                     .tint(.LL.Primary.salmonPrimary)
                                     .onTapGesture {
@@ -511,12 +523,10 @@ extension ProfileView {
                                 ProfileView.SettingItemCell(iconName: row.iconName, title: row.title, style: row.style, desc: row.desc(with: vm), toggle: row.toggle)
                             }
                         }
-                        
-                        
+
                         if row != .theme {
                             Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
                         }
-                        
                     }
                 }
             }
@@ -583,6 +593,51 @@ extension ProfileView.GeneralSectionView.Row {
     }
 }
 
+extension ProfileView {
+    struct FeedbackView: View {
+        enum Row {
+            case instabug
+        }
+
+        var body: some View {
+            VStack {
+                Section {
+                    Button {
+                        Instabug.show()
+                    } label: {
+                        ProfileView.SettingItemCell(iconName: Row.instabug.iconName, title: Row.instabug.title, style: Row.instabug.style)
+                    }
+                }
+            }
+            .background(RoundedRectangle(cornerRadius: 16)
+                .fill(Color.LL.bgForIcon))
+        }
+    }
+}
+
+extension ProfileView.FeedbackView.Row {
+    var iconName: String {
+        switch self {
+        case .instabug:
+            return "icon-instabug"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .instabug:
+            return "bug_report".localized
+        }
+    }
+
+    var style: ProfileView.SettingItemCell.Style {
+        switch self {
+        case .instabug:
+            return .none
+        }
+    }
+}
+
 // MARK: - About setting
 
 extension ProfileView {
@@ -599,21 +654,21 @@ extension ProfileView {
             VStack {
                 Section {
                     let dm = Row.developerMode(lud)
-                    
+
                     Button {
                         Router.route(to: RouteMap.Profile.developer)
                     } label: {
                         ProfileView.SettingItemCell(iconName: dm.iconName, title: dm.title, style: dm.style, desc: dm.desc, toggle: dm.toggle)
                     }
-                    
+
                     Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
-                    
+
                     Button {
                         UIApplication.shared.open(URL(string: "https://chrome.google.com/webstore/detail/lilico/hpclkefagolihohboafpheddmmgdffjm")!)
                     } label: {
                         ProfileView.SettingItemCell(iconName: Row.plugin.iconName, title: Row.plugin.title, style: Row.plugin.style, desc: Row.plugin.desc, toggle: Row.plugin.toggle, imageName: Row.plugin.imageName, sysImageColor: Row.plugin.sysImageColor)
                     }
-                    
+
                     Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
 
                     Button {
@@ -621,7 +676,6 @@ extension ProfileView {
                     } label: {
                         ProfileView.SettingItemCell(iconName: Row.about.iconName, title: Row.about.title, style: Row.about.style, desc: Row.about.desc, toggle: Row.about.toggle)
                     }
-                        
                 }
             }
             .background(RoundedRectangle(cornerRadius: 16)
@@ -670,7 +724,7 @@ extension ProfileView.AboutSectionView.Row {
             return "about".localized
         case .plugin:
             return ""
-        case let .developerMode(lud):
+        case .developerMode(let lud):
             return lud.flowNetwork.rawValue.capitalized
         }
     }
@@ -685,7 +739,7 @@ extension ProfileView.AboutSectionView.Row {
             return false
         }
     }
-    
+
     var imageName: String {
         switch self {
         case .about:
@@ -696,7 +750,7 @@ extension ProfileView.AboutSectionView.Row {
             return ""
         }
     }
-    
+
     var sysImageColor: Color {
         switch self {
         case .about:
@@ -707,8 +761,6 @@ extension ProfileView.AboutSectionView.Row {
             return Color.clear
         }
     }
-    
-    
 }
 
 // MARK: - Section more setting
@@ -816,12 +868,12 @@ extension ProfileView {
                 if let imageName = imageName, style == .image {
                     Image(imageName)
                 }
-                
+
                 if let imageName = imageName, let sysImageColor = sysImageColor, style == .sysImage {
                     Image(systemName: imageName)
                         .foregroundColor(sysImageColor)
                 }
-                
+
                 if style == .progress {
                     ProgressView()
                         .progressViewStyle(.circular)
@@ -833,21 +885,21 @@ extension ProfileView {
 //            .backgroundFill(Color.LL.bgForIcon)
         }
     }
-    
+
     var switchProfileTips: some View {
         VStack(spacing: 0) {
             HStack(spacing: 5) {
                 Image("light-tips-icon")
                     .renderingMode(.template)
                     .foregroundStyle(Color.Flow.blue)
-                
+
                 Text("switch_profile_tips".localized)
                     .font(.inter(size: 12))
-                    .foregroundColor( .Flow.blue )
+                    .foregroundColor(.Flow.blue)
                     .multilineTextAlignment(.leading)
-                
+
                 Spacer()
-                
+
                 Button {
                     LocalUserDefaults.shared.switchProfileTipsFlag = true
                 } label: {
@@ -865,10 +917,10 @@ extension ProfileView {
                 RoundedRectangle(cornerRadius: 8)
                     .foregroundColor(Color.Flow.blue.opacity(0.16))
             }
-            
+
             Image("icon-tips-bottom-arrow")
                 .renderingMode(.template)
-                .foregroundColor( .Flow.blue.opacity(0.16))
+                .foregroundColor(.Flow.blue.opacity(0.16))
         }
     }
 }

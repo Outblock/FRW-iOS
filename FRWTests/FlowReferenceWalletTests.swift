@@ -1,6 +1,6 @@
 //
-//  Flow Reference WalletTests.swift
-//  Flow Reference WalletTests
+//  Flow WalletTests.swift
+//  Flow WalletTests
 //
 //  Created by Hao Fu on 26/6/2022.
 //

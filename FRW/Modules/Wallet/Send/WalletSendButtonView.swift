@@ -1,6 +1,6 @@
 //
 //  WalletSendButtonView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 1/9/2022.
 //
@@ -23,7 +23,7 @@ struct WalletSendButtonView: View {
     
     
     var buttonText: String = "hold_to_send".localized
-    
+    var activeColor: Color = Color.LL.Button.color
     var action: () -> ()
     
     var body: some View {
@@ -73,7 +73,7 @@ struct WalletSendButtonView: View {
         }
         .frame(height: 54)
         .frame(maxWidth: .infinity)
-        .background( allowEnable ? Color.LL.Button.color : Color.LL.Neutrals.neutrals6)
+        .background( allowEnable ? activeColor : Color.LL.Neutrals.neutrals6)
         .cornerRadius(12)
         .scaleEffect(tap ? 0.95 : 1)
         .gesture(

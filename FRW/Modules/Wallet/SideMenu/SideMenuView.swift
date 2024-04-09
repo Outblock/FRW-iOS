@@ -1,6 +1,6 @@
 //
 //  SideMenuView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 4/1/2023.
 //
@@ -232,15 +232,15 @@ struct SideMenuView: View {
                 }
             }
             
-            if let sandboxAddress = wm.getFlowNetworkTypeAddress(network: .sandboxnet), isDeveloperMode {
+            if let sandboxAddress = wm.getFlowNetworkTypeAddress(network: .crescendo), isDeveloperMode {
                 Button {
-                    WalletManager.shared.changeNetwork(.sandboxnet)
+                    WalletManager.shared.changeNetwork(.crescendo)
                     NotificationCenter.default.post(name: .toggleSideMenu)
                 } label: {
-                    addressCell(type: .sandboxnet, address: sandboxAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .sandboxnet)
+                    addressCell(type: .crescendo, address: sandboxAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .crescendo)
                 }
                 
-//                if LocalUserDefaults.shared.flowNetwork == .sandboxnet {
+//                if LocalUserDefaults.shared.flowNetwork == .crescendo {
 //                    LazyVStack(spacing: 0) {
 //                        ForEach(cm.childAccounts, id: \.address) { childAccount in
 //                            childAccountCell(childAccount, isSelected: false)

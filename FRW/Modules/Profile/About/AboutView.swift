@@ -1,6 +1,6 @@
 //
 //  AboutView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 20/9/2022.
 //
@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AboutView: RouteableView {
-    
     let version = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
     
     let buildVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
@@ -18,15 +17,15 @@ struct AboutView: RouteableView {
     }
     
     var body: some View {
-        VStack(alignment: .center) {
-            
+        VStack(alignment: .center, spacing: 8) {
             Image("logo")
                 .resizable()
                 .frame(width: 100, height: 100)
                 .padding(.top, 20)
+                .padding(.bottom, 8)
             
-            Text("lilico".localized)
-                .font(.inter(size: 26, weight: .semibold))
+            Text("app_name_full".localized)
+                .font(.inter(size: 24, weight: .semibold))
             
             HStack {
                 Text("version")
@@ -38,21 +37,23 @@ struct AboutView: RouteableView {
             .font(.inter(size: 13, weight: .regular))
             .foregroundColor(.LL.note.opacity(0.5))
             .padding(.bottom, 50)
-            
+
             
             Section {
                 VStack(spacing: 0) {
-                    
-                    SocialButton(imageName: "disocrd",
-                                 text: "Disocrd") {
+                    SocialButton(imageName: "discord",
+                                 text: "Discord")
+                    {
                         UIApplication.shared.open(URL(string: "https://discord.com/invite/J6fFnh2xx6")!)
                     }
                     
                     SocialButton(imageName: "twitter",
-                                 text: "Twitter") {
+                                 text: "X",
+                                 showDivider: false)
+                    {
                         UIApplication.shared.open(URL(string: "https://twitter.com/flow_blockchain")!)
                     }
-//                    
+//
 //                    SocialButton(imageName: "email",
 //                                 text: "Email",
 //                                 showDivider: false) {
@@ -66,17 +67,18 @@ struct AboutView: RouteableView {
                     .font(.inter(size: 14, weight: .regular))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundColor(.LL.note)
+                    .padding(.bottom, 8)
             }
             
 //            Section {
 //                VStack(spacing: 0) {
-//                    
+//
 //                    SocialButton(imageName: "logo",
 //                                 text: "lilico".localized + " Extension",
 //                                 showDivider: false) {
 //                        UIApplication.shared.open(URL(string: "https://chrome.google.com/webstore/detail/lilico/hpclkefagolihohboafpheddmmgdffjm")!)
 //                    }
-//                    
+//
 //                }
 //                .cornerRadius(16)
 //            } header: {
@@ -88,7 +90,6 @@ struct AboutView: RouteableView {
 //                    .padding(.top, 20)
 //            }
             
-
             Spacer()
             
             Image("Flow")
@@ -97,11 +98,10 @@ struct AboutView: RouteableView {
                 .onTapGesture {
                     UIApplication.shared.open(URL(string: "https://flow.com")!)
                 }
-            
         }
         .padding(.horizontal, 24)
         .frame(maxWidth: .infinity)
-        .frame(maxHeight:.infinity, alignment: .top)
+        .frame(maxHeight: .infinity, alignment: .top)
         .backgroundFill(.LL.background)
         .applyRouteable(self)
     }
@@ -126,7 +126,6 @@ struct AboutView: RouteableView {
                             .font(.LL.body)
                             .foregroundColor(.LL.text)
                             
-                        
                         Spacer()
                         
                         Image(systemName: "arrow.up.right")
@@ -134,7 +133,6 @@ struct AboutView: RouteableView {
                             .foregroundColor(.LL.note)
                     }
                     .padding(18)
-                    
                 }
                 
                 if showDivider {

@@ -1,6 +1,6 @@
 //
-//  Flow Reference WalletAPI+Account.swift
-//  Flow Reference Wallet
+//  Flow WalletAPI+Account.swift
+//  Flow Wallet
 //
 //  Created by Selina on 9/9/2022.
 //
@@ -28,7 +28,7 @@ extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
     var path: String {
         switch self {
         case .flowScanQuery:
-            return "/v1/account/query"
+            return "/v2/account/query"
         case .transfers:
             return "/v1/account/transfers"
         case .tokenTransfers:
@@ -39,7 +39,7 @@ extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
     var method: Moya.Method {
         switch self {
         case .flowScanQuery:
-            return .post
+            return .get
         case .transfers, .tokenTransfers:
             return .get
         }
@@ -48,7 +48,7 @@ extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
     var task: Task {
         switch self {
         case .flowScanQuery(let query):
-            return .requestJSONEncodable(["query": query])
+            return .requestParameters(parameters: ["address": query], encoding: URLEncoding.queryString)
         case .transfers(let request):
             return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding.queryString)
         case .tokenTransfers(let request):
@@ -67,16 +67,8 @@ extension FRWAPI.Account {
             return 0
         }
         
-        let script = """
-            query TransfersNumber {
-                account(id: "\(address)") {
-                    transactionCount
-                }
-            }
-        """
-        
-        let response: FlowScanAccountTransferCountResponse = try await Network.request(FRWAPI.Account.flowScanQuery(script))
-        return response.data?.account?.transactionCount ?? 0
+        let response: FlowTransferCountResponse = try await Network.request(FRWAPI.Account.flowScanQuery(address))
+        return response.data?.participationsAggregate?.aggregate?.count ?? 0
     }
     
     static func fetchAccountTransfers() async throws -> ([FlowScanTransaction], Int) {

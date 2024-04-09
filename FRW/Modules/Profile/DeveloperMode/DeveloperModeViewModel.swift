@@ -1,6 +1,6 @@
 //
 //  DeveloperModeViewModel.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 15/9/2022.
 //
@@ -69,7 +69,7 @@ extension DeveloperModeViewModel {
         LocalUserDefaults.shared.customWatchAddress = address
     }
     
-    func enableSandboxnetAction() {
+    func enableCrescendoAction() {
         HUD.loading()
         
         let failedBlock = {
@@ -83,16 +83,18 @@ extension DeveloperModeViewModel {
         let successBlock = {
             DispatchQueue.main.async {
                 HUD.dismissLoading()
-                WalletManager.shared.changeNetwork(.sandboxnet)
+                WalletManager.shared.changeNetwork(.crescendo)
             }
         }
         
         Task {
             do {
-                let id: String = try await Network.request(FRWAPI.User.sandboxnet)
+                
+                let request = NetworkRequest(accountKey: AccountKey(hashAlgo: WalletManager.shared.hashAlgo.index, publicKey: WalletManager.shared.getCurrentPublicKey() ?? "", signAlgo: WalletManager.shared.signatureAlgo.index, weight: 1000), network: "crescendo")
+                let id: String = try await Network.request(FRWAPI.User.crescendo(request))
                 let txId = Flow.ID(hex: id)
                 
-                flow.configure(chainID: .sandboxnet)
+                flow.configure(chainID: .crescendo)
                 
                 let result = try await txId.onceSealed()
                 if result.isFailed {
@@ -102,7 +104,7 @@ extension DeveloperModeViewModel {
                 
                 successBlock()
             } catch {
-                debugPrint("DeveloperModeViewModel -> enableSandboxnetAction failed: \(error)")
+                debugPrint("DeveloperModeViewModel -> enableCrescendoAction failed: \(error)")
                 failedBlock()
             }
         }

@@ -1,6 +1,6 @@
 //
 //  ChildAccountDetailView.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 21/6/2023.
 //

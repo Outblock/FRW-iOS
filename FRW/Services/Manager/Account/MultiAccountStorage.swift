@@ -1,6 +1,6 @@
 //
 //  MultiAccountStorage.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Selina on 8/6/2023.
 //

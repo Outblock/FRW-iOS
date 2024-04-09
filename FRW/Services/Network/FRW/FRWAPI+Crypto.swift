@@ -1,6 +1,6 @@
 //
-//  Flow Reference WalletAPI+Crypto.swift
-//  Flow Reference Wallet
+//  Flow WalletAPI+Crypto.swift
+//  Flow Wallet
 //
 //  Created by Selina on 23/6/2022.
 //
@@ -12,6 +12,7 @@ extension FRWAPI {
     enum Crypto {
         case summary(CryptoSummaryRequest)
         case history(CryptoHistoryRequest)
+        case prices
     }
 }
 
@@ -21,7 +22,13 @@ extension FRWAPI.Crypto: TargetType, AccessTokenAuthorizable {
     }
 
     var baseURL: URL {
-        return Config.get(.lilico)
+        switch self {
+        case .prices:
+            return Config.get(.lilicoWeb)
+        default:
+            return Config.get(.lilico)
+        }
+        
     }
 
     var path: String {
@@ -30,12 +37,14 @@ extension FRWAPI.Crypto: TargetType, AccessTokenAuthorizable {
             return "/v1/crypto/summary"
         case .history:
             return "/v1/crypto/history"
+        case .prices:
+            return "prices"
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .summary, .history:
+        case .summary, .history,.prices:
             return .get
         }
     }
@@ -46,6 +55,8 @@ extension FRWAPI.Crypto: TargetType, AccessTokenAuthorizable {
             return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding())
         case let .history(request):
             return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding())
+        case .prices:
+            return .requestPlain
         }
     }
 

@@ -1,6 +1,6 @@
 //
 //  TermsAndPolicy.swift
-//  Flow Reference Wallet
+//  Flow Wallet
 //
 //  Created by Hao Fu on 24/12/21.
 //
