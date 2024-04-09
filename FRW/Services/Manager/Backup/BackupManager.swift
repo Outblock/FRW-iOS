@@ -46,10 +46,10 @@ extension BackupManager {
 
 extension BackupManager {
     class DriveItem: Codable {
-        var username: String
+        var username: String?
         var uid: String?
         var data: String
-        var version: String
+        var version: String?
         var time: String?
         
         init() {
