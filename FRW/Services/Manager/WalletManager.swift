@@ -67,6 +67,7 @@ class WalletManager: ObservableObject {
             .receive(on: DispatchQueue.main)
             .map { $0 }
             .sink { _ in
+                self.clearFlowAccount()
                 self.reloadWalletInfo()
             }.store(in: &cancellableSet)
     }
@@ -209,11 +210,19 @@ extension WalletManager {
         
         LocalUserDefaults.shared.flowNetwork = type
         FlowNetwork.setup()
-        
+        clearFlowAccount()
         if getPrimaryWalletAddress() == nil {
             WalletManager.shared.reloadWalletInfo()
         } else {
             walletInfo = walletInfo
+        }
+        Task {
+            do {
+                try await findFlowAccount()
+            }
+            catch {
+                log.error("[wallet] fetch flow account failed.")
+            }
         }
         
         NotificationCenter.default.post(name: .networkChange)
@@ -229,6 +238,10 @@ extension WalletManager {
         supportedCoins = nil
         activatedCoins = []
         coinBalances = [:]
+    }
+    
+    func clearFlowAccount() {
+        flowAccountKey = nil
     }
     
     @objc private func reset() {
@@ -384,7 +397,6 @@ extension WalletManager {
     func reloadWalletInfo() {
         log.debug("reloadWalletInfo")
         stopWalletInfoRetryTimer()
-        
         guard let uid = UserManager.shared.activatedUID else { return }
 
         Task {
