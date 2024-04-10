@@ -922,7 +922,7 @@
 "restore_enter_rp_placeholder" = "Enter your Recovery Phrase (15 words)";
 "bug_report" = "Bug Report";
 "wrong_network_title" = "Wrong Network";
-"switch_to_mainnet" = "Swicth to Mainnet";
+"switch_to_mainnet" = "Switch to Mainnet";
 "wrong_network_des" = "You can only create backup on mainnet.";
 "enable_path" = "Enable the path to ";
 "enable_evm_tip" = "Manage Multi VM assets seamlessly.";
@@ -937,3 +937,5 @@
 "other_key" = "Other Key";
 "enable_previewnet_failed" = "Enable previewnet failed";
 "evm_on_flow" = "EVM on Flow";
+"other" = "other";
+

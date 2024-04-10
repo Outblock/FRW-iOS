@@ -171,27 +171,27 @@ struct NFTDetailPage: RouteableView {
                             }
                             Spacer()
                             
-                            Button {
-                                Task {
-                                    let image = await vm.image()
-                                    Router.route(to: RouteMap.NFT.AR(image))
-                                }
-                            } label: {
-                                ZStack(alignment: .center) {
-                                    Circle()
-                                        .stroke(theColor, lineWidth: 2)
-                                        .frame(width: 44, height: 44)
-                                    
-                                    ResizableLottieView(lottieView: vm.animationView,
-                                                        color: theColor)
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 44, height: 44)
-                                        .frame(maxWidth: .infinity)
-                                        .contentShape(Rectangle())
-                                }
-                                .frame(width: 44, height: 44)
-                            }
-                            .padding(.horizontal, 6)
+//                            Button {
+//                                Task {
+//                                    let image = await vm.image()
+//                                    Router.route(to: RouteMap.NFT.AR(image))
+//                                }
+//                            } label: {
+//                                ZStack(alignment: .center) {
+//                                    Circle()
+//                                        .stroke(theColor, lineWidth: 2)
+//                                        .frame(width: 44, height: 44)
+//                                    
+//                                    ResizableLottieView(lottieView: vm.animationView,
+//                                                        color: theColor)
+//                                        .aspectRatio(contentMode: .fit)
+//                                        .frame(width: 44, height: 44)
+//                                        .frame(maxWidth: .infinity)
+//                                        .contentShape(Rectangle())
+//                                }
+//                                .frame(width: 44, height: 44)
+//                            }
+//                            .padding(.horizontal, 6)
 //                            .sheet(isPresented: $isSharePresented) {} content: {
 //                                ShareSheet(items: $items)
 //                            }

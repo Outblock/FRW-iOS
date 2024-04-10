@@ -38,7 +38,7 @@ class ReceiveQRViewModel: ObservableObject {
     }
     
     private func flowAddr() -> String {
-        WalletManager.shared.selectedAccountAddress
+        WalletManager.shared.getPrimaryWalletAddress() ?? ""
     }
     
     private func EVMName() -> String {
@@ -46,6 +46,6 @@ class ReceiveQRViewModel: ObservableObject {
     }
     
     private func EVMAddr() -> String {
-        WalletManager.shared.selectedAccountAddress + WalletManager.shared.selectedAccountAddress
+        WalletManager.shared.evmAccount?.showAddress ?? ""
     }
 }

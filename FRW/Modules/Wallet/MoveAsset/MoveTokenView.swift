@@ -62,14 +62,14 @@ struct MoveTokenView: View {
                 }
             }
             
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: viewModel.state,
-                           action: {
+            WalletSendButtonView(isLoading: viewModel.isLoading ,
+                                 allowEnable: $viewModel.enableButton,
+                                 buttonText: "move".localized) {
                 UIApplication.shared.endEditing()
                 viewModel.onNext()
-                           }, title: "move".localized)
-                .padding(.top, 12)
-                .padding(.bottom)
+            }
+                                 .padding(.top, 12)
+                                 .padding(.bottom)
             
         }
         .padding(18)

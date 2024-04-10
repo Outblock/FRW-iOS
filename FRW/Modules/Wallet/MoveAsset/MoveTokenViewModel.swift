@@ -17,6 +17,8 @@ class MoveTokenViewModel: ObservableObject {
     @Published var errorType: WalletSendAmountView.ErrorType = .none
 
     @Published var state: VPrimaryButtonState = .disabled
+    @Published var enableButton: Bool = false
+    @Published var isLoading: Bool = false
     
     var token: TokenModel
     
@@ -71,7 +73,7 @@ class MoveTokenViewModel: ObservableObject {
     }
     
     private func updateState() {
-        state = isReadyForSend ? .enabled : .disabled
+        enableButton  = isReadyForSend ? true : false
     }
      var isReadyForSend: Bool {
         return errorType == .none && inputText.isNumber && !inputText.isEmpty
@@ -156,7 +158,8 @@ extension MoveTokenViewModel {
             do {
                 log.info("[EVM] withdraw Coa balance")
                 DispatchQueue.main.async {
-                    self.state = .loading
+                    self.enableButton = false
+                    self.isLoading = true
                 }
                 let amount = self.inputTokenNum.decimalValue
                 let txid = try await FlowNetwork.withdrawCoa(amount: amount)
@@ -166,12 +169,14 @@ extension MoveTokenViewModel {
                 Router.dismiss()
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
-                    self.state = .enabled
+                    self.enableButton = true
+                    self.isLoading = false
                 }
             }
             catch {
                 DispatchQueue.main.async {
-                    self.state = .enabled
+                    self.enableButton = true
+                    self.isLoading = false
                 }
                 log.error("[EVM] move transation failed \(error)")
             }

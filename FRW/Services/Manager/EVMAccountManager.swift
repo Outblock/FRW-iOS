@@ -12,10 +12,13 @@ import SwiftUI
 class EVMAccountManager: ObservableObject {
     static let shared = EVMAccountManager()
     
+    @AppStorage("EVMEnable") private var EVMEnable = false
+
     @Published var hasAccount: Bool = false
+    @Published var showEVM: Bool = false
     @Published var accounts: [EVMAccountManager.Account] = [] {
         didSet {
-//            validSelectedChildAccount()
+            checkValid()
         }
     }
 
@@ -73,7 +76,16 @@ class EVMAccountManager: ObservableObject {
     private func clean() {
         log.debug("cleaned")
         accounts = []
-        hasAccount = false
+    }
+    
+    private func checkValid() {
+        if (CadenceManager.shared.current.evm?.createCoa) != nil && EVMEnable {
+            self.hasAccount = !self.accounts.isEmpty
+            self.showEVM = self.accounts.isEmpty
+        }else {
+            self.hasAccount = false
+            self.showEVM = false
+        }
     }
     
     @objc private func willReset() {
@@ -104,13 +116,12 @@ extension EVMAccountManager {
                         let account = EVMAccountManager.Account(address: address)
                         self.accounts = []
                         self.accounts.append(account)
-                        self.hasAccount = true
+                        
                     }
                     try await refreshBalance(address: address)
                 } else {
                     DispatchQueue.main.async {
                         self.accounts = []
-                        self.hasAccount = false
                         self.selectedAccount = nil
                     }
                 }
@@ -125,7 +136,6 @@ extension EVMAccountManager {
         let balance = try await fetchBalance(address)
         DispatchQueue.main.async {
             log.info("[EVM] refresh balance success")
-            self.hasAccount = true
             self.balance = balance
         }
     }
@@ -135,6 +145,10 @@ extension EVMAccountManager {
             return
         }
         selectedAccount = account
+    }
+    
+    func updateWhenDevChange() {
+        checkValid()
     }
 }
 

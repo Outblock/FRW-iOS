@@ -446,10 +446,8 @@ extension RouteMap.NFT: RouterTarget {
         case .send(let nft, let contact):
             let vc = CustomHostingController(rootView: NFTTransferView(nft: nft, target: contact))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
-        case .AR(let image):
-            let vc = ARViewController()
-            vc.image = image
-            navi.pushViewController(vc)
+        case .AR:
+            print("")
         }
     }
 }

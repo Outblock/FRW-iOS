@@ -14,9 +14,40 @@ import Web3Core
 import web3swift
 import WebKit
 import CryptoKit
+import Combine
+import Web3Wallet
+
+
 
 class TrustJSMessageHandler: NSObject {
     weak var webVC: BrowserViewController?
+    
+    private var subscriptions = Set<AnyCancellable>()
+
+    private let metadata = AppMetadata(
+        name: "Flow Core",
+        description: "Digital wallet created for everyone.",
+        url: "https://fcw-link.lilico.app",
+        icons: ["https://fcw-link.lilico.app/logo.png"],
+        redirect: AppMetadata.Redirect(
+            native: "frw://",
+            universal: "https://fcw-link.lilico.app"
+        )
+    )
+    
+    override init() {
+        
+        Web3Wallet.instance.authRequestPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { result in
+                log.info("[Web3] auth request")
+                // Process the authentication request here.
+                // This involves displaying UI to the user.
+            }
+            .store(in: &subscriptions)
+    }
+    
+    
 }
 
 // MARK: - helper

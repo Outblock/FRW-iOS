@@ -85,6 +85,7 @@ struct SideMenuView: View {
     @StateObject private var cm = ChildAccountManager.shared
     @StateObject private var evmManager = EVMAccountManager.shared
     @AppStorage("isDeveloperMode") private var isDeveloperMode = false
+    @State private var showSwitchUserAlert = false
     
     var body: some View {
         HStack(spacing: 0) {
@@ -94,7 +95,7 @@ struct SideMenuView: View {
                     
                     enableEVMView
                         .padding(.top, 24)
-                        .visibility(evmManager.hasAccount ? .gone : .visible)
+                        .visibility(evmManager.showEVM ? .visible : .gone)
                     
                     scanView
                         .padding(.top, 24)
@@ -206,7 +207,13 @@ struct SideMenuView: View {
         HStack(spacing: 15) {
             ForEach(vm.accountPlaceholders, id: \.uid) { placeholder in
                 Button {
-                    vm.switchAccountAction(placeholder.uid)
+                    if LocalUserDefaults.shared.flowNetwork != .mainnet {
+                        showSwitchUserAlert = true
+                    } else {
+                        vm.switchAccountAction(placeholder.uid)
+                    }
+                    
+                    
                 } label: {
                     KFImage.url(URL(string: placeholder.avatar))
                         .placeholder {
@@ -217,6 +224,15 @@ struct SideMenuView: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 28, height: 28)
                         .cornerRadius(14)
+                }
+                .alert("wrong_network_title".localized, isPresented: $showSwitchUserAlert) {
+                    Button("switch_to_mainnet".localized) {
+                        WalletManager.shared.changeNetwork(.mainnet)
+                        vm.switchAccountAction(placeholder.uid)
+                    }
+                    Button("action_cancel".localized, role: .cancel) {}
+                } message: {
+                    Text("wrong_network_des".localized)
                 }
             }
             

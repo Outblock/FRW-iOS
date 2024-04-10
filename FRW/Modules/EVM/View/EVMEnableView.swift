@@ -72,7 +72,7 @@ struct EVMEnableView: RouteableView {
                            action: {
                 viewModel.onClickEnable()
                            }, title: "enable".localized)
-                .frame(width: 115)
+                .frame(width: 160)
                 
             
             Button {

@@ -9,6 +9,7 @@ import Kingfisher
 import SwiftUI
 import SwiftUICharts
 import SwiftUIX
+import Flow
 
 // struct TokenDetailView_Previews: PreviewProvider {
 //    static var previews: some View {
@@ -158,7 +159,6 @@ struct TokenDetailView: RouteableView {
                     ZStack {
                         Rectangle()
                             .fill(Color.Theme.Accent.green.opacity(0.08))
-                            .cornerRadius([.topLeading, .bottomLeading], 20)
                         Image("icon_token_send")
                             .resizable()
                             .frame(width: 24, height: 24)
@@ -166,15 +166,22 @@ struct TokenDetailView: RouteableView {
                 }
                 .disabled(WalletManager.shared.isSelectedChildAccount)
 
-                Button {} label: {
-                    ZStack {
-                        Rectangle()
-                            .fill(Color.Theme.Accent.green.opacity(0.08))
-                        Image("icon_token_move")
-                            .resizable()
-                            .frame(width: 24, height: 24)
+                if RemoteConfigManager.shared.config?.features.onRamp ?? false == true && flow.chainID == .mainnet {
+                    
+                    Button {
+                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                        Router.route(to: RouteMap.Wallet.buyCrypto)
+                    } label: {
+                        ZStack {
+                            Rectangle()
+                                .fill(Color.Theme.Accent.green.opacity(0.08))
+                            Image("icon_token_move")
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                        }
                     }
                 }
+                
                 
                 Button {
                     vm.receiveAction()
@@ -187,19 +194,26 @@ struct TokenDetailView: RouteableView {
                             .frame(width: 24, height: 24)
                     }
                 }
-                Button {} label: {
-                    ZStack {
-                        Rectangle()
-                            .fill(Color.Theme.Accent.green.opacity(0.08))
-                            .cornerRadius([.topTrailing, .bottomTrailing], 20)
-                        Image("icon_token_convert")
-                            .resizable()
-                            .frame(width: 24, height: 24)
+                
+                if currentNetwork.isMainnet || currentNetwork == .testnet  {
+                    if let swapStatus = RemoteConfigManager.shared.config?.features.swap, swapStatus == true {
+                        Button {
+                            Router.route(to: RouteMap.Wallet.swap(nil))
+                        } label: {
+                            ZStack {
+                                Rectangle()
+                                    .fill(Color.Theme.Accent.green.opacity(0.08))
+                                Image("icon_token_convert")
+                                    .resizable()
+                                    .frame(width: 24, height: 24)
+                            }
+                        }
                     }
                 }
             }
             .frame(height: 40)
             .frame(minWidth: 0, maxWidth: .infinity)
+            .cornerRadius(20)
             .padding(.top, 24)
             .padding(.bottom, 14)
             .layoutPriority(100)

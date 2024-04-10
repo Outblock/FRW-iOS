@@ -390,6 +390,9 @@ extension UserManager {
     }
     
     private func insertLoginUID(_ uid: String) {
+        if LocalUserDefaults.shared.flowNetwork != .mainnet {
+            return
+        }
         var oldList = loginUIDList
         oldList.removeAll { $0 == uid }
         oldList.insert(uid, at: 0)
