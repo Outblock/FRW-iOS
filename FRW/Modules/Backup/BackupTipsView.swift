@@ -67,6 +67,6 @@ extension BackupTipsView {
     
     private func onBackupAction() {
         onCloseAction()
-        Router.route(to: RouteMap.Backup.backupRoot)
+        Router.route(to: RouteMap.Backup.backupList)
     }
 }
