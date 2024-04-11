@@ -166,21 +166,7 @@ struct TokenDetailView: RouteableView {
                 }
                 .disabled(WalletManager.shared.isSelectedChildAccount)
 
-                if RemoteConfigManager.shared.config?.features.onRamp ?? false == true && flow.chainID == .mainnet {
-                    
-                    Button {
-                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                        Router.route(to: RouteMap.Wallet.buyCrypto)
-                    } label: {
-                        ZStack {
-                            Rectangle()
-                                .fill(Color.Theme.Accent.green.opacity(0.08))
-                            Image("icon_token_move")
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                        }
-                    }
-                }
+
                 
                 
                 Button {
@@ -195,21 +181,6 @@ struct TokenDetailView: RouteableView {
                     }
                 }
                 
-                if currentNetwork.isMainnet || currentNetwork == .testnet  {
-                    if let swapStatus = RemoteConfigManager.shared.config?.features.swap, swapStatus == true {
-                        Button {
-                            Router.route(to: RouteMap.Wallet.swap(nil))
-                        } label: {
-                            ZStack {
-                                Rectangle()
-                                    .fill(Color.Theme.Accent.green.opacity(0.08))
-                                Image("icon_token_convert")
-                                    .resizable()
-                                    .frame(width: 24, height: 24)
-                            }
-                        }
-                    }
-                }
             }
             .frame(height: 40)
             .frame(minWidth: 0, maxWidth: .infinity)
