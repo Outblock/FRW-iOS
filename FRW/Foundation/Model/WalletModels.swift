@@ -58,7 +58,7 @@ enum ListedToken: String, CaseIterable {
         case .fusd:
             return .fixed(price: 1.0)
         case .stFlow:
-            return .mirror(.flow)
+            return .fixed(price: 1.0)
         case .usdc:
             return .fixed(price: 1.0)
         case .other:
