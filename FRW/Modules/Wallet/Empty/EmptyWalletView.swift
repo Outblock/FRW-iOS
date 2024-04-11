@@ -15,15 +15,15 @@ struct EmptyWalletView: View {
     @StateObject private var vm = EmptyWalletViewModel()
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(alignment: .center, spacing: 0) {
+            Spacer()
             topContent
                 .padding(.horizontal, 30)
-                .padding(.top, 160)
-                .padding(.bottom, 36)
-            
+                
+            Spacer()
             recentListContent
                 .padding(.horizontal, 41)
-                .visibility(vm.placeholders.isEmpty ? .invisible : .visible)
+                .visibility(vm.placeholders.isEmpty ? .gone : .visible)
             
             bottomContent
                 .padding(.horizontal, 41)
@@ -119,6 +119,7 @@ struct EmptyWalletView: View {
                     }
                 }
             }
+            .frame(maxHeight: 196)
         }
     }
     
@@ -154,4 +155,8 @@ struct EmptyWalletView: View {
         .cornerRadius(30)
         .shadow(color: Color.black.opacity(0.04), x: 0, y: 4, blur: 16)
     }
+}
+
+#Preview {
+    EmptyWalletView()
 }
