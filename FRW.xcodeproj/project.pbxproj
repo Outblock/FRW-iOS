@@ -1159,6 +1159,8 @@
 		4EF3FAE12A7B8D8400D7B09B /* FlowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */; };
 		4EF5129A28329ADA0014F4EC /* NFTDetailPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF5129828329ADA0014F4EC /* NFTDetailPage.swift */; };
 		4EF5129D28333A230014F4EC /* NFTTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF5129B28333A230014F4EC /* NFTTagsView.swift */; };
+		4EFBE5D02BC7D4AA0012968A /* ConfettiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBE5CF2BC7D4AA0012968A /* ConfettiManager.swift */; };
+		4EFBE5D12BC7D4AA0012968A /* ConfettiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBE5CF2BC7D4AA0012968A /* ConfettiManager.swift */; };
 		4EFF94B82AEEC76B00365EF7 /* DevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFF94B72AEEC76B00365EF7 /* DevicesView.swift */; };
 		4EFF94B92AEEC76B00365EF7 /* DevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFF94B72AEEC76B00365EF7 /* DevicesView.swift */; };
 		4EFF94BB2AEED15300365EF7 /* DevicesInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFF94BA2AEED15300365EF7 /* DevicesInfoView.swift */; };
@@ -2268,6 +2270,7 @@
 		4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowModel.swift; sourceTree = "<group>"; };
 		4EF5129828329ADA0014F4EC /* NFTDetailPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTDetailPage.swift; sourceTree = "<group>"; };
 		4EF5129B28333A230014F4EC /* NFTTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTTagsView.swift; sourceTree = "<group>"; };
+		4EFBE5CF2BC7D4AA0012968A /* ConfettiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiManager.swift; sourceTree = "<group>"; };
 		4EFF94B72AEEC76B00365EF7 /* DevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesView.swift; sourceTree = "<group>"; };
 		4EFF94BA2AEED15300365EF7 /* DevicesInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesInfoView.swift; sourceTree = "<group>"; };
 		4EFF94BD2AEEDB2D00365EF7 /* IPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPManager.swift; sourceTree = "<group>"; };
@@ -4249,6 +4252,7 @@
 				4EA0D0A22A7A357E004C6A19 /* LLSegmenControl.swift */,
 				4E1DD8CA2B1629560055E510 /* QRCodeView.swift */,
 				4E1B2FE52BA061F700F30379 /* QRCodeEyeShareFillCircle.swift */,
+				4EFBE5CF2BC7D4AA0012968A /* ConfettiManager.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -6604,6 +6608,7 @@
 				6A3FFA832A2842A400CB2B2C /* OnBoardingViewModel.swift in Sources */,
 				159DEC9328C67DB900493E9F /* NFTDetailPageViewModel.swift in Sources */,
 				4E5885452A6FDF00007CACCC /* SPQRMaskView.swift in Sources */,
+				4EFBE5D12BC7D4AA0012968A /* ConfettiManager.swift in Sources */,
 				6A164F422840A1380026B31E /* TabBar.swift in Sources */,
 				6AE084242851D481003BEEF0 /* Logger.swift in Sources */,
 				4EB2C6C92B4A520200EB899C /* RestoreMultiConnectView.swift in Sources */,
@@ -7310,6 +7315,7 @@
 				15C58BA52868A4EE00BD4FC6 /* TabBar.swift in Sources */,
 				4E5885442A6FDF00007CACCC /* SPQRMaskView.swift in Sources */,
 				15C58BA62868A4EE00BD4FC6 /* Logger.swift in Sources */,
+				4EFBE5D02BC7D4AA0012968A /* ConfettiManager.swift in Sources */,
 				6A382E24289BDAFF00163564 /* SecurityManager.swift in Sources */,
 				4EB2C6C82B4A520200EB899C /* RestoreMultiConnectView.swift in Sources */,
 				6AEDD6102A42CB8D008BC5CD /* ChildAccountDetailView.swift in Sources */,

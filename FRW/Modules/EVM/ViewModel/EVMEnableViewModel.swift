@@ -22,6 +22,7 @@ class EVMEnableViewModel: ObservableObject {
                 EVMAccountManager.shared.refresh()
                 state = .enabled
                 Router.pop()
+                ConfettiManager.show()
             }
             catch {
                 state = .enabled

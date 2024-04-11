@@ -379,7 +379,9 @@ extension UserManager {
         }
 
         try WalletManager.shared.storeAndActiveMnemonicToKeychain(mnemonic, uid: uid)
-        
+        if !self.loginUIDList.contains(uid) {
+            ConfettiManager.show()
+        }
         DispatchQueue.main.async {
             self.activatedUID = uid
             self.userInfo = info
