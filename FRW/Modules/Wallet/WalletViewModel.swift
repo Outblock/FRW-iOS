@@ -163,7 +163,14 @@ class WalletViewModel: ObservableObject {
                                            changePercentage: summary?.getChangePercentage() ?? 0)
             list.append(item)
         }
-
+        list.sort { first, second in
+            if first.balance * first.last == second.balance * second.last {
+                return first.last > second.last
+            }else {
+                return first.balance * first.last > second.balance * second.last
+            }
+            
+        }
         coinItems = list
         
         refreshTotalBalance()
