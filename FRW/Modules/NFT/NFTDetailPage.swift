@@ -306,7 +306,7 @@ struct NFTDetailPage: RouteableView {
                 .cornerRadius(12)
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
                 .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
-                .visibility(vm.nft.isDomain ? .gone : .visible)
+                .visibility(vm.nft.isDomain && vm.showSendButton ? .gone : .visible)
                 .disabled(WalletManager.shared.isSelectedChildAccount)
                 
                 Menu {

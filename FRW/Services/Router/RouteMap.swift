@@ -495,9 +495,14 @@ extension RouteMap.Explore: RouterTarget {
     func onPresent(navi: UINavigationController) {
         switch self {
         case .browser(let url):
-            let vc = BrowserViewController()
-            vc.loadURL(url)
-            navi.pushViewController(vc, animated: true)
+            if let isIn = RemoteConfigManager.shared.config?.features.browser, isIn{
+                let vc = BrowserViewController()
+                vc.loadURL(url)
+                navi.pushViewController(vc, animated: true)
+            }else {
+                UIApplication.shared.open(url)
+            }
+            
         case .safariBrowser(let url):
             let vc = SFSafariViewController(url: url)
             navi.present(vc, animated: true)
