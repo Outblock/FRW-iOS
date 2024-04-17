@@ -529,6 +529,7 @@ extension WalletConnectManager {
                     }
                 }
             } cancel: {
+                log.error("[EVM] Request cancel: [personalSign]")
                 self.rejectRequest(request: sessionRequest)
             }
             
