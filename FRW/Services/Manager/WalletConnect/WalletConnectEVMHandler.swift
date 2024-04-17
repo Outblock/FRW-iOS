@@ -74,11 +74,13 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
             cancel()
             return
         }
-        let title = "unknown"
-        let url = "unknown"
+        let pair = try? Pair.instance.getPairing(for: request.topic)
+        let title = pair?.peer?.name ?? "unknown"
+        let url = pair?.peer?.url ?? "unknown"
+        let logo = pair?.peer?.icons.first
         let vm = BrowserSignMessageViewModel(title: title,
                                              url: url,
-                                             logo: nil,
+                                             logo: logo,
                                              cadence: data.hexString)
         { result in
             if result {

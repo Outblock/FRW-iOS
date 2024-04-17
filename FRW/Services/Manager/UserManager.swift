@@ -26,6 +26,9 @@ class UserManager: ObservableObject {
         didSet {
             LocalUserDefaults.shared.activatedUID = activatedUID
             verifyUserType(by: activatedUID ?? "")
+            if oldValue != activatedUID {
+                clearWhenUserChanged()
+            }
         }
     }
     
@@ -112,6 +115,10 @@ class UserManager: ObservableObject {
                 userType = .phrase
             }
         }
+    }
+    
+    private func clearWhenUserChanged() {
+        BrowserViewController.deleteCookie()
     }
     
     func verityUserType() {
