@@ -20,10 +20,15 @@ class DevicesInfoViewModel: ObservableObject {
         if let deviceId = self.model.id {
             self.accountKey = DeviceManager.shared.findFlowAccount(deviceId: deviceId)
             self.userKey = DeviceManager.shared.findUserKey(deviceId: deviceId)
+            let localKey = WalletManager.shared.getCurrentPublicKey()
             if DeviceManager.shared.isCurrent(deviceId: deviceId) {
                 self.showRevokeButton = false
             } else if self.accountKey != nil {
-                self.showRevokeButton = true
+                if localKey == self.accountKey?.publicKey.description {
+                    self.showRevokeButton = false
+                }else {
+                    self.showRevokeButton = true
+                }
             }else {
                 self.showRevokeButton = false
             }
@@ -71,7 +76,7 @@ class DevicesInfoViewModel: ObservableObject {
             }
             return
         }
-        guard let cur = WalletManager.shared.getCurrentPublicKey(), cur == accountKey.publicKey.description else {
+        guard let cur = WalletManager.shared.getCurrentPublicKey(), cur != accountKey.publicKey.description else {
             HUD.info(title: "account_key_current_tips".localized)
             withAnimation(.easeOut(duration: 0.2)) {
                 showRemoveTipView = false

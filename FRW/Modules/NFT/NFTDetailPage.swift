@@ -267,24 +267,24 @@ struct NFTDetailPage: RouteableView {
             HStack(spacing: 8) {
                 Spacer()
                 
-                Button {
-                    // TODO: #six move NFT 1. show logic, 2. action
-                } label: {
-                    HStack {
-                        Image(systemName: "paperplane")
-                            .font(.system(size: 16))
-                            .foregroundColor(theColor)
-                        Text("move".localized)
-                            .foregroundColor(.LL.Neutrals.text)
-                    }
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
-                .cornerRadius(12)
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
-                .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
-                .visibility(vm.nft.isDomain ? .gone : .visible)
-                .disabled(WalletManager.shared.isSelectedChildAccount)
+//                Button {
+//                    // TODO: #six move NFT 1. show logic, 2. action
+//                } label: {
+//                    HStack {
+//                        Image(systemName: "paperplane")
+//                            .font(.system(size: 16))
+//                            .foregroundColor(theColor)
+//                        Text("move".localized)
+//                            .foregroundColor(.LL.Neutrals.text)
+//                    }
+//                }
+//                .padding(.horizontal, 12)
+//                .padding(.vertical, 10)
+//                .cornerRadius(12)
+//                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+//                .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
+//                .visibility(vm.nft.isDomain ? .gone : .visible)
+//                .disabled(WalletManager.shared.isSelectedChildAccount)
                 
                 Button {
                     if fromLinkedAccount {
@@ -306,7 +306,7 @@ struct NFTDetailPage: RouteableView {
                 .cornerRadius(12)
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
                 .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
-                .visibility(vm.nft.isDomain && vm.showSendButton ? .gone : .visible)
+                .visibility(vm.nft.isDomain || !vm.showSendButton ? .gone : .visible)
                 .disabled(WalletManager.shared.isSelectedChildAccount)
                 
                 Menu {
