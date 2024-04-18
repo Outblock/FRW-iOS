@@ -491,7 +491,7 @@ extension WalletConnectManager {
                 } catch {
                     log.error("[WALLET] Respond Error: [accountInfo] \(error.localizedDescription)")
                     rejectRequest(request: sessionRequest)
-                }
+                } 
             }
         case FCLWalletConnectMethod.addDeviceInfo.rawValue:
             Task {
@@ -737,7 +737,7 @@ extension WalletConnectManager {
     
     func findSession(method: String, at name: String = "flow") -> Session? {
         
-        let session = activeSessions.first { session in
+        let session = activeSessions.last { session in
             log.info("\(session.topic) : \(session.pairingTopic)")
             return session.namespaces[name]?.methods.contains(method) ?? false
         }
