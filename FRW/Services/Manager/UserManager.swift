@@ -51,7 +51,7 @@ class UserManager: ObservableObject {
     
     @Published var isMeowDomainEnabled: Bool = false
     
-    var userType: UserManager.UserType = .phrase
+    var userType: UserManager.UserType = .secure
     
     var isLoggedIn: Bool {
         return activatedUID != nil
