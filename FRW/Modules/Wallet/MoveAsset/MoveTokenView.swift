@@ -16,17 +16,13 @@ struct MoveTokenView: View {
         _viewModel = StateObject(wrappedValue: MoveTokenViewModel(token: tokenModel))
     }
     
-//    init(tokenModel: TokenModel) {
-//        _viewModel =
-//    }
-    
     var body: some View {
         VStack(spacing: 0) {
             HStack {
                 Text("Move Token")
                     .font(.inter(size: 18, weight: .w700))
                     .foregroundStyle(Color.LL.Neutrals.text)
-                
+                    .padding(.top, 6)
                 Spacer()
                 
                 Button {
@@ -37,6 +33,8 @@ struct MoveTokenView: View {
                         .frame(width: 24, height: 24)
                 }
             }
+            .padding(.top, 8)
+            
             
             Color.clear
                 .frame(height: 20)
@@ -61,21 +59,20 @@ struct MoveTokenView: View {
                 MoveTokenView.AccountView { _ in
                 }
             }
-            
+            Spacer()
             WalletSendButtonView(isLoading: viewModel.isLoading ,
                                  allowEnable: $viewModel.enableButton,
                                  buttonText: "move".localized) {
                 UIApplication.shared.endEditing()
                 viewModel.onNext()
             }
-                                 .padding(.top, 12)
                                  .padding(.bottom)
-            
         }
         .padding(18)
         .background(Color.Theme.Background.grey)
         .cornerRadius([.topLeading, .topTrailing], 16)
         .environmentObject(viewModel)
+        .ignoresSafeArea()
     }
 }
 
@@ -197,7 +194,7 @@ extension MoveTokenView {
                 }
                 
                 HStack {
-                    Text("$ \(viewModel.inputDollarNum.formatCurrencyString())")
+                    Text(viewModel.currentBalance)
                         .font(.inter(size: 16))
                         .foregroundStyle(Color.LL.Neutrals.text2)
                     

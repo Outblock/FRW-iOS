@@ -22,7 +22,10 @@ struct MoveChooseAccountView: View {
                 } label: {
                     Image("icon_close_circle_gray")
                         .resizable()
+                        .renderingMode(.template)
+                        .foregroundColor(.LL.Neutrals.note)
                         .frame(width: 24, height: 24)
+                        
                 }
             }
 

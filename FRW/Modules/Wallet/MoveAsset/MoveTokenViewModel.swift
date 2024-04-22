@@ -78,6 +78,15 @@ class MoveTokenViewModel: ObservableObject {
      var isReadyForSend: Bool {
         return errorType == .none && inputText.isNumber && !inputText.isEmpty
     }
+    
+    var currentBalance: String {
+        var str = ""
+        if inputDollarNum > 0 {
+            str += "Balance "
+        }
+        str += "$ \(inputDollarNum.formatCurrencyString())"
+        return str
+    }
 }
 
 extension MoveTokenViewModel {
