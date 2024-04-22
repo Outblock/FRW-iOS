@@ -19,7 +19,8 @@ class EVMEnableViewModel: ObservableObject {
             do {
                 state = .loading
                 try await EVMAccountManager.shared.enableEVM()
-                EVMAccountManager.shared.refresh()
+                await EVMAccountManager.shared.refreshSync()
+                EVMAccountManager.shared.select(EVMAccountManager.shared.accounts.first)
                 state = .enabled
                 Router.pop()
                 ConfettiManager.show()

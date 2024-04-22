@@ -109,27 +109,32 @@ class EVMAccountManager: ObservableObject {
 extension EVMAccountManager {
     func refresh() {
         Task {
-            do {
-                let address = try await fetchAddress()
-                if let address = address, !address.isEmpty {
-                    DispatchQueue.main.async {
-                        let account = EVMAccountManager.Account(address: address)
-                        self.accounts = []
-                        self.accounts.append(account)
-                        
-                    }
-                    try await refreshBalance(address: address)
-                } else {
-                    DispatchQueue.main.async {
-                        self.accounts = []
-                        self.selectedAccount = nil
-                    }
-                }
-            } catch {
-                log.error("[EVM] get address failed.\(error)")
-            }
+            await refreshSync()
         }
     }
+    
+    func refreshSync() async {
+        do {
+            let address = try await fetchAddress()
+            if let address = address, !address.isEmpty {
+                DispatchQueue.main.async {
+                    let account = EVMAccountManager.Account(address: address)
+                    self.accounts = []
+                    self.accounts.append(account)
+                    
+                }
+                try await refreshBalance(address: address)
+            } else {
+                DispatchQueue.main.async {
+                    self.accounts = []
+                    self.selectedAccount = nil
+                }
+            }
+        } catch {
+            log.error("[EVM] get address failed.\(error)")
+        }
+    }
+    
     
     func refreshBalance(address: String) async throws {
         log.info("[EVM] refresh balance at \(address)")
