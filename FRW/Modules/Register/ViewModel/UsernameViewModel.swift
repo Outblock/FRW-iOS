@@ -51,7 +51,7 @@ class UsernameViewModel: ViewModel {
         
         Task {
             do {
-                try await UserManager.shared.register(currentText, mnemonic: mnemonic)
+                try await UserManager.shared.register(currentText, mnemonic: nil)
                 HUD.success(title: "create_user_success".localized)
                 
                 DispatchQueue.main.async {

@@ -169,6 +169,8 @@ extension RouteMap {
         case backToTokenDetail
         case jailbreakAlert
         case pushAlert
+        case receiveQR
+        case enableEVM
     }
 }
 
@@ -237,6 +239,10 @@ extension RouteMap.Wallet: RouterTarget {
             contentNavi.modalPresentationCapturesStatusBarAppearance = true
             contentNavi.modalPresentationStyle = .fullScreen
             Router.topPresentedController().present(contentNavi, animated: true)
+        case .receiveQR:
+            navi.present(content: ReceiveQRView())
+        case .enableEVM:
+            navi.push(content: EVMEnableView())
         }
     }
 }
@@ -440,10 +446,8 @@ extension RouteMap.NFT: RouterTarget {
         case .send(let nft, let contact):
             let vc = CustomHostingController(rootView: NFTTransferView(nft: nft, target: contact))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
-        case .AR(let image):
-            let vc = ARViewController()
-            vc.image = image
-            navi.pushViewController(vc)
+        case .AR:
+            print("")
         }
     }
 }
@@ -491,9 +495,14 @@ extension RouteMap.Explore: RouterTarget {
     func onPresent(navi: UINavigationController) {
         switch self {
         case .browser(let url):
-            let vc = BrowserViewController()
-            vc.loadURL(url)
-            navi.pushViewController(vc, animated: true)
+            if let isIn = RemoteConfigManager.shared.config?.features.browser, isIn{
+                let vc = BrowserViewController()
+                vc.loadURL(url)
+                navi.pushViewController(vc, animated: true)
+            }else {
+                UIApplication.shared.open(url)
+            }
+            
         case .safariBrowser(let url):
             let vc = SFSafariViewController(url: url)
             navi.present(vc, animated: true)

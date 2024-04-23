@@ -39,12 +39,14 @@ extension LocalUserDefaults {
         case selectedChildAccount
         case switchProfileTipsFlag
         case freeGas
+        case selectedEVMAccount
     }
 
     enum FlowNetworkType: String, CaseIterable {
         case testnet
         case mainnet
         case crescendo
+        case previewnet
         
         var color: Color {
             switch self {
@@ -53,6 +55,8 @@ extension LocalUserDefaults {
             case .testnet:
                 return Color(hex: "#FF8A00")
             case .crescendo:
+                return Color(hex: "#CCAF21")
+            case .previewnet:
                 return Color(hex: "#CCAF21")
             }
         }
@@ -69,6 +73,8 @@ extension LocalUserDefaults {
                 return Flow.ChainID.mainnet
             case .crescendo:
                 return Flow.ChainID.crescendo
+            case .previewnet:
+                return Flow.ChainID.previewnet
             }
         }
         
@@ -80,6 +86,8 @@ extension LocalUserDefaults {
                 self = .mainnet
             case .crescendo:
                 self = .crescendo
+            case .previewnet:
+                self = .previewnet
             default:
                 return nil
             }
@@ -226,6 +234,23 @@ class LocalUserDefaults: ObservableObject {
         }
         get {
             if let data = UserDefaults.standard.data(forKey: Keys.selectedChildAccount.rawValue), let model = try? JSONDecoder().decode(ChildAccount.self, from: data) {
+                return model
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    var selectedEVMAccount: EVMAccountManager.Account? {
+        set {
+            if let value = newValue, let data = try? JSONEncoder().encode(value) {
+                UserDefaults.standard.set(data, forKey: Keys.selectedEVMAccount.rawValue)
+            } else {
+                UserDefaults.standard.removeObject(forKey: Keys.selectedEVMAccount.rawValue)
+            }
+        }
+        get {
+            if let data = UserDefaults.standard.data(forKey: Keys.selectedEVMAccount.rawValue), let model = try? JSONDecoder().decode(EVMAccountManager.Account.self, from: data) {
                 return model
             } else {
                 return nil

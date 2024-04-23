@@ -25,7 +25,9 @@ class UserManager: ObservableObject {
     @Published var activatedUID: String? = LocalUserDefaults.shared.activatedUID {
         didSet {
             LocalUserDefaults.shared.activatedUID = activatedUID
-            verifyUserType(by: activatedUID ?? "")
+            if oldValue != activatedUID {
+                clearWhenUserChanged()
+            }
         }
     }
     
@@ -48,7 +50,7 @@ class UserManager: ObservableObject {
     
     @Published var isMeowDomainEnabled: Bool = false
     
-    var userType: UserManager.UserType = .phrase
+    var userType: UserManager.UserType = .secure
     
     var isLoggedIn: Bool {
         return activatedUID != nil
@@ -114,6 +116,10 @@ class UserManager: ObservableObject {
         }
     }
     
+    private func clearWhenUserChanged() {
+        BrowserViewController.deleteCookie()
+    }
+    
     func verityUserType() {
         guard let userId = self.activatedUID else {
             return
@@ -159,10 +165,6 @@ extension UserManager {
 
 extension UserManager {
     func register(_ username: String, mnemonic: String? = nil) async throws {
-        guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) else {
-            HUD.error(title: "empty_wallet_key".localized)
-            throw LLError.emptyWallet
-        }
         
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
@@ -171,8 +173,6 @@ extension UserManager {
                 self.userInfo = nil
             }
         }
-
-//        let key = hdWallet.flowAccountKey
         
         let sec = try WallectSecureEnclave()
         let key = try sec.accountKey()
@@ -184,7 +184,7 @@ extension UserManager {
         let request = RegisterRequest(username: username, accountKey: key.toCodableModel(), deviceInfo: IPManager.shared.toParams())
         let model: RegisterResponse = try await Network.request(FRWAPI.User.register(request))
 
-        try await finishLogin(mnemonic: hdWallet.mnemonic, customToken: model.customToken)
+        try await finishLogin(mnemonic: "", customToken: model.customToken)
         WalletManager.shared.asyncCreateWalletAddressFromServer()
         userType = .secure
         if let privateKey = sec.key.privateKey {
@@ -259,27 +259,20 @@ extension UserManager {
         var mnemonicStr = ""
         if let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) {
             publicKey = hdWallet.getPublicKey()
-            guard var signToken = hdWallet.sign(token) else {
+            guard let signToken = hdWallet.sign(token) else {
                 throw LLError.restoreLoginFailed
             }
             signature = signToken
             mnemonicStr = hdWallet.mnemonic
         }
         
-        if let data = try WallectSecureEnclave.Store.fetch(by: userId ?? "" ), !data.isEmpty, let userToken = token.AddUserMessage() {
-            let sec = try WallectSecureEnclave(privateKey: data)
-            guard let newKey = sec.key.publickeyValue, !newKey.isEmpty else {
-                throw LLError.signFailed
-            }
-            signature = try sec.sign(data: userToken).hexValue
-            publicKey = newKey
-        }
-
+        userType = .phrase
         await IPManager.shared.fetch()
-        //TODO: hash & sign algo
-        let key = AccountKey(hashAlgo: WalletManager.shared.hashAlgo.index,
+        let hashAlgo = Flow.HashAlgorithm.SHA2_256.index
+        let signAlgo = Flow.SignatureAlgorithm.ECDSA_SECP256k1.index
+        let key = AccountKey(hashAlgo: hashAlgo,
                              publicKey: publicKey,
-                             signAlgo: WalletManager.shared.signatureAlgo.index)
+                             signAlgo: signAlgo)
         
         let request = LoginRequest(signature: signature, accountKey: key, deviceInfo: IPManager.shared.toParams())
         let response: Network.Response<LoginResponse> = try await Network.requestWithRawModel(FRWAPI.User.login(request))
@@ -295,7 +288,6 @@ extension UserManager {
     }
     
     func restoreLogin(userId: String) async throws {
-        
         
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
@@ -334,12 +326,12 @@ extension UserManager {
         if response.httpCode == 404 {
             throw LLError.accountNotFound
         }
-
+        userType = .secure
         guard let customToken = response.data?.customToken, !customToken.isEmpty else {
             throw LLError.restoreLoginFailed
         }
-        let existingMnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: userId) ?? ""
-        try await finishLogin(mnemonic: existingMnemonic, customToken: customToken)
+        
+        try await finishLogin(mnemonic: "", customToken: customToken)
     }
 }
 
@@ -350,16 +342,21 @@ extension UserManager {
         if !currentNetwork.isMainnet {
             WalletManager.shared.changeNetwork(.mainnet)
         }
-        guard let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid) else {
-            log.error("\(uid) mnemonic is missing")
-            throw WalletError.mnemonicMissing
-        }
         
         if uid == activatedUID {
             log.warning("switching the same account")
             return
         }
         
+        if let data = try WallectSecureEnclave.Store.fetch(by: uid) {
+            try await restoreLogin(userId: uid)
+            return
+        }
+        
+        guard let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid) else {
+            log.error("\(uid) mnemonic is missing")
+            throw WalletError.mnemonicMissing
+        }
         try await restoreLogin(withMnemonic: mnemonic, userId: uid)
     }
 }
@@ -375,9 +372,13 @@ extension UserManager {
         guard let uid = getFirebaseUID() else {
             throw LLError.fetchUserInfoFailed
         }
-
-        try WalletManager.shared.storeAndActiveMnemonicToKeychain(mnemonic, uid: uid)
+        if !mnemonic.isEmpty {
+            try WalletManager.shared.storeAndActiveMnemonicToKeychain(mnemonic, uid: uid)
+        }
         
+        if !self.loginUIDList.contains(uid) {
+            ConfettiManager.show()
+        }
         DispatchQueue.main.async {
             self.activatedUID = uid
             self.userInfo = info
@@ -388,6 +389,9 @@ extension UserManager {
     }
     
     private func insertLoginUID(_ uid: String) {
+        if LocalUserDefaults.shared.flowNetwork != .mainnet {
+            return
+        }
         var oldList = loginUIDList
         oldList.removeAll { $0 == uid }
         oldList.insert(uid, at: 0)

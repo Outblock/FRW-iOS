@@ -922,11 +922,20 @@
 "restore_enter_rp_placeholder" = "Enter your Recovery Phrase (15 words)";
 "bug_report" = "Bug Report";
 "wrong_network_title" = "Wrong Network";
-"switch_to_mainnet" = "Swicth to Mainnet";
-"wrong_network_des" = "You can only create backup on mainnet.";
+"switch_to_mainnet" = "Switch to Mainnet";
+"wrong_network_des" = "You can only perform this operation on the mainnet.";
+"enable_path" = "Enable the path to ";
+"enable_evm_tip" = "Manage Multi VM assets seamlessly.";
+"receiving_qr" = "Receiving QR Code";
+"current_chain" = "Current Chain";
+"move" = "Move";
 "full_access" = "Full Access";
 "multi_sign" = "Multi-sign";
 "account_key_weight" = "Weight";
 "account_key_index" = "Key Index";
 "account_key_done_revoked_tips" = "The key has been revoked";
 "other_key" = "Other Key";
+"enable_previewnet_failed" = "Enable previewnet failed";
+"evm_on_flow" = "EVM on Flow";
+"other" = "other";
+

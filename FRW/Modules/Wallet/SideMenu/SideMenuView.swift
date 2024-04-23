@@ -5,9 +5,10 @@
 //  Created by Selina on 4/1/2023.
 //
 
-import SwiftUI
-import Kingfisher
 import Combine
+import Kingfisher
+import SwiftUI
+import SwiftUIX
 
 private let SideOffset: CGFloat = 65
 
@@ -27,7 +28,7 @@ class SideMenuViewModel: ObservableObject {
     init() {
         nftCount = LocalUserDefaults.shared.nftCount
         
-        NotificationCenter.default.publisher(for: .nftCountChanged).sink { [weak self] noti in
+        NotificationCenter.default.publisher(for: .nftCountChanged).sink { [weak self] _ in
             DispatchQueue.main.async {
                 self?.nftCount = LocalUserDefaults.shared.nftCount
             }
@@ -39,10 +40,10 @@ class SideMenuViewModel: ObservableObject {
             .sink { [weak self] uidList in
                 guard let self = self else { return }
                 
-                self.accountPlaceholders = Array(uidList.dropFirst().prefix(2)).map({ uid in
+                self.accountPlaceholders = Array(uidList.dropFirst().prefix(2)).map { uid in
                     let avatar = MultiAccountStorage.shared.getUserInfo(uid)?.avatar.convertedAvatarString() ?? ""
                     return AccountPlaceholder(uid: uid, avatar: avatar)
-                })
+                }
             }.store(in: &cancelSets)
     }
     
@@ -70,6 +71,11 @@ class SideMenuViewModel: ObservableObject {
     func switchAccountMoreAction() {
         Router.route(to: RouteMap.Profile.switchProfile)
     }
+    
+    func onClickEnableEVM()  {
+        NotificationCenter.default.post(name: .toggleSideMenu)
+        Router.route(to: RouteMap.Wallet.enableEVM)
+    }
 }
 
 struct SideMenuView: View {
@@ -77,13 +83,20 @@ struct SideMenuView: View {
     @StateObject private var um = UserManager.shared
     @StateObject private var wm = WalletManager.shared
     @StateObject private var cm = ChildAccountManager.shared
+    @StateObject private var evmManager = EVMAccountManager.shared
     @AppStorage("isDeveloperMode") private var isDeveloperMode = false
+    @State private var showSwitchUserAlert = false
     
     var body: some View {
         HStack(spacing: 0) {
             ScrollView {
                 VStack {
                     cardView
+                    
+                    enableEVMView
+                        .padding(.top, 24)
+                        .visibility(evmManager.showEVM ? .visible : .gone)
+                    
                     scanView
                         .padding(.top, 24)
                     addressListView
@@ -92,14 +105,12 @@ struct SideMenuView: View {
                 .padding(.top, 25)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.LL.background)
+            .background(.Theme.Background.pureWhite)
             
             // placeholder, do not use this
-            VStack {
-                
-            }
-            .frame(width: SideOffset)
-            .frame(maxHeight: .infinity)
+            VStack {}
+                .frame(width: SideOffset)
+                .frame(maxHeight: .infinity)
         }
     }
     
@@ -107,10 +118,10 @@ struct SideMenuView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 KFImage.url(URL(string: um.userInfo?.avatar.convertedAvatarString() ?? ""))
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 72, height: 72)
@@ -142,21 +153,86 @@ struct SideMenuView: View {
         }
     }
     
+    var enableEVMView: some View {
+        return VStack {
+            ZStack(alignment: .topLeading) {
+                Image("icon_planet")
+                    .resizable()
+                    .frame(width: 36, height: 36)
+                    .zIndex(1)
+                    .offset(x: 8,y: -8)
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(spacing: 0) {
+                        Text("enable_path".localized)
+                            .font(.inter(size: 16, weight: .semibold))
+                            .foregroundStyle(Color.Theme.Text.black8)
+                        Text("evm_on_flow".localized)
+                            .font(.inter(size: 16, weight: .semibold))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [Color.Theme.Accent.blue, Color.Theme.Accent.green ],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                        Text(" !")
+                            .font(.inter(size: 16, weight: .semibold))
+                            .foregroundStyle(Color.Theme.Text.black8)
+                        Spacer()
+                        Image("right-arrow-stroke")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                    }
+                    .frame(height: 24)
+                    Text("enable_evm_tip".localized)
+                        .font(.inter(size: 14))
+                        .foregroundStyle(Color.Theme.Text.black3)
+                        .frame(height: 24)
+                }
+                .frame(height: 72)
+                .padding(.horizontal, 18)
+                .background(.Theme.Background.white)
+                .cornerRadius(16)
+                .shadow(color: Color.Theme.Background.white.opacity(0.08), radius: 16, y: 4)
+                .offset(y: 8)
+                
+            }
+        }
+        .onTapGesture {
+            vm.onClickEnableEVM()
+        }
+    }
+    
     var multiAccountView: some View {
         HStack(spacing: 15) {
             ForEach(vm.accountPlaceholders, id: \.uid) { placeholder in
                 Button {
-                    vm.switchAccountAction(placeholder.uid)
+                    if LocalUserDefaults.shared.flowNetwork != .mainnet {
+                        showSwitchUserAlert = true
+                    } else {
+                        vm.switchAccountAction(placeholder.uid)
+                    }
+                    
+                    
                 } label: {
                     KFImage.url(URL(string: placeholder.avatar))
-                        .placeholder({
+                        .placeholder {
                             Image("placeholder")
                                 .resizable()
-                        })
+                        }
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 28, height: 28)
                         .cornerRadius(14)
+                }
+                .alert("wrong_network_title".localized, isPresented: $showSwitchUserAlert) {
+                    Button("switch_to_mainnet".localized) {
+                        WalletManager.shared.changeNetwork(.mainnet)
+                        vm.switchAccountAction(placeholder.uid)
+                    }
+                    Button("action_cancel".localized, role: .cancel) {}
+                } message: {
+                    Text("wrong_network_des".localized)
                 }
             }
             
@@ -191,7 +267,7 @@ struct SideMenuView: View {
             }
             .padding(.horizontal, 20)
             .frame(height: 48)
-            .background(Color.LL.Neutrals.neutrals6)
+            .background(.Theme.Background.white)
             .cornerRadius(12)
         }
     }
@@ -232,38 +308,50 @@ struct SideMenuView: View {
                 }
             }
             
-            if let sandboxAddress = wm.getFlowNetworkTypeAddress(network: .crescendo), isDeveloperMode {
+            if let previewnetAddress = wm.getFlowNetworkTypeAddress(network: .previewnet), isDeveloperMode {
                 Button {
-                    WalletManager.shared.changeNetwork(.crescendo)
+                    WalletManager.shared.changeNetwork(.previewnet)
                     NotificationCenter.default.post(name: .toggleSideMenu)
                 } label: {
-                    addressCell(type: .crescendo, address: sandboxAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .crescendo)
+                    addressCell(type: .previewnet, address: previewnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .previewnet && !wm.isSelectedChildAccount && !wm.isSelectedEVMAccount)
                 }
                 
-//                if LocalUserDefaults.shared.flowNetwork == .crescendo {
-//                    LazyVStack(spacing: 0) {
-//                        ForEach(cm.childAccounts, id: \.address) { childAccount in
-//                            childAccountCell(childAccount, isSelected: false)
-//                        }
-//                    }
-//                }
+                if LocalUserDefaults.shared.flowNetwork == .previewnet {
+                    LazyVStack(spacing: 0) {
+                        ForEach(evmManager.accounts, id: \.address) { account in
+                            ChildAccountSideCell(item: account, isSelected: account.isSelected) { address in
+                                EVMAccountManager.shared.select(account)
+                                NotificationCenter.default.post(name: .toggleSideMenu)
+                            }
+                        }
+                    }
+                    LazyVStack(spacing: 0) {
+                        ForEach(cm.childAccounts, id: \.addr) { childAccount in
+                            childAccountCell(childAccount, isSelected: childAccount.isSelected)
+                        }
+                    }
+                }
             }
         }
-        .background(Color.LL.Neutrals.neutrals6)
+        .background(.Theme.Background.white)
         .cornerRadius(12)
     }
     
     func childAccountCell(_ childAccount: ChildAccount, isSelected: Bool) -> some View {
+//        ChildAccountSideCell(item: childAccount) { add in
+//            ChildAccountManager.shared.select(childAccount)
+//            NotificationCenter.default.post(name: .toggleSideMenu)
+//        }
         Button {
             ChildAccountManager.shared.select(childAccount)
             NotificationCenter.default.post(name: .toggleSideMenu)
         } label: {
             HStack(spacing: 15) {
                 KFImage.url(URL(string: childAccount.icon))
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 24, height: 24)
@@ -274,12 +362,21 @@ struct SideMenuView: View {
                         Text("@\(childAccount.aName)")
                             .foregroundColor(Color.LL.Neutrals.text)
                             .font(.inter(size: 14, weight: .semibold))
+                        
+                        Text("EVM")
+                            .font(.inter(size: 9))
+                            .foregroundStyle(Color.Theme.Text.white9)
+                            .frame(width: 36, height: 16)
+                            .background(Color.Theme.Accent.blue)
+                            .cornerRadius(8)
+                            .visibility(evmManager.hasAccount ? .visible : .gone)
                     }
                     .frame(alignment: .leading)
                     
                     Text(childAccount.addr ?? "")
                         .foregroundColor(Color.LL.Neutrals.text3)
                         .font(.inter(size: 12))
+                        .lineBreakMode(.byTruncatingMiddle)
                 }
                 .frame(alignment: .leading)
                 
@@ -381,7 +478,7 @@ struct SideContainerView: View {
                 dragOffset = value.translation
                 debugPrint("dragging: \(dragOffset)")
             }
-            .onEnded { value in
+            .onEnded { _ in
                 if !vm.isOpen && dragOffset.width > 20 {
                     vm.isOpen = true
                 }

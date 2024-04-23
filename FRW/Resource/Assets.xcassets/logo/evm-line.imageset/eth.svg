@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>eth</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="eth" transform="translate(0.5, 0.5)" stroke="#627EEA">
+            <circle id="椭圆形" cx="22" cy="22" r="22"></circle>
+            <path d="M22,30.5042017 L10.907563,24.0336134 L22,39.7478992 M22,30.5042017 L33.092437,24.0336134 L22,39.7478992 M22,30.5042017 L22,39.7478992" id="形状"></path>
+            <path d="M22,3.51260504 L10.907563,21.8151261 M22,3.51260504 L33.092437,22 M22,3.51260504 L22,16.8235294 M10.907563,21.8151261 L22,28.4705882 M10.907563,21.8151261 L22,16.8235294 M22,28.4705882 L33.092437,22 M22,28.4705882 L22,16.8235294 M33.092437,22 L22,16.8235294" id="形状"></path>
+        </g>
+    </g>
+</svg>

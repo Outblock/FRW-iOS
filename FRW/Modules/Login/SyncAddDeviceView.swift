@@ -53,9 +53,9 @@ struct SyncAddDeviceView: View {
                 .frame(height: 6)
             
             VStack(spacing: 8) {
-                DeviceInfoItem(title: "application_tag".localized, detail: viewModel.model.deviceInfo.userAgent)
+                DeviceInfoItem(title: "application_tag".localized, detail: viewModel.model.deviceInfo.userAgent ?? "")
                     .frame(height: 24)
-                DeviceInfoItem(title: "ip_address_tag".localized, detail: viewModel.model.deviceInfo.ip)
+                DeviceInfoItem(title: "ip_address_tag".localized, detail: viewModel.model.deviceInfo.ip ?? "")
                     .frame(height: 24)
                 DeviceInfoItem(title: "location".localized, detail: location)
                     .frame(height: 24)

@@ -5,23 +5,20 @@
 //  Created by cat on 2023/11/28.
 //
 
-import SwiftUI
 import QRCode
+import SwiftUI
 
 struct QRCodeView: View {
-    
     var content: String = ""
     var logo: UIImage? = UIImage(named: "lilico-app-icon")
     
-    var eyeColor: UIColor {
-        currentNetwork.isMainnet ?
-        UIColor.LL.Primary.salmonPrimary : UIColor(hex: "#333333")
-    }
+    var eyeColor: UIColor?
     
     var body: some View {
         ZStack {
             QRCodeDocumentUIView(document: doc(text: content,
-                                               eyeColor: eyeColor))
+                                               eyeColor: eyeColor ?? (currentNetwork.isMainnet ?
+                                                   UIColor.LL.Primary.salmonPrimary : UIColor(hex: "#333333"))))
             .padding(12)
         }
         .background(Color.white)
@@ -39,7 +36,7 @@ struct QRCodeView: View {
         d.utf8String = text
         if let logo = logo?.cgImage {
             let path = CGPath(ellipseIn: CGRect(x: 0.38, y: 0.38, width: 0.20, height: 0.20), transform: nil)
-            d.logoTemplate = QRCode.LogoTemplate(image: logo , path: path, inset: 6)
+            d.logoTemplate = QRCode.LogoTemplate(image: logo, path: path, inset: 6)
         }
         
         d.design.backgroundColor(UIColor(hex: "#FFFFFF").cgColor)

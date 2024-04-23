@@ -11,6 +11,8 @@ import Kingfisher
 
 struct AccountSwitchView: View {
     @StateObject private var vm = AccountSwitchViewModel()
+    @State private var showAlert = false
+    @State private var showSwitchUserAlert = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -40,9 +42,14 @@ struct AccountSwitchView: View {
                 .padding(.bottom, 30)
             
             Button {
-                Router.dismiss {
-                    vm.createNewAccountAction()
+                if LocalUserDefaults.shared.flowNetwork != .mainnet {
+                    showAlert = true
+                } else {
+                    Router.dismiss {
+                        vm.createNewAccountAction()
+                    }
                 }
+                
             } label: {
                 HStack(spacing: 15) {
                     Image("icon-plus")
@@ -57,6 +64,17 @@ struct AccountSwitchView: View {
                     Spacer()
                 }
                 .frame(height: 40)
+            }
+            .alert("wrong_network_title".localized, isPresented: $showAlert) {
+                Button("switch_to_mainnet".localized) {
+                    WalletManager.shared.changeNetwork(.mainnet)
+                    Router.dismiss {
+                        vm.createNewAccountAction()
+                    }
+                }
+                Button("action_cancel".localized, role: .cancel) {}
+            } message: {
+                Text("wrong_network_des".localized)
             }
             
             Button {
@@ -88,11 +106,27 @@ struct AccountSwitchView: View {
             LazyVStack(spacing: 20) {
                 ForEach(vm.placeholders, id: \.uid) { placeholder in
                     Button {
-                        Router.dismiss {
-                            vm.switchAccountAction(placeholder.uid)
+                        if LocalUserDefaults.shared.flowNetwork != .mainnet {
+                            showSwitchUserAlert = true
+                        } else {
+                            Router.dismiss {
+                                vm.switchAccountAction(placeholder.uid)
+                            }
                         }
+                        
                     } label: {
                         createAccountCell(placeholder)
+                    }
+                    .alert("wrong_network_title".localized, isPresented: $showSwitchUserAlert) {
+                        Button("switch_to_mainnet".localized) {
+                            WalletManager.shared.changeNetwork(.mainnet)
+                            Router.dismiss {
+                                vm.switchAccountAction(placeholder.uid)
+                            }
+                        }
+                        Button("action_cancel".localized, role: .cancel) {}
+                    } message: {
+                        Text("wrong_network_des".localized)
                     }
                 }
             }

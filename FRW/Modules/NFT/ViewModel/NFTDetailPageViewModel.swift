@@ -13,12 +13,13 @@ import Lottie
 class NFTDetailPageViewModel: ObservableObject {
     @Published var nft: NFTModel
     @Published var svgString: String = ""
+    let showSendButton: Bool
     
     let animationView = AnimationView(name: "inAR", bundle: .main)
     
     init(nft: NFTModel) {
         self.nft = nft
-        
+        showSendButton = RemoteConfigManager.shared.config?.features.nftTransfer ?? false
         if nft.isSVG {
             guard let rawSVGURL = nft.response.postMedia.image,
                   let rawSVGURL = URL(string: rawSVGURL.replacingOccurrences(of: "https://lilico.app/api/svg2png?url=", with: "")) else {

@@ -153,6 +153,7 @@ extension AppDelegate {
         _ = ChildAccountManager.shared
         WalletManager.shared.bindChildAccountManager()
         NFTCatalogCache.cache.fetchIfNeed()
+        _ = CadenceManager.shared
         if UserManager.shared.isLoggedIn {
             DeviceManager.shared.updateDevice()
         }

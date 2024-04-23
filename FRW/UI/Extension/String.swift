@@ -302,6 +302,8 @@ extension String {
             string = "https://testnet.flowscan.org/account/\(self)"
         } else if LocalUserDefaults.shared.flowNetwork == .crescendo {
             string = "https://crescendo.flowscan.org/account/\(self)"
+        } else if LocalUserDefaults.shared.flowNetwork == .previewnet {
+            string = "https://previewnet.flowscan.org/account/\(self)"
         }
         
         return URL(string: string)
@@ -313,6 +315,8 @@ extension String {
             string = "https://testnet.flowdiver.io/tx/\(self)"
         } else if LocalUserDefaults.shared.flowNetwork == .crescendo {
             string = "https://crescendo.flowscan.org/transaction/\(self)"
+        } else if LocalUserDefaults.shared.flowNetwork == .previewnet {
+            string = "https://previewnet.flowdiver.io/tx/\(self)"
         }
         
         return URL(string: string)

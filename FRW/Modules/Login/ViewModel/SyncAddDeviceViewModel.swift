@@ -33,8 +33,8 @@ class SyncAddDeviceViewModel: ObservableObject {
                                              hashAlgo: Flow.HashAlgorithm(cadence: model.accountKey.hashAlgo),
                                              weight: 1000)
             do {
-                try await WalletManager.shared.findFlowAccount()
-                let sequenceNumber = WalletManager.shared.flowAccountKey?.sequenceNumber ?? 0
+                let flowAccount = try await findFlowAccount()
+                let sequenceNumber = flowAccount?.sequenceNumber ?? 0
                 let flowId = try await FlowNetwork.addKeyWithMulti(address: address, keyIndex: WalletManager.shared.keyIndex, sequenceNum: sequenceNumber, accountKey: accountKey, signers: [WalletManager.shared, RemoteConfigManager.shared])
                 guard let data = try? JSONEncoder().encode(model) else {
                     return
@@ -86,6 +86,22 @@ class SyncAddDeviceViewModel: ObservableObject {
     
     func sendFaildStatus() {
         callback?(false)
+    }
+    
+    func findFlowAccount() async throws -> Flow.AccountKey? {
+        guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
+        }
+        guard let publicKey = WalletManager.shared.getCurrentPublicKey() else {
+            throw WalletError.emptyPublicKey
+        }
+        
+        let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
+        let sortedAccount = account.keys.sorted { $0.weight > $1.weight }
+        let flowAccountKey = sortedAccount.filter {
+            $0.publicKey.description == publicKey
+        }.first
+        return flowAccountKey
     }
     
     deinit {

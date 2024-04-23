@@ -15,17 +15,17 @@ struct DeveloperModeView_Previews: PreviewProvider {
 
 struct DeveloperModeView: RouteableView {
     @StateObject private var lud = LocalUserDefaults.shared
-    @StateObject private var vm: DeveloperModeViewModel = DeveloperModeViewModel()
+    @StateObject private var vm: DeveloperModeViewModel = .init()
     @StateObject private var walletManager = WalletManager.shared
     
     @AppStorage("isDeveloperMode") private var isDeveloperMode = false
+    @AppStorage("EVMEnable") private var isEVMEnable = false
     
     var title: String {
         return "developer_mode".localized
     }
     
     var body: some View {
-        
         ScrollView {
             VStack {
                 HStack {
@@ -40,7 +40,6 @@ struct DeveloperModeView: RouteableView {
             .padding(.horizontal, 18)
             
             if isDeveloperMode {
-                
                 VStack {
                     Text("switch_network".localized)
                         .font(.LL.footnote)
@@ -51,6 +50,7 @@ struct DeveloperModeView: RouteableView {
                             let isMainnet = lud.flowNetwork == .mainnet
                             let isTestnet = lud.flowNetwork == .testnet
                             let isCrescendo = lud.flowNetwork == .crescendo
+                            let isPreviewnet = lud.flowNetwork == .previewnet
                             
                             Cell(sysImageTuple: (isMainnet ? .checkmarkSelected : .checkmarkUnselected, isMainnet ? .LL.Primary.salmonPrimary : .LL.Neutrals.neutrals1), title: "Mainnet", desc: isMainnet ? "Selected" : "")
                                 .onTapGestureOnBackground {
@@ -74,6 +74,18 @@ struct DeveloperModeView: RouteableView {
 //                                        walletManager.changeNetwork(.crescendo)
 //                                    }
 //                                }
+                            
+                            Divider()
+                            Cell(sysImageTuple: (isPreviewnet ? .checkmarkSelected : .checkmarkUnselected, isPreviewnet ? LocalUserDefaults.FlowNetworkType.previewnet.color : .LL.Neutrals.neutrals1), title: "Previewnet", desc: isPreviewnet ? "Selected" : "", btnTitle: walletManager.isPreviewEnabled ? nil : "Enable", btnAction: {
+                                if !walletManager.isPreviewEnabled {
+                                    vm.enablePreviewnetAction()
+                                }
+                            }, titleAlpha: walletManager.isPreviewEnabled ? 1 : 0.5)
+                                .onTapGestureOnBackground {
+                                    if walletManager.isPreviewEnabled {
+                                        walletManager.changeNetwork(.previewnet)
+                                    }
+                                }
                         }
                         .background(.LL.bgForIcon)
                     }
@@ -132,7 +144,26 @@ struct DeveloperModeView: RouteableView {
                             }
                             .frame(height: 64)
                             .padding(.horizontal, 16)
-                            
+                        }
+                        .background(.LL.bgForIcon)
+                    }
+                    .cornerRadius(16)
+                    
+                    Text("other".localized)
+                        .font(.LL.footnote)
+                        .foregroundColor(.LL.Neutrals.neutrals3)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    VStack(spacing: 0) {
+                        Section {
+                            HStack {
+                                Toggle("evm_on_flow".localized, isOn: $isEVMEnable)
+                                    .toggleStyle(SwitchToggleStyle(tint: .LL.Primary.salmonPrimary))
+                                    .onChange(of: isEVMEnable) { _ in
+                                        EVMAccountManager.shared.updateWhenDevChange()
+                                    }
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
                         }
                         .background(.LL.bgForIcon)
                     }

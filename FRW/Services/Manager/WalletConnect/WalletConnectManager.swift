@@ -34,6 +34,7 @@ class WalletConnectManager: ObservableObject {
     
     private var publishers = [AnyCancellable]()
     private var pendingRequestCheckTimer: Timer?
+    private var handler = WalletConnectHandler()
     
     var currentProposal: Session.Proposal?
     var currentRequest: WalletConnectSign.Request?
@@ -171,51 +172,7 @@ class WalletConnectManager: ObservableObject {
                 print("[RESPONDER] WC: Did receive session proposal")
                 self?.currentProposal = context.proposal
                 let sessionProposal = context.proposal
-
-                let pairings = Pair.instance.getPairings()
-                if pairings.contains(where: { $0.peer == sessionProposal.proposer }) {
-                    self?.approveSession(proposal: sessionProposal)
-                    return
-                }
-                
-                let appMetadata = sessionProposal.proposer
-                let requiredNamespaces = sessionProposal.requiredNamespaces
-                let info = SessionInfo(
-                    name: appMetadata.name,
-                    descriptionText: appMetadata.description,
-                    dappURL: appMetadata.url,
-                    iconURL: appMetadata.icons.first ?? "",
-                    chains: requiredNamespaces["flow"]?.chains ?? [],
-                    methods: requiredNamespaces["flow"]?.methods ?? [],
-                    pendingRequests: [],
-                    data: ""
-                )
-                self?.currentSessionInfo = info
-                
-                guard let chains = requiredNamespaces["flow"]?.chains,
-                      let reference = chains.first(where: { $0.namespace == "flow" })?.reference
-                else {
-                    self?.rejectSession(proposal: sessionProposal)
-                    return
-                }
-                
-                let network = Flow.ChainID(name: reference.lowercased())
-                
-                let authnVM = BrowserAuthnViewModel(title: info.name,
-                                                    url: info.dappURL,
-                                                    logo: info.iconURL,
-                                                    walletAddress: WalletManager.shared.getPrimaryWalletAddress(),
-                                                    network: network)
-                { result in
-                    if result {
-                        // TODO: Handle network mismatch
-                        self?.approveSession(proposal: sessionProposal)
-                    } else {
-                        self?.rejectSession(proposal: sessionProposal)
-                    }
-                }
-                
-                Router.route(to: RouteMap.Explore.authn(authnVM))
+                self?.handleSessionProposal(sessionProposal)
             }.store(in: &publishers)
         
         Sign.instance.sessionSettlePublisher
@@ -310,9 +267,81 @@ extension WalletConnectManager {
 // MARK: - Handle
 
 extension WalletConnectManager {
+    
+    private func handleSessionProposal(_ sessionProposal: Session.Proposal) {
+        let pairings = Pair.instance.getPairings()
+        if pairings.contains(where: { $0.peer == sessionProposal.proposer }) {
+            self.approveSession(proposal: sessionProposal)
+            return
+        }
+        
+        guard let network = self.handler.chainId(sessionProposal: sessionProposal) else {
+            self.rejectSession(proposal: sessionProposal)
+            return
+        }
+        let info = self.handler.sessionInfo(sessionProposal: sessionProposal)
+        self.currentSessionInfo = info
+        let authnVM = BrowserAuthnViewModel(title: info.name,
+                                            url: info.dappURL,
+                                            logo: info.iconURL,
+                                            walletAddress: WalletManager.shared.getPrimaryWalletAddress(),
+                                            network: network)
+        { result in
+            if result {
+                // TODO: Handle network mismatch
+                self.approveSession(proposal: sessionProposal)
+            } else {
+                self.rejectSession(proposal: sessionProposal)
+            }
+        }
+        
+        Router.route(to: RouteMap.Explore.authn(authnVM))
+        
+        /*
+        let appMetadata = sessionProposal.proposer
+        let requiredNamespaces = sessionProposal.requiredNamespaces
+        let info = SessionInfo(
+            name: appMetadata.name,
+            descriptionText: appMetadata.description,
+            dappURL: appMetadata.url,
+            iconURL: appMetadata.icons.first ?? "",
+            chains: requiredNamespaces["flow"]?.chains ?? [],
+            methods: requiredNamespaces["flow"]?.methods ?? [],
+            pendingRequests: [],
+            data: ""
+        )
+        self?.currentSessionInfo = info
+        
+        guard let chains = requiredNamespaces["flow"]?.chains,
+              let reference = chains.first(where: { $0.namespace == "flow" })?.reference
+        else {
+            self?.rejectSession(proposal: sessionProposal)
+            return
+        }
+        
+        let network = Flow.ChainID(name: reference.lowercased())
+        
+        let authnVM = BrowserAuthnViewModel(title: info.name,
+                                            url: info.dappURL,
+                                            logo: info.iconURL,
+                                            walletAddress: WalletManager.shared.getPrimaryWalletAddress(),
+                                            network: network)
+        { result in
+            if result {
+                // TODO: Handle network mismatch
+                self?.approveSession(proposal: sessionProposal)
+            } else {
+                self?.rejectSession(proposal: sessionProposal)
+            }
+        }
+        
+        Router.route(to: RouteMap.Explore.authn(authnVM))
+        */
+    }
+    
     func handleRequest(_ sessionRequest: WalletConnectSign.Request) {
         let address = WalletManager.shared.address.hex.addHexPrefix()
-        let keyId = WalletManager.shared.keyIndex // TODO: FIX ME with dynmaic keyIndex
+        let keyId = WalletManager.shared.keyIndex 
         
         switch sessionRequest.method {
         case FCLWalletConnectMethod.authn.rawValue:
@@ -462,7 +491,7 @@ extension WalletConnectManager {
                 } catch {
                     log.error("[WALLET] Respond Error: [accountInfo] \(error.localizedDescription)")
                     rejectRequest(request: sessionRequest)
-                }
+                } 
             }
         case FCLWalletConnectMethod.addDeviceInfo.rawValue:
             Task {
@@ -475,7 +504,7 @@ extension WalletConnectManager {
                                     try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable("")))
                                 } catch {
                                     self.rejectRequest(request: sessionRequest)
-                                    print("[WALLET] Respond Error: [addDeviceInfo] \(error.localizedDescription)")
+                                    print("[WALLET] Request Error: [addDeviceInfo] \(error.localizedDescription)")
                                 }
                             }
                         } else {
@@ -484,10 +513,26 @@ extension WalletConnectManager {
                     }
                     Router.route(to: RouteMap.RestoreLogin.syncDevice(viewModel))
                 } catch {
-                    print("[WALLET] Respond Error: [addDeviceInfo] \(error.localizedDescription)")
+                    print("[WALLET] Request Error: [addDeviceInfo] \(error.localizedDescription)")
                     rejectRequest(request: sessionRequest)
                 }
             }
+        case WalletConnectEVMMethod.personalSign.rawValue:
+            log.info("[EVM] sign person")
+            handler.handlePersonalSignRequest(request: sessionRequest) { signStr in
+                Task {
+                    do {
+                        try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable(signStr)))
+                    } catch {
+                        self.rejectRequest(request: sessionRequest)
+                        log.error("[EVM] Request Error: [personalSign] \(error)")
+                    }
+                }
+            } cancel: {
+                log.error("[EVM] Request cancel: [personalSign]")
+                self.rejectRequest(request: sessionRequest)
+            }
+            
         default:
             rejectRequest(request: sessionRequest, reason: "unspport method")
         }
@@ -532,21 +577,23 @@ extension WalletConnectManager {
             return
         }
         
-        var sessionNamespaces = [String: SessionNamespace]()
-        proposal.requiredNamespaces.forEach {
-            let caip2Namespace = $0.key
-            let proposalNamespace = $0.value
-            if let chains = proposalNamespace.chains {
-                let accounts = Set(chains.compactMap { WalletConnectSign.Account($0.absoluteString + ":\(account)") })
-                let sessionNamespace = SessionNamespace(accounts: accounts, methods: proposalNamespace.methods, events: proposalNamespace.events)
-                sessionNamespaces[caip2Namespace] = sessionNamespace
-            }
-        }
+//        var sessionNamespaces = [String: SessionNamespace]()
+//        proposal.requiredNamespaces.forEach {
+//            let caip2Namespace = $0.key
+//            let proposalNamespace = $0.value
+//            if let chains = proposalNamespace.chains {
+//                let accounts = Set(chains.compactMap { WalletConnectSign.Account($0.absoluteString + ":\(account)") })
+//                let sessionNamespace = SessionNamespace(accounts: accounts, methods: proposalNamespace.methods, events: proposalNamespace.events)
+//                sessionNamespaces[caip2Namespace] = sessionNamespace
+//            }
+//        }
+//        
+//        let namespaces = sessionNamespaces
         
-        let namespaces = sessionNamespaces
         
         Task {
             do {
+                let namespaces = try handler.approveSessionNamespaces(sessionProposal: proposal)
                 try await Sign.instance.approve(proposalId: proposal.id, namespaces: namespaces)
                 HUD.success(title: "approved".localized)
             } catch {
@@ -690,7 +737,7 @@ extension WalletConnectManager {
     
     func findSession(method: String, at name: String = "flow") -> Session? {
         
-        let session = activeSessions.first { session in
+        let session = activeSessions.last { session in
             log.info("\(session.topic) : \(session.pairingTopic)")
             return session.namespaces[name]?.methods.contains(method) ?? false
         }

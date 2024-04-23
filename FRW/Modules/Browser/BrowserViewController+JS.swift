@@ -7,6 +7,7 @@
 
 import UIKit
 import WebKit
+import TrustWeb3Provider
 
 private let jsListenWindowFCLMessage = """
     window.addEventListener('message', function (event) {
@@ -91,6 +92,10 @@ extension BrowserViewController {
         ucc.addUserScript(listenFCLMessageUserScript)
         ucc.addUserScript(listenFlowWalletTransactionUserScript)
         ucc.addUserScript(extensionInjectUserScript)
+        // Trust Web3
+        ucc.add(self.trustJSHandler, name: TrustWeb3Provider.scriptHandlerName)
+        ucc.addUserScript(trustProvider.providerScript)
+        ucc.addUserScript(trustProvider.injectScript)
         config.userContentController = ucc
         
         return config

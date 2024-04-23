@@ -8,7 +8,12 @@
 import Foundation
 import SwiftUI
 
+
 enum CardBackground: CaseIterable {
+    enum Style {
+        case flow
+        case evm
+    }
     static var allCases: [CardBackground] = [
         .fluid,
         .matrix,
@@ -38,7 +43,7 @@ enum CardBackground: CaseIterable {
                     .aspectRatio(contentMode: .fill)
             }
         case let .fade(imageIndex):
-            FadeAnimationBackground(image: fadeList[safe: imageIndex] ?? fadeList[0])
+            FadeAnimationBackground(image: fadeList[safe: imageIndex] ?? fadeList[0], color: fadeColor)
         case let .image(imageIndex):
             (imageList[safe: imageIndex] ?? imageList[0])
                 .resizable()
@@ -51,7 +56,35 @@ enum CardBackground: CaseIterable {
     }
     
     var fadeList: [Image] {
-        return [Image("flow-line")]
+        switch self {
+        case .fade:
+            switch cardStyle {
+            case .evm:
+                return [Image("evm-line")]
+            default:
+                return [Image("flow-line")]
+            }
+        default:
+            return [Image("flow-line")]
+        }
+    }
+    
+    var fadeColor: Color {
+        switch self {
+        case .fade:
+            switch cardStyle {
+            case .evm:
+                return Color.Theme.Accent.blue
+            default:
+                return Color.Theme.Accent.green
+            }
+        default:
+            return Color.Theme.Accent.green
+        }
+    }
+    
+    private var cardStyle: CardBackground.Style {
+        WalletManager.shared.isSelectedEVMAccount ? CardBackground.Style.evm : CardBackground.Style.flow
     }
     
     var rawValue: String {

@@ -12,6 +12,7 @@ extension RemoteConfigManager {
         let mainnet: [String: String]?
         let testnet: [String: String]?
         let crescendo: [String: String]?
+        let previewnet: [String: String]?
     }
     
     struct Config: Codable {
@@ -26,6 +27,8 @@ extension RemoteConfigManager {
         let onRamp: Bool?
         let appList: Bool?
         let swap: Bool?
+        let browser: Bool?
+        let nftTransfer: Bool?
 
         enum CodingKeys: String, CodingKey {
             case freeGas = "free_gas"
@@ -33,6 +36,8 @@ extension RemoteConfigManager {
             case onRamp = "on_ramp"
             case appList = "app_list"
             case swap = "swap"
+            case browser = "browser"
+            case nftTransfer = "nft_transfer"
         }
     }
 
@@ -41,6 +46,7 @@ extension RemoteConfigManager {
         let mainnet: PayerInfo
         let testnet: PayerInfo
         let crescendo: PayerInfo?
+        let previewnet: PayerInfo?
     }
 
     // MARK: - Net

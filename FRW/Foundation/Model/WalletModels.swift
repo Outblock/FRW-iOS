@@ -43,6 +43,7 @@ enum ListedToken: String, CaseIterable {
     case fusd
     case stFlow
     case usdc
+    case other
     
     enum PriceAction {
         case fixed(price: Decimal)
@@ -57,8 +58,10 @@ enum ListedToken: String, CaseIterable {
         case .fusd:
             return .fixed(price: 1.0)
         case .stFlow:
-            return .mirror(.flow)
+            return .fixed(price: 1.0)
         case .usdc:
+            return .fixed(price: 1.0)
+        case .other:
             return .fixed(price: 1.0)
         }
     }
@@ -67,7 +70,7 @@ enum ListedToken: String, CaseIterable {
         if let item = ListedToken.allCases.first(where: { $0.rawValue.lowercased() == rawValue.lowercased() }) {
             self = item
         } else {
-            return nil
+            self = .other
         }
     }
 }
@@ -100,6 +103,8 @@ struct TokenModel: Codable, Identifiable, Mockable {
             addressString = address.mainnet ?? ""
         case .crescendo:
             addressString = address.crescendo ?? ""
+        case .previewnet:
+            addressString = address.previewnet ?? ""
         }
         
         addressString = addressString.stripHexPrefix()
@@ -121,7 +126,7 @@ struct TokenModel: Codable, Identifiable, Mockable {
         case .usdc:
             return market.usdcPricePair
         default:
-            return ""
+            return market.flowPricePair //TODO: #six Need to confirm
         }
     }
     
@@ -135,7 +140,7 @@ struct TokenModel: Codable, Identifiable, Mockable {
     
     static func mock() -> TokenModel {
         return TokenModel(name: "mockname",
-                          address: FlowNetworkModel(mainnet: nil, testnet: nil, crescendo: nil),
+                          address: FlowNetworkModel(mainnet: nil, testnet: nil, crescendo: nil, previewnet: nil),
                           contractName: "contractname",
                           storagePath: FlowTokenStoragePath(balance: "", vault: "", receiver: ""),
                           decimal: 999,
@@ -149,6 +154,7 @@ struct FlowNetworkModel: Codable {
     let mainnet: String?
     let testnet: String?
     let crescendo: String?
+    let previewnet: String?
 
     func addressByNetwork(_ network: Flow.ChainID) -> String? {
         switch network {
@@ -158,6 +164,8 @@ struct FlowNetworkModel: Codable {
             return testnet
         case .crescendo:
             return crescendo
+        case .previewnet:
+            return previewnet
         default:
             return nil
         }

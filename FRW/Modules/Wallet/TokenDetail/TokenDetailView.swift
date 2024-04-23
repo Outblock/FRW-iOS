@@ -5,11 +5,13 @@
 //  Created by Selina on 30/6/2022.
 //
 
+import Kingfisher
 import SwiftUI
 import SwiftUICharts
-import Kingfisher
+import SwiftUIX
+import Flow
 
-//struct TokenDetailView_Previews: PreviewProvider {
+// struct TokenDetailView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        TokenDetailView()
 //        VStack {
@@ -18,7 +20,7 @@ import Kingfisher
 //        .frame(maxWidth: .infinity, maxHeight: .infinity)
 //        .backgroundFill(.LL.Neutrals.background)
 //    }
-//}
+// }
 
 struct TokenDetailView: RouteableView {
     @Environment(\.colorScheme) var colorScheme
@@ -43,8 +45,8 @@ struct TokenDetailView: RouteableView {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 12) {
                 CalloutView(type: .tip, corners: [.topLeading, .topTrailing, .bottomTrailing, .bottomLeading], content: naccessibleDesc())
-                .padding(.bottom, 12)
-                .visibility( showAccessibleWarning() ? .visible : .gone)
+                    .padding(.bottom, 12)
+                    .visibility(showAccessibleWarning() ? .visible : .gone)
                 
                 summaryView
                 stakeAdView
@@ -60,47 +62,77 @@ struct TokenDetailView: RouteableView {
         .buttonStyle(.plain)
         .backgroundFill(.LL.deepBg)
         .applyRouteable(self)
+        .halfSheet(showSheet: $vm.showSheet) {
+            if vm.buttonAction == .move {
+                MoveTokenView(tokenModel: vm.token)
+            }
+        }
     }
     
     var summaryView: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Button {
-                if let url = vm.token.website {
-                    UIApplication.shared.open(url)
-                }
-            } label: {
-                ZStack(alignment: .leading) {
-                    HStack(spacing: 5) {
-                        Text(vm.token.name)
-                            .foregroundColor(.LL.Neutrals.neutrals1)
-                            .font(.inter(size: 16, weight: .semibold))
-                        Image("icon-right-arrow")
+            HStack {
+                Button {
+                    if let url = vm.token.website {
+                        UIApplication.shared.open(url)
                     }
-                    .frame(height: 32)
-                    .padding(.trailing, 10)
-                    .padding(.leading, 90)
-                    .background {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(.linearGradient(
-                                colors: colorScheme == .dark ? darkGradientColors : lightGradientColors,
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ))
+                } label: {
+                    ZStack(alignment: .leading) {
+                        HStack(spacing: 5) {
+                            Text(vm.token.name)
+                                .foregroundColor(.LL.Neutrals.neutrals1)
+                                .font(.inter(size: 16, weight: .semibold))
+                            Image("icon-right-arrow")
+                        }
+                        .frame(height: 32)
+                        .padding(.trailing, 10)
+                        .padding(.leading, 90)
+                        .background {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(.linearGradient(
+                                    colors: colorScheme == .dark ? darkGradientColors : lightGradientColors,
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ))
+                        }
+                        
+                        KFImage.url(vm.token.icon)
+                            .placeholder {
+                                Image("placeholder")
+                                    .resizable()
+                            }
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 64, height: 64)
+                            .clipShape(Circle())
+                            .padding(.top, -12)
+                            .padding(.leading, 18)
                     }
-                    
-                    KFImage.url(vm.token.icon)
-                        .placeholder({
-                            Image("placeholder")
-                                .resizable()
-                        })
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 64, height: 64)
-                        .clipShape(Circle())
-                        .padding(.top, -12)
-                        .padding(.leading, 18)
+                    .padding(.leading, -18)
                 }
-                .padding(.leading, -18)
+                
+                Spacer()
+                
+                Button {
+                    if vm.balance == 0 {
+                        HUD.error(title: "There is not an adequate balance")
+                    }
+                    vm.onMoveToken()
+                } label: {
+                    HStack {
+                        Text("move".localized)
+                            .font(.inter(size: 14))
+                            .foregroundStyle(Color.Theme.Accent.green)
+                        Image("button_move_double")
+                            .resizable()
+                            .frame(width: 12, height: 12)
+                    }
+                    .frame(height: 24)
+                    .padding(.horizontal, 9)
+                    .background(Color.Theme.Accent.green.fixedOpacity())
+                    .cornerRadius(8)
+                }
+                .visibility(vm.movable ? .visible : .gone)
             }
             
             HStack(alignment: .bottom, spacing: 6) {
@@ -120,34 +152,42 @@ struct TokenDetailView: RouteableView {
                 .font(.inter(size: 16, weight: .medium))
                 .padding(.top, 3)
             
-            HStack(spacing: 13) {
+            HStack(spacing: 2) {
                 Button {
                     vm.sendAction()
                 } label: {
-                    Text("send_uppercase".localized)
-                        .foregroundColor(.LL.Button.send)
-                        .font(.inter(size: 14, weight: .bold))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 40)
-                        .background(.Flow.accessory)
-                        .cornerRadius(12)
+                    ZStack {
+                        Rectangle()
+                            .fill(Color.Theme.Accent.green.opacity(0.08))
+                        Image("icon_token_send")
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                    }
                 }
                 .disabled(WalletManager.shared.isSelectedChildAccount)
+
+
+                
                 
                 Button {
                     vm.receiveAction()
                 } label: {
-                    Text("receive_uppercase".localized)
-                        .foregroundColor(.LL.Button.send)
-                        .font(.inter(size: 14, weight: .bold))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 40)
-                        .background(.Flow.accessory)
-                        .cornerRadius(12)
+                    ZStack {
+                        Rectangle()
+                            .fill(Color.Theme.Accent.green.opacity(0.08))
+                        Image("icon_token_recieve")
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                    }
                 }
+                
             }
+            .frame(height: 40)
+            .frame(minWidth: 0, maxWidth: .infinity)
+            .cornerRadius(20)
             .padding(.top, 24)
             .padding(.bottom, 14)
+            .layoutPriority(100)
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 18)
@@ -158,7 +198,6 @@ struct TokenDetailView: RouteableView {
     
     var activitiesView: some View {
         VStack(spacing: 0) {
-            
             // header
             HStack {
                 Text("token_detail_activities".localized)
@@ -292,17 +331,17 @@ extension TokenDetailView {
         }
         
         let c =
-        FilledLineChart(chartData: chartData)
-            .filledTopLine(chartData: chartData,
-                           lineColour: ColourStyle(colour: Color.LL.Primary.salmonPrimary),
-                           strokeStyle: StrokeStyle(lineWidth: 1, lineCap: .round))
-            .touchOverlay(chartData: chartData, specifier: "%.2f")
-            .floatingInfoBox(chartData: chartData)
-            .yAxisLabels(chartData: chartData, specifier: "%.2f")
-            .id(chartData.id)
-            .frame(height: 163)
-            .padding(.horizontal, 18)
-            .padding(.top, 5)
+            FilledLineChart(chartData: chartData)
+                .filledTopLine(chartData: chartData,
+                               lineColour: ColourStyle(colour: Color.LL.Primary.salmonPrimary),
+                               strokeStyle: StrokeStyle(lineWidth: 1, lineCap: .round))
+                .touchOverlay(chartData: chartData, specifier: "%.2f")
+                .floatingInfoBox(chartData: chartData)
+                .yAxisLabels(chartData: chartData, specifier: "%.2f")
+                .id(chartData.id)
+                .frame(height: 163)
+                .padding(.horizontal, 18)
+                .padding(.top, 5)
         
         return AnyView(c)
     }
@@ -420,10 +459,10 @@ extension TokenDetailView {
         var body: some View {
             HStack(spacing: 8) {
                 KFImage.url(URL(string: model.image ?? ""))
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 32, height: 32)
@@ -437,7 +476,8 @@ extension TokenDetailView {
                             .frame(width: 12, height: 12)
                             .aspectRatio(contentMode: .fit)
                         
-                        Text(model.token?.replaceBeforeLast(".", replacement: "").removePrefix(".") ?? "")
+                        
+                        Text(model.title ?? "")
                             .font(.inter(size: 14, weight: .semibold))
                             .foregroundColor(Color.LL.Neutrals.text)
                             .lineLimit(1)
@@ -477,7 +517,6 @@ extension TokenDetailView {
             vm.stakeDetailAction()
         } label: {
             VStack(spacing: 0) {
-                
                 // header
                 HStack {
                     Text("stake_reward_title".localized)
@@ -502,7 +541,6 @@ extension TokenDetailView {
                 
                 // reward summary
                 HStack(spacing: 12) {
-                    
                     // daily
                     VStack(alignment: .leading, spacing: 13) {
                         Text("stake_daily_reward".localized)
@@ -609,6 +647,7 @@ extension TokenDetailView {
 }
 
 // MARK: - Data for UI
+
 extension TokenDetailView {
     func naccessibleDesc() -> String {
         let token = vm.token.name
@@ -620,5 +659,4 @@ extension TokenDetailView {
     func showAccessibleWarning() -> Bool {
         return !isAccessible
     }
-    
 }

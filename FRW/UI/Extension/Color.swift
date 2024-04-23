@@ -31,28 +31,27 @@ extension Color {
 }
 
 extension UIColor {
-
     func adjustbyTheme(by percentage: CGFloat = 30.0) -> UIColor {
         if UIScreen.main.traitCollection.userInterfaceStyle == .dark {
-            return lighter(by: percentage)
+            return self.lighter(by: percentage)
         }
-        return darker(by: percentage)
+        return self.darker(by: percentage)
     }
-    
+
     func lighter(by percentage: CGFloat = 30.0) -> UIColor {
-        return self.adjust(by: abs(percentage) )
+        return self.adjust(by: abs(percentage))
     }
 
     func darker(by percentage: CGFloat = 30.0) -> UIColor {
-        return self.adjust(by: -1 * abs(percentage) )
+        return self.adjust(by: -1 * abs(percentage))
     }
 
     func adjust(by percentage: CGFloat = 30.0) -> UIColor {
         var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
         if self.getRed(&red, green: &green, blue: &blue, alpha: &alpha) {
-            return UIColor(red: min(red + percentage/100, 1.0),
-                           green: min(green + percentage/100, 1.0),
-                           blue: min(blue + percentage/100, 1.0),
+            return UIColor(red: min(red + percentage / 100, 1.0),
+                           green: min(green + percentage / 100, 1.0),
+                           blue: min(blue + percentage / 100, 1.0),
                            alpha: alpha)
         } else {
             return self
@@ -96,7 +95,7 @@ extension Color {
         static let deepBg = Color("DeepBackground")
 
         static let neutrals1 = Color("Neutrals1")
-        
+
         static let stakeMain = Color("other.stakingMain")
 
         /// The primary color palette is used across all the iteractive elemets such as CTA’s(Call to The Action), links, inputs,active states,etc
@@ -178,7 +177,7 @@ extension Color {
             static let text = Color("button.text")
             static let send = Color("button.send")
         }
-        
+
         enum Other {
             static let text1 = Color("other.text1")
             static let text2 = Color("other.text2")
@@ -193,7 +192,6 @@ extension Color {
 extension Color {
     // 2023-08-21
     enum Flow {
-        
         static let accessory = Color("accessory")
         static let blue = Color("tip.blue")
         enum Font {
@@ -201,7 +199,6 @@ extension Color {
             static let descend = Color("font.descend")
             static let inaccessible = Color("font.inaccessible")
         }
-        
     }
 }
 
@@ -215,9 +212,8 @@ extension Color {
             static let yellow = Color("accent.yellow")
             static let purple = Color("accent.purple")
             static let orange = Color("accent.orange")
-            
         }
-        
+
         enum Background {
             ///BG
             static let white = Color("bg.white")
@@ -225,14 +221,16 @@ extension Color {
             static let grey = Color("bg.grey")
             ///BG3
             static let silver = Color("bg.silver")
+            static let white8 = Color("bg.white8")
+            static let black3 = Color("bg.black3")
             /// White
             static let pureWhite = Color("bg.0")
         }
-        
+
         enum Line {
             static let line = Color("line.black")
         }
-        
+
         enum Text {
             static let black = Color("text.black")
             static let black1 = Color("text.black.1")

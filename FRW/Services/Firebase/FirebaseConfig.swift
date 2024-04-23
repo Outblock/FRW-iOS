@@ -20,7 +20,8 @@ enum FirebaseConfig: String {
     case config = "free_gas_config"
     case dapp
     case contractAddress = "contract_address"
-
+    case appSecret = "app_secret"
+    
     static func start() {
         Task {
             do {
@@ -50,6 +51,12 @@ extension FirebaseConfig {
             debugPrint(error)
             throw FirebaseConfigError.decode
         }
+    }
+    
+    func fetch() throws -> String {
+        let remoteConfig = RemoteConfig.remoteConfig()
+        let json = remoteConfig.configValue(forKey: rawValue)
+        return json.stringValue ?? ""
     }
     
     func fetchLocal<T: Codable>() throws -> T {

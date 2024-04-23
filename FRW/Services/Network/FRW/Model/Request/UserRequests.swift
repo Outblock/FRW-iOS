@@ -31,10 +31,10 @@ struct LoginRequest: Codable {
 
 struct DeviceInfoRequest: Codable {
     let deviceId: String
-    let ip: String
-    let name: String
-    let type: String
-    let userAgent: String
+    let ip: String?
+    let name: String?
+    let type: String?
+    let userAgent: String?
 
     let continent: String?
     let continentCode: String?
@@ -55,11 +55,11 @@ struct DeviceInfoRequest: Codable {
 extension DeviceInfoRequest {
     
     func showApp() -> String {
-        return userAgent
+        return userAgent ?? ""
     }
     
     func showIP() -> String {
-        return ip
+        return ip ?? ""
     }
     
     func showLocation() -> String {

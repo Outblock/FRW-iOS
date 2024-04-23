@@ -72,8 +72,9 @@ extension NFTAddCollectionView {
                 Button {
                     
                     if let website = item.collection.officialWebsite, let url = URL(string: website) {
-                        
-                        Router.route(to: RouteMap.Explore.browser(url))
+                        if let isOn = RemoteConfigManager.shared.config?.features.browser, isOn {
+                            Router.route(to: RouteMap.Explore.browser(url))
+                        }
                     }
                     
                 } label: {

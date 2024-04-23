@@ -25,6 +25,7 @@ enum ScriptAddress: String, CaseIterable {
     case stakingCollection = "0xStakingCollection"
     case flowIDTableStaking = "0xFlowIDTableStaking"
     case hybridCustody = "0xHybridCustody"
+    case evm = "0xEVM"
     
     static func addressMap(on network: LocalUserDefaults.FlowNetworkType = LocalUserDefaults.shared.flowNetwork) -> [String: String] {
         let dict = ScriptAddress.allCases.reduce(into: [String: String]()) { partialResult, script in

@@ -76,7 +76,7 @@ struct ChooseAccountView: RouteableView {
     
     func createAccountView(item: BackupManager.DriveItem) -> some View {
         ZStack {
-            Text(item.username)
+            Text(item.username ?? "")
                 .font(.inter(size: 14, weight: .bold))
                 .foregroundColor(.LL.Neutrals.text)
                 .lineLimit(1)

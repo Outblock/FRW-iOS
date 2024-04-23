@@ -8,6 +8,8 @@
 import UIKit
 import Flow
 import SwiftUI
+import CryptoKit
+import WalletCore
 
 class RemoteConfigManager {
     static let shared = RemoteConfigManager()
@@ -47,6 +49,8 @@ class RemoteConfigManager {
             return config?.payer.testnet.address ?? emptyAddress
         case .crescendo:
             return config?.payer.crescendo?.address ?? emptyAddress
+        case .previewnet:
+            return config?.payer.previewnet?.address ?? emptyAddress
         default:
             return emptyAddress
         }
@@ -64,6 +68,8 @@ class RemoteConfigManager {
             return config?.payer.testnet.keyID ?? 0
         case .crescendo:
             return config?.payer.crescendo?.keyID ?? 0
+        case .previewnet:
+            return config?.payer.previewnet?.keyID ?? 0
         default:
             return 0
         }
@@ -77,6 +83,8 @@ class RemoteConfigManager {
             return contractAddress?.testnet
         case .crescendo:
             return contractAddress?.crescendo
+        case .previewnet:
+            return contractAddress?.previewnet
         }
     }
     
@@ -85,6 +93,7 @@ class RemoteConfigManager {
             let config: Config = try FirebaseConfig.config.fetch(decoder: JSONDecoder())
             self.config = config
             self.contractAddress = try FirebaseConfig.contractAddress.fetch(decoder: JSONDecoder())
+            try handleSecret()
         } catch {
             do {
                 log.warning("will load from local")
@@ -97,6 +106,21 @@ class RemoteConfigManager {
             }
         }
     }
+    
+    private func handleSecret() throws {
+        let data: String = try FirebaseConfig.appSecret.fetch()
+        let key = LocalEnvManager.shared.backupAESKey
+        guard let keyData = key.data(using: .utf8),
+              let ivData = key.sha256().prefix(16).data(using: .utf8) else{
+            return
+        }
+        let decodeData = AES.decryptCBC(key: keyData, data: Data(hex: data), iv: ivData, mode: .pkcs7)!
+        let config = try? JSONDecoder().decode(Config.self, from: decodeData)
+        if config != nil {
+            self.config = config
+        }
+    }
+    
 }
 
 extension RemoteConfigManager: FlowSigner {

@@ -189,10 +189,6 @@
 		159CFF2C27887ED3006421FB /* InputMnemonicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159CFF2A27887ED3006421FB /* InputMnemonicView.swift */; };
 		159DEC8828C6753700493E9F /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159DEC8728C6753700493E9F /* Colors.swift */; };
 		159DEC8928C6753700493E9F /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159DEC8728C6753700493E9F /* Colors.swift */; };
-		159DEC8C28C679F800493E9F /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159DEC8B28C679F800493E9F /* ARViewController.swift */; };
-		159DEC8D28C679F800493E9F /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159DEC8B28C679F800493E9F /* ARViewController.swift */; };
-		159DEC8F28C67A3700493E9F /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159DEC8E28C67A3700493E9F /* Grid.swift */; };
-		159DEC9028C67A3700493E9F /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159DEC8E28C67A3700493E9F /* Grid.swift */; };
 		159DEC9228C67DB900493E9F /* NFTDetailPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159DEC9128C67DB900493E9F /* NFTDetailPageViewModel.swift */; };
 		159DEC9328C67DB900493E9F /* NFTDetailPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159DEC9128C67DB900493E9F /* NFTDetailPageViewModel.swift */; };
 		15ADAE2A28F51EBB0014B722 /* SymmetricEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15ADAE2928F51EBB0014B722 /* SymmetricEncryption.swift */; };
@@ -968,6 +964,7 @@
 		4E3670052B2A8B32000F2693 /* BackupUploadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3670032B2A8B32000F2693 /* BackupUploadView.swift */; };
 		4E3670072B2A8BB6000F2693 /* BackupUploadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3670062B2A8BB6000F2693 /* BackupUploadViewModel.swift */; };
 		4E3670082B2A8BB6000F2693 /* BackupUploadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3670062B2A8BB6000F2693 /* BackupUploadViewModel.swift */; };
+		4E3682C72BB6A59100B24785 /* web3swift in Frameworks */ = {isa = PBXBuildFile; productRef = 4E3682C62BB6A59100B24785 /* web3swift */; };
 		4E3E5BE32875DC2000A5FA65 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E5BE22875DC2000A5FA65 /* SearchBar.swift */; };
 		4E3E5BE42875DC2000A5FA65 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E5BE22875DC2000A5FA65 /* SearchBar.swift */; };
 		4E42DC5F2B22AEB700EF0A75 /* BackupListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E42DC5E2B22AEB700EF0A75 /* BackupListView.swift */; };
@@ -976,10 +973,30 @@
 		4E4F794F2831FF0F00ED027C /* NFTSquareCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4F794D2831FF0F00ED027C /* NFTSquareCard.swift */; };
 		4E51B4FC2854A76500EDE4FE /* CaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E51B4FA2854A76500EDE4FE /* CaptureView.swift */; };
 		4E51B4FF2854BEB600EDE4FE /* ImageSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E51B4FD2854BEB600EDE4FE /* ImageSaver.swift */; };
+		4E539C872BC626770080BAF8 /* Web3Wallet in Frameworks */ = {isa = PBXBuildFile; productRef = 4E539C862BC626770080BAF8 /* Web3Wallet */; };
+		4E539C892BC6269E0080BAF8 /* Web3Wallet in Frameworks */ = {isa = PBXBuildFile; productRef = 4E539C882BC6269E0080BAF8 /* Web3Wallet */; };
 		4E5885442A6FDF00007CACCC /* SPQRMaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5885432A6FDF00007CACCC /* SPQRMaskView.swift */; };
 		4E5885452A6FDF00007CACCC /* SPQRMaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5885432A6FDF00007CACCC /* SPQRMaskView.swift */; };
 		4E5D4FAC2AEF9A5A00DC419B /* DeviceGuru in Frameworks */ = {isa = PBXBuildFile; productRef = 4E5D4FAB2AEF9A5A00DC419B /* DeviceGuru */; };
 		4E5D4FAE2AEF9A7400DC419B /* DeviceGuru in Frameworks */ = {isa = PBXBuildFile; productRef = 4E5D4FAD2AEF9A7400DC419B /* DeviceGuru */; };
+		4E63A5692B8B9D1000BBD15F /* EVMEnableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63A5682B8B9D1000BBD15F /* EVMEnableView.swift */; };
+		4E63A56A2B8B9D1000BBD15F /* EVMEnableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63A5682B8B9D1000BBD15F /* EVMEnableView.swift */; };
+		4E63A5712B8BA1F400BBD15F /* EVMEnableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63A5702B8BA1F400BBD15F /* EVMEnableViewModel.swift */; };
+		4E63A5722B8BA1F400BBD15F /* EVMEnableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63A5702B8BA1F400BBD15F /* EVMEnableViewModel.swift */; };
+		4E63A5742B8BB79700BBD15F /* ReceiveQRView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63A5732B8BB79700BBD15F /* ReceiveQRView.swift */; };
+		4E63A5752B8BB79700BBD15F /* ReceiveQRView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63A5732B8BB79700BBD15F /* ReceiveQRView.swift */; };
+		4E63A5772B8BBD7700BBD15F /* ReceiveQRViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63A5762B8BBD7700BBD15F /* ReceiveQRViewModel.swift */; };
+		4E63A5782B8BBD7700BBD15F /* ReceiveQRViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63A5762B8BBD7700BBD15F /* ReceiveQRViewModel.swift */; };
+		4E63A57B2B8D6A4100BBD15F /* MoveTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63A57A2B8D6A4100BBD15F /* MoveTokenView.swift */; };
+		4E63A57C2B8D6A4100BBD15F /* MoveTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63A57A2B8D6A4100BBD15F /* MoveTokenView.swift */; };
+		4E63A57E2B8D75F200BBD15F /* MoveTokenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63A57D2B8D75F200BBD15F /* MoveTokenViewModel.swift */; };
+		4E63A57F2B8D75F200BBD15F /* MoveTokenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63A57D2B8D75F200BBD15F /* MoveTokenViewModel.swift */; };
+		4E63A5812B8D76AD00BBD15F /* MoveChooseAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63A5802B8D76AD00BBD15F /* MoveChooseAccountView.swift */; };
+		4E63A5822B8D76AD00BBD15F /* MoveChooseAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63A5802B8D76AD00BBD15F /* MoveChooseAccountView.swift */; };
+		4E6ED48B2BA9258D009906A5 /* EVMAccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6ED48A2BA9258D009906A5 /* EVMAccountManager.swift */; };
+		4E6ED48C2BA9258D009906A5 /* EVMAccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6ED48A2BA9258D009906A5 /* EVMAccountManager.swift */; };
+		4E6ED48E2BA96DBB009906A5 /* ChildAccountSideCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6ED48D2BA96DBB009906A5 /* ChildAccountSideCell.swift */; };
+		4E6ED48F2BA96DBB009906A5 /* ChildAccountSideCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6ED48D2BA96DBB009906A5 /* ChildAccountSideCell.swift */; };
 		4E6ED4912BAA79F6009906A5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4E6ED4902BAA79F6009906A5 /* PrivacyInfo.xcprivacy */; };
 		4E6ED4932BAA7CB6009906A5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4E6ED4922BAA7CB6009906A5 /* PrivacyInfo.xcprivacy */; };
 		4E777CAE2B1ECF8900300A3E /* SyncInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E777CAD2B1ECF8900300A3E /* SyncInfo.swift */; };
@@ -1006,7 +1023,24 @@
 		4E8DD9FD282E52110016A931 /* JSONStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8DD9FB282E52110016A931 /* JSONStorage.swift */; };
 		4E90592F2B1792F10029FC66 /* SyncAddDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */; };
 		4E9059302B1792F10029FC66 /* SyncAddDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */; };
+		4E947C922BBEB2E300E87A85 /* web3swift in Frameworks */ = {isa = PBXBuildFile; productRef = 4E947C912BBEB2E300E87A85 /* web3swift */; };
+		4E9621D52B984EF3006859AD /* CadenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D42B984EF3006859AD /* CadenceManager.swift */; };
+		4E9621D62B984EF3006859AD /* CadenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D42B984EF3006859AD /* CadenceManager.swift */; };
+		4E9621D82B9850CF006859AD /* FRWAPI+Cadence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */; };
+		4E9621D92B9850CF006859AD /* FRWAPI+Cadence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */; };
+		4E9621DB2B985BAB006859AD /* cloudfunctions.json in Resources */ = {isa = PBXBuildFile; fileRef = 4E9621DA2B985BAB006859AD /* cloudfunctions.json */; };
+		4E9621DC2B985BAB006859AD /* cloudfunctions.json in Resources */ = {isa = PBXBuildFile; fileRef = 4E9621DA2B985BAB006859AD /* cloudfunctions.json */; };
 		4E9BFF5D2867631300601339 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E9BFF5C2867631300601339 /* UIKit.framework */; };
+		4E9D98DD2B9DEAE300A70879 /* TrustWeb3Provider in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9D98DC2B9DEAE300A70879 /* TrustWeb3Provider */; };
+		4E9D98DF2B9DEAEF00A70879 /* TrustWeb3Provider in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9D98DE2B9DEAEF00A70879 /* TrustWeb3Provider */; };
+		4E9D98E22B9DEC0800A70879 /* TrustProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D98E12B9DEC0800A70879 /* TrustProvider.swift */; };
+		4E9D98E32B9DEC0800A70879 /* TrustProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D98E12B9DEC0800A70879 /* TrustProvider.swift */; };
+		4E9D98E52B9DF48B00A70879 /* TrustJSMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D98E42B9DF48B00A70879 /* TrustJSMessageHandler.swift */; };
+		4E9D98E62B9DF48B00A70879 /* TrustJSMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D98E42B9DF48B00A70879 /* TrustJSMessageHandler.swift */; };
+		4E9D98E82B9DF4BF00A70879 /* TrustAppMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D98E72B9DF4BF00A70879 /* TrustAppMethod.swift */; };
+		4E9D98E92B9DF4BF00A70879 /* TrustAppMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D98E72B9DF4BF00A70879 /* TrustAppMethod.swift */; };
+		4E9D98EB2B9DF55000A70879 /* WKScriptMessage+JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D98EA2B9DF55000A70879 /* WKScriptMessage+JSON.swift */; };
+		4E9D98EC2B9DF55000A70879 /* WKScriptMessage+JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D98EA2B9DF55000A70879 /* WKScriptMessage+JSON.swift */; };
 		4E9DCE452B50E845005DE911 /* InstabugConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9DCE442B50E845005DE911 /* InstabugConfig.swift */; };
 		4E9DCE472B50E8A0005DE911 /* InstabugConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9DCE462B50E8A0005DE911 /* InstabugConfig.swift */; };
 		4E9E21B3282644B200E1BACD /* WalletViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9E21B1282644B100E1BACD /* WalletViewModel.swift */; };
@@ -1090,8 +1124,6 @@
 		4ECE28C52ADF6D170035787D /* AccountKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECE28C32ADF6D170035787D /* AccountKeys.swift */; };
 		4ECE28C72AE20DBF0035787D /* AccountKeyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECE28C62AE20DBF0035787D /* AccountKeyViewModel.swift */; };
 		4ECE28C82AE20DC30035787D /* AccountKeyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECE28C62AE20DBF0035787D /* AccountKeyViewModel.swift */; };
-		4ECE28CA2AE20EC90035787D /* CadenceTemplate+AccountKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECE28C92AE20EC90035787D /* CadenceTemplate+AccountKeys.swift */; };
-		4ECE28CB2AE20EC90035787D /* CadenceTemplate+AccountKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECE28C92AE20EC90035787D /* CadenceTemplate+AccountKeys.swift */; };
 		4ED06E372ABABABA00F49A1A /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */; };
 		4ED06E382ABABABA00F49A1A /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */; };
 		4ED06E3B2ABABABA00F49A1A /* WalletCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E342ABABABA00F49A1A /* WalletCore.xcframework */; };
@@ -1121,14 +1153,22 @@
 		4EE8E4962834DC7100DFEF59 /* NFTModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE8E4942834DC7100DFEF59 /* NFTModel.swift */; };
 		4EE8E4992835EAF500DFEF59 /* NFTFavoriteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE8E4972835EAF100DFEF59 /* NFTFavoriteView.swift */; };
 		4EE8E49C283626D000DFEF59 /* NFTLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE8E49A283626D000DFEF59 /* NFTLoading.swift */; };
-		4EEC374F2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */; };
-		4EEC37502A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */; };
 		4EEDA38D2B4D788A0000D382 /* MultiBackupDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDA38C2B4D788A0000D382 /* MultiBackupDetailViewModel.swift */; };
 		4EEDA38E2B4D788A0000D382 /* MultiBackupDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDA38C2B4D788A0000D382 /* MultiBackupDetailViewModel.swift */; };
 		4EF3FAE02A7B8D8400D7B09B /* FlowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */; };
 		4EF3FAE12A7B8D8400D7B09B /* FlowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */; };
 		4EF5129A28329ADA0014F4EC /* NFTDetailPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF5129828329ADA0014F4EC /* NFTDetailPage.swift */; };
 		4EF5129D28333A230014F4EC /* NFTTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF5129B28333A230014F4EC /* NFTTagsView.swift */; };
+		4EFBE5D02BC7D4AA0012968A /* ConfettiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBE5CF2BC7D4AA0012968A /* ConfettiManager.swift */; };
+		4EFBE5D12BC7D4AA0012968A /* ConfettiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBE5CF2BC7D4AA0012968A /* ConfettiManager.swift */; };
+		4EFBE5D72BCE52ED0012968A /* WalletConnectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBE5D62BCE52ED0012968A /* WalletConnectHandler.swift */; };
+		4EFBE5D82BCE52ED0012968A /* WalletConnectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBE5D62BCE52ED0012968A /* WalletConnectHandler.swift */; };
+		4EFBE5DA2BCE61EB0012968A /* WalletConnectFlowHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBE5D92BCE61EB0012968A /* WalletConnectFlowHandler.swift */; };
+		4EFBE5DB2BCE61EB0012968A /* WalletConnectFlowHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBE5D92BCE61EB0012968A /* WalletConnectFlowHandler.swift */; };
+		4EFBE5DD2BCE61FF0012968A /* WalletConnectEVMHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBE5DC2BCE61FF0012968A /* WalletConnectEVMHandler.swift */; };
+		4EFBE5DE2BCE61FF0012968A /* WalletConnectEVMHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBE5DC2BCE61FF0012968A /* WalletConnectEVMHandler.swift */; };
+		4EFBE5E02BCE68FF0012968A /* WalletConnectChildHandlerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBE5DF2BCE68FF0012968A /* WalletConnectChildHandlerProtocol.swift */; };
+		4EFBE5E12BCE68FF0012968A /* WalletConnectChildHandlerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBE5DF2BCE68FF0012968A /* WalletConnectChildHandlerProtocol.swift */; };
 		4EFF94B82AEEC76B00365EF7 /* DevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFF94B72AEEC76B00365EF7 /* DevicesView.swift */; };
 		4EFF94B92AEEC76B00365EF7 /* DevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFF94B72AEEC76B00365EF7 /* DevicesView.swift */; };
 		4EFF94BB2AEED15300365EF7 /* DevicesInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFF94BA2AEED15300365EF7 /* DevicesInfoView.swift */; };
@@ -1829,8 +1869,6 @@
 		159A560127536E4E004BCACC /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
 		159CFF2A27887ED3006421FB /* InputMnemonicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputMnemonicView.swift; sourceTree = "<group>"; };
 		159DEC8728C6753700493E9F /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
-		159DEC8B28C679F800493E9F /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
-		159DEC8E28C67A3700493E9F /* Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
 		159DEC9128C67DB900493E9F /* NFTDetailPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTDetailPageViewModel.swift; sourceTree = "<group>"; };
 		15ADAE2928F51EBB0014B722 /* SymmetricEncryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SymmetricEncryption.swift; sourceTree = "<group>"; };
 		15ADAE2C28F51ECE0014B722 /* SymmetricEncryptionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SymmetricEncryptionTests.swift; sourceTree = "<group>"; };
@@ -2138,6 +2176,15 @@
 		4E51B4FA2854A76500EDE4FE /* CaptureView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaptureView.swift; sourceTree = "<group>"; };
 		4E51B4FD2854BEB600EDE4FE /* ImageSaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaver.swift; sourceTree = "<group>"; };
 		4E5885432A6FDF00007CACCC /* SPQRMaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPQRMaskView.swift; sourceTree = "<group>"; };
+		4E63A5682B8B9D1000BBD15F /* EVMEnableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EVMEnableView.swift; sourceTree = "<group>"; };
+		4E63A5702B8BA1F400BBD15F /* EVMEnableViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EVMEnableViewModel.swift; sourceTree = "<group>"; };
+		4E63A5732B8BB79700BBD15F /* ReceiveQRView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveQRView.swift; sourceTree = "<group>"; };
+		4E63A5762B8BBD7700BBD15F /* ReceiveQRViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveQRViewModel.swift; sourceTree = "<group>"; };
+		4E63A57A2B8D6A4100BBD15F /* MoveTokenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveTokenView.swift; sourceTree = "<group>"; };
+		4E63A57D2B8D75F200BBD15F /* MoveTokenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveTokenViewModel.swift; sourceTree = "<group>"; };
+		4E63A5802B8D76AD00BBD15F /* MoveChooseAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveChooseAccountView.swift; sourceTree = "<group>"; };
+		4E6ED48A2BA9258D009906A5 /* EVMAccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EVMAccountManager.swift; sourceTree = "<group>"; };
+		4E6ED48D2BA96DBB009906A5 /* ChildAccountSideCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildAccountSideCell.swift; sourceTree = "<group>"; };
 		4E6ED4902BAA79F6009906A5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		4E6ED4922BAA7CB6009906A5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		4E777CAD2B1ECF8900300A3E /* SyncInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncInfo.swift; sourceTree = "<group>"; };
@@ -2154,7 +2201,14 @@
 		4E8DD9F7282E2FBB0016A931 /* NFTEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTEmptyView.swift; sourceTree = "<group>"; };
 		4E8DD9FB282E52110016A931 /* JSONStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONStorage.swift; sourceTree = "<group>"; };
 		4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncAddDeviceView.swift; sourceTree = "<group>"; };
+		4E9621D42B984EF3006859AD /* CadenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CadenceManager.swift; sourceTree = "<group>"; };
+		4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FRWAPI+Cadence.swift"; sourceTree = "<group>"; };
+		4E9621DA2B985BAB006859AD /* cloudfunctions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cloudfunctions.json; sourceTree = "<group>"; };
 		4E9BFF5C2867631300601339 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		4E9D98E12B9DEC0800A70879 /* TrustProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustProvider.swift; sourceTree = "<group>"; };
+		4E9D98E42B9DF48B00A70879 /* TrustJSMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustJSMessageHandler.swift; sourceTree = "<group>"; };
+		4E9D98E72B9DF4BF00A70879 /* TrustAppMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustAppMethod.swift; sourceTree = "<group>"; };
+		4E9D98EA2B9DF55000A70879 /* WKScriptMessage+JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKScriptMessage+JSON.swift"; sourceTree = "<group>"; };
 		4E9DCE442B50E845005DE911 /* InstabugConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstabugConfig.swift; sourceTree = "<group>"; };
 		4E9DCE462B50E8A0005DE911 /* InstabugConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstabugConfig.swift; sourceTree = "<group>"; };
 		4E9E21B1282644B100E1BACD /* WalletViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletViewModel.swift; sourceTree = "<group>"; };
@@ -2205,7 +2259,6 @@
 		4ECB9964285B8D6A00F59852 /* OffsetScrollViewWithAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffsetScrollViewWithAppBar.swift; sourceTree = "<group>"; };
 		4ECE28C32ADF6D170035787D /* AccountKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountKeys.swift; sourceTree = "<group>"; };
 		4ECE28C62AE20DBF0035787D /* AccountKeyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountKeyViewModel.swift; sourceTree = "<group>"; };
-		4ECE28C92AE20EC90035787D /* CadenceTemplate+AccountKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CadenceTemplate+AccountKeys.swift"; sourceTree = "<group>"; };
 		4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = FRW/Library/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
 		4ED06E342ABABABA00F49A1A /* WalletCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WalletCore.xcframework; path = FRW/Library/WalletCore.xcframework; sourceTree = "<group>"; };
 		4ED21F36284E2E6E00320AD0 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
@@ -2221,11 +2274,15 @@
 		4EE8E4942834DC7100DFEF59 /* NFTModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTModel.swift; sourceTree = "<group>"; };
 		4EE8E4972835EAF100DFEF59 /* NFTFavoriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTFavoriteView.swift; sourceTree = "<group>"; };
 		4EE8E49A283626D000DFEF59 /* NFTLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTLoading.swift; sourceTree = "<group>"; };
-		4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CadenceTemplate+ChildAccount.swift"; sourceTree = "<group>"; };
 		4EEDA38C2B4D788A0000D382 /* MultiBackupDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupDetailViewModel.swift; sourceTree = "<group>"; };
 		4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowModel.swift; sourceTree = "<group>"; };
 		4EF5129828329ADA0014F4EC /* NFTDetailPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTDetailPage.swift; sourceTree = "<group>"; };
 		4EF5129B28333A230014F4EC /* NFTTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTTagsView.swift; sourceTree = "<group>"; };
+		4EFBE5CF2BC7D4AA0012968A /* ConfettiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiManager.swift; sourceTree = "<group>"; };
+		4EFBE5D62BCE52ED0012968A /* WalletConnectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletConnectHandler.swift; sourceTree = "<group>"; };
+		4EFBE5D92BCE61EB0012968A /* WalletConnectFlowHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletConnectFlowHandler.swift; sourceTree = "<group>"; };
+		4EFBE5DC2BCE61FF0012968A /* WalletConnectEVMHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletConnectEVMHandler.swift; sourceTree = "<group>"; };
+		4EFBE5DF2BCE68FF0012968A /* WalletConnectChildHandlerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletConnectChildHandlerProtocol.swift; sourceTree = "<group>"; };
 		4EFF94B72AEEC76B00365EF7 /* DevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesView.swift; sourceTree = "<group>"; };
 		4EFF94BA2AEED15300365EF7 /* DevicesInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesInfoView.swift; sourceTree = "<group>"; };
 		4EFF94BD2AEEDB2D00365EF7 /* IPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPManager.swift; sourceTree = "<group>"; };
@@ -2548,12 +2605,15 @@
 				6A19A74E2A612FAB00B84F09 /* FirebaseMessaging in Frameworks */,
 				6AE1D48E287690E7000FA0B7 /* SwiftUIPager in Frameworks */,
 				6AADFB54293CB7F800E5D6B2 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
+				4E3682C72BB6A59100B24785 /* web3swift in Frameworks */,
 				15D6D8F628CBAEE000CBA152 /* FancyScrollView in Frameworks */,
 				152BB09628AE900C00B2A2AA /* Lottie in Frameworks */,
 				6AEA375A28A51792004545D4 /* MJRefresh in Frameworks */,
+				4E539C892BC6269E0080BAF8 /* Web3Wallet in Frameworks */,
 				15185ED8278A73A3006B74A9 /* SPConfetti in Frameworks */,
 				6ABFE5A129A711ED00AA1688 /* Gzip in Frameworks */,
 				15832B642867641D0066046D /* GTMSessionFetcherCore in Frameworks */,
+				4E9D98DF2B9DEAEF00A70879 /* TrustWeb3Provider in Frameworks */,
 				6A7C080F286EE95E00020987 /* SwiftUICharts in Frameworks */,
 				1588332428943F7D00142B35 /* NativeUIKit in Frameworks */,
 				15D5775B277C23BF00045E79 /* Moya in Frameworks */,
@@ -2614,6 +2674,7 @@
 				4ED06E422ABABB9500F49A1A /* WalletCore.xcframework in Frameworks */,
 				152BB09428AE8FD100B2A2AA /* Lottie in Frameworks */,
 				6AEA374028A49DBE004545D4 /* MJRefresh in Frameworks */,
+				4E539C872BC626770080BAF8 /* Web3Wallet in Frameworks */,
 				15C58C442868A4EE00BD4FC6 /* SPConfetti in Frameworks */,
 				1549CF03299A10C2002B37A5 /* Gzip in Frameworks */,
 				15C58C452868A4EE00BD4FC6 /* GTMSessionFetcherCore in Frameworks */,
@@ -2626,6 +2687,7 @@
 				15C58C482868A4EE00BD4FC6 /* Resolver in Frameworks */,
 				15C58C492868A4EE00BD4FC6 /* KeychainAccess in Frameworks */,
 				15C58C4A2868A4EE00BD4FC6 /* Haneke in Frameworks */,
+				4E947C922BBEB2E300E87A85 /* web3swift in Frameworks */,
 				15CC8A6128C4E0FD001D2696 /* RiveRuntime in Frameworks */,
 				15C58C4B2868A4EE00BD4FC6 /* GoogleAPIClientForRESTCore in Frameworks */,
 				155E372E28D3AD4700834C30 /* Highlightr in Frameworks */,
@@ -2633,6 +2695,7 @@
 				4E5D4FAC2AEF9A5A00DC419B /* DeviceGuru in Frameworks */,
 				15C58C4D2868A4EE00BD4FC6 /* IrregularGradient in Frameworks */,
 				15C58C4F2868A4EE00BD4FC6 /* FirebaseCrashlytics in Frameworks */,
+				4E9D98DD2B9DEAE300A70879 /* TrustWeb3Provider in Frameworks */,
 				15C58C502868A4EE00BD4FC6 /* FirebaseRemoteConfig in Frameworks */,
 				15C58C512868A4EE00BD4FC6 /* CombineMoya in Frameworks */,
 				158832CA2894262B00142B35 /* WalletConnect in Frameworks */,
@@ -2718,6 +2781,7 @@
 				6A29113628CAE7FE003295BD /* FRWAPI+Account.swift */,
 				6AF4A6C328D46FAF00B12FAB /* FRWAPI+Flowns.swift */,
 				6A2C5610290BE9FF00306A6C /* FRWAPI+Utils.swift */,
+				4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */,
 			);
 			path = FRW;
 			sourceTree = "<group>";
@@ -2725,6 +2789,7 @@
 		1507C7EA2755FCB100890C5D /* Wallet */ = {
 			isa = PBXGroup;
 			children = (
+				4E63A5792B8D69C200BBD15F /* MoveAsset */,
 				6AFE1D032A384E1800824D5C /* AccountSwitch */,
 				6A12173629659F4A00BA0C3B /* SideMenu */,
 				1575A72E28B26F2100ADC513 /* Card */,
@@ -2781,6 +2846,7 @@
 		153C440427520811006D1E8D /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				4E9D98E02B9DEBF100A70879 /* TrustProvider */,
 				4EB2C6BB2B4A3E6E00EB899C /* MultiRestore */,
 				4E7918422B214D4900DA832F /* MultiBackup */,
 				4EB2DBCA2AE6252400A421CE /* PageStatus */,
@@ -2803,6 +2869,7 @@
 				15B1F6282786A36900847BB5 /* Backup */,
 				15BCFEF9277560C2000B7863 /* Register */,
 				1507C7ED275634BC00890C5D /* Profile */,
+				4E63A5672B8B9CEF00BBD15F /* EVM */,
 				1507C7EA2755FCB100890C5D /* Wallet */,
 				159A543627536890004BCACC /* Login */,
 			);
@@ -3002,6 +3069,10 @@
 				4E777CB02B1EE69E00300A3E /* WalletConnect+SyncDevice.swift */,
 				158832D6289427EF00142B35 /* Websocket.swift */,
 				4E2380FD2B186A6000756874 /* WalletConnect+Tools.swift */,
+				4EFBE5D62BCE52ED0012968A /* WalletConnectHandler.swift */,
+				4EFBE5DF2BCE68FF0012968A /* WalletConnectChildHandlerProtocol.swift */,
+				4EFBE5D92BCE61EB0012968A /* WalletConnectFlowHandler.swift */,
+				4EFBE5DC2BCE61FF0012968A /* WalletConnectEVMHandler.swift */,
 			);
 			path = WalletConnect;
 			sourceTree = "<group>";
@@ -3202,8 +3273,6 @@
 		159DEC8A28C679E500493E9F /* AR */ = {
 			isa = PBXGroup;
 			children = (
-				159DEC8B28C679F800493E9F /* ARViewController.swift */,
-				159DEC8E28C67A3700493E9F /* Grid.swift */,
 			);
 			path = AR;
 			sourceTree = "<group>";
@@ -4199,6 +4268,7 @@
 				4EA0D0A22A7A357E004C6A19 /* LLSegmenControl.swift */,
 				4E1DD8CA2B1629560055E510 /* QRCodeView.swift */,
 				4E1B2FE52BA061F700F30379 /* QRCodeEyeShareFillCircle.swift */,
+				4EFBE5CF2BC7D4AA0012968A /* ConfettiManager.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -4234,6 +4304,7 @@
 				6A46754928F2D50500F705A8 /* DBManager.swift */,
 				6A998DA82936769000EF133B /* StakingManager.swift */,
 				6A18DDFB2A3B10F5003232AB /* ChildAccountManager.swift */,
+				4E6ED48A2BA9258D009906A5 /* EVMAccountManager.swift */,
 				6ADC280B2A651AFD003B0B3A /* PushHandler.swift */,
 				4EBE49252AA1B732000FFFFE /* AppUpdateManager.swift */,
 				4EC626082AE8A28100318720 /* UUIDManager.swift */,
@@ -4372,6 +4443,41 @@
 			path = MaterialMap;
 			sourceTree = "<group>";
 		};
+		4E63A5672B8B9CEF00BBD15F /* EVM */ = {
+			isa = PBXGroup;
+			children = (
+				4E63A56F2B8BA1A500BBD15F /* View */,
+				4E63A56B2B8BA18600BBD15F /* ViewModel */,
+			);
+			path = EVM;
+			sourceTree = "<group>";
+		};
+		4E63A56B2B8BA18600BBD15F /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				4E63A5702B8BA1F400BBD15F /* EVMEnableViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		4E63A56F2B8BA1A500BBD15F /* View */ = {
+			isa = PBXGroup;
+			children = (
+				4E63A5682B8B9D1000BBD15F /* EVMEnableView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		4E63A5792B8D69C200BBD15F /* MoveAsset */ = {
+			isa = PBXGroup;
+			children = (
+				4E63A57A2B8D6A4100BBD15F /* MoveTokenView.swift */,
+				4E63A57D2B8D75F200BBD15F /* MoveTokenViewModel.swift */,
+				4E63A5802B8D76AD00BBD15F /* MoveChooseAccountView.swift */,
+			);
+			path = MoveAsset;
+			sourceTree = "<group>";
+		};
 		4E7918422B214D4900DA832F /* MultiBackup */ = {
 			isa = PBXGroup;
 			children = (
@@ -4425,9 +4531,21 @@
 			path = Tools;
 			sourceTree = "<group>";
 		};
+		4E9D98E02B9DEBF100A70879 /* TrustProvider */ = {
+			isa = PBXGroup;
+			children = (
+				4E9D98E12B9DEC0800A70879 /* TrustProvider.swift */,
+				4E9D98E42B9DF48B00A70879 /* TrustJSMessageHandler.swift */,
+				4E9D98E72B9DF4BF00A70879 /* TrustAppMethod.swift */,
+				4E9D98EA2B9DF55000A70879 /* WKScriptMessage+JSON.swift */,
+			);
+			path = TrustProvider;
+			sourceTree = "<group>";
+		};
 		4EA820C128634A9700DF36A8 /* Json */ = {
 			isa = PBXGroup;
 			children = (
+				4E9621DA2B985BAB006859AD /* cloudfunctions.json */,
 				6A998DA5293674FC00EF133B /* staking_provider.json */,
 				4EA820C5286354E200DF36A8 /* remote_config_defaults.plist */,
 			);
@@ -4519,8 +4637,7 @@
 				4EC56B2F281FC57900246878 /* FlowQuery.swift */,
 				15832D58286816ED0066046D /* FlowAddressRegistor.swift */,
 				6AD9EC24286C4E4C0062A9CE /* CadenceTemplate.swift */,
-				4EEC374E2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift */,
-				4ECE28C92AE20EC90035787D /* CadenceTemplate+AccountKeys.swift */,
+				4E9621D42B984EF3006859AD /* CadenceManager.swift */,
 			);
 			path = FlowCoin;
 			sourceTree = "<group>";
@@ -4641,6 +4758,7 @@
 			isa = PBXGroup;
 			children = (
 				6A12173729659F5E00BA0C3B /* SideMenuView.swift */,
+				4E6ED48D2BA96DBB009906A5 /* ChildAccountSideCell.swift */,
 			);
 			path = SideMenu;
 			sourceTree = "<group>";
@@ -4850,6 +4968,8 @@
 			children = (
 				6A4009112875615A00A77070 /* WalletReceiveView.swift */,
 				6A4009142875699D00A77070 /* WalletReceiveViewModel.swift */,
+				4E63A5732B8BB79700BBD15F /* ReceiveQRView.swift */,
+				4E63A5762B8BBD7700BBD15F /* ReceiveQRViewModel.swift */,
 			);
 			path = Receive;
 			sourceTree = "<group>";
@@ -5481,6 +5601,7 @@
 				158CEFBE277DB3FF004EF2C7 /* Embed Frameworks */,
 				6A0C6E2C29542DFE005F0EF6 /* Embed Foundation Extensions */,
 				6A04A4732961A71000F069C4 /* dSYM Upload */,
+				4ECF45322BB258AC00F5B3B7 /* Swift Lint */,
 			);
 			buildRules = (
 			);
@@ -5540,6 +5661,9 @@
 				4EC852522B0AD89E00C5CD52 /* FlowWalletCore */,
 				4E1DD8D32B16443B0055E510 /* WalletConnectAuth */,
 				4E1DD8C82B16222A0055E510 /* Instabug */,
+				4E9D98DE2B9DEAEF00A70879 /* TrustWeb3Provider */,
+				4E3682C62BB6A59100B24785 /* web3swift */,
+				4E539C882BC6269E0080BAF8 /* Web3Wallet */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 154B8928276A1EEB00780E93 /* FRW-dev.app */;
@@ -5616,6 +5740,9 @@
 				4EC852502B0AD88E00C5CD52 /* FlowWalletCore */,
 				4E1DD8D52B1644480055E510 /* WalletConnectAuth */,
 				4E1DD8C62B1622030055E510 /* Instabug */,
+				4E9D98DC2B9DEAE300A70879 /* TrustWeb3Provider */,
+				4E947C912BBEB2E300E87A85 /* web3swift */,
+				4E539C862BC626770080BAF8 /* Web3Wallet */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 15C58C6D2868A4EE00BD4FC6 /* FRW.app */;
@@ -5777,6 +5904,8 @@
 				4E5D4FAA2AEF9A5A00DC419B /* XCRemoteSwiftPackageReference "DeviceGuru" */,
 				4EC8524F2B0AD88D00C5CD52 /* XCRemoteSwiftPackageReference "Flow-Wallet-Core" */,
 				4E1DD8C52B1622030055E510 /* XCRemoteSwiftPackageReference "Instabug-SP" */,
+				4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */,
+				4E3682C52BB6A59100B24785 /* XCRemoteSwiftPackageReference "web3swift" */,
 			);
 			productRefGroup = 15EC9DEF274FD1FC00F70CD9 /* Products */;
 			projectDirPath = "";
@@ -5845,6 +5974,7 @@
 				4E0D34A22A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf in Resources */,
 				1565FBB228B171BB0086A652 /* Copy.json in Resources */,
 				1565FB6628B14F140086A652 /* Saved.json in Resources */,
+				4E9621DC2B985BAB006859AD /* cloudfunctions.json in Resources */,
 				4E9E21E0282A71B500E1BACD /* Colors.xcassets in Resources */,
 				15D6D8EE28CB730800CBA152 /* inAR.json in Resources */,
 				1565FB9C28B1681F0086A652 /* Coin.json in Resources */,
@@ -5897,6 +6027,7 @@
 				4E0D34A12A8B4E2900BC6E43 /* e-Ukraine-Regular.ttf in Resources */,
 				1565FB6528B14F140086A652 /* Saved.json in Resources */,
 				15C58C652868A4EE00BD4FC6 /* Colors.xcassets in Resources */,
+				4E9621DB2B985BAB006859AD /* cloudfunctions.json in Resources */,
 				152EEC7028E4F5EC00C37A67 /* config.plist in Resources */,
 				15D6D8ED28CB730800CBA152 /* inAR.json in Resources */,
 				1565FB9B28B1681F0086A652 /* Coin.json in Resources */,
@@ -5980,6 +6111,24 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\n# Not workimg well with SwiftUI\n#if [ `uname -m` == 'arm64' ] && [ -d /opt/homebrew/bin/ ]; then\n#  export PATH=/opt/homebrew/bin:$PATH\n#fi\n\n#if which rswift >/dev/null; then\n#    rswift generate \"$SRCROOT/R.generated.swift\"\n#else\n#  echo \"warning: Rswift not installed, download from https://github.com/mac-cain13/R.swift/releases/tag/v6.0.0\"\n#fi\n";
 		};
+		4ECF45322BB258AC00F5B3B7 /* Swift Lint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Swift Lint";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
 		6A04A4722961A5A900F069C4 /* dSYM Upload */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -6058,6 +6207,7 @@
 				6A3FFA802A283A5C00CB2B2C /* OnBoardingView.swift in Sources */,
 				6AE69EA528C0BCD4004D4709 /* UIViewController.swift in Sources */,
 				6A8D2A38283C7C790041100E /* AddressBookView.swift in Sources */,
+				4E9621D92B9850CF006859AD /* FRWAPI+Cadence.swift in Sources */,
 				4E8CE63A2B4BE0BA00E71A87 /* MultiBackupPhraseView.swift in Sources */,
 				15DC214327819C56000B187A /* VTabNavigationView.swift in Sources */,
 				6A2D35BE283B6B5A008293D9 /* ThemeChangeViewModel.swift in Sources */,
@@ -6066,6 +6216,7 @@
 				6A18DDFD2A3B10F5003232AB /* ChildAccountManager.swift in Sources */,
 				15DC21DB27819C56000B187A /* StateColorsAndOpacities_EP_D.swift in Sources */,
 				15DC21ED27819C57000B187A /* StateColors_OOID.swift in Sources */,
+				4E63A57C2B8D6A4100BBD15F /* MoveTokenView.swift in Sources */,
 				6A115972288E72CC005EF797 /* Coordinator.swift in Sources */,
 				6AF2ED9228364BC200F06AD3 /* UIFont.swift in Sources */,
 				6AE1817D28C5D654009ADDDB /* FCLAuthnResponse.swift in Sources */,
@@ -6084,6 +6235,7 @@
 				6A35EADA2859BD36005A85B8 /* EditAvatarView.swift in Sources */,
 				15DC20C727819C56000B187A /* VCloseButtonState.swift in Sources */,
 				15DC214927819C56000B187A /* VTabNavigationViewModel.swift in Sources */,
+				4E63A5822B8D76AD00BBD15F /* MoveChooseAccountView.swift in Sources */,
 				4E1B2FE42BA038C000F30379 /* DevicesInfoViewModel.swift in Sources */,
 				15DC20FF27819C56000B187A /* VStepperModel.swift in Sources */,
 				6AA78E0428A0BF2C00FF6CF9 /* ScanHandler.swift in Sources */,
@@ -6117,6 +6269,7 @@
 				15DC21B327819C56000B187A /* Optional.LetBlockTransformation.swift in Sources */,
 				4EB2DBCD2AE6253B00A421CE /* PageStatus.swift in Sources */,
 				6A18DDF72A3AFEFC003232AB /* ChildAccountLinkView.swift in Sources */,
+				4EFBE5D82BCE52ED0012968A /* WalletConnectHandler.swift in Sources */,
 				6AF95B452848C8D70012C837 /* BMChineseSort.swift in Sources */,
 				158832E528942D6300142B35 /* SessionInfo.swift in Sources */,
 				15DC1F7327819B74000B187A /* SpinnerStyle.swift in Sources */,
@@ -6139,7 +6292,6 @@
 				15DE23012780208300B5EE03 /* RestoreWalletViewModel.swift in Sources */,
 				4EE8E49C283626D000DFEF59 /* NFTLoading.swift in Sources */,
 				15DC216527819C56000B187A /* _VHalfModal.swift in Sources */,
-				159DEC8D28C679F800493E9F /* ARViewController.swift in Sources */,
 				6ACF0E642851FB2E008E7FA6 /* UserRequests.swift in Sources */,
 				154B8904276A1EEB00780E93 /* OffsetPageTabView.swift in Sources */,
 				158CE8812782BEAA006A8394 /* TYNKViewModel.swift in Sources */,
@@ -6149,6 +6301,7 @@
 				15DC21E727819C57000B187A /* StateColorsAndOpacities_EFSEPD_PD.swift in Sources */,
 				6A7D9DD228E1923500333954 /* OtherResponses.swift in Sources */,
 				15CB4DF528CA15B10069ABB4 /* BuyProvderView.swift in Sources */,
+				4EFBE5DB2BCE61EB0012968A /* WalletConnectFlowHandler.swift in Sources */,
 				4EB2C6BA2B49D1A500EB899C /* MultiBackupDetailView.swift in Sources */,
 				6A62122D28ACC592002046CA /* UIImage.swift in Sources */,
 				6AF1F35E2869977B0084DF3D /* AddTokenView.swift in Sources */,
@@ -6285,6 +6438,7 @@
 				154B8907276A1EEB00780E93 /* View.swift in Sources */,
 				6AE69E9728C085F0004D4709 /* BrowserActionBarView.swift in Sources */,
 				6AFED02A2906794000221F95 /* WalletSettingViewModel.swift in Sources */,
+				4E9D98E62B9DF48B00A70879 /* TrustJSMessageHandler.swift in Sources */,
 				6A8FA4AE285B192900EE5BE3 /* SnapAlignment.swift in Sources */,
 				4EC4EF3C2B103A2B00217618 /* SyncAccountViewModel.swift in Sources */,
 				6A8FA4A4285B192900EE5BE3 /* CGPoint+Distance.swift in Sources */,
@@ -6299,6 +6453,7 @@
 				6AE1817428C59B57009ADDDB /* JSModels.swift in Sources */,
 				15DC207F27819C56000B187A /* VBaseViewNavigationBarLeading.swift in Sources */,
 				4EB397FD2B4C06D900704F8A /* RestoreMultiInputMnemonicView.swift in Sources */,
+				4E63A5782B8BBD7700BBD15F /* ReceiveQRViewModel.swift in Sources */,
 				6AEA374728A4AD7F004545D4 /* NFTUIKitCollectionItemCell.swift in Sources */,
 				15DC207B27819C56000B187A /* VBaseView.swift in Sources */,
 				15D9283327843DAD00382226 /* ManualBackupViewModel.swift in Sources */,
@@ -6307,10 +6462,10 @@
 				15DC214727819C56000B187A /* VTabNavigationViewPage.swift in Sources */,
 				6A8FA4AA285B192900EE5BE3 /* SnapIDModifier.swift in Sources */,
 				15DC20F927819C56000B187A /* VBaseList.swift in Sources */,
-				159DEC9028C67A3700493E9F /* Grid.swift in Sources */,
 				15DC21C127819C56000B187A /* DerivedButtonType.swift in Sources */,
 				15D6D8E928CB45BA00CBA152 /* DOFavoriteButtonView.swift in Sources */,
 				15DC217927819C56000B187A /* VModal.swift in Sources */,
+				4E9621D62B984EF3006859AD /* CadenceManager.swift in Sources */,
 				15DC21A127819C56000B187A /* UIKitTextFieldRepresentable.swift in Sources */,
 				15D874EB28C629430072C6EA /* FirebaseAPI.swift in Sources */,
 				15DC20BD27819C56000B187A /* VSquareButtonModel.swift in Sources */,
@@ -6321,20 +6476,22 @@
 				6A98509C28C71B5D00A07C2D /* BrowserAuthnViewModel.swift in Sources */,
 				4EE6FA8A2B19677B006A827B /* SyncConfirmViewModel.swift in Sources */,
 				6A73BF5328C59029004B836A /* JSMessageHandler.swift in Sources */,
-				4ECE28CB2AE20EC90035787D /* CadenceTemplate+AccountKeys.swift in Sources */,
 				6A16F19428B8B1AC0055936E /* TransactionHolderView.swift in Sources */,
 				154B8908276A1EEB00780E93 /* ColorBook.swift in Sources */,
 				1565FB9028B15D890086A652 /* LottieView.swift in Sources */,
 				4E42DC602B22AEB700EF0A75 /* BackupListView.swift in Sources */,
 				15D874E428C5D37F0072C6EA /* MatrixView.swift in Sources */,
 				15ECAE3C28C4FCEB00B79453 /* WalletConnectViewModel.swift in Sources */,
+				4EFBE5E12BCE68FF0012968A /* WalletConnectChildHandlerProtocol.swift in Sources */,
 				15DC212127819C56000B187A /* VSpinnerModelDashed.swift in Sources */,
 				6A63F9F328C9C69100FE96C0 /* ImageAnimated.swift in Sources */,
 				4EB2C6AF2B49446F00EB899C /* MultiBackupManager.swift in Sources */,
 				6AE8821F288EB67A00ADF36E /* RouterExtensions.swift in Sources */,
+				4E63A5722B8BA1F400BBD15F /* EVMEnableViewModel.swift in Sources */,
 				6AD90069284717FC00B65CE6 /* AddAddressViewModel.swift in Sources */,
 				154866F428D0FE8900D012B8 /* ViewCondition.swift in Sources */,
 				6A46754B28F2D50500F705A8 /* DBManager.swift in Sources */,
+				4EFBE5DE2BCE61FF0012968A /* WalletConnectEVMHandler.swift in Sources */,
 				15DC20DB27819C56000B187A /* VPrimaryButtonState.swift in Sources */,
 				6A5D99AF2A4D5E7400C43D36 /* DAppsListViewModel.swift in Sources */,
 				1565FBB828B173960086A652 /* ExploreTabScreen.swift in Sources */,
@@ -6383,6 +6540,7 @@
 				15BA24B628C785B300755CBF /* GradientButton.swift in Sources */,
 				15DC20B127819C56000B187A /* VBaseButtonState.swift in Sources */,
 				15D9282D2783395F00382226 /* HUDManager.swift in Sources */,
+				4E63A57F2B8D75F200BBD15F /* MoveTokenViewModel.swift in Sources */,
 				4E4F794C2831FCB700ED027C /* ImageName.swift in Sources */,
 				15B1F6302786AC9E00847BB5 /* BackupPasswordViewModel.swift in Sources */,
 				4EA0D0A42A7A357E004C6A19 /* LLSegmenControl.swift in Sources */,
@@ -6455,12 +6613,14 @@
 				15DC1D5927816660000B187A /* Network.swift in Sources */,
 				6AEA375828A5152E004545D4 /* UIScrollView.swift in Sources */,
 				15DC214527819C56000B187A /* VTabNavigationPageItem.swift in Sources */,
+				4E9D98E32B9DEC0800A70879 /* TrustProvider.swift in Sources */,
 				15DC20C127819C56000B187A /* VSquareButton.swift in Sources */,
 				6AC476F028F41563008503E6 /* BrowserBookmarkViewModel.swift in Sources */,
 				6A4009162875699E00A77070 /* WalletReceiveViewModel.swift in Sources */,
 				15DC216F27819C56000B187A /* VDialog.swift in Sources */,
 				6A29115428CB3B88003295BD /* FlowScanTransfer.swift in Sources */,
 				6A9850A228C74CA600A07C2D /* BrowserAuthzViewModel.swift in Sources */,
+				4E9D98E92B9DF4BF00A70879 /* TrustAppMethod.swift in Sources */,
 				6A7F98A02869A40500282845 /* AddTokenViewModel.swift in Sources */,
 				6A6BD9DD287D5066009FA262 /* ProgressHUD.swift in Sources */,
 				6A06CB0728AA25F400C81BE1 /* NFTUIKitListDataSource.swift in Sources */,
@@ -6468,6 +6628,7 @@
 				6A3FFA832A2842A400CB2B2C /* OnBoardingViewModel.swift in Sources */,
 				159DEC9328C67DB900493E9F /* NFTDetailPageViewModel.swift in Sources */,
 				4E5885452A6FDF00007CACCC /* SPQRMaskView.swift in Sources */,
+				4EFBE5D12BC7D4AA0012968A /* ConfettiManager.swift in Sources */,
 				6A164F422840A1380026B31E /* TabBar.swift in Sources */,
 				6AE084242851D481003BEEF0 /* Logger.swift in Sources */,
 				4EB2C6C92B4A520200EB899C /* RestoreMultiConnectView.swift in Sources */,
@@ -6569,6 +6730,7 @@
 				15DC20F727819C56000B187A /* VBaseListLayoutType.swift in Sources */,
 				6A8FA4A6285B192900EE5BE3 /* SnapAlignment+Convert.swift in Sources */,
 				15DC20FB27819C56000B187A /* VBaseListElement.swift in Sources */,
+				4E63A5752B8BB79700BBD15F /* ReceiveQRView.swift in Sources */,
 				1570467C2793D60000D1747B /* NFTListResponse.swift in Sources */,
 				6A9C34FC28AB939600AA41A5 /* NFTUIKitCache.swift in Sources */,
 				4E777CAF2B1ECF8900300A3E /* SyncInfo.swift in Sources */,
@@ -6643,6 +6805,7 @@
 				6A4BFE312893CA5500142113 /* AlertView.swift in Sources */,
 				6A11596C288E710C005EF797 /* Router.swift in Sources */,
 				6AEA375428A4FD2C004545D4 /* NFTUIKitItemCell.swift in Sources */,
+				4E6ED48F2BA96DBB009906A5 /* ChildAccountSideCell.swift in Sources */,
 				6A8FA4A0285B192900EE5BE3 /* CoordinateSpaceNameEnvironmentKey.swift in Sources */,
 				6A8FA496285B192800EE5BE3 /* UIKitIntrospectionView.swift in Sources */,
 				154B8918276A1EEB00780E93 /* Endpoint.swift in Sources */,
@@ -6673,6 +6836,7 @@
 				6AEA374B28A4DE10004545D4 /* NFTUIKitCollectionHContainerView.swift in Sources */,
 				6A8FA49C285B192800EE5BE3 /* SnapID.swift in Sources */,
 				15D4F9A728BCC22300E0CADF /* DAppModel.swift in Sources */,
+				4E9D98EC2B9DF55000A70879 /* WKScriptMessage+JSON.swift in Sources */,
 				6AA947E928B5F84100591880 /* SVGCache.swift in Sources */,
 				15DC20AB27819C56000B187A /* VBaseButton.swift in Sources */,
 				6AB3732A28D071C300E8BF05 /* FlowTransactionViewMoreFooter.swift in Sources */,
@@ -6693,6 +6857,7 @@
 				15F2444328CB370D00C1090E /* LikeView.swift in Sources */,
 				4ECA7E66284371CA0039A210 /* NFTBlurImageView.swift in Sources */,
 				4E3E5BE42875DC2000A5FA65 /* SearchBar.swift in Sources */,
+				4E63A56A2B8B9D1000BBD15F /* EVMEnableView.swift in Sources */,
 				4EB2C6D22B4A7DED00EB899C /* RestoreMultiAccountViewModel.swift in Sources */,
 				15DC20F127819C56000B187A /* VSectionListLayoutType.swift in Sources */,
 				15DC20C327819C56000B187A /* VCloseButtonModel.swift in Sources */,
@@ -6720,8 +6885,8 @@
 				6AB5FBA328926C9100FA2261 /* iCloudAPI.swift in Sources */,
 				4EE6FA8D2B196B16006A827B /* Dictionary+Add.swift in Sources */,
 				4EC31183284508F200F711F5 /* NFTListView.swift in Sources */,
-				4EEC37502A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift in Sources */,
 				154866F128D0EEF000D012B8 /* FlowTransactionTemplate.swift in Sources */,
+				4E6ED48C2BA9258D009906A5 /* EVMAccountManager.swift in Sources */,
 				6A6C410528D849A000074DE9 /* InboxView.swift in Sources */,
 				154866ED28D0ECE400D012B8 /* FlixAuditEndpoint.swift in Sources */,
 			);
@@ -6753,6 +6918,7 @@
 				6A3FFA7F2A283A5C00CB2B2C /* OnBoardingView.swift in Sources */,
 				6AE69EA428C0BCD4004D4709 /* UIViewController.swift in Sources */,
 				15C58ABC2868A4EE00BD4FC6 /* AddressBookView.swift in Sources */,
+				4E9621D82B9850CF006859AD /* FRWAPI+Cadence.swift in Sources */,
 				4E8CE6392B4BE0BA00E71A87 /* MultiBackupPhraseView.swift in Sources */,
 				15C58ABD2868A4EE00BD4FC6 /* VTabNavigationView.swift in Sources */,
 				15C58ABE2868A4EE00BD4FC6 /* ThemeChangeViewModel.swift in Sources */,
@@ -6761,6 +6927,7 @@
 				6A18DDFC2A3B10F5003232AB /* ChildAccountManager.swift in Sources */,
 				15C58AC22868A4EE00BD4FC6 /* StateColorsAndOpacities_EP_D.swift in Sources */,
 				15C58AC32868A4EE00BD4FC6 /* StateColors_OOID.swift in Sources */,
+				4E63A57B2B8D6A4100BBD15F /* MoveTokenView.swift in Sources */,
 				6A115971288E72CC005EF797 /* Coordinator.swift in Sources */,
 				15C58AC42868A4EE00BD4FC6 /* UIFont.swift in Sources */,
 				6AE1817C28C5D654009ADDDB /* FCLAuthnResponse.swift in Sources */,
@@ -6779,6 +6946,7 @@
 				15C58ACA2868A4EE00BD4FC6 /* EditAvatarView.swift in Sources */,
 				15C58ACB2868A4EE00BD4FC6 /* VCloseButtonState.swift in Sources */,
 				15C58ACC2868A4EE00BD4FC6 /* VTabNavigationViewModel.swift in Sources */,
+				4E63A5812B8D76AD00BBD15F /* MoveChooseAccountView.swift in Sources */,
 				4E1B2FE32BA038C000F30379 /* DevicesInfoViewModel.swift in Sources */,
 				15C58ACD2868A4EE00BD4FC6 /* VStepperModel.swift in Sources */,
 				6AA78E0328A0BF2C00FF6CF9 /* ScanHandler.swift in Sources */,
@@ -6812,6 +6980,7 @@
 				15C58AE12868A4EE00BD4FC6 /* Optional.LetBlockTransformation.swift in Sources */,
 				4EB2DBCC2AE6253B00A421CE /* PageStatus.swift in Sources */,
 				6A18DDF62A3AFEFC003232AB /* ChildAccountLinkView.swift in Sources */,
+				4EFBE5D72BCE52ED0012968A /* WalletConnectHandler.swift in Sources */,
 				15C58AE22868A4EE00BD4FC6 /* BMChineseSort.swift in Sources */,
 				158832E428942D6300142B35 /* SessionInfo.swift in Sources */,
 				15C58AE32868A4EE00BD4FC6 /* SpinnerStyle.swift in Sources */,
@@ -6834,7 +7003,6 @@
 				15C58AEB2868A4EE00BD4FC6 /* RestoreWalletViewModel.swift in Sources */,
 				15C58AEC2868A4EE00BD4FC6 /* NFTLoading.swift in Sources */,
 				15C58AED2868A4EE00BD4FC6 /* _VHalfModal.swift in Sources */,
-				159DEC8C28C679F800493E9F /* ARViewController.swift in Sources */,
 				15C58AEE2868A4EE00BD4FC6 /* UserRequests.swift in Sources */,
 				15C58AEF2868A4EE00BD4FC6 /* OffsetPageTabView.swift in Sources */,
 				15C58AF02868A4EE00BD4FC6 /* TYNKViewModel.swift in Sources */,
@@ -6844,6 +7012,7 @@
 				15C58AF32868A4EE00BD4FC6 /* StateColorsAndOpacities_EFSEPD_PD.swift in Sources */,
 				6A7D9DD128E1923500333954 /* OtherResponses.swift in Sources */,
 				15CB4DF428CA15B10069ABB4 /* BuyProvderView.swift in Sources */,
+				4EFBE5DA2BCE61EB0012968A /* WalletConnectFlowHandler.swift in Sources */,
 				4EB2C6B92B49D1A500EB899C /* MultiBackupDetailView.swift in Sources */,
 				6A62122C28ACC592002046CA /* UIImage.swift in Sources */,
 				6AF1F35D2869977B0084DF3D /* AddTokenView.swift in Sources */,
@@ -6980,6 +7149,7 @@
 				15C58B3F2868A4EE00BD4FC6 /* SnapAlignment.swift in Sources */,
 				6AFED0292906794000221F95 /* WalletSettingViewModel.swift in Sources */,
 				15C58B402868A4EE00BD4FC6 /* CGPoint+Distance.swift in Sources */,
+				4E9D98E52B9DF48B00A70879 /* TrustJSMessageHandler.swift in Sources */,
 				4EC4EF3B2B103A2B00217618 /* SyncAccountViewModel.swift in Sources */,
 				15C58B412868A4EE00BD4FC6 /* VPageIndicatorAuto.swift in Sources */,
 				6A5F15F02A317E3A0035AC38 /* AppPathDefine.swift in Sources */,
@@ -6994,18 +7164,19 @@
 				6AEA374628A4AD7F004545D4 /* NFTUIKitCollectionItemCell.swift in Sources */,
 				4EB397FC2B4C06D900704F8A /* RestoreMultiInputMnemonicView.swift in Sources */,
 				15C58B462868A4EE00BD4FC6 /* VBaseView.swift in Sources */,
+				4E63A5772B8BBD7700BBD15F /* ReceiveQRViewModel.swift in Sources */,
 				15C58B472868A4EE00BD4FC6 /* ManualBackupViewModel.swift in Sources */,
 				6A2772A528D329E8007E06E9 /* AppPrivateView.swift in Sources */,
 				15C58B482868A4EE00BD4FC6 /* VLazyScrollView.swift in Sources */,
 				15C58B492868A4EE00BD4FC6 /* VTabNavigationViewPage.swift in Sources */,
 				15C58B4A2868A4EE00BD4FC6 /* SnapIDModifier.swift in Sources */,
 				15C58B4B2868A4EE00BD4FC6 /* VBaseList.swift in Sources */,
-				159DEC8F28C67A3700493E9F /* Grid.swift in Sources */,
 				15C58B4C2868A4EE00BD4FC6 /* DerivedButtonType.swift in Sources */,
 				15D6D8E828CB45BA00CBA152 /* DOFavoriteButtonView.swift in Sources */,
 				15C58B4D2868A4EE00BD4FC6 /* VModal.swift in Sources */,
 				15C58B4E2868A4EE00BD4FC6 /* UIKitTextFieldRepresentable.swift in Sources */,
 				15D874EA28C629430072C6EA /* FirebaseAPI.swift in Sources */,
+				4E9621D52B984EF3006859AD /* CadenceManager.swift in Sources */,
 				15C58B4F2868A4EE00BD4FC6 /* VSquareButtonModel.swift in Sources */,
 				15C58B502868A4EE00BD4FC6 /* MMCQ.swift in Sources */,
 				15C58B512868A4EE00BD4FC6 /* FocusableTextField.swift in Sources */,
@@ -7015,7 +7186,6 @@
 				6A73BF5228C59028004B836A /* JSMessageHandler.swift in Sources */,
 				4EE6FA892B19677B006A827B /* SyncConfirmViewModel.swift in Sources */,
 				6A16F19328B8B1AC0055936E /* TransactionHolderView.swift in Sources */,
-				4ECE28CA2AE20EC90035787D /* CadenceTemplate+AccountKeys.swift in Sources */,
 				15C58B532868A4EE00BD4FC6 /* ColorBook.swift in Sources */,
 				1565FB8F28B15D890086A652 /* LottieView.swift in Sources */,
 				15D874E328C5D37F0072C6EA /* MatrixView.swift in Sources */,
@@ -7023,13 +7193,16 @@
 				15ECAE3B28C4FCEB00B79453 /* WalletConnectViewModel.swift in Sources */,
 				15C58B542868A4EE00BD4FC6 /* VSpinnerModelDashed.swift in Sources */,
 				6A63F9F228C9C69100FE96C0 /* ImageAnimated.swift in Sources */,
+				4EFBE5E02BCE68FF0012968A /* WalletConnectChildHandlerProtocol.swift in Sources */,
 				6AE8821E288EB67A00ADF36E /* RouterExtensions.swift in Sources */,
 				4EB2C6AE2B49446F00EB899C /* MultiBackupManager.swift in Sources */,
 				15C58B552868A4EE00BD4FC6 /* AddAddressViewModel.swift in Sources */,
 				154866F328D0FE8900D012B8 /* ViewCondition.swift in Sources */,
+				4E63A5712B8BA1F400BBD15F /* EVMEnableViewModel.swift in Sources */,
 				15C58B562868A4EE00BD4FC6 /* VPrimaryButtonState.swift in Sources */,
 				6A46754A28F2D50500F705A8 /* DBManager.swift in Sources */,
 				1565FBB728B173960086A652 /* ExploreTabScreen.swift in Sources */,
+				4EFBE5DD2BCE61FF0012968A /* WalletConnectEVMHandler.swift in Sources */,
 				6A5D99AE2A4D5E7400C43D36 /* DAppsListViewModel.swift in Sources */,
 				15C58B572868A4EE00BD4FC6 /* ThemeManager.swift in Sources */,
 				6A382E21289BD3B000163564 /* BionicErrorHandler.swift in Sources */,
@@ -7078,6 +7251,7 @@
 				15C58B702868A4EE00BD4FC6 /* HUDManager.swift in Sources */,
 				15C58B712868A4EE00BD4FC6 /* ImageName.swift in Sources */,
 				15C58B722868A4EE00BD4FC6 /* BackupPasswordViewModel.swift in Sources */,
+				4E63A57E2B8D75F200BBD15F /* MoveTokenViewModel.swift in Sources */,
 				15C58B732868A4EE00BD4FC6 /* ScrollAccessory.swift in Sources */,
 				4EA0D0A32A7A357E004C6A19 /* LLSegmenControl.swift in Sources */,
 				15C58B742868A4EE00BD4FC6 /* UIApplication.swift in Sources */,
@@ -7150,12 +7324,14 @@
 				15C58BA12868A4EE00BD4FC6 /* VTabNavigationPageItem.swift in Sources */,
 				15C58BA22868A4EE00BD4FC6 /* VSquareButton.swift in Sources */,
 				6A4009152875699D00A77070 /* WalletReceiveViewModel.swift in Sources */,
+				4E9D98E22B9DEC0800A70879 /* TrustProvider.swift in Sources */,
 				6AC476EF28F41563008503E6 /* BrowserBookmarkViewModel.swift in Sources */,
 				15C58BA32868A4EE00BD4FC6 /* VDialog.swift in Sources */,
 				6A29115328CB3B88003295BD /* FlowScanTransfer.swift in Sources */,
 				6A9850A128C74CA600A07C2D /* BrowserAuthzViewModel.swift in Sources */,
 				6A7F989F2869A40500282845 /* AddTokenViewModel.swift in Sources */,
 				6A6BD9DC287D5066009FA262 /* ProgressHUD.swift in Sources */,
+				4E9D98E82B9DF4BF00A70879 /* TrustAppMethod.swift in Sources */,
 				6A06CB0628AA25F400C81BE1 /* NFTUIKitListDataSource.swift in Sources */,
 				6AAD4E6928BC6E9900AEAB1F /* TransactionModels.swift in Sources */,
 				159DEC9228C67DB900493E9F /* NFTDetailPageViewModel.swift in Sources */,
@@ -7163,6 +7339,7 @@
 				15C58BA52868A4EE00BD4FC6 /* TabBar.swift in Sources */,
 				4E5885442A6FDF00007CACCC /* SPQRMaskView.swift in Sources */,
 				15C58BA62868A4EE00BD4FC6 /* Logger.swift in Sources */,
+				4EFBE5D02BC7D4AA0012968A /* ConfettiManager.swift in Sources */,
 				6A382E24289BDAFF00163564 /* SecurityManager.swift in Sources */,
 				4EB2C6C82B4A520200EB899C /* RestoreMultiConnectView.swift in Sources */,
 				6AEDD6102A42CB8D008BC5CD /* ChildAccountDetailView.swift in Sources */,
@@ -7264,6 +7441,7 @@
 				15C58BE32868A4EE00BD4FC6 /* SnapAlignment+Convert.swift in Sources */,
 				15C58BE42868A4EE00BD4FC6 /* VBaseListElement.swift in Sources */,
 				15C58BE52868A4EE00BD4FC6 /* NFTListResponse.swift in Sources */,
+				4E63A5742B8BB79700BBD15F /* ReceiveQRView.swift in Sources */,
 				6A9C34FB28AB939600AA41A5 /* NFTUIKitCache.swift in Sources */,
 				4E777CAE2B1ECF8900300A3E /* SyncInfo.swift in Sources */,
 				15C58BE72868A4EE00BD4FC6 /* TabBarItemView.swift in Sources */,
@@ -7338,6 +7516,7 @@
 				6A4BFE302893CA5500142113 /* AlertView.swift in Sources */,
 				6A11596B288E710C005EF797 /* Router.swift in Sources */,
 				6AEA375328A4FD2C004545D4 /* NFTUIKitItemCell.swift in Sources */,
+				4E6ED48E2BA96DBB009906A5 /* ChildAccountSideCell.swift in Sources */,
 				15C58C172868A4EE00BD4FC6 /* CoordinateSpaceNameEnvironmentKey.swift in Sources */,
 				15C58C182868A4EE00BD4FC6 /* UIKitIntrospectionView.swift in Sources */,
 				15C58C192868A4EE00BD4FC6 /* Endpoint.swift in Sources */,
@@ -7368,6 +7547,7 @@
 				6AEA374A28A4DE10004545D4 /* NFTUIKitCollectionHContainerView.swift in Sources */,
 				15C58C212868A4EE00BD4FC6 /* SnapID.swift in Sources */,
 				15D4F9A628BCC22300E0CADF /* DAppModel.swift in Sources */,
+				4E9D98EB2B9DF55000A70879 /* WKScriptMessage+JSON.swift in Sources */,
 				6AA947E828B5F84100591880 /* SVGCache.swift in Sources */,
 				15C58C222868A4EE00BD4FC6 /* VBaseButton.swift in Sources */,
 				6AB3732928D071C300E8BF05 /* FlowTransactionViewMoreFooter.swift in Sources */,
@@ -7388,6 +7568,7 @@
 				15F2444228CB370D00C1090E /* LikeView.swift in Sources */,
 				15C58C292868A4EE00BD4FC6 /* NFTBlurImageView.swift in Sources */,
 				4E3E5BE32875DC2000A5FA65 /* SearchBar.swift in Sources */,
+				4E63A5692B8B9D1000BBD15F /* EVMEnableView.swift in Sources */,
 				4EB2C6D12B4A7DED00EB899C /* RestoreMultiAccountViewModel.swift in Sources */,
 				15C58C2A2868A4EE00BD4FC6 /* VSectionListLayoutType.swift in Sources */,
 				15C58C2B2868A4EE00BD4FC6 /* VCloseButtonModel.swift in Sources */,
@@ -7415,8 +7596,8 @@
 				6AB5FBA228926C9100FA2261 /* iCloudAPI.swift in Sources */,
 				4EE6FA8C2B196B16006A827B /* Dictionary+Add.swift in Sources */,
 				15C58C3B2868A4EE00BD4FC6 /* NFTListView.swift in Sources */,
-				4EEC374F2A7B57910050CE6F /* CadenceTemplate+ChildAccount.swift in Sources */,
 				154866F028D0EEF000D012B8 /* FlowTransactionTemplate.swift in Sources */,
+				4E6ED48B2BA9258D009906A5 /* EVMAccountManager.swift in Sources */,
 				6A6C410428D849A000074DE9 /* InboxView.swift in Sources */,
 				154866EC28D0ECE400D012B8 /* FlixAuditEndpoint.swift in Sources */,
 			);
@@ -7594,6 +7775,7 @@
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "FRW/App/FRW-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -7636,6 +7818,7 @@
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "FRW/App/FRW-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -8571,7 +8754,7 @@
 			repositoryURL = "https://github.com/outblock/flow-swift";
 			requirement = {
 				kind = exactVersion;
-				version = 0.3.5;
+				version = 0.3.6;
 			};
 		};
 		15F517F928C6574C00504FDC /* XCRemoteSwiftPackageReference "atlantis" */ = {
@@ -8591,9 +8774,25 @@
 				minimumVersion = 12.6.0;
 			};
 		};
+		4E3682C52BB6A59100B24785 /* XCRemoteSwiftPackageReference "web3swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/web3swift-team/web3swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.2.0;
+			};
+		};
 		4E5D4FAA2AEF9A5A00DC419B /* XCRemoteSwiftPackageReference "DeviceGuru" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/InderKumarRathore/DeviceGuru";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/trustwallet/trust-web3-provider";
 			requirement = {
 				branch = master;
 				kind = branch;
@@ -9059,6 +9258,21 @@
 			package = 158832C82894262B00142B35 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
 			productName = WalletConnectAuth;
 		};
+		4E3682C62BB6A59100B24785 /* web3swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E3682C52BB6A59100B24785 /* XCRemoteSwiftPackageReference "web3swift" */;
+			productName = web3swift;
+		};
+		4E539C862BC626770080BAF8 /* Web3Wallet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 158832C82894262B00142B35 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
+			productName = Web3Wallet;
+		};
+		4E539C882BC6269E0080BAF8 /* Web3Wallet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 158832C82894262B00142B35 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
+			productName = Web3Wallet;
+		};
 		4E5D4FAB2AEF9A5A00DC419B /* DeviceGuru */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4E5D4FAA2AEF9A5A00DC419B /* XCRemoteSwiftPackageReference "DeviceGuru" */;
@@ -9068,6 +9282,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4E5D4FAA2AEF9A5A00DC419B /* XCRemoteSwiftPackageReference "DeviceGuru" */;
 			productName = DeviceGuru;
+		};
+		4E947C912BBEB2E300E87A85 /* web3swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E3682C52BB6A59100B24785 /* XCRemoteSwiftPackageReference "web3swift" */;
+			productName = web3swift;
+		};
+		4E9D98DC2B9DEAE300A70879 /* TrustWeb3Provider */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */;
+			productName = TrustWeb3Provider;
+		};
+		4E9D98DE2B9DEAEF00A70879 /* TrustWeb3Provider */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */;
+			productName = TrustWeb3Provider;
 		};
 		4EC56B2C281D3ED000246878 /* FirebaseRemoteConfig */ = {
 			isa = XCSwiftPackageProductDependency;

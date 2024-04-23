@@ -5,8 +5,8 @@
 //  Created by Selina on 15/6/2023.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 struct ChildAccount: Codable {
     var addr: String?
@@ -36,6 +36,7 @@ struct ChildAccount: Codable {
     var isPinned: Bool {
         return pinTime > 0
     }
+    
 
     struct Thumbnail: Codable {
         let url: String?
@@ -58,6 +59,28 @@ struct ChildAccount: Codable {
     }
 }
 
+extension ChildAccount: ChildAccountSideCellItem {
+    
+    
+    var showAddress: String {
+        return self.addr ?? ""
+    }
+    
+    var showIcon: String {
+        icon
+    }
+    
+    var showName: String {
+        aName
+    }
+    
+    var isEVM: Bool {
+        false
+    }
+    
+    
+}
+
 class ChildAccountManager: ObservableObject {
     static let shared = ChildAccountManager()
     
@@ -65,9 +88,10 @@ class ChildAccountManager: ObservableObject {
     
     @Published var childAccounts: [ChildAccount] = [] {
         didSet {
-            self.validSelectedChildAccount()
+            validSelectedChildAccount()
         }
     }
+
     @Published var selectedChildAccount: ChildAccount? = LocalUserDefaults.shared.selectedChildAccount {
         didSet {
             LocalUserDefaults.shared.selectedChildAccount = selectedChildAccount
@@ -129,7 +153,7 @@ class ChildAccountManager: ObservableObject {
         
         switch obj.internalStatus {
         case .success:
-            self.refresh()
+            refresh()
         default:
             break
         }

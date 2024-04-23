@@ -5,18 +5,22 @@
 //  Created by Selina on 1/9/2022.
 //
 
-import UIKit
-import SwiftUI
-import SnapKit
-import WebKit
-import Hero
 import Combine
+import Hero
+import SnapKit
+import SwiftUI
+import TrustWeb3Provider
+import UIKit
+import WebKit
 
 class BrowserViewController: UIViewController {
     private var observation: NSKeyValueObservation?
     private var actionBarIsHiddenFlag: Bool = false
     public var shouldHideActionBar: Bool = false
     private var cancelSets = Set<AnyCancellable>()
+    
+    let trustProvider = TrustWeb3Provider.config()
+
     
     private lazy var contentView: UIView = {
         let view = UIView()
@@ -33,16 +37,22 @@ class BrowserViewController: UIViewController {
         let view = WKWebView(frame: .zero, configuration: generateWebViewConfiguration())
         view.navigationDelegate = self
         
-#if DEBUG
-        if #available(iOS 16.4, *) {
-            view.isInspectable = true
-        }
-#endif
+        #if DEBUG
+            if #available(iOS 16.4, *) {
+                view.isInspectable = true
+            }
+        #endif
         return view
     }()
     
     lazy var jsHandler: JSMessageHandler = {
         let obj = JSMessageHandler()
+        obj.webVC = self
+        return obj
+    }()
+    
+    lazy var trustJSHandler: TrustJSMessageHandler = {
+        let obj = TrustJSMessageHandler()
         obj.webVC = self
         return obj
     }()
@@ -158,11 +168,10 @@ extension BrowserViewController {
 
 extension BrowserViewController {
     private func reloadActionBarView() {
-        
         if let title = webView.title, !title.isEmpty {
             actionBarView.addressLabel.text = title
         } else {
-            actionBarView.addressLabel.text =  webView.url?.absoluteString
+            actionBarView.addressLabel.text = webView.url?.absoluteString
         }
         
         actionBarView.reloadBtn.isSelected = webView.isLoading
@@ -254,7 +263,7 @@ extension BrowserViewController {
                 }
             }
         }
-        self.navigationController?.pushViewController(inputVC, animated: false)
+        navigationController?.pushViewController(inputVC, animated: false)
     }
 }
 
@@ -297,6 +306,25 @@ extension BrowserViewController: UIScrollViewDelegate {
             showActionBarView()
         } else {
             hideActionBarView()
+        }
+    }
+}
+
+extension BrowserViewController {
+    static func deleteCookie() {
+        HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
+        let dispatch_group = DispatchGroup()
+        WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+            records.forEach { record in
+                dispatch_group.enter()
+                WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {
+                    dispatch_group.leave()
+                })
+                #if DEBUG
+                    print("WKWebsiteDataStore record deleted:", record)
+                #endif
+            }
+            dispatch_group.notify(queue: DispatchQueue.main) {}
         }
     }
 }

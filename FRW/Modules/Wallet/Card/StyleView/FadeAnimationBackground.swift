@@ -15,6 +15,8 @@ struct FadeAnimationBackground: View {
     @State
     var isAnimating = false
     
+    var color: Color = Color.Theme.Accent.green 
+    
     var body: some View {
         GeometryReader { geometry in
             
@@ -39,7 +41,7 @@ struct FadeAnimationBackground: View {
                                 )
                                 .padding(.horizontal, 4)
                                 .offset(x: -270, y: -30)
-                                .foregroundColor(Color(hex: "#00EF8B"))
+                                .foregroundColor(color)
                         }
                     }
                     .rotationEffect(Angle(degrees: 5))
@@ -69,7 +71,7 @@ struct FadeAnimationBackground: View {
 
 struct FadeAnimationBackground_Previews: PreviewProvider {
     static var previews: some View {
-        FadeAnimationBackground(image: Image("flow-line"))
+        FadeAnimationBackground(image: Image("evm-line"))
         
 //        NewEmptyWalletBackgroundView().colorScheme(.dark)
     }
