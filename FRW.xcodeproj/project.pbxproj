@@ -1155,6 +1155,7 @@
 		4EE8E49C283626D000DFEF59 /* NFTLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE8E49A283626D000DFEF59 /* NFTLoading.swift */; };
 		4EEDA38D2B4D788A0000D382 /* MultiBackupDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDA38C2B4D788A0000D382 /* MultiBackupDetailViewModel.swift */; };
 		4EEDA38E2B4D788A0000D382 /* MultiBackupDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDA38C2B4D788A0000D382 /* MultiBackupDetailViewModel.swift */; };
+		4EEE9DC72BD243DB00685AAA /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 4EEE9DC62BD243DB00685AAA /* FirebaseAnalytics */; };
 		4EF3FAE02A7B8D8400D7B09B /* FlowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */; };
 		4EF3FAE12A7B8D8400D7B09B /* FlowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3FADF2A7B8D8400D7B09B /* FlowModel.swift */; };
 		4EF5129A28329ADA0014F4EC /* NFTDetailPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF5129828329ADA0014F4EC /* NFTDetailPage.swift */; };
@@ -2646,6 +2647,7 @@
 				154B8920276A1EEB00780E93 /* SwiftUIX in Frameworks */,
 				6AC1AE6B289BAD0600F76C7A /* SnapKit in Frameworks */,
 				158832D42894277600142B35 /* Starscream in Frameworks */,
+				4EEE9DC72BD243DB00685AAA /* FirebaseAnalytics in Frameworks */,
 				6A29114428CB2AA3003295BD /* JXSegmentedView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5664,6 +5666,7 @@
 				4E9D98DE2B9DEAEF00A70879 /* TrustWeb3Provider */,
 				4E3682C62BB6A59100B24785 /* web3swift */,
 				4E539C882BC6269E0080BAF8 /* Web3Wallet */,
+				4EEE9DC62BD243DB00685AAA /* FirebaseAnalytics */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 154B8928276A1EEB00780E93 /* FRW-dev.app */;
@@ -9317,6 +9320,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4ED6DD0E285A22A800105133 /* XCRemoteSwiftPackageReference "IrregularGradient" */;
 			productName = IrregularGradient;
+		};
+		4EEE9DC62BD243DB00685AAA /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 154B887C2765EBA700780E93 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
 		};
 		6A0454CC28768E9E00A9131C /* SwiftUIPager */ = {
 			isa = XCSwiftPackageProductDependency;

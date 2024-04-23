@@ -81,6 +81,13 @@ extension TrustJSMessageHandler {
         }
         return data
     }
+    
+    private func extractObject(json: [String: Any]) -> [String: Any]? {
+        guard let obj = json["object"] as? [String: Any] else {
+            return nil
+        }
+        return obj
+    }
 }
 
 extension TrustJSMessageHandler: WKScriptMessageHandler {
@@ -95,34 +102,43 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
 
         switch method {
         case .requestAccounts:
+            log.info("[Trust] requestAccounts")
             handleRequestAccounts(network: network, id: id)
         case .signRawTransaction:
-            print("[Trust] signRawTransaction")
+            log.info("[Trust] signRawTransaction")
         case .signTransaction:
-            print("[Trust] signTransaction")
+            log.info("[Trust] signTransaction")
+            guard let obj = extractObject(json: json)
+            else {
+                log.info("[Trust] data is missing")
+                return
+            }
+            handleSendTransaction(network: network, id: id, info: obj)
         case .signMessage:
-            print("[Trust] signMessage")
+            log.info("[Trust] signMessage")
+            
         case .signTypedMessage:
-            print("[Trust] signTypedMessage")
+            log.info("[Trust] signTypedMessage")
         case .signPersonalMessage:
             guard let data = extractMessage(json: json) else {
-                print("[Trust] data is missing")
+                log.info("[Trust] data is missing")
                 return
             }
             handleSignPersonal(network: network, id: id, data: data, addPrefix: true)
         case .sendTransaction:
-            print("[Trust] sendTransaction")
+            log.info("[Trust] sendTransaction")
+            
         case .ecRecover:
-            print("[Trust] ecRecover")
+            log.info("[Trust] ecRecover")
 
         case .watchAsset:
             print("[Trust] watchAsset")
         case .addEthereumChain:
-            print("[Trust] addEthereumChain")
+            log.info("[Trust] addEthereumChain")
         case .switchEthereumChain:
-            print("[Trust] switchEthereumChain")
+            log.info("[Trust] switchEthereumChain")
         case .switchChain:
-            print("[Trust] switchChain")
+            log.info("[Trust] switchChain")
         }
     }
 }
@@ -203,6 +219,40 @@ extension TrustJSMessageHandler {
         }
         
         Router.route(to: RouteMap.Explore.signMessage(vm))
+    }
+    
+    private func handleSendTransaction(network: ProviderNetwork, id: Int64, info: [String: Any])  {
+        log.info(info)
+        guard let amountValue = info["value"] as? String, 
+                let toAddr = info["to"] as? String,
+                let value = BigUInt(from: amountValue)
+        else {
+            return
+        }
+        
+        
+        let amount = Utilities.formatToPrecision(value)
+        var gasInt: UInt64 = 100000
+        
+        if let gasStr = info["gas"] as? String, let gasValue = UInt64(gasStr.stripHexPrefix(), radix: 16) {
+            gasInt = gasValue
+        }
+        
+        let data = info["data"] as? Data
+        let gas = gasInt
+        Task {
+            do {
+                let tix = try await FlowNetwork.sendTransaction(amount: amount, data: data, toAddress: toAddr.stripHexPrefix(), gas: gas)
+                let result = try await tix.onceSealed()
+                if result.isFailed {
+                    HUD.error(title: "transaction failed")
+                }
+            }
+            catch {
+                log.error("\(error)")
+            }
+        }
+        
     }
     
     private func signWithMessage(data: Data) -> Data? {

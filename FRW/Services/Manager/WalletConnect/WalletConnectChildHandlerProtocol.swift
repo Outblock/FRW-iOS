@@ -9,8 +9,12 @@ import Foundation
 import WalletConnectSign
 import Flow
 
+enum WalletConnectHandlerType {
+    case flow,evm
+}
+
 protocol WalletConnectChildHandlerProtocol {
-    
+    var type: WalletConnectHandlerType { get}
     var nameTag: String { get }
     func sessionInfo(sessionProposal: Session.Proposal) -> SessionInfo
     func chainId(sessionProposal: Session.Proposal) -> Flow.ChainID?

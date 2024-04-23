@@ -1093,5 +1093,63 @@ extension FlowNetwork {
         }
     }
     
+    static func sendTransaction(amount: String, data: Data?, toAddress: String, gas: UInt64) async throws -> Flow.ID {
+        
+        guard let amountParse = Decimal(string: amount) else {
+            throw WalletError.insufficientBalance
+        }
+        let originCadence = CadenceManager.shared.current.evm?.callContract?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        let toKeyIndex = WalletManager.shared.keyIndex
+        
+        guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
+        }
+        var argData: [Flow.Cadence.FValue] =  []
+        if let toValue = data?.cadenceValue {
+            argData = [toValue]
+        }
+        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+            cadence {
+                cadenceStr
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            arguments {
+                [
+                    .string(toAddress),
+                    .ufix64(amountParse),
+                    .array(argData),
+                    .uint64(gas)
+                ]
+            }
+            proposer {
+                Flow.TransactionProposalKey(address: Flow.Address(hex: fromAddress), keyIndex: toKeyIndex)
+            }
+            
+            authorizers {
+                Flow.Address(hex: fromAddress)
+            }
+            
+            gasLimit {
+                9999
+            }
+        }
+    }
     
+    
+}
+
+extension Data {
+    var cadenceValue: Flow.Cadence.FValue {
+        .array(map{ $0.cadenceValue })
+    }
+}
+
+extension UInt8 {
+    var cadenceValue: Flow.Cadence.FValue {
+        Flow.Cadence.FValue.uint8(self)
+    }
 }

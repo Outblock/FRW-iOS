@@ -66,15 +66,21 @@ struct WalletConnectHandler {
         return try handle.approveSessionNamespaces(sessionProposal: sessionProposal)
     }
     
+    func currentType(sessionProposal: Session.Proposal) -> WalletConnectHandlerType {
+        let handle = current(sessionProposal: sessionProposal)
+        return handle.type
+    }
+    
     func handlePersonalSignRequest(request: WalletConnectSign.Request, confirm: @escaping (String)->(), cancel:@escaping ()->()) {
         let handle = current(request: request)
         handle.handlePersonalSignRequest(request: request, confirm: confirm, cancel: cancel)
     }
 
+    
 }
 
 extension WalletConnectHandler {
     private func namespaceTag(sessionProposal: Session.Proposal) -> [String] {
-        return Array(sessionProposal.requiredNamespaces.keys)
+        return Array(sessionProposal.requiredNamespaces.keys) + Array((sessionProposal.optionalNamespaces ?? [:]).keys)
     }
 }

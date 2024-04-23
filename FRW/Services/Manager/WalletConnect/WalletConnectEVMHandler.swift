@@ -16,18 +16,28 @@ import BigInt
 
 enum WalletConnectEVMMethod: String, Codable {
     case personalSign = "personal_sign"
+    case sendTransaction = "eth_sendTransaction"
 }
 
 struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
+    
+    var type: WalletConnectHandlerType {
+        return .evm
+    }
+    
     var nameTag: String {
         return "eip155"
     }
     
     func chainId(sessionProposal: Session.Proposal) -> Flow.ChainID? {
-        guard let chains = sessionProposal.requiredNamespaces[nameTag]?.chains,
-              let reference = chains.first(where: { $0.namespace == nameTag })?.reference else {
-            return nil
+        var reference: String?
+        if let chains = sessionProposal.requiredNamespaces[nameTag]?.chains {
+            reference = chains.first(where: { $0.namespace == nameTag })?.reference
         }
+        if reference==nil, let chains = sessionProposal.optionalNamespaces?[nameTag]?.chains {
+            reference = chains.first(where: { $0.namespace == nameTag })?.reference
+        }
+        //TODO: if not the list allowed, HOW
         switch reference {
         case "646":
             return .previewnet
@@ -39,7 +49,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
     }
     
     func approveSessionNamespaces(sessionProposal: Session.Proposal) throws -> [String : SessionNamespace] {
-        guard let account = WalletManager.shared.evmAccount?.address else {
+        guard let account = EVMAccountManager.shared.accounts.first?.address.addHexPrefix() else {
             return [:]
         }
         // Following properties are used to support all the required and optional namespaces for the testing purposes

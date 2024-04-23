@@ -280,6 +280,10 @@ extension WalletConnectManager {
             return
         }
         let info = self.handler.sessionInfo(sessionProposal: sessionProposal)
+        if self.handler.currentType(sessionProposal: sessionProposal) == .evm {
+            //TODO: if evm not enable
+            
+        }
         self.currentSessionInfo = info
         let authnVM = BrowserAuthnViewModel(title: info.name,
                                             url: info.dappURL,
@@ -532,7 +536,9 @@ extension WalletConnectManager {
                 log.error("[EVM] Request cancel: [personalSign]")
                 self.rejectRequest(request: sessionRequest)
             }
-            
+        case WalletConnectEVMMethod.sendTransaction.rawValue:
+            //TODO: #six add mothed
+            print("not support")
         default:
             rejectRequest(request: sessionRequest, reason: "unspport method")
         }

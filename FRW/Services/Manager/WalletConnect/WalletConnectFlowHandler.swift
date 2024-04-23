@@ -10,6 +10,9 @@ import WalletConnectSign
 import Flow
 
 struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
+    var type: WalletConnectHandlerType {
+        return .flow
+    }
     var nameTag: String {
         return "flow"
     }

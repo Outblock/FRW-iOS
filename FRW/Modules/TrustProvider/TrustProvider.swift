@@ -15,7 +15,7 @@ extension TrustWeb3Provider {
     }
     
     static func config(at index: Int = 0) -> TrustWeb3Provider {
-        let address = EVMAccountManager.shared.accounts.first?.address ?? ""
+        let address = EVMAccountManager.shared.accounts.first?.showAddress ?? ""
         let config = TrustWeb3Provider.Config.EthereumConfig(address: address, chainId: chainId(), rpcUrl: rpcUrl())
         return TrustWeb3Provider(config: .init(ethereum: config))
     }
