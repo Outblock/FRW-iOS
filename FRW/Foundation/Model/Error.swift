@@ -90,4 +90,5 @@ enum StakingError: Error {
 enum EVMError: Error {
     case createAccount
     case findAddress
+    case transactionResult
 }

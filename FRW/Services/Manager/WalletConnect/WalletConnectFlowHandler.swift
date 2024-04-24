@@ -46,4 +46,8 @@ struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
     func handlePersonalSignRequest(request: Request, confirm: @escaping (String) -> (), cancel: @escaping () -> ()) {
         
     }
+    
+    func handleSendTransactionRequest(request: WalletConnectSign.Request, confirm: @escaping (String)->(), cancel:@escaping ()->()) {
+        
+    }
 }

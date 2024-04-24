@@ -121,7 +121,56 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         Router.route(to: RouteMap.Explore.signMessage(vm))
     }
     
-    
+    func handleSendTransactionRequest(request: WalletConnectSign.Request, confirm: @escaping (String)->(), cancel:@escaping ()->()) {
+        
+        let pair = try? Pair.instance.getPairing(for: request.topic)
+        let title = pair?.peer?.name ?? "unknown"
+        let url = pair?.peer?.url ?? "unknown"
+        let logo = pair?.peer?.icons.first
+        
+        let originCadence = CadenceManager.shared.current.evm?.callContract?.toFunc() ?? ""
+        
+        let vm = BrowserAuthzViewModel(title: title,
+                                             url: url,
+                                             logo: logo,
+                                             cadence: originCadence)
+        { result in
+            if result {
+                Task {
+                    do {
+                        let result = try request.params.get([EVMTransactionReceive].self)
+                        guard let receiveModel = result.first else {
+                            cancel()
+                            return
+                        }
+                        guard let toAddr = receiveModel.toAddress else {
+                            cancel()
+                            return
+                        }
+                        let tix = try await FlowNetwork.sendTransaction(amount: receiveModel.amount, data: receiveModel.dataValue, toAddress: toAddr, gas: receiveModel.gasValue)
+                        let tixResult = try await tix.onceSealed()
+                        if tixResult.isFailed {
+                            HUD.error(title: "transaction failed")
+                            cancel()
+                            return
+                        }
+                        let model = try await FlowNetwork.fetchEVMTransactionResult(txid: tix.hex)
+                        DispatchQueue.main.async {
+                            confirm(model.transactionHash)
+                        }
+                    }
+                    catch {
+                        log.error("[EVM] send transaction failed \(error)")
+                        cancel()
+                    }
+                }
+            }
+            else {
+                cancel()
+            }
+        }
+        Router.route(to: RouteMap.Explore.authz(vm))
+    }
 }
 
 extension WalletConnectEVMHandler {

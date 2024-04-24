@@ -75,7 +75,11 @@ struct WalletConnectHandler {
         let handle = current(request: request)
         handle.handlePersonalSignRequest(request: request, confirm: confirm, cancel: cancel)
     }
-
+    
+    func handleSendTransactionRequest(request: WalletConnectSign.Request, confirm: @escaping (String)->(), cancel:@escaping ()->()) {
+        let handle = current(request: request)
+        handle.handleSendTransactionRequest(request: request, confirm: confirm, cancel: cancel)
+    }
     
 }
 

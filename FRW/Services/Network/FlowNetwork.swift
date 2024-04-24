@@ -965,7 +965,7 @@ extension FlowNetwork {
 // MARK: - EVM
 
 extension FlowNetwork {
-    static func createEVM() async throws -> Flow.ID {
+    static func createEVM(amount: Decimal = 0.001) async throws -> Flow.ID {
         guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
         }
@@ -983,7 +983,7 @@ extension FlowNetwork {
             }
             arguments {
                 [
-                    .ufix64(0)
+                    .ufix64(amount)
                 ]
             }
             proposer {
@@ -1105,9 +1105,9 @@ extension FlowNetwork {
         guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
         }
-        var argData: [Flow.Cadence.FValue] =  []
+        var argData: Flow.Cadence.FValue =  .array([])
         if let toValue = data?.cadenceValue {
-            argData = [toValue]
+            argData = toValue
         }
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
             cadence {
@@ -1121,7 +1121,7 @@ extension FlowNetwork {
                 [
                     .string(toAddress),
                     .ufix64(amountParse),
-                    .array(argData),
+                    argData,
                     .uint64(gas)
                 ]
             }
@@ -1139,7 +1139,18 @@ extension FlowNetwork {
         }
     }
     
-    
+    static func fetchEVMTransactionResult(txid: String) async throws -> EVMTransactionExecuted {
+        let result = try await flow.getTransactionResultById(id: .init(hex: txid))
+        let event = result.events.filter { event in
+            event.type == "evm.TransactionExecuted"
+        }.first
+        guard let event = event else {
+            throw EVMError.transactionResult
+        }
+        let model: EVMTransactionExecuted = try event.payload.decode()
+        log.debug("[EVM] result ==> \(model.transactionHash)")
+        return model
+    }
 }
 
 extension Data {

@@ -270,10 +270,10 @@ extension WalletConnectManager {
     
     private func handleSessionProposal(_ sessionProposal: Session.Proposal) {
         let pairings = Pair.instance.getPairings()
-        if pairings.contains(where: { $0.peer == sessionProposal.proposer }) {
-            self.approveSession(proposal: sessionProposal)
-            return
-        }
+//        if pairings.contains(where: { $0.peer == sessionProposal.proposer }) {
+//            self.approveSession(proposal: sessionProposal)
+//            return
+//        }
         
         guard let network = self.handler.chainId(sessionProposal: sessionProposal) else {
             self.rejectSession(proposal: sessionProposal)
@@ -538,7 +538,20 @@ extension WalletConnectManager {
             }
         case WalletConnectEVMMethod.sendTransaction.rawValue:
             //TODO: #six add mothed
-            print("not support")
+            log.info("[EVM] sendTransaction")
+            handler.handleSendTransactionRequest(request: sessionRequest) { signStr in
+                Task {
+                    do {
+                        try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable(signStr)))
+                    } catch {
+                        self.rejectRequest(request: sessionRequest)
+                        log.error("[EVM] Request Error: [sendTransaction] \(error)")
+                    }
+                }
+            } cancel: {
+                log.error("[EVM] Request cancel: [sendTransaction]")
+                self.rejectRequest(request: sessionRequest)
+            }
         default:
             rejectRequest(request: sessionRequest, reason: "unspport method")
         }

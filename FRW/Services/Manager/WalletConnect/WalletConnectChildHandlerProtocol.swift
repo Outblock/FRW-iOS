@@ -20,6 +20,7 @@ protocol WalletConnectChildHandlerProtocol {
     func chainId(sessionProposal: Session.Proposal) -> Flow.ChainID?
     func approveSessionNamespaces(sessionProposal: Session.Proposal) throws -> [String: SessionNamespace]
     func handlePersonalSignRequest(request: WalletConnectSign.Request, confirm: @escaping (String)->(), cancel:@escaping ()->())
+    func handleSendTransactionRequest(request: WalletConnectSign.Request, confirm: @escaping (String)->(), cancel:@escaping ()->())
 }
 
 extension WalletConnectChildHandlerProtocol {

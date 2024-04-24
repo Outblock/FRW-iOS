@@ -222,40 +222,77 @@ extension TrustJSMessageHandler {
     }
     
     private func handleSendTransaction(network: ProviderNetwork, id: Int64, info: [String: Any])  {
-        log.info(info)
-        guard let amountValue = info["value"] as? String, 
-                let toAddr = info["to"] as? String,
-                let value = BigUInt(from: amountValue)
-        else {
-            return
+        
+        var title = webVC?.webView.title ?? "unknown"
+        if title.isEmpty {
+            title = "unknown"
         }
+        let url = webVC?.webView.url
         
+        let originCadence = CadenceManager.shared.current.evm?.callContract?.toFunc() ?? ""
         
-        let amount = Utilities.formatToPrecision(value)
-        var gasInt: UInt64 = 100000
-        
-        if let gasStr = info["gas"] as? String, let gasValue = UInt64(gasStr.stripHexPrefix(), radix: 16) {
-            gasInt = gasValue
-        }
-        
-        let data = info["data"] as? Data
-        let gas = gasInt
-        Task {
-            do {
-                let tix = try await FlowNetwork.sendTransaction(amount: amount, data: data, toAddress: toAddr.stripHexPrefix(), gas: gas)
-                let result = try await tix.onceSealed()
-                if result.isFailed {
-                    HUD.error(title: "transaction failed")
+        let vm = BrowserAuthzViewModel(title: title,
+                                             url: url?.absoluteString ?? "unknown",
+                                             logo: url?.absoluteString.toFavIcon()?.absoluteString,
+                                             cadence: originCadence)
+        { [weak self] result in
+            
+            guard let self = self else {
+                self?.webVC?.webView.tw.send(network: .ethereum, error: "Canceled", to: id)
+                return
+            }
+            
+            if result {
+               
+                Task {
+                    do {
+                        
+                        guard let data = info.jsonData else {
+                            self.cancel(id: id)
+                            return
+                        }
+                        let receiveModel = try JSONDecoder().decode(EVMTransactionReceive.self, from: data)
+                        guard let toAddr = receiveModel.toAddress else {
+                            self.cancel(id: id)
+                            return
+                        }
+                        let tix = try await FlowNetwork.sendTransaction(amount: receiveModel.amount, data: receiveModel.dataValue, toAddress: toAddr, gas: receiveModel.gasValue)
+                        let result = try await tix.onceSealed()
+                        if result.isFailed {
+                            HUD.error(title: "transaction failed")
+                            self.cancel(id: id)
+                            return
+                        }
+                        let model = try await FlowNetwork.fetchEVMTransactionResult(txid: tix.hex)
+                        DispatchQueue.main.async {
+                            self.webVC?.webView.tw.send(network: .ethereum, result: model.transactionHash, to: id)
+                        }
+                    }
+                    catch {
+                        log.error("\(error)")
+                        self.cancel(id: id)
+                    }
                 }
-            }
-            catch {
-                log.error("\(error)")
+                
+            } else {
+                self.webVC?.webView.tw.send(network: .ethereum, error: "Canceled", to: id)
             }
         }
         
+        Router.route(to: RouteMap.Explore.authz(vm))
     }
+    
+    
+    
+    
     
     private func signWithMessage(data: Data) -> Data? {
         return WalletManager.shared.signSync(signableData: data)
+    }
+    
+    private func cancel(id: Int64) {
+        DispatchQueue.main.async {
+            self.webVC?.webView.tw.send(network: .ethereum, error: "Canceled", to: id)
+        }
     }
 }
