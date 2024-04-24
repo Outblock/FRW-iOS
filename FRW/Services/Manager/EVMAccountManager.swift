@@ -119,9 +119,7 @@ extension EVMAccountManager {
             if let address = address, !address.isEmpty {
                 DispatchQueue.main.async {
                     let account = EVMAccountManager.Account(address: address)
-                    self.accounts = []
-                    self.accounts.append(account)
-                    
+                    self.accounts = [account]
                 }
                 try await refreshBalance(address: address)
             } else {
@@ -131,6 +129,10 @@ extension EVMAccountManager {
                 }
             }
         } catch {
+            DispatchQueue.main.async {
+                self.accounts = []
+                self.selectedAccount = nil
+            }
             log.error("[EVM] get address failed.\(error)")
         }
     }

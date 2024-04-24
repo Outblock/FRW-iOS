@@ -938,4 +938,4 @@
 "enable_previewnet_failed" = "Enable previewnet failed";
 "evm_on_flow" = "EVM on Flow";
 "other" = "other";
-
+"evm_check_balance" = "Balance is lower than 0.02,\n please fund your account to continue.";
