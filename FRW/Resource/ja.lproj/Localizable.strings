@@ -310,9 +310,9 @@
 "Search__Address__or__Flow__domain::message" = "検索、アドレス(0x)、またはフロードメイン";
 "welcome_desc" = "私たちに参加して、素晴らしい新しい体験をすべてアンロックしてください!";
 "Search__the__ID::message" = "IDを検索してください:";
-"addresses" = "住所";
+"addresses" = "アドレスブック";
 "Sorry__we__could__not__find__any__accounts::message" = "申し訳ありませんが、アカウントが見つかりませんでした。もう一度試してください。";
-"wallets" = "財布";
+"wallets" = "ウォレットの詳細";
 "Market::message" = "市場";
 "device" = "装置";
 "Website::message" = "Webサイト";
@@ -633,7 +633,7 @@
 "pending_transaction" = "保留中の取引";
 "transaction_failed" = "取引処理に失敗しました";
 "Welcome__Back__Unlock::message" = "おかえり";
-"transaction_success" = "取引プロセスは成功しました";
+"transaction_success" = "取引が成功しました";
 "AddressBook::message" = "住所録";
 "process_pending_text" = "保留中";
 "Search__PlaceHolder::message" = "検索アドレス(0x)、またはフロードメイン";
@@ -678,7 +678,7 @@
 "claim_free_domain_substring2" = "無料";
 "claim_free_domain_substring3" = "Flow Walletドメイン！";
 "domain_title2" = "Flow Wallet ドメイン";
-"inbox" = "受信トレイ";
+"inbox" = "トークン受信トレイ";
 "inbox_token_x" = "トークン (%d)";
 "inbox_nft_x" = "代替不可能なトークン (%d)";
 "inbox_reject" = "拒絶";
@@ -850,7 +850,7 @@
 "application_tag" = "応用";
 "backup_detail" = "バックアップの詳細";
 "backup_info" = "バックアップ情報";
-"backup_note_x" = "注: %@ が Flow Wallet のサーバーを通過することはありません。エンドツーエンドで暗号化されており、決して読み取ることはできません。";
+"backup_note_x" = "注意：バックアップキーはエンドツーエンドで暗号化されており、Flowウォレットサーバーには送信されません。";
 "backup.register.key" = "登録キーリスト";
 "backup.status.create" = "バックアップを作成する";
 "backup.status.end" = "わかりました";
@@ -894,7 +894,7 @@
 "restore_device_desc" = "モバイルまたは拡張デバイス";
 "restore_device_title" = "デバイスのバックアップから";
 "restore_enter_rp_placeholder" = "回復フレーズを入力してください (15 単語)";
-"restore_from_backup" = "バックアップ履歴からウォレットを復元します。";
+"restore_from_backup" = "バックアップを使用してウォレットを復元してください。 ";
 "restore_multi_desc" = "Googleドライブ/パスキー/iCloud/リカバリフレーズ";
 "restore_multi_title" = "マルチバックアップから";
 "restore_phrase_desc" = "マルチバックアップバージョンの違い";
@@ -904,7 +904,7 @@
 "revoke" = "取り消す";
 "revoke_device" = "デバイスの取り消し";
 "revoked" = "取り消されました";
-"Scan_sync_detal" = "フロー リファレンス ブラウザ\nextension に表示される QR コードをスキャンして、ウォレットを同期します。";
+"Scan_sync_detal" = "Flowウォレットブラウザ拡張機能が表示するQRコードをスキャンして、デバイス間でウォレットを同期します。";
 "scan_to_extension" = "スキャンして同期する拡張ウォレット";
 "scan_to_extension_detail" = "Flow Wallet Browser 拡張機能によって表示される QR コードをスキャンして、ウォレットを同期します。";
 "Scan_to_Sync_Extension_Wallet" = "スキャンして同期する拡張ウォレット";

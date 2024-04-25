@@ -310,9 +310,9 @@
 "Search__Address__or__Flow__domain::message" = "Поиск, адрес (0x) или домен потока";
 "welcome_desc" = "Присоединяйтесь к нам и откройте все блестящие и новые впечатления!";
 "Search__the__ID::message" = "Найдите идентификатор:";
-"addresses" = "Адреса";
+"addresses" = "Адресная книга";
 "Sorry__we__could__not__find__any__accounts::message" = "К сожалению, нам не удалось найти ни одного аккаунта. Пожалуйста, попробуйте еще раз.";
-"wallets" = "Кошельки";
+"wallets" = "Детали кошелька";
 "Market::message" = "Рынок";
 "device" = "Устройство";
 "Website::message" = "Веб-сайт";
@@ -633,7 +633,7 @@
 "pending_transaction" = "Ожидающая транзакция";
 "transaction_failed" = "Сбой процесса транзакции";
 "Welcome__Back__Unlock::message" = "Добро пожаловать";
-"transaction_success" = "Транзакция прошла успешно";
+"transaction_success" = "Транзакция успешно завершена";
 "AddressBook::message" = "Адресная книга";
 "process_pending_text" = "В ожидании";
 "Search__PlaceHolder::message" = "Адрес поиска (0x) или домен потока";
@@ -678,7 +678,7 @@
 "claim_free_domain_substring2" = "БЕСПЛАТНО";
 "claim_free_domain_substring3" = " Домен Flow Wallet!";
 "domain_title2" = "Flow Wallet Домен";
-"inbox" = "Входящие";
+"inbox" = "Токен входящих";
 "inbox_token_x" = "Токен (%d)";
 "inbox_nft_x" = "NFT (%д)";
 "inbox_reject" = "Отклонять";
@@ -809,7 +809,7 @@
 "hold_to_link" = "Удерживайте, чтобы связать";
 "work_in_progress" = "Работа в процессе";
 "try_it_again" = "Попробуйте снова";
-"linked_account" = "Связанный аккаунт";
+"linked_account" = "Связанные учетные записи";
 "description" = "ОПИСАНИЕ";
 "unlink_account" = "Отключить учетную запись";
 "unlink_confirmation" = "Подтверждение отмены связи";
@@ -850,7 +850,7 @@
 "application_tag" = "Приложение";
 "backup_detail" = "Детали резервной копии";
 "backup_info" = "Резервная информация";
-"backup_note_x" = "Примечание. Ваш %@ НИКОГДА не пройдет через сервер Flow Wallet. Он полностью зашифрован, и мы никогда не сможем его прочитать.";
+"backup_note_x" = "Примечание: Ваш ключ резервного копирования зашифрован с конца на конец и никогда не отправляется на серверы Flow Wallet.";
 "backup.register.key" = "Список ключей регистрации";
 "backup.status.create" = "Создать резервную копию";
 "backup.status.end" = "ХОРОШО";
@@ -894,7 +894,7 @@
 "restore_device_desc" = "Мобильные устройства или дополнительные устройства";
 "restore_device_title" = "Из резервной копии устройства";
 "restore_enter_rp_placeholder" = "Введите фразу восстановления (15 слов)";
-"restore_from_backup" = "Восстановите кошелек из истории резервных копий.";
+"restore_from_backup" = "Используйте резервную копию для восстановления вашего кошелька.";
 "restore_multi_desc" = "Google Диск/пароль/iCloud/фраза восстановления";
 "restore_multi_title" = "Из мультирезервной копии";
 "restore_phrase_desc" = "Разница между версией Multi-Backup";
@@ -904,10 +904,10 @@
 "revoke" = "Отозвать";
 "revoke_device" = "Отозвать устройство";
 "revoked" = "Отозван";
-"Scan_sync_detal" = "Отсканируйте QR-код, отображаемый в браузере Flow Wallet\extension, чтобы синхронизировать свой кошелек.";
+"Scan_sync_detal" = "Отсканируйте QR-код, отображаемый браузерным расширением Flow Wallet, чтобы синхронизировать свой кошелек между устройствами.";
 "scan_to_extension" = "Сканировать для синхронизации расширенного кошелька";
 "scan_to_extension_detail" = "Отсканируйте QR-код, отображаемый расширением браузера Flow Wallet, чтобы синхронизировать свой кошелек.";
-"Scan_to_Sync_Extension_Wallet" = "Сканировать для синхронизации расширенного кошелька";
+"Scan_to_Sync_Extension_Wallet" = "Синхронизируйте свой кошелек между устройствами";
 "start_now" = "Начать сейчас";
 "switch_to_mainnet" = "Переключиться на Mainnet";
 "sync_confirm_failed" = "синхронизация не удалась";
