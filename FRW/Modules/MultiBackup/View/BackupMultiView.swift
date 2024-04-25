@@ -26,10 +26,10 @@ struct BackupMultiView: RouteableView {
                     .font(.inter(size: 16))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(Color.Theme.Accent.grey)
-                Text("multi_backup_guide_note".localized)
-                    .font(.inter(size: 12))
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(Color.Theme.Accent.grey)
+//                Text("multi_backup_guide_note".localized)
+//                    .font(.inter(size: 12))
+//                    .multilineTextAlignment(.center)
+//                    .foregroundStyle(Color.Theme.Accent.grey)
             }
             .padding(.horizontal, 40)
             

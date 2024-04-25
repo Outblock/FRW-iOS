@@ -310,9 +310,9 @@
 "Search__Address__or__Flow__domain::message" = "Search, Address(0x) or Flow domain";
 "welcome_desc" = "We will do our best to protect your assets!";
 "Search__the__ID::message" = "Search the ID: ";
-"addresses" = "Addresses";
+"addresses" = "Address Book";
 "Sorry__we__could__not__find__any__accounts::message" = "Sorry, we could not find any accounts. Please try again.";
-"wallets" = "Wallets";
+"wallets" = "Wallet Details";
 "Market::message" = "Market";
 "device" = "Device";
 "Website::message" = "Website";
@@ -633,7 +633,7 @@
 "pending_transaction" = "Pending Transaction";
 "transaction_failed" = "Transaction process failed";
 "Welcome__Back__Unlock::message" = "Welcome Back";
-"transaction_success" = "Transaction process succeeded";
+"transaction_success" = "Transaction Succeeded";
 "AddressBook::message" = "Address Book";
 "process_pending_text" = "Pending";
 "Search__PlaceHolder::message" = "Search address(0x), or flow Domain";
@@ -678,7 +678,7 @@
 "claim_free_domain_substring2" = "FREE";
 "claim_free_domain_substring3" = " Flow Wallet domain!";
 "domain_title2" = "Flow Wallet Domain";
-"inbox" = "Inbox";
+"inbox" = "Token Inbox";
 "inbox_token_x" = "Token (%d)";
 "inbox_nft_x" = "NFT (%d)";
 "inbox_reject" = "Reject";
@@ -809,7 +809,7 @@
 "hold_to_link" = "Hold to Link";
 "work_in_progress" = "Work in Progress";
 "try_it_again" = "Try it again";
-"linked_account" = "Linked Account";
+"linked_account" = "Linked Accounts";
 "description" = "Description";
 "unlink_account" = "Unlink Account";
 "unlink_confirmation" = "Unlink Confirmation";
@@ -848,8 +848,8 @@
 "account_key_revoke_content" = "Once you revoke this key,\nthere is no way to re-activate this key.";
 "hold_to_revoke" = "Hold to Revoke";
 "devices" = "Devices";
-"Scan_to_Sync_Extension_Wallet"="Scan to Sync Extension Wallet";
-"Scan_sync_detal"="Scan QR code shown by the Flow Wallet Browser\nextension to sync your wallet.";
+"Scan_to_Sync_Extension_Wallet"="Sync your wallet between your devices";
+"Scan_sync_detal"="Scan the QR code shown by the Flow Wallet browser \n extension to sync your wallet between your devices";
 "add_other_device" = "Add Other Device";
 "current_device" = "Current Device";
 "other_device" = "Other Devices";
@@ -875,12 +875,11 @@
 "start_now" = "Start Now";
 "multi_backup" = "Multi-Backup";
 "multi_backup_guide_title" = "Please Select 2 or More Backup Options";
-"multi_backup_guide_note" = "Note: All Your Backup will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
 "create_device_backup_title" = "Create Device Backup";
 "create_device_backup_note" = "Note: Your Google Drive Backup will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
 "create_multi_backup_title" = "Create Multi-Backup";
 "create_multi_backup_note" = "Note: Your Google Drive Backup will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
-"backup_note_x" = "Note: Your %@ will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
+"backup_note_x" = "Note: Your backup key is end-to-end encrypted and is never sent to Flow Wallet servers";
 "backup.status.create" = "Create Backup";
 "backup.status.upload" = "Upload Backup";
 "backup.status.regist" = "Registration Keylist";
@@ -896,7 +895,7 @@
 "backup_detail" = "Backup Detail";
 "backup_info" = "Backup Info";
 "key_location" = "Key Location";
-"restore_from_backup" = "Restore wallet from your backup history.";
+"restore_from_backup" = "Restore your wallet using a backup.";
 "restore_device_title" = "From Device Backup";
 "restore_device_desc" = "Mobile or Extension Devices";
 "restore_multi_title" = "From Multi Backup";

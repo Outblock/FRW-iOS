@@ -98,7 +98,7 @@ enum MultiBackupType: Int, CaseIterable {
     }
     
     var noteDes: String {
-        "backup_note_x".localized(title)
+        "backup_note_x".localized
     }
     
     var normalIcon: String {
