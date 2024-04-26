@@ -47,9 +47,9 @@ class WalletManager: ObservableObject {
     private var hdWallet: HDWallet?
     var flowAccountKey: Flow.AccountKey?
 
-    var mainKeychain = Keychain(service: Bundle.main.bundleIdentifier ?? defaultBundleID)
+    var mainKeychain = Keychain(service: (Bundle.main.bundleIdentifier ?? defaultBundleID) + ".local")
         .label("Lilico app backup")
-        .synchronizable(true)
+        .synchronizable(false)
         .accessibility(.whenUnlocked)
 
     private var walletInfoRetryTimer: Timer?

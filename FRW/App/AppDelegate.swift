@@ -61,7 +61,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         flowConfig()
         
         setupUI()
-        tryToRestoreAccountWhenFirstLaunch()
+//        tryToRestoreAccountWhenFirstLaunch()
+        let migration = Migration()
+        migration.start()
         
 #if DEBUG
         Atlantis.start()

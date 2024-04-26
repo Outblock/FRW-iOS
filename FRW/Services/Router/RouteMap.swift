@@ -277,6 +277,8 @@ extension RouteMap {
         case accountKeys
         case devices
         case deviceInfo(DeviceInfoModel)
+        
+        case keychain
     }
 }
 
@@ -354,6 +356,8 @@ extension RouteMap.Profile: RouterTarget {
             navi.push(content: DevicesView())
         case .deviceInfo(let model):
             navi.push(content: DevicesInfoView(info: model))
+        case .keychain:
+            navi.push(content: KeychainListView())
         }
     }
 }
