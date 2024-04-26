@@ -110,7 +110,7 @@ class UserManager: ObservableObject {
         Task {
             if let publicData = try WallectSecureEnclave.Store.fetch(by: userId), !publicData.isEmpty {
                 userType = .secure
-            }else {
+            } else {
                 userType = .phrase
             }
         }
@@ -121,13 +121,13 @@ class UserManager: ObservableObject {
     }
     
     func verityUserType() {
-        guard let userId = self.activatedUID else {
+        guard let userId = activatedUID else {
             return
         }
         Task {
             if let publicData = try WallectSecureEnclave.Store.fetch(by: userId), !publicData.isEmpty {
                 userType = .secure
-            }else {
+            } else {
                 userType = .phrase
             }
         }
@@ -165,7 +165,6 @@ extension UserManager {
 
 extension UserManager {
     func register(_ username: String, mnemonic: String? = nil) async throws {
-        
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
             DispatchQueue.main.async {
@@ -177,7 +176,6 @@ extension UserManager {
         let sec = try WallectSecureEnclave()
         let key = try sec.accountKey()
         
-
         if IPManager.shared.info == nil {
             await IPManager.shared.fetch()
         }
@@ -188,9 +186,8 @@ extension UserManager {
         WalletManager.shared.asyncCreateWalletAddressFromServer()
         userType = .secure
         if let privateKey = sec.key.privateKey {
-            
             try WallectSecureEnclave.Store.store(key: model.id, value: privateKey.dataRepresentation)
-        }else {
+        } else {
             log.error("store public key on iPhone failed")
         }
     }
@@ -234,13 +231,10 @@ extension UserManager {
     }
     
     func restoreLogin(withMnemonic mnemonic: String, userId: String? = nil) async throws {
-        
-        
         if let uid = userId {
             let address = MultiAccountStorage.shared.getWalletInfo(uid)?.currentNetworkWalletModel?.getAddress ?? "0x"
             try await WalletManager.shared.findFlowAccount(with: uid, at: address)
         }
-        
         
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
@@ -288,7 +282,6 @@ extension UserManager {
     }
     
     func restoreLogin(userId: String) async throws {
-        
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
             DispatchQueue.main.async {
@@ -316,7 +309,7 @@ extension UserManager {
         }
         let signature = try sec.sign(data: signData).hexValue
         await IPManager.shared.fetch()
-        //TODO: hash & sign algo
+        // TODO: hash & sign algo
         let key = AccountKey(hashAlgo: Flow.HashAlgorithm.SHA2_256.index,
                              publicKey: publicKey,
                              signAlgo: Flow.SignatureAlgorithm.ECDSA_P256.index)
@@ -348,16 +341,25 @@ extension UserManager {
             return
         }
         
-        if let data = try WallectSecureEnclave.Store.fetch(by: uid) {
+        if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid), !mnemonic.isEmpty {
+            guard let address = MultiAccountStorage.shared.getWalletInfo(uid)?.getNetworkWalletModel(network: .mainnet)?.getAddress else {
+                throw LLError.invalidAddress
+            }
+            let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
+            let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic)
+            let accountKeys = account.keys.first { $0.publicKey.description == hdWallet?.getPublicKey() }
+            if accountKeys != nil {
+                try await restoreLogin(withMnemonic: mnemonic, userId: uid)
+                return
+            }
+        }
+        
+        if (try WallectSecureEnclave.Store.fetch(by: uid)) != nil {
             try await restoreLogin(userId: uid)
             return
         }
         
-        guard let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid) else {
-            log.error("\(uid) mnemonic is missing")
-            throw WalletError.mnemonicMissing
-        }
-        try await restoreLogin(withMnemonic: mnemonic, userId: uid)
+        throw WalletError.mnemonicMissing
     }
 }
 
@@ -376,7 +378,7 @@ extension UserManager {
             try WalletManager.shared.storeAndActiveMnemonicToKeychain(mnemonic, uid: uid)
         }
         
-        if !self.loginUIDList.contains(uid) {
+        if !loginUIDList.contains(uid) {
             ConfettiManager.show()
         }
         DispatchQueue.main.async {
@@ -522,4 +524,3 @@ extension UserManager {
         userInfo = newUserInfo
     }
 }
-
