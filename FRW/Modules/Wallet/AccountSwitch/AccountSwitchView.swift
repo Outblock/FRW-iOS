@@ -106,6 +106,7 @@ struct AccountSwitchView: View {
             LazyVStack(spacing: 20) {
                 ForEach(vm.placeholders, id: \.uid) { placeholder in
                     Button {
+                        vm.selectedUid = placeholder.uid
                         if LocalUserDefaults.shared.flowNetwork != .mainnet {
                             showSwitchUserAlert = true
                         } else {
@@ -120,8 +121,10 @@ struct AccountSwitchView: View {
                     .alert("wrong_network_title".localized, isPresented: $showSwitchUserAlert) {
                         Button("switch_to_mainnet".localized) {
                             WalletManager.shared.changeNetwork(.mainnet)
-                            Router.dismiss {
-                                vm.switchAccountAction(placeholder.uid)
+                            if let uid = vm.selectedUid {
+                                Router.dismiss {
+                                    vm.switchAccountAction(uid)
+                                }
                             }
                         }
                         Button("action_cancel".localized, role: .cancel) {}

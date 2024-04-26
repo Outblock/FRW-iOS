@@ -20,7 +20,7 @@ extension AccountSwitchViewModel {
 class AccountSwitchViewModel: ObservableObject {
     @Published var placeholders: [Placeholder] = []
     private var cancelSets = Set<AnyCancellable>()
-    
+    var selectedUid: String?
     init() {
         UserManager.shared.$loginUIDList
             .receive(on: DispatchQueue.main)
