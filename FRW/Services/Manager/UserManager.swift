@@ -99,11 +99,6 @@ class UserManager: ObservableObject {
         if LocalUserDefaults.shared.tryToRestoreAccountFlag == true {
             return
         }
-        
-        if !hasOldAccount() {
-            LocalUserDefaults.shared.tryToRestoreAccountFlag = true
-            return
-        }
     }
     
     private func verifyUserType(by userId: String) {
@@ -205,24 +200,37 @@ extension UserManager {
     }
     
     func tryToRestoreOldAccountOnFirstLaunch() {
-        LocalUserDefaults.shared.tryToRestoreAccountFlag = true
-        
-        HUD.loading()
-        
-        guard let uid = getFirebaseUID(), let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid) else {
-            HUD.dismissLoading()
-            HUD.error(title: "restore_account_failed".localized)
-            return
-        }
-        
+
+        HUD.loading()        
         Task {
             do {
-                try await UserManager.shared.restoreLogin(withMnemonic: mnemonic, userId: uid)
-                HUD.dismissLoading()
-                HUD.success(title: "login_success".localized)
-            } catch {
+                let list = try WallectSecureEnclave.Store.fetch()
+                var addressList: [String: String] = [:]
+                for item in list {
+                    do {
+                        let sec = try WallectSecureEnclave(privateKey: item.publicKey)
+                        guard let publicKey = sec.key.publickeyValue else { continue }
+                        let response: AccountResponse = try await Network.requestWithRawModel(FRWAPI.Utils.flowAddress(publicKey))
+                        let account = response.accounts?.filter { ($0.weight ?? 0) >= 1000 && $0.address != nil }.first
+                        if let model = account {
+                            addressList[item.uniq] = model.address ?? "0x"
+                        }
+                    } catch {
+                        log.error("[Launch] first login check failed:\(item.uniq):\(error)")
+                    }
+                }
+                let uidList = addressList.map{ $0.key }
+                let userAddress = addressList
+                DispatchQueue.main.async {
+                    self.loginUIDList = uidList
+                    LocalUserDefaults.shared.userAddressOfDeletedApp = userAddress
+                    LocalUserDefaults.shared.tryToRestoreAccountFlag = true
+                }
+                
                 HUD.dismissLoading()
                 
+            } catch {
+                HUD.dismissLoading()
                 HUD.showAlert(title: "", msg: "restore_account_failed".localized, cancelAction: {}, confirmTitle: "retry".localized) {
                     self.tryToRestoreOldAccountOnFirstLaunch()
                 }
@@ -342,19 +350,30 @@ extension UserManager {
         }
         
         if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid), !mnemonic.isEmpty {
-            guard let address = MultiAccountStorage.shared.getWalletInfo(uid)?.getNetworkWalletModel(network: .mainnet)?.getAddress else {
+            var addressStr = LocalUserDefaults.shared.userAddressOfDeletedApp[uid]
+            if addressStr == nil {
+                addressStr = MultiAccountStorage.shared.getWalletInfo(uid)?.getNetworkWalletModel(network: .mainnet)?.getAddress
+            }
+            guard let address = addressStr else {
                 throw LLError.invalidAddress
             }
-            let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
-            let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic)
-            let accountKeys = account.keys.first { $0.publicKey.description == hdWallet?.getPublicKey() }
+            var accountKeys: Flow.AccountKey?
+            do {
+                let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
+                let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic)
+                accountKeys = account.keys.first { $0.publicKey.description == hdWallet?.getPublicKey() }
+            }
+            catch {
+                log.error("[Flow] \(error)")
+            }
             if accountKeys != nil {
                 try await restoreLogin(withMnemonic: mnemonic, userId: uid)
                 return
             }
+            
         }
         
-        if (try WallectSecureEnclave.Store.fetch(by: uid)) != nil {
+        if try (WallectSecureEnclave.Store.fetch(by: uid)) != nil {
             try await restoreLogin(userId: uid)
             return
         }
@@ -522,5 +541,19 @@ extension UserManager {
 
         let newUserInfo = UserInfo(avatar: avatar, nickname: current.nickname, username: current.username, private: current.private, address: nil)
         userInfo = newUserInfo
+    }
+}
+
+// used by API FRWAPI.Utils.flowAddress
+extension UserManager {
+    struct AccountResponse: Codable {
+        let publicKey: String?
+        let accounts: [AccountInfo]?
+    }
+    
+    struct AccountInfo: Codable {
+        let address: String?
+        let weight: Int?
+        let keyId: Int?
     }
 }

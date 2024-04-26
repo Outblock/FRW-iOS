@@ -12,6 +12,7 @@ extension FRWAPI {
     enum Utils {
         case currencyRate(Currency)
         case retoken(String, String)
+        case flowAddress(String)
     }
 }
 
@@ -21,6 +22,8 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
         case .currencyRate:
             return .bearer
         case .retoken:
+            return .bearer
+        case .flowAddress:
             return .bearer
         }
     }
@@ -35,7 +38,8 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
             #else
             return .init(string: "https://dev-scanner.lilico.app")!
             #endif
-            
+        case .flowAddress:
+            return .init(string: "https://key-indexer.production.flow.com")!
         }
     }
     
@@ -45,12 +49,15 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
             return "/v1/crypto/exchange"
         case .retoken:
             return "/retoken"
+        case .flowAddress(let publicKey):
+            let result = publicKey.stripHexPrefix()
+            return "/key/\(result)"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .currencyRate:
+        case .currencyRate, .flowAddress:
             return .get
         case .retoken:
             return .post
@@ -63,6 +70,8 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
             return .requestParameters(parameters: ["from": "USD", "to": toCurrency.rawValue], encoding: URLEncoding.queryString)
         case .retoken(let token, let address):
             return .requestJSONEncodable(["token": token, "address": address])
+        case .flowAddress:
+            return .requestPlain
         }
     }
     
@@ -71,6 +80,8 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
         case .currencyRate:
             return FRWAPI.commonHeaders
         case .retoken:
+            return FRWAPI.commonHeaders
+        case .flowAddress:
             return FRWAPI.commonHeaders
         }
     }

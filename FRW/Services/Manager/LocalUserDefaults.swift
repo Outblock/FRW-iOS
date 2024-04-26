@@ -40,6 +40,7 @@ extension LocalUserDefaults {
         case switchProfileTipsFlag
         case freeGas
         case selectedEVMAccount
+        case userAddressOfDeletedApp
     }
 
     enum FlowNetworkType: String, CaseIterable {
@@ -221,6 +222,15 @@ class LocalUserDefaults: ObservableObject {
         }
         get {
             return UserDefaults.standard.array(forKey: Keys.loginUIDList.rawValue) as? [String] ?? []
+        }
+    }
+    
+    var userAddressOfDeletedApp: [String: String] {
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: Keys.userAddressOfDeletedApp.rawValue)
+        }
+        get {
+            return UserDefaults.standard.dictionary(forKey: Keys.userAddressOfDeletedApp.rawValue) as? [String: String] ?? [:]
         }
     }
     

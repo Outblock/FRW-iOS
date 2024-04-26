@@ -138,11 +138,11 @@ struct EmptyWalletView: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text("@\(placeholder.username)")
                     .font(.inter(size: 12, weight: .bold))
-                    .foregroundColor(Color(hex: "#333333"))
+                    .foregroundStyle(Color.Theme.Text.black8)
                 
                 Text("\(placeholder.address)")
                     .font(.inter(size: 12, weight: .regular))
-                    .foregroundColor(Color(hex: "#808080"))
+                    .foregroundStyle(Color.Theme.Text.black3)
             }
             
             Spacer()
@@ -150,9 +150,9 @@ struct EmptyWalletView: View {
         .padding(.horizontal, 12)
         .frame(height: 60)
         .frame(maxWidth: .infinity)
-        .background(Color.white.opacity(0.5))
+        .background(Color.Theme.Line.line)
         .contentShape(Rectangle())
-        .cornerRadius(30)
+        .cornerRadius(24)
         .shadow(color: Color.black.opacity(0.04), x: 0, y: 4, blur: 16)
     }
 }
