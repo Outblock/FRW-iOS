@@ -96,9 +96,12 @@ class WalletManager: ObservableObject {
             .sink { account in
                 log.info("[EVM] account did changed to \(account?.address ?? "")")
                 self.evmAccount = account
-                Task {
-                    try? await self.fetchWalletDatas()
+                if account != nil {
+                    Task {
+                        try? await self.fetchWalletDatas()
+                    }
                 }
+                
                 // TODO: #six send changed?
             }
             .store(in: &cancellableSet)

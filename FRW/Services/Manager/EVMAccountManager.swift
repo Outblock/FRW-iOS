@@ -76,6 +76,7 @@ class EVMAccountManager: ObservableObject {
     private func clean() {
         log.debug("cleaned")
         accounts = []
+        selectedAccount = nil
     }
     
     private func checkValid() {
