@@ -164,19 +164,20 @@ struct DeveloperModeView: RouteableView {
                             }
                             .frame(height: 64)
                             .padding(.horizontal, 16)
-                            
-                            HStack {
-                                Button {
-                                    Router.route(to: RouteMap.Profile.keychain)
-                                } label: {
-                                    Text("KeyChain")
-                                        .font(.inter(size: 14, weight: .medium))
-                                        .foregroundStyle(Color.Theme.Text.black8)
+                            if isDevModel {
+                                HStack {
+                                    Button {
+                                        Router.route(to: RouteMap.Profile.keychain)
+                                    } label: {
+                                        Text("KeyChain")
+                                            .font(.inter(size: 14, weight: .medium))
+                                            .foregroundStyle(Color.Theme.Text.black8)
+                                    }
+                                    Spacer()
                                 }
-                                Spacer()
+                                .frame(height: 64)
+                                .padding(.horizontal, 16)
                             }
-                            .frame(height: 64)
-                            .padding(.horizontal, 16)
                         }
                         .background(.LL.bgForIcon)
                     }

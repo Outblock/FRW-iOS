@@ -30,6 +30,11 @@ class KeychainListViewModel: ObservableObject {
     }
     
     private func fecth() {
+        
+        guard isDevModel, let bundleId = Bundle.main.bundleIdentifier, bundleId.hasSuffix(".dev")  else {
+            
+            return
+        }
         remoteList = remoteKeychain.allItems()
         if let item = remoteList.last {
             log.info(item)
