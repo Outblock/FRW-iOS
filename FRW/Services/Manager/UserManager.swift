@@ -11,6 +11,7 @@ import FirebaseAuth
 import Flow
 import FlowWalletCore
 import Foundation
+import Alamofire
 
 extension UserManager {
     enum UserType {
@@ -200,8 +201,7 @@ extension UserManager {
     }
     
     func tryToRestoreOldAccountOnFirstLaunch() {
-
-        HUD.loading()        
+        HUD.loading()
         Task {
             do {
                 let list = try WallectSecureEnclave.Store.fetch()
