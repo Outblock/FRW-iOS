@@ -240,8 +240,9 @@ extension UserManager {
     
     func restoreLogin(withMnemonic mnemonic: String, userId: String? = nil) async throws {
         if let uid = userId {
-            let address = MultiAccountStorage.shared.getWalletInfo(uid)?.currentNetworkWalletModel?.getAddress ?? "0x"
-            try await WalletManager.shared.findFlowAccount(with: uid, at: address)
+            if let address = MultiAccountStorage.shared.getWalletInfo(uid)?.currentNetworkWalletModel?.getAddress {
+                try? await WalletManager.shared.findFlowAccount(with: uid, at: address)
+            }
         }
         
         if Auth.auth().currentUser?.isAnonymous != true {
@@ -358,19 +359,13 @@ extension UserManager {
                 throw LLError.invalidAddress
             }
             var accountKeys: Flow.AccountKey?
-            do {
-                let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
-                let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic)
-                accountKeys = account.keys.first { $0.publicKey.description == hdWallet?.getPublicKey() }
-            }
-            catch {
-                log.error("[Flow] \(error)")
-            }
+            let account = try? await FlowNetwork.getAccountAtLatestBlock(address: address)
+            let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic)
+            accountKeys = account?.keys.first { $0.publicKey.description == hdWallet?.getPublicKey() }
             if accountKeys != nil {
                 try await restoreLogin(withMnemonic: mnemonic, userId: uid)
                 return
             }
-            
         }
         
         if try (WallectSecureEnclave.Store.fetch(by: uid)) != nil {
