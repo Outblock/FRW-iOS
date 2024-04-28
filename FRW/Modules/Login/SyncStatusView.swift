@@ -75,12 +75,12 @@ struct SyncStatusView: View {
     
     var successView: some View {
         VStack {
-            Text("Congratulation!")
+            Text("Congratulations!")
                 .font(.montserrat(size: 30, weight: .bold))
                 .foregroundStyle(Color.Theme.Accent.green)
                 .multilineTextAlignment(.center)
             
-            Text("Import Successfully 🎉")
+            Text("Import Successful 🎉")
                 .font(.inter(size: 20,weight: .bold))
                 .foregroundStyle(textColor)
                 .multilineTextAlignment(.center)
@@ -89,12 +89,12 @@ struct SyncStatusView: View {
     
     var syncSuccessView: some View {
         VStack {
-            Text("Congratulation!")
+            Text("Congratulations!")
                 .font(.montserrat(size: 30, weight: .bold))
                 .foregroundStyle(Color.Theme.Accent.green)
                 .multilineTextAlignment(.center)
             
-            Text("Sync Successfully 🎉")
+            Text("Sync Successful 🎉")
                 .font(.inter(size: 20,weight: .bold))
                 .foregroundStyle(textColor)
                 .multilineTextAlignment(.center)
