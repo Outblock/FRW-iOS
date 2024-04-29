@@ -15,7 +15,7 @@ import UIKit
 import WalletCore
 import SwiftyBeaver
 import FirebaseMessaging
-import Alamofire
+
 
 #if DEBUG
 import Atlantis
@@ -27,7 +27,7 @@ let log = SwiftyBeaver.self
 class AppDelegate: NSObject, UIApplicationDelegate {
     var window: UIWindow?
     lazy var coordinator = Coordinator(window: window!)
-    private var net: NetworkReachabilityManager? = NetworkReachabilityManager()
+    
     
     static var isUnitTest : Bool {
 #if DEBUG
@@ -66,7 +66,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         let migration = Migration()
         migration.start()
-        tryToRestoreAccountWhenFirstLaunch()
 #if DEBUG
         Atlantis.start()
 #endif
@@ -180,36 +179,7 @@ extension AppDelegate {
         FlowNetwork.setup()
     }
     
-    private func tryToRestoreAccountWhenFirstLaunch() {
-        if LocalUserDefaults.shared.tryToRestoreAccountFlag {
-            // has been triggered or no old account to restore
-            return
-        }
-        
-        self.window?.isUserInteractionEnabled = false
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.window?.isUserInteractionEnabled = true
-            
-            guard let isReachable = self.net?.isReachable else { return }
-            
-            if isReachable {
-                self.net?.stopListening()
-                UserManager.shared.tryToRestoreOldAccountOnFirstLaunch()
-                return
-            }else {
-                self.net?.startListening(onQueue: .main, onUpdatePerforming: { status in
-                    log.info("[NET] network changed")
-                    switch status {
-                    case .reachable:
-                        self.tryToRestoreAccountWhenFirstLaunch()
-                    default:
-                        log.info("[NET] not reachable")
-                    }
-                })
-            }
-        }
-    }
+    
 }
 
 // MARK: - UI

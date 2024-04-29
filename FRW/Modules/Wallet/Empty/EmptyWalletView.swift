@@ -14,6 +14,8 @@ import SwiftUIX
 struct EmptyWalletView: View {
     @StateObject private var vm = EmptyWalletViewModel()
     
+    @State private var isSettingNotificationFirst = true
+    
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
             Spacer()
@@ -32,6 +34,12 @@ struct EmptyWalletView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.LL.background)
+        .onAppear(perform: {
+            if !self.isSettingNotificationFirst {
+                self.vm.tryToRestoreAccountWhenFirstLaunch()
+            }
+            self.isSettingNotificationFirst = false
+        })
     }
     
     var topContent: some View {

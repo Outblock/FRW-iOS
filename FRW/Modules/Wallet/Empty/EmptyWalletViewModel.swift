@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import Alamofire
 
 extension EmptyWalletViewModel {
     struct Placeholder {
@@ -21,20 +22,26 @@ extension EmptyWalletViewModel {
 class EmptyWalletViewModel: ObservableObject {
     @Published var placeholders: [EmptyWalletViewModel.Placeholder] = []
     private var cancelSets = Set<AnyCancellable>()
-    
+    private var net: NetworkReachabilityManager? = NetworkReachabilityManager()
     init() {
         UserManager.shared.$loginUIDList
             .receive(on: DispatchQueue.main)
             .map { $0 }
             .sink { [weak self] list in
                 guard let self = self else { return }
+                var index = 1
                 self.placeholders = list.map { uid in
                     let userInfo = MultiAccountStorage.shared.getUserInfo(uid)
                     var address = MultiAccountStorage.shared.getWalletInfo(uid)?.getNetworkWalletModel(network: .mainnet)?.getAddress ?? "0x"
                     if address == "0x" {
                         address = LocalUserDefaults.shared.userAddressOfDeletedApp[uid] ?? "0x"
                     }
-                    return Placeholder(uid: uid, avatar: userInfo?.avatar ?? "", username: userInfo?.username ?? "", address: address)
+                    var username = userInfo?.username
+                    if username == nil {
+                        username = "Account \(index)"
+                        index += 1
+                    }
+                    return Placeholder(uid: uid, avatar: userInfo?.avatar ?? "", username: username ?? "", address: address)
                 }
             }.store(in: &cancelSets)
     }
@@ -63,5 +70,33 @@ class EmptyWalletViewModel: ObservableObject {
     
     func syncAccountAction() {
         Router.route(to: RouteMap.RestoreLogin.syncQC)
+    }
+    
+    func tryToRestoreAccountWhenFirstLaunch() {
+        if LocalUserDefaults.shared.tryToRestoreAccountFlag {
+            // has been triggered or no old account to restore
+            return
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                
+            guard let isReachable = self.net?.isReachable else { return }
+            
+            if isReachable {
+                self.net?.stopListening()
+                UserManager.shared.tryToRestoreOldAccountOnFirstLaunch()
+                return
+            }else {
+                self.net?.startListening(onQueue: .main, onUpdatePerforming: { status in
+                    log.info("[NET] network changed")
+                    switch status {
+                    case .reachable:
+                        self.tryToRestoreAccountWhenFirstLaunch()
+                    default:
+                        log.info("[NET] not reachable")
+                    }
+                })
+            }
+        }
     }
 }
