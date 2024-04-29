@@ -83,7 +83,8 @@ extension String {
     }
     
     var isEVMAddress: Bool {
-        return EthereumAddress.toChecksumAddress(self) != nil
+        let address = EthereumAddress(self)
+        return address != nil && (address?.isValid ?? false)
     }
     
     var isFlowOrEVMAddress: Bool {
