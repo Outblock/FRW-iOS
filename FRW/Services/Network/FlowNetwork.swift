@@ -339,7 +339,8 @@ enum LilicoError: Error {
 extension FlowNetwork {
     static func stakingIsEnabled() async throws -> Bool {
         let cadence = CadenceManager.shared.current.staking?.checkSetup?.toFunc() ?? ""
-        return try await self.fetch(cadence: cadence, arguments: [])
+        let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
+        return try await self.fetch(cadence: cadence, arguments: [.address(address)])
     }
     
     static func accountStakingIsSetup() async throws -> Bool {
