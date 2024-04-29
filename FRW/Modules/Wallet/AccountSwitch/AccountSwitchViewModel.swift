@@ -27,14 +27,19 @@ class AccountSwitchViewModel: ObservableObject {
             .map { $0 }
             .sink { [weak self] list in
                 guard let self = self else { return }
+                var index = 1
                 self.placeholders = list.map { uid in
                     let userInfo = MultiAccountStorage.shared.getUserInfo(uid)
                     var address = MultiAccountStorage.shared.getWalletInfo(uid)?.getNetworkWalletModel(network: .mainnet)?.getAddress ?? "0x"
                     if address == "0x" {
                         address = LocalUserDefaults.shared.userAddressOfDeletedApp[uid] ?? "0x"
                     }
-
-                    return Placeholder(uid: uid, avatar: userInfo?.avatar ?? "", username: userInfo?.username ?? "", address: address)
+                    var username = userInfo?.username
+                    if username == nil {
+                        username = "Account \(index)"
+                        index += 1
+                    }
+                    return Placeholder(uid: uid, avatar: userInfo?.avatar ?? "", username: username ?? "", address: address)
                 }
             }.store(in: &cancelSets)
     }

@@ -12,6 +12,7 @@ struct UserInfo: Codable {
     let nickname: String
     let username: String
     let `private`: Int?
+    var type: UserManager.UserType?
     
     /// Only applicable under certain circumstances.
     /// Note: The Logged-in user did not use this.

@@ -14,7 +14,7 @@ import Foundation
 import Alamofire
 
 extension UserManager {
-    enum UserType {
+    enum UserType: Codable {
         case phrase
         case secure
     }
@@ -81,12 +81,13 @@ class UserManager: ObservableObject {
         
         Task {
             do {
-                let info = try await self.fetchUserInfo()
-                
+                var info = try await self.fetchUserInfo()
+                info.type = self.userInfo?.type
+                let userInfo = info
                 if activatedUID != uid { return }
                 
                 DispatchQueue.main.async {
-                    self.userInfo = info
+                    self.userInfo = userInfo
                 }
                 
                 self.fetchMeowDomainStatus(info.username)
@@ -104,29 +105,32 @@ class UserManager: ObservableObject {
     
     private func verifyUserType(by userId: String) {
         Task {
-            if let publicData = try WallectSecureEnclave.Store.fetch(by: userId), !publicData.isEmpty {
-                userType = .secure
-            } else {
-                userType = .phrase
+            do {
+                userType = try await checkUserType()
+            }
+            catch {
+                log.error("[User] check user type:\(error)")
             }
         }
+    }
+    
+    private func checkUserType() async throws -> UserManager.UserType {
+        guard let address = WalletManager.shared.getPrimaryWalletAddress(), let uid = activatedUID else { return .secure }
+        
+        let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
+        
+        if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid), !mnemonic.isEmpty {
+            let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic)
+            let accountKeys = account.keys.first { $0.publicKey.description == hdWallet?.getPublicKey() }
+            if accountKeys != nil {
+                return .phrase
+            }
+        }
+        return .secure
     }
     
     private func clearWhenUserChanged() {
         BrowserViewController.deleteCookie()
-    }
-    
-    func verityUserType() {
-        guard let userId = activatedUID else {
-            return
-        }
-        Task {
-            if let publicData = try WallectSecureEnclave.Store.fetch(by: userId), !publicData.isEmpty {
-                userType = .secure
-            } else {
-                userType = .phrase
-            }
-        }
     }
 }
 
@@ -382,7 +386,9 @@ extension UserManager {
 extension UserManager {
     private func finishLogin(mnemonic: String, customToken: String) async throws {
         try await firebaseLogin(customToken: customToken)
-        let info = try await fetchUserInfo()
+        var info = try await fetchUserInfo()
+        info.type = self.userType
+        let userInfo = info
         fetchMeowDomainStatus(info.username)
 
         guard let uid = getFirebaseUID() else {
@@ -397,7 +403,7 @@ extension UserManager {
         }
         DispatchQueue.main.async {
             self.activatedUID = uid
-            self.userInfo = info
+            self.userInfo = userInfo
             self.insertLoginUID(uid)
             NotificationCenter.default.post(name: .didFinishAccountLogin, object: nil)
             self.uploadUserNameIfNeeded()

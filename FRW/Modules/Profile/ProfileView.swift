@@ -229,7 +229,6 @@ extension ProfileView {
                 }
 
                 ProfileView.InfoActionButton(iconName: "icon-wallet", title: "wallets".localized) {
-//                    UserManager.shared.verityUserType()
                     Router.route(to: RouteMap.Profile.walletSetting(true))
                 }
 
