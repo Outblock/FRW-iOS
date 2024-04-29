@@ -17,58 +17,61 @@ struct MoveTokenView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Text("Move Token")
-                    .font(.inter(size: 18, weight: .w700))
-                    .foregroundStyle(Color.LL.Neutrals.text)
-                    .padding(.top, 6)
-                Spacer()
-                
-                Button {
-                    Router.dismiss()
-                } label: {
-                    Image("icon_close_circle_gray")
-                        .resizable()
-                        .frame(width: 24, height: 24)
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                HStack {
+                    Text("Move Token")
+                        .font(.inter(size: 18, weight: .w700))
+                        .foregroundStyle(Color.LL.Neutrals.text)
+                        .padding(.top, 6)
+                    Spacer()
+                    
+                    Button {
+                        Router.dismiss()
+                    } label: {
+                        Image("icon_close_circle_gray")
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                    }
                 }
-            }
-            .padding(.top, 8)
-            
-            
-            Color.clear
-                .frame(height: 20)
-            VStack(spacing: 8) {
-                ZStack {
-                    VStack(spacing: 8) {
-                        MoveUserView(icon: viewModel.showFromIcon,
-                                     name: viewModel.showFromName,
-                                     address: viewModel.showFromAddress,
-                                     isEVM: viewModel.fromEVM)
-                        MoveUserView(icon: viewModel.showToIcon,
-                                     name: viewModel.showToName,
-                                     address: viewModel.showToAddress,
-                                     isEVM: !viewModel.fromEVM)
+                .padding(.top, 8)
+                
+                
+                Color.clear
+                    .frame(height: 20)
+                VStack(spacing: 8) {
+                    ZStack {
+                        VStack(spacing: 8) {
+                            MoveUserView(icon: viewModel.showFromIcon,
+                                         name: viewModel.showFromName,
+                                         address: viewModel.showFromAddress,
+                                         isEVM: viewModel.fromEVM)
+                            MoveUserView(icon: viewModel.showToIcon,
+                                         name: viewModel.showToName,
+                                         address: viewModel.showToAddress,
+                                         isEVM: !viewModel.fromEVM)
+                        }
+                        
+                        Image("icon_move_exchange")
+                            .resizable()
+                            .frame(width: 32, height: 32)
                     }
                     
-                    Image("icon_move_exchange")
-                        .resizable()
-                        .frame(width: 32, height: 32)
+                    MoveTokenView.AccountView { _ in
+                    }
                 }
-                
-                MoveTokenView.AccountView { _ in
+                Spacer(minLength: 24)
+                WalletSendButtonView(isLoading: viewModel.isLoading ,
+                                     allowEnable: $viewModel.enableButton,
+                                     buttonText: "move".localized) {
+                    UIApplication.shared.endEditing()
+                    viewModel.onNext()
                 }
+                                     .padding(.bottom)
             }
-            Spacer()
-            WalletSendButtonView(isLoading: viewModel.isLoading ,
-                                 allowEnable: $viewModel.enableButton,
-                                 buttonText: "move".localized) {
-                UIApplication.shared.endEditing()
-                viewModel.onNext()
-            }
-                                 .padding(.bottom)
+            .padding(18)
         }
-        .padding(18)
+        .hideKeyboardWhenTappedAround()
         .background(Color.Theme.Background.grey)
         .cornerRadius([.topLeading, .topTrailing], 16)
         .environmentObject(viewModel)
