@@ -891,14 +891,14 @@
 "multi_backup_guide_title" = "2 つ以上のバックアップ オプションを選択してください";
 "other_device" = "他のデバイス";
 "prepared_to_restore" = "ウォレットを復元する準備ができました";
-"restore_device_desc" = "モバイルまたは拡張デバイス";
+"restore_device_desc" = "別のモバイルまたは拡張ウォレットから復元する";
 "restore_device_title" = "デバイスのバックアップから";
 "restore_enter_rp_placeholder" = "回復フレーズを入力してください (15 単語)";
 "restore_from_backup" = "バックアップを使用してウォレットを復元してください。 ";
 "restore_multi_desc" = "Googleドライブ/パスキー/iCloud/リカバリフレーズ";
 "restore_multi_title" = "マルチバックアップから";
-"restore_phrase_desc" = "マルチバックアップバージョンの違い";
-"restore_phrase_title" = "リカバリーフレーズより（旧）";
+"restore_phrase_desc" = "レガシーリカバリフレーズを使用して復元する（マルチバックアップではない）";
+"restore_phrase_title" = "リカバリフレーズから（旧式）";
 "restore_phrase_you_created_desc" = "これは、以前のウォレットを作成したときに与えられた 15 語のフレーズです。";
 "restore_wallet" = "ウォレットを復元する";
 "revoke" = "取り消す";

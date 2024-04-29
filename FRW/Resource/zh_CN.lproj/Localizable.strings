@@ -898,11 +898,11 @@
 "key_location" = "关键位置";
 "restore_from_backup" = "使用备份恢复您的钱包。";
 "restore_device_title" = "从设备备份";
-"restore_device_desc" = "移动或扩展设备";
+"restore_device_desc" = "从另一个移动或扩展钱包恢复";
 "restore_multi_title" = "来自多重备份";
 "restore_multi_desc" = "Google Drive/密钥/iCloud/恢复短语";
-"restore_phrase_title" = "来自恢复短语（旧）";
-"restore_phrase_desc" = "多备份版本的区别";
+"restore_phrase_title" = "从短语恢复（旧版）";
+"restore_phrase_desc" = "使用旧版恢复短语进行恢复（非多备份）";
 "from_multi_backup" = "来自多重备份";
 "from_multi_backup_desc" = "请选择 2 个或更多备份选项";
 "connect_to_x" = "连接到 %@";
