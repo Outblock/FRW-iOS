@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import SwiftUIPager
 import Flow
+import Web3Core
 
 import Combine
 
@@ -325,7 +326,7 @@ extension WalletSendViewModel {
     func searchTextDidChangeAction(text: String) {
         let trimedText = text.trim()
         
-        if trimedText.isAddress {
+        if trimedText.isFlowOrEVMAddress {
             if let callback = selectCallback {
                 let target = Contact(address: trimedText, avatar: nil, contactName: trimedText, contactType: .external, domain: nil, id: UUID().hashValue, username: nil)
                 callback(target)

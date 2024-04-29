@@ -1151,6 +1151,43 @@ extension FlowNetwork {
         log.debug("[EVM] result ==> \(model.transactionHash)")
         return model
     }
+    //transferFlowToEvmAddress
+    static func sendFlowToEvm(evmAddress: String, amount: Decimal, gas: UInt64) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.evm?.transferFlowToEvmAddress?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        let fromKeyIndex = WalletManager.shared.keyIndex
+        
+        guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
+        }
+        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+            cadence {
+                cadenceStr
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            arguments {
+                [
+                    .string(evmAddress),
+                    .ufix64(amount),
+                    .uint64(gas)
+                ]
+            }
+            proposer {
+                Flow.TransactionProposalKey(address: Flow.Address(hex: fromAddress), keyIndex: fromKeyIndex)
+            }
+            
+            authorizers {
+                Flow.Address(hex: fromAddress)
+            }
+            
+            gasLimit {
+                9999
+            }
+        }
+    }
 }
 
 extension Data {

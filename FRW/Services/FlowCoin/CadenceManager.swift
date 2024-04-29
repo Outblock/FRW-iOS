@@ -266,6 +266,7 @@ extension CadenceModel {
         let withdrawCoa: String?
         let fundCoa: String?
         let callContract: String?
+        let transferFlowToEvmAddress: String?
     }
 }
 

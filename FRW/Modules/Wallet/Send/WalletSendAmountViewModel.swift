@@ -97,7 +97,11 @@ extension WalletSendAmountViewModel {
     private func checkAddress() {
         Task {
             if let address = targetContact.address {
-                let isValid = await FlowNetwork.addressVerify(address: address)
+                var isValidAddr = address.isEVMAddress
+                if !isValidAddr {
+                    isValidAddr = await FlowNetwork.addressVerify(address: address)
+                }
+                let isValid = isValidAddr
                 DispatchQueue.main.async {
                     self.addressIsValid = isValid
                     if isValid == false {
@@ -113,6 +117,13 @@ extension WalletSendAmountViewModel {
     private func checkToken() {
         Task {
             if let address = targetContact.address {
+                if address.isEVMAddress {
+                    DispatchQueue.main.async {
+                        //TODO: need check logic is right?
+                        self.isValidToken = self.token.isFlowCoin
+                    }
+                    return
+                }
                 let list = try await FlowNetwork.checkTokensEnable(address: Flow.Address(hex: address))
                 let model = list.first { $0.key.lowercased() == token.contractId.lowercased() }
                 let isValid = model?.value
@@ -247,7 +258,7 @@ extension WalletSendAmountViewModel {
             return
         }
         
-        guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
+        guard let address = WalletManager.shared.getPrimaryWalletAddress(), let targetAddress = targetContact.address else {
             return
         }
         
@@ -265,9 +276,40 @@ extension WalletSendAmountViewModel {
         
         Task {
             do {
-                let id = try await FlowNetwork.transferToken(to: Flow.Address(hex: targetContact.address ?? "0x"),
-                                                             amount: inputTokenNum.decimalValue,
-                                                             token: token)
+                
+                let fromEVM = WalletManager.shared.isSelectedEVMAccount
+                let toEVM = targetAddress.isEVMAddress
+                let flowToFlow = !fromEVM && !toEVM
+                let flowToCoa = !fromEVM && toEVM
+                let coaToFlow = fromEVM && !toEVM
+                let coaToCoa = fromEVM && toEVM
+                let flowToEoa = !fromEVM && toEVM && (targetAddress != EVMAccountManager.shared.accounts.first?.address)
+                
+                var txId: Flow.ID?
+                let amount = inputTokenNum.decimalValue
+                if flowToFlow {
+                    txId = try await FlowNetwork.transferToken(to: Flow.Address(hex: targetContact.address ?? "0x"),
+                                                                 amount: amount,
+                                                                 token: token)
+                }else if flowToCoa {
+                    // Move 1 fundCoa()
+                    txId = try await FlowNetwork.fundCoa(amount: amount)
+                }else if coaToFlow {
+                    // Move 2 withdrawCoa()
+                    txId = try await FlowNetwork.withdrawCoa(amount: amount)
+                }else if coaToCoa {
+                    // evmCall check
+                    txId = try await FlowNetwork.sendTransaction(amount: amount.description, data: nil, toAddress: targetAddress, gas: 100000)
+                }else if flowToEoa {
+                    // transferFlowToEvmAddress
+                    txId = try await FlowNetwork.sendFlowToEvm(evmAddress: targetAddress, amount: amount, gas: 100000)
+                }
+                
+                guard let id = txId else {
+                    failureBlock()
+                    return
+                }
+                
                 
                 DispatchQueue.main.async {
                     let obj = CoinTransferModel(amount: self.inputTokenNum, symbol: self.token.symbol ?? "", target: self.targetContact, from: address)

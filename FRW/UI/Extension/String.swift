@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import CryptoKit
+import Web3Core
 
 extension String {
     var localized: String {
@@ -79,6 +80,14 @@ extension String {
     
     var isAddress: Bool {
         return !isEmpty && self.hasPrefix("0x") && self.count == 18
+    }
+    
+    var isEVMAddress: Bool {
+        return EthereumAddress.toChecksumAddress(self) != nil
+    }
+    
+    var isFlowOrEVMAddress: Bool {
+        return self.isEVMAddress || self.isAddress
     }
     
     var hexValue: [UInt8] {

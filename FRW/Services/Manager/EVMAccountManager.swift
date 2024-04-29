@@ -152,7 +152,9 @@ extension EVMAccountManager {
         if selectedAccount?.address == account?.address {
             return
         }
-        selectedAccount = account
+        DispatchQueue.main.async {
+            self.selectedAccount = account
+        }
     }
     
     func updateWhenDevChange() {

@@ -8,6 +8,7 @@
 import SwiftUI
 import Kingfisher
 import Combine
+import SwiftUIX
 
 //struct WalletSendAmountView_Previews: PreviewProvider {
 //    static var previews: some View {
@@ -83,7 +84,7 @@ struct WalletSendAmountView: RouteableView {
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 44, height: 44)
                     } else {
-                        if let contactType = vm.targetContact.contactType, let contactName = vm.targetContact.contactName, contactType == .external, contactName.isAddress {
+                        if let contactType = vm.targetContact.contactType, let contactName = vm.targetContact.contactName, contactType == .external, contactName.isFlowOrEVMAddress {
                             Text("0x")
                                 .foregroundColor(.white)
                                 .font(.inter(size: 24, weight: .semibold))
@@ -103,10 +104,13 @@ struct WalletSendAmountView: RouteableView {
                     Text(vm.targetContact.contactName ?? "no name")
                         .foregroundColor(.LL.Neutrals.text)
                         .font(.inter(size: 14, weight: .bold))
+                        .lineLimit(1)
 
                     Text(vm.targetContact.address ?? "no address")
                         .foregroundColor(.LL.Neutrals.note)
                         .font(.inter(size: 14, weight: .regular))
+                        .lineLimit(1)
+                        
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -116,7 +120,6 @@ struct WalletSendAmountView: RouteableView {
                     Image(systemName: .delete)
                         .foregroundColor(.LL.Neutrals.note)
                 }
-
             }
             .padding(.horizontal, 16)
             .frame(height: 73)
