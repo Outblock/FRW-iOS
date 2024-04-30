@@ -844,7 +844,7 @@
 "account_key_number" = "序列号";
 "account_key_current_tips" = "无法撤销当前设备密钥";
 "account_key_fail_tips" = "撤销设备密钥失败";
-"account_key_revoke_title" = "您确定要撤销此密钥吗?";
+"account_key_revoke_title" = "您确定吗？\n一旦您撤销此密钥，将无法重新激活它。";
 "account_key_revoke_content" = "一旦撤销此密钥，\n就没有办法重新激活此密钥。";
 "hold_to_revoke" = "长按撤销";
 "devices" = "设备";
@@ -916,7 +916,7 @@
 "delete_backup" = "删除备份";
 "app_name_full" = "Flow Wallet";
 "feedback" = "反馈";
-"multi_backup_create_pin" = "因此，我们会用您的密码保护您的备份。";
+"multi_backup_create_pin" = "您的 PIN 码将用于安全加密您的帐户备份。";
 "verify" = "核实";
 "restore_phrase_you_created_desc" = "这是您在创建以前的钱包时获得的 15 个单词的短语。";
 "restore_enter_rp_placeholder" = "输入您的恢复短语（15 个单词）";

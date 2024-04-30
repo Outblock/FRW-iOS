@@ -844,7 +844,7 @@
 "account_key_key" = "公開鍵";
 "account_key_number" = "シーケンス番号";
 "account_key_revoke_content" = "このキーを取り消すと、\nこのキーを再度アクティブにする方法はありません。";
-"account_key_revoke_title" = "\nこのキーを取り消してもよろしいですか?";
+"account_key_revoke_title" = "本当にいいですか？\nこのキーを取り消すと、再度アクティブ化する方法はありません。";
 "add_other_device" = "他のデバイスを追加する";
 "app_name_full" = "フローリファレンスウォレット";
 "application_tag" = "応用";
@@ -886,7 +886,7 @@
 "key_location" = "主要な場所";
 "location" = "位置";
 "multi_backup" = "マルチバックアップ";
-"multi_backup_create_pin" = "したがって、PIN を使用してバックアップを保護します。";
+"multi_backup_create_pin" = "PINコードは、アカウントのバックアップを安全に暗号化するために使用されます。";
 "multi_backup_guide_note" = "注: すべてのバックアップが Flow Wallet のサーバーを経由することはありません。エンドツーエンドで暗号化されており、決して読み取ることはできません。";
 "multi_backup_guide_title" = "2 つ以上のバックアップ オプションを選択してください";
 "other_device" = "他のデバイス";

@@ -41,7 +41,7 @@ class MultiBackupVerifyPinViewModel: ObservableObject {
 
     var desc: String {
         if from == .backup {
-            return "So we will secure your backup with pin code."
+            return "Your PIN code will be used to securely encrypt your account backup"
         } else {
             return "Please enter the pin when you create this backup."
         }
