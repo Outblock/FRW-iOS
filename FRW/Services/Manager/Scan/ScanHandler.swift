@@ -31,6 +31,17 @@ class ScanHandler {
                     let contract = Contact(address: address, avatar: nil, contactName: "-", contactType: .none, domain: nil, id: -1, username: nil)
                     Router.route(to: RouteMap.Wallet.sendAmount(contract, token, isPush: false))
                 })
+            case .ethWallet(let address):
+                vc.stopRunning()
+                vc.presentingViewController?.dismiss(animated: true, completion: {
+                    
+                    let symbol = LocalUserDefaults.shared.recentToken ?? "flow"
+                    guard let token = WalletManager.shared.getToken(bySymbol: symbol) else {
+                        return
+                    }
+                    let contract = Contact(address: address, avatar: nil, contactName: "-", contactType: .none, domain: nil, id: -1, username: nil)
+                    Router.route(to: RouteMap.Wallet.sendAmount(contract, token, isPush: false))
+                })
             default:
                 break
             }

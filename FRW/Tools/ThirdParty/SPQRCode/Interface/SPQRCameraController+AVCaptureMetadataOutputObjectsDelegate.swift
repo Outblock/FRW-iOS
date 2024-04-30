@@ -110,6 +110,17 @@ extension SPQRCameraController: AVCaptureMetadataOutputObjectsDelegate {
             return .walletConnect(string)
         }
         
+        let ethPre = "ethereum:"
+        if string.lowercased().hasPrefix(ethPre) {
+            let indexStart = string.index(string.startIndex, offsetBy: ethPre.count)
+            let address = String(string[indexStart...])
+            let regex =  "^0x[a-fA-F0-9]{40}$"
+            let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
+            if predicate.evaluate(with: address){
+                return .ethWallet(address)
+            }
+        }
+        
         if let components = URLComponents(string: string), components.scheme != nil {
             if let url = components.url {
                 return .url(url)
