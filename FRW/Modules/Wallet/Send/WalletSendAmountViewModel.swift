@@ -280,7 +280,7 @@ extension WalletSendAmountViewModel {
                 let fromEVM = WalletManager.shared.isSelectedEVMAccount
                 let toEVM = targetAddress.isEVMAddress
                 let flowToFlow = !fromEVM && !toEVM
-                let flowToCoa = !fromEVM && toEVM
+                let flowToCoa = !fromEVM && toEVM && (targetAddress == EVMAccountManager.shared.accounts.first?.address)
                 let coaToFlow = fromEVM && !toEVM
                 let coaToCoa = fromEVM && toEVM
                 let flowToEoa = !fromEVM && toEVM && (targetAddress != EVMAccountManager.shared.accounts.first?.address)
@@ -299,10 +299,10 @@ extension WalletSendAmountViewModel {
                     txId = try await FlowNetwork.withdrawCoa(amount: amount)
                 }else if coaToCoa {
                     // evmCall check
-                    txId = try await FlowNetwork.sendTransaction(amount: amount.description, data: nil, toAddress: targetAddress, gas: 100000)
+                    txId = try await FlowNetwork.sendTransaction(amount: amount.description, data: nil, toAddress: targetAddress.stripHexPrefix(), gas: 100000)
                 }else if flowToEoa {
                     // transferFlowToEvmAddress
-                    txId = try await FlowNetwork.sendFlowToEvm(evmAddress: targetAddress, amount: amount, gas: 100000)
+                    txId = try await FlowNetwork.sendFlowToEvm(evmAddress: targetAddress.stripHexPrefix(), amount: amount, gas: 100000)
                 }
                 
                 guard let id = txId else {
