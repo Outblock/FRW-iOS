@@ -103,7 +103,7 @@ class UserManager: ObservableObject {
         }
     }
     
-    private func verifyUserType(by userId: String) {
+    func verifyUserType(by userId: String) {
         Task {
             do {
                 userType = try await checkUserType()

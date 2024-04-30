@@ -279,7 +279,7 @@ extension WalletViewModel {
         guard WalletManager.shared.getPrimaryWalletAddress() != nil else {
             return
         }
-        
+        UserManager.shared.verifyUserType(by: "")
         if isReloading {
             return
         }
