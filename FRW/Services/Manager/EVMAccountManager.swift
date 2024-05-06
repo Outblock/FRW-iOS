@@ -80,7 +80,7 @@ class EVMAccountManager: ObservableObject {
     }
     
     private func checkValid() {
-        if (CadenceManager.shared.current.evm?.createCoa) != nil && EVMEnable {
+        if (CadenceManager.shared.current.evm?.createCoaEmpty) != nil && EVMEnable {
             self.hasAccount = !self.accounts.isEmpty
             self.showEVM = self.accounts.isEmpty
         }else {

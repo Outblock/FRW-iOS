@@ -208,8 +208,20 @@ extension WalletSendAmountViewModel {
     
     func maxAction() {
         exchangeType = .token
-        let num = max(amountBalance - 0.001, 0)
-        inputText = num.formatCurrencyString()
+        if token.isFlowCoin {
+            Task {
+                do {
+                    let topAmount = try await FlowNetwork.minFlowBalance()
+                    let num = max(amountBalance - topAmount, 0)
+                    inputText = num.formatCurrencyString()
+                }catch {
+                    log.error("[Flow] min flow balance error")
+                }
+            }
+        }else {
+            let num = max(amountBalance - 0.001, 0)
+            inputText = num.formatCurrencyString()
+        }
     }
     
     func toggleExchangeTypeAction() {

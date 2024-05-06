@@ -92,6 +92,15 @@ extension FlowNetwork {
             }
         })
     }
+    
+    static func minFlowBalance() async throws -> Double {
+        guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
+        }
+        let cadenceString = CadenceManager.shared.current.basic?.getAccountMinFlow?.toFunc() ?? ""
+        let result: Decimal = try await fetch(cadence: cadenceString, arguments: [.address(Flow.Address(hex: fromAddress))])
+        return result.doubleValue
+    }
 }
 
 // MARK: - NFT
@@ -966,11 +975,11 @@ extension FlowNetwork {
 // MARK: - EVM
 
 extension FlowNetwork {
-    static func createEVM(amount: Decimal = 0.001) async throws -> Flow.ID {
+    static func createEVM() async throws -> Flow.ID {
         guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
         }
-        let originCadence = CadenceManager.shared.current.evm?.createCoa?.toFunc() ?? ""
+        let originCadence = CadenceManager.shared.current.evm?.createCoaEmpty?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         let fromKeyIndex = WalletManager.shared.keyIndex
 
@@ -982,11 +991,7 @@ extension FlowNetwork {
             payer {
                 RemoteConfigManager.shared.payer
             }
-            arguments {
-                [
-                    .ufix64(amount)
-                ]
-            }
+            
             proposer {
                 Flow.TransactionProposalKey(address: Flow.Address(hex: fromAddress), keyIndex: fromKeyIndex)
             }

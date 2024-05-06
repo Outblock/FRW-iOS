@@ -112,6 +112,7 @@ extension CadenceModel {
         let getTokenBalanceWithModel: String?
         let isTokenStorageEnabled: String?
         let revokeKey: String?
+        let getAccountMinFlow: String?
     }
     
     struct Account: Codable {
@@ -255,7 +256,7 @@ extension CadenceModel {
 extension CadenceModel {
     struct EVM: Codable {
         let call: String?
-        let createCoa: String?
+        let createCoaEmpty: String?
         let deployContract: String?
         let estimateGas: String?
         let fundEvmAddr: String?

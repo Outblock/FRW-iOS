@@ -24,7 +24,7 @@ class InputMnemonicViewModel: ViewModel {
                     break
                 }
             }
-            hasError = (words.count != 12)
+            hasError = (words.count > 12)
 
             DispatchQueue.main.async {
                 self.state.hasError = hasError
