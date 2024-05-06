@@ -24,6 +24,7 @@ class InputMnemonicViewModel: ViewModel {
                     break
                 }
             }
+            hasError = (words.count != 12)
 
             DispatchQueue.main.async {
                 self.state.hasError = hasError
@@ -35,8 +36,9 @@ class InputMnemonicViewModel: ViewModel {
                 } else {
                     self.state.suggestions = Mnemonic.search(prefix: String(words.last ?? ""))
                 }
-
-                self.state.nextEnable = valid
+                if words.count == 12 {
+                    self.state.nextEnable = valid
+                }
             }
         case .next:
             restoreLogin()

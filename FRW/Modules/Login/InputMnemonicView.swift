@@ -114,6 +114,7 @@ struct InputMnemonicView: RouteableView {
             .frame(maxWidth: .infinity, alignment: .leading)
             .foregroundColor(viewModel.state.hasError ? .LL.error : .LL.text)
             .padding(.horizontal, 28)
+            .padding(.vertical, 4)
             .opacity(viewModel.state.hasError ? 1 : 0)
             .animation(.linear, value: viewModel.state.hasError)
             

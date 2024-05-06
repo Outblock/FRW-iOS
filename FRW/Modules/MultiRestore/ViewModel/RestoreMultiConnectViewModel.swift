@@ -115,8 +115,17 @@ extension RestoreMultiConnectViewModel {
         let key = LocalEnvManager.shared.backupAESKey
         do {
             let dataHexString = try MultiBackupManager.shared.encryptMnemonic(mnemonicData, password: key)
-            let publicKey = hdWallet.flowAccountP256Key.publicKey.description
-            let item = MultiBackupManager.StoreItem(address: "", userId: "", userName: "", publicKey: publicKey, data: dataHexString, keyIndex: 0, signAlgo: Flow.SignatureAlgorithm.ECDSA_P256.index, hashAlgo: Flow.HashAlgorithm.SHA2_256.index, weight: 500, deviceInfo: IPManager.shared.toParams())
+            let isOldAccount = hdWallet.mnemonic.words.count == 12
+            let publicKey = isOldAccount ? hdWallet.getPublicKey() : hdWallet.flowAccountP256Key.publicKey.description
+            let item = MultiBackupManager.StoreItem(
+                address: "", userId: "", userName: "", 
+                publicKey: publicKey,
+                data: dataHexString, keyIndex: 0,
+                signAlgo: isOldAccount ? Flow.SignatureAlgorithm.ECDSA_SECP256k1.index : Flow.SignatureAlgorithm.ECDSA_P256.index,
+                hashAlgo: Flow.HashAlgorithm.SHA2_256.index,
+                weight: isOldAccount ? 1000 : 500,
+                deviceInfo: IPManager.shared.toParams()
+            )
             phraseItem = item
             let nextIndex = currentIndex + 1
             if items.count <= nextIndex {

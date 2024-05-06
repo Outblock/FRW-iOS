@@ -422,7 +422,7 @@ extension MultiBackupManager {
                     signAlgo: firstSigner.signatureAlgo.index, 
                     signMessage: userId,
                     signature: firstSignature,
-                    weight: firstSigner.provider.weight ?? 500
+                    weight: firstSigner.weight
                 )
                 
                 let secondSignature =  secondSigner.sign(userId) ?? ""
@@ -433,7 +433,7 @@ extension MultiBackupManager {
                     signAlgo: secondSigner.signatureAlgo.index,
                     signMessage: userId,
                     signature: secondSignature,
-                    weight: secondSigner.provider.weight ?? 500
+                    weight: secondSigner.weight
                 )
                 let request = SignedRequest(accountKey: AccountKey(hashAlgo: key.hashAlgo.index,
                                                                    publicKey: key.publicKey.description,
@@ -486,11 +486,21 @@ extension MultiBackupManager {
         }
         
         public var signatureAlgo: Flow.SignatureAlgorithm {
-            .ECDSA_P256
+            if hdWallet?.mnemonic.words.count == 12 {
+                return .ECDSA_SECP256k1
+            }
+            return .ECDSA_P256
         }
         
         public var keyIndex: Int {
             provider.keyIndex
+        }
+        
+        public var weight: Int {
+            if hdWallet?.mnemonic.words.count == 12 {
+                return 1000
+            }
+            return provider.weight ?? 500
         }
         
         private func createHDWallet() async throws  {
@@ -520,14 +530,15 @@ extension MultiBackupManager {
             guard let hdWallet = self.hdWallet else {
                 throw BackupError.missingMnemonic
             }
-            var privateKey = hdWallet.getKeyByCurve(curve: .nist256p1, derivationPath: WalletManager.flowPath)
+            let curve: WalletCore.Curve = hdWallet.mnemonic.words.count == 15 ? .nist256p1 : .secp256k1
+            var privateKey = hdWallet.getKeyByCurve(curve: curve, derivationPath: WalletManager.flowPath)
             let hashedData = Hash.sha256(data: signableData)
             
             defer {
                 privateKey = PrivateKey()
             }
             
-            guard var signature = privateKey.sign(digest: hashedData, curve: .nist256p1) else {
+            guard var signature = privateKey.sign(digest: hashedData, curve: curve) else {
                 throw LLError.signFailed
             }
             
@@ -548,15 +559,15 @@ extension MultiBackupManager {
             guard let hdWallet = self.hdWallet else {
                 return nil
             }
-            
-            var privateKey = hdWallet.getKeyByCurve(curve: .nist256p1, derivationPath: WalletManager.flowPath)
+            let curve: WalletCore.Curve = hdWallet.mnemonic.words.count == 15 ? .nist256p1 : .secp256k1
+            var privateKey = hdWallet.getKeyByCurve(curve: curve, derivationPath: WalletManager.flowPath)
             
             defer {
                 privateKey = PrivateKey()
             }
             
             let hashedData = Hash.sha256(data: data)
-            guard var signature = privateKey.sign(digest: hashedData, curve: .nist256p1) else {
+            guard var signature = privateKey.sign(digest: hashedData, curve: curve) else {
                 return nil
             }
 
