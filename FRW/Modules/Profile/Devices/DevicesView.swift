@@ -36,11 +36,12 @@ struct DevicesView: RouteableView {
                         .font(.inter(size: 16, weight: .semibold))
                         .foregroundStyle(Color.Theme.Text.white9)
                 }
+                .frame(width: 339, height: 54)
+                .background(Color.Theme.Accent.blue)
+                .cornerRadius(16)
             }
-            .frame(width: 339, height: 54)
-            .background(Color.Theme.Accent.blue)
-            .cornerRadius(16)
             .padding(.top, 24)
+            .buttonStyle(ScaleButtonStyle())
 
             Divider()
                 .background(Color.LL.Neutrals.background)
