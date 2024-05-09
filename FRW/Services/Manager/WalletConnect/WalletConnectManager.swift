@@ -42,6 +42,8 @@ class WalletConnectManager: ObservableObject {
     var currentRequestInfo: RequestInfo?
     var currentMessageInfo: RequestMessageInfo?
     
+    @Published var setSessions: [Session] = []
+    
     private var syncAccountFlag: Bool = false
     
     // TODO: rebranding @Hao @six redirect
@@ -159,10 +161,10 @@ class WalletConnectManager: ObservableObject {
         
         Sign.instance.sessionsPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [unowned self] (_: [Session]) in
+            .sink { [unowned self] (sessions: [Session]) in
                 // reload UI
                 print("[RESPONDER] WC: Did session")
-
+                self.setSessions = sessions
             }.store(in: &publishers)
         
         // TODO: Adapt proposal data to be used on the view
