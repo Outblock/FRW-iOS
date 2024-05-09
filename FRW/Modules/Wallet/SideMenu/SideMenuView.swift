@@ -138,12 +138,8 @@ struct SideMenuView: View {
                 .foregroundColor(.LL.Neutrals.text)
                 .font(.inter(size: 24, weight: .semibold))
                 .padding(.top, 10)
-                .padding(.bottom, 5)
-            
-            Text("Since 2022 · \(vm.nftCount) NFTs")
-                .foregroundColor(.LL.Neutrals.text3)
-                .font(.inter(size: 14))
                 .padding(.bottom, 20)
+            
         }
         .padding(.horizontal, 12)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -205,36 +201,36 @@ struct SideMenuView: View {
     
     var multiAccountView: some View {
         HStack(spacing: 15) {
-            ForEach(vm.accountPlaceholders, id: \.uid) { placeholder in
-                Button {
-                    if LocalUserDefaults.shared.flowNetwork != .mainnet {
-                        showSwitchUserAlert = true
-                    } else {
-                        vm.switchAccountAction(placeholder.uid)
-                    }
-                    
-                    
-                } label: {
-                    KFImage.url(URL(string: placeholder.avatar))
-                        .placeholder {
-                            Image("placeholder")
-                                .resizable()
-                        }
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 28, height: 28)
-                        .cornerRadius(14)
-                }
-                .alert("wrong_network_title".localized, isPresented: $showSwitchUserAlert) {
-                    Button("switch_to_mainnet".localized) {
-                        WalletManager.shared.changeNetwork(.mainnet)
-                        vm.switchAccountAction(placeholder.uid)
-                    }
-                    Button("action_cancel".localized, role: .cancel) {}
-                } message: {
-                    Text("wrong_network_des".localized)
-                }
-            }
+//            ForEach(vm.accountPlaceholders, id: \.uid) { placeholder in
+//                Button {
+//                    if LocalUserDefaults.shared.flowNetwork != .mainnet {
+//                        showSwitchUserAlert = true
+//                    } else {
+//                        vm.switchAccountAction(placeholder.uid)
+//                    }
+//                    
+//                    
+//                } label: {
+//                    KFImage.url(URL(string: placeholder.avatar))
+//                        .placeholder {
+//                            Image("placeholder")
+//                                .resizable()
+//                        }
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fill)
+//                        .frame(width: 28, height: 28)
+//                        .cornerRadius(14)
+//                }
+//                .alert("wrong_network_title".localized, isPresented: $showSwitchUserAlert) {
+//                    Button("switch_to_mainnet".localized) {
+//                        WalletManager.shared.changeNetwork(.mainnet)
+//                        vm.switchAccountAction(placeholder.uid)
+//                    }
+//                    Button("action_cancel".localized, role: .cancel) {}
+//                } message: {
+//                    Text("wrong_network_des".localized)
+//                }
+//            }
             
             Button {
                 vm.switchAccountMoreAction()
