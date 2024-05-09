@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import SwiftUI
 import Hero
+import Combine
 
 class NFTUIKitListViewController: UIViewController {
     var style: NFTTabScreen.ViewStyle = .normal {
@@ -19,6 +20,7 @@ class NFTUIKitListViewController: UIViewController {
     
     var listStyleHandler: NFTUIKitListStyleHandler = NFTUIKitListStyleHandler()
     var gridStyleHandler: NFTUIKitGridStyleHandler = NFTUIKitGridStyleHandler()
+    private var cancelSets = Set<AnyCancellable>()
     
     private lazy var contentView: UIView = {
         let view = UIView()
@@ -102,6 +104,15 @@ class NFTUIKitListViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(onCustomAddressChanged), name: .watchAddressDidChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didReset), name: .didResetWallet, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onChildAccountChanged), name: .childAccountChanged, object: nil)
+        
+        WalletManager.shared.$walletInfo
+            .dropFirst()
+            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                log.debug("wallet info refresh triggerd a upload token action")
+                self.walletInfoDidChanged()
+            }.store(in: &cancelSets)
     }
     
     @objc private func didReset() {
@@ -115,6 +126,11 @@ class NFTUIKitListViewController: UIViewController {
     }
     
     @objc private func onChildAccountChanged() {
+        listStyleHandler.collectionView.beginRefreshing()
+        gridStyleHandler.collectionView.beginRefreshing()
+    }
+    
+    private func walletInfoDidChanged() {
         listStyleHandler.collectionView.beginRefreshing()
         gridStyleHandler.collectionView.beginRefreshing()
     }
