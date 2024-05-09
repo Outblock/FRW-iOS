@@ -522,7 +522,7 @@
 "Earn_More_Flow::message" = "フローポートの起動";
 "create_wallet" = "ウォレットを作成する";
 "Stake_tokens_and_earn_rewards::message" = "トークンを賭けて報酬を獲得";
-"wallet_transactions" = "トレード";
+"wallet_transactions" = "取引履歴";
 "USD::message" = "米ドル";
 "transaction_list_transaction_x" = "トランザクション (%d)";
 "Deposit::message" = "デポジット";
@@ -544,7 +544,7 @@
 "Forgot_password::message" = "パスワードをお忘れですか？";
 "view_more_transactions" = "もっとお得な情報を見る";
 "Welcome_to_lilico::message" = "Flow Walletへようこそ";
-"token_detail_activities" = "アカウント アクティビティ";
+"token_detail_activities" = "取引履歴";
 "Flow::message" = "フロー";
 "free_gas_fee" = "取引手数料なし";
 "Import_your_wallet::message" = "ウォレットをインポートする";

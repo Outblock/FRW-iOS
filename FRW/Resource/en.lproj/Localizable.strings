@@ -348,7 +348,7 @@
 "Showing__NFT__under::message" = "Showing NFT under ";
 "visible" = "Visible";
 "Launch__My__Wallet::message" = "Launch My Wallet";
-"unvisible" = "Unvisible";
+"unvisible" = "invisible";
 "Start__exploring__with__Lilico__now::message" = "Start exploring with Flow Wallet now!";
 "done" = "Done";
 "all__set::message" = "all set";
@@ -522,7 +522,7 @@
 "Earn_More_Flow::message" = "Launch Flow Port";
 "create_wallet" = "Create Wallet";
 "Stake_tokens_and_earn_rewards::message" = "Stake tokens and earn rewards";
-"wallet_transactions" = "Transactions";
+"wallet_transactions" = "Transaction History";
 "USD::message" = "USD";
 "transaction_list_transaction_x" = "Transaction (%d)";
 "Deposit::message" = "Deposit";
@@ -544,7 +544,7 @@
 "Forgot_password::message" = "Forgot password?";
 "view_more_transactions" = "View more transactions";
 "Welcome_to_lilico::message" = "Welcome to Flow Wallet";
-"token_detail_activities" = "Activities";
+"token_detail_activities" = "Transaction history";
 "Flow::message" = "Flow";
 "free_gas_fee" = "Free Gas Fee";
 "Import_your_wallet::message" = "Import your wallet";

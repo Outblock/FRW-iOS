@@ -25,7 +25,7 @@ struct EVMEnableView: RouteableView {
                 Button {
                     viewModel.onSkip()
                 } label: {
-                    Text("skip".localized)
+                    Text("not_now".localized)
                         .font(.inter(size: 14))
                         .foregroundStyle(ThemeManager.shared.style == .light ? Color.Theme.Text.black : Color.Theme.Text.black8)
                         .padding(.horizontal, 16)

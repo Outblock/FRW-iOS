@@ -522,7 +522,7 @@
 "Earn_More_Flow::message" = "发射流量端口";
 "create_wallet" = "创建钱包";
 "Stake_tokens_and_earn_rewards::message" = "质押代币并赚取奖励";
-"wallet_transactions" = "交易";
+"wallet_transactions" = "交易历史";
 "USD::message" = "美元";
 "transaction_list_transaction_x" = "交易（%d）";
 "Deposit::message" = "订金";
@@ -544,7 +544,7 @@
 "Forgot_password::message" = "忘记密码？";
 "view_more_transactions" = "查看更多交易";
 "Welcome_to_lilico::message" = "欢迎来到Flow Wallet";
-"token_detail_activities" = "账户活动";
+"token_detail_activities" = "交易历史";
 "Flow::message" = "流动";
 "free_gas_fee" = "免交易手续费";
 "Import_your_wallet::message" = "导入你的钱包";

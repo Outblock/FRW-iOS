@@ -522,7 +522,7 @@
 "Earn_More_Flow::message" = "Запустить потоковый порт";
 "create_wallet" = "Создать кошелек";
 "Stake_tokens_and_earn_rewards::message" = "Ставьте токены и получайте вознаграждения";
-"wallet_transactions" = "Транзакции";
+"wallet_transactions" = "История транзакций";
 "USD::message" = "доллар США";
 "transaction_list_transaction_x" = "Транзакция (%d)";
 "Deposit::message" = "Депозит";
@@ -544,7 +544,7 @@
 "Forgot_password::message" = "Забыли пароль?";
 "view_more_transactions" = "Посмотреть больше транзакций";
 "Welcome_to_lilico::message" = "Добро пожаловать в Flow Wallet";
-"token_detail_activities" = "Деятельность";
+"token_detail_activities" = "История транзакций";
 "Flow::message" = "Поток";
 "free_gas_fee" = "Плата за бесплатный газ";
 "Import_your_wallet::message" = "Импортируйте свой кошелек";
