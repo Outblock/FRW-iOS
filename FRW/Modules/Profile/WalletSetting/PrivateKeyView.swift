@@ -53,8 +53,8 @@ struct PrivateKeyView: RouteableView {
                             UIPasteboard.general.string = WalletManager.shared.getCurrentPrivateKey() ?? ""
                             HUD.success(title: "copied".localized)
                         } label: {
-                            Label("Copy".localized, image: "Copy")
-                                .foregroundColor(.LL.Neutrals.neutrals6)
+                            Label(LocalizedStringKey("Copy".localized), colorImage: "Copy")
+                                .foregroundColor(.Theme.Accent.grey)
                         }
                     }
                 }
@@ -81,8 +81,8 @@ struct PrivateKeyView: RouteableView {
                             HUD.success(title: "copied".localized)
                             
                         } label: {
-                            Label("Copy".localized, image: "Copy")
-                                .foregroundColor(.LL.Neutrals.neutrals6)
+                            Label(LocalizedStringKey("Copy".localized), colorImage: "Copy")
+                                .foregroundColor(.Theme.Accent.grey)
                         }
                     }
                 }
@@ -144,6 +144,18 @@ struct PrivateKeyScreen_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             PrivateKeyView()
+        }
+    }
+}
+
+extension Label where Title == Text, Icon == Image {
+    init(_ title: LocalizedStringKey, colorImage: String) {
+    
+        self.init {
+            Text(title)
+        } icon: {
+            Image(colorImage)
+                .renderingMode(.template)
         }
     }
 }
