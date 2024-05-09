@@ -208,7 +208,7 @@ extension WalletSendAmountViewModel {
     
     func maxAction() {
         exchangeType = .token
-        if token.isFlowCoin {
+        if token.isFlowCoin && EVMAccountManager.shared.selectedAccount == nil {
             Task {
                 do {
                     let topAmount = try await FlowNetwork.minFlowBalance()
