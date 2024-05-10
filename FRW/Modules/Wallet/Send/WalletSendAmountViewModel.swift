@@ -219,7 +219,7 @@ extension WalletSendAmountViewModel {
                 }
             }
         }else {
-            let num = max(amountBalance - 0.001, 0)
+            let num = max(amountBalance, 0)
             inputText = num.formatCurrencyString()
         }
     }

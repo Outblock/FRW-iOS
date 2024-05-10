@@ -639,6 +639,7 @@ extension WalletManager {
         }
         if isSelectedEVMAccount {
             try await fetchEVMBalance()
+            try await fetchEVMTokenAndBalance()
             return
         }
 
@@ -674,6 +675,18 @@ extension WalletManager {
             log.info("[EVM] load balance success \(balance)")
             self.activatedCoins = [tokenModel]
             self.coinBalances = [symbol: balance.doubleValue]
+        }
+    }
+    
+    private func fetchEVMTokenAndBalance() async throws {
+        log.info("[EVM] fetch evm other token and balance")
+        let list = try await EVMAccountManager.shared.fetchTokens()
+        DispatchQueue.main.sync {
+            log.info("[EVM] load evm token and balance")
+            list.forEach { item in
+                self.activatedCoins.append(item.toTokenModel())
+                self.coinBalances[item.symbol] = item.flowBalance
+            }
         }
     }
     
@@ -774,17 +787,26 @@ extension WalletManager: FlowSigner {
     
     public var hashAlgo: Flow.HashAlgorithm {
         // TODO: FIX ME, make it dynamic
-        flowAccountKey?.hashAlgo ?? .SHA2_256
+        if userSecretSign() {
+            return flowAccountKey?.hashAlgo ?? .SHA2_256
+        }
+        return .SHA2_256
     }
     
     public var signatureAlgo: Flow.SignatureAlgorithm {
         // TODO: FIX ME, make it dynamic
-        flowAccountKey?.signAlgo ?? .ECDSA_SECP256k1
+        if userSecretSign() {
+            return flowAccountKey?.signAlgo ?? .ECDSA_SECP256k1
+        }
+        return .ECDSA_SECP256k1
     }
     
     public var keyIndex: Int {
         // TODO: FIX ME, make it dynamic
-        flowAccountKey?.index ?? 0
+        if userSecretSign() {
+           return flowAccountKey?.index ?? 0
+        }
+        return 0
     }
     
     

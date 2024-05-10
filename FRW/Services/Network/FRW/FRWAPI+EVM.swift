@@ -1,35 +1,35 @@
 //
-//  FRWAPI+Cadence.swift
+//  FRWAPI+EVM.swift
 //  FRW
 //
-//  Created by cat on 2024/3/6.
+//  Created by cat on 2024/4/29.
 //
 
 import Foundation
 import Moya
 
 extension FRWAPI {
-    enum Cadence {
-        case list
+    enum EVM {
+        case tokenList(String)
     }
 }
 
-extension FRWAPI.Cadence: TargetType, AccessTokenAuthorizable {
+extension FRWAPI.EVM: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
         return .bearer
     }
     
     var baseURL: URL {
         switch self {
-        case .list:
+        case .tokenList:
             return Config.get(.lilicoWeb)
         }
     }
     
     var path: String {
         switch self {
-        case .list:
-            return "scripts"
+        case .tokenList(let addr):
+            return "evm/\(addr)/fts"
         }
     }
     
@@ -39,14 +39,13 @@ extension FRWAPI.Cadence: TargetType, AccessTokenAuthorizable {
     
     var task: Task {
         switch self {
-        case .list:
-            return .requestParameters(parameters: [:], encoding: URLEncoding.queryString)
+        case .tokenList:
+            return .requestPlain
         }
     }
     
     var headers: [String: String]? {
         var headers = FRWAPI.commonHeaders
-        headers["version"] = CadenceManager.shared.version
         return headers
     }
 }

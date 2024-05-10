@@ -293,7 +293,7 @@ extension FlowNetwork {
         cadenceString = cadenceString
             .replace(by: ["Token1Name": tokenName, "Token1Addr": tokenAddress])
             .replace(by: ScriptAddress.addressMap())
-        
+        log.error("[Cadence] swap from:\n \(cadenceString)")
         var args = [Flow.Cadence.FValue]()
         args.append(.array(swapPaths.map { .string($0) }))
         

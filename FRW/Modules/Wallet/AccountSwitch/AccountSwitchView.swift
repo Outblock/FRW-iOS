@@ -102,7 +102,7 @@ struct AccountSwitchView: View {
     }
     
     var contentView: some View {
-        ScrollView(.vertical, showsIndicators: false) {
+        ScrollView(.vertical, showsIndicators: true) {
             LazyVStack(spacing: 20) {
                 ForEach(vm.placeholders, id: \.uid) { placeholder in
                     Button {

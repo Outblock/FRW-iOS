@@ -180,6 +180,14 @@ extension EVMAccountManager {
     func fetchBalance(_ address: String) async throws -> Decimal {
         return try await FlowNetwork.fetchEVMBalance(address: address)
     }
+    
+    func fetchTokens() async throws -> [EVMTokenResponse] {
+        guard let address = self.accounts.first?.showAddress else {
+            return []
+        }
+        let response: [EVMTokenResponse] =  try await Network.request(FRWAPI.EVM.tokenList(address))
+        return response
+    }
 }
 
 extension EVMAccountManager {
