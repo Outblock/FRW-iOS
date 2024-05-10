@@ -77,7 +77,7 @@ enum ListedToken: String, CaseIterable {
 
 struct TokenModel: Codable, Identifiable, Mockable {
     let name: String
-    let address: FlowNetworkModel
+    var address: FlowNetworkModel
     let contractName: String
     let storagePath: FlowTokenStoragePath
     let decimal: Int
@@ -152,9 +152,9 @@ struct TokenModel: Codable, Identifiable, Mockable {
 
 struct FlowNetworkModel: Codable {
     let mainnet: String?
-    let testnet: String?
+    var testnet: String?
     let crescendo: String?
-    let previewnet: String?
+    var previewnet: String?
 
     func addressByNetwork(_ network: Flow.ChainID) -> String? {
         switch network {
@@ -176,4 +176,70 @@ struct FlowTokenStoragePath: Codable {
     let balance: String
     let vault: String
     let receiver: String
+}
+
+struct SingleTokenResponse: Codable {
+    let mainnet: SingleTokenItem?
+    let testnet: SingleTokenItem?
+    let previewnet: SingleTokenItem?
+    
+    func conversion() -> [TokenModel] {
+        var result: [TokenModel] = []
+        
+        mainnet?.tokens?.forEach{ model in
+            result.append(model.toTokenModel(network: .mainnet))
+        }
+        testnet?.tokens?.forEach { model in
+            var index = result.firstIndex { $0.contractName.uppercased() == model.contractName.uppercased() && $0.symbol?.uppercased() == model.symbol?.uppercased() }
+            if let index = index {
+                var tokenModel = result[index]
+                tokenModel.address.testnet = model.address
+                result[index] = tokenModel
+                
+            }else {
+                result.append(model.toTokenModel(network: .testnet))
+            }
+        }
+        previewnet?.tokens?.forEach { model in
+            var index = result.firstIndex { $0.contractName.uppercased() == model.contractName.uppercased() && $0.symbol?.uppercased() == model.symbol?.uppercased() }
+            if let index = index {
+                var tokenModel = result[index]
+                tokenModel.address.previewnet = model.address
+                result[index] = tokenModel
+            }else {
+                result.append(model.toTokenModel(network: .previewnet))
+            }
+        }
+        return result
+    }
+    
+}
+
+struct SingleTokenItem: Codable {
+    let tokens: [SingleToken]?
+}
+
+struct SingleToken: Codable {
+    let address: String
+    let contractName: String
+    let path: FlowTokenStoragePath
+    let symbol: String?
+    let name: String
+    let decimals: Int
+    let logoURI: URL?
+    let extensions: TokenExtension?
+    
+    func toTokenModel(network: LocalUserDefaults.FlowNetworkType) -> TokenModel {
+        
+        let model = TokenModel(name: name, 
+                               address: FlowNetworkModel(mainnet: network == .mainnet ? address : nil, testnet: network == .testnet ? address : nil, crescendo: nil, previewnet: network == .previewnet ? address : nil),
+                               contractName: contractName, storagePath: path, decimal: decimals, icon: logoURI, symbol: symbol, website: extensions?.website)
+        return model
+    }
+}
+
+struct TokenExtension: Codable {
+    let website: URL?
+    let twitter: URL?
+    let discord: URL?
 }

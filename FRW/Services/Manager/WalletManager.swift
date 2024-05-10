@@ -587,7 +587,8 @@ extension WalletManager {
     }
 
     private func fetchSupportedCoins() throws {
-        let coins: [TokenModel] = try FirebaseConfig.flowCoins.fetch()
+        let tokenResponse: SingleTokenResponse = try FirebaseConfig.tokenList.fetch()
+        let coins: [TokenModel] = tokenResponse.conversion()
         let validCoins = coins.filter { $0.getAddress()?.isEmpty == false }
         DispatchQueue.main.sync {
             self.supportedCoins = validCoins
