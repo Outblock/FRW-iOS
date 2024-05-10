@@ -36,6 +36,10 @@ struct WalletView: View {
     @StateObject var wm = WalletManager.shared
     @StateObject private var vm = WalletViewModel()
     @State var isRefreshing: Bool = false
+    
+    @State private var textOpacity = 1.0
+    @State private var hackOpacity = 0.08
+    @State private var animation = Animation.easeOut(duration: 0.3)
 
     var errorView: some View {
         Text("error")
@@ -203,9 +207,28 @@ struct WalletView: View {
             Spacer()
 
             Button {
+                withAnimation(self.animation) {
+                    textOpacity = 0
+                }
+                withAnimation(self.animation.delay(0.3)) {
+                    hackOpacity = 0
+                }
                 vm.scanAction()
             } label: {
-                Image("icon-wallet-scan").renderingMode(.template).foregroundColor(.primary)
+                HStack {
+                    Text("Scan to connect")
+                        .foregroundStyle(Color.Theme.Accent.green)
+                        .font(.inter(size: 14))
+                        .opacity(textOpacity)
+                        .visibility(textOpacity == 0 ? .gone : .visible)
+                    
+                    Image("icon-wallet-scan").renderingMode(.template).foregroundColor(hackOpacity == 0 ? .primary : .Theme.Accent.green)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 4)
+                .background(.Theme.Accent.green.opacity(hackOpacity))
+                .cornerRadius(12)
+                
             }
         }
     }
