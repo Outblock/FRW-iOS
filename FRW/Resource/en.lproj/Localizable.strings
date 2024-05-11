@@ -844,8 +844,8 @@
 "account_key_number" = "Sequence Number";
 "account_key_current_tips" = "Can't revoke current device key";
 "account_key_fail_tips" = "Revoke device key fail";
-"account_key_revoke_title" = "Are you sure? \n Once you revoke this key, there is no way to re-activate it.";
-"account_key_revoke_content" = "Once you revoke this key,\nthere is no way to re-activate this key.";
+"account_key_revoke_title" = "Are you sure?";
+"account_key_revoke_content" = "Once you revoke this key,\nthere is no way to re-activate it.";
 "hold_to_revoke" = "Hold to Revoke";
 "devices" = "Devices";
 "Scan_to_Sync_Extension_Wallet"="Sync your wallet between your devices";
@@ -938,3 +938,4 @@
 "evm_on_flow" = "EVM on Flow";
 "other" = "other";
 "evm_check_balance" = "Balance is lower than 0.02,\n please fund your account to continue.";
+"view_more" = "View More";

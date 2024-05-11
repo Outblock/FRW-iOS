@@ -65,6 +65,8 @@ class WalletSendAmountViewModel: ObservableObject {
     
     private var addressIsValid: Bool?
     
+    private var minBalance: Double = 0.001
+    
     init(target: Contact, token: TokenModel) {
         self.targetContact = target
         self.token = token
@@ -77,6 +79,7 @@ class WalletSendAmountViewModel: ObservableObject {
         }.store(in: &cancelSets)
         checkAddress()
         checkTransaction()
+        fetchMinFlowBalance()
         NotificationCenter.default.addObserver(self, selector: #selector(onHolderChanged(noti:)), name: .transactionStatusDidChanged, object: nil)
     }
     
@@ -173,9 +176,12 @@ extension WalletSendAmountViewModel {
             return
         }
         
-        if amountBalance - inputTokenNum < 0.001 {
-            errorType = .belowMinimum
-            return
+        if token.isFlowCoin && EVMAccountManager.shared.selectedAccount == nil {
+            
+            if amountBalance - inputTokenNum < minBalance  {
+                errorType = .belowMinimum
+                return
+            }
         }
         
         errorType = .none
@@ -183,6 +189,17 @@ extension WalletSendAmountViewModel {
     
     private func saveToRecentLlist() {
         RecentListCache.cache.append(contact: targetContact)
+    }
+    
+    private func fetchMinFlowBalance()  {
+        Task {
+            do {
+                self.minBalance = try await FlowNetwork.minFlowBalance()
+                log.debug("[Flow] min balance:\(self.minBalance)")
+            }catch {
+                self.minBalance = 0.001
+            }
+        }
     }
 }
 
@@ -215,6 +232,8 @@ extension WalletSendAmountViewModel {
                     let num = max(amountBalance - topAmount, 0)
                     inputText = num.formatCurrencyString()
                 }catch {
+                    let num = max(amountBalance - minBalance, 0)
+                    inputText = num.formatCurrencyString()
                     log.error("[Flow] min flow balance error")
                 }
             }

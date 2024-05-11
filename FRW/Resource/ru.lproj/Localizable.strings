@@ -843,8 +843,8 @@
 "account_key_hash" = "Хэш";
 "account_key_key" = "Открытый ключ";
 "account_key_number" = "Порядковый номер";
-"account_key_revoke_content" = "После отзыва этого ключа\nего повторно активировать невозможно.";
-"account_key_revoke_title" = "Вы уверены? \n После отзыва этого ключа нет способа его повторно активировать.";
+"account_key_revoke_content" = "Как только вы отзовете этот ключ,\nнет способа повторно активировать его.";
+"account_key_revoke_title" = "Вы уверены? ";
 "add_other_device" = "Добавить другое устройство";
 "app_name_full" = "Справочный кошелек Flow";
 "application_tag" = "Приложение";
@@ -923,3 +923,4 @@
 "wallet_confirmation" = "Подтверждение кошелька";
 "wrong_network_des" = "Вы можете создать резервную копию только в основной сети.";
 "wrong_network_title" = "Неправильная сеть";
+"view_more" = "Посмотреть больше";

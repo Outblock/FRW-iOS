@@ -843,8 +843,8 @@
 "account_key_hash" = "ハッシュ";
 "account_key_key" = "公開鍵";
 "account_key_number" = "シーケンス番号";
-"account_key_revoke_content" = "このキーを取り消すと、\nこのキーを再度アクティブにする方法はありません。";
-"account_key_revoke_title" = "本当にいいですか？\nこのキーを取り消すと、再度アクティブ化する方法はありません。";
+"account_key_revoke_content" = "このキーを取り消すと、\n再度アクティブ化する方法はありません。";
+"account_key_revoke_title" = "本当にいいですか？";
 "add_other_device" = "他のデバイスを追加する";
 "app_name_full" = "フローリファレンスウォレット";
 "application_tag" = "応用";
@@ -923,3 +923,4 @@
 "wallet_confirmation" = "ウォレットの確認";
 "wrong_network_des" = "バックアップはメインネット上でのみ作成できます。";
 "wrong_network_title" = "間違ったネットワーク";
+"view_more" = "もっと見る";

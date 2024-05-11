@@ -104,7 +104,7 @@ extension WalletConnectSyncDevice {
         let requestParam = RegisterRequest(username: "", accountKey: key.toCodableModel(), deviceInfo: IPManager.shared.toParams())
         let response = SyncInfo.SyncResponse<RegisterRequest>(method: FCLWalletConnectMethod.addDeviceInfo.rawValue, data: requestParam)
         try WallectSecureEnclave.Store.store(key: userId, value: sec.key.privateKey!.dataRepresentation)
-        
+        log.debug("[Sync] public: \(sec.key.publickeyValue ?? "")")
         return AnyCodable(response)
     }
 }

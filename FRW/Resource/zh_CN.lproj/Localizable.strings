@@ -844,8 +844,8 @@
 "account_key_number" = "序列号";
 "account_key_current_tips" = "无法撤销当前设备密钥";
 "account_key_fail_tips" = "撤销设备密钥失败";
-"account_key_revoke_title" = "您确定吗？\n一旦您撤销此密钥，将无法重新激活它。";
-"account_key_revoke_content" = "一旦撤销此密钥，\n就没有办法重新激活此密钥。";
+"account_key_revoke_title" = "您确定吗？";
+"account_key_revoke_content" = "一旦撤销此密钥，\n就无法重新激活。";
 "hold_to_revoke" = "长按撤销";
 "devices" = "设备";
 "Scan_to_Sync_Extension_Wallet"="在您的设备之间同步您的钱包";
@@ -924,4 +924,4 @@
 "wrong_network_title" = "网络错误";
 "switch_to_mainnet" = "切换到主网";
 "wrong_network_des" = "您只能在主网上创建备份。";
-
+"view_more" = "查看更多";
