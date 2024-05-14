@@ -29,7 +29,7 @@ extension FRWAPI.Cadence: TargetType, AccessTokenAuthorizable {
     var path: String {
         switch self {
         case .list:
-            return "scripts"
+            return "v2/scripts"
         }
     }
     
