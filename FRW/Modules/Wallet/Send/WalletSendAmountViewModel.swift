@@ -285,6 +285,13 @@ extension WalletSendAmountViewModel {
     }
     
     private func doSend() {
+        
+        enum AccountType {
+            case flow
+            case coa
+            case eoa
+        }
+        
         if isSending {
             return
         }
@@ -307,40 +314,37 @@ extension WalletSendAmountViewModel {
         
         Task {
             do {
-                
-                let fromEVM = WalletManager.shared.isSelectedEVMAccount
-                let toEVM = targetAddress.isEVMAddress
-                let flowToFlow = !fromEVM && !toEVM
-                let flowToCoa = !fromEVM && toEVM && (targetAddress == EVMAccountManager.shared.accounts.first?.address)
-                let coaToFlow = fromEVM && !toEVM
-                let coaToCoa = fromEVM && toEVM
-                let flowToEoa = !fromEVM && toEVM && (targetAddress != EVMAccountManager.shared.accounts.first?.address)
-                
                 var txId: Flow.ID?
                 let amount = inputTokenNum.decimalValue
-                if flowToFlow {
+                
+                let fromAccountType = WalletManager.shared.isSelectedEVMAccount ? AccountType.coa : AccountType.flow
+                var toAccountType = targetAddress.isEVMAddress ? AccountType.coa : AccountType.flow
+                if targetAddress != EVMAccountManager.shared.accounts.first?.address {
+                    toAccountType = .eoa
+                }
+                
+                switch (fromAccountType, toAccountType) {
+                case (.flow, .flow):
                     txId = try await FlowNetwork.transferToken(to: Flow.Address(hex: targetContact.address ?? "0x"),
                                                                  amount: amount,
                                                                  token: token)
-                }else if flowToCoa {
-                    // Move 1 fundCoa()
+                case (.flow, .coa):
                     txId = try await FlowNetwork.fundCoa(amount: amount)
-                }else if coaToFlow {
-                    // Move 2 withdrawCoa()
+                case (.coa, .flow):
                     txId = try await FlowNetwork.withdrawCoa(amount: amount)
-                }else if coaToCoa {
-                    // evmCall check
+                case (.coa, .coa):
                     txId = try await FlowNetwork.sendTransaction(amount: amount.description, data: nil, toAddress: targetAddress.stripHexPrefix(), gas: 100000)
-                }else if flowToEoa {
-                    // transferFlowToEvmAddress
+                case (.flow, .eoa):
                     txId = try await FlowNetwork.sendFlowToEvm(evmAddress: targetAddress.stripHexPrefix(), amount: amount, gas: 100000)
+                default:
+                    failureBlock()
+                    return
                 }
                 
                 guard let id = txId else {
                     failureBlock()
                     return
                 }
-                
                 
                 DispatchQueue.main.async {
                     let obj = CoinTransferModel(amount: self.inputTokenNum, symbol: self.token.symbol ?? "", target: self.targetContact, from: address)
