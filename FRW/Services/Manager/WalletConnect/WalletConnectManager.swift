@@ -468,8 +468,22 @@ extension WalletConnectManager {
             do {
                 currentRequest = sessionRequest
                 let jsonString = try sessionRequest.params.get([String].self)
-                let data = jsonString[0].data(using: .utf8)!
-                let model = try JSONDecoder().decode(SignableMessage.self, from: data)
+                
+                guard let json = jsonString.first else {
+                    throw LLError.decodeFailed
+                }
+                var model: SignableMessage?
+                if let data = Data(base64Encoded: json),
+                   data.isGzipped,
+                   let uncompressData = try? data.gunzipped() {
+                    model = try JSONDecoder().decode(SignableMessage.self, from: uncompressData)
+                }else if let data = json.data(using: .utf8) {
+                    model = try JSONDecoder().decode(SignableMessage.self, from: data)
+                }
+                guard let model = model else {
+                    throw LLError.decodeFailed
+                }
+                
                 if let session = activeSessions.first(where: { $0.topic == sessionRequest.topic }) {
                     let request = RequestMessageInfo(name: session.peer.name, descriptionText: session.peer.description, dappURL: session.peer.url, iconURL: session.peer.icons.first ?? "", chains: Set(arrayLiteral: sessionRequest.chainId), methods: nil, pendingRequests: [], message: model.message)
                     currentMessageInfo = request
