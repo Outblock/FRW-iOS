@@ -18,8 +18,11 @@ struct EVMTokenResponse: Codable {
     let decimals: Int
     let logoURI: String
     let balance: String?
+    let flowIdentifier: String?
+    
 
     func toTokenModel() -> TokenModel {
+        
         let model = TokenModel(name: name,
                                address: FlowNetworkModel(mainnet: nil, testnet: nil, crescendo: nil, previewnet: address),
                                contractName: "",
@@ -27,15 +30,14 @@ struct EVMTokenResponse: Codable {
                                decimal: decimals,
                                icon: .init(string: logoURI),
                                symbol: symbol,
-                               website: nil)
+                               website: nil, evmAddress: nil, flowIdentifier: flowIdentifier)
         return model
     }
     
     var flowBalance: Double {
-        guard let bal = balance else {
+        guard let bal = balance, let value = BigUInt(bal) else {
             return 0
         }
-        guard let value = BigUInt(from: bal) else { return 0 }
-        return Utilities.formatToPrecision(value).doubleValue
+        return Utilities.formatToPrecision(value, formattingDecimals: decimals).doubleValue
     }
 }

@@ -155,11 +155,16 @@ extension MoveTokenViewModel {
 
 extension MoveTokenViewModel {
     func onNext() {
-        if WalletManager.shared.isSelectedEVMAccount {
-            withdrawCoa()
+        if token.isFlowCoin {
+            if WalletManager.shared.isSelectedEVMAccount {
+                withdrawCoa()
+            }else {
+                fundCoa()
+            }
         }else {
-            fundCoa()
+            bridgeToken()
         }
+        
     }
     
     private func withdrawCoa() {
@@ -215,6 +220,34 @@ extension MoveTokenViewModel {
                     self.state = .enabled
                 }
                 log.error("[EVM] move transation failed \(error)")
+            }
+        }
+    }
+    
+    private func bridgeToken() {
+        Task {
+            do {
+                log.info("[EVM] bridge token \(fromEVM ? "FromEVM" : "ToEVM")")
+                let amount = self.inputTokenNum.decimalValue
+        
+                let address = (fromEVM ? token.evmBridgeAddress()   : token.getAddress()) ?? ""
+                let name = fromEVM ? (token.evmBridgeContractName() ?? "") : token.contractName
+                
+                let txid = try await FlowNetwork.bridgeToken(address: address, contractName: name, amount: amount, fromEvm: fromEVM, decimals: token.decimal)
+                let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
+                TransactionManager.shared.newTransaction(holder: holder)
+                
+                Router.dismiss()
+                WalletManager.shared.reloadWalletInfo()
+                DispatchQueue.main.async {
+                    self.state = .enabled
+                }
+            }
+            catch {
+                DispatchQueue.main.async {
+                    self.state = .enabled
+                }
+                log.error("[EVM] move transation bridge token failed \(error)")
             }
         }
     }

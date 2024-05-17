@@ -98,6 +98,7 @@ struct CadenceModel: Codable {
     let swap: CadenceModel.Swap?
     
     let evm: CadenceModel.EVM?
+    let bridge: CadenceModel.Bridge?
 }
 
 extension CadenceModel {
@@ -268,6 +269,12 @@ extension CadenceModel {
         let fundCoa: String?
         let callContract: String?
         let transferFlowToEvmAddress: String?
+    }
+    
+    struct Bridge: Codable {
+        let batchOnboardByIdentifier: String?
+        let bridgeTokensFromEvm: String?
+        let bridgeTokensToEvm: String?
     }
 }
 

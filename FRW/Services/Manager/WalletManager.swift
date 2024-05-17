@@ -575,7 +575,7 @@ extension WalletManager {
         
         log.debug("fetchWalletDatas")
         
-        try fetchSupportedCoins()
+        try await fetchSupportedCoins()
         try await fetchActivatedCoins()
         try await fetchBalance()
         try await fetchAccessible()
@@ -586,8 +586,9 @@ extension WalletManager {
         try await findFlowAccount()
     }
 
-    private func fetchSupportedCoins() throws {
-        let coins: [TokenModel] = try FirebaseConfig.flowCoins.fetch()
+    private func fetchSupportedCoins() async throws {
+        let tokenResponse: SingleTokenResponse = try await Network.requestWithRawModel(GithubEndpoint.tokenList)
+        let coins: [TokenModel] = tokenResponse.conversion()
         let validCoins = coins.filter { $0.getAddress()?.isEmpty == false }
         DispatchQueue.main.sync {
             self.supportedCoins = validCoins

@@ -145,7 +145,7 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
 
 extension TrustJSMessageHandler {
     private func handleRequestAccounts(network: ProviderNetwork, id: Int64) {
-        let address = webVC?.trustProvider.config.ethereum.address ?? ""
+        let address = webVC?.trustProvider?.config.ethereum.address ?? ""
 
         let title = webVC?.webView.title ?? "unknown"
         let chainID = LocalUserDefaults.shared.flowNetwork.toFlowType()

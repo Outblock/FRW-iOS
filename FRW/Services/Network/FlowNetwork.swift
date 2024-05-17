@@ -9,6 +9,7 @@ import BigInt
 import Combine
 import Flow
 import Foundation
+import Web3Core
 
 enum FlowNetwork {
     static func setup() {
@@ -1194,7 +1195,52 @@ extension FlowNetwork {
             }
         }
     }
+    
+    static func bridgeToken(address: String,contractName: String, amount: Decimal, fromEvm: Bool, decimals: Int) async throws -> Flow.ID {
+        let originCadence = (fromEvm ? CadenceManager.shared.current.bridge?.bridgeTokensFromEvm?.toFunc()
+        : CadenceManager.shared.current.bridge?.bridgeTokensToEvm?.toFunc()) ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        var amountValue = Flow.Cadence.FValue.ufix64(amount)
+        if let result = Utilities.parseToBigUInt(amount.description,decimals: decimals) , fromEvm {
+           amountValue = Flow.Cadence.FValue.uint256(result)
+        }
+        
+        let fromKeyIndex = WalletManager.shared.keyIndex
+        
+        guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
+        }
+        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+            cadence {
+                cadenceStr
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            arguments {
+                [
+                    .address(Flow.Address(hex: address)),
+                    .string(contractName),
+                    amountValue
+                ]
+            }
+            proposer {
+                Flow.TransactionProposalKey(address: Flow.Address(hex: fromAddress), keyIndex: fromKeyIndex)
+            }
+            
+            authorizers {
+                Flow.Address(hex: fromAddress)
+            }
+            
+            gasLimit {
+                9999
+            }
+        }
+    }
 }
+
+
 
 extension Data {
     var cadenceValue: Flow.Cadence.FValue {

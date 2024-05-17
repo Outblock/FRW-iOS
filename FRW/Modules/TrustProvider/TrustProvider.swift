@@ -14,18 +14,13 @@ extension TrustWeb3Provider {
         return TrustWeb3Provider(config: .init(ethereum: .init(address: address, chainId: chainId, rpcUrl: rpcUrl)))
     }
     
-    static func config(at index: Int = 0) -> TrustWeb3Provider {
-        let address = EVMAccountManager.shared.accounts.first?.showAddress ?? ""
-        let config = TrustWeb3Provider.Config.EthereumConfig(address: address, chainId: chainId(), rpcUrl: rpcUrl())
+    static func config(at index: Int = 0) -> TrustWeb3Provider? {
+        guard let address = EVMAccountManager.shared.accounts.first?.showAddress, let url = LocalUserDefaults.shared.flowNetwork.evmUrl?.absoluteString else {
+            return nil
+        }
+        let chainId = LocalUserDefaults.shared.flowNetwork.networkID
+        let config = TrustWeb3Provider.Config.EthereumConfig(address: address, chainId: chainId, rpcUrl: url)
         return TrustWeb3Provider(config: .init(ethereum: config))
-    }
-    
-    static private func chainId() -> Int {
-        return 646
-    }
-    
-    static private func rpcUrl() -> String {
-        return "https://previewnet.evm.nodes.onflow.org"
     }
     
 }

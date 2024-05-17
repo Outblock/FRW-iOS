@@ -8,6 +8,7 @@
 import Flow
 import Foundation
 
+
 // MARK: - Coin
 
 enum QuoteMarket: String {
@@ -77,13 +78,15 @@ enum ListedToken: String, CaseIterable {
 
 struct TokenModel: Codable, Identifiable, Mockable {
     let name: String
-    let address: FlowNetworkModel
+    var address: FlowNetworkModel
     let contractName: String
     let storagePath: FlowTokenStoragePath
     let decimal: Int
     let icon: URL?
     let symbol: String?
     let website: URL?
+    let evmAddress: String?
+    let flowIdentifier: String?
     
     var listedToken: ListedToken? {
         ListedToken(rawValue: symbol ?? "")
@@ -146,15 +149,34 @@ struct TokenModel: Codable, Identifiable, Mockable {
                           decimal: 999,
                           icon: nil,
                           symbol: randomString(),
-                          website: nil)
+                          website: nil,
+                          evmAddress: nil,
+                          flowIdentifier: nil
+        )
+    }
+}
+
+extension TokenModel {
+    func evmBridgeAddress() -> String? {
+        guard let addr = flowIdentifier?.split(separator: ".")[1] else {
+            return nil
+        }
+        return String(addr).addHexPrefix()
+    }
+    
+    func evmBridgeContractName() -> String? {
+        guard let name = flowIdentifier?.split(separator: ".")[2] else {
+            return nil
+        }
+        return String(name)
     }
 }
 
 struct FlowNetworkModel: Codable {
     let mainnet: String?
-    let testnet: String?
+    var testnet: String?
     let crescendo: String?
-    let previewnet: String?
+    var previewnet: String?
 
     func addressByNetwork(_ network: Flow.ChainID) -> String? {
         switch network {
@@ -176,4 +198,46 @@ struct FlowTokenStoragePath: Codable {
     let balance: String
     let vault: String
     let receiver: String
+}
+
+struct SingleTokenResponse: Codable {
+    let name: String
+    let network: String
+    let chainId: Int
+    let tokens: [SingleToken]
+
+    
+    func conversion() -> [TokenModel] {
+        let network = LocalUserDefaults.shared.flowNetwork
+        let result = tokens.map { $0.toTokenModel(network: network) }
+        return result
+    }
+    
+}
+
+struct SingleToken: Codable {
+    let chainId: Int
+    let address: String
+    let contractName: String
+    let path: FlowTokenStoragePath
+    let symbol: String?
+    let name: String
+    let decimals: Int
+    let logoURI: URL?
+    let extensions: TokenExtension?
+    let evmAddress: String?
+    
+    func toTokenModel(network: LocalUserDefaults.FlowNetworkType) -> TokenModel {
+        
+        let model = TokenModel(name: name, 
+                               address: FlowNetworkModel(mainnet: network == .mainnet ? address : nil, testnet: network == .testnet ? address : nil, crescendo: nil, previewnet: network == .previewnet ? address : nil),
+                               contractName: contractName, storagePath: path, decimal: decimals, icon: logoURI, symbol: symbol, website: extensions?.website, evmAddress: evmAddress, flowIdentifier: nil)
+        return model
+    }
+}
+
+struct TokenExtension: Codable {
+    let website: URL?
+    let twitter: URL?
+    let discord: URL?
 }

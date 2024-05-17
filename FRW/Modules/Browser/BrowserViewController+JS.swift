@@ -94,8 +94,11 @@ extension BrowserViewController {
         ucc.addUserScript(extensionInjectUserScript)
         // Trust Web3
         ucc.add(self.trustJSHandler, name: TrustWeb3Provider.scriptHandlerName)
-        ucc.addUserScript(trustProvider.providerScript)
-        ucc.addUserScript(trustProvider.injectScript)
+        if let provider =  trustProvider {
+            ucc.addUserScript(provider.providerScript)
+            ucc.addUserScript(provider.injectScript)
+        }
+        
         config.userContentController = ucc
         
         return config

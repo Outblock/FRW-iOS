@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 import Flow
+import web3swift
+import Web3Core
 
 import Combine
 
@@ -311,7 +313,7 @@ extension WalletSendAmountViewModel {
         saveToRecentLlist()
         
         isSending = true
-        
+        let gas: UInt64 = 100000
         Task {
             do {
                 var txId: Flow.ID?
@@ -333,9 +335,18 @@ extension WalletSendAmountViewModel {
                 case (.coa, .flow):
                     txId = try await FlowNetwork.withdrawCoa(amount: amount)
                 case (.coa, .coa):
-                    txId = try await FlowNetwork.sendTransaction(amount: amount.description, data: nil, toAddress: targetAddress.stripHexPrefix(), gas: 100000)
+                    txId = try await FlowNetwork.sendTransaction(amount: amount.description, data: nil, toAddress: targetAddress.stripHexPrefix(), gas: gas)
                 case (.flow, .eoa):
-                    txId = try await FlowNetwork.sendFlowToEvm(evmAddress: targetAddress.stripHexPrefix(), amount: amount, gas: 100000)
+                    txId = try await FlowNetwork.sendFlowToEvm(evmAddress: targetAddress.stripHexPrefix(), amount: amount, gas: gas)
+                case (.coa,.eoa):
+                    
+                    let erc20Contract = try await FlowProvider.Web3.defaultContract()
+                    let testData = erc20Contract?.contract.method("transfer", parameters: [targetAddress, Utilities.parseToBigUInt(amount.description, units: .ether)!], extraData: nil)
+                    guard let toAddress = token.getAddress() else {
+                        throw LLError.invalidAddress
+                    }
+                    txId = try await FlowNetwork.sendTransaction(amount: "0", data: testData, toAddress:toAddress.stripHexPrefix(), gas: gas)
+                    
                 default:
                     failureBlock()
                     return
