@@ -143,7 +143,7 @@ extension DeveloperModeViewModel {
                 }
                 successBlock()
             } catch {
-                debugPrint("DeveloperModeViewModel -> enableCrescendoAction failed: \(error)")
+                debugPrint("DeveloperModeViewModel -> enablePreviewnetAction failed: \(error)")
                 failedBlock()
             }
         }

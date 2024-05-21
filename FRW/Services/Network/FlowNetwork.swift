@@ -1238,6 +1238,45 @@ extension FlowNetwork {
             }
         }
     }
+    
+    static func bridgeNFTToEVM(contractAddress address: String, contractName name: String, ids: [UInt64], fromEvm: Bool) async throws -> Flow.ID {
+        let originCadence = (fromEvm ? CadenceManager.shared.current.bridge?.batchBridgeNFTFromEvm?.toFunc()
+        : CadenceManager.shared.current.bridge?.batchBridgeNFTToEvm?.toFunc()) ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        let fromKeyIndex = WalletManager.shared.keyIndex
+        let idMaped = fromEvm ? ids.map{ Flow.Cadence.FValue.uint256(BigUInt($0))} : ids.map { Flow.Cadence.FValue.uint64($0) }
+        
+        guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
+        }
+        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+            cadence {
+                cadenceStr
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            arguments {
+                [
+                    .address(Flow.Address(hex: address)),
+                    .string(name),
+                    .array(idMaped)
+                ]
+            }
+            proposer {
+                Flow.TransactionProposalKey(address: Flow.Address(hex: fromAddress), keyIndex: fromKeyIndex)
+            }
+            
+            authorizers {
+                Flow.Address(hex: fromAddress)
+            }
+            
+            gasLimit {
+                9999
+            }
+        }
+    }
 }
 
 

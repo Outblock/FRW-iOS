@@ -171,6 +171,7 @@ extension RouteMap {
         case pushAlert
         case receiveQR
         case enableEVM
+        case moveNFTs
     }
 }
 
@@ -243,6 +244,9 @@ extension RouteMap.Wallet: RouterTarget {
             navi.present(content: ReceiveQRView())
         case .enableEVM:
             navi.push(content: EVMEnableView())
+        case .moveNFTs:
+            navi.present(content: MoveNFTsView())
+            
         }
     }
 }
@@ -433,6 +437,7 @@ extension RouteMap {
         case addCollection
         case send(NFTModel, Contact)
         case AR(UIImage)
+        case selectCollection(SelectCollectionViewModel)
     }
 }
 
@@ -452,6 +457,8 @@ extension RouteMap.NFT: RouterTarget {
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .AR:
             print("")
+        case .selectCollection(let vm):
+            navi.present(content: SelectCollectionView(viewModel: vm))
         }
     }
 }

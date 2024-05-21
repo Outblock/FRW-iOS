@@ -63,6 +63,8 @@ class WalletViewModel: ObservableObject {
     
     @Published var isMock: Bool = false
     
+    @Published var moveAssetsPresent: Bool = false
+    
     var needShowPlaceholder: Bool {
         return isMock || walletState == .noAddress
     }
@@ -323,6 +325,10 @@ extension WalletViewModel {
     
     func toggleHiddenStatusAction() {
         LocalUserDefaults.shared.walletHidden = !isHidden
+    }
+    
+    func moveAssetsAction() {
+        moveAssetsPresent = true
     }
     
     func scanAction() {

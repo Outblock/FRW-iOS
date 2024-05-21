@@ -11,7 +11,7 @@ import Moya
 extension FRWAPI {
     enum NFT {
         case collections
-        case userCollection(String)
+        case userCollection(String,Int,Int)
         case collectionDetailList(NFTCollectionDetailListRequest)
         case gridDetailList(NFTGridDetailListRequest)
         case favList(String)
@@ -41,12 +41,21 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
     var path: String {
         switch self {
         case .gridDetailList:
+            if LocalUserDefaults.shared.flowNetwork == .previewnet {
+                    return "v2/nft/list"
+            }
             return "nft/list"
         case .userCollection:
+            if LocalUserDefaults.shared.flowNetwork == .previewnet {
+                    return "v2/nft/id"
+            }
             return "nft/id"
         case .collections:
             return "nft/collections"
         case .collectionDetailList:
+            if LocalUserDefaults.shared.flowNetwork == .previewnet {
+                return "v2/nft/collectionList"
+            }
             return "nft/collectionList"
         case .addFav, .updateFav:
             return "v2/nft/favorite"
@@ -80,8 +89,8 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
             return .requestJSONEncodable(request)
         case let .updateFav(request):
             return .requestJSONEncodable(request)
-        case let .userCollection(address):
-            return .requestParameters(parameters: ["address": address], encoding: URLEncoding())
+        case let .userCollection(address,offset,limit):
+            return .requestParameters(parameters: ["address": address,"offset": offset,"limit": limit], encoding: URLEncoding())
         }
     }
 

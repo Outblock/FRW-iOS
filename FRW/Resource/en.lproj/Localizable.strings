@@ -939,3 +939,11 @@
 "other" = "other";
 "evm_check_balance" = "Balance is lower than 0.02,\n please fund your account to continue.";
 "view_more" = "View More";
+"move_assets" = "Move Assets";
+"move_assets_note_x" = "Move your assets between Cadence to EVM on\n Flow, so %@ can view your assets";
+"move_nft" = "Move NFTs";
+"move_token" = "Move Tokens";
+"select_nfts" = "Select NFTs";
+"move_nft_x" = "Move %@ NFTs";
+"collection" = "Collection";
+"move_nft_limit_x" = "You can move %@ NFTs";

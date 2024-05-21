@@ -182,7 +182,7 @@ class NFTUIKitListNormalDataModel {
             return []
         }
         
-        let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(address))
+        let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(address,0,100))
         if let list = response.data {
             return list
         } else {

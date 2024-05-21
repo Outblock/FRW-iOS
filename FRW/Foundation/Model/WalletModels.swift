@@ -240,4 +240,17 @@ struct TokenExtension: Codable {
     let website: URL?
     let twitter: URL?
     let discord: URL?
+    
+    enum CodingKeys: String, CodingKey {
+        case website
+        case twitter
+        case discord
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        website = try? container.decode(URL.self, forKey: .website)
+        twitter = try? container.decode(URL.self, forKey: .twitter)
+        discord = try? container.decode(URL.self, forKey: .discord)
+    }
 }

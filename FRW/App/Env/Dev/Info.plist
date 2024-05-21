@@ -46,7 +46,9 @@
 			<key>CFBundleURLName</key>
 			<string></string>
 			<key>CFBundleURLSchemes</key>
-			<array/>
+			<array>
+				<string>fw</string>
+			</array>
 		</dict>
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>

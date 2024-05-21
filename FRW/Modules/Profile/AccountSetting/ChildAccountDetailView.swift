@@ -114,7 +114,7 @@ class ChildAccountDetailViewModel: ObservableObject {
                 var result = try await FlowNetwork.fetchAccessibleCollection(parent: parent, child: child)
                 result = result.map { item in
                     if let model = NFTCatalogCache.cache.find(by: item.path) {
-                        return FlowModel.NFTCollection(id: item.id, path: item.path, display: FlowModel.CollectionDislay(name: model.collection.name, squareImage: model.collection.logo ?? AppPlaceholder.image, mediaType: ""), idList: item.idList)
+                        return FlowModel.NFTCollection(id: item.id, path: item.path, display: FlowModel.NFTCollection.CollectionDislay(name: model.collection.name, squareImage: model.collection.logo ?? AppPlaceholder.image, mediaType: ""), idList: item.idList)
                     }
                     return item
                 }
@@ -648,7 +648,7 @@ extension FlowModel.NFTCollection : ChildAccountAccessible {
         let item = CollectionItem()
         item.name = title
         item.count = idList.count
-        item.collection = NFTCollectionInfo(id: self.id, name: title, contractName: title, address: "", logo: self.img, banner: "", officialWebsite: "", description: "", path: ContractPath(storagePath: "", publicPath: "", publicCollectionName: "", publicType: "", privateType: ""))
+        item.collection = NFTCollectionInfo(id: self.id, name: title, contractName: title, address: "", logo: self.img, banner: "", officialWebsite: "", description: "", path: ContractPath(storagePath: "", publicPath: "", publicCollectionName: "", publicType: "", privateType: ""), evmAddress: nil, socials: nil)
         item.isEnd = true
         return item
     }

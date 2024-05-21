@@ -275,6 +275,9 @@ extension CadenceModel {
         let batchOnboardByIdentifier: String?
         let bridgeTokensFromEvm: String?
         let bridgeTokensToEvm: String?
+        
+        let batchBridgeNFTToEvm: String?
+        let batchBridgeNFTFromEvm: String?
     }
 }
 

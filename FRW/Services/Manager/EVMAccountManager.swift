@@ -21,6 +21,10 @@ class EVMAccountManager: ObservableObject {
             checkValid()
         }
     }
+    
+    var openEVM: Bool {
+        return (CadenceManager.shared.current.evm?.createCoaEmpty) != nil && EVMEnable
+    }
 
     var balance: Decimal = 0
     

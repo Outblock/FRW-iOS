@@ -166,11 +166,11 @@ struct TokenDetailView: RouteableView {
                 }
                 .disabled(WalletManager.shared.isSelectedChildAccount)
 
-                if RemoteConfigManager.shared.config?.features.onRamp ?? false == true && flow.chainID == .mainnet {
+                if let swapStatus = RemoteConfigManager.shared.config?.features.swap, swapStatus == true {
                     
                     Button {
                         UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                        Router.route(to: RouteMap.Wallet.buyCrypto)
+                        Router.route(to: RouteMap.Wallet.swap(nil))
                     } label: {
                         ZStack {
                             Rectangle()
@@ -196,9 +196,10 @@ struct TokenDetailView: RouteableView {
                 }
                 
                 if currentNetwork.isMainnet || currentNetwork == .testnet  {
-                    if let swapStatus = RemoteConfigManager.shared.config?.features.swap, swapStatus == true {
+                    if RemoteConfigManager.shared.config?.features.onRamp ?? false == true && flow.chainID == .mainnet {
                         Button {
-                            Router.route(to: RouteMap.Wallet.swap(nil))
+                            Router.route(to: RouteMap.Wallet.buyCrypto)
+                            
                         } label: {
                             ZStack {
                                 Rectangle()

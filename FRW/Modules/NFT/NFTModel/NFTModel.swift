@@ -17,6 +17,16 @@ struct NFTCollection: Codable {
     let collection: NFTCollectionInfo
     var count: Int
     var ids: [String]?
+    
+    static func mock() -> NFTCollection {
+        NFTCollection(collection: NFTCollectionInfo.mock(), count: 13)
+    }
+}
+
+struct EVMNFTCollectionResponse: Codable {
+    let tokens: [NFTCollectionInfo]
+    let chainId: Int?
+    let network: String?
 }
 
 struct NFTCollectionInfo: Codable, Hashable, Mockable {
@@ -31,6 +41,9 @@ struct NFTCollectionInfo: Codable, Hashable, Mockable {
     let description: String?
     
     let path: ContractPath
+    
+    let evmAddress: String?
+    let socials: NFTCollectionInfo.Social?
     
     var logoURL: URL {
         if let logoString = logo {
@@ -49,16 +62,27 @@ struct NFTCollectionInfo: Codable, Hashable, Mockable {
     }
     
     static func mock() -> NFTCollectionInfo {
-        return NFTCollectionInfo(id: randomString(), name: randomString(), contractName: randomString(), address: randomString(), logo: randomString(), banner: randomString(), officialWebsite: randomString(), description: randomString(), path: ContractPath.mock())
+        return NFTCollectionInfo(id: randomString(), name: randomString(), contractName: randomString(), address: randomString(), logo: randomString(), banner: randomString(), officialWebsite: randomString(), description: randomString(), path: ContractPath.mock(), evmAddress: nil, socials: nil)
     }
+}
+
+extension NFTCollectionInfo {
+    struct Social: Codable,Hashable {
+        let twitter: SocialItem?
+    }
+    
+    struct SocialItem: Codable,Hashable {
+        let url: String?
+    }
+    
 }
 
 struct ContractPath: Codable, Hashable, Mockable {
     let storagePath: String
     let publicPath: String
-    let publicCollectionName: String
-    let publicType: String
-    let privateType: String
+    let publicCollectionName: String?
+    let publicType: String?
+    let privateType: String?
     
     static func mock() -> ContractPath {
         return ContractPath(storagePath: randomString(), publicPath: randomString(), publicCollectionName: randomString(), publicType: randomString(), privateType: randomString())

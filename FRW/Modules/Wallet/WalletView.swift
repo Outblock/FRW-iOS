@@ -136,6 +136,11 @@ struct WalletView: View {
                 vm.backupTipsPresent = false
             })
         }
+        .halfSheet(showSheet: $vm.moveAssetsPresent){
+            MoveAssetsView() {
+                vm.moveAssetsPresent = false
+            }
+        }
         .navigationBarHidden(true)
     }
     
@@ -202,18 +207,35 @@ struct WalletView: View {
             
             Spacer()
 
-            Button {
-                vm.scanAction()
-            } label: {
-                HStack {
-                    Spacer()
-                    Image("icon-wallet-scan")
-                        .renderingMode(.template)
-                        .foregroundColor(.primary)
-                    
+            HStack(spacing: 16) {
+                Button {
+                    vm.moveAssetsAction()
+                } label: {
+                    HStack {
+                        Spacer()
+                        Image("evm_move_icon")
+                            .renderingMode(.template)
+                            .foregroundColor(.primary)
+                        
+                    }
+                    .frame(width: 30)
                 }
-                .frame(width: 60)
+                .visibility(EVMAccountManager.shared.openEVM ? .visible : .gone)
+                
+                Button {
+                    vm.scanAction()
+                } label: {
+                    HStack {
+                        Spacer()
+                        Image("icon-wallet-scan")
+                            .renderingMode(.template)
+                            .foregroundColor(.primary)
+                        
+                    }
+                    .frame(width: 30)
+                }
             }
+            
         }
     }
 

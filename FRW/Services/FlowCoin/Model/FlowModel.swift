@@ -11,55 +11,40 @@ struct FlowModel {
     
 }
 
-protocol MetadataViewsFile: Codable {
-    func uri() -> String
-}
-
 //MARK: struct MetadataViews and substruct
 extension FlowModel {
     
-    struct MetadataViews {
-        struct Media<T:MetadataViewsFile>: Codable {
-            let file: T
-            let mediaType: String
-        }
-        
-        struct HTTPFile: MetadataViewsFile, Codable {
+    struct Media: Codable {
+        struct File: Codable {
             let url: String
-            init(url: String) {
-                self.url = url
-            }
-            
-            func uri() -> String {
-                return self.url
-            }
         }
-        
-        struct NFTCollectionDisplay: Codable {
-            let name: String
-            let squareImage: MetadataViews.Media<HTTPFile>
-        }
+        let file: Media.File
+        let mediaType: String
     }
     
 }
 
 // MARK: custom struct for convenient base on flow
 // https://testnet.contractbrowser.com/A.631e88ae7f1d7c20.MetadataViews
+
+
 extension FlowModel {
-    struct CollectionDislay: Codable {
-        var name: String
-        var squareImage: String
-        var mediaType: String
-    }
+    
     
     struct NFTCollection: Codable, Mockable {
+        struct CollectionDislay: Codable {
+            var name: String
+            var squareImage: String
+            var mediaType: String
+        }
+        
         static func mock() -> FlowModel.NFTCollection {
             return FlowModel.NFTCollection(id: "", path: "", display: nil, idList: [])
         }
         
         var id: String
         var path: String
-        var display: CollectionDislay?
+        var display: FlowModel.NFTCollection.CollectionDislay?
         let idList: [UInt64]
     }
     

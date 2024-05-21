@@ -52,6 +52,10 @@ struct NFTResponse: Codable, Hashable {
     func video() -> String? {
         return postMedia.video
     }
+    
+    static func mock() -> NFTResponse {
+        NFTResponse(id: "", name: "", description: "", thumbnail: "", externalURL: "", contractAddress: "", collectionID: "", collectionName: "", collectionDescription: "", collectionSquareImage: "", collectionExternalURL: "", collectionContractName: "", collectionBannerImage: "", traits: [], postMedia: NFTPostMedia(title: "", description: "", video: "", isSvg: false))
+    }
 }
 
 struct NFTRoyalty: Codable, Hashable {

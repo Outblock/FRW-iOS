@@ -54,6 +54,8 @@ class WalletManager: ObservableObject {
 
     private var walletInfoRetryTimer: Timer?
     private var cancellableSet = Set<AnyCancellable>()
+    
+    var walletAccount: WalletAccount = WalletAccount()
 
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(reset), name: .willResetWallet, object: nil)
@@ -587,7 +589,7 @@ extension WalletManager {
     }
 
     private func fetchSupportedCoins() async throws {
-        let tokenResponse: SingleTokenResponse = try await Network.requestWithRawModel(GithubEndpoint.tokenList)
+        let tokenResponse: SingleTokenResponse = try await Network.requestWithRawModel(GithubEndpoint.ftTokenList)
         let coins: [TokenModel] = tokenResponse.conversion()
         let validCoins = coins.filter { $0.getAddress()?.isEmpty == false }
         DispatchQueue.main.sync {
@@ -1025,3 +1027,6 @@ extension String {
         return self
     }
 }
+
+// MARK: Account
+

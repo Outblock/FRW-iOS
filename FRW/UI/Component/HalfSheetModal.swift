@@ -130,8 +130,9 @@ class CustomHostingController<Content: View>: UIHostingController<Content>{
     
     var showLarge: Bool = false
     var showGrabber: Bool = true
+    var onlyLarge: Bool = false
     
-    public init(rootView: Content, showLarge: Bool = false, showGrabber: Bool = true) {
+    public init(rootView: Content, showLarge: Bool = false, showGrabber: Bool = true, onlyLarge: Bool = false) {
         super.init(rootView: rootView)
         self.showLarge = showLarge
         self.showGrabber = showGrabber
@@ -148,8 +149,12 @@ class CustomHostingController<Content: View>: UIHostingController<Content>{
         
         // setting presentation controller properties...
         if let presentationController = presentationController as? UISheetPresentationController{
-            presentationController.detents = showLarge ? [.medium(), .large()] : [.medium()]
             
+            if onlyLarge {
+                presentationController.detents = [.large()]
+            }else {
+                presentationController.detents = showLarge ? [.medium(), .large()] : [.medium()]
+            }
             // to show grab protion...
             presentationController.prefersGrabberVisible = true
         }
