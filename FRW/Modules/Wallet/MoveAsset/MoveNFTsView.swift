@@ -17,6 +17,10 @@ struct MoveNFTsView:  RouteableView {
         return true
     }
     
+    func configNavigationItem(_ navigationItem: UINavigationItem) {
+        
+    }
+    
     @StateObject var viewModel = MoveNFTsViewModel()
     
     private let columns = [
@@ -28,6 +32,7 @@ struct MoveNFTsView:  RouteableView {
             TitleWithClosedView(title: "select_nfts".localized) {
                 viewModel.closeAction()
             }
+            .padding(.top, 24)
             
             accountView()
             
@@ -38,18 +43,12 @@ struct MoveNFTsView:  RouteableView {
             
             NFTListView()
             
-            Button {
+            VPrimaryButton(model: ButtonStyle.green,
+                           state: viewModel.buttonState,
+                           action: {
                 viewModel.moveAction()
-            } label: {
-                Text(viewModel.moveButtonTitle)
-                    .font(.inter(size: 16))
-                    .foregroundStyle(Color.Theme.Text.black8)
-                    .frame(height: 48)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.Theme.Accent.green)
-                    .cornerRadius(16)
-            }
-            .buttonStyle(ScaleButtonStyle())
+            }, title: viewModel.moveButtonTitle)
+            
         }
         .padding(.horizontal, 18)
         .applyRouteable(self)
@@ -122,7 +121,7 @@ struct MoveNFTsView:  RouteableView {
                         viewModel.selectCollectionAction()
                     } label: {
                         HStack {
-                            KFImage.url(info.collection.logoURL)
+                            KFImage.url(info.maskLogo)
                                 .placeholder({
                                     Image("placeholder")
                                         .resizable()
@@ -134,7 +133,7 @@ struct MoveNFTsView:  RouteableView {
                                 .clipped()
                                 .padding(.trailing,8)
                             
-                            Text(info.collection.name)
+                            Text(info.maskName)
                                 .font(.inter(size: 14))
                                 .foregroundStyle(Color.Theme.Text.black)
                                 .padding(.trailing, 4)
@@ -180,6 +179,7 @@ struct MoveNFTsView:  RouteableView {
             .overlay(alignment: .bottom) {
                 hintView
                     .visibility(viewModel.showHint ? .visible : .gone)
+                    .animation(.easeInOut, value: viewModel.selectedCount)
             }
         }
     }

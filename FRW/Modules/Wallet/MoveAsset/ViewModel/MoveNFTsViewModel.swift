@@ -9,8 +9,8 @@ import Foundation
 import SwiftUI
 
 class MoveNFTsViewModel: ObservableObject {
-    @Published var selectedCollection: NFTCollection?
-    private var collectionList: [NFTCollection] = []
+    @Published var selectedCollection: CollectionMask?
+    private var collectionList: [CollectionMask] = []
     // NFTModel
     @Published var nfts: [MoveNFTsViewModel.NFT] = [
         MoveNFTsViewModel.NFT.mock(),
@@ -20,25 +20,32 @@ class MoveNFTsViewModel: ObservableObject {
     @Published var isMock = true
     @Published var showHint = false
     
+    @Published var buttonState: VPrimaryButtonState = .disabled
+    
     let limitCount = 4
 
     init() {
-        fetchNFTs()
+        if EVMAccountManager.shared.selectedAccount != nil {
+            fetchEVMNFTs()
+        }else {
+            fetchNFTs()
+        }
+        
     }
     
     func moveAction() {
-        guard let collection = selectedCollection?.collection else {
+        guard let collection = selectedCollection else {
             return
         }
         Task {
             do {
-                let address = collection.address // "0x8920ffd3d8768daa"
-                let name = collection.contractName // "ExampleNFT"
+                let address = collection.maskAddress // "0x8920ffd3d8768daa"
+                let name = collection.maskContractName // "ExampleNFT"
                 let ids: [UInt64] = nfts.compactMap { nft in
                     if !nft.isSelected {
                         return nil
                     }
-                    let nftId = nft.model.id
+                    let nftId = nft.model.maskId
                     guard let resultId = UInt64(nftId) else {
                         return nil
                     }
@@ -63,10 +70,26 @@ class MoveNFTsViewModel: ObservableObject {
     }
     
     func selectCollectionAction() {
-        let vm = SelectCollectionViewModel(selectedItem: selectedCollection, list: collectionList) { item in
-            self.selectedCollection = item
+        
+        let vm = SelectCollectionViewModel(selectedItem: selectedCollection, list: collectionList) { [weak self] item in
+            self?.updateCollection(item: item)
         }
         Router.route(to: RouteMap.NFT.selectCollection(vm))
+    }
+    
+    private func updateCollection(item: CollectionMask) {
+        if item.maskId == self.selectedCollection?.maskId, item.maskContractName == self.selectedCollection?.maskContractName {
+            return
+        }
+        self.selectedCollection = item
+        if EVMAccountManager.shared.selectedAccount == nil {
+            self.nfts = []
+            fetchNFTs()
+        }else {
+            self.nfts = []
+            guard let col = self.selectedCollection as? EVMCollection else { return  }
+            self.nfts = col.nfts.map { MoveNFTsViewModel.NFT(isSelected: false, model: $0) }
+        }
     }
     
     func closeAction() {
@@ -74,7 +97,7 @@ class MoveNFTsViewModel: ObservableObject {
     }
     
     func toggleSelection(of nft: MoveNFTsViewModel.NFT) {
-        showHint = selectedCount >= limitCount
+        
         if let index = nfts.firstIndex(where: { $0.id == nft.id }) {
             if !nfts[index].isSelected && selectedCount >= limitCount {
                 
@@ -82,10 +105,16 @@ class MoveNFTsViewModel: ObservableObject {
                 nfts[index].isSelected.toggle()
             }
         }
+        showHint = selectedCount >= limitCount
+        resetButtonState()
     }
     
     var selectedCount: Int {
         nfts.filter { $0.isSelected }.count
+    }
+    
+    private func resetButtonState() {
+        buttonState = selectedCount > 0 ? .enabled : .disabled
     }
     
     var moveButtonTitle: String {
@@ -117,6 +146,7 @@ class MoveNFTsViewModel: ObservableObject {
     }
     
     func fetchNFTs(_ offset: Int = 0) {
+        buttonState = .loading
         guard let collection = selectedCollection else {
             fetchCollection()
             return
@@ -124,7 +154,7 @@ class MoveNFTsViewModel: ObservableObject {
         Task {
             do {
                 let address = WalletManager.shared.selectedAccountAddress
-                let request = NFTCollectionDetailListRequest(address: address, collectionIdentifier: collection.collection.id, offset: offset, limit: 30)
+                let request = NFTCollectionDetailListRequest(address: address, collectionIdentifier: collection.maskId, offset: offset, limit: 30)
                 let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(request))
                 DispatchQueue.main.async {
                     if let list = response.nfts {
@@ -134,14 +164,49 @@ class MoveNFTsViewModel: ObservableObject {
                         self.nfts = []
                     }
                     self.isMock = false
+                    self.resetButtonState()
                 }
             }
             catch {
                 DispatchQueue.main.async {
                     self.nfts = []
                     self.isMock = false
+                    self.resetButtonState()
                 }
                 log.error("[MoveAsset] fetch NFTs failed:\(error)")
+            }
+        }
+    }
+    
+    func fetchEVMNFTs() {
+        buttonState = .loading
+        Task {
+            do {
+                guard let address = EVMAccountManager.shared.selectedAccount?.showAddress else {
+                    DispatchQueue.main.async {
+                        self.resetButtonState()
+                    }
+                    return
+                }
+                let response: [EVMCollection] =  try await Network.request(FRWAPI.EVM.nfts(address))
+                DispatchQueue.main.async {
+                    self.collectionList = response
+                    response.forEach { collection in
+                        if collection.nfts.count > 0 {
+                            self.nfts = collection.nfts.map { MoveNFTsViewModel.NFT(isSelected: false, model: $0) }
+                            self.selectedCollection = collection
+                        }
+                    }
+                    self.isMock = false
+                    self.resetButtonState()
+                }
+            }catch {
+                DispatchQueue.main.async {
+                    self.nfts = []
+                    self.isMock = false
+                    self.resetButtonState()
+                }
+                log.error("[MoveAsset] fetch EVM collection & NFTs failed:\(error)")
             }
         }
     }
@@ -170,7 +235,7 @@ extension MoveNFTsViewModel {
     
     func showEVMTag(isFirst: Bool) -> Bool {
         let isSelectedEVM = EVMAccountManager.shared.selectedAccount != nil
-        return !(isFirst && (isFirst == !isSelectedEVM))
+        return isSelectedEVM == isFirst
     }
     
     func logo() -> Image {
@@ -183,10 +248,10 @@ extension MoveNFTsViewModel {
     struct NFT: Identifiable {
         let id: UUID = .init()
         var isSelected: Bool
-        var model: NFTResponse
+        var model: NFTMask
         
         var imageUrl: String {
-            return model.thumbnail ?? ""
+            return model.maskLogo
         }
         
         static func mock() -> MoveNFTsViewModel.NFT {
@@ -194,3 +259,4 @@ extension MoveNFTsViewModel {
         }
     }
 }
+

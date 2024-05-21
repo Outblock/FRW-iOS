@@ -11,6 +11,7 @@ import Moya
 extension FRWAPI {
     enum EVM {
         case tokenList(String?)
+        case nfts(String?)
     }
 }
 
@@ -21,7 +22,7 @@ extension FRWAPI.EVM: TargetType, AccessTokenAuthorizable {
     
     var baseURL: URL {
         switch self {
-        case .tokenList:
+        case .tokenList, .nfts:
             return Config.get(.lilicoWeb)
         }
     }
@@ -33,6 +34,11 @@ extension FRWAPI.EVM: TargetType, AccessTokenAuthorizable {
                 return "evm/\(addr)/fts"
             }
             return "evm/fts"
+        case .nfts(let addr):
+            if let addr = addr {
+                return "evm/\(addr)/nfts"
+            }
+            return "evm/nfts"
         }
     }
     
@@ -42,7 +48,7 @@ extension FRWAPI.EVM: TargetType, AccessTokenAuthorizable {
     
     var task: Task {
         switch self {
-        case .tokenList:
+        case .tokenList, .nfts:
             return .requestPlain
         }
     }

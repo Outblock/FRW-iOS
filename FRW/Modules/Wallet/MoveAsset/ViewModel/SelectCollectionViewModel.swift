@@ -10,13 +10,13 @@ import SwiftUI
 
 class SelectCollectionViewModel: ObservableObject {
     
-    @Published var list: [NFTCollection] = []
-    @Published var selectedItem: NFTCollection?
+    @Published var list: [CollectionMask] = []
+    @Published var selectedItem: CollectionMask?
     @Published var isMock = false
     
-    var callback:(NFTCollection)->()?
+    var callback:(CollectionMask)->()?
     
-    init(selectedItem: NFTCollection?, list: [NFTCollection]?, callback:@escaping (NFTCollection)->()?) {
+    init(selectedItem: CollectionMask?, list: [CollectionMask]?, callback:@escaping (CollectionMask)->()?) {
         self.selectedItem = selectedItem
         self.callback = callback
         
@@ -64,7 +64,7 @@ extension SelectCollectionViewModel {
         Router.dismiss()
     }
     
-    func select(item: NFTCollection) {
+    func select(item: CollectionMask) {
         self.selectedItem = item
         confirmAction()
     }
@@ -76,7 +76,7 @@ extension SelectCollectionViewModel {
         closeAction()
     }
     
-    func isSelected(_ item: NFTCollection) -> Bool {
-        return item.collection.contractName == selectedItem?.collection.contractName && item.collection.name == selectedItem?.collection.name
+    func isSelected(_ item: CollectionMask) -> Bool {
+        return item.maskContractName == selectedItem?.maskContractName && item.maskName == selectedItem?.maskName
     }
 }

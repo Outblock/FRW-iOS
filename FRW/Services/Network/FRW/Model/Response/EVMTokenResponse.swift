@@ -41,3 +41,22 @@ struct EVMTokenResponse: Codable {
         return Utilities.formatToPrecision(value, formattingDecimals: decimals).doubleValue
     }
 }
+
+struct EVMCollection: Codable {
+    let chainId: Int
+    let address: String
+    let symbol: String
+    let name: String
+    let tokenURI: String
+    let logoURI: String
+    let balance: String?
+    let flowIdentifier: String?
+    let nftIds: [String]
+    let nfts: [EVMNFT]
+}
+
+struct EVMNFT: Codable {
+    let id: String
+    let name: String
+    let thumbnail: String
+}

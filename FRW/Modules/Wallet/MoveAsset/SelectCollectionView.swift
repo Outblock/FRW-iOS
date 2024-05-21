@@ -55,12 +55,12 @@ struct SelectCollectionView: RouteableView {
     }
     
     @ViewBuilder
-    func card(item: NFTCollection) -> some View {
+    func card(item: CollectionMask) -> some View {
         Button {
             viewModel.select(item: item)
         } label: {
             HStack(spacing: 16) {
-                KFImage.url(item.collection.logoURL)
+                KFImage.url(item.maskLogo)
                     .placeholder({
                         Image("placeholder")
                             .resizable()
@@ -70,7 +70,7 @@ struct SelectCollectionView: RouteableView {
                     .frame(width: 64, height: 64)
                 VStack(alignment: .leading) {
                     HStack(spacing: 4) {
-                        Text(item.collection.name)
+                        Text(item.maskName)
                             .font(.inter(size: 14))
                             .foregroundStyle(Color.Theme.Text.black)
                             .padding(.trailing, 4)
@@ -80,7 +80,7 @@ struct SelectCollectionView: RouteableView {
                             .frame(width: 12, height: 12)
                     }
                     
-                    Text("\(item.count) NFTs")
+                    Text("\(item.maskCount) NFTs")
                         .font(.inter(size: 12))
                         .foregroundStyle(Color.Theme.Text.black8)
                 }

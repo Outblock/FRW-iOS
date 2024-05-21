@@ -101,4 +101,24 @@ class ButtonStyle {
         model.layout.cornerRadius = 16
         return model
     }()
+    
+    public static let green: VPrimaryButtonModel = {
+        
+        var model: VPrimaryButtonModel = .init()
+        model.layout.height = 48
+        model.fonts.title = Font.inter(size: 16, weight: .w600)
+        let textColor = Color.Theme.Text.black8
+        model.colors.textContent = .init(enabled: textColor,
+                                         pressed: textColor.opacity(0.5),
+                                         loading: textColor,
+                                         disabled: textColor)
+        let backgroundColor = Color.Theme.Accent.green
+        model.colors.background = .init(enabled: backgroundColor,
+                                        pressed: backgroundColor.opacity(0.5),
+                                        loading: backgroundColor,
+                                        disabled: backgroundColor)
+
+        model.layout.cornerRadius = 16
+        return model
+    }()
 }

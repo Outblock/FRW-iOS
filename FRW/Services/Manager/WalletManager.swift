@@ -202,15 +202,18 @@ extension WalletManager {
     }
     
     func changeNetwork(_ type: LocalUserDefaults.FlowNetworkType) {
-        if isSelectedEVMAccount {
-            EVMAccountManager.shared.select(nil)
-        }
+        
         if LocalUserDefaults.shared.flowNetwork == type {
             if isSelectedChildAccount {
                 ChildAccountManager.shared.select(nil)
             }
-            
-            return
+            if !isSelectedEVMAccount {
+                return
+            }
+        }
+        
+        if isSelectedEVMAccount {
+            EVMAccountManager.shared.select(nil)
         }
         
         LocalUserDefaults.shared.flowNetwork = type
