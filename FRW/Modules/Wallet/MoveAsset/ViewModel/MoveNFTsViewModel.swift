@@ -25,11 +25,7 @@ class MoveNFTsViewModel: ObservableObject {
     let limitCount = 4
 
     init() {
-        if EVMAccountManager.shared.selectedAccount != nil {
-            fetchEVMNFTs()
-        }else {
-            fetchNFTs()
-        }
+        fetchNFTs(0)
         
     }
     
@@ -37,6 +33,7 @@ class MoveNFTsViewModel: ObservableObject {
         guard let collection = selectedCollection else {
             return
         }
+        buttonState = .loading
         Task {
             do {
                 let address = collection.maskAddress // "0x8920ffd3d8768daa"
@@ -57,8 +54,12 @@ class MoveNFTsViewModel: ObservableObject {
                 TransactionManager.shared.newTransaction(holder: holder)
                 let result = try await tid.onceSealed()
                 if result.isFailed {
+                    DispatchQueue.main.async {
+                        self.resetButtonState()
+                    }
                     return
                 }
+                
                 fetchNFTs()
                 log.info("[Move] NFT TIX: \(tid)")
             }
@@ -72,7 +73,10 @@ class MoveNFTsViewModel: ObservableObject {
     func selectCollectionAction() {
         
         let vm = SelectCollectionViewModel(selectedItem: selectedCollection, list: collectionList) { [weak self] item in
-            self?.updateCollection(item: item)
+            DispatchQueue.main.async {
+                self?.updateCollection(item: item)
+            }
+            
         }
         Router.route(to: RouteMap.NFT.selectCollection(vm))
     }
@@ -105,7 +109,7 @@ class MoveNFTsViewModel: ObservableObject {
                 nfts[index].isSelected.toggle()
             }
         }
-        showHint = selectedCount >= limitCount
+        
         resetButtonState()
     }
     
@@ -115,6 +119,7 @@ class MoveNFTsViewModel: ObservableObject {
     
     private func resetButtonState() {
         buttonState = selectedCount > 0 ? .enabled : .disabled
+        showHint = selectedCount >= limitCount
     }
     
     var moveButtonTitle: String {
@@ -146,6 +151,14 @@ class MoveNFTsViewModel: ObservableObject {
     }
     
     func fetchNFTs(_ offset: Int = 0) {
+        if EVMAccountManager.shared.selectedAccount == nil {
+            fetchFlowNFTs(offset)
+        }else {
+            fetchEVMNFTs()
+        }
+    }
+    
+    private func fetchFlowNFTs(_ offset: Int = 0) {
         buttonState = .loading
         guard let collection = selectedCollection else {
             fetchCollection()
@@ -178,7 +191,7 @@ class MoveNFTsViewModel: ObservableObject {
         }
     }
     
-    func fetchEVMNFTs() {
+    private func fetchEVMNFTs() {
         buttonState = .loading
         Task {
             do {
@@ -190,11 +203,15 @@ class MoveNFTsViewModel: ObservableObject {
                 }
                 let response: [EVMCollection] =  try await Network.request(FRWAPI.EVM.nfts(address))
                 DispatchQueue.main.async {
+                    self.nfts = []
                     self.collectionList = response
+                    self.selectedCollection = response.first
                     response.forEach { collection in
                         if collection.nfts.count > 0 {
                             self.nfts = collection.nfts.map { MoveNFTsViewModel.NFT(isSelected: false, model: $0) }
-                            self.selectedCollection = collection
+                            if self.selectedCollection == nil {
+                                self.selectedCollection = collection
+                            }
                         }
                     }
                     self.isMock = false

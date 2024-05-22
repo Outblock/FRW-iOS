@@ -50,6 +50,13 @@ class NFTUIKitListGridDataModel {
             return []
         }
         
+        if EVMAccountManager.shared.selectedAccount != nil {
+            let response: [EVMCollection] =  try await Network.request(FRWAPI.EVM.nfts(address))
+            let list = response.map { $0.toNFTCollection() }
+            let nfts = list.compactMap { $0.evmNFTs }
+            return Array(nfts.joined())
+        }
+        
         let request = NFTGridDetailListRequest(address: address, offset: offset, limit: limit)
         let response: Network.Response<NFTListResponse> = try await Network.requestWithRawModel(FRWAPI.NFT.gridDetailList(request))
         
@@ -168,7 +175,9 @@ class NFTUIKitListNormalDataModel {
             item.collectionId = collection.collection.id
             item.count = collection.count
             item.collection = collection.collection
-            
+            if let list = collection.evmNFTs {
+                item.nfts = list
+            }
             items.append(item)
         }
         
@@ -180,6 +189,12 @@ class NFTUIKitListNormalDataModel {
     private func requestCollections() async throws -> [NFTCollection] {
         guard let address = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
             return []
+        }
+        
+        if EVMAccountManager.shared.selectedAccount != nil {
+            let response: [EVMCollection] =  try await Network.request(FRWAPI.EVM.nfts(address))
+            let list = response.map { $0.toNFTCollection() }
+            return list
         }
         
         let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(address,0,100))
