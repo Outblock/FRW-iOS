@@ -18,7 +18,7 @@ struct MoveAssetsView: View {
             })
             .padding(.top, 24)
             
-            Text("move_assets_note_x".localized("[Application-Name]"))
+            Text("move_assets_note_x".localized(toName()))
                 .font(.inter(size: 14))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.Theme.Text.black8)
@@ -63,6 +63,10 @@ struct MoveAssetsView: View {
         .ignoresSafeArea()
     }
     
+    func toName() -> String {
+        EVMAccountManager.shared.selectedAccount == nil ? "Flow" : "EVM"
+    }
+    
     @ViewBuilder
     func card(isNFT: Bool) -> some View {
         VStack {
@@ -80,6 +84,7 @@ struct MoveAssetsView: View {
             Image("move_assets_bg_\(isNFT ? "0" : "1")")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
+                .frame(width: 164, height: 224)
         }
         
     }

@@ -204,6 +204,7 @@ extension Color {
 
 extension Color {
     enum Theme {
+        static let evm = Color("evm")
         enum Accent {
             static let green = Color("accent.green")
             static let grey = Color("accent.grey")

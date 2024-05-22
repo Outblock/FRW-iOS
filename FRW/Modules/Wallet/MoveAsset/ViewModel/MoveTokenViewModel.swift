@@ -62,7 +62,7 @@ class MoveTokenViewModel: ObservableObject {
             errorType = .belowMinimum
             return
         }
-        
+        errorType = .none
     }
     
     func maxAction() {
@@ -80,12 +80,10 @@ class MoveTokenViewModel: ObservableObject {
     }
     
     var currentBalance: String {
-        var str = ""
-        if inputDollarNum > 0 {
-            str += "Balance "
-        }
-        str += "$ \(inputDollarNum.formatCurrencyString())"
-        return str
+        
+        let total = amountBalance * coinRate
+        let totalStr = total.formatCurrencyString(considerCustomCurrency: true)
+        return "Balance: \(totalStr)"
     }
 }
 
@@ -173,7 +171,6 @@ extension MoveTokenViewModel {
                 log.info("[EVM] withdraw Coa balance")
                 DispatchQueue.main.async {
                     self.enableButton = false
-                    self.isLoading = true
                 }
                 let amount = self.inputTokenNum.decimalValue
                 let txid = try await FlowNetwork.withdrawCoa(amount: amount)
@@ -184,13 +181,11 @@ extension MoveTokenViewModel {
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
                     self.enableButton = true
-                    self.isLoading = false
                 }
             }
             catch {
                 DispatchQueue.main.async {
                     self.enableButton = true
-                    self.isLoading = false
                 }
                 log.error("[EVM] move transation failed \(error)")
             }

@@ -11,9 +11,14 @@ struct EVMTagView: View {
     var body: some View {
         Text("EVM")
             .font(.inter(size: 9))
-            .foregroundStyle(Color.Theme.Text.black)
+            .kerning(0.144)
+            .foregroundStyle(Color.white)
             .frame(width: 36, height: 16)
-            .background(Color.Theme.Accent.blue)
+            .background(Color.Theme.evm)
             .cornerRadius(8)
     }
+}
+
+#Preview {
+    EVMTagView()
 }

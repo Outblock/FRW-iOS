@@ -52,16 +52,7 @@ class MoveNFTsViewModel: ObservableObject {
                 let tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: address, contractName: name, ids: ids, fromEvm: fromEvm)
                 let holder = TransactionManager.TransactionHolder(id: tid, type: .moveAsset)
                 TransactionManager.shared.newTransaction(holder: holder)
-                let result = try await tid.onceSealed()
-                if result.isFailed {
-                    DispatchQueue.main.async {
-                        self.resetButtonState()
-                    }
-                    return
-                }
-                
-                fetchNFTs()
-                log.info("[Move] NFT TIX: \(tid)")
+                closeAction()
             }
             catch {
                 log.error(" Move NFTs =====")

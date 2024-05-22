@@ -1196,6 +1196,47 @@ extension FlowNetwork {
         }
     }
     
+    static func sendNoFlowTokenToEvm(amount: Decimal,contractAddress: String, contractName: String, contractEVMAddress:String, data: Data, gas: UInt64) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.bridge?.bridgeTokensToEvmAddress?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        var amountValue = Flow.Cadence.FValue.ufix64(amount)
+        
+        let fromKeyIndex = WalletManager.shared.keyIndex
+        guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
+        }
+        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+            cadence {
+                cadenceStr
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            arguments {
+                [
+                    .address(Flow.Address(hex: contractAddress)),
+                    .string(contractName),
+                    amountValue,
+                    .string(contractEVMAddress),
+                    data.cadenceValue,
+                    .uint64(gas)
+                ]
+            }
+            proposer {
+                Flow.TransactionProposalKey(address: Flow.Address(hex: fromAddress), keyIndex: fromKeyIndex)
+            }
+            
+            authorizers {
+                Flow.Address(hex: fromAddress)
+            }
+            
+            gasLimit {
+                9999
+            }
+        }
+    }
+    
     static func bridgeToken(address: String,contractName: String, amount: Decimal, fromEvm: Bool, decimals: Int) async throws -> Flow.ID {
         let originCadence = (fromEvm ? CadenceManager.shared.current.bridge?.bridgeTokensFromEvm?.toFunc()
         : CadenceManager.shared.current.bridge?.bridgeTokensToEvm?.toFunc()) ?? ""
