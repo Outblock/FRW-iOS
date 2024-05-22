@@ -171,29 +171,9 @@ extension MoveTokenView {
                             viewModel.inputTextDidChangeAction(text: text)
                         }
                         .focused($isAmountFocused)
-                    Button {} label: {
-                        HStack(spacing: 4) {
-                            KFImage.url(viewModel.token.icon)
-                                .placeholder {
-                                    Image("placeholder")
-                                        .resizable()
-                                }
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 32, height: 32)
-                                .cornerRadius(16)
-                                
-                            Text(viewModel.token.name)
-                                .font(.inter(size: 14, weight: .medium))
-                                .foregroundStyle(Color.LL.Neutrals.text2)
-//                            Image("icon_arrow_bottom_16")
-//                                .resizable()
-//                                .frame(width: 16, height: 16)
-                        }
-                        .padding(8)
-                        .background(Color.Theme.Line.line)
-                        .cornerRadius(16)
-                    }
+                    
+                    switchMenuButton
+                    
                 }
                 
                 HStack {
@@ -220,7 +200,51 @@ extension MoveTokenView {
             .backgroundFill(Color.Theme.Background.white)
             .cornerRadius(16)
         }
+        
+        @ViewBuilder
+        var switchMenuButton: some View {
+            Menu {
+                ForEach(WalletManager.shared.activatedCoins) { token in
+                    Button {
+                        viewModel.changeTokenModelAction(token: token)
+                    } label: {
+                        KFImage.url(token.icon)
+                            .placeholder({
+                                Image("placeholder")
+                                    .resizable()
+                            })
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 32, height: 32)
+                            .clipShape(Circle())
+                        Text(token.name)
+                    }
+                }
+            } label: {
+                HStack(spacing: 4) {
+                    KFImage.url(viewModel.token.icon)
+                        .placeholder({
+                            Image("placeholder")
+                                .resizable()
+                        })
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 32, height: 32)
+                        .clipShape(Circle())
+                    Text(viewModel.token.name)
+                        .font(.inter(size: 14, weight: .medium))
+                        .foregroundStyle(Color.LL.Neutrals.text2)
+                    Image("icon-arrow-bottom")
+                        .foregroundColor(.LL.Neutrals.neutrals3)
+                }
+                .padding(8)
+                .background(Color.Theme.Line.line)
+                .cornerRadius(16)
+            }
+        }
+        
     }
+    
 }
 
 #Preview {

@@ -16,14 +16,22 @@ class MoveTokenViewModel: ObservableObject {
     @Published var coinRate: Double = 0
     @Published var errorType: WalletSendAmountView.ErrorType = .none
 
-    @Published var state: VPrimaryButtonState = .disabled
     @Published var enableButton: Bool = false
-    @Published var isLoading: Bool = false
     
     var token: TokenModel
     
     init(token: TokenModel) {
         self.token = token
+        refreshTokenData()
+    }
+    
+    func changeTokenModelAction(token: TokenModel) {
+        if token.contractId == self.token.contractId {
+            return
+        }
+        self.token = token
+        inputText = ""
+        errorType = .none
         refreshTokenData()
     }
     
@@ -197,7 +205,7 @@ extension MoveTokenViewModel {
             do {
                 log.info("[EVM] fund Coa balance")
                 DispatchQueue.main.async {
-                    self.state = .loading
+                    self.enableButton = false
                 }
                 let amount = self.inputTokenNum.decimalValue
                 let txid = try await FlowNetwork.fundCoa(amount: amount)
@@ -207,12 +215,12 @@ extension MoveTokenViewModel {
                 Router.dismiss()
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
-                    self.state = .enabled
+                    self.enableButton = true
                 }
             }
             catch {
                 DispatchQueue.main.async {
-                    self.state = .enabled
+                    self.enableButton = true
                 }
                 log.error("[EVM] move transation failed \(error)")
             }
@@ -235,12 +243,12 @@ extension MoveTokenViewModel {
                 Router.dismiss()
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
-                    self.state = .enabled
+                    self.enableButton = true
                 }
             }
             catch {
                 DispatchQueue.main.async {
-                    self.state = .enabled
+                    self.enableButton = false
                 }
                 log.error("[EVM] move transation bridge token failed \(error)")
             }
