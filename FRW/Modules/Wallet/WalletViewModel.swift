@@ -64,6 +64,7 @@ class WalletViewModel: ObservableObject {
     @Published var isMock: Bool = false
     
     @Published var moveAssetsPresent: Bool = false
+    @Published var moveTokenPresent: Bool = false
     
     var needShowPlaceholder: Bool {
         return isMock || walletState == .noAddress

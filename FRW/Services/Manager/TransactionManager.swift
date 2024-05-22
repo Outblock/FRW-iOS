@@ -330,6 +330,8 @@ class TransactionManager: ObservableObject {
             Task {
                 try? await WalletManager.shared.fetchWalletDatas()
             }
+        case .moveAsset:
+            NotificationCenter.default.post(name: .nftDidChangedByMoving, object: nil)
         default:
             break
         }

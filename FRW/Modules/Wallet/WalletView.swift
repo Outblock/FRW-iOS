@@ -137,8 +137,15 @@ struct WalletView: View {
             })
         }
         .halfSheet(showSheet: $vm.moveAssetsPresent){
-            MoveAssetsView() {
+            MoveAssetsView(token: vm.coinItems.first?.token, showToken: {
+                vm.moveTokenPresent = true
+            }) {
                 vm.moveAssetsPresent = false
+            }
+        }
+        .halfSheet(showSheet: $vm.moveTokenPresent) {
+            if let token = vm.coinItems.first?.token {
+                MoveTokenView(tokenModel: token)
             }
         }
         .navigationBarHidden(true)

@@ -104,7 +104,7 @@ class NFTUIKitListViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(onCustomAddressChanged), name: .watchAddressDidChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didReset), name: .didResetWallet, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onChildAccountChanged), name: .childAccountChanged, object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(onNFTDidChangedByMoving), name: .nftDidChangedByMoving, object: nil)
         WalletManager.shared.$walletInfo
             .dropFirst()
             .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
@@ -128,6 +128,11 @@ class NFTUIKitListViewController: UIViewController {
     }
     
     @objc private func onChildAccountChanged() {
+        listStyleHandler.collectionView.beginRefreshing()
+        gridStyleHandler.collectionView.beginRefreshing()
+    }
+    
+    @objc private func onNFTDidChangedByMoving() {
         listStyleHandler.collectionView.beginRefreshing()
         gridStyleHandler.collectionView.beginRefreshing()
     }

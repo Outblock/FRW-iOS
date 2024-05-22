@@ -9,6 +9,8 @@ import SwiftUI
 import SwiftUIX
 
 struct MoveAssetsView: View {
+    var token: TokenModel?
+    var showToken: () ->()
     var closeAction: () -> ()
     
     var body: some View {
@@ -35,6 +37,7 @@ struct MoveAssetsView: View {
                 Spacer()
                 Button {
                     closeAction()
+                    showToken()
                 } label: {
                     card(isNFT: false)
                 }
@@ -91,5 +94,10 @@ struct MoveAssetsView: View {
 }
 
 #Preview {
-    MoveAssetsView(){}
+    MoveAssetsView(token: TokenModel.mock()) {
+        
+    } closeAction: {
+        
+    }
+    
 }

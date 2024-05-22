@@ -9,6 +9,7 @@ import AVKit
 import Kingfisher
 import SPIndicator
 import SwiftUI
+import SwiftUIX
 
 struct NFTDetailPage: RouteableView {
     static var ShareNFTView: NFTShareView? = nil
@@ -59,6 +60,8 @@ struct NFTDetailPage: RouteableView {
     var player = AVPlayer()
     
     @State var fromLinkedAccount = false
+    
+    @State var isPresentMove = false
 
     init(viewModel: NFTTabViewModel, nft: NFTModel, from LinkedAccount: Bool = false) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -257,6 +260,11 @@ struct NFTDetailPage: RouteableView {
                     }
                 }
             }
+            .halfSheet(showSheet: $isPresentMove) {
+                MoveSingleNFTView(nft: vm.nft) {
+                    isPresentMove = false
+                }
+            }
         }
         .background(
             NFTBlurImageView(colors: viewModel.state.colorsMap[vm.nft.imageURL.absoluteString] ?? [])
@@ -267,24 +275,7 @@ struct NFTDetailPage: RouteableView {
             HStack(spacing: 8) {
                 Spacer()
                 
-//                Button {
-//                    // TODO: #six move NFT 1. show logic, 2. action
-//                } label: {
-//                    HStack {
-//                        Image(systemName: "paperplane")
-//                            .font(.system(size: 16))
-//                            .foregroundColor(theColor)
-//                        Text("move".localized)
-//                            .foregroundColor(.LL.Neutrals.text)
-//                    }
-//                }
-//                .padding(.horizontal, 12)
-//                .padding(.vertical, 10)
-//                .cornerRadius(12)
-//                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
-//                .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
-//                .visibility(vm.nft.isDomain ? .gone : .visible)
-//                .disabled(WalletManager.shared.isSelectedChildAccount)
+                
                 
                 Button {
                     if fromLinkedAccount {
@@ -307,6 +298,25 @@ struct NFTDetailPage: RouteableView {
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
                 .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
                 .visibility(vm.nft.isDomain || !vm.showSendButton ? .gone : .visible)
+                .disabled(WalletManager.shared.isSelectedChildAccount)
+                
+                Button {
+                    isPresentMove = true
+                } label: {
+                    HStack {
+                        Image(systemName: "arrow.left.arrow.right")
+                            .font(.system(size: 16))
+                            .foregroundColor(theColor)
+                        Text("move".localized)
+                            .foregroundColor(.LL.Neutrals.text)
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .cornerRadius(12)
+                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
+                .visibility(vm.nft.isDomain ? .gone : .visible)
                 .disabled(WalletManager.shared.isSelectedChildAccount)
                 
                 Menu {

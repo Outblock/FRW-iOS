@@ -16,7 +16,7 @@ class MoveTokenViewModel: ObservableObject {
     @Published var coinRate: Double = 0
     @Published var errorType: WalletSendAmountView.ErrorType = .none
 
-    @Published var enableButton: Bool = false
+    @Published var buttonState: VPrimaryButtonState = .disabled
     
     var token: TokenModel
     
@@ -66,22 +66,22 @@ class MoveTokenViewModel: ObservableObject {
             return
         }
         
-        if amountBalance - inputTokenNum < 0.001 {
-            errorType = .belowMinimum
-            return
-        }
+//        if amountBalance - inputTokenNum < 0.001 {
+//            errorType = .belowMinimum
+//            return
+//        }
         errorType = .none
     }
     
     func maxAction() {
-        let num = max(amountBalance - 0.001, 0)
+        let num = max(amountBalance, 0)
         inputText = num.formatCurrencyString()
         refreshSummary()
         updateState()
     }
     
     private func updateState() {
-        enableButton  = isReadyForSend ? true : false
+        buttonState  = isReadyForSend ? .enabled : .disabled
     }
      var isReadyForSend: Bool {
         return errorType == .none && inputText.isNumber && !inputText.isEmpty
@@ -178,7 +178,7 @@ extension MoveTokenViewModel {
             do {
                 log.info("[EVM] withdraw Coa balance")
                 DispatchQueue.main.async {
-                    self.enableButton = false
+                    self.buttonState = .loading
                 }
                 let amount = self.inputTokenNum.decimalValue
                 let txid = try await FlowNetwork.withdrawCoa(amount: amount)
@@ -188,12 +188,12 @@ extension MoveTokenViewModel {
                 Router.dismiss()
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
-                    self.enableButton = true
+                    self.buttonState = .enabled
                 }
             }
             catch {
                 DispatchQueue.main.async {
-                    self.enableButton = true
+                    self.buttonState = .enabled
                 }
                 log.error("[EVM] move transation failed \(error)")
             }
@@ -205,7 +205,7 @@ extension MoveTokenViewModel {
             do {
                 log.info("[EVM] fund Coa balance")
                 DispatchQueue.main.async {
-                    self.enableButton = false
+                    self.buttonState = .loading
                 }
                 let amount = self.inputTokenNum.decimalValue
                 let txid = try await FlowNetwork.fundCoa(amount: amount)
@@ -215,12 +215,12 @@ extension MoveTokenViewModel {
                 Router.dismiss()
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
-                    self.enableButton = true
+                    self.buttonState = .enabled
                 }
             }
             catch {
                 DispatchQueue.main.async {
-                    self.enableButton = true
+                    self.buttonState = .enabled
                 }
                 log.error("[EVM] move transation failed \(error)")
             }
@@ -230,6 +230,9 @@ extension MoveTokenViewModel {
     private func bridgeToken() {
         Task {
             do {
+                DispatchQueue.main.async {
+                    self.buttonState = .loading
+                }
                 log.info("[EVM] bridge token \(fromEVM ? "FromEVM" : "ToEVM")")
                 let amount = self.inputTokenNum.decimalValue
         
@@ -243,12 +246,12 @@ extension MoveTokenViewModel {
                 Router.dismiss()
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
-                    self.enableButton = true
+                    self.buttonState = .enabled
                 }
             }
             catch {
                 DispatchQueue.main.async {
-                    self.enableButton = false
+                    self.buttonState = .enabled
                 }
                 log.error("[EVM] move transation bridge token failed \(error)")
             }

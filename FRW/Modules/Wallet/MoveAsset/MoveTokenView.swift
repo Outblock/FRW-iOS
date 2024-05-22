@@ -9,7 +9,15 @@ import Kingfisher
 import SwiftUI
 import SwiftUIX
 
-struct MoveTokenView: View {
+struct MoveTokenView: RouteableView {
+    var title: String {
+        ""
+    }
+    
+    var isNavigationBarHidden: Bool {
+        true
+    }
+    
     @StateObject var viewModel: MoveTokenViewModel
     
     init(tokenModel: TokenModel) {
@@ -67,7 +75,7 @@ struct MoveTokenView: View {
                 Spacer()
                 
                 VPrimaryButton(model: ButtonStyle.primary,
-                               state: viewModel.enableButton ? .enabled : .disabled,
+                               state: viewModel.buttonState,
                                action: {
                                    UIApplication.shared.endEditing()
                                    viewModel.onNext()
@@ -81,6 +89,7 @@ struct MoveTokenView: View {
             .environmentObject(viewModel)
             .edgesIgnoringSafeArea(.bottom)
         }
+        .applyRouteable(self)
     }
 }
 
@@ -231,7 +240,7 @@ extension MoveTokenView {
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 32, height: 32)
                         .clipShape(Circle())
-                    Text(viewModel.token.name)
+                    Text(viewModel.token.symbol?.uppercased() ?? "?")
                         .font(.inter(size: 14, weight: .medium))
                         .foregroundStyle(Color.LL.Neutrals.text2)
                     Image("icon-arrow-bottom")

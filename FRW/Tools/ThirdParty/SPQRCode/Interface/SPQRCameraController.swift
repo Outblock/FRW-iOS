@@ -158,6 +158,10 @@ open class SPQRCameraController: SPController {
                 detailView.applyDefaultAppearance(with: .init(content: .white, background: UIColor(hex: "#00EF8B")))
                 frameLayer.strokeColor = UIColor(hex: "#00EF8B").cgColor
             }
+            if case .ethWallet(_) = qrCodeData {
+                detailView.applyDefaultAppearance(with: .init(content: .white, background: UIColor(hex: "#00EF8B")))
+                frameLayer.strokeColor = UIColor(hex: "#00EF8B").cgColor
+            }
             UIView.animate(withDuration: duration, delay: .zero, options: .curveEaseInOut, animations: {
                 self.detailView.transform = .identity
                 self.detailView.alpha = 1

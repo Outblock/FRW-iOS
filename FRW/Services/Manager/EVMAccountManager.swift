@@ -33,6 +33,7 @@ class EVMAccountManager: ObservableObject {
     @Published var selectedAccount: EVMAccountManager.Account? = LocalUserDefaults.shared.selectedEVMAccount {
         didSet {
             LocalUserDefaults.shared.selectedEVMAccount = selectedAccount
+            NotificationCenter.default.post(name: .watchAddressDidChanged, object: nil)
         }
     }
     

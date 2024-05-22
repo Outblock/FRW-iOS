@@ -391,6 +391,12 @@ extension WalletSendViewModel {
                     self?.searchText = address
                     self?.searchRemote()
                 })
+            case .ethWallet(let address):
+                vc.stopRunning()
+                vc.presentingViewController?.dismiss(animated: true, completion: { [weak self] in
+                    self?.searchText = address
+                    self?.searchRemote()
+                })
             default:
                 break
             }

@@ -39,4 +39,6 @@ public extension Notification.Name {
     static let childAccountChanged = Notification.Name("childAccountChanged")
     
     static let syncDeviceStatusDidChanged = Notification.Name("syncDeviceStatusDidChanged")
+    
+    static let nftDidChangedByMoving = Notification.Name("nftDidChangedByMoving")
 }

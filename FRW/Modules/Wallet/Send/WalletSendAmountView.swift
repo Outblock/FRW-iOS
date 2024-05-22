@@ -105,11 +105,13 @@ struct WalletSendAmountView: RouteableView {
                         .foregroundColor(.LL.Neutrals.text)
                         .font(.inter(size: 14, weight: .bold))
                         .lineLimit(1)
+                        .truncationMode(.middle)
 
                     Text(vm.targetContact.address ?? "no address")
                         .foregroundColor(.LL.Neutrals.note)
                         .font(.inter(size: 14, weight: .regular))
                         .lineLimit(1)
+                        .truncationMode(.middle)
                         
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
