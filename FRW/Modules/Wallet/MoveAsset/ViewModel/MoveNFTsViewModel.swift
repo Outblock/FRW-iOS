@@ -196,15 +196,12 @@ class MoveNFTsViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self.nfts = []
                     self.collectionList = response
-                    self.selectedCollection = response.first
-                    response.forEach { collection in
-                        if collection.nfts.count > 0 {
-                            self.nfts = collection.nfts.map { MoveNFTsViewModel.NFT(isSelected: false, model: $0) }
-                            if self.selectedCollection == nil {
-                                self.selectedCollection = collection
-                            }
-                        }
-                    }
+                    
+                    let collection = response.first(where: { $0.nfts.count > 0 })
+                    self.selectedCollection = collection
+                    self.nfts = collection?.nfts.map{ MoveNFTsViewModel.NFT(isSelected: false, model: $0) } ?? []
+                    
+                    
                     self.isMock = false
                     self.resetButtonState()
                 }
