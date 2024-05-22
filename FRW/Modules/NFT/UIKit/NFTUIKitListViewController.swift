@@ -113,6 +113,8 @@ class NFTUIKitListViewController: UIViewController {
                 log.debug("wallet info refresh triggerd a upload token action")
                 self.walletInfoDidChanged()
             }.store(in: &cancelSets)
+        listStyleHandler.refreshAction()
+        gridStyleHandler.refreshAction()
     }
     
     @objc private func didReset() {

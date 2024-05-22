@@ -121,7 +121,7 @@ extension NFTUIKitGridStyleHandler {
         }
     }
     
-    private func refreshAction() {
+    func refreshAction() {
         if isRequesting {
             collectionView.stopRefreshing()
             return

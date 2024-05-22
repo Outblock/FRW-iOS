@@ -80,6 +80,7 @@ struct WalletAccount {
         }
     }
     
+    var emojiMap: [String: Emoji] = [:]
     
     private func currentKey() -> String {
         guard let userId = UserManager.shared.activatedUID else {
@@ -91,21 +92,27 @@ struct WalletAccount {
 }
 
 extension WalletAccount {
-    func readInfo(at address: String) -> Emoji {
-        guard let emojiList = generalInfo(count: 2) else {
+    
+    mutating func readInfo(at address: String) -> Emoji {
+        
+        if let emoji = emojiMap[address] {
+            return emoji
+        }
+        guard let emojiList = generalInfo(count: 2, excluded: []) else {
             return Emoji.monster
         }
+        self.emojiMap[address] = emojiList.first!
         return emojiList.first!
     }
     
-    private func generalInfo(count: Int) -> [WalletAccount.Emoji]? {
+    private func generalInfo(count: Int, excluded:[Emoji]) -> [WalletAccount.Emoji]? {
         let list = Emoji.allCases
-        return list.randomDifferentElements(count: count)
+        return list.randomDifferentElements(count: count,excluded: excluded)
     }
 }
 
 extension Array where Element: Equatable {
-    func randomDifferentElements(count: Int) -> [Element]? {
+    func randomDifferentElements(count: Int, excluded: [Element]) -> [Element]? {
         guard self.count >= count else {
             return nil // 确保数组中至少有指定数量的元素
         }
@@ -114,7 +121,7 @@ extension Array where Element: Equatable {
         
         while selectedElements.count < count {
             let element = self.randomElement()!
-            if !selectedElements.contains(element) {
+            if !selectedElements.contains(element) && !excluded.contains(element) {
                 selectedElements.append(element)
             }
         }

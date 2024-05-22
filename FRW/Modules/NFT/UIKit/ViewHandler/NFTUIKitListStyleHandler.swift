@@ -258,7 +258,7 @@ extension NFTUIKitListStyleHandler {
         }
     }
     
-    private func refreshAction() {
+    func refreshAction() {
         if isRequesting {
             collectionView.stopRefreshing()
             return
