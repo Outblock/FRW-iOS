@@ -1029,7 +1029,7 @@ extension FlowNetwork {
         return result
     }
     
-    /// evm to cadence
+    /// evm to flow between self
     static func withdrawCoa(amount: Decimal) async throws -> Flow.ID {
         guard let toAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
@@ -1199,7 +1199,7 @@ extension FlowNetwork {
     static func sendNoFlowTokenToEvm(amount: Decimal,contractAddress: String, contractName: String, contractEVMAddress:String, data: Data, gas: UInt64) async throws -> Flow.ID {
         let originCadence = CadenceManager.shared.current.bridge?.bridgeTokensToEvmAddress?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
-        var amountValue = Flow.Cadence.FValue.ufix64(amount)
+        let amountValue = Flow.Cadence.FValue.ufix64(amount)
         
         let fromKeyIndex = WalletManager.shared.keyIndex
         guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
@@ -1280,6 +1280,44 @@ extension FlowNetwork {
         }
     }
     
+    static func bridgeTokensFromEvmToFlow(contractAddress: String,contractName: String, amount: Decimal, receiver: String) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.bridge?.bridgeTokensFromEvmToFlow?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        let amountValue = Flow.Cadence.FValue.ufix64(amount)
+        let fromKeyIndex = WalletManager.shared.keyIndex
+        guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
+        }
+        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+            cadence {
+                cadenceStr
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            arguments {
+                [
+                    .address(Flow.Address(hex: contractAddress)),
+                    .string(contractName),
+                    amountValue,
+                    .address(Flow.Address(hex: contractAddress))
+                ]
+            }
+            proposer {
+                Flow.TransactionProposalKey(address: Flow.Address(hex: fromAddress), keyIndex: fromKeyIndex)
+            }
+            
+            authorizers {
+                Flow.Address(hex: fromAddress)
+            }
+            
+            gasLimit {
+                9999
+            }
+        }
+    }
+    //
     static func bridgeNFTToEVM(contractAddress address: String, contractName name: String, ids: [UInt64], fromEvm: Bool) async throws -> Flow.ID {
         let originCadence = (fromEvm ? CadenceManager.shared.current.bridge?.batchBridgeNFTFromEvm?.toFunc()
         : CadenceManager.shared.current.bridge?.batchBridgeNFTToEvm?.toFunc()) ?? ""
@@ -1303,6 +1341,89 @@ extension FlowNetwork {
                     .address(Flow.Address(hex: address)),
                     .string(name),
                     .array(idMaped)
+                ]
+            }
+            proposer {
+                Flow.TransactionProposalKey(address: Flow.Address(hex: fromAddress), keyIndex: fromKeyIndex)
+            }
+            
+            authorizers {
+                Flow.Address(hex: fromAddress)
+            }
+            
+            gasLimit {
+                9999
+            }
+        }
+    }
+    
+    static func bridgeNFTToAnyEVM(nftContractAddress: String, nftContractName: String, id: String, tokenContractName: String, contractEVMAddress:String, data: Data, gas: UInt64) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.bridge?.bridgeNFTToEvmAddress?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        let fromKeyIndex = WalletManager.shared.keyIndex
+        guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
+        }
+        guard let nftId = UInt64(id) else {
+            throw NFTError.invalidTokenId
+        }
+        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+            cadence {
+                cadenceStr
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            arguments {
+                [
+                    .address(Flow.Address(hex: nftContractAddress)),
+                    .string(nftContractName),
+                    .uint64(nftId),
+                    .string(contractEVMAddress),
+                    data.cadenceValue,
+                    .uint64(gas)
+                ]
+            }
+            proposer {
+                Flow.TransactionProposalKey(address: Flow.Address(hex: fromAddress), keyIndex: fromKeyIndex)
+            }
+            
+            authorizers {
+                Flow.Address(hex: fromAddress)
+            }
+            
+            gasLimit {
+                9999
+            }
+        }
+    }
+    
+    
+    static func bridgeNFTFromEVMToAnyFlow(nftContractAddress: String, nftContractName: String, id: String, receiver: String) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.bridge?.bridgeNFTFromEvmToFlow?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        let fromKeyIndex = WalletManager.shared.keyIndex
+        guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
+        }
+        guard let nftId = BigUInt(id) else {
+            throw NFTError.invalidTokenId
+        }
+        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+            cadence {
+                cadenceStr
+            }
+            
+            payer {
+                RemoteConfigManager.shared.payer
+            }
+            arguments {
+                [
+                    .address(Flow.Address(hex: nftContractAddress)),
+                    .string(nftContractName),
+                    .uint256(nftId),
+                    .address(Flow.Address(hex: receiver))
                 ]
             }
             proposer {

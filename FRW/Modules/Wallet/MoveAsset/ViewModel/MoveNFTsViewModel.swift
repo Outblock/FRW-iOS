@@ -126,7 +126,7 @@ class MoveNFTsViewModel: ObservableObject {
                 let address = WalletManager.shared.selectedAccountAddress
                 let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(address, 0, 100))
                 DispatchQueue.main.async {
-                    self.collectionList = response.data ?? []
+                    self.collectionList = response.data?.sorted(by: { $0.count > $1.count }) ?? []
                     if self.selectedCollection == nil {
                         self.selectedCollection = self.collectionList.first
                     }
@@ -195,12 +195,11 @@ class MoveNFTsViewModel: ObservableObject {
                 let response: [EVMCollection] =  try await Network.request(FRWAPI.EVM.nfts(address))
                 DispatchQueue.main.async {
                     self.nfts = []
-                    self.collectionList = response
-                    
-                    let collection = response.first(where: { $0.nfts.count > 0 })
+                    let sortedList = response.sorted(by: { $0.nfts.count > $1.nfts.count })
+                    self.collectionList = sortedList
+                    let collection = sortedList.first
                     self.selectedCollection = collection
                     self.nfts = collection?.nfts.map{ MoveNFTsViewModel.NFT(isSelected: false, model: $0) } ?? []
-                    
                     
                     self.isMock = false
                     self.resetButtonState()

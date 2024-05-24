@@ -70,7 +70,7 @@ struct PrivateKeyView: RouteableView {
                     
                 } header: {
                     HStack {
-                        Text("Publick Key".localized)
+                        Text("account_key_key".localized)
                             .foregroundColor(.LL.Neutrals.neutrals3)
                             .fontWeight(.semibold)
                         Spacer()

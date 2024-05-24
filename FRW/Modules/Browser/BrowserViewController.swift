@@ -36,7 +36,8 @@ class BrowserViewController: UIViewController {
     lazy var webView: WKWebView = {
         let view = WKWebView(frame: .zero, configuration: generateWebViewConfiguration())
         view.navigationDelegate = self
-        
+        view.allowsBackForwardNavigationGestures = true
+        view.allowsLinkPreview = true
         #if DEBUG
             if #available(iOS 16.4, *) {
                 view.isInspectable = true

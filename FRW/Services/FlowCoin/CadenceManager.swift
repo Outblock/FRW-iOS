@@ -280,6 +280,11 @@ extension CadenceModel {
         let batchBridgeNFTFromEvm: String?
         /// send Not Flow Token to Evm
         let bridgeTokensToEvmAddress: String?
+        /// evm to other flow
+        let bridgeTokensFromEvmToFlow: String?
+        /// nft flow to any evm
+        let bridgeNFTToEvmAddress: String?
+        let bridgeNFTFromEvmToFlow: String?
     }
 }
 

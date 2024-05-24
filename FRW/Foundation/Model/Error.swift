@@ -66,6 +66,7 @@ enum iCloudBackupError: Error {
 enum NFTError: Error {
     case noCollectionInfo
     case invalidTokenId
+    case sendInvalidAddress
 }
 
 enum StakingError: Error {

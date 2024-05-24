@@ -321,7 +321,7 @@ extension WalletSendAmountViewModel {
                 
                 let fromAccountType = WalletManager.shared.isSelectedEVMAccount ? AccountType.coa : AccountType.flow
                 var toAccountType = targetAddress.isEVMAddress ? AccountType.coa : AccountType.flow
-                if targetAddress != EVMAccountManager.shared.accounts.first?.address {
+                if toAccountType == .coa && targetAddress != EVMAccountManager.shared.accounts.first?.address {
                     toAccountType = .eoa
                 }
                 
@@ -333,7 +333,19 @@ extension WalletSendAmountViewModel {
                 case (.flow, .coa):
                     txId = try await FlowNetwork.fundCoa(amount: amount)
                 case (.coa, .flow):
-                    txId = try await FlowNetwork.withdrawCoa(amount: amount)
+                    if targetAddress == address {
+                        txId = try await FlowNetwork.withdrawCoa(amount: amount)
+                    }else {
+                        guard let contractAddress = token.getAddress(),
+                                let bigUIntValue = Utilities.parseToBigUInt(amount.description, units: .ether),
+                              let amountEVM = Decimal(string: bigUIntValue.description) else {
+                            failureBlock()
+                            return
+                        }
+                        
+                        txId = try await FlowNetwork.bridgeTokensFromEvmToFlow(contractAddress: contractAddress, contractName: token.name, amount: amountEVM, receiver: targetAddress)
+                    }
+                    
                 case (.coa, .coa):
                     txId = try await FlowNetwork.sendTransaction(amount: amount.description, data: nil, toAddress: targetAddress.stripHexPrefix(), gas: gas)
                 case (.flow, .eoa):
@@ -341,7 +353,15 @@ extension WalletSendAmountViewModel {
                         txId = try await FlowNetwork.sendFlowToEvm(evmAddress: targetAddress.stripHexPrefix(), amount: amount, gas: gas)
                     }
                     else {
-//                        txid =  try await FlowNetwork
+                        let erc20Contract = try await FlowProvider.Web3.defaultContract()
+                        guard let contractAddress = token.getAddress(), 
+                                let EVMAddress = token.evmAddress,
+                              let data = erc20Contract?.contract.method("transfer", parameters: [targetAddress, Utilities.parseToBigUInt(amount.description, units: .ether)!], extraData: nil)
+                        else {
+                            failureBlock()
+                            return
+                        }
+                        txId =  try await FlowNetwork.sendNoFlowTokenToEvm(amount: amount, contractAddress:contractAddress , contractName: token.contractName, contractEVMAddress: EVMAddress.stripHexPrefix(), data: data, gas: gas)
                     }
                     
                 case (.coa,.eoa):
