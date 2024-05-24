@@ -1125,10 +1125,10 @@ extension FlowNetwork {
         ])
     }
     
-    static func bridgeTokensFromEvmToFlow(contractAddress: String,contractName: String, amount: Decimal, receiver: String) async throws -> Flow.ID {
+    static func bridgeTokensFromEvmToFlow(contractAddress: String,contractName: String, amount: BigUInt, receiver: String) async throws -> Flow.ID {
         let originCadence = CadenceManager.shared.current.bridge?.bridgeTokensFromEvmToFlow?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
-        let amountValue = Flow.Cadence.FValue.ufix64(amount)
+        let amountValue = Flow.Cadence.FValue.uint256(amount)
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
             .address(Flow.Address(hex: contractAddress)),
             .string(contractName),
