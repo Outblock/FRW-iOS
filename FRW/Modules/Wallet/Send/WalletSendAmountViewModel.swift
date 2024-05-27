@@ -313,7 +313,7 @@ extension WalletSendAmountViewModel {
         saveToRecentLlist()
         
         isSending = true
-        let gas: UInt64 = 100000
+        let gas: UInt64 = WalletManager.defaultGas
         Task {
             do {
                 var txId: Flow.ID?

@@ -133,7 +133,7 @@ class NFTTransferViewModel: ObservableObject {
                         throw NFTError.sendInvalidAddress
                     }
                     
-                    tid = try await FlowNetwork.bridgeNFTToAnyEVM(nftContractAddress: nftAddress, nftContractName: nftName, id: nftId, contractEVMAddress: evmContractAddress.stripHexPrefix(), data: data, gas: 100000)
+                    tid = try await FlowNetwork.bridgeNFTToAnyEVM(nftContractAddress: nftAddress, nftContractName: nftName, id: nftId, contractEVMAddress: evmContractAddress.stripHexPrefix(), data: data, gas: WalletManager.defaultGas)
                 case (.coa, .flow):
                     let nftId = nft.response.id
                     guard let nftAddress = self.nft.collection?.address, let nftName = nft.collection?.contractName
@@ -166,7 +166,7 @@ class NFTTransferViewModel: ObservableObject {
                     }
                     log.debug("[NFT] nftID: \(nftId)")
                     log.debug("[NFT] data:\(data.hexString)")
-                    tid = try await FlowNetwork.sendTransaction(amount: "0", data: data, toAddress: evmContractAddress.stripHexPrefix(), gas: 100000)
+                    tid = try await FlowNetwork.sendTransaction(amount: "0", data: data, toAddress: evmContractAddress.stripHexPrefix(), gas: WalletManager.defaultGas)
                     log.debug("[NFT] tix:\(String(describing: tid))")
                 default:
                     failedBlock()
