@@ -41,6 +41,7 @@ extension LocalUserDefaults {
         case freeGas
         case selectedEVMAccount
         case userAddressOfDeletedApp
+        case walletAccount
     }
 
     enum FlowNetworkType: String, CaseIterable {
@@ -216,6 +217,7 @@ class LocalUserDefaults: ObservableObject {
     @AppStorage(Keys.onBoardingShown.rawValue) var onBoardingShown: Bool = false
     @AppStorage(Keys.multiAccountUpgradeFlag.rawValue) var multiAccountUpgradeFlag: Bool = false
     
+    
     var loginUIDList: [String] {
         set {
             UserDefaults.standard.setValue(newValue, forKey: Keys.loginUIDList.rawValue)
@@ -269,6 +271,24 @@ class LocalUserDefaults: ObservableObject {
     }
     
     @AppStorage(Keys.switchProfileTipsFlag.rawValue) var switchProfileTipsFlag: Bool = false
+    
+    var walletAccount: [String: [String: String]]? {
+        set {
+            if let data = try? JSONEncoder().encode(newValue) {
+                UserDefaults.standard.set(data, forKey: Keys.walletAccount.rawValue)
+            } else {
+                UserDefaults.standard.removeObject(forKey: Keys.walletAccount.rawValue)
+            }
+        }
+        get {
+            if let data = UserDefaults.standard.data(forKey: Keys.walletAccount.rawValue), 
+                let model = try? JSONDecoder().decode([String: [String: String]].self, from: data) {
+                return model
+            } else {
+                return nil
+            }
+        }
+    }
 }
 
 extension LocalUserDefaults {

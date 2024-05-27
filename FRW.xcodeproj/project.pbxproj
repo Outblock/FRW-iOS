@@ -1108,6 +1108,8 @@
 		4EB398022B4CDB7D00704F8A /* DangerousTipSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB398012B4CDB7D00704F8A /* DangerousTipSheetView.swift */; };
 		4EB398032B4CDF5B00704F8A /* DangerousTipSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB398012B4CDB7D00704F8A /* DangerousTipSheetView.swift */; };
 		4EB60F90286825960025DD72 /* ContextMenuPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB60F8E286825960025DD72 /* ContextMenuPreview.swift */; };
+		4EB8223C2C040FFE0014E73D /* AccountSideCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB8223B2C040FFE0014E73D /* AccountSideCell.swift */; };
+		4EB8223D2C040FFE0014E73D /* AccountSideCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB8223B2C040FFE0014E73D /* AccountSideCell.swift */; };
 		4EB9A7C02AE9EF53004DA67F /* AccountKeyRevokeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB9A7BF2AE9EF53004DA67F /* AccountKeyRevokeView.swift */; };
 		4EB9A7C12AE9EF53004DA67F /* AccountKeyRevokeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB9A7BF2AE9EF53004DA67F /* AccountKeyRevokeView.swift */; };
 		4EBDF2B92BFB3A9700E56968 /* FlowModel+NFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBDF2B82BFB3A9700E56968 /* FlowModel+NFT.swift */; };
@@ -1175,6 +1177,12 @@
 		4ED40AF72B1A190B00C25EBF /* Loading_animation.json in Resources */ = {isa = PBXBuildFile; fileRef = 4ED40AF62B1A190B00C25EBF /* Loading_animation.json */; };
 		4ED40AF82B1A190B00C25EBF /* Loading_animation.json in Resources */ = {isa = PBXBuildFile; fileRef = 4ED40AF62B1A190B00C25EBF /* Loading_animation.json */; };
 		4ED6DD10285A22A800105133 /* IrregularGradient in Frameworks */ = {isa = PBXBuildFile; productRef = 4ED6DD0F285A22A800105133 /* IrregularGradient */; };
+		4ED9C5BA2C0464A9004276D1 /* NetworkMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED9C5B92C0464A9004276D1 /* NetworkMenuItem.swift */; };
+		4ED9C5BB2C0464A9004276D1 /* NetworkMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED9C5B92C0464A9004276D1 /* NetworkMenuItem.swift */; };
+		4ED9C5BF2C0487D1004276D1 /* FloatingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED9C5BC2C0487D1004276D1 /* FloatingButton.swift */; };
+		4ED9C5C02C0487D1004276D1 /* FloatingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED9C5BC2C0487D1004276D1 /* FloatingButton.swift */; };
+		4ED9C5C12C0487D1004276D1 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED9C5BD2C0487D1004276D1 /* Utils.swift */; };
+		4ED9C5C22C0487D1004276D1 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED9C5BD2C0487D1004276D1 /* Utils.swift */; };
 		4EDDAA24285F5DC600EB8AF9 /* NFTAddCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDDAA22285F5DC600EB8AF9 /* NFTAddCollectionView.swift */; };
 		4EE6FA892B19677B006A827B /* SyncConfirmViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE6FA882B19677B006A827B /* SyncConfirmViewModel.swift */; };
 		4EE6FA8A2B19677B006A827B /* SyncConfirmViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE6FA882B19677B006A827B /* SyncConfirmViewModel.swift */; };
@@ -2289,6 +2297,7 @@
 		4EB397FE2B4C073B00704F8A /* RestoreMultiInputMnemonicViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreMultiInputMnemonicViewModel.swift; sourceTree = "<group>"; };
 		4EB398012B4CDB7D00704F8A /* DangerousTipSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DangerousTipSheetView.swift; sourceTree = "<group>"; };
 		4EB60F8E286825960025DD72 /* ContextMenuPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuPreview.swift; sourceTree = "<group>"; };
+		4EB8223B2C040FFE0014E73D /* AccountSideCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSideCell.swift; sourceTree = "<group>"; };
 		4EB9A7BF2AE9EF53004DA67F /* AccountKeyRevokeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountKeyRevokeView.swift; sourceTree = "<group>"; };
 		4EBDF2B82BFB3A9700E56968 /* FlowModel+NFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FlowModel+NFT.swift"; sourceTree = "<group>"; };
 		4EBDF2BB2BFB7B4A00E56968 /* WalletAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletAccount.swift; sourceTree = "<group>"; };
@@ -2323,6 +2332,9 @@
 		4ED2D7752850DDBE00B9A572 /* ColorsFromImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorsFromImage.swift; sourceTree = "<group>"; };
 		4ED40ADA2B1A0B4700C25EBF /* SyncStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncStatusView.swift; sourceTree = "<group>"; };
 		4ED40AF62B1A190B00C25EBF /* Loading_animation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Loading_animation.json; sourceTree = "<group>"; };
+		4ED9C5B92C0464A9004276D1 /* NetworkMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMenuItem.swift; sourceTree = "<group>"; };
+		4ED9C5BC2C0487D1004276D1 /* FloatingButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatingButton.swift; sourceTree = "<group>"; };
+		4ED9C5BD2C0487D1004276D1 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		4EDDAA22285F5DC600EB8AF9 /* NFTAddCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTAddCollectionView.swift; sourceTree = "<group>"; };
 		4EE6AC582B1D5DD60051EC5C /* Flow-Wallet-Core */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Flow-Wallet-Core"; path = "../Flow-Wallet-Core"; sourceTree = "<group>"; };
 		4EE6FA882B19677B006A827B /* SyncConfirmViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncConfirmViewModel.swift; sourceTree = "<group>"; };
@@ -4761,6 +4773,15 @@
 			path = Helper;
 			sourceTree = "<group>";
 		};
+		4ED9C5BE2C0487D1004276D1 /* FloatingButton */ = {
+			isa = PBXGroup;
+			children = (
+				4ED9C5BC2C0487D1004276D1 /* FloatingButton.swift */,
+				4ED9C5BD2C0487D1004276D1 /* Utils.swift */,
+			);
+			path = FloatingButton;
+			sourceTree = "<group>";
+		};
 		4EE8E4932834DC5C00DFEF59 /* NFTModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -4862,6 +4883,8 @@
 			children = (
 				6A12173729659F5E00BA0C3B /* SideMenuView.swift */,
 				4E6ED48D2BA96DBB009906A5 /* ChildAccountSideCell.swift */,
+				4EB8223B2C040FFE0014E73D /* AccountSideCell.swift */,
+				4ED9C5B92C0464A9004276D1 /* NetworkMenuItem.swift */,
 			);
 			path = SideMenu;
 			sourceTree = "<group>";
@@ -5429,6 +5452,7 @@
 		6ABAE52D2836297C00C97AE2 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				4ED9C5BE2C0487D1004276D1 /* FloatingButton */,
 				6A63F9ED28C9C48B00FE96C0 /* SwiftUIPullToRefresh */,
 				158832F928943D1C00142B35 /* SPQRCode */,
 				6A6BD9DA287D5057009FA262 /* ProgressHUD */,
@@ -6323,6 +6347,7 @@
 				15DC20E527819C56000B187A /* VAccordion.swift in Sources */,
 				6A18DDFD2A3B10F5003232AB /* ChildAccountManager.swift in Sources */,
 				4E9D8F0C2BF5E3AD00E11CC7 /* NetworkProvider.swift in Sources */,
+				4ED9C5C22C0487D1004276D1 /* Utils.swift in Sources */,
 				15DC21DB27819C56000B187A /* StateColorsAndOpacities_EP_D.swift in Sources */,
 				15DC21ED27819C57000B187A /* StateColors_OOID.swift in Sources */,
 				4E63A57C2B8D6A4100BBD15F /* MoveTokenView.swift in Sources */,
@@ -6464,6 +6489,7 @@
 				6A43BCFF2872D19C003E9D16 /* Date.swift in Sources */,
 				4EB2C6CC2B4A529500EB899C /* RestoreMultiConnectViewModel.swift in Sources */,
 				15F2444928CB370D00C1090E /* ShrinkingCapsule.swift in Sources */,
+				4ED9C5BB2C0464A9004276D1 /* NetworkMenuItem.swift in Sources */,
 				15DC21A927819C56000B187A /* UIKitTextFieldCoordinator.swift in Sources */,
 				6AF4A6C228D46F1D00B12FAB /* ClaimDomainViewModel.swift in Sources */,
 				15F2444B28CB370D00C1090E /* CapusuleGroupView.swift in Sources */,
@@ -6531,6 +6557,7 @@
 				4E9DCE472B50E8A0005DE911 /* InstabugConfig.swift in Sources */,
 				6A29114A28CB37AF003295BD /* TransactionListBaseHandler.swift in Sources */,
 				15DC216927819C56000B187A /* VHalfModalNavigationViewCloseButton.swift in Sources */,
+				4ED9C5C02C0487D1004276D1 /* FloatingButton.swift in Sources */,
 				4EB2C6AC2B49017000EB899C /* BackupListViewModel.swift in Sources */,
 				15DC20D727819C56000B187A /* VPlainButtonState.swift in Sources */,
 				1575A74428B29D2700ADC513 /* SVGWebView.swift in Sources */,
@@ -6848,6 +6875,7 @@
 				15DC207727819C56000B187A /* VText.swift in Sources */,
 				4E9059302B1792F10029FC66 /* SyncAddDeviceView.swift in Sources */,
 				6A164F642845F1CB0026B31E /* UIView+Extensions.swift in Sources */,
+				4EB8223D2C040FFE0014E73D /* AccountSideCell.swift in Sources */,
 				15DC1D5D27816F46000B187A /* MoyaAsync.swift in Sources */,
 				15DC20F727819C56000B187A /* VBaseListLayoutType.swift in Sources */,
 				6A8FA4A6285B192900EE5BE3 /* SnapAlignment+Convert.swift in Sources */,
@@ -7054,6 +7082,7 @@
 				15C58AC12868A4EE00BD4FC6 /* VAccordion.swift in Sources */,
 				6A18DDFC2A3B10F5003232AB /* ChildAccountManager.swift in Sources */,
 				4E9D8F0B2BF5E3AD00E11CC7 /* NetworkProvider.swift in Sources */,
+				4ED9C5C12C0487D1004276D1 /* Utils.swift in Sources */,
 				15C58AC22868A4EE00BD4FC6 /* StateColorsAndOpacities_EP_D.swift in Sources */,
 				15C58AC32868A4EE00BD4FC6 /* StateColors_OOID.swift in Sources */,
 				4E63A57B2B8D6A4100BBD15F /* MoveTokenView.swift in Sources */,
@@ -7195,6 +7224,7 @@
 				15F2444828CB370D00C1090E /* ShrinkingCapsule.swift in Sources */,
 				4EB2C6CB2B4A529500EB899C /* RestoreMultiConnectViewModel.swift in Sources */,
 				15C58B072868A4EE00BD4FC6 /* UIKitTextFieldCoordinator.swift in Sources */,
+				4ED9C5BA2C0464A9004276D1 /* NetworkMenuItem.swift in Sources */,
 				6AF4A6C128D46F1D00B12FAB /* ClaimDomainViewModel.swift in Sources */,
 				15F2444A28CB370D00C1090E /* CapusuleGroupView.swift in Sources */,
 				15C58B082868A4EE00BD4FC6 /* InputMnemonicView.swift in Sources */,
@@ -7262,6 +7292,7 @@
 				15C58B2F2868A4EE00BD4FC6 /* VHalfModalNavigationViewCloseButton.swift in Sources */,
 				15C58B302868A4EE00BD4FC6 /* VPlainButtonState.swift in Sources */,
 				4EB2C6AB2B49017000EB899C /* BackupListViewModel.swift in Sources */,
+				4ED9C5BF2C0487D1004276D1 /* FloatingButton.swift in Sources */,
 				1575A74328B29D2700ADC513 /* SVGWebView.swift in Sources */,
 				15C58B312868A4EE00BD4FC6 /* TextFieldStyle.swift in Sources */,
 				15C58B322868A4EE00BD4FC6 /* ManualBackupView.swift in Sources */,
@@ -7579,6 +7610,7 @@
 				4E90592F2B1792F10029FC66 /* SyncAddDeviceView.swift in Sources */,
 				15C58BDF2868A4EE00BD4FC6 /* UIView+Extensions.swift in Sources */,
 				15C58BE12868A4EE00BD4FC6 /* MoyaAsync.swift in Sources */,
+				4EB8223C2C040FFE0014E73D /* AccountSideCell.swift in Sources */,
 				15C58BE22868A4EE00BD4FC6 /* VBaseListLayoutType.swift in Sources */,
 				15C58BE32868A4EE00BD4FC6 /* SnapAlignment+Convert.swift in Sources */,
 				15C58BE42868A4EE00BD4FC6 /* VBaseListElement.swift in Sources */,

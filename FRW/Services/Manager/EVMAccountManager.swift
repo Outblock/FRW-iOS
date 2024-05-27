@@ -62,11 +62,11 @@ class EVMAccountManager: ObservableObject {
                 }
             }.store(in: &cancelSets)
         
-        NotificationCenter.default.publisher(for: .networkChange)
-            .receive(on: DispatchQueue.main)
-            .sink { _ in
-                self.clean()
-            }.store(in: &cancelSets)
+//        NotificationCenter.default.publisher(for: .networkChange)
+//            .receive(on: DispatchQueue.main)
+//            .sink { _ in
+//                self.clean()
+//            }.store(in: &cancelSets)
         
         NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
         
@@ -120,6 +120,13 @@ extension EVMAccountManager {
     }
     
     func refreshSync() async {
+        if (CadenceManager.shared.current.evm?.createCoaEmpty) == nil || !EVMEnable {
+            DispatchQueue.main.async {
+                self.accounts = []
+                self.selectedAccount = nil
+            }
+            return
+        }
         do {
             let address = try await fetchAddress()
             if let address = address, !address.isEmpty {

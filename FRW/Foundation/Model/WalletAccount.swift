@@ -72,7 +72,7 @@ struct WalletAccount {
         func icon(size: CGFloat = 24) -> some View {
             return VStack {
                 Text(self.rawValue)
-                    .font(.system(size: size - 6))
+                    .font(.system(size: size/2 + 2))
             }
             .frame(width: size, height: size)
             .background(self.color)
@@ -81,28 +81,50 @@ struct WalletAccount {
     }
     
     var emojiMap: [String: Emoji] = [:]
+    var storedAccount: [String: [String: String]]
     
-    private func currentKey() -> String {
+    private var key: String {
         guard let userId = UserManager.shared.activatedUID else {
-            return "empty"
+            return "empty-emtpy"
         }
         let network = LocalUserDefaults.shared.flowNetwork
-        return "\(userId)_\(network)"
+        return "\(userId)-\(network.rawValue)"
     }
+
+    
+    init() {
+        self.storedAccount = LocalUserDefaults.shared.walletAccount ?? [:]
+    }
+    
+    
+    private func saveCache() {
+        LocalUserDefaults.shared.walletAccount = self.storedAccount
+    }
+    
 }
 
 extension WalletAccount {
     
     mutating func readInfo(at address: String) -> Emoji {
         
-        if let emoji = emojiMap[address] {
-            return emoji
+        if var list = self.storedAccount[key] {
+            if let emoji = list[address] {
+                return Emoji.init(rawValue: emoji) ?? .avocado
+            }else {
+                let existList = list.values.map { Emoji.init(rawValue: $0) ?? .monster }
+                let nEmoji = generalInfo(count: 1, excluded: existList)?.first ?? .monster
+                list[address] = nEmoji.rawValue
+                self.storedAccount[key] = list
+                saveCache()
+                return nEmoji
+            }
+        }else {
+            let nEmoji = generalInfo(count: 1, excluded: [])?.first ?? .monster
+            let list:[String: String] = [key: nEmoji.rawValue]
+            self.storedAccount[key] = list
+            saveCache()
+            return nEmoji
         }
-        guard let emojiList = generalInfo(count: 2, excluded: []) else {
-            return Emoji.monster
-        }
-        self.emojiMap[address] = emojiList.first!
-        return emojiList.first!
     }
     
     private func generalInfo(count: Int, excluded:[Emoji]) -> [WalletAccount.Emoji]? {
@@ -129,3 +151,5 @@ extension Array where Element: Equatable {
         return selectedElements
     }
 }
+
+

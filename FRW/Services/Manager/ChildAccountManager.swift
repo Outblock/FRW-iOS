@@ -132,7 +132,7 @@ class ChildAccountManager: ObservableObject {
         
         NotificationCenter.default.publisher(for: .networkChange)
             .receive(on: DispatchQueue.main)
-            .sink { _ in
+            .sink { name in
                 self.clean()
             }.store(in: &cancelSets)
         

@@ -83,3 +83,5 @@ struct ChildAccountSideCell: View {
         LinearGradient(colors: [Color(hex: "#00FF38").opacity(0.08), Color(hex: "#00FF38").opacity(0)], startPoint: .leading, endPoint: .trailing)
     }
 }
+
+
