@@ -153,8 +153,13 @@ extension FlowNetwork {
             throw NFTError.invalidTokenId
         }
         
-        let nftTransfer = CadenceManager.shared.current.domain?.sendInboxNFT?.toFunc() ?? ""
-        let nbaNFTTransfer = CadenceManager.shared.current.collection?.sendNbaNFT?.toFunc() ?? ""
+        var nftTransfer = CadenceManager.shared.current.domain?.sendInboxNFT?.toFunc() ?? ""
+        var nbaNFTTransfer = CadenceManager.shared.current.collection?.sendNbaNFT?.toFunc() ?? ""
+        let result = CadenceManager.shared.current.version?.compareVersion(to: "1.0.0")
+        if result != .orderedAscending {
+            nftTransfer = CadenceManager.shared.current.collection?.sendNFT?.toFunc() ?? ""
+        }
+        
         let cadenceString = collection.formatCadence(script: nft.isNBA ? nbaNFTTransfer : nftTransfer)
         let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
@@ -1051,7 +1056,7 @@ extension FlowNetwork {
             .ufix64(amount),
         ])
     }
-    
+    /// coa -> eoa
     static func sendTransaction(amount: String, data: Data?, toAddress: String, gas: UInt64) async throws -> Flow.ID {
         
         guard let amountParse = Decimal(string: amount) else {
@@ -1150,7 +1155,7 @@ extension FlowNetwork {
         ])
     }
     
-    static func bridgeNFTToAnyEVM(nftContractAddress: String, nftContractName: String, id: String, tokenContractName: String, contractEVMAddress:String, data: Data, gas: UInt64) async throws -> Flow.ID {
+    static func bridgeNFTToAnyEVM(nftContractAddress: String, nftContractName: String, id: String, contractEVMAddress:String, data: Data, gas: UInt64) async throws -> Flow.ID {
         let originCadence = CadenceManager.shared.current.bridge?.bridgeNFTToEvmAddress?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         guard let nftId = UInt64(id) else {
@@ -1227,5 +1232,11 @@ extension Data {
 extension UInt8 {
     var cadenceValue: Flow.Cadence.FValue {
         Flow.Cadence.FValue.uint8(self)
+    }
+}
+
+extension String {
+    func compareVersion(to version: String) -> ComparisonResult {
+        return self.compare(version, options: .numeric)
     }
 }

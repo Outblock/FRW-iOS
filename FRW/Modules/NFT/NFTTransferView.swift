@@ -10,6 +10,7 @@ import Kingfisher
 import Flow
 import web3swift
 import Web3Core
+import BigInt
 
 class NFTTransferViewModel: ObservableObject {
     @Published var nft: NFTModel
@@ -28,6 +29,18 @@ class NFTTransferViewModel: ObservableObject {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+    }
+    
+    var fromTargetContent: Contact {
+        if EVMAccountManager.shared.selectedAccount == nil {
+            return UserManager.shared.userInfo!.toContactWithCurrentUserAddress()
+        }else {
+            guard let account = EVMAccountManager.shared.accounts.first else {
+                return UserManager.shared.userInfo!.toContactWithCurrentUserAddress()
+            }
+            let contact = Contact(address: account.showAddress, avatar: account.showIcon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName)
+            return contact
+        }
     }
     
     func checkNFTReachable() {
@@ -98,16 +111,20 @@ class NFTTransferViewModel: ObservableObject {
                     tid = try await FlowNetwork.transferNFT(to: Flow.Address(hex: toAddress), nft: nft)
                 case (.flow, .eoa):
                     log.debug("[NFT] flow to eoa send")
-                    let erc20Contract = try await FlowProvider.Web3.defaultContract()
+                    let erc721 = try await FlowProvider.Web3.erc721NFTContract()
                     let nftId = nft.response.id
+                    
                     guard let nftAddress = self.nft.collection?.address, let nftName = nft.collection?.contractName,
-                          let collectionName = nft.collection?.contractName,
-                          let data = erc20Contract?.contract.method("transfer", parameters: [toAddress, Utilities.parseToBigUInt(String(nftId), units: .ether)!], extraData: nil)
+                          let coaAddress = EVMAccountManager.shared.accounts.first?.showAddress,
+                          let evmContractAddress = await NFTCollectionConfig.share.get(from: nftAddress)?.evmAddress
                     else {
                         throw NFTError.sendInvalidAddress
                     }
+                    guard let data = erc721?.contract.method("safeTransferFrom", parameters: [coaAddress,toAddress, nftId], extraData: nil) else {
+                        throw NFTError.sendInvalidAddress
+                    }
                     
-                    tid = try await FlowNetwork.bridgeNFTToAnyEVM(nftContractAddress: nftAddress, nftContractName: nftName, id: nftId, tokenContractName: collectionName, contractEVMAddress: toAddress.stripHexPrefix(), data: data, gas: 100000)
+                    tid = try await FlowNetwork.bridgeNFTToAnyEVM(nftContractAddress: nftAddress, nftContractName: nftName, id: nftId, contractEVMAddress: evmContractAddress.stripHexPrefix(), data: data, gas: 100000)
                 case (.coa, .flow):
                     if fromAddress == toAddress {
                         
@@ -115,12 +132,27 @@ class NFTTransferViewModel: ObservableObject {
                         
                     }
                     let nftId = nft.response.id
-                    guard let nftAddress = self.nft.collection?.address, let nftName = nft.collection?.contractName,
-                          let collectionName = nft.collection?.contractName
+                    guard let nftAddress = self.nft.collection?.address, let nftName = nft.collection?.contractName
                     else {
                         throw NFTError.sendInvalidAddress
                     }
                     tid = try await FlowNetwork.bridgeNFTFromEVMToAnyFlow(nftContractAddress: nftAddress, nftContractName: nftName, id: nftId, receiver: toAddress)
+                case (.coa, .eoa):
+                    // sendTransaction
+                    
+                    let erc721 = try await FlowProvider.Web3.erc721NFTContract()
+                    let nftId = nft.response.id
+                    guard let coaAddress = EVMAccountManager.shared.accounts.first?.showAddress,
+                          let nftAddress = self.nft.collection?.address.addHexPrefix(),
+                          let evmContractAddress = await NFTCollectionConfig.share.get(from: nftAddress)?.evmAddress
+                    else {
+                        throw NFTError.sendInvalidAddress
+                    }
+                    guard let data = erc721?.contract.method("safeTransferFrom", parameters: [coaAddress,toAddress, nftId], extraData: nil) else {
+                        throw NFTError.sendInvalidAddress
+                    }
+
+                    tid = try await FlowNetwork.sendTransaction(amount: "0", data: data, toAddress: evmContractAddress.stripHexPrefix(), gas: 100000)
                     
                 default:
                     failedBlock()
@@ -197,7 +229,7 @@ struct NFTTransferView: View {
 
     var fromToView: some View {
         HStack(spacing: 16) {
-            contactView(contact: UserManager.shared.userInfo!.toContactWithCurrentUserAddress())
+            contactView(contact: vm.fromTargetContent)
             Spacer()
             contactView(contact: vm.targetContact)
         }

@@ -26,5 +26,12 @@ struct FlowProvider {
             let web3 = try await FlowProvider.Web3.default()
             return web3?.contract(Web3Utils.erc20ABI)
         }
+        
+        /// for nft
+        static func erc721NFTContract() async throws -> web3swift.Web3.Contract? {
+            let web3 = try await FlowProvider.Web3.default()
+            let erc721Contract = web3?.contract(Web3Utils.erc721ABI)
+            return erc721Contract
+        }
     }
 }
