@@ -109,6 +109,15 @@ class NFTTransferViewModel: ObservableObject {
                 switch (fromAccountType, toAccountType) {
                 case (.flow, .flow):
                     tid = try await FlowNetwork.transferNFT(to: Flow.Address(hex: toAddress), nft: nft)
+                case (.flow, .coa):
+                    let nftId = nft.response.id
+                    guard let nftAddress = self.nft.collection?.address, let nftName = self.nft.collection?.contractName,
+                        let IdInt = UInt64(nftId)
+                    else {
+                        throw NFTError.sendInvalidAddress
+                    }
+                    tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: nftAddress, contractName: nftName, ids: [IdInt], fromEvm: false)
+                    log.error("========")
                 case (.flow, .eoa):
                     log.debug("[NFT] flow to eoa send")
                     let erc721 = try await FlowProvider.Web3.erc721NFTContract()
@@ -126,17 +135,21 @@ class NFTTransferViewModel: ObservableObject {
                     
                     tid = try await FlowNetwork.bridgeNFTToAnyEVM(nftContractAddress: nftAddress, nftContractName: nftName, id: nftId, contractEVMAddress: evmContractAddress.stripHexPrefix(), data: data, gas: 100000)
                 case (.coa, .flow):
-                    if fromAddress == toAddress {
-                        
-                    }else {
-                        
-                    }
                     let nftId = nft.response.id
                     guard let nftAddress = self.nft.collection?.address, let nftName = nft.collection?.contractName
                     else {
                         throw NFTError.sendInvalidAddress
                     }
-                    tid = try await FlowNetwork.bridgeNFTFromEVMToAnyFlow(nftContractAddress: nftAddress, nftContractName: nftName, id: nftId, receiver: toAddress)
+                    if fromAddress == toAddress {
+                        guard let IdInt = UInt64(nftId) else {
+                            throw NFTError.sendInvalidAddress
+                        }
+                        tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: nftAddress, contractName: nftName, ids: [IdInt], fromEvm: false)
+                    }else {
+                        tid = try await FlowNetwork.bridgeNFTFromEVMToAnyFlow(nftContractAddress: nftAddress, nftContractName: nftName, id: nftId, receiver: toAddress)
+                    }
+                    
+                    
                 case (.coa, .eoa):
                     // sendTransaction
                     
@@ -151,15 +164,14 @@ class NFTTransferViewModel: ObservableObject {
                     guard let data = erc721?.contract.method("safeTransferFrom", parameters: [coaAddress,toAddress, nftId], extraData: nil) else {
                         throw NFTError.sendInvalidAddress
                     }
-
+                    log.debug("[NFT] nftID: \(nftId)")
+                    log.debug("[NFT] data:\(data.hexString)")
                     tid = try await FlowNetwork.sendTransaction(amount: "0", data: data, toAddress: evmContractAddress.stripHexPrefix(), gas: 100000)
-                    
+                    log.debug("[NFT] tix:\(String(describing: tid))")
                 default:
                     failedBlock()
                     return
                 }
-                
-                
                 
                 
                 let model = NFTTransferModel(nft: nft, target: self.targetContact, from: fromAddress)
