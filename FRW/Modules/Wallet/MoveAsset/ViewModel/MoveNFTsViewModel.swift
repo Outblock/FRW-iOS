@@ -36,8 +36,8 @@ class MoveNFTsViewModel: ObservableObject {
         buttonState = .loading
         Task {
             do {
-                let address = collection.maskAddress // "0x8920ffd3d8768daa"
-                let name = collection.maskContractName // "ExampleNFT"
+                let address = collection.maskAddress
+                let name = collection.maskContractName
                 let ids: [UInt64] = nfts.compactMap { nft in
                     if !nft.isSelected {
                         return nil
@@ -131,7 +131,13 @@ class MoveNFTsViewModel: ObservableObject {
                         self.selectedCollection = self.collectionList.first
                     }
                     if self.selectedCollection != nil {
-                        self.fetchNFTs()
+                        self.fetchFlowNFTs()
+                    }else {
+                        DispatchQueue.main.async {
+                            self.nfts = []
+                            self.isMock = false
+                            self.resetButtonState()
+                        }
                     }
                 }
             }

@@ -153,7 +153,7 @@ extension FlowNetwork {
             throw NFTError.invalidTokenId
         }
         
-        var nftTransfer = CadenceManager.shared.current.domain?.sendInboxNFT?.toFunc() ?? ""
+        var nftTransfer = CadenceManager.shared.current.collection?.sendNFT?.toFunc() ?? ""
         var nbaNFTTransfer = CadenceManager.shared.current.collection?.sendNbaNFT?.toFunc() ?? ""
         let result = CadenceManager.shared.current.version?.compareVersion(to: "1.0.0")
         if result != .orderedAscending {

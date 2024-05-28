@@ -28,7 +28,7 @@ class ScanHandler {
                     guard let token = WalletManager.shared.getToken(bySymbol: symbol) else {
                         return
                     }
-                    let contract = Contact(address: address, avatar: nil, contactName: "-", contactType: .none, domain: nil, id: -1, username: nil)
+                    let contract = Contact(address: address, avatar: nil, contactName: "-", contactType: .none, domain: nil, id: -1, username: nil, emoji: nil)
                     Router.route(to: RouteMap.Wallet.sendAmount(contract, token, isPush: false))
                 })
             case .ethWallet(let address):
@@ -39,7 +39,7 @@ class ScanHandler {
                     guard let token = WalletManager.shared.getToken(bySymbol: symbol) else {
                         return
                     }
-                    let contract = Contact(address: address, avatar: nil, contactName: "-", contactType: .none, domain: nil, id: -1, username: nil)
+                    let contract = Contact(address: address, avatar: nil, contactName: "-", contactType: .none, domain: nil, id: -1, username: nil, emoji: nil)
                     Router.route(to: RouteMap.Wallet.sendAmount(contract, token, isPush: false))
                 })
             default:
@@ -66,7 +66,7 @@ class ScanHandler {
                     guard let token = WalletManager.shared.getToken(bySymbol: symbol) else {
                         return
                     }
-                    let contract = Contact(address: address, avatar: nil, contactName: "-", contactType: .none, domain: nil, id: -1, username: nil)
+                    let contract = Contact(address: address, avatar: nil, contactName: "-", contactType: .none, domain: nil, id: -1, username: nil, emoji: nil)
                     Router.route(to: RouteMap.Wallet.sendAmount(contract, token, isPush: false))
                 })
             case let .text(text):

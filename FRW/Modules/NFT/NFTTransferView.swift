@@ -38,7 +38,8 @@ class NFTTransferViewModel: ObservableObject {
             guard let account = EVMAccountManager.shared.accounts.first else {
                 return UserManager.shared.userInfo!.toContactWithCurrentUserAddress()
             }
-            let contact = Contact(address: account.showAddress, avatar: account.showIcon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName)
+            let emoji = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
+            let contact = Contact(address: account.showAddress, avatar: nil, contactName: emoji.name, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName,emoji: emoji)
             return contact
         }
     }
@@ -265,7 +266,10 @@ struct NFTTransferView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 44, height: 44)
-                } else {
+                } else if let emoji = contact.emoji {
+                    emoji.icon(size: 44)
+                }
+                else {
                     Text(String((contact.contactName?.first ?? "A").uppercased()))
                         .foregroundColor(.LL.Primary.salmonPrimary)
                         .font(.inter(size: 24, weight: .semibold))

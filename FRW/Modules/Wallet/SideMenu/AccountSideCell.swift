@@ -104,15 +104,6 @@ struct AccountSideCell: View {
             }
             .padding(18)
             .frame(height: 82)
-//            .background {
-//                LinearGradient(colors: [
-//                    Color.Theme.Accent.green.opacity(0.08),
-//                    Color.Theme.Accent.green.opacity(0)
-//                ],
-//                               startPoint: .leading,
-//                               endPoint: .trailing)
-//                    .visibility(isSelected ? .visible : .gone)
-//            }
         }
     }
 }

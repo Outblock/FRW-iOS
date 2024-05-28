@@ -23,6 +23,10 @@ class SideMenuViewModel: ObservableObject {
     @Published var nftCount: Int = 0
     @Published var accountPlaceholders: [AccountPlaceholder] = []
     @Published var showLinkedAccount: Bool = false
+    @Published var isSwitchOpen = false
+    @Published var userInfoBackgroudColor = Color.LL.Neutrals.neutrals6
+    
+    var colorsMap: [String: Color] = [:]
     
     private var cancelSets = Set<AnyCancellable>()
     var currentAddress: String {
@@ -49,12 +53,36 @@ class SideMenuViewModel: ObservableObject {
                 guard let self = self else { return }
                 self.showLinkedAccount = !accounts.isEmpty
             }.store(in: &cancelSets)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(onToggle), name: .toggleSideMenu, object: nil)
+    }
+    
+    @objc func onToggle() {
+        isSwitchOpen = false
     }
     
     func scanAction() {
         NotificationCenter.default.post(name: .toggleSideMenu)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             ScanHandler.scan()
+        }
+    }
+    
+    func pickColor(from url: String) {
+        guard !url.isEmpty else {
+            userInfoBackgroudColor = Color.LL.Neutrals.neutrals6
+            return
+        }
+        if let color = colorsMap[url] {
+            userInfoBackgroudColor = color
+            return
+        }
+        Task {
+            let color = await ImageHelper.mostFrequentColor(from: url)
+            DispatchQueue.main.async {
+                self.colorsMap[url] = color
+                self.userInfoBackgroudColor = color
+            }
         }
     }
     
@@ -90,20 +118,17 @@ struct SideMenuView: View {
     @StateObject private var evmManager = EVMAccountManager.shared
     @AppStorage("isDeveloperMode") private var isDeveloperMode = false
     @State private var showSwitchUserAlert = false
-    @State private var isSwitchOpen = false
+    
     
     private let cPadding = 12.0
     
     var body: some View {
         GeometryReader { proxy in
             HStack(spacing: 0) {
-                
                 VStack {
-                    
                     cardView
                         .padding(.top, proxy.safeAreaInsets.top)
                         
-
                     ScrollView {
                         VStack {
                             enableEVMView
@@ -127,6 +152,7 @@ struct SideMenuView: View {
                     .frame(width: SideOffset)
                     .frame(maxHeight: .infinity)
             }
+            
         }
     }
     
@@ -138,6 +164,9 @@ struct SideMenuView: View {
                         Image("placeholder")
                             .resizable()
                     }
+                    .onSuccess({ _ in
+                        vm.pickColor(from: um.userInfo?.avatar.convertedAvatarString() ?? "")
+                    })
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 48, height: 48)
@@ -164,25 +193,16 @@ struct SideMenuView: View {
         .padding(.horizontal, 18)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background {
-            Rectangle()
-                .foregroundColor(.clear)
-              
-                .background(
-                    Color.LL.Neutrals.neutrals6
-                )
-                .padding(.top, 24)
-                .cornerRadius(12)
-                .clipped()
             
-//            LinearGradient(
-//                stops: [
-//                    Gradient.Stop(color: .white.opacity(0.64), location: 0.00),
-//                    Gradient.Stop(color: Color.Theme.Accent.yellow.opacity(0.64), location: 1.00),
-//                ],
-//                startPoint: UnitPoint(x: 0.5, y: 0),
-//                endPoint: UnitPoint(x: 0.5, y: 1)
-//            )
-//            .cornerRadius(12)
+            LinearGradient(
+                stops: [
+                    Gradient.Stop(color: vm.userInfoBackgroudColor.opacity(00), location: 0.00),
+                    Gradient.Stop(color: vm.userInfoBackgroudColor.opacity(0.64), location: 1.00),
+                ],
+                startPoint: UnitPoint(x: 0.5, y: 0),
+                endPoint: UnitPoint(x: 0.5, y: 1)
+            )
+            .cornerRadius(12)
         }
     }
     
@@ -246,12 +266,14 @@ struct SideMenuView: View {
                     }
                 }
                 .background {
-                    LinearGradient(colors: [
-                        Color.Theme.Accent.green.opacity(0.08),
-                        Color.Theme.Accent.green.opacity(0)
-                    ],
-                    startPoint: .leading,
-                    endPoint: .trailing)
+                    LinearGradient(
+                        stops: [
+                            Gradient.Stop(color: Color.Theme.Accent.green.opacity(0), location: 0.00),
+                            Gradient.Stop(color: Color.Theme.Accent.green.opacity(0.08), location: 1.00),
+                        ],
+                        startPoint: UnitPoint(x: 1.11, y: 0.4),
+                        endPoint: UnitPoint(x: 0, y: 0.4)
+                    )
                 }
                 .cornerRadius(12)
                 .animation(.easeInOut, value: WalletManager.shared.getPrimaryWalletAddress())
@@ -323,17 +345,17 @@ struct SideMenuView: View {
                 Spacer()
                 
                 FloatingButton(mainButtonView:
-                    Text(LocalUserDefaults.shared.flowNetwork.rawValue)
-                        .font(.inter(size: 12))
-                        .foregroundStyle(LocalUserDefaults.shared.flowNetwork.color)
-                        .frame(height: 24)
-                        .padding(.horizontal, 8)
-                        .background(LocalUserDefaults.shared.flowNetwork.color.opacity(0.08))
-                        .cornerRadius(8),
+                        Text(LocalUserDefaults.shared.flowNetwork.rawValue.uppercasedFirstLetter())
+                            .font(.inter(size: 12))
+                            .foregroundStyle(LocalUserDefaults.shared.flowNetwork.color)
+                            .frame(height: 24)
+                            .padding(.horizontal, 8)
+                            .background(LocalUserDefaults.shared.flowNetwork.color.opacity(0.08))
+                            .cornerRadius(8),
                     buttons: [
                         VStack {
                             Button {
-                                isSwitchOpen.toggle()
+                                vm.isSwitchOpen.toggle()
                                 WalletManager.shared.changeNetwork(.mainnet)
                                 
                             } label: {
@@ -341,7 +363,7 @@ struct SideMenuView: View {
                             }
                             
                             Button {
-                                isSwitchOpen.toggle()
+                                vm.isSwitchOpen.toggle()
                                 WalletManager.shared.changeNetwork(.testnet)
                                 
                             } label: {
@@ -349,7 +371,7 @@ struct SideMenuView: View {
                             }
                             
                             Button {
-                                isSwitchOpen.toggle()
+                                vm.isSwitchOpen.toggle()
                                 WalletManager.shared.changeNetwork(.previewnet)
                                 
                             } label: {
@@ -360,17 +382,15 @@ struct SideMenuView: View {
                         .padding(16)
                         .background(Color.Theme.Background.pureWhite)
                         .cornerRadius([.topLeading, .topTrailing, .bottomLeading], 24)
-                        .shadow(color: Color.Theme.Background.pureWhite.opacity(0.08), radius: 6, x: 0, y: 4)
+                        .shadow(color: Color.Theme.Background.pureWhite.opacity(0.08), radius: 6, x: 0, y: 4),
                     ],
-                               isOpen: $isSwitchOpen
-                )
+                               isOpen: $vm.isSwitchOpen)
                     .straight()
                     .direction(.top)
                     .alignment(.center)
                     .initialOpacity(0)
                     .mainZStackAlignment(.trailing)
                     
-                
 //                Menu {
 //
 //

@@ -110,7 +110,15 @@ class NFTUIKitListViewController: UIViewController {
             .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
             .receive(on: DispatchQueue.main)
             .sink { _ in
-                log.debug("wallet info refresh triggerd a upload token action")
+                log.debug("[NFT] wallet info refresh triggerd a upload token action")
+                self.walletInfoDidChanged()
+            }.store(in: &cancelSets)
+        EVMAccountManager.shared.$selectedAccount
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { _ in
+                log.debug("[NFT] refresh NFTs when EVM account did change ")
                 self.walletInfoDidChanged()
             }.store(in: &cancelSets)
         listStyleHandler.refreshAction()
