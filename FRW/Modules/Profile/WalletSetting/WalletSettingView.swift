@@ -13,6 +13,7 @@ struct WalletSettingView: RouteableView {
         "wallet".localized.capitalized
     }
     
+    var address: String
     
     @StateObject private var vm = WalletSettingViewModel()
     @AppStorage(LocalUserDefaults.Keys.freeGas.rawValue) private var localGreeGas = true
@@ -24,51 +25,11 @@ struct WalletSettingView: RouteableView {
                 VStack(spacing: 16) {
                     VStack(spacing: 0) {
                         Button {
-                            if SecurityManager.shared.securityType == .none {
-                                Router.route(to: RouteMap.Profile.privateKey(true))
-                                return
-                            }
                             
-                            Task {
-                                let result = await SecurityManager.shared.inAppVerify()
-                                if result {
-                                    Router.route(to: RouteMap.Profile.privateKey(false))
-                                }
-                            }
                         } label: {
-                            ProfileSecureView.ItemCell(title: "private_key".localized, style: .arrow, isOn: false, toggleAction: nil)
-                        }
-                        
-                        Divider().foregroundColor(.LL.Neutrals.background)
-                        
-                        Button {
-                            if SecurityManager.shared.securityType == .none {
-                                Router.route(to: RouteMap.Profile.manualBackup(true))
-                                return
-                            }
-                            
-                            Task {
-                                let result = await SecurityManager.shared.inAppVerify()
-                                if result {
-                                    Router.route(to: RouteMap.Profile.manualBackup(false))
-                                }
-                            }
-                        } label: {
-                            ProfileSecureView.ItemCell(title: "recovery_phrase".localized, style: .arrow, isOn: false, toggleAction: nil)
-                                .contentShape(Rectangle())
-                        }
-                        
-                        
-                    }
-                    .padding(.horizontal, 16)
-                    .roundedBg()
-                    .visibility( UserManager.shared.userType == .phrase ? .visible : .gone)
-                    
-                    VStack(spacing: 0) {
-                        Button {
-                            Router.route(to: RouteMap.Profile.accountKeys)
-                        } label: {
-                            ProfileSecureView.ItemCell(title: "wallet_account_key".localized, style: .arrow, isOn: false, toggleAction: nil)
+                            ProfileSecureView.WalletInfoCell(emoji: emoji(), onEdit: {
+                                
+                            })
                         }
                     }
                     .frame(maxWidth: .infinity)
@@ -76,42 +37,100 @@ struct WalletSettingView: RouteableView {
                     .padding(.horizontal, 16)
                     .roundedBg()
                     
-                    VStack(spacing: 0) {
+                    VStack(spacing: 16) {
                         
-                        HStack {
-                            Text("free_gas_fee".localized)
-                                .font(.inter(size: 16, weight: .medium))
-                                .foregroundColor(Color.LL.Neutrals.text)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            Spacer()
-                            
-                            Toggle(isOn: $localGreeGas) {
+                        VStack(spacing: 0) {
+                            Button {
+                                if SecurityManager.shared.securityType == .none {
+                                    Router.route(to: RouteMap.Profile.privateKey(true))
+                                    return
+                                }
                                 
+                                Task {
+                                    let result = await SecurityManager.shared.inAppVerify()
+                                    if result {
+                                        Router.route(to: RouteMap.Profile.privateKey(false))
+                                    }
+                                }
+                            } label: {
+                                ProfileSecureView.ItemCell(title: "private_key".localized, style: .arrow, isOn: false, toggleAction: nil)
                             }
-                            .tint(.LL.Primary.salmonPrimary)
-                            .onChange(of: localGreeGas) { value in
+                            
+                            Divider().foregroundColor(.LL.Neutrals.background)
+                            
+                            Button {
+                                if SecurityManager.shared.securityType == .none {
+                                    Router.route(to: RouteMap.Profile.manualBackup(true))
+                                    return
+                                }
+                                
+                                Task {
+                                    let result = await SecurityManager.shared.inAppVerify()
+                                    if result {
+                                        Router.route(to: RouteMap.Profile.manualBackup(false))
+                                    }
+                                }
+                            } label: {
+                                ProfileSecureView.ItemCell(title: "recovery_phrase".localized, style: .arrow, isOn: false, toggleAction: nil)
+                                    .contentShape(Rectangle())
                             }
+                            
                             
                         }
+                        .padding(.horizontal, 16)
+                        .roundedBg()
+                        .visibility( UserManager.shared.userType == .phrase ? .visible : .gone)
                         
-                        Text("gas_fee_desc".localized)
-                            .font(.inter(size: 12, weight: .regular))
-                            .foregroundColor(Color.LL.Neutrals.neutrals7)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        VStack(spacing: 0) {
+                            Button {
+                                Router.route(to: RouteMap.Profile.accountKeys)
+                            } label: {
+                                ProfileSecureView.ItemCell(title: "wallet_account_key".localized, style: .arrow, isOn: false, toggleAction: nil)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 64)
+                        .padding(.horizontal, 16)
+                        .roundedBg()
                         
+                        VStack(spacing: 0) {
+                            
+                            HStack {
+                                Text("free_gas_fee".localized)
+                                    .font(.inter(size: 16, weight: .medium))
+                                    .foregroundColor(Color.LL.Neutrals.text)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                Spacer()
+                                
+                                Toggle(isOn: $localGreeGas) {
+                                    
+                                }
+                                .tint(.LL.Primary.salmonPrimary)
+                                .onChange(of: localGreeGas) { value in
+                                }
+                                
+                            }
+                            
+                            Text("gas_fee_desc".localized)
+                                .font(.inter(size: 12, weight: .regular))
+                                .foregroundColor(Color.LL.Neutrals.neutrals7)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 80)
+                        .padding(.horizontal, 16)
+                        .roundedBg()
+                        
+                        storageView
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 16)
+                            .roundedBg()
                         
                     }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 80)
-                    .padding(.horizontal, 16)
-                    .roundedBg()
-                    
-                    storageView
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 16)
-                        .roundedBg()
-                    
+                    .visibility(onlyShowInfo() ? .gone : .visible)
                 }
                 .padding(.horizontal, 18)
                 
@@ -132,6 +151,7 @@ struct WalletSettingView: RouteableView {
                 }
                 .padding(.horizontal, 18)
             }
+            .visibility(onlyShowInfo() ? .gone : .visible)
             
         }
         .backgroundFill(.LL.background)
@@ -162,12 +182,21 @@ struct WalletSettingView: RouteableView {
                 .tint(Color.LL.Primary.salmonPrimary)
         }
     }
+    
+    func emoji() -> WalletAccount.Emoji {
+        WalletManager.shared.walletAccount.readInfo(at: address)
+    }
+    
+    func onlyShowInfo() -> Bool {
+        let list = EVMAccountManager.shared.accounts.filter { $0.showAddress == address }
+        return !list.isEmpty
+    }
 }
 
 struct WalletSettingView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            WalletSettingView()
+            WalletSettingView(address: "0x")
         }
     }
 }

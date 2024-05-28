@@ -82,6 +82,36 @@ extension ProfileSecureView {
             .frame(height: 52)
         }
     }
+    
+    struct WalletInfoCell: View {
+        
+        var emoji: WalletAccount.Emoji
+        var onEdit:()->()
+        
+        var body: some View {
+            HStack {
+                emoji.icon(size: 40)
+                Text(emoji.name)
+                    .font(.inter())
+                    .foregroundStyle(Color.Theme.Text.black)
+                
+                Spacer()
+                Button {
+                    onEdit()
+                } label: {
+                    HStack {
+                        Image("icon-edit-child-account")
+                            .resizable()
+                            .renderingMode(.template)
+                            .frame(width: 24, height: 24)
+                            .foregroundStyle(Color.Theme.Text.black3)
+                    }
+                    .padding(.vertical, 4)
+                    .padding(.leading, 4)
+                }
+            }
+        }
+    }
 }
 
 extension ProfileSecureView.ItemCell {

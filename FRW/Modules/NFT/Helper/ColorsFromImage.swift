@@ -12,21 +12,6 @@ import Kingfisher
 
 extension UIImage {
     func colors() async -> [Color] {
-//        return await withCheckedContinuation { continuation in
-//            DispatchQueue.global().async {
-//                guard let colors = ColorThief.getPalette(from: self, colorCount: 6, quality: 1, ignoreWhite: false) else {
-//                    DispatchQueue.main.async {
-//                        continuation.resume(returning: [])
-//                    }
-//
-//                    return
-//                }
-//                DispatchQueue.main.async {
-//                    let result = colors.map { Color(uiColor: $0.makeUIColor()) }
-//                    continuation.resume(returning: result)
-//                }
-//            }
-//        }
         
         guard let colors = try? dominantColors(),
               let palette = ColorPalette(orderedColors: colors, ignoreContrastRatio: true) else {

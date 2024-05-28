@@ -265,7 +265,7 @@ extension RouteMap {
         case editName
         case editAvatar
         case backupChange
-        case walletSetting(Bool)
+        case walletSetting(Bool,String)
         case privateKey(Bool)
         case walletConnect
         case manualBackup(Bool)
@@ -285,6 +285,7 @@ extension RouteMap {
         case deviceInfo(DeviceInfoModel)
         
         case keychain
+        case walletList
     }
 }
 
@@ -316,8 +317,8 @@ extension RouteMap.Profile: RouterTarget {
             }
 
             navi.push(content: ProfileBackupView())
-        case .walletSetting(let animated):
-            Router.coordinator.rootNavi?.push(content: WalletSettingView(), animated: animated)
+        case .walletSetting(let animated, let address):
+            Router.coordinator.rootNavi?.push(content: WalletSettingView(address: address), animated: animated)
         case .walletConnect:
             navi.push(content: WalletConnectView())
         case .privateKey(let animated):
@@ -364,6 +365,9 @@ extension RouteMap.Profile: RouterTarget {
             navi.push(content: DevicesInfoView(info: model))
         case .keychain:
             navi.push(content: KeychainListView())
+            
+        case .walletList:
+            navi.push(content: WalletListView())
         }
     }
 }

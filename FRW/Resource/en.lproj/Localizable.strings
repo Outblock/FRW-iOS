@@ -947,3 +947,4 @@
 "move_nft_x" = "Move %@ NFTs";
 "collection" = "Collection";
 "move_nft_limit_x" = "You can move %@ NFTs";
+"wallet_list" = "Wallet List";
