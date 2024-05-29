@@ -74,20 +74,24 @@ struct MoveTokenView: RouteableView {
                 }
                 Spacer()
                 
-                VPrimaryButton(model: ButtonStyle.primary,
-                               state: viewModel.buttonState,
-                               action: {
-                                   UIApplication.shared.endEditing()
-                                   viewModel.onNext()
-                               }, title: "move".localized)
-                    .padding(.horizontal, 18)
-                    .padding(.bottom, geometry.safeAreaInsets.bottom + 8)
+                
             }
             .hideKeyboardWhenTappedAround()
             .backgroundFill(Color.Theme.Background.grey)
             .cornerRadius([.topLeading, .topTrailing], 16)
             .environmentObject(viewModel)
             .edgesIgnoringSafeArea(.bottom)
+            .overlay(alignment: .bottom) {
+                VPrimaryButton(model: ButtonStyle.primary,
+                               state: viewModel.buttonState,
+                               action: {
+                                    log.debug("[Move] click button")
+                                    viewModel.onNext()
+                                   UIApplication.shared.endEditing()
+                               }, title: "move".localized)
+                    .padding(.horizontal, 18)
+                    .padding(.bottom,  8)
+            }
         }
         .applyRouteable(self)
     }
