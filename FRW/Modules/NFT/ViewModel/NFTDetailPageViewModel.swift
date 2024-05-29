@@ -13,6 +13,7 @@ import Lottie
 class NFTDetailPageViewModel: ObservableObject {
     @Published var nft: NFTModel
     @Published var svgString: String = ""
+    @Published var movable: Bool = false
     let showSendButton: Bool
     
     let animationView = AnimationView(name: "inAR", bundle: .main)
@@ -39,6 +40,7 @@ class NFTDetailPageViewModel: ObservableObject {
                 }
             }
         }
+        fetchNFTStatus()
     }
     
     func sendNFTAction() {
@@ -58,5 +60,30 @@ class NFTDetailPageViewModel: ObservableObject {
         }
         
         return image
+    }
+    
+    func fetchNFTStatus() {
+        if self.nft.isDomain {
+            movable = false
+            return
+        }
+        
+        
+        Task {
+            let address = self.nft.response.contractAddress ?? ""
+            let evmAddress = await NFTCollectionConfig.share.get(from: address)?.evmAddress
+            if evmAddress == nil && self.nft.collection?.flowIdentifier == nil {
+                DispatchQueue.main.async {
+                    self.movable = false
+                }
+                
+                return
+            }
+            DispatchQueue.main.async {
+                withAnimation {
+                    self.movable = true
+                }
+            }
+        }
     }
 }

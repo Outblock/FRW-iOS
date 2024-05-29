@@ -189,16 +189,6 @@ struct NFTModel: Codable, Hashable, Identifiable {
         
         return name.hasSuffix(".meow") || url.hasSuffix(".meow")
     }
-    
-    var allowMovable: Bool {
-        if isDomain {
-            return false
-        }
-        if collection?.evmAddress == nil && collection?.flowIdentifier == nil {
-            return false
-        }
-        return true
-    }
 }
 
 class CollectionItem: Identifiable, ObservableObject {

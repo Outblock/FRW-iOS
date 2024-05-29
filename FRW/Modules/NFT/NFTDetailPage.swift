@@ -317,7 +317,7 @@ struct NFTDetailPage: RouteableView {
                 .cornerRadius(12)
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
                 .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
-                .visibility(vm.nft.allowMovable ? .visible : .gone)
+                .visibility(vm.movable ? .visible : .gone)
                 .disabled(WalletManager.shared.isSelectedChildAccount)
                 
                 Menu {
