@@ -85,13 +85,13 @@ extension ProfileSecureView {
     
     struct WalletInfoCell: View {
         
-        var emoji: WalletAccount.Emoji
+        var user: WalletAccount.User
         var onEdit:()->()
         
         var body: some View {
             HStack {
-                emoji.icon(size: 40)
-                Text(emoji.name)
+                user.emoji.icon(size: 40)
+                Text(user.name)
                     .font(.inter())
                     .foregroundStyle(Color.Theme.Text.black)
                 

@@ -1100,6 +1100,16 @@ extension FlowNetwork {
         ])
     }
     
+    /// transferFlowFromCoaToFlow
+    static func sendFlowTokenFromCoaToFlow(amount: Decimal, address: String) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.evm?.transferFlowFromCoaToFlow?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
+            .ufix64(amount),
+            .address(Flow.Address(hex: address))
+        ])
+    }
+    
     static func sendNoFlowTokenToEvm(amount: Decimal,contractAddress: String, contractName: String, contractEVMAddress:String, data: Data, gas: UInt64) async throws -> Flow.ID {
         let originCadence = CadenceManager.shared.current.bridge?.bridgeTokensToEvmAddress?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())

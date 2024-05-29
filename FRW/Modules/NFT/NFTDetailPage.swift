@@ -263,6 +263,7 @@ struct NFTDetailPage: RouteableView {
             .halfSheet(showSheet: $isPresentMove) {
                 MoveSingleNFTView(nft: vm.nft) {
                     isPresentMove = false
+                    Router.pop()
                 }
             }
         }
@@ -316,7 +317,7 @@ struct NFTDetailPage: RouteableView {
                 .cornerRadius(12)
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
                 .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
-                .visibility(vm.nft.isDomain ? .gone : .visible)
+                .visibility(vm.nft.allowMovable ? .visible : .gone)
                 .disabled(WalletManager.shared.isSelectedChildAccount)
                 
                 Menu {

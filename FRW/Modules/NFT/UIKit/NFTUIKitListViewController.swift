@@ -105,6 +105,7 @@ class NFTUIKitListViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(didReset), name: .didResetWallet, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onChildAccountChanged), name: .childAccountChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onNFTDidChangedByMoving), name: .nftDidChangedByMoving, object: nil)
+        
         WalletManager.shared.$walletInfo
             .dropFirst()
             .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
@@ -141,8 +142,9 @@ class NFTUIKitListViewController: UIViewController {
     }
     
     @objc private func onNFTDidChangedByMoving() {
-        listStyleHandler.collectionView.beginRefreshing()
-        gridStyleHandler.collectionView.beginRefreshing()
+        log.debug("[NFT] move NFT notification")
+        listStyleHandler.refreshAction()
+        gridStyleHandler.refreshAction()
     }
     
     private func walletInfoDidChanged() {

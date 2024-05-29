@@ -9,7 +9,7 @@ import SwiftUI
 
 extension WalletListViewModel {
     struct Item {
-        var emoji: WalletAccount.Emoji
+        var user: WalletAccount.User
         var address: String
         var balance: String
         var isEvm: Bool
@@ -24,15 +24,15 @@ class WalletListViewModel: ObservableObject {
     func reload() {
         mainWallets = []
         if let mainAddress = WalletManager.shared.getPrimaryWalletAddress() {
-            let emoji = WalletManager.shared.walletAccount.readInfo(at: mainAddress)
-            let mainWallet = WalletListViewModel.Item(emoji: emoji, address: mainAddress, balance: "", isEvm: false)
+            let user = WalletManager.shared.walletAccount.readInfo(at: mainAddress)
+            let mainWallet = WalletListViewModel.Item(user: user, address: mainAddress, balance: "", isEvm: false)
             mainWallets.append(mainWallet)
             
         }
         multiVMWallets = []
         EVMAccountManager.shared.accounts.forEach { account in
-            let emoji = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
-            let model = WalletListViewModel.Item(emoji: emoji, address: account.showAddress, balance: "", isEvm: true)
+            let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
+            let model = WalletListViewModel.Item(user: user, address: account.showAddress, balance: "", isEvm: true)
             multiVMWallets.append(model)
         }
     }
@@ -112,10 +112,10 @@ extension WalletListView {
 
         var body: some View {
             HStack(spacing: 12) {
-                item.emoji.icon(size: 40)
+                item.user.emoji.icon(size: 40)
                 VStack(alignment: .leading) {
                     HStack(spacing: 0) {
-                        Text(item.emoji.name)
+                        Text(item.user.name)
                             .font(.inter())
                             .foregroundStyle(Color.Theme.Text.black)
                         Text("(\(item.address))")

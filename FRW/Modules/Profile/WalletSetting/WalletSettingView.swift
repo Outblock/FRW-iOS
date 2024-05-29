@@ -14,9 +14,17 @@ struct WalletSettingView: RouteableView {
     }
     
     var address: String
+    @State var showAccountEditor = false
+    @State var user: WalletAccount.User
     
     @StateObject private var vm = WalletSettingViewModel()
     @AppStorage(LocalUserDefaults.Keys.freeGas.rawValue) private var localGreeGas = true
+    
+    init(address: String) {
+        self.address = address
+        self.user = WalletManager.shared.walletAccount.readInfo(at: address)
+    }
+    
     var body: some View {
         
         ZStack(alignment: .bottom) {
@@ -27,8 +35,8 @@ struct WalletSettingView: RouteableView {
                         Button {
                             
                         } label: {
-                            ProfileSecureView.WalletInfoCell(emoji: emoji(), onEdit: {
-                                
+                            ProfileSecureView.WalletInfoCell(user: user, onEdit: {
+                                showAccountEditor.toggle()
                             })
                         }
                     }
@@ -156,6 +164,18 @@ struct WalletSettingView: RouteableView {
         }
         .backgroundFill(.LL.background)
         .applyRouteable(self)
+        .popup(isPresented: $showAccountEditor) {
+            WalletAccountEditor(address: address) {
+                reload()
+                showAccountEditor = false
+            }
+        } customize: {
+            $0
+                .closeOnTap(false)
+                .closeOnTapOutside(true)
+                .backgroundColor(.black.opacity(0.4))
+        }
+        
     }
     
     var storageView: some View {
@@ -183,8 +203,9 @@ struct WalletSettingView: RouteableView {
         }
     }
     
-    func emoji() -> WalletAccount.Emoji {
-        WalletManager.shared.walletAccount.readInfo(at: address)
+    func reload() {
+        user = WalletManager.shared.walletAccount.readInfo(at: address)
+        WalletManager.shared.changeNetwork(LocalUserDefaults.shared.flowNetwork)
     }
     
     func onlyShowInfo() -> Bool {

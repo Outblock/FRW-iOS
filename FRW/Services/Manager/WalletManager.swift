@@ -677,9 +677,11 @@ extension WalletManager {
         try await EVMAccountManager.shared.refreshBalance(address: evmAccount.address)
         let tokenModel = supportedCoins?.first { $0.name.lowercased() == "flow" }
         let balance = EVMAccountManager.shared.balance
-        guard let tokenModel = tokenModel, let symbol = tokenModel.symbol else { return }
+        guard var tokenModel = tokenModel, let symbol = tokenModel.symbol else { return }
+        
         DispatchQueue.main.sync {
             log.info("[EVM] load balance success \(balance)")
+            tokenModel.flowIdentifier = tokenModel.contractId
             self.activatedCoins = [tokenModel]
             self.coinBalances = [symbol: balance.doubleValue]
         }

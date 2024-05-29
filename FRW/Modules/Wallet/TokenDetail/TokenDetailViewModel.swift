@@ -179,7 +179,7 @@ extension TokenDetailViewModel {
     }
     
     var movable: Bool {
-        EVMAccountManager.shared.hasAccount
+        EVMAccountManager.shared.hasAccount && (token.evmAddress != nil || token.flowIdentifier != nil || token.isFlowCoin)
     }
 }
 

@@ -369,14 +369,16 @@ struct SideMenuView: View {
                             } label: {
                                 NetworkMenuItem(network: .testnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
                             }
-                            
-                            Button {
-                                vm.isSwitchOpen.toggle()
-                                WalletManager.shared.changeNetwork(.previewnet)
-                                
-                            } label: {
-                                NetworkMenuItem(network: .previewnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
+                            if let previewnetAddress = wm.getFlowNetworkTypeAddress(network: .previewnet), isDeveloperMode {
+                                Button {
+                                    vm.isSwitchOpen.toggle()
+                                    WalletManager.shared.changeNetwork(.previewnet)
+                                    
+                                } label: {
+                                    NetworkMenuItem(network: .previewnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
+                                }
                             }
+                            
                         }
                         .frame(width: 196)
                         .padding(16)

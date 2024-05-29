@@ -57,7 +57,7 @@ struct EVMCollection: Codable {
     func toNFTCollection() -> NFTCollection {
         let contractName = flowIdentifier?.split(separator: ".")[2] ?? ""
         let contractAddress = flowIdentifier?.split(separator: ".")[1] ?? ""
-        let info = NFTCollectionInfo(id: flowIdentifier ?? "", name: name, contractName: String(contractName), address: String(contractAddress), logo: logoURI, banner: nil, officialWebsite: nil, description: nil, path: ContractPath(storagePath: "", publicPath: "", publicCollectionName: nil, publicType: nil, privateType: nil), evmAddress: address, socials: nil)
+        let info = NFTCollectionInfo(id: flowIdentifier ?? "", name: name, contractName: String(contractName), address: String(contractAddress), logo: logoURI, banner: nil, officialWebsite: nil, description: nil, path: ContractPath(storagePath: "", publicPath: "", publicCollectionName: nil, publicType: nil, privateType: nil), evmAddress: address, socials: nil, flowIdentifier: flowIdentifier)
         let list = nfts.map {  NFTModel($0.toNFT(), in: info) }
         let model = NFTCollection(collection: info,
                                   count: nfts.count,

@@ -223,13 +223,13 @@ class MoveNFTsViewModel: ObservableObject {
 }
 
 extension MoveNFTsViewModel {
-    private func emojiAccount(isFirst: Bool) -> WalletAccount.Emoji {
+    private func emojiAccount(isFirst: Bool) -> WalletAccount.User {
         let address = accountAddress(isFirst: isFirst)
         return WalletManager.shared.walletAccount.readInfo(at: address)
     }
     
     func accountIcon(isFirst: Bool) -> some View {
-        return emojiAccount(isFirst: isFirst).icon(size: 20)
+        return emojiAccount(isFirst: isFirst).emoji.icon(size: 20)
     }
     
     func accountName(isFirst: Bool) -> String {

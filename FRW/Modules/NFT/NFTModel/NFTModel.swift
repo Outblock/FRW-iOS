@@ -45,7 +45,8 @@ struct NFTCollectionInfo: Codable, Hashable, Mockable {
     let path: ContractPath
     
     let evmAddress: String?
-    let socials: NFTCollectionInfo.Social?
+    var socials: NFTCollectionInfo.Social?
+    let flowIdentifier: String?
     
     var logoURL: URL {
         if let logoString = logo {
@@ -64,7 +65,7 @@ struct NFTCollectionInfo: Codable, Hashable, Mockable {
     }
     
     static func mock() -> NFTCollectionInfo {
-        return NFTCollectionInfo(id: randomString(), name: randomString(), contractName: randomString(), address: randomString(), logo: randomString(), banner: randomString(), officialWebsite: randomString(), description: randomString(), path: ContractPath.mock(), evmAddress: nil, socials: nil)
+        return NFTCollectionInfo(id: randomString(), name: randomString(), contractName: randomString(), address: randomString(), logo: randomString(), banner: randomString(), officialWebsite: randomString(), description: randomString(), path: ContractPath.mock(), evmAddress: nil, socials: nil, flowIdentifier: nil)
     }
 }
 
@@ -187,6 +188,16 @@ struct NFTModel: Codable, Hashable, Identifiable {
         let url = response.externalURL ?? ""
         
         return name.hasSuffix(".meow") || url.hasSuffix(".meow")
+    }
+    
+    var allowMovable: Bool {
+        if isDomain {
+            return false
+        }
+        if collection?.evmAddress == nil && collection?.flowIdentifier == nil {
+            return false
+        }
+        return true
     }
 }
 

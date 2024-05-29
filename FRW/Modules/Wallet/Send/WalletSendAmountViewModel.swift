@@ -333,8 +333,8 @@ extension WalletSendAmountViewModel {
                 case (.flow, .coa):
                     txId = try await FlowNetwork.fundCoa(amount: amount)
                 case (.coa, .flow):
-                    if targetAddress == address {
-                        txId = try await FlowNetwork.withdrawCoa(amount: amount)
+                    if token.isFlowCoin {
+                        txId = try await FlowNetwork.sendFlowTokenFromCoaToFlow(amount: amount, address: targetAddress)
                     }else {
                         guard let contractAddress = self.token.flowIdentifier?.split(separator: ".")[1],
                               let contractName = self.token.flowIdentifier?.split(separator: ".")[2],

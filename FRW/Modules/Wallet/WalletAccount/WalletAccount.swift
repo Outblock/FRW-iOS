@@ -9,6 +9,76 @@ import Foundation
 import SwiftUI
 
 struct WalletAccount {
+    
+    var storedAccount: [String: [WalletAccount.User]]
+    
+    private var key: String {
+        guard let userId = UserManager.shared.activatedUID else {
+            return "empty"
+        }
+        return "\(userId)"
+    }
+
+    
+    init() {
+        self.storedAccount = LocalUserDefaults.shared.walletAccount ?? [:]
+    }
+    
+    
+    private func saveCache() {
+        LocalUserDefaults.shared.walletAccount = self.storedAccount
+    }
+    
+}
+//MARK: Logical processing
+extension WalletAccount {
+    
+    mutating func readInfo(at address: String) -> WalletAccount.User {
+        let currentNetwork = LocalUserDefaults.shared.flowNetwork
+        if var list = self.storedAccount[key] {
+            var lastUser = list.last { $0.network == currentNetwork && $0.address == address }
+            if let user = lastUser{
+                return user
+            }else {
+                let existList = list.map { $0.emoji }
+                let nEmoji = generalInfo(count: 1, excluded: existList)?.first ?? .monster
+                let user = WalletAccount.User(emoji: nEmoji, address: address)
+                list.append(user)
+                self.storedAccount[key] = list
+                saveCache()
+                return user
+            }
+        }else {
+            let nEmoji = generalInfo(count: 1, excluded: [])?.first ?? .monster
+            let model = WalletAccount.User(emoji: nEmoji, address: address)
+            self.storedAccount[key] = [model]
+            saveCache()
+            return model
+        }
+    }
+    
+    mutating func update(at address: String, emoji: WalletAccount.Emoji, name: String? = nil) {
+        let currentNetwork = LocalUserDefaults.shared.flowNetwork
+        if var list = self.storedAccount[key] {
+            if var index = list.lastIndex(where: { $0.network == currentNetwork && $0.address == address }) {
+                var user = list[index]
+                user.emoji = emoji
+                user.name = name ?? emoji.name
+                list[index] = user
+                self.storedAccount[key] = list
+                saveCache()
+            }
+        }
+    }
+    
+    private func generalInfo(count: Int, excluded:[Emoji]) -> [WalletAccount.Emoji]? {
+        let list = Emoji.allCases
+        return list.randomDifferentElements(count: count,excluded: excluded)
+    }
+}
+
+//MARK: data struct
+extension WalletAccount {
     enum Emoji: String, CaseIterable, Codable {
         case monster = "👾"
         case devil = "👹"
@@ -80,56 +150,18 @@ struct WalletAccount {
         }
     }
     
-    var emojiMap: [String: Emoji] = [:]
-    var storedAccount: [String: [String: String]]
-    
-    private var key: String {
-        guard let userId = UserManager.shared.activatedUID else {
-            return "empty-emtpy"
-        }
-        let network = LocalUserDefaults.shared.flowNetwork
-        return "\(userId)-\(network.rawValue)"
-    }
-
-    
-    init() {
-        self.storedAccount = LocalUserDefaults.shared.walletAccount ?? [:]
-    }
-    
-    
-    private func saveCache() {
-        LocalUserDefaults.shared.walletAccount = self.storedAccount
-    }
-    
-}
-
-extension WalletAccount {
-    
-    mutating func readInfo(at address: String) -> Emoji {
+    struct User: Codable {
+        var emoji: WalletAccount.Emoji
+        var name: String
+        var address: String
+        var network: LocalUserDefaults.FlowNetworkType
         
-        if var list = self.storedAccount[key] {
-            if let emoji = list[address] {
-                return Emoji.init(rawValue: emoji) ?? .avocado
-            }else {
-                let existList = list.values.map { Emoji.init(rawValue: $0) ?? .monster }
-                let nEmoji = generalInfo(count: 1, excluded: existList)?.first ?? .monster
-                list[address] = nEmoji.rawValue
-                self.storedAccount[key] = list
-                saveCache()
-                return nEmoji
-            }
-        }else {
-            let nEmoji = generalInfo(count: 1, excluded: [])?.first ?? .monster
-            let list:[String: String] = [key: nEmoji.rawValue]
-            self.storedAccount[key] = list
-            saveCache()
-            return nEmoji
+        init(emoji: WalletAccount.Emoji, address: String) {
+            self.emoji = emoji
+            self.name = emoji.name
+            self.address = address
+            self.network = LocalUserDefaults.shared.flowNetwork
         }
-    }
-    
-    private func generalInfo(count: Int, excluded:[Emoji]) -> [WalletAccount.Emoji]? {
-        let list = Emoji.allCases
-        return list.randomDifferentElements(count: count,excluded: excluded)
     }
 }
 

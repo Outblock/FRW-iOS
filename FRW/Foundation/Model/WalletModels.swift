@@ -86,7 +86,7 @@ struct TokenModel: Codable, Identifiable, Mockable {
     let symbol: String?
     let website: URL?
     let evmAddress: String?
-    let flowIdentifier: String?
+    var flowIdentifier: String?
     
     var listedToken: ListedToken? {
         ListedToken(rawValue: symbol ?? "")

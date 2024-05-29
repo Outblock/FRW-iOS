@@ -46,7 +46,7 @@ struct Contact: Codable, Identifiable {
     let domain: Domain?
     let id: Int
     let username: String?
-    var emoji: WalletAccount.Emoji? = nil
+    var user: WalletAccount.User? = nil
     
     var needShowLocalAvatar: Bool {
         return contactType == .domain

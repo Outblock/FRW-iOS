@@ -269,6 +269,7 @@ extension CadenceModel {
         let fundCoa: String?
         let callContract: String?
         let transferFlowToEvmAddress: String?
+        let transferFlowFromCoaToFlow: String?
     }
     
     struct Bridge: Codable {

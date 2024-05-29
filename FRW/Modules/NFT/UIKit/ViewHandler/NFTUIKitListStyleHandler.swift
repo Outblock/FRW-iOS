@@ -295,6 +295,7 @@ extension NFTUIKitListStyleHandler {
                     }
                 }
             } catch {
+                log.debug("[NFT] \(error)")
                 DispatchQueue.main.async {
                     self.isRequesting = false
                     self.isInitRequested = true

@@ -25,7 +25,7 @@ struct AccountSideCell: View {
         LocalUserDefaults.shared.flowNetwork
     }
     
-    private var emoji: WalletAccount.Emoji {
+    private var user: WalletAccount.User {
         WalletManager.shared.walletAccount.readInfo(at: address)
     }
     
@@ -64,14 +64,14 @@ struct AccountSideCell: View {
                         .frame(width: 24, height: 24)
                         .cornerRadius(12)
                 }else {
-                    emoji.icon()
+                    user.emoji.icon()
                         .padding(.trailing,18)
                 }
                 
                     
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
-                        Text(emoji.name)
+                        Text(user.name)
                             .font(.inter(size: 14))
                             .foregroundStyle(Color.Theme.Text.black8)
                             .frame(height: 22)
