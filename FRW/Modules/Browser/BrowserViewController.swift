@@ -19,7 +19,7 @@ class BrowserViewController: UIViewController {
     public var shouldHideActionBar: Bool = false
     private var cancelSets = Set<AnyCancellable>()
     
-    let trustProvider = TrustWeb3Provider.config()
+    let trustProvider = TrustWeb3Provider.flowConfig()
 
     
     private lazy var contentView: UIView = {
