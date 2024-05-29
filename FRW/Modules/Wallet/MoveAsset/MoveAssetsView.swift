@@ -20,7 +20,7 @@ struct MoveAssetsView: View {
             })
             .padding(.top, 24)
             
-            Text("move_assets_note_x".localized(toName()))
+            Text("move_assets_note".localized)
                 .font(.inter(size: 14))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.Theme.Text.black8)

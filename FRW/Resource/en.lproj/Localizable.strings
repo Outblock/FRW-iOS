@@ -94,9 +94,9 @@
 "Edit__Address::message" = "Edit Address";
 "top_selection" = "Top Selection";
 "Are__you__sure__you__want__to__remove__this__contact::message" = "Are you sure you want to remove this contact?";
-"nft_empty" = "We find nothing here.";
+"nft_empty" = "You don’t have any NFTs yet.";
 "You__will__no__longer__find__this__contact__in__your__address__book::message" = "You will no longer find this contact in your address book.";
-"nft_empty_discovery" = "Looking forward to your new discovery.";
+"nft_empty_discovery" = "Looking forward to your next discovery.";
 "Empty__List::message" = "Empty List";
 "get_new_nft" = "Get new NFTs";
 "No__results__found::message" = "No results found!";
@@ -940,11 +940,12 @@
 "evm_check_balance" = "Balance is lower than 0.02,\n please fund your account to continue.";
 "view_more" = "View More";
 "move_assets" = "Move Assets";
-"move_assets_note_x" = "Would you like to move your assets to\n%@ account? ";
+"move_assets_note" = "What type of assets would you like to move?";
 "move_nft" = "Move NFTs";
 "move_token" = "Move Tokens";
 "select_nfts" = "Select NFTs";
 "move_nft_x" = "Move %@ NFTs";
 "collection" = "Collection";
 "move_nft_limit_x" = "You can move %@ NFTs";
-"wallet_list" = "Wallet List";
+"wallet_list" = "Account List";
+"account_detail" = "Account Details";

@@ -10,7 +10,7 @@ import SwiftUI
 struct WalletSettingView: RouteableView {
     
     var title: String {
-        "wallet".localized.capitalized
+        "account".localized.capitalized
     }
     
     var address: String
