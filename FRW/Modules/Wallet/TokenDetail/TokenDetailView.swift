@@ -114,9 +114,7 @@ struct TokenDetailView: RouteableView {
                 Spacer()
                 
                 Button {
-                    if vm.balance == 0 {
-                        HUD.error(title: "There is not an adequate balance")
-                    }
+                    
                     vm.onMoveToken()
                 } label: {
                     HStack {

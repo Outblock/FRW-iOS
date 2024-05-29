@@ -693,8 +693,10 @@ extension WalletManager {
         DispatchQueue.main.sync {
             log.info("[EVM] load evm token and balance")
             list.forEach { item in
-                self.activatedCoins.append(item.toTokenModel())
-                self.coinBalances[item.symbol] = item.flowBalance
+                if item.flowBalance > 0 {
+                    self.activatedCoins.append(item.toTokenModel())
+                    self.coinBalances[item.symbol] = item.flowBalance
+                }
             }
         }
     }
