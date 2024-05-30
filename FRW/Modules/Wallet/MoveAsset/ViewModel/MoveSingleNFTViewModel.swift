@@ -19,18 +19,20 @@ class MoveSingleNFTViewModel: ObservableObject {
     }
     
     func closeAction() {
+        Router.dismiss()
         callback()
     }
     
     func moveAction() {
-        guard let collection = nft.collection, let nftId = UInt64(nft.response.id) else {
+        guard let nftId = UInt64(nft.response.id),
+              let address = nft.response.contractAddress,
+              let name = nft.response.collectionContractName else {
             HUD.error(title: "invalid data")
             return
         }
         Task {
             do {
-                let address = collection.address
-                let name = collection.contractName // "ExampleNFT"
+                
                 let ids: [UInt64] = [nftId]
                 let fromEvm = EVMAccountManager.shared.selectedAccount != nil
                 let tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: address, contractName: name, ids: ids, fromEvm: fromEvm)
