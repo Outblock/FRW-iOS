@@ -96,7 +96,7 @@ struct TokenDetailView: RouteableView {
                                 ))
                         }
                         
-                        KFImage.url(vm.token.icon)
+                        KFImage.url(vm.token.iconURL)
                             .placeholder {
                                 Image("placeholder")
                                     .resizable()

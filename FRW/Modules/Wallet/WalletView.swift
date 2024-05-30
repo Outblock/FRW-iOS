@@ -553,7 +553,7 @@ extension WalletView {
         var body: some View {
             VStack(spacing: 0) {
                 HStack(spacing: 18) {
-                    KFImage.url(coin.token.icon)
+                    KFImage.url(coin.token.iconURL)
                         .placeholder({
                             Image("placeholder")
                                 .resizable()

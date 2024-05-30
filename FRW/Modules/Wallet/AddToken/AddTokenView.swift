@@ -106,7 +106,7 @@ extension AddTokenView {
                 action()
             } label: {
                 HStack {
-                    KFImage.url(token.icon)
+                    KFImage.url(token.iconURL)
                         .placeholder({
                             Image("placeholder")
                                 .resizable()
@@ -187,7 +187,7 @@ extension AddTokenView {
                         }
                         
                         KFImage
-                            .url(token.icon)
+                            .url(token.iconURL)
                             .placeholder({
                                 Image("placeholder")
                                     .resizable()

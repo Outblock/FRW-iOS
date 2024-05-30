@@ -194,7 +194,7 @@ struct WalletSendAmountView: RouteableView {
                         .font(.inter(size: 16, weight: .medium))
                         .visibility(vm.exchangeType == .token ? .visible : .gone)
                     
-                    KFImage.url(vm.token.icon)
+                    KFImage.url(vm.token.iconURL)
                         .placeholder({
                             Image("placeholder")
                                 .resizable()
@@ -236,7 +236,7 @@ struct WalletSendAmountView: RouteableView {
                 Button {
                     vm.changeTokenModelAction(token: token)
                 } label: {
-                    KFImage.url(token.icon)
+                    KFImage.url(token.iconURL)
                         .placeholder({
                             Image("placeholder")
                                 .resizable()
@@ -250,7 +250,7 @@ struct WalletSendAmountView: RouteableView {
             }
         } label: {
             HStack(spacing: 8) {
-                KFImage.url(vm.token.icon)
+                KFImage.url(vm.token.iconURL)
                     .placeholder({
                         Image("placeholder")
                             .resizable()
@@ -299,7 +299,7 @@ struct WalletSendAmountView: RouteableView {
                 .padding(.bottom, 9)
             
             HStack {
-                KFImage.url(vm.token.icon)
+                KFImage.url(vm.token.iconURL)
                     .placeholder({
                         Image("placeholder")
                             .resizable()
@@ -430,7 +430,7 @@ extension WalletSendAmountView {
                     .font(.inter(size: 14, weight: .medium))
                 
                 HStack(spacing: 0) {
-                    KFImage.url(vm.token.icon)
+                    KFImage.url(vm.token.iconURL)
                         .placeholder({
                             Image("placeholder")
                                 .resizable()

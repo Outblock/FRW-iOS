@@ -159,7 +159,7 @@ extension TransactionManager {
                     return nil
                 }
                 
-                return token.icon
+                return token.iconURL
             case .addToken:
                 return decodedObject(TokenModel.self)?.icon
             case .addCollection:

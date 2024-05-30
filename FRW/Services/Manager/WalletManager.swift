@@ -711,7 +711,7 @@ extension WalletManager {
 extension WalletManager {
     private func preloadActivatedIcons() {
         for token in activatedCoins {
-            if let url = token.icon {
+            if let url = token.iconURL {
                 KingfisherManager.shared.retrieveImage(with: url) { _ in
                 }
             }

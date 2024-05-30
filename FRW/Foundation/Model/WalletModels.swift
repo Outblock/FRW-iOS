@@ -114,6 +114,18 @@ struct TokenModel: Codable, Identifiable, Mockable {
         return "A.\(addressString).\(contractName)"
     }
     
+    var iconURL: URL {
+        if let logoString = icon?.absoluteString {
+            if logoString.hasSuffix("svg") {
+                return logoString.convertedSVGURL() ?? URL(string: placeholder)!
+            }
+            
+            return URL(string: logoString) ?? URL(string: placeholder)!
+        }
+        
+        return URL(string: placeholder)!
+    }
+    
     var id: String {
         return symbol ?? ""
     }
