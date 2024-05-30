@@ -16,6 +16,8 @@ class NFTDetailPageViewModel: ObservableObject {
     @Published var movable: Bool = false
     let showSendButton: Bool
     
+    @Published var isPresentMove = false
+    
     let animationView = AnimationView(name: "inAR", bundle: .main)
     
     init(nft: NFTModel) {
@@ -60,6 +62,10 @@ class NFTDetailPageViewModel: ObservableObject {
         }
         
         return image
+    }
+    
+    func showMoveAction() {
+        isPresentMove = true
     }
     
     func fetchNFTStatus() {

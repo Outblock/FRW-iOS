@@ -61,7 +61,6 @@ struct NFTDetailPage: RouteableView {
     
     @State var fromLinkedAccount = false
     
-    @State var isPresentMove = false
 
     init(viewModel: NFTTabViewModel, nft: NFTModel, from LinkedAccount: Bool = false) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -260,9 +259,12 @@ struct NFTDetailPage: RouteableView {
                     }
                 }
             }
-            .halfSheet(showSheet: $isPresentMove) {
+            .halfSheet(showSheet: $vm.isPresentMove) {
                 MoveSingleNFTView(nft: vm.nft) {
-                    isPresentMove = false
+                    withAnimation {
+                        vm.isPresentMove = false
+                    }
+                    
                     Router.pop()
                 }
             }
@@ -302,7 +304,7 @@ struct NFTDetailPage: RouteableView {
                 .disabled(WalletManager.shared.isSelectedChildAccount)
                 
                 Button {
-                    isPresentMove = true
+                    vm.showMoveAction()
                 } label: {
                     HStack {
                         Image(systemName: "arrow.left.arrow.right")

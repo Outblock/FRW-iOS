@@ -339,6 +339,7 @@ struct SideMenuView: View {
                     .frame(width: 24, height: 24)
                     .foregroundColor(Color.Theme.Text.black8)
                 Text("Network")
+                    .lineLimit(1)
                     .font(.inter(size: 14, weight: .semibold))
                     .foregroundStyle(Color.Theme.Text.black8)
                 
@@ -393,18 +394,6 @@ struct SideMenuView: View {
                     .initialOpacity(0)
                     .mainZStackAlignment(.trailing)
                     
-//                Menu {
-//
-//
-//                } label: {
-//                    Text(LocalUserDefaults.shared.flowNetwork.rawValue)
-//                        .font(.inter(size: 12))
-//                        .foregroundStyle(LocalUserDefaults.shared.flowNetwork.color)
-//                        .frame(height: 24)
-//                        .padding(.horizontal,8)
-//                        .background(LocalUserDefaults.shared.flowNetwork.color.opacity(0.08))
-//                        .cornerRadius(8)
-//                }
             }
             .frame(height: 40)
             

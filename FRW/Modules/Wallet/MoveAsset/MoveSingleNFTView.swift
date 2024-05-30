@@ -22,7 +22,7 @@ struct MoveSingleNFTView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
                         HStack {
-                            Text("Move Token")
+                            Text("Move NFT")
                                 .font(.inter(size: 18, weight: .w700))
                                 .foregroundStyle(Color.LL.Neutrals.text)
                                 .padding(.top, 6)
@@ -102,11 +102,19 @@ struct MoveSingleNFTView: View {
                             .padding(.horizontal, 10)
                         }
                         
+                        Spacer()
+                        
                     }
                     .padding(18)
+                    
                 }
-                Spacer()
                 
+            }
+            .hideKeyboardWhenTappedAround()
+            .backgroundFill(Color.Theme.Background.grey)
+            .cornerRadius([.topLeading, .topTrailing], 16)
+            .edgesIgnoringSafeArea(.bottom)
+            .overlay(alignment: .bottom) {
                 VPrimaryButton(model: ButtonStyle.primary,
                                state: .enabled ,
                                action: {
@@ -115,10 +123,6 @@ struct MoveSingleNFTView: View {
                     .padding(.horizontal, 18)
                     .padding(.bottom, geometry.safeAreaInsets.bottom + 8)
             }
-            .hideKeyboardWhenTappedAround()
-            .backgroundFill(Color.Theme.Background.grey)
-            .cornerRadius([.topLeading, .topTrailing], 16)
-            .edgesIgnoringSafeArea(.bottom)
         }
         
     }
