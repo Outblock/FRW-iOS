@@ -57,6 +57,7 @@ class WalletManager: ObservableObject {
     private var cancellableSet = Set<AnyCancellable>()
     
     var walletAccount: WalletAccount = WalletAccount()
+    let balanceProvider = BalanceProvider()
 
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(reset), name: .willResetWallet, object: nil)
@@ -644,6 +645,7 @@ extension WalletManager {
         if address.isEmpty {
             throw WalletError.fetchBalanceFailed
         }
+        balanceProvider.refreshBalance()
         if isSelectedEVMAccount {
             try await fetchEVMBalance()
             try await fetchEVMTokenAndBalance()

@@ -25,6 +25,7 @@ class SideMenuViewModel: ObservableObject {
     @Published var showLinkedAccount: Bool = false
     @Published var isSwitchOpen = false
     @Published var userInfoBackgroudColor = Color.LL.Neutrals.neutrals6
+    @Published var walletBalance: [String: String] = [:]
     
     var colorsMap: [String: Color] = [:]
     
@@ -53,7 +54,12 @@ class SideMenuViewModel: ObservableObject {
                 guard let self = self else { return }
                 self.showLinkedAccount = !accounts.isEmpty
             }.store(in: &cancelSets)
-        
+        WalletManager.shared.balanceProvider.$balances
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { [weak self] balances in
+                self?.walletBalance = balances
+            }.store(in: &cancelSets)
         NotificationCenter.default.addObserver(self, selector: #selector(onToggle), name: .toggleSideMenu, object: nil)
     }
     
@@ -108,6 +114,13 @@ class SideMenuViewModel: ObservableObject {
         NotificationCenter.default.post(name: .toggleSideMenu)
         Router.route(to: RouteMap.Wallet.enableEVM)
     }
+    
+    func balanceValue(at address: String) -> String {
+        guard let value = WalletManager.shared.balanceProvider.balanceValue(at: address) else {
+            return ""
+        }
+        return "\(value) Flow"
+    }
 }
 
 struct SideMenuView: View {
@@ -118,7 +131,6 @@ struct SideMenuView: View {
     @StateObject private var evmManager = EVMAccountManager.shared
     @AppStorage("isDeveloperMode") private var isDeveloperMode = false
     @State private var showSwitchUserAlert = false
-    
     
     private let cPadding = 12.0
     
@@ -152,7 +164,6 @@ struct SideMenuView: View {
                     .frame(width: SideOffset)
                     .frame(maxHeight: .infinity)
             }
-            
         }
     }
     
@@ -164,9 +175,9 @@ struct SideMenuView: View {
                         Image("placeholder")
                             .resizable()
                     }
-                    .onSuccess({ _ in
+                    .onSuccess { _ in
                         vm.pickColor(from: um.userInfo?.avatar.convertedAvatarString() ?? "")
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 48, height: 48)
@@ -193,7 +204,6 @@ struct SideMenuView: View {
         .padding(.horizontal, 18)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background {
-            
             LinearGradient(
                 stops: [
                     Gradient.Stop(color: vm.userInfoBackgroudColor.opacity(00), location: 0.00),
@@ -259,21 +269,13 @@ struct SideMenuView: View {
         VStack(spacing: 0) {
             Section {
                 VStack(spacing: 0) {
-                    AccountSideCell(address: WalletManager.shared.getPrimaryWalletAddress() ?? "", currentAddress: vm.currentAddress) { _, action in
+                    AccountSideCell(address: WalletManager.shared.getPrimaryWalletAddress() ?? "", 
+                                    currentAddress: vm.currentAddress,
+                                    detail: vm.balanceValue(at: WalletManager.shared.getPrimaryWalletAddress() ?? "") ) { _, action in
                         if action == .card {
                             WalletManager.shared.changeNetwork(LocalUserDefaults.shared.flowNetwork)
                         }
                     }
-                }
-                .background {
-                    LinearGradient(
-                        stops: [
-                            Gradient.Stop(color: Color.Theme.Accent.green.opacity(0), location: 0.00),
-                            Gradient.Stop(color: Color.Theme.Accent.green.opacity(0.08), location: 1.00),
-                        ],
-                        startPoint: UnitPoint(x: 1.11, y: 0.4),
-                        endPoint: UnitPoint(x: 0, y: 0.4)
-                    )
                 }
                 .cornerRadius(12)
                 .animation(.easeInOut, value: WalletManager.shared.getPrimaryWalletAddress())
@@ -294,7 +296,10 @@ struct SideMenuView: View {
                 VStack(spacing: 0) {
                     ForEach(evmManager.accounts, id: \.address) { account in
                         let address = account.showAddress
-                        AccountSideCell(address: address, currentAddress: vm.currentAddress) { _, action in
+                        AccountSideCell(address: address, 
+                                        currentAddress: vm.currentAddress,
+                                        detail: vm.balanceValue(at: address)
+                        ) { _, action in
                             if action == .card {
                                 EVMAccountManager.shared.select(account)
                             }
@@ -316,7 +321,7 @@ struct SideMenuView: View {
                     Text("Linked Account")
                         .font(.inter(size: 12))
                         .foregroundStyle(Color.Theme.Text.black3)
-                    
+                        .padding(.vertical, 8)
                     Spacer()
                 }
                 .visibility(vm.showLinkedAccount ? .visible : .gone)
@@ -344,81 +349,45 @@ struct SideMenuView: View {
                     .foregroundStyle(Color.Theme.Text.black8)
                 
                 Spacer()
-                /*
-                FloatingButton(mainButtonView:
-                        Text(LocalUserDefaults.shared.flowNetwork.rawValue.uppercasedFirstLetter())
-                            .font(.inter(size: 12))
-                            .foregroundStyle(LocalUserDefaults.shared.flowNetwork.color)
-                            .frame(height: 24)
-                            .padding(.horizontal, 8)
-                            .background(LocalUserDefaults.shared.flowNetwork.color.opacity(0.08))
-                            .cornerRadius(8),
-                    buttons: [
-                        VStack {
-                            Button {
-                                vm.isSwitchOpen.toggle()
-                                WalletManager.shared.changeNetwork(.mainnet)
-                                
-                            } label: {
-                                NetworkMenuItem(network: .mainnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
-                            }
-                            
-                            Button {
-                                vm.isSwitchOpen.toggle()
-                                WalletManager.shared.changeNetwork(.testnet)
-                                
-                            } label: {
-                                NetworkMenuItem(network: .testnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
-                            }
-                            if let previewnetAddress = wm.getFlowNetworkTypeAddress(network: .previewnet), isDeveloperMode {
-                                Button {
-                                    vm.isSwitchOpen.toggle()
-                                    WalletManager.shared.changeNetwork(.previewnet)
-                                    
-                                } label: {
-                                    NetworkMenuItem(network: .previewnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
-                                }
-                            }
-                            
-                        }
-                        .frame(width: 196)
-                        .padding(16)
-                        .background(Color.Theme.Background.pureWhite)
-                        .cornerRadius([.topLeading, .topTrailing, .bottomLeading], 24)
-                        .shadow(color: Color.Theme.Background.pureWhite.opacity(0.08), radius: 6, x: 0, y: 4),
-                    ],
-                               isOpen: $vm.isSwitchOpen)
-                    .straight()
-                    .direction(.top)
-                    .alignment(.center)
-                    .initialOpacity(0)
-                    .mainZStackAlignment(.trailing)
-                */
+                
                 Menu {
-                    Button {
-                        vm.isSwitchOpen.toggle()
-                        WalletManager.shared.changeNetwork(.previewnet)
-                        
-                    } label: {
-                        NetworkMenuItem(network: .previewnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
-                    }
-                    
-                            Button(action: { print("Menu button 1")
-                            }) {
-                                NetworkMenuItem(network: .testnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
-                            }
-                            
+                    VStack {
+                        Button {
+                            vm.isSwitchOpen.toggle()
+                            WalletManager.shared.changeNetwork(.mainnet)
                             
                         } label: {
-                            Text(LocalUserDefaults.shared.flowNetwork.rawValue.uppercasedFirstLetter())
-                                .font(.inter(size: 12))
-                                .foregroundStyle(LocalUserDefaults.shared.flowNetwork.color)
-                                .frame(height: 24)
-                                .padding(.horizontal, 8)
-                                .background(LocalUserDefaults.shared.flowNetwork.color.opacity(0.08))
-                                .cornerRadius(8)
+                            NetworkMenuItem(network: .mainnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
                         }
-                    
+                        
+                        Button {
+                            vm.isSwitchOpen.toggle()
+                            WalletManager.shared.changeNetwork(.testnet)
+                            
+                        } label: {
+                            NetworkMenuItem(network: .testnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
+                        }
+                        
+                        if let previewnetAddress = wm.getFlowNetworkTypeAddress(network: .previewnet), isDeveloperMode {
+                            Button {
+                                vm.isSwitchOpen.toggle()
+                                WalletManager.shared.changeNetwork(.previewnet)
+                                
+                            } label: {
+                                NetworkMenuItem(network: .previewnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
+                            }
+                        }
+                    }
+                            
+                } label: {
+                    Text(LocalUserDefaults.shared.flowNetwork.rawValue.uppercasedFirstLetter())
+                        .font(.inter(size: 12))
+                        .foregroundStyle(LocalUserDefaults.shared.flowNetwork.color)
+                        .frame(height: 24)
+                        .padding(.horizontal, 8)
+                        .background(LocalUserDefaults.shared.flowNetwork.color.opacity(0.08))
+                        .cornerRadius(8)
+                }
             }
             .frame(height: 40)
             

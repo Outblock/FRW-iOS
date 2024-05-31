@@ -86,7 +86,7 @@ struct AccountSideCell: View {
                             
                     }
                     
-                    Text(address)
+                    Text(detail ?? address)
                         .font(.inter(size: 12))
                         .lineLimit(1)
                         .truncationMode(.middle)
@@ -104,6 +104,19 @@ struct AccountSideCell: View {
             }
             .padding(18)
             .frame(height: 82)
+            .background{
+                if isSelected {
+                    LinearGradient(
+                        stops: [
+                            Gradient.Stop(color: Color.Theme.Accent.green.opacity(0), location: 0.00),
+                            Gradient.Stop(color: Color.Theme.Accent.green.opacity(0.08), location: 1.00),
+                        ],
+                        startPoint: UnitPoint(x: 1.11, y: 0.4),
+                        endPoint: UnitPoint(x: 0, y: 0.4)
+                    )
+                }
+            }
+            .cornerRadius(12)
         }
     }
 }
