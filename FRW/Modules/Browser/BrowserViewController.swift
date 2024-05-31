@@ -36,6 +36,7 @@ class BrowserViewController: UIViewController {
     lazy var webView: WKWebView = {
         let view = WKWebView(frame: .zero, configuration: generateWebViewConfiguration())
         view.navigationDelegate = self
+        view.uiDelegate = self
         view.allowsBackForwardNavigationGestures = true
         view.allowsLinkPreview = true
         #if DEBUG
@@ -313,6 +314,21 @@ extension BrowserViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         decisionHandler(.allow)
         reloadActionBarView()
+    }
+    
+}
+
+extension BrowserViewController: WKUIDelegate {
+    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if navigationAction.targetFrame == nil, let url = navigationAction.request.url {
+            if url.description.lowercased().range(of: "http://") != nil ||
+                url.description.lowercased().range(of: "https://") != nil ||
+                url.description.lowercased().range(of: "mailto:") != nil
+            {
+                UIApplication.shared.openURL(url)
+            }
+        }
+        return nil
     }
 }
 
