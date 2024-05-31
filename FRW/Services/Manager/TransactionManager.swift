@@ -320,6 +320,7 @@ class TransactionManager: ObservableObject {
             if let model = holder.decodedObject(NFTTransferModel.self) {
                 NFTUIKitCache.cache.transferedNFT(model.nft.response)
             }
+            NotificationCenter.default.post(name: .nftDidChangedByMoving, object: nil)
         case .stakeFlow:
             StakingManager.shared.refresh()
         case .unlinkAccount:

@@ -110,10 +110,10 @@ struct MoveUserView: View {
                 .foregroundStyle(Color.Theme.Text.black3)
                 .visibility(user != nil ? .gone : .visible)
             
-            HStack {
-                user?.emoji.icon(size: 40)
+            HStack(spacing: 12) {
+                user?.emoji.icon(size: 32)
                 
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text(user?.name ?? "")
                             .foregroundColor(Color.LL.Neutrals.text)
@@ -142,7 +142,7 @@ struct MoveUserView: View {
                     .visibility(user == nil ? .visible : .gone)
             }
         }
-        .frame(height: 74)
+        .frame(height: 56)
         .padding(.horizontal, 16)
         .background(Color.Theme.Background.white)
         .cornerRadius(16)
@@ -198,7 +198,7 @@ extension MoveTokenView {
                     }
                 }
             }
-            .padding(20)
+            .padding(16)
             .backgroundFill(Color.Theme.Background.white)
             .cornerRadius(16)
         }

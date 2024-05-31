@@ -124,8 +124,7 @@ extension WalletSendAmountViewModel {
             if let address = targetContact.address {
                 if address.isEVMAddress {
                     DispatchQueue.main.async {
-                        //TODO: need check logic is right?
-                        self.isValidToken = self.token.isFlowCoin
+                        self.isValidToken = true
                     }
                     return
                 }

@@ -141,7 +141,12 @@ extension FlowNetwork {
     }
     
     static func transferNFT(to address: Flow.Address, nft: NFTModel) async throws -> Flow.ID {
-        guard let collection = nft.collection else {
+        var nftCollection = nft.collection
+        if nftCollection == nil {
+            nftCollection = await NFTCollectionConfig.share.get(from: nft.response.contractAddress ?? "")
+        }
+        
+        guard let collection = nftCollection else {
             throw NFTError.noCollectionInfo
         }
         
@@ -154,7 +159,7 @@ extension FlowNetwork {
         }
         
         var nftTransfer = CadenceManager.shared.current.collection?.sendNFT?.toFunc() ?? ""
-        var nbaNFTTransfer = CadenceManager.shared.current.collection?.sendNbaNFT?.toFunc() ?? ""
+        let nbaNFTTransfer = CadenceManager.shared.current.collection?.sendNbaNFT?.toFunc() ?? ""
         let result = CadenceManager.shared.current.version?.compareVersion(to: "1.0.0")
         if result != .orderedAscending {
             nftTransfer = CadenceManager.shared.current.collection?.sendNFT?.toFunc() ?? ""

@@ -182,10 +182,12 @@ class NFTTransferViewModel: ObservableObject {
                 }
                 
                 DispatchQueue.main.async {
-                    HUD.dismissLoading()
-                    Router.dismiss()
                     let holder = TransactionManager.TransactionHolder(id: tid, type: .transferNFT, data: data)
                     TransactionManager.shared.newTransaction(holder: holder)
+                    HUD.dismissLoading()
+                    Router.dismiss()
+                    Router.pop()
+                    
                 }
             } catch {
                 debugPrint("NFTTransferViewModel -> sendAction error: \(error)")

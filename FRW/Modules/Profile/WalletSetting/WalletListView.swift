@@ -91,15 +91,15 @@ struct WalletListView: RouteableView {
         .padding(.horizontal, 18)
         .backgroundFill(.LL.background)
         .applyRouteable(self)
-        .navigationBarItems(trailing: HStack(spacing: 6) {
-            Button {
-                viewModel.addAccount()
-            } label: {
-                Image("btn-add")
-                    .renderingMode(.template)
-                    .foregroundColor(.Theme.Text.black8)
-            }
-        })
+//        .navigationBarItems(trailing: HStack(spacing: 6) {
+//            Button {
+//                viewModel.addAccount()
+//            } label: {
+//                Image("btn-add")
+//                    .renderingMode(.template)
+//                    .foregroundColor(.Theme.Text.black8)
+//            }
+//        })
         .onAppear(perform: {
             viewModel.reload()
         })
