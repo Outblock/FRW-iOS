@@ -207,7 +207,7 @@ extension MoveTokenView {
         var switchMenuButton: some View {
             
             Button(action: {
-                Router.route(to: RouteMap.Wallet.selectToken(viewModel.token, [], { selectedToken in
+                Router.route(to: RouteMap.Wallet.selectMoveToken(viewModel.token, { selectedToken in
                     viewModel.changeTokenModelAction(token: selectedToken)
                 }))
             }, label: {

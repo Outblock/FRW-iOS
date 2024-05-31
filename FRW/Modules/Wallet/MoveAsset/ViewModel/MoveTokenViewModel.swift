@@ -256,6 +256,6 @@ extension MoveTokenViewModel {
     }
     
     func closeAction() {
-        isPresent = false
+        Router.dismiss()
     }
 }

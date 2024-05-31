@@ -136,6 +136,7 @@ class CustomHostingController<Content: View>: UIHostingController<Content>{
         super.init(rootView: rootView)
         self.showLarge = showLarge
         self.showGrabber = showGrabber
+        self.onlyLarge = onlyLarge
         self.overrideUserInterfaceStyle = ThemeManager.shared.getUIKitStyle()
     }
     

@@ -53,6 +53,7 @@ struct MoveNFTsView:  RouteableView {
         .padding(.horizontal, 18)
         .applyRouteable(self)
         .mockPlaceholder(viewModel.isMock)
+        .background(Color.Theme.Background.grey)
     }
     
     @ViewBuilder

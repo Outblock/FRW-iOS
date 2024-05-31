@@ -8,7 +8,13 @@
 import SwiftUI
 import SwiftUIX
 
-struct MoveAssetsView: View {
+struct MoveAssetsView: RouteableView {
+    
+    var title: String {
+        return ""
+    }
+    
+    
     var token: TokenModel?
     var showToken: () ->()
     var closeAction: () -> ()
@@ -16,7 +22,7 @@ struct MoveAssetsView: View {
     var body: some View {
         VStack {
             TitleWithClosedView(title: "move_assets".localized, closeAction: {
-                closeAction()
+                onClose()
             })
             .padding(.top, 24)
             
@@ -27,7 +33,7 @@ struct MoveAssetsView: View {
             
             HStack {
                 Button {
-                    closeAction()
+                    onClose()
                     Router.route(to: RouteMap.Wallet.moveNFTs)
                 } label: {
                     card(isNFT: true)
@@ -36,8 +42,14 @@ struct MoveAssetsView: View {
 
                 Spacer()
                 Button {
-                    closeAction()
-                    showToken()
+                    if let current = currentToken() {
+                        onClose()
+                        Router.route(to: RouteMap.Wallet.moveToken(current))
+                    }else {
+                        HUD.error(title: "not found token")
+                    }
+                    
+//                    showToken()
                 } label: {
                     card(isNFT: false)
                 }
@@ -64,6 +76,7 @@ struct MoveAssetsView: View {
         .background(Color.Theme.Background.grey)
         .cornerRadius([.topLeading, .topTrailing], 16)
         .ignoresSafeArea()
+        .applyRouteable(self)
     }
     
     func toName() -> String {
@@ -90,6 +103,21 @@ struct MoveAssetsView: View {
                 .frame(width: 164, height: 224)
         }
         
+    }
+        
+    private func currentToken() -> TokenModel? {
+        if let current = token {
+            return current
+        }
+        if let current = WalletManager.shared.activatedCoins.first {
+            return current
+        }
+        return nil
+    }
+    
+    private func onClose() {
+        Router.dismiss()
+//        closeAction()
     }
 }
 

@@ -172,6 +172,9 @@ extension RouteMap {
         case receiveQR
         case enableEVM
         case moveNFTs
+        case moveAssets
+        case moveToken(TokenModel)
+        case selectMoveToken(TokenModel?,(TokenModel)->())
     }
 }
 
@@ -245,7 +248,17 @@ extension RouteMap.Wallet: RouterTarget {
         case .enableEVM:
             navi.push(content: EVMEnableView())
         case .moveNFTs:
-            navi.present(content: MoveNFTsView())
+            let vc = CustomHostingController(rootView: MoveNFTsView(),onlyLarge: true)
+            navi.present(vc, animated: true, completion: nil)
+        case .moveAssets:
+            let vc = CustomHostingController(rootView: MoveAssetsView(showToken: {}, closeAction: {}))
+            navi.present(vc, animated: true, completion: nil)
+        case .moveToken(let tokenModel):
+            let vc = CustomHostingController(rootView: MoveTokenView(tokenModel: tokenModel, isPresent: .constant(true)))
+            navi.present(vc, animated: true, completion: nil)
+        case .selectMoveToken(let token, let callback):
+            let vm = AddTokenViewModel(selectedToken: token, disableTokens: [], selectCallback: callback)
+            Router.topPresentedController().present(content: AddTokenView(vm: vm))
         }
     }
 }

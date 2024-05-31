@@ -329,7 +329,8 @@ extension WalletViewModel {
     }
     
     func moveAssetsAction() {
-        moveAssetsPresent = true
+        Router.route(to: RouteMap.Wallet.moveAssets)
+//        moveAssetsPresent = true
     }
     
     func scanAction() {

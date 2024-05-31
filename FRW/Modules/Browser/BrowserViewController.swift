@@ -63,7 +63,7 @@ class BrowserViewController: UIViewController {
         
         view.backBtn.addTarget(self, action: #selector(onBackBtnClick), for: .touchUpInside)
         view.homeBtn.addTarget(self, action: #selector(onHomeBtnClick), for: .touchUpInside)
-        view.reloadBtn.addTarget(self, action: #selector(onReloadBtnClick), for: .touchUpInside)
+        view.reloadBtn.addTarget(self, action: #selector(onMoveAssets), for: .touchUpInside)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onAddressBarClick))
         view.addressBarContainer.addGestureRecognizer(tapGesture)
@@ -222,6 +222,18 @@ extension BrowserViewController {
     
     @objc private func onReloadBtnClick() {
         webView.reload()
+    }
+    
+    @objc private func onMoveAssets() {
+        
+        let vc = CustomHostingController(rootView: MoveAssetsView(showToken: {
+            print("[Browser] show")
+        }, closeAction: {
+            print("[Browser] close")
+        }))
+        
+
+        self.navigationController?.present(vc, completion: nil)
     }
     
     @objc private func onAddressBarClick() {
