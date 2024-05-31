@@ -205,6 +205,33 @@ extension MoveTokenView {
         
         @ViewBuilder
         var switchMenuButton: some View {
+            
+            Button(action: {
+                Router.route(to: RouteMap.Wallet.selectToken(viewModel.token, [], { selectedToken in
+                    viewModel.changeTokenModelAction(token: selectedToken)
+                }))
+            }, label: {
+                HStack(spacing: 4) {
+                    KFImage.url(viewModel.token.icon)
+                        .placeholder({
+                            Image("placeholder")
+                                .resizable()
+                        })
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 32, height: 32)
+                        .clipShape(Circle())
+                    Text(viewModel.token.symbol?.uppercased() ?? "?")
+                        .font(.inter(size: 14, weight: .medium))
+                        .foregroundStyle(Color.LL.Neutrals.text2)
+                    Image("icon-arrow-bottom")
+                        .foregroundColor(.LL.Neutrals.neutrals3)
+                }
+                .padding(8)
+                .background(Color.Theme.Line.line)
+                .cornerRadius(16)
+            })
+            /*
             Menu {
                 ForEach(WalletManager.shared.activatedCoins) { token in
                     Button {
@@ -243,6 +270,7 @@ extension MoveTokenView {
                 .background(Color.Theme.Line.line)
                 .cornerRadius(16)
             }
+            */
         }
         
     }

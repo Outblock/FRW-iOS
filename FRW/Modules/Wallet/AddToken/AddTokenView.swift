@@ -103,9 +103,10 @@ extension AddTokenView {
         
         var body: some View {
             Button {
-                if !isEVMAccount {
-                    action()
+                if isEVMAccount && vm.mode == .addToken {
+                    return
                 }
+                action()
             } label: {
                 HStack {
                     KFImage.url(token.iconURL)
@@ -130,7 +131,9 @@ extension AddTokenView {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    if !isEVMAccount {
+                    if isEVMAccount && vm.mode == .addToken {
+                        HStack{}
+                    }else {
                         if isActivated {
                             Image(systemName: .checkmarkSelected)
                                 .foregroundColor(.LL.Success.success3)
@@ -139,7 +142,6 @@ extension AddTokenView {
                                 .visibility(vm.mode == .addToken ? .visible : .gone)
                         }
                     }
-                    
                 }
                 .padding(.horizontal, 12)
                 .frame(height: TokenCellHeight)
