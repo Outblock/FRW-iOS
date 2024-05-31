@@ -22,17 +22,26 @@ class WalletListViewModel: ObservableObject {
     
     
     func reload() {
+        
         mainWallets = []
         if let mainAddress = WalletManager.shared.getPrimaryWalletAddress() {
             let user = WalletManager.shared.walletAccount.readInfo(at: mainAddress)
-            let mainWallet = WalletListViewModel.Item(user: user, address: mainAddress, balance: "", isEvm: false)
+            var balance = WalletManager.shared.balanceProvider.balanceValue(at: mainAddress) ?? ""
+            if !balance.isEmpty {
+                balance += " Flow"
+            }
+            let mainWallet = WalletListViewModel.Item(user: user, address: mainAddress, balance: balance, isEvm: false)
             mainWallets.append(mainWallet)
             
         }
         multiVMWallets = []
         EVMAccountManager.shared.accounts.forEach { account in
             let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
-            let model = WalletListViewModel.Item(user: user, address: account.showAddress, balance: "", isEvm: true)
+            var balance = WalletManager.shared.balanceProvider.balanceValue(at: account.showAddress) ?? ""
+            if !balance.isEmpty {
+                balance += " Flow"
+            }
+            let model = WalletListViewModel.Item(user: user, address: account.showAddress, balance: balance, isEvm: true)
             multiVMWallets.append(model)
         }
     }
