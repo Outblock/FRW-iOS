@@ -103,7 +103,9 @@ extension AddTokenView {
         
         var body: some View {
             Button {
-                action()
+                if !isEVMAccount {
+                    action()
+                }
             } label: {
                 HStack {
                     KFImage.url(token.iconURL)
@@ -128,12 +130,16 @@ extension AddTokenView {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    if isActivated {
-                        Image(systemName: .checkmarkSelected).foregroundColor(.LL.Success.success3)
-                    } else {
-                        Image(systemName: .add).foregroundColor(.LL.Primary.salmonPrimary)
-                            .visibility(vm.mode == .addToken ? .visible : .gone)
+                    if !isEVMAccount {
+                        if isActivated {
+                            Image(systemName: .checkmarkSelected)
+                                .foregroundColor(.LL.Success.success3)
+                        } else {
+                            Image(systemName: .add).foregroundColor(.LL.Primary.salmonPrimary)
+                                .visibility(vm.mode == .addToken ? .visible : .gone)
+                        }
                     }
+                    
                 }
                 .padding(.horizontal, 12)
                 .frame(height: TokenCellHeight)
@@ -142,7 +148,13 @@ extension AddTokenView {
                 })
             }
         }
+        
+        var isEVMAccount: Bool {
+            EVMAccountManager.shared.selectedAccount != nil
+        }
     }
+    
+    
 }
 
 extension AddTokenView {

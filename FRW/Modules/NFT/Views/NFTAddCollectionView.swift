@@ -118,7 +118,7 @@ extension NFTAddCollectionView {
                         .clipShape(Circle())
                 }
                 .padding(.trailing, 16)
-                .visibility(item.status == .own ? .invisible : .visible)
+                .visibility( isEVMAccount ? .invisible : (item.status == .own ? .invisible : .visible))
                 
 
             }
@@ -160,6 +160,10 @@ extension NFTAddCollectionView {
             .padding(.horizontal, 18)
         
             
+        }
+        
+        var isEVMAccount: Bool {
+            EVMAccountManager.shared.selectedAccount != nil
         }
     }
 }

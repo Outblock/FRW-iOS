@@ -312,7 +312,7 @@
 "Search__the__ID::message" = "Search the ID: ";
 "addresses" = "Address Book";
 "Sorry__we__could__not__find__any__accounts::message" = "Sorry, we could not find any accounts. Please try again.";
-"wallets" = "Wallet Details";
+"wallets" = "Account List";
 "Market::message" = "Market";
 "device" = "Device";
 "Website::message" = "Website";
