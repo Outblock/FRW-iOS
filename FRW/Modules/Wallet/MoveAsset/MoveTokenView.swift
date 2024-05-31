@@ -20,8 +20,8 @@ struct MoveTokenView: RouteableView {
     
     @StateObject var viewModel: MoveTokenViewModel
     
-    init(tokenModel: TokenModel) {
-        _viewModel = StateObject(wrappedValue: MoveTokenViewModel(token: tokenModel))
+    init(tokenModel: TokenModel, isPresent: Binding<Bool>) {
+        _viewModel = StateObject(wrappedValue: MoveTokenViewModel(token: tokenModel, isPresent: isPresent))
     }
     
     var body: some View {
@@ -37,7 +37,7 @@ struct MoveTokenView: RouteableView {
                             Spacer()
                             
                             Button {
-                                Router.dismiss()
+                                viewModel.closeAction()
                             } label: {
                                 Image("icon_close_circle_gray")
                                     .resizable()
@@ -51,12 +51,10 @@ struct MoveTokenView: RouteableView {
                         VStack(spacing: 8) {
                             ZStack {
                                 VStack(spacing: 8) {
-                                    MoveUserView(icon: viewModel.showFromIcon,
-                                                 name: viewModel.showFromName,
+                                    MoveUserView(user: viewModel.showFromUser,
                                                  address: viewModel.showFromAddress,
                                                  isEVM: viewModel.fromEVM)
-                                    MoveUserView(icon: viewModel.showToIcon,
-                                                 name: viewModel.showToName,
+                                    MoveUserView(user: viewModel.showToUser,
                                                  address: viewModel.showToAddress,
                                                  isEVM: !viewModel.fromEVM)
                                 }
@@ -100,8 +98,7 @@ struct MoveTokenView: RouteableView {
 // MARK: - MoveUserView
 
 struct MoveUserView: View {
-    var icon: String?
-    var name: String?
+    var user: WalletAccount.User?
     var address: String?
     var isEVM: Bool = false
     var placeholder: String?
@@ -111,22 +108,14 @@ struct MoveUserView: View {
             Text(placeholder ?? "From")
                 .font(.inter(size: 16, weight: .w600))
                 .foregroundStyle(Color.Theme.Text.black3)
-                .visibility(name != nil ? .gone : .visible)
+                .visibility(user != nil ? .gone : .visible)
             
             HStack {
-                KFImage.url(URL(string: icon ?? ""))
-                    .placeholder {
-                        Image("placeholder")
-                            .resizable()
-                    }
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 40, height: 40)
-                    .cornerRadius(20)
+                user?.emoji.icon(size: 40)
                 
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
-                        Text(name ?? "")
+                        Text(user?.name ?? "")
                             .foregroundColor(Color.LL.Neutrals.text)
                             .font(.inter(size: 14, weight: .semibold))
                         
@@ -143,14 +132,14 @@ struct MoveUserView: View {
                 }
                 .frame(alignment: .leading)
             }
-            .visibility(name == nil ? .gone : .visible)
+            .visibility(user == nil ? .gone : .visible)
             
             Spacer()
             Button {} label: {
                 Image("icon_arrow_bottom_16")
                     .resizable()
                     .frame(width: 16, height: 16)
-                    .visibility(name == nil ? .visible : .gone)
+                    .visibility(user == nil ? .visible : .gone)
             }
         }
         .frame(height: 74)
@@ -261,6 +250,6 @@ extension MoveTokenView {
 }
 
 #Preview {
-    MoveTokenView(tokenModel: TokenModel(name: "Flow", address: FlowNetworkModel(mainnet: "", testnet: "", crescendo: "", previewnet: ""), contractName: "", storagePath: FlowTokenStoragePath(balance: "100", vault: "a", receiver: ""), decimal: 30, icon: nil, symbol: nil, website: nil, evmAddress: nil, flowIdentifier: nil))
+    MoveTokenView(tokenModel: TokenModel(name: "Flow", address: FlowNetworkModel(mainnet: "", testnet: "", crescendo: "", previewnet: ""), contractName: "", storagePath: FlowTokenStoragePath(balance: "100", vault: "a", receiver: ""), decimal: 30, icon: nil, symbol: nil, website: nil, evmAddress: nil, flowIdentifier: nil), isPresent: .constant(true))
 //
 }

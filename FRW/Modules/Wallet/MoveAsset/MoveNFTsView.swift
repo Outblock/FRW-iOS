@@ -167,10 +167,9 @@ struct MoveNFTsView:  RouteableView {
             ScrollView {
                 LazyVGrid(columns: columns,spacing: 4){
                     ForEach(viewModel.nfts) { nft in
-                        NFTView(nft: nft)
-                            .onTapGesture {
-                                viewModel.toggleSelection(of: nft)
-                            }
+                        NFTView(nft: nft, reachMax: viewModel.showHint,collection: self.viewModel.selectedCollection) { model in
+                            viewModel.toggleSelection(of: model)
+                        }
                     }
                 }
                 
@@ -204,6 +203,9 @@ struct MoveNFTsView:  RouteableView {
 extension MoveNFTsView {
     struct NFTView: View {
         var nft: MoveNFTsViewModel.NFT
+        var reachMax: Bool
+        var collection: CollectionMask?
+        var click: (MoveNFTsViewModel.NFT) -> ()
         
         var body: some View {
             VStack {
@@ -217,22 +219,49 @@ extension MoveNFTsView {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .aspectRatio(1, contentMode: .fit)
-            .overlay(alignment: .topTrailing){
-                RoundedRectangle(cornerRadius: 16)
-                  .inset(by: 0.5)
-                  .stroke(Color.Theme.Accent.green, lineWidth: 1)
-                  .background(Color.black.opacity(0.6))
-                  .visibility(nft.isSelected ? .visible : .gone)
+            .overlay(alignment: .topTrailing) {
+                ZStack(alignment: .topTrailing) {
+                    RoundedRectangle(cornerRadius: 16)
+                      .inset(by: 0.5)
+                      .stroke(showMask() ? Color.clear : Color.Theme.Accent.green, lineWidth: 1)
+                      .background(Color.black.opacity(0.6))
+                      .visibility(nft.isSelected || showMask()  ? .visible : .gone)
+                    
+                    Image(nft.isSelected ? "evm_check_1" : "evm_check_0")
+                        .resizable()
+                        .frame(width: 16, height: 16)
+                        .padding([.top,.trailing],8)
+                        .visibility(allowSelect() ? .visible : .gone)
+                }
             }
-            .overlay(alignment: .topTrailing, content: {
-                Image(nft.isSelected ? "evm_check_1" : "evm_check_0")
-                    .resizable()
-                    .frame(width: 16, height: 16)
-                    .padding([.top,.trailing],8)
-            })
+            
             
             .clipShape(RoundedRectangle(cornerRadius: 16))
+            .onTapGesture {
+                if allowSelect() {
+                    click(nft)
+                }
+            }
         }
+        
+        private func showMask() -> Bool {
+            if nft.isSelected {
+                return false
+            }
+            if reachMax {
+                return true
+            }
+            return !allowSelect()
+        }
+        
+        private func allowSelect() -> Bool {
+            
+            guard let model = collection else {
+                return false
+            }
+            return !model.maskContractName.isEmpty
+        }
+        
     }
 }
 

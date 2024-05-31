@@ -22,7 +22,7 @@ class MoveNFTsViewModel: ObservableObject {
     
     @Published var buttonState: VPrimaryButtonState = .disabled
     
-    let limitCount = 3
+    let limitCount = 10
 
     init() {
         fetchNFTs(0)

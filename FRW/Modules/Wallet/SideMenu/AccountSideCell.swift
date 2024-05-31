@@ -86,7 +86,7 @@ struct AccountSideCell: View {
                             
                     }
                     
-                    Text(detail ?? address)
+                    Text(address)
                         .font(.inter(size: 12))
                         .lineLimit(1)
                         .truncationMode(.middle)

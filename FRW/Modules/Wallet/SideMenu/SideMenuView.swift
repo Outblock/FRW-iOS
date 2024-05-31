@@ -344,7 +344,7 @@ struct SideMenuView: View {
                     .foregroundStyle(Color.Theme.Text.black8)
                 
                 Spacer()
-                
+                /*
                 FloatingButton(mainButtonView:
                         Text(LocalUserDefaults.shared.flowNetwork.rawValue.uppercasedFirstLetter())
                             .font(.inter(size: 12))
@@ -393,6 +393,31 @@ struct SideMenuView: View {
                     .alignment(.center)
                     .initialOpacity(0)
                     .mainZStackAlignment(.trailing)
+                */
+                Menu {
+                    Button {
+                        vm.isSwitchOpen.toggle()
+                        WalletManager.shared.changeNetwork(.previewnet)
+                        
+                    } label: {
+                        NetworkMenuItem(network: .previewnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
+                    }
+                    
+                            Button(action: { print("Menu button 1")
+                            }) {
+                                NetworkMenuItem(network: .testnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
+                            }
+                            
+                            
+                        } label: {
+                            Text(LocalUserDefaults.shared.flowNetwork.rawValue.uppercasedFirstLetter())
+                                .font(.inter(size: 12))
+                                .foregroundStyle(LocalUserDefaults.shared.flowNetwork.color)
+                                .frame(height: 24)
+                                .padding(.horizontal, 8)
+                                .background(LocalUserDefaults.shared.flowNetwork.color.opacity(0.08))
+                                .cornerRadius(8)
+                        }
                     
             }
             .frame(height: 40)

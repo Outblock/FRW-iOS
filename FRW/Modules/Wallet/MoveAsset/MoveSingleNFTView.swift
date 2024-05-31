@@ -41,13 +41,11 @@ struct MoveSingleNFTView: View {
                         Color.clear
                             .frame(height: 20)
                         VStack(spacing: 0) {
-                            MoveUserView(icon: viewModel.showFromIcon,
-                                         name: viewModel.showFromName,
+                            MoveUserView(user: viewModel.showFromUser,
                                          address: viewModel.showFromAddress,
                                          isEVM: viewModel.fromEVM)
                             .padding(.bottom, 8)
-                            MoveUserView(icon: viewModel.showToIcon,
-                                         name: viewModel.showToName,
+                            MoveUserView(user: viewModel.showToUser,
                                          address: viewModel.showToAddress,
                                          isEVM: !viewModel.fromEVM)
                             HStack {

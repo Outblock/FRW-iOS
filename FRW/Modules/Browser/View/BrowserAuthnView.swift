@@ -155,12 +155,9 @@ struct BrowserAuthnView: View {
         VStack(alignment: .leading, spacing: 8) {
             
             HStack {
-                Image("logo")
-                    .resizable()
-                    .frame(width: 20, height: 20)
-                    .foregroundColor(.white.opacity(0.3))
-                
-                Text("wallet".capitalized)
+                user.emoji.icon(size: 20)
+
+                Text(user.name.capitalized)
                     .foregroundColor(.white.opacity(0.3))
                 
                 Spacer()
@@ -186,6 +183,10 @@ struct BrowserAuthnView: View {
         .padding(.horizontal, 18)
         .background(Color(hex: "#313131"))
         .cornerRadius(12)
+    }
+    
+    var user: WalletAccount.User {
+        WalletManager.shared.walletAccount.readInfo(at: vm.walletAddress ?? "")
     }
     
     var actionView: some View {

@@ -306,9 +306,11 @@ struct NFTDetailPage: RouteableView {
                 Button {
                     vm.showMoveAction()
                 } label: {
-                    HStack {
-                        Image(systemName: "arrow.left.arrow.right")
-                            .font(.system(size: 16))
+                    HStack { 
+                        Image("icon_move")
+                            .resizable()
+                            .renderingMode(.template)
+                            .frame(width: 20, height: 20)
                             .foregroundColor(theColor)
                         Text("move".localized)
                             .foregroundColor(.LL.Neutrals.text)

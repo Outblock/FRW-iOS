@@ -42,6 +42,7 @@ extension LocalUserDefaults {
         case selectedEVMAccount
         case userAddressOfDeletedApp
         case walletAccountInfo
+        case EVMAddress
     }
 
     enum FlowNetworkType: String, CaseIterable, Codable {
@@ -287,6 +288,15 @@ class LocalUserDefaults: ObservableObject {
             } else {
                 return nil
             }
+        }
+    }
+    
+    var EVMAddress: [String: [String]] {
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: Keys.EVMAddress.rawValue)
+        }
+        get {
+            return UserDefaults.standard.dictionary(forKey: Keys.EVMAddress.rawValue) as? [String: [String]] ?? [:]
         }
     }
 }

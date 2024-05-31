@@ -49,24 +49,16 @@ class MoveSingleNFTViewModel: ObservableObject {
 }
 
 extension MoveSingleNFTViewModel {
-    var showFromIcon: String {
-        fromEVM ? evmIcon : walletIcon
-    }
-
-    var showFromName: String {
-        fromEVM ? evmName : walletName
+    var showFromUser: WalletAccount.User {
+        WalletManager.shared.walletAccount.readInfo(at: showFromAddress)
     }
 
     var showFromAddress: String {
         fromEVM ? evmAddress : walletAddress
     }
     
-    var showToIcon: String {
-        fromEVM ? walletIcon : evmIcon
-    }
-    
-    var showToName: String {
-        fromEVM ? walletName : evmName
+    var showToUser: WalletAccount.User {
+        WalletManager.shared.walletAccount.readInfo(at: showToAddress)
     }
     
     var showToAddress: String {

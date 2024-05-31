@@ -64,7 +64,7 @@ struct TokenDetailView: RouteableView {
         .applyRouteable(self)
         .halfSheet(showSheet: $vm.showSheet) {
             if vm.buttonAction == .move {
-                MoveTokenView(tokenModel: vm.token)
+                MoveTokenView(tokenModel: vm.token, isPresent: $vm.showSheet)
             }
         }
     }

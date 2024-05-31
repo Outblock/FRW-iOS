@@ -22,6 +22,8 @@ class EVMAccountManager: ObservableObject {
         }
     }
     
+    private var cacheAccounts: [String: [String]] = LocalUserDefaults.shared.EVMAddress
+    
     var openEVM: Bool {
         return (CadenceManager.shared.current.evm?.createCoaEmpty) != nil && EVMEnable
     }
@@ -80,8 +82,10 @@ class EVMAccountManager: ObservableObject {
     
     private func clean() {
         log.debug("cleaned")
-        accounts = []
-        selectedAccount = nil
+        DispatchQueue.main.async {
+            self.accounts = []
+            self.selectedAccount = nil
+        }
     }
     
     private func checkValid() {
@@ -91,6 +95,18 @@ class EVMAccountManager: ObservableObject {
         }else {
             self.hasAccount = false
             self.showEVM = false
+        }
+    }
+    
+    private func addAddress(_ address: String) {
+        guard let primaryAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            return
+        }
+        var list = cacheAccounts[primaryAddress] ?? []
+        if !list.contains(address) {
+            list.append(address)
+            cacheAccounts[primaryAddress] = list
+            LocalUserDefaults.shared.EVMAddress = cacheAccounts
         }
     }
     
@@ -120,36 +136,47 @@ extension EVMAccountManager {
     }
     
     func refreshSync() async {
+        
         if (CadenceManager.shared.current.evm?.createCoaEmpty) == nil || !EVMEnable {
+            clean()
+            return
+        }
+        
+        guard let primaryAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            return
+        }
+        
+        if let EVMAddress = cacheAccounts[primaryAddress]?.first
+        {
             DispatchQueue.main.async {
-                self.accounts = []
-                self.selectedAccount = nil
+                let account = EVMAccountManager.Account(address: EVMAddress)
+                self.accounts = [account]
+            }
+            do {
+                try await refreshBalance(address: EVMAddress)
+            }catch {
+                log.error("[EVM] fetch balance failed")
             }
             return
         }
+        
         do {
             let address = try await fetchAddress()
             if let address = address, !address.isEmpty {
                 DispatchQueue.main.async {
                     let account = EVMAccountManager.Account(address: address)
                     self.accounts = [account]
+                    self.addAddress(address)
                 }
                 try await refreshBalance(address: address)
             } else {
-                DispatchQueue.main.async {
-                    self.accounts = []
-                    self.selectedAccount = nil
-                }
+                clean()
             }
         } catch {
-            DispatchQueue.main.async {
-                self.accounts = []
-                self.selectedAccount = nil
-            }
+            clean()
             log.error("[EVM] get address failed.\(error)")
         }
     }
-    
     
     func refreshBalance(address: String) async throws {
         log.info("[EVM] refresh balance at \(address)")
@@ -172,6 +199,8 @@ extension EVMAccountManager {
     func updateWhenDevChange() {
         checkValid()
     }
+    
+    
 }
 
 extension EVMAccountManager {

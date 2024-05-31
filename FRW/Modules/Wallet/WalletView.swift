@@ -145,7 +145,7 @@ struct WalletView: View {
         }
         .halfSheet(showSheet: $vm.moveTokenPresent) {
             if let token = vm.coinItems.first?.token {
-                MoveTokenView(tokenModel: token)
+                MoveTokenView(tokenModel: token, isPresent: $vm.moveTokenPresent)
             }
         }
         .navigationBarHidden(true)
@@ -282,7 +282,7 @@ struct WalletView: View {
                 Spacer()
                 
                 actionButton(imageName: "wallet-receive-stroke") {
-                    Router.route(to: RouteMap.Wallet.receive)
+                    Router.route(to: RouteMap.Wallet.receiveQR)
                 }
                 
                 if currentNetwork.isMainnet || currentNetwork == .testnet  {

@@ -172,7 +172,6 @@ extension RouteMap {
         case receiveQR
         case enableEVM
         case moveNFTs
-        case moveToken(TokenModel)
     }
 }
 
@@ -247,8 +246,6 @@ extension RouteMap.Wallet: RouterTarget {
             navi.push(content: EVMEnableView())
         case .moveNFTs:
             navi.present(content: MoveNFTsView())
-        case .moveToken(let model):
-            navi.present(content: MoveTokenView(tokenModel: model))
         }
     }
 }

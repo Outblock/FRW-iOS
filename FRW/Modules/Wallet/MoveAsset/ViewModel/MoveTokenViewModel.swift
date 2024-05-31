@@ -19,9 +19,11 @@ class MoveTokenViewModel: ObservableObject {
     @Published var buttonState: VPrimaryButtonState = .disabled
     
     var token: TokenModel
+    @Binding var isPresent: Bool
     
-    init(token: TokenModel) {
+    init(token: TokenModel, isPresent: Binding<Bool>) {
         self.token = token
+        _isPresent = isPresent
         refreshTokenData()
     }
     
@@ -81,14 +83,14 @@ class MoveTokenViewModel: ObservableObject {
     }
     
     private func updateState() {
-        buttonState  = isReadyForSend ? .enabled : .disabled
+        buttonState = isReadyForSend ? .enabled : .disabled
     }
-     var isReadyForSend: Bool {
+
+    var isReadyForSend: Bool {
         return errorType == .none && inputText.isNumber && !inputText.isEmpty
     }
     
     var currentBalance: String {
-        
         let total = amountBalance * coinRate
         let totalStr = total.formatCurrencyString(considerCustomCurrency: true)
         return "Balance: \(totalStr)"
@@ -96,24 +98,17 @@ class MoveTokenViewModel: ObservableObject {
 }
 
 extension MoveTokenViewModel {
-    var showFromIcon: String {
-        fromEVM ? evmIcon : walletIcon
-    }
-
-    var showFromName: String {
-        fromEVM ? evmName : walletName
+    
+    var showFromUser: WalletAccount.User {
+        WalletManager.shared.walletAccount.readInfo(at: showFromAddress)
     }
 
     var showFromAddress: String {
         fromEVM ? evmAddress : walletAddress
     }
     
-    var showToIcon: String {
-        fromEVM ? walletIcon : evmIcon
-    }
-    
-    var showToName: String {
-        fromEVM ? walletName : evmName
+    var showToUser: WalletAccount.User {
+        WalletManager.shared.walletAccount.readInfo(at: showToAddress)
     }
     
     var showToAddress: String {
@@ -164,13 +159,14 @@ extension MoveTokenViewModel {
         if token.isFlowCoin {
             if WalletManager.shared.isSelectedEVMAccount {
                 withdrawCoa()
-            }else {
+            }
+            else {
                 fundCoa()
             }
-        }else {
+        }
+        else {
             bridgeToken()
         }
-        
     }
     
     private func withdrawCoa() {
@@ -185,9 +181,10 @@ extension MoveTokenViewModel {
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
                 HUD.dismissLoading()
-                Router.dismiss()
+                
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
+                    self.closeAction()
                     self.buttonState = .enabled
                 }
             }
@@ -212,9 +209,9 @@ extension MoveTokenViewModel {
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
                 
-                Router.dismiss()
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
+                    self.closeAction()
                     self.buttonState = .enabled
                 }
             }
@@ -236,16 +233,16 @@ extension MoveTokenViewModel {
                 log.info("[EVM] bridge token \(fromEVM ? "FromEVM" : "ToEVM")")
                 let amount = self.inputTokenNum.decimalValue
         
-                let address = (fromEVM ? token.evmBridgeAddress()   : token.getAddress()) ?? ""
+                let address = (fromEVM ? token.evmBridgeAddress() : token.getAddress()) ?? ""
                 let name = fromEVM ? (token.evmBridgeContractName() ?? "") : token.contractName
                 
                 let txid = try await FlowNetwork.bridgeToken(address: address, contractName: name, amount: amount, fromEvm: fromEVM, decimals: token.decimal)
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
                 
-                Router.dismiss()
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
+                    self.closeAction()
                     self.buttonState = .enabled
                 }
             }
@@ -256,5 +253,9 @@ extension MoveTokenViewModel {
                 log.error("[EVM] move transation bridge token failed \(error)")
             }
         }
+    }
+    
+    func closeAction() {
+        isPresent = false
     }
 }
