@@ -193,7 +193,8 @@ class NFTUIKitListNormalDataModel {
         
         if EVMAccountManager.shared.selectedAccount != nil {
             let response: [EVMCollection] =  try await Network.request(FRWAPI.EVM.nfts(address))
-            let list = response.map { $0.toNFTCollection() }
+            let list = response.map({ $0.toNFTCollection() }).filter { $0.count > 0 }
+            
             return list
         }
         

@@ -225,15 +225,19 @@ extension BrowserViewController {
     }
     
     @objc private func onMoveAssets() {
-        
-        let vc = CustomHostingController(rootView: MoveAssetsView(showToken: {
-            print("[Browser] show")
-        }, closeAction: {
-            print("[Browser] close")
-        }))
-        
+        if LocalUserDefaults.shared.flowNetwork == .previewnet {
+            let vc = CustomHostingController(rootView: MoveAssetsView(showToken: {
+                print("[Browser] show")
+            }, closeAction: {
+                print("[Browser] close")
+            }))
+            
 
-        self.navigationController?.present(vc, completion: nil)
+            self.navigationController?.present(vc, completion: nil)
+        }else {
+            HUD.info(title: "Features Coming Soon")
+        }
+        
     }
     
     @objc private func onAddressBarClick() {

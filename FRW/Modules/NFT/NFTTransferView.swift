@@ -157,8 +157,7 @@ class NFTTransferViewModel: ObservableObject {
                     let erc721 = try await FlowProvider.Web3.erc721NFTContract()
                     let nftId = nft.response.id
                     guard let coaAddress = EVMAccountManager.shared.accounts.first?.showAddress,
-                          let nftAddress = self.nft.collection?.address.addHexPrefix(),
-                          let evmContractAddress = await NFTCollectionConfig.share.get(from: nftAddress)?.evmAddress
+                          let evmContractAddress = self.nft.collection?.evmAddress
                     else {
                         throw NFTError.sendInvalidAddress
                     }
