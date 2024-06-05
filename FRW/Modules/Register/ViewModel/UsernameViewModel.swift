@@ -51,14 +51,19 @@ class UsernameViewModel: ViewModel {
         
         Task {
             do {
-                try await UserManager.shared.register(currentText, mnemonic: nil)
-                HUD.success(title: "create_user_success".localized)
-                
-                DispatchQueue.main.async {
-                    self.changeBackupTypeIfNeeded()
-                    self.state.isRegisting = false
-                    Router.popToRoot()
+                let txid = try await UserManager.shared.register(currentText, mnemonic: nil)
+                let viewModel = CreateProfileWaitingViewModel(txId: txid ?? "") { finished in
+                    HUD.success(title: "create_user_success".localized)
+
+                    DispatchQueue.main.async {
+                        self.changeBackupTypeIfNeeded()
+                        self.state.isRegisting = false
+                        Router.popToRoot()
+                    }
                 }
+                Router.route(to: RouteMap.RestoreLogin.createProfile(viewModel))
+                
+                
             } catch {
                 DispatchQueue.main.async {
                     self.state.isRegisting = false

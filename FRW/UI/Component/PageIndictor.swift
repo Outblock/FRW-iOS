@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SPIndicator
 
 struct PageIndictor: View {
     var indicatorOffset: CGFloat
@@ -29,4 +30,10 @@ struct PageIndictor: View {
             alignment: .leading
         )
     }
+}
+
+
+
+#Preview {
+    PageIndictor(indicatorOffset: 0, currentIndex: 0, count: 3)
 }

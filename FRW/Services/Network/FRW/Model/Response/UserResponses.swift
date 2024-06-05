@@ -20,6 +20,7 @@ struct LoginResponse: Codable {
 struct RegisterResponse: Codable {
     let customToken: String
     let id: String
+    let txId: String?
 }
 
 struct UserInfoResponse: Codable {

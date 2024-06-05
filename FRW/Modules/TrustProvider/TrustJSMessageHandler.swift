@@ -239,7 +239,7 @@ extension TrustJSMessageHandler {
                         }
                         let model = try await FlowNetwork.fetchEVMTransactionResult(txid: tix.hex)
                         DispatchQueue.main.async {
-                            self.webVC?.webView.tw.send(network: .ethereum, result: model.transactionHash, to: id)
+                            self.webVC?.webView.tw.send(network: .ethereum, result: model.hash ?? "", to: id)
                         }
                     }
                     catch {

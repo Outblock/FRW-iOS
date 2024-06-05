@@ -11,11 +11,8 @@ import Web3Core
 import BigInt
 
 struct EVMTransactionExecuted: Codable {
-    let transactionHash: String
-    let failed: Bool
-    let blockHash: String
-    let transaction: String
-    let transactionType: Int
+    let hash: String?
+    let blockHash: String?    
 }
 
 struct EVMTransactionReceive: Codable {

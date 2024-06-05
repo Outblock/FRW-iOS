@@ -30,6 +30,8 @@ extension RouteMap {
         case multiConnect([MultiBackupType])
         case multiAccount([[MultiBackupManager.StoreItem]])
         case inputMnemonic((String) -> ())
+        
+        case createProfile(CreateProfileWaitingViewModel)
     }
 }
 
@@ -62,6 +64,8 @@ extension RouteMap.RestoreLogin: RouterTarget {
             navi.push(content: RestoreMultiAccountView(list))
         case .inputMnemonic(let callback):
             navi.push(content: RestoreMultiInputMnemonicView(callback: callback))
+        case .createProfile(let vm):
+            navi.push(content: CreateProfileWaitingView(vm))
         }
     }
 }

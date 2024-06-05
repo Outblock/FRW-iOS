@@ -1084,13 +1084,13 @@ extension FlowNetwork {
     static func fetchEVMTransactionResult(txid: String) async throws -> EVMTransactionExecuted {
         let result = try await flow.getTransactionResultById(id: .init(hex: txid))
         let event = result.events.filter { event in
-            event.type == "evm.TransactionExecuted"
+            event.type.lowercased().contains("evm.TransactionExecuted".lowercased())
         }.first
         guard let event = event else {
             throw EVMError.transactionResult
         }
         let model: EVMTransactionExecuted = try event.payload.decode()
-        log.debug("[EVM] result ==> \(model.transactionHash)")
+        log.debug("[EVM] result ==> \(String(describing: model.hash))")
         return model
     }
     

@@ -164,7 +164,7 @@ extension UserManager {
 // MARK: - Register
 
 extension UserManager {
-    func register(_ username: String, mnemonic: String? = nil) async throws {
+    func register(_ username: String, mnemonic: String? = nil) async throws -> String? {
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
             DispatchQueue.main.async {
@@ -190,6 +190,8 @@ extension UserManager {
         } else {
             log.error("store public key on iPhone failed")
         }
+        
+        return model.txId
     }
 }
 

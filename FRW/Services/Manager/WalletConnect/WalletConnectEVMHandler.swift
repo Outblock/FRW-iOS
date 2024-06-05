@@ -156,7 +156,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                         }
                         let model = try await FlowNetwork.fetchEVMTransactionResult(txid: tix.hex)
                         DispatchQueue.main.async {
-                            confirm(model.transactionHash)
+                            confirm(model.hash ?? "")
                         }
                     }
                     catch {
