@@ -31,7 +31,7 @@ class BrowserActionBarView: UIView {
     }()
     
     private lazy var stackView: UIStackView = {
-        let view = UIStackView(arrangedSubviews: [backBtn, reloadBtn, addressBarContainer, menuBtn, homeBtn])
+        let view = UIStackView(arrangedSubviews: [backBtn, moveBtn, addressBarContainer, menuBtn, homeBtn])
         view.axis = .horizontal
         view.spacing = 0
         return view
@@ -62,10 +62,24 @@ class BrowserActionBarView: UIView {
         return btn
     }()
     
-    lazy var reloadBtn: UIButton = {
+    lazy var moveBtn: UIButton = {
         let btn = UIButton(type: .custom)
         btn.setImage(UIImage(named: "icon-btn-move"), for: .normal)
         btn.setImage(UIImage(named: "icon-btn-move")?.withRenderingMode(.alwaysTemplate), for: .selected)
+        btn.tintColor = .white
+        
+        btn.snp.makeConstraints { make in
+            make.width.equalTo(BtnWidth)
+            make.height.equalTo(BtnHeight)
+        }
+        
+        return btn
+    }()
+    
+    lazy var reloadBtn: UIButton = {
+        let btn = UIButton(type: .custom)
+        btn.setImage(UIImage(named: "icon-btn-reload"), for: .normal)
+        btn.setImage(UIImage(named: "icon-btn-reload-stop")?.withRenderingMode(.alwaysTemplate), for: .selected)
         btn.tintColor = .white
         
         btn.snp.makeConstraints { make in
@@ -174,7 +188,13 @@ class BrowserActionBarView: UIView {
         addressLabel.snp.makeConstraints { make in
             make.left.equalTo(12)
             make.centerY.equalToSuperview()
-            make.right.equalTo(-12)
+        }
+        
+        addressBarContainer.addSubview(reloadBtn)
+        reloadBtn.snp.makeConstraints { make in
+            make.left.equalTo(addressLabel.snp.right).offset(0)
+            make.centerY.equalToSuperview()
+            make.right.equalTo(-0)
         }
     }
 }

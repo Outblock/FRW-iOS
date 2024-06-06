@@ -64,7 +64,8 @@ class BrowserViewController: UIViewController {
         
         view.backBtn.addTarget(self, action: #selector(onBackBtnClick), for: .touchUpInside)
         view.homeBtn.addTarget(self, action: #selector(onHomeBtnClick), for: .touchUpInside)
-        view.reloadBtn.addTarget(self, action: #selector(onMoveAssets), for: .touchUpInside)
+        view.moveBtn.addTarget(self, action: #selector(onMoveAssets), for: .touchUpInside)
+        view.reloadBtn.addTarget(self, action: #selector(onReloadBtnClick), for: .touchUpInside)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onAddressBarClick))
         view.addressBarContainer.addGestureRecognizer(tapGesture)
@@ -176,6 +177,7 @@ extension BrowserViewController {
             actionBarView.addressLabel.text = webView.url?.absoluteString
         }
         
+        actionBarView.moveBtn.isSelected = webView.isLoading
         actionBarView.reloadBtn.isSelected = webView.isLoading
         actionBarView.progressView.isHidden = !webView.isLoading
         actionBarView.progressView.progress = webView.isLoading ? webView.estimatedProgress : 0
