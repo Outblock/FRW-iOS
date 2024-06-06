@@ -1091,6 +1091,8 @@
 		4EAFBD7F2C104DAF0031EA20 /* CreateProfileWaitingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAFBD7D2C104DAF0031EA20 /* CreateProfileWaitingViewModel.swift */; };
 		4EAFBD812C1051D00031EA20 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAFBD802C1051D00031EA20 /* CircularProgressView.swift */; };
 		4EAFBD822C1051D00031EA20 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAFBD802C1051D00031EA20 /* CircularProgressView.swift */; };
+		4EAFBD852C1063E50031EA20 /* CrowdinSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 4EAFBD842C1063E50031EA20 /* CrowdinSDK */; };
+		4EAFBD872C1064070031EA20 /* CrowdinSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 4EAFBD862C1064070031EA20 /* CrowdinSDK */; };
 		4EB006D52A82660C0027D1CC /* ChildAccountAccessibleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB006D42A82660C0027D1CC /* ChildAccountAccessibleManager.swift */; };
 		4EB006D62A82660C0027D1CC /* ChildAccountAccessibleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB006D42A82660C0027D1CC /* ChildAccountAccessibleManager.swift */; };
 		4EB17C872862947600CA4DAE /* NFTCollectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB17C852862947600CA4DAE /* NFTCollectionModel.swift */; };
@@ -2309,6 +2311,7 @@
 		4EAFBD442C0FF72B0031EA20 /* CreateProfileWaitingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateProfileWaitingView.swift; sourceTree = "<group>"; };
 		4EAFBD7D2C104DAF0031EA20 /* CreateProfileWaitingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateProfileWaitingViewModel.swift; sourceTree = "<group>"; };
 		4EAFBD802C1051D00031EA20 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
+		4EAFBD892C115E320031EA20 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		4EB006D42A82660C0027D1CC /* ChildAccountAccessibleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildAccountAccessibleManager.swift; sourceTree = "<group>"; };
 		4EB17C852862947600CA4DAE /* NFTCollectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTCollectionModel.swift; sourceTree = "<group>"; };
 		4EB17C8828629DE200CA4DAE /* NFTCollectionStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTCollectionStateManager.swift; sourceTree = "<group>"; };
@@ -2417,7 +2420,6 @@
 		6A12173729659F5E00BA0C3B /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		6A1559902A29C7BC0083747E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6A1559922A29C7D10083747E /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
-		6A1559942A29CB860083747E /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_CN; path = zh_CN.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6A15C1FE286D914000C2EBA2 /* TokenDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenDetailView.swift; sourceTree = "<group>"; };
 		6A164F3D2840A1380026B31E /* TabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		6A164F3E2840A1380026B31E /* TabBarItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarItemView.swift; sourceTree = "<group>"; };
@@ -2749,6 +2751,7 @@
 				15DE22F1277F133B00B5EE03 /* SkeletonUI in Frameworks */,
 				1552DC6A2787090D00EAA7D5 /* Introspect in Frameworks */,
 				15D3BA7228C3B90A009AEA6E /* ViewAnimator in Frameworks */,
+				4EAFBD852C1063E50031EA20 /* CrowdinSDK in Frameworks */,
 				154B8920276A1EEB00780E93 /* SwiftUIX in Frameworks */,
 				6AC1AE6B289BAD0600F76C7A /* SnapKit in Frameworks */,
 				158832D42894277600142B35 /* Starscream in Frameworks */,
@@ -2814,6 +2817,7 @@
 				15C58C562868A4EE00BD4FC6 /* SkeletonUI in Frameworks */,
 				15C58C572868A4EE00BD4FC6 /* Introspect in Frameworks */,
 				15D6D8F428CBAEBD00CBA152 /* FancyScrollView in Frameworks */,
+				4EAFBD872C1064070031EA20 /* CrowdinSDK in Frameworks */,
 				15C58C582868A4EE00BD4FC6 /* SwiftUIX in Frameworks */,
 				6AC1AE69289BACDF00F76C7A /* SnapKit in Frameworks */,
 				158832D22894273600142B35 /* Starscream in Frameworks */,
@@ -5863,6 +5867,7 @@
 				4E3682C62BB6A59100B24785 /* web3swift */,
 				4E539C882BC6269E0080BAF8 /* Web3Wallet */,
 				4EEE9DC62BD243DB00685AAA /* FirebaseAnalytics */,
+				4EAFBD842C1063E50031EA20 /* CrowdinSDK */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 154B8928276A1EEB00780E93 /* FRW-dev.app */;
@@ -5942,6 +5947,7 @@
 				4E9D98DC2B9DEAE300A70879 /* TrustWeb3Provider */,
 				4E947C912BBEB2E300E87A85 /* web3swift */,
 				4E539C862BC626770080BAF8 /* Web3Wallet */,
+				4EAFBD862C1064070031EA20 /* CrowdinSDK */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 15C58C6D2868A4EE00BD4FC6 /* FRW.app */;
@@ -6058,7 +6064,7 @@
 				Base,
 				ja,
 				ru,
-				zh_CN,
+				"zh-Hans",
 			);
 			mainGroup = 15EC9DE5274FD1FC00F70CD9;
 			packageReferences = (
@@ -6105,6 +6111,7 @@
 				4E1DD8C52B1622030055E510 /* XCRemoteSwiftPackageReference "Instabug-SP" */,
 				4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */,
 				4E3682C52BB6A59100B24785 /* XCRemoteSwiftPackageReference "web3swift" */,
+				4EAFBD832C1063E50031EA20 /* XCRemoteSwiftPackageReference "mobile-sdk-ios" */,
 			);
 			productRefGroup = 15EC9DEF274FD1FC00F70CD9 /* Products */;
 			projectDirPath = "";
@@ -7952,7 +7959,7 @@
 				15B1F63A2786B89800847BB5 /* en */,
 				6A1559902A29C7BC0083747E /* ru */,
 				6A1559922A29C7D10083747E /* ja */,
-				6A1559942A29CB860083747E /* zh_CN */,
+				4EAFBD892C115E320031EA20 /* zh-Hans */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -8041,7 +8048,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -8084,7 +8091,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
@@ -8751,7 +8758,7 @@
 			repositoryURL = "https://github.com/daltoniam/Starscream";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.0.0;
+				minimumVersion = 4.0.4;
 			};
 		};
 		1588332028943F4D00142B35 /* XCRemoteSwiftPackageReference "NativeUIKit" */ = {
@@ -9065,6 +9072,14 @@
 			requirement = {
 				branch = master;
 				kind = branch;
+			};
+		};
+		4EAFBD832C1063E50031EA20 /* XCRemoteSwiftPackageReference "mobile-sdk-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/crowdin/mobile-sdk-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.9.0;
 			};
 		};
 		4EC8524F2B0AD88D00C5CD52 /* XCRemoteSwiftPackageReference "Flow-Wallet-Core" */ = {
@@ -9566,6 +9581,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */;
 			productName = TrustWeb3Provider;
+		};
+		4EAFBD842C1063E50031EA20 /* CrowdinSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4EAFBD832C1063E50031EA20 /* XCRemoteSwiftPackageReference "mobile-sdk-ios" */;
+			productName = CrowdinSDK;
+		};
+		4EAFBD862C1064070031EA20 /* CrowdinSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4EAFBD832C1063E50031EA20 /* XCRemoteSwiftPackageReference "mobile-sdk-ios" */;
+			productName = CrowdinSDK;
 		};
 		4EC56B2C281D3ED000246878 /* FirebaseRemoteConfig */ = {
 			isa = XCSwiftPackageProductDependency;

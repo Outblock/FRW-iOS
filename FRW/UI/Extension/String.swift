@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import CryptoKit
 import Web3Core
+import CrowdinSDK
 
 extension String {
     var localized: String {

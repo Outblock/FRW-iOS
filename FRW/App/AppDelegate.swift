@@ -15,6 +15,7 @@ import UIKit
 import WalletCore
 import SwiftyBeaver
 import FirebaseMessaging
+import CrowdinSDK
 
 
 #if DEBUG
@@ -70,6 +71,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         Atlantis.start()
 #endif
         
+        let crowdinProviderConfig = CrowdinProviderConfig(hashString: "f4bff0f0e2ed98c2ba53a29qzvm",
+          sourceLanguage: "{source_language}")
+        let crowdinSDKConfig = CrowdinSDKConfig.config().with(crowdinProviderConfig: crowdinProviderConfig)
+        CrowdinSDK.startWithConfig(crowdinSDKConfig, completion: {
+            log.info("[Crowdin] SDK is ready to use")
+        })
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             self.jailbreakDetect()
         }
