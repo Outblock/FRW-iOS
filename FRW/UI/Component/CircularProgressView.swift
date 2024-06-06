@@ -45,8 +45,6 @@ struct AnimationValues {
 enum AnimationPhase: Int {
     case initial = 0, pending, finalized,executed,sealed
     
-    
-    
     var values: AnimationValues {
         switch self {
         case .initial:

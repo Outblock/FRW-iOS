@@ -11,11 +11,15 @@ import SwiftUIPager
 
 struct CreateProfileWaitingView: RouteableView {
     
-    @State var currentPage: Int = 0
+    
     @StateObject var viewModel: CreateProfileWaitingViewModel
     
     var title: String {
         return ""
+    }
+    
+    var isNavigationBarHidden: Bool {
+        true
     }
     
     init(_ viewModel: CreateProfileWaitingViewModel) {
@@ -42,14 +46,14 @@ struct CreateProfileWaitingView: RouteableView {
                 HStack(spacing: 15) {
                     
                     ForEach(items.indices, id: \.self) { index in
-                        let item = items[currentPage]
+                        let item = items[viewModel.currentPage]
                             Capsule()
-                            .fill(currentPage == index ? item.color : Color.Theme.Line.line)
-                            .frame(width: currentPage == index ? 20 : 7, height: 7)
+                            .fill(viewModel.currentPage == index ? item.color : Color.Theme.Line.line)
+                            .frame(width: viewModel.currentPage == index ? 20 : 7, height: 7)
                     }
                 }
                 .overlay(alignment: .leading){
-                    let item = items[currentPage]
+                    let item = items[viewModel.currentPage]
                     Capsule()
                         .fill(item.color)
                         .frame(width: 20, height: 7)
@@ -59,9 +63,9 @@ struct CreateProfileWaitingView: RouteableView {
                     .frame(width: 48, height: 1)
             }
             .padding(.bottom, 54)
-            if viewModel.animationPhase == .sealed {
+            if viewModel.createFinished {
                 Button{
-                    viewModel.callback(true)
+                    viewModel.onConfirm()
                 }label: {
                     HStack {
                         Text("Go with the FLOW")
@@ -78,11 +82,7 @@ struct CreateProfileWaitingView: RouteableView {
                     Text("Creating your Profile")
                         .font(.inter(size: 14, weight: .bold))
                         .foregroundStyle(Color.Theme.Accent.green)
-                    ZStack {
-                        CircularProgressBackground(animationPhase: $viewModel.animationPhase)
-                        CircularProgressIndicator(animationPhase: $viewModel.animationPhase)
-                    }
-                    .frame(width: 12,height: 12)
+                    VSpinner(type: .continous(spinnerSubModel))
                 }
                 .frame(width: 220,height: 56)
                 .border(Color.Theme.Accent.green,cornerRadius: 16)
@@ -97,23 +97,35 @@ struct CreateProfileWaitingView: RouteableView {
     }
     
     func getOffset() -> CGFloat {
-        return CGFloat(22 * currentPage)
+        return CGFloat(22 * viewModel.currentPage)
     }
     
     var items: [CreateProfileWaitingView.Item] {
         CreateProfileWaitingView.Item.default()
+    }
+    
+    var spinnerSubModel: VSpinnerModelContinous {
+        var model: VSpinnerModelContinous = .init()
+        model.colors.spinner = Color.Theme.Accent.green
+        return model
     }
 }
 
 extension CreateProfileWaitingView {
     
     var bodyContainer: some View {
-        Pager(page: Page.first(), data: CreateProfileWaitingView.Item.default(), id: \.self) { item in
+        Pager(page: viewModel.page, data: CreateProfileWaitingView.Item.default(), id: \.self) { item in
             createPageView(item: item)
         }
         .bounces(false)
+        .onDraggingBegan({
+            viewModel.onPageDrag(true)
+        })
+        .onDraggingEnded({
+            viewModel.onPageDrag(false)
+        })
         .onPageWillChange({ willIndex in
-            onPageIndexChangeAction(willIndex)
+            viewModel.onPageIndexChangeAction(willIndex)
         })
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -151,11 +163,6 @@ extension CreateProfileWaitingView {
         }
     }
     
-    func onPageIndexChangeAction(_ index: Int) {
-        withAnimation(.default) {
-            currentPage = index
-        }
-    }
 }
 
 extension CreateProfileWaitingView {

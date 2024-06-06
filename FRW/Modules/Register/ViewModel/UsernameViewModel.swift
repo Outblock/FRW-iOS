@@ -53,7 +53,6 @@ class UsernameViewModel: ViewModel {
             do {
                 let txid = try await UserManager.shared.register(currentText, mnemonic: nil)
                 let viewModel = CreateProfileWaitingViewModel(txId: txid ?? "") { finished in
-                    HUD.success(title: "create_user_success".localized)
 
                     DispatchQueue.main.async {
                         self.changeBackupTypeIfNeeded()

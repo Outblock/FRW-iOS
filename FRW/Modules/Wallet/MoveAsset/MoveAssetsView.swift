@@ -57,18 +57,6 @@ struct MoveAssetsView: RouteableView {
             }
             .padding(.top, 32)
             
-            Button  {
-                closeAction()
-            } label: {
-                HStack {
-                    Text("maybe_later_text")
-                        .font(.inter(size: 16))
-                        .foregroundStyle(Color.Theme.Text.black8)
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 8)
-            }
-            .padding(.top, 24)
 
             Spacer()
         }
