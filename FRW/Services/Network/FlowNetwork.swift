@@ -1082,6 +1082,7 @@ extension FlowNetwork {
     }
     
     static func fetchEVMTransactionResult(txid: String) async throws -> EVMTransactionExecuted {
+        log.info("[EVM] evm transaction tix: \(txid)")
         let result = try await flow.getTransactionResultById(id: .init(hex: txid))
         let event = result.events.filter { event in
             event.type.lowercased().contains("evm.TransactionExecuted".lowercased())

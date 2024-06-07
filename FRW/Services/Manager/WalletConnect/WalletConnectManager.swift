@@ -282,15 +282,16 @@ extension WalletConnectManager {
             return
         }
         let info = self.handler.sessionInfo(sessionProposal: sessionProposal)
+        var address = WalletManager.shared.getPrimaryWalletAddress()
         if self.handler.currentType(sessionProposal: sessionProposal) == .evm {
             //TODO: if evm not enable
-            
+            address = EVMAccountManager.shared.accounts.first?.showAddress ?? ""
         }
         self.currentSessionInfo = info
         let authnVM = BrowserAuthnViewModel(title: info.name,
                                             url: info.dappURL,
                                             logo: info.iconURL,
-                                            walletAddress: WalletManager.shared.getPrimaryWalletAddress(),
+                                            walletAddress: address,
                                             network: network)
         { result in
             if result {
