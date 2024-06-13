@@ -352,29 +352,31 @@ struct SideMenuView: View {
                 
                 Menu {
                     VStack {
-                        Button {
-                            vm.isSwitchOpen.toggle()
-                            WalletManager.shared.changeNetwork(.mainnet)
-                            
-                        } label: {
-                            NetworkMenuItem(network: .mainnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
-                        }
-                        
-                        Button {
-                            vm.isSwitchOpen.toggle()
-                            WalletManager.shared.changeNetwork(.testnet)
-                            
-                        } label: {
-                            NetworkMenuItem(network: .testnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
-                        }
-                        
-                        if let previewnetAddress = wm.getFlowNetworkTypeAddress(network: .previewnet), isDeveloperMode {
+                        if isDeveloperMode {
                             Button {
                                 vm.isSwitchOpen.toggle()
-                                WalletManager.shared.changeNetwork(.previewnet)
+                                WalletManager.shared.changeNetwork(.mainnet)
                                 
                             } label: {
-                                NetworkMenuItem(network: .previewnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
+                                NetworkMenuItem(network: .mainnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
+                            }
+                            
+                            Button {
+                                vm.isSwitchOpen.toggle()
+                                WalletManager.shared.changeNetwork(.testnet)
+                                
+                            } label: {
+                                NetworkMenuItem(network: .testnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
+                            }
+                            
+                            if let previewnetAddress = wm.getFlowNetworkTypeAddress(network: .previewnet), isDeveloperMode {
+                                Button {
+                                    vm.isSwitchOpen.toggle()
+                                    WalletManager.shared.changeNetwork(.previewnet)
+                                    
+                                } label: {
+                                    NetworkMenuItem(network: .previewnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
+                                }
                             }
                         }
                     }
