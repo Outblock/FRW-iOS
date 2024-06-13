@@ -46,6 +46,6 @@ class ReceiveQRViewModel: ObservableObject {
     }
     
     private func EVMAddr() -> String {
-        WalletManager.shared.evmAccount?.showAddress ?? ""
+        EVMAccountManager.shared.accounts.first?.showAddress ?? ""
     }
 }
