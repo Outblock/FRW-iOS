@@ -28,65 +28,36 @@ struct CreateProfileWaitingView: RouteableView {
     
     var body: some View {
         VStack(alignment: .center) {
-            HStack {
-                Image("lilico-app-icon")
-                    .resizable()
-                    .frame(width: 32, height: 32)
-                Text("app_name_full".localized)
-                    .font(.inter(size: 18, weight: .semibold))
-                    .foregroundStyle(Color.Theme.Text.black)
-                Spacer()
-            }
-            Spacer()
+           
             bodyContainer
-            Spacer()
-            
-            HStack {
-                Spacer()
-                HStack(spacing: 15) {
+                .overlay(alignment:.bottomTrailing) {
                     
-                    ForEach(items.indices, id: \.self) { index in
-                        let item = items[viewModel.currentPage]
-                            Capsule()
-                            .fill(viewModel.currentPage == index ? item.color : Color.Theme.Line.line)
-                            .frame(width: viewModel.currentPage == index ? 20 : 7, height: 7)
-                    }
-                }
-                .overlay(alignment: .leading){
-                    let item = items[viewModel.currentPage]
-                    Capsule()
-                        .fill(item.color)
-                        .frame(width: 20, height: 7)
-                        .offset(x: getOffset())
-                }
-                Color.clear
-                    .frame(width: 48, height: 1)
-            }
-            .padding(.bottom, 54)
-            if viewModel.createFinished {
-                Button{
-                    viewModel.onConfirm()
-                }label: {
                     HStack {
-                        Text("Go with the FLOW")
-                            .font(.inter(size: 14, weight: .bold))
-                            .foregroundStyle(Color.Theme.Text.white9)
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 16)
-                    .background(Color.Theme.Accent.green)
-                    .cornerRadius(16)
+                                    Spacer()
+                                    HStack(spacing: 15) {
+                                        
+                                        ForEach(items.indices, id: \.self) { index in
+                                            let item = items[viewModel.currentPage]
+                                                Capsule()
+                                                .fill(viewModel.currentPage == index ? item.color : Color.Theme.Line.line)
+                                                .frame(width: viewModel.currentPage == index ? 20 : 7, height: 7)
+                                        }
+                                    }
+                                    .overlay(alignment: .leading){
+                                        let item = items[viewModel.currentPage]
+                                        Capsule()
+                                            .fill(item.color)
+                                            .frame(width: 20, height: 7)
+                                            .offset(x: getOffset())
+                                    }
+                                    Color.clear
+                                        .frame(width: 48, height: 1)
+                                }
+                                .padding(.bottom, 150)
                 }
-            } else {
-                HStack {
-                    Text("Creating your Profile")
-                        .font(.inter(size: 14, weight: .bold))
-                        .foregroundStyle(Color.Theme.Accent.green)
-                    VSpinner(type: .continous(spinnerSubModel))
-                }
-                .frame(width: 220,height: 56)
-                .border(Color.Theme.Accent.green,cornerRadius: 16)
-            }
+            
+            
+            
             
         }
         .padding(.top, 40)
@@ -131,14 +102,26 @@ extension CreateProfileWaitingView {
     }
     
     func createPageView(item: CreateProfileWaitingView.Item)-> some View {
-        VStack {
-            VStack(spacing: 25) {
+        VStack(alignment: .leading) {
+            
+            HStack {
+                Image("lilico-app-icon")
+                    .resizable()
+                    .frame(width: 32, height: 32)
+                Text("app_name_full".localized)
+                    .font(.inter(size: 18, weight: .semibold))
+                    .foregroundStyle(Color.Theme.Text.black)
+                Spacer()
+            }
+            Spacer()
+            VStack(alignment: .leading, spacing: 25) {
                 HStack(alignment: .top) {
                     VStack {
                         Text(item.title)
                             .font(.montserrat(size: 48, weight: .light))
                             .fontWeight(.thin)
                             .foregroundStyle(Color.Theme.Text.black)
+                            .padding(.trailing, 32)
 
                         Spacer()
                     }
@@ -158,8 +141,39 @@ extension CreateProfileWaitingView {
                 Text(item.desc)
                     .font(.inter(size: 18,weight: .light))
                     .foregroundStyle(Color.Theme.Text.black8)
+                    .padding(.trailing, 32)
             }
             
+            Spacer()
+            HStack(alignment: .center) {
+                Spacer()
+                if viewModel.createFinished {
+                                           Button{
+                                               viewModel.onConfirm()
+                                           }label: {
+                                               HStack {
+                                                   Text("Go with the FLOW")
+                                                       .font(.inter(size: 14, weight: .bold))
+                                                       .foregroundStyle(Color.Theme.Text.white9)
+                                               }
+                                               .padding(.horizontal, 24)
+                                               .padding(.vertical, 16)
+                                               .background(Color.Theme.Accent.green)
+                                               .cornerRadius(16)
+                                           }
+                                       } else {
+                                           HStack {
+                                               Text("Creating your Profile")
+                                                   .font(.inter(size: 14, weight: .bold))
+                                                   .foregroundStyle(Color.Theme.Accent.green)
+                                           }
+                                           .frame(width: 220,height: 56)
+                                           .border(Color.Theme.Accent.green,cornerRadius: 16)
+                                       }
+                Spacer()
+            }
+            .frame(height: .infinity)
+            .padding(.bottom, 40)
         }
     }
     
