@@ -13,6 +13,8 @@ import UIKit
 
 enum RouteMap {}
 
+typealias EmptyClosure = ()->()
+
 // MARK: - Restore Login
 
 extension RouteMap {
@@ -252,13 +254,13 @@ extension RouteMap.Wallet: RouterTarget {
         case .enableEVM:
             navi.push(content: EVMEnableView())
         case .moveNFTs:
-            let vc = CustomHostingController(rootView: MoveNFTsView(),onlyLarge: true)
+            let vc = PresentHostingController(rootView: MoveNFTsView())
             navi.present(vc, animated: true, completion: nil)
         case .moveAssets:
-            let vc = CustomHostingController(rootView: MoveAssetsView(showToken: {}, closeAction: {}))
+            let vc = PresentHostingController(rootView: MoveAssetsView())
             navi.present(vc, animated: true, completion: nil)
         case .moveToken(let tokenModel):
-            let vc = CustomHostingController(rootView: MoveTokenView(tokenModel: tokenModel, isPresent: .constant(true)))
+            let vc = PresentHostingController(rootView: MoveTokenView(tokenModel: tokenModel, isPresent: .constant(true)))
             navi.present(vc, animated: true, completion: nil)
         case .selectMoveToken(let token, let callback):
             let vm = AddTokenViewModel(selectedToken: token, disableTokens: [], selectCallback: callback)

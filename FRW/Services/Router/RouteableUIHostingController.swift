@@ -51,7 +51,7 @@ extension RouterContentDelegate {
     }
 }
 
-class RouteableUIHostingController<Content: RouteableView>: UIHostingController<Content> {
+class RouteableUIHostingController<Content: RouteableView>: UIHostingController<Content>, UIPopoverPresentationControllerDelegate {
     override init(rootView: Content) {
         super.init(rootView: rootView)
     }
@@ -74,6 +74,8 @@ class RouteableUIHostingController<Content: RouteableView>: UIHostingController<
         navigationItem.largeTitleDisplayMode = rootView.navigationBarTitleDisplayMode == .large ? .always : .never
         
         rootView.configNavigationItem(navigationItem)
+        
+        self.popoverPresentationController?.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -101,4 +103,9 @@ class RouteableUIHostingController<Content: RouteableView>: UIHostingController<
     @MainActor required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    @objc func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        log.debug("[Route] ----")
+    }
 }
+

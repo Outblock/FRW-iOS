@@ -8,7 +8,7 @@
 import SwiftUI
 import Kingfisher
 
-struct MoveNFTsView:  RouteableView {
+struct MoveNFTsView:  RouteableView,PresentActionDelegate {
     var title: String {
         return ""
     }
@@ -19,6 +19,10 @@ struct MoveNFTsView:  RouteableView {
     
     func configNavigationItem(_ navigationItem: UINavigationItem) {
         
+    }
+    
+    var detents: [UISheetPresentationController.Detent] {
+        return [.large()]
     }
     
     @StateObject var viewModel = MoveNFTsViewModel()
@@ -198,6 +202,10 @@ struct MoveNFTsView:  RouteableView {
         .background(Color.Theme.Accent.orange)
         .cornerRadius(24)
         .offset(y: -8)
+    }
+    
+    func customViewDidDismiss() {
+        MoveAssetsAction.shared.endBrowser()
     }
 }
 

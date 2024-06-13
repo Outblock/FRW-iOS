@@ -119,36 +119,45 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
 
 extension TrustJSMessageHandler {
     private func handleRequestAccounts(network: ProviderNetwork, id: Int64) {
-        let address = webVC?.trustProvider?.config.ethereum.address ?? ""
-
-        let title = webVC?.webView.title ?? "unknown"
-        let chainID = LocalUserDefaults.shared.flowNetwork.toFlowType()
-        let url = webVC?.webView.url
-        let vm = BrowserAuthnViewModel(title: title,
-                                       url: url?.host ?? "unknown",
-                                       logo: url?.absoluteString.toFavIcon()?.absoluteString,
-                                       walletAddress: address,
-                                       network: chainID)
-        { [weak self] result in
+        
+        let callback = { [weak self] in
             guard let self = self else {
                 return
             }
-            
-            if result {
-                switch network {
-                case .ethereum:
-                    webVC?.webView.tw.set(network: network.rawValue, address: address)
-                    webVC?.webView.tw.send(network: network, results: [address], to: id)
-                default:
-                    print("not support")
+            let address = webVC?.trustProvider?.config.ethereum.address ?? ""
+
+            let title = webVC?.webView.title ?? "unknown"
+            let chainID = LocalUserDefaults.shared.flowNetwork.toFlowType()
+            let url = webVC?.webView.url
+            let vm = BrowserAuthnViewModel(title: title,
+                                           url: url?.host ?? "unknown",
+                                           logo: url?.absoluteString.toFavIcon()?.absoluteString,
+                                           walletAddress: address,
+                                           network: chainID)
+            { [weak self] result in
+                guard let self = self else {
+                    return
                 }
-            } else {
-                webVC?.webView.tw.send(network: network, error: "Canceled", to: id)
-                log.debug("handle authn cancelled")
+                
+                if result {
+                    switch network {
+                    case .ethereum:
+                        webVC?.webView.tw.set(network: network.rawValue, address: address)
+                        webVC?.webView.tw.send(network: network, results: [address], to: id)
+                    default:
+                        print("not support")
+                    }
+                } else {
+                    webVC?.webView.tw.send(network: network, error: "Canceled", to: id)
+                    log.debug("handle authn cancelled")
+                }
             }
+            
+            Router.route(to: RouteMap.Explore.authn(vm))
         }
         
-        Router.route(to: RouteMap.Explore.authn(vm))
+        MoveAssetsAction.shared.startBrowserWithMoveAssets(callback: callback)
+        
     }
     
     private func handleSignPersonal(network: ProviderNetwork, id: Int64, data: Data, addPrefix: Bool) {

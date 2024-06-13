@@ -88,7 +88,9 @@ class MoveNFTsViewModel: ObservableObject {
     }
     
     func closeAction() {
-        Router.dismiss()
+        Router.dismiss {
+            MoveAssetsAction.shared.endBrowser()
+        }
     }
     
     func toggleSelection(of nft: MoveNFTsViewModel.NFT) {

@@ -243,28 +243,36 @@ extension JSMessageHandler {
             
             processingFCLResponse = authnResponse
             
-            let title = authnResponse.config?.app?.title ?? webVC?.webView.title ?? "unknown"
-            let network = authnResponse.config?.client?.network ?? ""
-            let chainID = Flow.ChainID(name: network)
-            let vm = BrowserAuthnViewModel(title: title,
-                                           url: webVC?.webView.url?.host ?? "unknown",
-                                           logo: authnResponse.config?.app?.icon,
-                                           walletAddress: WalletManager.shared.getPrimaryWalletAddress(),
-                                           network: chainID) { [weak self] result in
+            let callback = {[weak self] in
                 guard let self = self else {
                     return
                 }
-                
-                if result {
-                    self.didConfirmAuthn(response: authnResponse)
-                } else {
-                    log.debug("handle authn cancelled")
+                let title = authnResponse.config?.app?.title ?? self.webVC?.webView.title ?? "unknown"
+                let network = authnResponse.config?.client?.network ?? ""
+                let chainID = Flow.ChainID(name: network)
+                let vm = BrowserAuthnViewModel(title: title,
+                                               url: self.webVC?.webView.url?.host ?? "unknown",
+                                               logo: authnResponse.config?.app?.icon,
+                                               walletAddress: WalletManager.shared.getPrimaryWalletAddress(),
+                                               network: chainID) { [weak self] result in
+                    guard let self = self else {
+                        return
+                    }
+                    
+                    if result {
+                        self.didConfirmAuthn(response: authnResponse)
+                    } else {
+                        log.debug("handle authn cancelled")
+                    }
+                    
+                    self.finishService()
                 }
                 
-                self.finishService()
+                Router.route(to: RouteMap.Explore.authn(vm))
             }
+            MoveAssetsAction.shared.startBrowserWithMoveAssets(callback: callback)
             
-            Router.route(to: RouteMap.Explore.authn(vm))
+            
         } catch {
             log.error("decode message failed", context: error)
         }

@@ -8,21 +8,20 @@
 import SwiftUI
 import SwiftUIX
 
-struct MoveAssetsView: RouteableView {
+struct MoveAssetsView: RouteableView,PresentActionDelegate {
     
     var title: String {
         return ""
     }
     
-    
     var token: TokenModel?
-    var showToken: () ->()
-    var closeAction: () -> ()
     
     var body: some View {
         VStack {
             TitleWithClosedView(title: "move_assets".localized, closeAction: {
-                onClose()
+                Router.dismiss(animated: true, completion: {
+                    MoveAssetsAction.shared.endBrowser()
+                })
             })
             .padding(.top, 24)
             
@@ -48,8 +47,6 @@ struct MoveAssetsView: RouteableView {
                     }else {
                         HUD.error(title: "not found token")
                     }
-                    
-//                    showToken()
                 } label: {
                     card(isNFT: false)
                 }
@@ -105,15 +102,14 @@ struct MoveAssetsView: RouteableView {
     
     private func onClose() {
         Router.dismiss()
-//        closeAction()
+    }
+    
+    func customViewDidDismiss() {
+        MoveAssetsAction.shared.endBrowser()
     }
 }
 
 #Preview {
-    MoveAssetsView(token: TokenModel.mock()) {
+    MoveAssetsView(token: TokenModel.mock())
         
-    } closeAction: {
-        
-    }
-    
 }

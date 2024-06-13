@@ -91,6 +91,7 @@ class BrowserViewController: UIViewController {
         setup()
         setupObserver()
         hero.isEnabled = true
+        MoveAssetsAction.shared.reset()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -228,19 +229,12 @@ extension BrowserViewController {
     }
     
     @objc private func onMoveAssets() {
-        if LocalUserDefaults.shared.flowNetwork == .previewnet {
-            let vc = CustomHostingController(rootView: MoveAssetsView(showToken: {
-                print("[Browser] show")
-            }, closeAction: {
-                print("[Browser] close")
-            }))
-            
-
+        if MoveAssetsAction.shared.allowMoveAssets {
+            let vc = PresentHostingController(rootView: MoveAssetsView())
             self.navigationController?.present(vc, completion: nil)
         }else {
             HUD.info(title: "Features Coming Soon")
         }
-        
     }
     
     @objc private func onAddressBarClick() {

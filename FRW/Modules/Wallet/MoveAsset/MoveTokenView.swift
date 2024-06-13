@@ -9,7 +9,7 @@ import Kingfisher
 import SwiftUI
 import SwiftUIX
 
-struct MoveTokenView: RouteableView {
+struct MoveTokenView: RouteableView, PresentActionDelegate {
     var title: String {
         ""
     }
@@ -93,6 +93,11 @@ struct MoveTokenView: RouteableView {
         }
         .applyRouteable(self)
     }
+    
+    func customViewDidDismiss() {
+        MoveAssetsAction.shared.endBrowser()
+    }
+    
 }
 
 // MARK: - MoveUserView
