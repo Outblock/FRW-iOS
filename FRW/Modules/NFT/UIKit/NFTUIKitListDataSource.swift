@@ -32,6 +32,9 @@ class NFTUIKitListGridDataModel {
     }
     
     func requestGridAction(offset: Int) async throws {
+        DispatchQueue.syncOnMain {
+            self.nfts.removeAll()
+        }
         let limit = 24
         let nfts = try await requestGrid(offset: offset, limit: limit)
         DispatchQueue.syncOnMain {
@@ -146,6 +149,9 @@ class NFTUIKitListNormalDataModel {
     }
     
     func refreshCollectionAction() async throws {
+        DispatchQueue.syncOnMain {
+            self.items = []
+        }
         var collecitons = try await requestCollections()
         
         removeAllCache()
