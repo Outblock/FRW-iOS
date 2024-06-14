@@ -58,7 +58,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         
         let supportedRequiredChains = sessionProposal.requiredNamespaces[nameTag]?.chains ?? []
         let supportedOptionalChains = sessionProposal.optionalNamespaces?[nameTag]?.chains ?? []
-        let supportedChains = supportedRequiredChains.union(supportedOptionalChains) //supportedRequiredChains + supportedOptionalChains
+        let supportedChains = supportedRequiredChains + supportedOptionalChains
 
         let supportedAccounts = Array(supportedChains).map { WalletConnectSign.Account(blockchain: $0, address: account)! }
 

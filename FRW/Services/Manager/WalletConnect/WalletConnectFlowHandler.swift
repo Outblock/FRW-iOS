@@ -35,7 +35,7 @@ struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
             let caip2Namespace = $0.key
             let proposalNamespace = $0.value
             if let chains = proposalNamespace.chains {
-                let accounts = Set(chains.compactMap { WalletConnectSign.Account($0.absoluteString + ":\(account)") })
+                let accounts = Array(chains.compactMap { WalletConnectSign.Account($0.absoluteString + ":\(account)") })
                 let sessionNamespace = SessionNamespace(accounts: accounts, methods: proposalNamespace.methods, events: proposalNamespace.events)
                 sessionNamespaces[caip2Namespace] = sessionNamespace
             }

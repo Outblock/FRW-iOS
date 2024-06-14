@@ -13,7 +13,7 @@ struct SessionInfo {
     let descriptionText: String
     let dappURL: String
     let iconURL: String
-    let chains: Set<Blockchain>?
+    let chains: [Blockchain]?
     let methods: Set<String>?
     let pendingRequests: [String]
     let data: String

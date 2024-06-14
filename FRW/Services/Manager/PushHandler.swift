@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseMessaging
 import Combine
+import WalletConnectNotify
 
 class PushHandler: NSObject, ObservableObject {
     static let shared = PushHandler()
@@ -42,6 +43,8 @@ class PushHandler: NSObject, ObservableObject {
             .sink { _ in
                 self.refreshPushStatus()
             }.store(in: &cancelSets)
+        
+        requestPermission()
     }
     
     func requestPermission() {
@@ -91,7 +94,7 @@ extension PushHandler {
     }
     
     private func uploadCurrentToken() {
-        guard let address = WalletManager.shared.getPrimaryWalletAddress(), let fcmToken = fcmToken else {
+        guard let address = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress(), let fcmToken = fcmToken else {
             return
         }
         
@@ -112,7 +115,7 @@ extension PushHandler {
     }
     
     func uploadWhenAppUpgrade()  {
-        guard let address = WalletManager.shared.getPrimaryWalletAddress(), let fcmToken = Messaging.messaging().fcmToken else {
+        guard let address = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress(), let fcmToken = Messaging.messaging().fcmToken else {
             return
         }
         
@@ -147,6 +150,7 @@ extension PushHandler: MessagingDelegate, UNUserNotificationCenterDelegate {
         if let fcmToken = fcmToken, !fcmToken.isEmpty {
             uploadToken(fcmToken)
         }
+//        registerForWalletConnect()
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
@@ -157,6 +161,27 @@ extension PushHandler: MessagingDelegate, UNUserNotificationCenterDelegate {
             if let transactionId = userInfo["transactionId"] as? String, let url = transactionId.toFlowScanTransactionDetailURL {
                 Router.route(to: RouteMap.Explore.browser(url))
             }
+        }
+    }
+}
+
+extension PushHandler {
+    private func registerForWalletConnect() {
+        if let deviceToken = Messaging.messaging().apnsToken {
+            Task(priority: .high) {
+                
+                log.debug("[Push] web3wallet register before")
+                let deviceTokenString = deviceToken.map { data in String(format: "%02.2hhx", data) }
+                UserDefaults.standard.set(deviceTokenString.joined(), forKey: "deviceToken")
+                do {
+//                    try await Notify.instance.register(deviceToken: deviceToken, enableEncrypted: true)
+                    log.debug("[Push] web3wallet register after")
+                }catch {
+                    log.error("[Push] web3wallet register error")
+                }
+                
+            }
+
         }
     }
 }

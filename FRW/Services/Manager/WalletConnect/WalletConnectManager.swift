@@ -18,6 +18,8 @@ import WalletConnectRouter
 import WalletConnectSign
 import WalletConnectUtils
 import WalletCore
+import WalletConnectNotify
+import Web3Wallet
 
 class WalletConnectManager: ObservableObject {
     static let shared = WalletConnectManager()
@@ -47,20 +49,27 @@ class WalletConnectManager: ObservableObject {
     private var syncAccountFlag: Bool = false
     
     // TODO: rebranding @Hao @six redirect
-    let metadata = AppMetadata(
-        name: "Flow Core",
-        description: "Digital wallet created for everyone.",
-        url: "https://fcw-link.lilico.app",
-        icons: ["https://fcw-link.lilico.app/logo.png"],
-        redirect: AppMetadata.Redirect(
-            native: "frw://",
-            universal: "https://fcw-link.lilico.app"
-        )
-    )
+//    let metadata = AppMetadata(
+//        name: "Flow Core",
+//        description: "Digital wallet created for everyone.",
+//        url: "https://fcw-link.lilico.app",
+//        icons: ["https://fcw-link.lilico.app/logo.png"],
+//        redirect: AppMetadata.Redirect(
+//            native: "frw://",
+//            universal: "https://fcw-link.lilico.app"
+//        )?
+//    )
 
     init() {
-        Networking.configure(projectId: LocalEnvManager.shared.walletConnectProjectID, socketFactory: SocketFactory())
+        let redirect = try! AppMetadata.Redirect(native: "frw://", universal: "https://fcw-link.lilico.app")
+        let metadata = AppMetadata(name: "Flow Core", description: "Digital wallet created for everyone.", url: "https://fcw-link.lilico.app", icons: ["https://fcw-link.lilico.app/logo.png"], redirect: redirect)
+        Networking.configure(groupIdentifier: AppGroupName, projectId: LocalEnvManager.shared.walletConnectProjectID, socketFactory: SocketFactory())
         Pair.configure(metadata: metadata)
+        Sign.configure(crypto: DefaultCryptoProvider())
+        Web3Wallet.configure(metadata: metadata, crypto: DefaultCryptoProvider())
+        
+        Notify.configure(environment: .production, crypto: DefaultCryptoProvider())
+        Notify.instance.setLogging(level: .debug)
         
         reloadActiveSessions()
         reloadPairing()
@@ -630,7 +639,7 @@ extension WalletConnectManager {
         Task {
             do {
                 let namespaces = try handler.approveSessionNamespaces(sessionProposal: proposal)
-                try await Sign.instance.approve(proposalId: proposal.id, namespaces: namespaces)
+                _ = try await Sign.instance.approve(proposalId: proposal.id, namespaces: namespaces)
                 HUD.success(title: "approved".localized)
             } catch {
                 debugPrint("WalletConnectManager -> approveSession failed: \(error)")
@@ -642,7 +651,7 @@ extension WalletConnectManager {
     private func rejectSession(proposal: Session.Proposal) {
         Task {
             do {
-                try await Sign.instance.reject(proposalId: proposal.id, reason: .userRejected)
+                try await Sign.instance.rejectSession(proposalId: proposal.id, reason: .userRejected)
                 HUD.success(title: "rejected".localized)
             } catch {
                 HUD.error(title: "reject_failed".localized)

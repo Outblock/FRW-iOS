@@ -16,6 +16,8 @@ import WalletCore
 import SwiftyBeaver
 import FirebaseMessaging
 import CrowdinSDK
+import Web3Wallet
+import WalletConnectNotify
 
 
 #if DEBUG
@@ -215,10 +217,35 @@ extension AppDelegate {
                 self.window?.backgroundColor = currentNetwork.isMainnet ? UIColor.LL.Neutrals.background : UIColor(currentNetwork.color)
             }
         }
+        
     }
     
     @objc func handleNetworkChange() {
         self.window?.backgroundColor = currentNetwork.isMainnet ? UIColor.LL.Neutrals.background : UIColor(currentNetwork.color)
+    }
+}
+
+// MARK: Delegate
+extension AppDelegate {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Task(priority: .high) {
+            
+            let deviceTokenString = deviceToken.map { data in String(format: "%02.2hhx", data) }
+            UserDefaults.standard.set(deviceTokenString.joined(), forKey: "deviceToken")
+            log.debug("[Push] web3wallet register before \(deviceTokenString.joined())")
+            do {
+                try await Web3Wallet.instance.register(deviceToken: deviceToken, enableEncrypted: true)
+                log.debug("[Push] web3wallet register after")
+            }catch {
+                log.error("[Push] web3wallet register error")
+            }
+            
+        }
+        #if DEBUG
+        Messaging.messaging().setAPNSToken(deviceToken, type: .sandbox)
+        #else
+        Messaging.messaging().setAPNSToken(deviceToken, type: .prod)
+        #endif
     }
 }
 

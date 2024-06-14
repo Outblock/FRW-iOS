@@ -38,7 +38,7 @@ class SyncConfirmViewModel: ObservableObject {
                 let blockchain = Sign.FlowWallet.blockchain
                 
                 let params = try await WalletConnectSyncDevice.packageDeviceInfo(userId: self.userId)
-                let request = Request(topic: currentSession.topic, method: methods, params: params, chainId: blockchain)
+                let request = try Request(topic: currentSession.topic, method: methods, params: params, chainId: blockchain)
                 try await Sign.instance.request(params: request)
                 WalletConnectManager.shared.currentRequest = request
             }

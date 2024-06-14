@@ -38,7 +38,7 @@ enum WalletConnectSyncDevice {
         let methods: String = FCLWalletConnectMethod.accountInfo.rawValue
         let blockchain = Sign.FlowWallet.blockchain
         do {
-            let request = Request(topic: session.topic, method: methods, params: emptyParams(), chainId: blockchain)
+            let request = try Request(topic: session.topic, method: methods, params: emptyParams(), chainId: blockchain)
             try await Sign.instance.request(params: request)
             return request
         } catch {
