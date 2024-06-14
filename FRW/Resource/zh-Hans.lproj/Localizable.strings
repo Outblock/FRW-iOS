@@ -958,4 +958,5 @@
 "move_single_token" = "移动令牌";
 "share_qr_code" = "共享 QR 代码";
 "move_single_nft" = "移动 NFT";
-
+"do_not_ask" = "不要再问我了。";
+"move_asset_browser_title_x" = "在 Flow 上的 cadence 地址之间移动您的资产，以便 %@ 查看您的资产";

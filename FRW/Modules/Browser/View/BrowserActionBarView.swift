@@ -16,6 +16,7 @@ private let ProgressViewHeight: CGFloat = 4
 
 class BrowserActionBarView: UIView {
     var bookmarkAction: ((Bool) -> ())?
+    var clearCookie: EmptyClosure?
     
     private lazy var contentView: UIView = {
         let view = UIView()
@@ -209,9 +210,15 @@ extension BrowserActionBarView {
                 guard let self = self else { return }
                 self.bookmarkAction?(!isBookmarked)
             }
+            let clearCacheAction = UIAction(title: "clean cookie".localized, image: UIImage(systemName: "trash.slash")) { [weak self] _ in
+                guard let self = self else { return }
+                self.clearCookie?()
+            }
             
             children.append(bookmarkAction)
+            children.append(clearCacheAction)
         }
+        
         
         menuBtn.showsMenuAsPrimaryAction = true
         menuBtn.menu = UIMenu(title: "", children: children)

@@ -91,8 +91,7 @@ class MoveTokenViewModel: ObservableObject {
     }
     
     var currentBalance: String {
-        let total = amountBalance * coinRate
-        let totalStr = total.formatCurrencyString(considerCustomCurrency: true)
+        let totalStr = amountBalance.formatCurrencyString()
         return "Balance: \(totalStr)"
     }
 }

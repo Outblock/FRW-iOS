@@ -74,6 +74,10 @@ class BrowserViewController: UIViewController {
             guard let self = self else { return }
             self.onBookmarkAction(isBookmark)
         }
+        view.clearCookie = { [weak self] in
+            guard let self = self else { return }
+            self.onClearCookie()
+        }
         
         return view
     }()
@@ -260,6 +264,10 @@ extension BrowserViewController {
         }
         
         actionBarView.updateMenu(currentURL: webView.url)
+    }
+    
+    private func onClearCookie() {
+        BrowserViewController.deleteCookie()
     }
 }
 

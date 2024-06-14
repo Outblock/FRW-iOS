@@ -156,7 +156,7 @@ extension TrustJSMessageHandler {
             Router.route(to: RouteMap.Explore.authn(vm))
         }
         
-        MoveAssetsAction.shared.startBrowserWithMoveAssets(callback: callback)
+        MoveAssetsAction.shared.startBrowserWithMoveAssets(appName: webVC?.webView.title, callback: callback)
         
     }
     

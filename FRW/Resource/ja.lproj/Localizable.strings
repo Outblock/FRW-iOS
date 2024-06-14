@@ -958,3 +958,5 @@
 "move_single_token" = "トークンの移動";
 "share_qr_code" = "QRコードを共有する";
 "move_single_nft" = "NFTを動かす";
+"do_not_ask" = "二度と聞かないでくれ。";
+"move_asset_browser_title_x" = "Flow上のケイデンスアドレス間でアセットを移動させ、 %@ 、アセットを閲覧できるようにする。";

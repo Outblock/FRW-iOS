@@ -43,6 +43,7 @@ extension LocalUserDefaults {
         case userAddressOfDeletedApp
         case walletAccountInfo
         case EVMAddress
+        case showMoveAssetOnBrowser
     }
 
     enum FlowNetworkType: String, CaseIterable, Codable {
@@ -218,6 +219,7 @@ class LocalUserDefaults: ObservableObject {
     @AppStorage(Keys.onBoardingShown.rawValue) var onBoardingShown: Bool = false
     @AppStorage(Keys.multiAccountUpgradeFlag.rawValue) var multiAccountUpgradeFlag: Bool = false
     
+    @AppStorage(Keys.showMoveAssetOnBrowser.rawValue) var showMoveAssetOnBrowser: Bool = true
     
     var loginUIDList: [String] {
         set {

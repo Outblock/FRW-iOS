@@ -36,7 +36,7 @@ class AccountSwitchViewModel: ObservableObject {
                     }
                     var username = userInfo?.username
                     if username == nil {
-                        username = "Account \(index)"
+                        username = "Profile \(index)"
                         index += 1
                     }
                     return Placeholder(uid: uid, avatar: userInfo?.avatar ?? "", username: username ?? "", address: address)

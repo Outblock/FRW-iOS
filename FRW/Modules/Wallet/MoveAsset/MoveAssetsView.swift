@@ -15,6 +15,23 @@ struct MoveAssetsView: RouteableView,PresentActionDelegate {
     }
     
     var token: TokenModel?
+    var showCheck: Bool {
+        MoveAssetsAction.shared.showCheckOnMoveAsset
+    }
+    
+    var showNote: String {
+        if let note = MoveAssetsAction.shared.showNote {
+            return note
+        }
+        return "move_assets_note".localized
+    }
+    
+    @State private var notAsk: Bool = LocalUserDefaults.shared.showMoveAssetOnBrowser {
+        didSet {
+            LocalUserDefaults.shared.showMoveAssetOnBrowser = notAsk
+        }
+    }
+    
     
     var body: some View {
         VStack {
@@ -25,7 +42,7 @@ struct MoveAssetsView: RouteableView,PresentActionDelegate {
             })
             .padding(.top, 24)
             
-            Text("move_assets_note".localized)
+            Text(showNote)
                 .font(.inter(size: 14))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.Theme.Text.black8)
@@ -54,7 +71,35 @@ struct MoveAssetsView: RouteableView,PresentActionDelegate {
             }
             .padding(.top, 32)
             
-
+            Color.clear
+                .frame(width: 1, height: 24)
+            
+            if showCheck {
+                HStack {
+                    if notAsk {
+                        Image("icon_check_rounde_0")
+                        .resizable()
+                        .renderingMode(.template)
+                        .foregroundStyle(Color.Theme.Text.black8)
+                        .frame(width: 16, height: 16)
+                    }else {
+                        Image("icon_check_rounde_1")
+                        .resizable()
+                        .frame(width: 16, height: 16)
+                    }
+                        
+                    Text("do_not_ask".localized)
+                        .font(.inter(size: 16))
+                        .foregroundStyle(Color.Theme.Text.black8)
+                    
+                }
+                .onTapGesture {
+                    notAsk.toggle()
+                }
+            }
+            
+            
+            
             Spacer()
         }
         .padding(.horizontal,18)
