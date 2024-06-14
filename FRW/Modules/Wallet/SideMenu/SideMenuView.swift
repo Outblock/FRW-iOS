@@ -281,7 +281,7 @@ struct SideMenuView: View {
                 .animation(.easeInOut, value: WalletManager.shared.getPrimaryWalletAddress())
             } header: {
                 HStack {
-                    Text("Main Account")
+                    Text("main_account".localized)
                         .font(.inter(size: 12))
                         .foregroundStyle(Color.Theme.Text.black3)
                         .padding(.vertical, 8)
@@ -318,7 +318,7 @@ struct SideMenuView: View {
                 }
             } header: {
                 HStack {
-                    Text("Linked Account")
+                    Text("Linked_Account::message".localized)
                         .font(.inter(size: 12))
                         .foregroundStyle(Color.Theme.Text.black3)
                         .padding(.vertical, 8)
@@ -343,7 +343,7 @@ struct SideMenuView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 24, height: 24)
                     .foregroundColor(Color.Theme.Text.black8)
-                Text("Network")
+                Text("Network::message".localized)
                     .lineLimit(1)
                     .font(.inter(size: 14, weight: .semibold))
                     .foregroundStyle(Color.Theme.Text.black8)
@@ -370,7 +370,7 @@ struct SideMenuView: View {
                                 NetworkMenuItem(network: .testnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
                             }
                             
-                            if let previewnetAddress = wm.getFlowNetworkTypeAddress(network: .previewnet), isDeveloperMode {
+                            if let previewnetAddress = wm.getFlowNetworkTypeAddress(network: .previewnet) {
                                 Button {
                                     vm.isSwitchOpen.toggle()
                                     WalletManager.shared.changeNetwork(.previewnet)
@@ -405,7 +405,7 @@ struct SideMenuView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 24, height: 24)
                         .foregroundColor(Color.Theme.Text.black8)
-                    Text("Import Wallet")
+                    Text("import_wallet".localized)
                         .font(.inter(size: 14, weight: .semibold))
                         .foregroundStyle(Color.Theme.Text.black8)
                     

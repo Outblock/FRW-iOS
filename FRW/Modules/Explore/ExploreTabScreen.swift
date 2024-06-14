@@ -50,7 +50,7 @@ struct ExploreTabScreen: View {
                         .foregroundColor(.LL.Secondary.violet4)
                         .frame(width: 24, height: 24)
                     
-                    Text("Search name or URL")
+                    Text("search_name_url".localized)
                         .font(.inter(size: 16, weight: .semibold))
                         .foregroundColor(.LL.Secondary.violet4)
                     

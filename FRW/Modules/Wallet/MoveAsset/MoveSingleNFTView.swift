@@ -22,7 +22,7 @@ struct MoveSingleNFTView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
                         HStack {
-                            Text("Move NFT")
+                            Text("move_single_nft".localized)
                                 .font(.inter(size: 18, weight: .w700))
                                 .foregroundStyle(Color.LL.Neutrals.text)
                                 .padding(.top, 6)

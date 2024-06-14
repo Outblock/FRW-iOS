@@ -12,7 +12,7 @@ struct ExploreEmptyScreen: View {
         VStack(alignment: .center) {
             Image("empty-box")
             
-            Text("Empty Bookmarks")
+            Text("empty_bookmark".localized)
                 .font(.LL.body)
                 .fontWeight(.medium)
                 .foregroundColor(.LL.Neutrals.neutrals9)

@@ -71,7 +71,7 @@ struct WalletListView: RouteableView {
                     }
                 } header: {
                     HStack {
-                        Text("Main Accounts")
+                        Text("main_accounts".localized)
                             .font(.inter(size: 14, weight: .semibold))
                             .foregroundStyle(Color.Theme.Text.black3)
                         Spacer()
@@ -88,7 +88,7 @@ struct WalletListView: RouteableView {
                     }
                 } header: {
                     HStack {
-                        Text("EVM Accounts")
+                        Text("evm_accounts".localized)
                             .font(.inter(size: 14, weight: .semibold))
                             .foregroundStyle(Color.Theme.Text.black3)
                         Spacer()

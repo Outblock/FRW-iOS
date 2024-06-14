@@ -949,3 +949,11 @@
 "move_nft_limit_x" = "You can move %@ NFTs";
 "wallet_list" = "Account List";
 "account_detail" = "Account Details";
+"main_account" = "Main Account";
+"main_accounts" = "Main Accounts";
+"evm_accounts" = "EVM Accounts";
+"search_name_url" = "Search name or URL";
+"empty_bookmark" = "Empty Bookmarks";
+"move_single_token" = "Move Token";
+"share_qr_code" = "Share QR Code";
+"move_single_nft" = "Move NFT";

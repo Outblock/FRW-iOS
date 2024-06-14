@@ -949,3 +949,13 @@
 "move_nft_limit_x" = "您可以移动%@个NFTs";
 "wallet_list" = "账户列表";
 "account_detail" = "账户明细";
+"test_key" = "测试Crowdin";
+"main_account" = "主账户";
+"main_accounts" = "主要账户";
+"evm_accounts" = "EVM 账户";
+"search_name_url" = "搜索名称或 URL";
+"empty_bookmark" = "空书签";
+"move_single_token" = "移动令牌";
+"share_qr_code" = "共享 QR 代码";
+"move_single_nft" = "移动 NFT";
+

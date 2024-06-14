@@ -30,7 +30,7 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
                         HStack {
-                            Text("Move Token")
+                            Text("move_single_token".localized)
                                 .font(.inter(size: 18, weight: .w700))
                                 .foregroundStyle(Color.LL.Neutrals.text)
                                 .padding(.top, 6)

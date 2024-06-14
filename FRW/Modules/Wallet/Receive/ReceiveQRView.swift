@@ -106,7 +106,7 @@ struct ReceiveQRView: RouteableView {
             UIApplication.shared.windows.first?.rootViewController?.presentedViewController?.present(activityController, animated: true, completion: nil)
             
         } label: {
-            Text("Share QR Code")
+            Text("share_qr_code".localized)
                 .font(.inter(size: 14, weight: .semibold))
                 .foregroundStyle(Color.Theme.Text.black)
                 .padding(.vertical, 15)
