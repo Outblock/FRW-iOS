@@ -350,9 +350,10 @@ struct SideMenuView: View {
                 
                 Spacer()
                 
-                Menu {
-                    VStack {
-                        if isDeveloperMode {
+                if isDeveloperMode {
+                    Menu {
+                        VStack {
+                            
                             Button {
                                 vm.isSwitchOpen.toggle()
                                 WalletManager.shared.changeNetwork(.mainnet)
@@ -379,17 +380,18 @@ struct SideMenuView: View {
                                 }
                             }
                         }
+                                
+                    } label: {
+                        Text(LocalUserDefaults.shared.flowNetwork.rawValue.uppercasedFirstLetter())
+                            .font(.inter(size: 12))
+                            .foregroundStyle(LocalUserDefaults.shared.flowNetwork.color)
+                            .frame(height: 24)
+                            .padding(.horizontal, 8)
+                            .background(LocalUserDefaults.shared.flowNetwork.color.opacity(0.08))
+                            .cornerRadius(8)
                     }
-                            
-                } label: {
-                    Text(LocalUserDefaults.shared.flowNetwork.rawValue.uppercasedFirstLetter())
-                        .font(.inter(size: 12))
-                        .foregroundStyle(LocalUserDefaults.shared.flowNetwork.color)
-                        .frame(height: 24)
-                        .padding(.horizontal, 8)
-                        .background(LocalUserDefaults.shared.flowNetwork.color.opacity(0.08))
-                        .cornerRadius(8)
                 }
+                
             }
             .frame(height: 40)
             
