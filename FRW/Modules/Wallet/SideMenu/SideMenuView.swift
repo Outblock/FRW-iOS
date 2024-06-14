@@ -324,7 +324,7 @@ struct SideMenuView: View {
                         .padding(.vertical, 8)
                     Spacer()
                 }
-                .visibility(vm.showLinkedAccount ? .visible : .gone)
+                .visibility(evmManager.accounts.count > 0 || cm.childAccounts.count > 0 ? .visible : .gone)
             }
         }
     }
