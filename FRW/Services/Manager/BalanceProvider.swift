@@ -15,6 +15,7 @@ class BalanceProvider: ObservableObject {
         Task {
             await fetchFlowFlowBalance()
             await fetchEVMFlowBalance()
+            await fetchChildBalance()
         }
     }
     
@@ -35,6 +36,22 @@ class BalanceProvider: ObservableObject {
                 return
             }
             balances[address] = model.value.formatCurrencyString()
+        }catch {
+            log.error("[Balance] fetch Flow flow balance :\(error)")
+        }
+    }
+    
+    private func fetchChildBalance() async {
+        do {
+            for model in ChildAccountManager.shared.childAccounts {
+                if let address = model.addr {
+                    let balanceList = try await FlowNetwork.fetchBalance(at: Flow.Address(hex: address))
+                    guard let model =  balanceList.first(where:{ $0.key.lowercased().hasSuffix("FlowToken".lowercased())  }) else {
+                        return
+                    }
+                    balances[address] = model.value.formatCurrencyString()
+                }
+            }
         }catch {
             log.error("[Balance] fetch Flow flow balance :\(error)")
         }

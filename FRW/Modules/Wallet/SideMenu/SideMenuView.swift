@@ -308,7 +308,10 @@ struct SideMenuView: View {
                     
                     ForEach(cm.childAccounts, id: \.addr) { childAccount in
                         if let address = childAccount.addr {
-                            AccountSideCell(address: address, currentAddress: vm.currentAddress) { _, action in
+                            AccountSideCell(address: address, 
+                                            currentAddress: vm.currentAddress,
+                                            detail: vm.balanceValue(at: address)
+                            ) { _, action in
                                 if action == .card {
                                     ChildAccountManager.shared.select(childAccount)
                                 }
@@ -335,22 +338,21 @@ struct SideMenuView: View {
                 .background(.Theme.Line.line)
                 .frame(height: 1)
                 .padding(.bottom, 24)
-            
-            HStack {
-                Image("icon_side_link")
-                    .resizable()
-                    .renderingMode(.template)
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 24, height: 24)
-                    .foregroundColor(Color.Theme.Text.black8)
-                Text("Network::message".localized)
-                    .lineLimit(1)
-                    .font(.inter(size: 14, weight: .semibold))
-                    .foregroundStyle(Color.Theme.Text.black8)
-                
-                Spacer()
-                
-                if isDeveloperMode {
+            if isDeveloperMode {
+                HStack {
+                    Image("icon_side_link")
+                        .resizable()
+                        .renderingMode(.template)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(Color.Theme.Text.black8)
+                    Text("Network::message".localized)
+                        .lineLimit(1)
+                        .font(.inter(size: 14, weight: .semibold))
+                        .foregroundStyle(Color.Theme.Text.black8)
+                    
+                    Spacer()
+                    
                     Menu {
                         VStack {
                             
@@ -390,10 +392,12 @@ struct SideMenuView: View {
                             .background(LocalUserDefaults.shared.flowNetwork.color.opacity(0.08))
                             .cornerRadius(8)
                     }
+                    
+                    
                 }
-                
+                .frame(height: 40)
             }
-            .frame(height: 40)
+            
             
             Button {
                 Router.route(to: RouteMap.RestoreLogin.restoreList)

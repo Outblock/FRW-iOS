@@ -31,6 +31,12 @@ struct DeveloperModeView: RouteableView {
                 HStack {
                     Toggle("developer_mode".localized, isOn: $isDeveloperMode)
                         .toggleStyle(SwitchToggleStyle(tint: .LL.Primary.salmonPrimary))
+                        .onChange(of: isDeveloperMode) { value in
+                            if  !value {
+                                walletManager.changeNetwork(.mainnet)
+                            }
+                        }
+                        
                 }
                 .frame(height: 64)
                 .padding(.horizontal, 16)
