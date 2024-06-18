@@ -9,7 +9,10 @@ import SwiftUI
 import Combine
 import Kingfisher
 
-struct AccountSwitchView: View {
+struct AccountSwitchView: PresentActionView {
+    var changeHeight: (() -> ())?
+    
+    
     @StateObject private var vm = AccountSwitchViewModel()
     @State private var showAlert = false
     @State private var showSwitchUserAlert = false
@@ -193,7 +196,7 @@ struct AccountSwitchView: View {
     
     var moreView: some View {
         Button {
-            
+            self.changeHeight?()
         } label: {
             HStack {
                 Text("view_more".localized)
@@ -210,6 +213,12 @@ struct AccountSwitchView: View {
             .cornerRadius(16)
         }
         
+    }
+}
+
+extension AccountSwitchView {
+    var detents: [UISheetPresentationController.Detent] {
+        return [.medium(), .large()]
     }
 }
 

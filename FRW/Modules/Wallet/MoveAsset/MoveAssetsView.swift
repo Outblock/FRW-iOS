@@ -8,11 +8,13 @@
 import SwiftUI
 import SwiftUIX
 
-struct MoveAssetsView: RouteableView,PresentActionDelegate {
+struct MoveAssetsView: RouteableView, PresentActionDelegate {
+    var changeHeight: (() -> ())?
     
     var title: String {
         return ""
     }
+    
     
     var token: TokenModel?
     var showCheck: Bool {
@@ -20,6 +22,7 @@ struct MoveAssetsView: RouteableView,PresentActionDelegate {
     }
     
     var showNote: String {
+        
         if let note = MoveAssetsAction.shared.showNote {
             return note
         }
@@ -32,81 +35,90 @@ struct MoveAssetsView: RouteableView,PresentActionDelegate {
         }
     }
     
-    
     var body: some View {
-        VStack {
-            TitleWithClosedView(title: "move_assets".localized, closeAction: {
-                Router.dismiss(animated: true, completion: {
-                    MoveAssetsAction.shared.endBrowser()
+        ScrollView {
+            VStack {
+                TitleWithClosedView(title: "move_assets".localized, closeAction: {
+                    Router.dismiss(animated: true, completion: {
+                        MoveAssetsAction.shared.endBrowser()
+                    })
                 })
-            })
-            .padding(.top, 24)
-            
-            Text(showNote)
-                .font(.inter(size: 14))
-                .multilineTextAlignment(.center)
-                .foregroundStyle(Color.Theme.Text.black8)
-            
-            HStack {
-                Button {
-                    onClose()
-                    Router.route(to: RouteMap.Wallet.moveNFTs)
-                } label: {
-                    card(isNFT: true)
-                }
-                .buttonStyle(ScaleButtonStyle())
-
-                Spacer()
-                Button {
-                    if let current = currentToken() {
-                        onClose()
-                        Router.route(to: RouteMap.Wallet.moveToken(current))
-                    }else {
-                        HUD.error(title: "not found token")
-                    }
-                } label: {
-                    card(isNFT: false)
-                }
-                .buttonStyle(ScaleButtonStyle())
-            }
-            .padding(.top, 32)
-            
-            Color.clear
-                .frame(width: 1, height: 24)
-            
-            if showCheck {
+                .padding(.top, 24)
+                
+                Text(showNote)
+                    .font(.inter(size: 14))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(Color.Theme.Text.black8)
+                
                 HStack {
-                    if notAsk {
-                        Image("icon_check_rounde_0")
-                        .resizable()
-                        .renderingMode(.template)
-                        .foregroundStyle(Color.Theme.Text.black8)
-                        .frame(width: 16, height: 16)
-                    }else {
-                        Image("icon_check_rounde_1")
-                        .resizable()
-                        .frame(width: 16, height: 16)
+                    Button {
+                        onClose()
+                        Router.route(to: RouteMap.Wallet.moveNFTs)
+                    } label: {
+                        card(isNFT: true)
                     }
-                        
-                    Text("do_not_ask".localized)
-                        .font(.inter(size: 16))
-                        .foregroundStyle(Color.Theme.Text.black8)
+                    .buttonStyle(ScaleButtonStyle())
+
+                    Spacer()
+                    Button {
+                        if let current = currentToken() {
+                            onClose()
+                            Router.route(to: RouteMap.Wallet.moveToken(current))
+                        } else {
+                            HUD.error(title: "not found token")
+                        }
+                    } label: {
+                        card(isNFT: false)
+                    }
+                    .buttonStyle(ScaleButtonStyle())
+                }
+                .padding(.top, 32)
+                
+                
+                if showCheck {
+                    VPrimaryButton(model: ButtonStyle.primary,
+                                   state: .enabled,
+                                   action: {
+                                       Router.dismiss(animated: true, completion: {
+                                           MoveAssetsAction.shared.endBrowser()
+                                       })
+                                   },
+                                   title: "skip".localized)
+                    .padding(.top, 12)
                     
+                    HStack {
+                        if notAsk {
+                            Image("icon_check_rounde_0")
+                                .resizable()
+                                .renderingMode(.template)
+                                .foregroundStyle(Color.Theme.Text.black8)
+                                .frame(width: 16, height: 16)
+                        } else {
+                            Image("icon_check_rounde_1")
+                                .resizable()
+                                .frame(width: 16, height: 16)
+                        }
+                            
+                        Text("do_not_ask".localized)
+                            .font(.inter(size: 16))
+                            .foregroundStyle(Color.Theme.Text.black8)
+                    }
+                    .padding(.top)
+                    .onTapGesture {
+                        notAsk.toggle()
+                    }
+                    .padding(.bottom, 43)
                 }
-                .onTapGesture {
-                    notAsk.toggle()
-                }
+                Spacer()
             }
+            .padding(.horizontal, 18)
             
-            
-            
-            Spacer()
         }
-        .padding(.horizontal,18)
-        .background(Color.Theme.Background.grey)
+        .backgroundFill(Color.Theme.Background.grey)
         .cornerRadius([.topLeading, .topTrailing], 16)
-        .ignoresSafeArea()
         .applyRouteable(self)
+        .edgesIgnoringSafeArea(.all)
+
     }
     
     func toName() -> String {
@@ -120,8 +132,7 @@ struct MoveAssetsView: RouteableView,PresentActionDelegate {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 
-            
-            Text(isNFT ? "move_nft".localized : "move_token".localized )
+            Text(isNFT ? "move_nft".localized : "move_token".localized)
                 .font(.inter(size: 18, weight: .semibold))
                 .foregroundStyle(Color.Theme.Text.black)
         }
@@ -132,7 +143,6 @@ struct MoveAssetsView: RouteableView,PresentActionDelegate {
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 164, height: 224)
         }
-        
     }
         
     private func currentToken() -> TokenModel? {
@@ -155,6 +165,9 @@ struct MoveAssetsView: RouteableView,PresentActionDelegate {
 }
 
 #Preview {
-    MoveAssetsView(token: TokenModel.mock())
-        
+    VStack {
+        Spacer()
+        MoveAssetsView(token: TokenModel.mock())
+    }
+    
 }

@@ -10,6 +10,7 @@ import SwiftUI
 import SwiftUIX
 
 struct MoveTokenView: RouteableView, PresentActionDelegate {
+    var changeHeight: (() -> ())?
     var title: String {
         ""
     }
@@ -71,7 +72,6 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                     .padding(18)
                 }
                 Spacer()
-                
                 
             }
             .hideKeyboardWhenTappedAround()

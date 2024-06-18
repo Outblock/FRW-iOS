@@ -136,11 +136,6 @@ struct WalletView: View {
                 vm.backupTipsPresent = false
             })
         }
-        .halfSheet(showSheet: $vm.moveTokenPresent) {
-            if let token = vm.coinItems.first?.token {
-                MoveTokenView(tokenModel: token, isPresent: $vm.moveTokenPresent)
-            }
-        }
         .navigationBarHidden(true)
     }
     
@@ -571,7 +566,7 @@ extension WalletView {
 
                         HStack {
                             HStack() {
-                                Text("\(CurrencyCache.cache.currencySymbol)\(coin.token.symbol == "fusd" ? CurrencyCache.cache.currentCurrencyRate.formatCurrencyString() : coin.last.formatCurrencyString(considerCustomCurrency: true))")
+                                Text(coin.priceValue)
                                     .foregroundColor(.LL.Neutrals.neutrals7)
                                     .font(.inter(size: 14, weight: .regular))
 

@@ -9,6 +9,7 @@ import SwiftUI
 import Kingfisher
 
 struct MoveNFTsView:  RouteableView,PresentActionDelegate {
+    var changeHeight: (() -> ())?
     var title: String {
         return ""
     }

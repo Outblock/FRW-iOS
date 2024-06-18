@@ -11,7 +11,6 @@ class MoveAssetsAction {
     static let shared = MoveAssetsAction()
     
     private var browserCallback: EmptyClosure?
-    private var ignoreMoveHint: Bool = false
     private var appName: String? = nil
     
     var allowMoveAssets: Bool {
@@ -35,12 +34,7 @@ class MoveAssetsAction {
         }
         self.appName = appName
         self.browserCallback = callback
-        if ignoreMoveHint {
-            endBrowser()
-        }else {
-            Router.route(to: RouteMap.Wallet.moveAssets)
-            ignoreMoveHint = true
-        }
+        Router.route(to: RouteMap.Wallet.moveAssets)
     }
     
     func endBrowser() {
@@ -48,11 +42,7 @@ class MoveAssetsAction {
         self.browserCallback = nil
         self.appName = ""
     }
-    
-    func reset() {
-        ignoreMoveHint = false
-    }
-    
+        
     var showCheckOnMoveAsset: Bool {
         browserCallback != nil
     }

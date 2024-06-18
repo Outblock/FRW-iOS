@@ -183,6 +183,18 @@ struct DeveloperModeView: RouteableView {
                                 }
                                 .frame(height: 64)
                                 .padding(.horizontal, 16)
+                                
+                                HStack {
+                                    Text("Reset the move asset configuration in the built-in browser")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                    Spacer()
+                                }
+                                .frame(height: 64)
+                                .padding(.horizontal, 16)
+                                .onTapGesture {
+                                    LocalUserDefaults.shared.showMoveAssetOnBrowser = true
+                                }
                             }
                         }
                         .background(.LL.bgForIcon)

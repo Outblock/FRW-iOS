@@ -95,7 +95,6 @@ class BrowserViewController: UIViewController {
         setup()
         setupObserver()
         hero.isEnabled = true
-        MoveAssetsAction.shared.reset()
     }
     
     override func viewWillAppear(_ animated: Bool) {

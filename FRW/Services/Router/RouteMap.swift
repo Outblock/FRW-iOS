@@ -360,7 +360,7 @@ extension RouteMap.Profile: RouterTarget {
             let vm = ChildAccountDetailViewModel(childAccount: childAccount)
             navi.push(content: ChildAccountDetailView(vm: vm))
         case .switchProfile:
-            let vc = CustomHostingController(rootView: AccountSwitchView(), showLarge: true)
+            let vc = PresentHostingController(rootView: AccountSwitchView())
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .editChildAccount(let childAccount):
             let vm = ChildAccountDetailEditViewModel(childAccount: childAccount)

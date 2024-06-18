@@ -28,7 +28,17 @@ extension WalletViewModel {
             return changePercentage < 0
         }
 
+        var priceValue: String {
+            if last == 0 && token.symbol != "fusd" {
+                return "-"
+            }
+            return "\(CurrencyCache.cache.currencySymbol)\(token.symbol == "fusd" ? CurrencyCache.cache.currentCurrencyRate.formatCurrencyString() : last.formatCurrencyString(considerCustomCurrency: true))"
+        }
+        
         var changeString: String {
+            if changePercentage == 0 {
+                return "-"
+            }
             let symbol = changeIsNegative ? "-" : "+"
             let num = String(format: "%.1f", fabsf(Float(changePercentage) * 100))
             return "\(symbol)\(num)%"
@@ -39,6 +49,9 @@ extension WalletViewModel {
         }
         
         var changeBG: Color {
+            if changePercentage == 0 {
+                return Color.Theme.Background.grey.opacity(0.16)
+            }
             return changeIsNegative ? Color.Flow.Font.descend.opacity(0.16) : Color.Flow.Font.ascend.opacity(0.16)
         }
 
@@ -330,7 +343,7 @@ extension WalletViewModel {
     
     func moveAssetsAction() {
         Router.route(to: RouteMap.Wallet.moveAssets)
-//        moveAssetsPresent = true
+
     }
     
     func scanAction() {

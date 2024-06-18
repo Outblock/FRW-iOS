@@ -63,7 +63,7 @@ enum ListedToken: String, CaseIterable {
         case .usdc:
             return .fixed(price: 1.0)
         case .other:
-            return .fixed(price: 1.0)
+            return .fixed(price: 0.0)
         }
     }
     

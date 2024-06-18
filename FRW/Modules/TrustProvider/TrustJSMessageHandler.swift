@@ -120,6 +120,8 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
 extension TrustJSMessageHandler {
     private func handleRequestAccounts(network: ProviderNetwork, id: Int64) {
         
+        
+        
         let callback = { [weak self] in
             guard let self = self else {
                 return
