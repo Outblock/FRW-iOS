@@ -876,9 +876,9 @@
 "multi_backup" = "Multi-Backup";
 "multi_backup_guide_title" = "Please Select 2 or More Backup Options";
 "create_device_backup_title" = "Create Device Backup";
-"create_device_backup_note" = "Note: Your Google Drive Backup will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
+"create_device_backup_note" = "Utilise Your Device as a Backup Wallet to Safeguard and Restore Your Digital Assets with Ease";
 "create_multi_backup_title" = "Create Multi-Backup";
-"create_multi_backup_note" = "Note: Your Google Drive Backup will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
+"create_multi_backup_note" = "Create a Cloud Backup with Trusted Providers like Google Drive, Passkey, iCloud, and Secure Your Recovery Phrase";
 "backup_note_x" = "Note: Your backup key is end-to-end encrypted and is never sent to Flow Wallet servers.";
 "backup.status.create" = "Create Backup";
 "backup.status.upload" = "Upload Backup";
