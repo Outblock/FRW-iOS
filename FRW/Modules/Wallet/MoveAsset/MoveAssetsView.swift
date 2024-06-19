@@ -49,6 +49,7 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
                     .font(.inter(size: 14))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(Color.Theme.Text.black8)
+                    .frame(height: 72)
                 
                 HStack {
                     Button {
@@ -84,9 +85,10 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
                                        })
                                    },
                                    title: "skip".localized)
-                    .padding(.top, 12)
+                    .padding(.top, 24)
                     
                     HStack {
+                        Spacer()
                         if notAsk {
                             Image("icon_check_rounde_0")
                                 .resizable()
@@ -102,14 +104,16 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
                         Text("do_not_ask".localized)
                             .font(.inter(size: 16))
                             .foregroundStyle(Color.Theme.Text.black8)
+                        Spacer()
                     }
                     .padding(.top)
                     .onTapGesture {
                         notAsk.toggle()
                     }
                     .padding(.bottom, 43)
+                }else {
+                    Spacer()
                 }
-                Spacer()
             }
             .padding(.horizontal, 18)
             
@@ -128,21 +132,37 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
     @ViewBuilder
     func card(isNFT: Bool) -> some View {
         VStack {
-            Image(isNFT ? "evm_move_nft_header" : "evm_move_token_header")
+            Image(cardHead(isNFT: isNFT))
                 .resizable()
-                .aspectRatio(contentMode: .fit)
+                .aspectRatio(contentMode: .fill)
+                .frame(width: isNFT ? (showCheck ? 128 : 134) : (showCheck ? 96 : 140) ,  height: showCheck ? 56 : 96)
                 
             Text(isNFT ? "move_nft".localized : "move_token".localized)
                 .font(.inter(size: 18, weight: .semibold))
                 .foregroundStyle(Color.Theme.Text.black)
         }
-        .frame(width: 164, height: 224)
+        .frame(width: 164, height: showCheck ? 120 : 224)
         .background {
-            Image("move_assets_bg_\(isNFT ? "0" : "1")")
+            Image(cardBG(isNFT: isNFT))
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-                .frame(width: 164, height: 224)
+                .frame(width: 164, height: showCheck ? 120 : 224)
+                .clipped()
         }
+    }
+    
+    private func cardHead(isNFT: Bool) -> String {
+        if showCheck {
+            return isNFT ? "evm_move_nft_header_s" : "evm_move_token_header_s"
+        }
+        return isNFT ? "evm_move_nft_header" : "evm_move_token_header"
+    }
+    
+    private func cardBG(isNFT: Bool) -> String {
+        if showCheck {
+            return "move_assets_bg_s_\(isNFT ? "0" : "1")"
+        }
+        return "move_assets_bg_\(isNFT ? "0" : "1")"
     }
         
     private func currentToken() -> TokenModel? {
