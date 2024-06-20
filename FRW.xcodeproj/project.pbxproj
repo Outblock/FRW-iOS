@@ -1190,6 +1190,8 @@
 		4ECE28C52ADF6D170035787D /* AccountKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECE28C32ADF6D170035787D /* AccountKeys.swift */; };
 		4ECE28C72AE20DBF0035787D /* AccountKeyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECE28C62AE20DBF0035787D /* AccountKeyViewModel.swift */; };
 		4ECE28C82AE20DC30035787D /* AccountKeyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECE28C62AE20DBF0035787D /* AccountKeyViewModel.swift */; };
+		4ECF45342BB4F20E00F5B3B7 /* WalletHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECF45332BB4F20E00F5B3B7 /* WalletHomeView.swift */; };
+		4ECF45352BB4F20E00F5B3B7 /* WalletHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECF45332BB4F20E00F5B3B7 /* WalletHomeView.swift */; };
 		4ED06E372ABABABA00F49A1A /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */; };
 		4ED06E382ABABABA00F49A1A /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */; };
 		4ED06E3B2ABABABA00F49A1A /* WalletCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E342ABABABA00F49A1A /* WalletCore.xcframework */; };
@@ -2374,6 +2376,7 @@
 		4ECB9964285B8D6A00F59852 /* OffsetScrollViewWithAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffsetScrollViewWithAppBar.swift; sourceTree = "<group>"; };
 		4ECE28C32ADF6D170035787D /* AccountKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountKeys.swift; sourceTree = "<group>"; };
 		4ECE28C62AE20DBF0035787D /* AccountKeyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountKeyViewModel.swift; sourceTree = "<group>"; };
+		4ECF45332BB4F20E00F5B3B7 /* WalletHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletHomeView.swift; sourceTree = "<group>"; };
 		4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = FRW/Library/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
 		4ED06E342ABABABA00F49A1A /* WalletCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WalletCore.xcframework; path = FRW/Library/WalletCore.xcframework; sourceTree = "<group>"; };
 		4ED21F36284E2E6E00320AD0 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
@@ -2935,6 +2938,7 @@
 				15BCFF1627772994000B7863 /* Empty */,
 				15DE22E7277EDC4700B5EE03 /* WalletView.swift */,
 				4E9E21B1282644B100E1BACD /* WalletViewModel.swift */,
+				4ECF45332BB4F20E00F5B3B7 /* WalletHomeView.swift */,
 			);
 			path = Wallet;
 			sourceTree = "<group>";
@@ -7160,6 +7164,7 @@
 				6AF95B472848C8D70012C837 /* BMChineseUtils.swift in Sources */,
 				6AE69E9328C08310004D4709 /* BrowserViewController.swift in Sources */,
 				6AAFFEDF292544BD00B5A264 /* StakeAmountView.swift in Sources */,
+				4ECF45352BB4F20E00F5B3B7 /* WalletHomeView.swift in Sources */,
 				6AB5FBA328926C9100FA2261 /* iCloudAPI.swift in Sources */,
 				4EE6FA8D2B196B16006A827B /* Dictionary+Add.swift in Sources */,
 				4EC31183284508F200F711F5 /* NFTListView.swift in Sources */,
@@ -7909,6 +7914,7 @@
 				15C58C392868A4EE00BD4FC6 /* BMChineseUtils.swift in Sources */,
 				6AE69E9228C08310004D4709 /* BrowserViewController.swift in Sources */,
 				6AAFFEDE292544BD00B5A264 /* StakeAmountView.swift in Sources */,
+				4ECF45342BB4F20E00F5B3B7 /* WalletHomeView.swift in Sources */,
 				6AB5FBA228926C9100FA2261 /* iCloudAPI.swift in Sources */,
 				4EE6FA8C2B196B16006A827B /* Dictionary+Add.swift in Sources */,
 				15C58C3B2868A4EE00BD4FC6 /* NFTListView.swift in Sources */,

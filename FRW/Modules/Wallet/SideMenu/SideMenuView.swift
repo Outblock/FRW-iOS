@@ -483,7 +483,7 @@ struct SideContainerView: View {
     
     @ViewBuilder private func makeTabView() -> some View {
         let wallet = TabBarPageModel<AppTabType>(tag: WalletView.tabTag(), iconName: WalletView.iconName(), color: WalletView.color()) {
-            AnyView(WalletView())
+            AnyView(WalletHomeView())
         }
 
         let nft = TabBarPageModel<AppTabType>(tag: NFTTabScreen.tabTag(), iconName: NFTTabScreen.iconName(), color: NFTTabScreen.color()) {
