@@ -421,6 +421,9 @@ extension WalletConnectManager {
         case FCLWalletConnectMethod.authz.rawValue:
             
             do {
+                if sessionRequest.id == currentRequest?.id {
+                    return
+                }
                 currentRequest = sessionRequest
                 let jsonString = try sessionRequest.params.get([String].self)
                 
@@ -721,7 +724,7 @@ extension WalletConnectManager {
             } catch {
                 debugPrint("WalletConnectManager -> rejectRequest failed: \(error)")
                 HUD.error(title: "reject_failed".localized)
-                rejectRequest(request: request)
+//                rejectRequest(request: request)
             }
         }
     }
