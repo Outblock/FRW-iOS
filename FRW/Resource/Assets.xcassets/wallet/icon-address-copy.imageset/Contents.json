@@ -1,16 +1,17 @@
 {
   "images" : [
     {
+      "filename" : "copy-fill.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "icon-address-copy@2x.png",
+      "filename" : "copy-fill@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "icon-address-copy@3x.png",
+      "filename" : "copy-fill@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -58,6 +58,10 @@ class WalletManager: ObservableObject {
     
     var walletAccount: WalletAccount = WalletAccount()
     let balanceProvider = BalanceProvider()
+    
+    var currentAccount: WalletAccount.User {
+        WalletManager.shared.walletAccount.readInfo(at: getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? "")
+    }
 
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(reset), name: .willResetWallet, object: nil)

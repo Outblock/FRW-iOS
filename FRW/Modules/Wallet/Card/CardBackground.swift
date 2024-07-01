@@ -14,6 +14,23 @@ enum CardBackground: CaseIterable {
         case flow
         case evm
     }
+    
+    static var dynamicCases: [CardBackground] = [
+        .fluid,
+        .matrix,
+        .fade(imageIndex: 0)
+    ]
+    
+    static var imageCases: [CardBackground] = [
+        .image(imageIndex: 0),
+        .image(imageIndex: 1),
+        .image(imageIndex: 2),
+        .image(imageIndex: 3),
+        .image(imageIndex: 4),
+        .image(imageIndex: 5),
+    ]
+    
+    
     static var allCases: [CardBackground] = [
         .fluid,
         .matrix,
@@ -52,7 +69,7 @@ enum CardBackground: CaseIterable {
     }
     
     var imageList: [Image] {
-        return [Image("bg-wallet-card")]
+        return [Image("wallpaper_0"), Image("wallpaper_1"),Image("wallpaper_2"),Image("wallpaper_3"),Image("wallpaper_4"),Image("wallpaper_5")]
     }
     
     var fadeList: [Image] {

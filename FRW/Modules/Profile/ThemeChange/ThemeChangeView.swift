@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import SwiftUIX
 
 struct ThemeChangeView: RouteableView {
     @StateObject private var vm = ThemeChangeViewModel()
@@ -30,6 +31,28 @@ struct ThemeChangeView: RouteableView {
     var body: some View {
         ZStack {
             ScrollView {
+                
+                Section {
+                    Button {
+                        Router.route(to: RouteMap.Profile.wallpaper)
+                    } label: {
+                        HStack {
+                            Text("Wallpaper")
+                                .font(.inter(size: 14, weight: .semibold))
+                                .foregroundColor(.LL.Neutrals.text)
+                                
+                            Spacer()
+                        }
+                        .padding(.horizontal, 24)
+                        .frame(height: 64)
+                        .background(.LL.bgForIcon)
+                        .cornerRadius(16)
+                    }
+                }
+                .padding(.horizontal, 18)
+                .padding(.bottom, 12)
+                
+                
                 Section {
                     VStack {
                         themeItemView.padding(.vertical, 24)
@@ -37,7 +60,7 @@ struct ThemeChangeView: RouteableView {
                         autoItemView
                             .hoverEffect(.lift)
                     }
-        //            .roundedBg(cornerRadius: 16, fillColor: .LL.bgForIcon)
+                    //            .roundedBg(cornerRadius: 16, fillColor: .LL.bgForIcon)
                     .background(.LL.bgForIcon)
                     .cornerRadius(16)
                     .frame(maxHeight: .infinity, alignment: .top)
@@ -49,51 +72,6 @@ struct ThemeChangeView: RouteableView {
                 }
                 .padding(.horizontal, 18)
                 .padding(.bottom, 12)
-                
-                Section {
-                    VStack {
-                        ForEach(CardBackground.allCases, id: \.identify) { card in
-                            
-//                            Button {
-//                                walletCardBackrgound = card.rawValue
-//                            } label: {
-                                
-                                if card.identify == CardBackground.color(color: .clear).identify {
-                                    Cell(isSelected: CardBackground(value: walletCardBackrgound).identify == card.identify, title: card.identify.capitalized){
-                                        ColorPicker(selection: $cardColor, supportsOpacity: false) {}
-                                            .onChange(of: cardColor, perform: { color in
-                                                walletCardBackrgound = CardBackground.color(color: color.toUIColor() ?? UIColor(hex: "#FC814A")).rawValue
-                                            })
-                                    }
-                                    .onTapGestureOnBackground {
-                                        walletCardBackrgound = card.rawValue
-                                    }
-                                } else {
-                                    Cell(isSelected: CardBackground(value: walletCardBackrgound).identify == card.identify, title: card.identify.capitalized){}
-                                        .onTapGestureOnBackground {
-                                            walletCardBackrgound = card.rawValue
-                                        }
-                                    
-                                }
-                                
-//                            }
-                            BaseDivider()
-                            
-                        }
-                    }
-        //            .roundedBg(cornerRadius: 16, fillColor: .LL.bgForIcon)
-                    .background(.LL.bgForIcon)
-                    .cornerRadius(16)
-                    .frame(maxHeight: .infinity, alignment: .top)
-                } header: {
-                    Text("Card Background")
-                        .font(.LL.body)
-                        .foregroundColor(.LL.Neutrals.text2)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .padding(.horizontal, 18)
-                .padding(.bottom, 12)
-                
             }
         }
         .backgroundFill(.LL.Neutrals.background)

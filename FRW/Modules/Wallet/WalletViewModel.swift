@@ -9,6 +9,7 @@ import Combine
 import Flow
 import Foundation
 import SwiftUI
+import SwiftUIPager
 
 extension WalletViewModel {
     enum WalletState {
@@ -79,6 +80,12 @@ class WalletViewModel: ObservableObject {
     @Published var moveAssetsPresent: Bool = false
     @Published var moveTokenPresent: Bool = false
     
+    @Published var notiList: [NotificationData] = []
+    @Published var currentPage: Int = 0
+    @Published var page: Page = .first()
+    
+    @Published var showHeaderMask = false
+    
     var needShowPlaceholder: Bool {
         return isMock || walletState == .noAddress
     }
@@ -128,6 +135,12 @@ class WalletViewModel: ObservableObject {
                 self?.pendingRequestCount = WalletConnectManager.shared.pendingRequests.count
             }.store(in: &cancelSets)
         
+        ThemeManager.shared.$style.sink { scheme in
+            DispatchQueue.main.async {
+                self.updateTheme()
+            }
+        }.store(in: &cancelSets)
+        
         NotificationCenter.default.publisher(for: .walletHiddenFlagUpdated)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
@@ -159,8 +172,18 @@ class WalletViewModel: ObservableObject {
         NotificationCenter.default.addObserver(self, selector: #selector(transactionCountDidChanged), name: .transactionCountDidChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didReset), name: .didResetWallet, object: nil)
+        
+        
     }
 
+    private func updateTheme() {
+        showHeaderMask = false
+        if ThemeManager.shared.style == .dark {
+            showHeaderMask = true
+            return
+        }
+        //check has notification
+    }
     private func refreshHiddenFlag() {
         isHidden = LocalUserDefaults.shared.walletHidden
     }
@@ -334,11 +357,13 @@ extension WalletViewModel {
     
     func copyAddressAction() {
         UIPasteboard.general.string = WalletManager.shared.selectedAccountAddress
-        HUD.success(title: "copied".localized)
+        HUD.success(title: "Address Copied".localized)
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
     
     func toggleHiddenStatusAction() {
         LocalUserDefaults.shared.walletHidden = !isHidden
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
     
     func moveAssetsAction() {
@@ -355,11 +380,18 @@ extension WalletViewModel {
             Router.route(to: RouteMap.Wallet.stakeGuide)
             return
         }
-        
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         Router.route(to: RouteMap.Wallet.stakingList)
     }
     
     func sideToggleAction() {
         NotificationCenter.default.post(name: .toggleSideMenu, object: nil)
+    }
+    
+    func onPageIndexChangeAction(_ index: Int) {
+        withAnimation(.default) {
+            log.info("[Index] \(index)")
+            currentPage = index
+        }
     }
 }

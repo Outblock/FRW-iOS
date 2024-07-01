@@ -302,6 +302,8 @@ extension RouteMap {
         
         case keychain
         case walletList
+        
+        case wallpaper
     }
 }
 
@@ -384,6 +386,8 @@ extension RouteMap.Profile: RouterTarget {
             
         case .walletList:
             navi.push(content: WalletListView())
+        case .wallpaper:
+            navi.push(content: WallpaperView())
         }
     }
 }

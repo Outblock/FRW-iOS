@@ -96,6 +96,21 @@ struct AccountSideCell: View {
                 }
                 Spacer()
                 
+                Button {
+                    UIPasteboard.general.string = address
+                    HUD.success(title: "Address Copied".localized)
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                } label: {
+                    HStack {
+                        Image("icon-address-copy")
+                            .resizable()
+                            .renderingMode(.template)
+                            .foregroundStyle(Color.Theme.Text.black3)
+                            .frame(width: 20, height: 20)
+                            .padding(8)
+                    }
+                }
+
 //                Image("device_arrow_right")
 //                    .resizable()
 //                    .aspectRatio(contentMode: .fit)

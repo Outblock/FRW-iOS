@@ -5,13 +5,13 @@
 //  Created by cat on 2024/3/28.
 //
 
-import SwiftUI
 import FirebaseAuth
 import Flow
 import Kingfisher
 import SPConfetti
+import SwiftUI
+import SwiftUIPager
 import SwiftUIX
-
 
 extension WalletHomeView: AppTabBarPageProtocol {
     static func tabTag() -> AppTabType {
@@ -46,9 +46,10 @@ struct WalletContentView: View {
     @StateObject var wm = WalletManager.shared
     @StateObject private var vm = WalletViewModel()
     @State var isRefreshing: Bool = false
-    
+    @State private var showActionSheet = false
     @AppStorage("WalletCardBackrgound")
     private var walletCardBackrgound: String = "fade:0"
+    
     
     private let scrollName: String = "WALLETSCROLL"
     
@@ -58,7 +59,8 @@ struct WalletContentView: View {
     
     var body: some View {
         ZStack {
-            NormalView()
+            GuestView().visibility(um.isLoggedIn ? .gone : .visible)
+            NormalView().visibility(um.isLoggedIn ? .visible : .gone)
         }
         .halfSheet(showSheet: $vm.backupTipsPresent) {
             BackupTipsView(closeAction: {
@@ -66,7 +68,6 @@ struct WalletContentView: View {
             })
         }
         .navigationBarHidden(true)
-        
     }
     
     @ViewBuilder
@@ -82,28 +83,35 @@ struct WalletContentView: View {
                 isRefreshing = false
             }
         } progress: { state in
-            ImageAnimated(imageSize: CGSize(width: 60, height: 60), imageNames: ImageAnimated.appRefreshImageNames(), duration: 1.6, isAnimating: state == .loading || state == .primed)
+            ImageAnimated(imageSize: CGSize(width: 60, height: 60),
+                          imageNames: ImageAnimated.appRefreshImageNames(),
+                          duration: 1.6,
+                          isAnimating: state == .loading || state == .primed)
                 .frame(maxWidth: .infinity)
                 .frame(height: 60)
-                .transition(AnyTransition.move(edge: .top).combined(with: .scale).combined(with: .opacity))
+                .transition(
+                    AnyTransition.move(edge: .bottom).combined(with: .scale).combined(with: .opacity)
+                )
                 .visibility(state == .waiting ? .gone : .visible)
-                .zIndex(10)
-                .offset(y: size.height * 0.45 + 20)
+                .zIndex(2)
+                .offset(y: headerHeight + 20)
         } content: {
             VStack(spacing: 0) {
                 JailbreakTipsView()
                     .visibility(UIDevice.isJailbreak ? .visible : .gone)
                 HeaderView()
+                    .zIndex(1)
                 WalletInfo()
+                    .zIndex(10)
                 ErrorView()
                     .visibility(vm.walletState == .error ? .visible : .gone)
+                    .zIndex(11)
                 CoinListView()
-                
+                    .zIndex(20)
             }
             .overlay(alignment: .top) {
                 TopMenuView()
             }
-            
         }
         .coordinateSpace(name: scrollName)
         
@@ -122,16 +130,13 @@ struct WalletContentView: View {
                     vm.sideToggleAction()
                 } label: {
                     HStack {
-                        Image("icon_wallet_menu")
-                            .resizable()
-                            .renderingMode(.template)
-                            .foregroundStyle(Color.Theme.Text.black8)
-                            .frame(width: 24, height: 24)
+                        wm.currentAccount.emoji.icon(size: 24)
                     }
-                    .frame(width: 56, height: 40)
+                    .frame(width: 40, height: 40)
                     .background(Color.Theme.Text.white9.opacity(0.9))
-                    .cornerRadius(16)
+                    .cornerRadius(20)
                 }
+                
                 Spacer()
                 
                 HStack {
@@ -147,7 +152,6 @@ struct WalletContentView: View {
                             .padding(8)
                     }
                     .visibility(EVMAccountManager.shared.openEVM ? .visible : .gone)
-                    
                     
                     Button {
                         Router.route(to: RouteMap.Wallet.transactionList(nil))
@@ -171,26 +175,24 @@ struct WalletContentView: View {
                             .frame(width: 24, height: 24)
                             .padding(8)
                     }
-
                 }
                 .padding(.horizontal, 8)
                 .background(Color.Theme.Text.white9.opacity(0.9))
                 .cornerRadius(16)
             }
-            .padding(.top, safeArea.top )
+            .padding(.top, safeArea.top)
             .padding([.horizontal, .bottom], 15)
-            .background({
+            .background {
                 Color.Theme.Text.white9
                     .opacity(-progress)
-            })
+            }
             .offset(y: -minY)
-            
         }
         .frame(height: 40)
     }
     
     @ViewBuilder
-    func JailbreakTipsView()-> some View {
+    func JailbreakTipsView() -> some View {
         Button {
             Router.route(to: RouteMap.Wallet.jailbreakAlert)
         } label: {
@@ -222,48 +224,109 @@ struct WalletContentView: View {
             let size = proxy.size
             let minY = proxy.frame(in: .named(scrollName)).minY
             let progress = minY / (headerHeight * (minY > 0 ? 0.5 : 0.8))
-            ZStack {
-                if WalletManager.shared.isSelectedChildAccount {
-                    childAccountBackground
-                } else {
-                    CardBackground(value: walletCardBackrgound).renderView()
+            ZStack(alignment: .bottom) {
+                HStack {
+                    if WalletManager.shared.isSelectedChildAccount {
+                        childAccountBackground
+                    } else {
+                        CardBackground(value: walletCardBackrgound).renderView()
+                    }
                 }
+                .overlay {
+                    LinearGradient(
+                        stops: [
+                            Gradient.Stop(color: .white.opacity(0), location: 0.00),
+                            Gradient.Stop(color: .black.opacity(0.3), location: 1.00),
+                        ],
+                        startPoint: UnitPoint(x: 0.5, y: 0),
+                        endPoint: UnitPoint(x: 0.5, y: 1)
+                    )
+                    .visibility(vm.showHeaderMask ? .visible : .gone)
+                    
+                }
+                .onLongPressGesture {
+                    if showActionSheet {
+                        return
+                    }
+                    self.showActionSheet = true
+                }
+                
+                VStack(alignment: .trailing) {
+                    Spacer()
+                    if vm.notiList.count > 1 {
+                        HStack {
+                            HStack(spacing: 15) {
+                                ForEach(vm.notiList.indices, id: \.self) { index in
+                                    Capsule()
+                                        .fill(vm.currentPage == index ? Color.Theme.Accent.green : Color.Theme.Line.line)
+                                        .frame(width: vm.currentPage == index ? 20 : 7, height: 7)
+                                }
+                            }
+                            .overlay(alignment: .leading) {
+                                Capsule()
+                                    .fill(Color.Theme.Accent.green)
+                                    .frame(width: 20, height: 7)
+                                    .offset(x: CGFloat(22 * vm.currentPage))
+                            }
+                        }
+                    }
+                    
+                    Pager(page: vm.page, data: 0 ..< vm.notiList.count, id: \.self) { index in
+                        let item = vm.notiList[index]
+                        WalletNotificationView(data: item) {} onAction: {}
+                    }
+                    .itemSpacing(10)
+                    .onPageWillChange { willIndex in
+                        vm.onPageIndexChangeAction(willIndex)
+                    }
+                    .frame(height: 72)
+                    .padding(.bottom, 32)
+                }
+                .padding(.horizontal, 16)
+                .clipped()
             }
             .frame(width: size.width, height: size.height + (minY > 0 ? minY : 0))
             .clipped()
-            .overlay({
+            .overlay {
                 Color.Theme.Text.white9
                     .opacity(-progress)
-            })
+            }
             .offset(y: -minY)
-            
+            .confirmationDialog("Select a color", isPresented: $showActionSheet, titleVisibility: .hidden) {
+                Button("change wallpaper") {
+                    showWallpaper()
+                }
+            }
         }
         .frame(height: headerHeight + safeArea.top)
+    }
+    
+    private func showWallpaper() {
+        Router.route(to: RouteMap.Profile.wallpaper)
     }
     
     private var childAccountBackground: some View {
         ZStack {
             KFImage.url(URL(string: WalletManager.shared.selectedAccountIcon))
-                .placeholder({
+                .placeholder {
                     Image("placeholder")
                         .resizable()
-                })
+                }
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .blur(radius: 6)
             
             LinearGradient(colors:
-                            [
-                                Color(hex: "#333333"),
-                                Color(hex: "#333333"),
-                                Color(hex: "#333333").opacity(0.88),
-                                Color(hex: "#333333").opacity(0.32),
-                            ],
-                           startPoint: .leading,
-                           endPoint: .trailing)
+                [
+                    Color(hex: "#333333"),
+                    Color(hex: "#333333"),
+                    Color(hex: "#333333").opacity(0.88),
+                    Color(hex: "#333333").opacity(0.32),
+                ],
+                startPoint: .leading,
+                endPoint: .trailing)
         }
-        
     }
     
     @ViewBuilder
@@ -271,10 +334,10 @@ struct WalletContentView: View {
         HStack {
             Spacer()
             Rectangle()
-              .foregroundColor(.clear)
-              .frame(width: 71, height: 5)
-              .background(Color(red: 0.85, green: 0.85, blue: 0.85))
-              .cornerRadius(8)
+                .foregroundColor(.clear)
+                .frame(width: 71, height: 5)
+                .background(Color(red: 0.85, green: 0.85, blue: 0.85))
+                .cornerRadius(8)
             Spacer()
         }
     }
@@ -292,7 +355,9 @@ struct WalletContentView: View {
                 } label: {
                     Image(vm.isHidden ? "icon-wallet-hidden-on" : "icon-wallet-hidden-off")
                         .resizable()
+                        .renderingMode(.template)
                         .aspectRatio(contentMode: .fill)
+                        .foregroundColor(Color.Theme.Text.black3)
                         .frame(width: 12, height: 12)
                 }
                 .frame(width: 32, height: 32)
@@ -305,7 +370,7 @@ struct WalletContentView: View {
                 Button {
                     vm.copyAddressAction()
                 } label: {
-                    HStack() {
+                    HStack {
                         Image("icon-address-copy")
                             .resizable()
                             .renderingMode(.template)
@@ -322,16 +387,16 @@ struct WalletContentView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 24)
-        .overlay(alignment: .top, {
+        .overlay(alignment: .top) {
             IndicatorBar()
                 .offset(y: -12)
-        })
+        }
         .background(.Theme.Background.white)
     }
     
     private func walletActionBar() -> some View {
         let showSwap = (RemoteConfigManager.shared.config?.features.swap ?? false) == true
-        let showStake =  currentNetwork.isMainnet
+        let showStake = currentNetwork.isMainnet
         let isH = (showSwap == false && showStake == false)
         
         return HStack {
@@ -350,7 +415,7 @@ struct WalletContentView: View {
     func CoinListView() -> some View {
         VStack(spacing: 16) {
             HStack {
-                Text( (vm.mCoinItems.count > 0 ? "\(vm.mCoinItems.count) " : "") + "tokens".localized)
+                Text((vm.mCoinItems.count > 0 ? "\(vm.mCoinItems.count) " : "") + "tokens".localized)
                     .font(.inter(size: 18, weight: .bold))
                     .foregroundStyle(Color.Theme.Text.black3)
                 Spacer()
@@ -365,6 +430,7 @@ struct WalletContentView: View {
                                 .resizable()
                                 .renderingMode(.template)
                                 .foregroundColor(Color.Theme.Text.black3)
+                                .background(.clear)
                                 .frame(width: 24, height: 24)
                             
                             Text("buy_uppercase".localized)
@@ -388,8 +454,6 @@ struct WalletContentView: View {
                 }
                 .disabled(wm.isSelectedChildAccount)
                 .buttonStyle(ScaleButtonStyle())
-                
-
             }
             
             VStack(spacing: 5) {
@@ -401,7 +465,6 @@ struct WalletContentView: View {
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(ScaleButtonStyle())
-                    
                 }
             }
             
@@ -427,7 +490,6 @@ struct WalletContentView: View {
 private let CoinIconHeight: CGFloat = 43
 private let CoinCellHeight: CGFloat = 72
 extension WalletHomeView {
-    
     struct CoinCell: View {
         let coin: WalletViewModel.WalletCoinItemModel
         @EnvironmentObject var vm: WalletViewModel
@@ -437,10 +499,10 @@ extension WalletHomeView {
             VStack(spacing: 0) {
                 HStack(spacing: 18) {
                     KFImage.url(coin.token.iconURL)
-                        .placeholder({
+                        .placeholder {
                             Image("placeholder")
                                 .resizable()
-                        })
+                        }
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: CoinIconHeight, height: CoinIconHeight)
@@ -460,7 +522,7 @@ extension WalletHomeView {
                         }
 
                         HStack {
-                            HStack() {
+                            HStack {
                                 Text(coin.priceValue)
                                     .foregroundColor(.LL.Neutrals.neutrals7)
                                     .font(.inter(size: 14, weight: .regular))
@@ -472,9 +534,8 @@ extension WalletHomeView {
                                     .padding(.horizontal, 6)
                                     .background(coin.changeBG)
                                     .cornerRadius(11, style: .continuous)
-                                    
                             }
-                            .visibility( WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .visible : .gone)
+                            .visibility(WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .visible : .gone)
                             
                             Text("Inaccessible")
                                 .foregroundStyle(Color.Flow.Font.inaccessible)
@@ -534,10 +595,11 @@ extension WalletHomeView {
     }
 }
 
-//MARK: ActionView
+// MARK: ActionView
+
 extension WalletHomeView {
     enum Action: String {
-        case send,receive, swap,stake
+        case send, receive, swap, stake
         
         var icon: String {
             switch self {
@@ -571,13 +633,15 @@ extension WalletHomeView {
             }
         }
     }
+
     struct ActionView: View {
         let isH: Bool
         let action: WalletHomeView.Action
         var body: some View {
-            Button{
+            Button {
                 action.doEvent()
-            }label: {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            } label: {
                 container {
                     Image(action.icon)
                         .resizable()
@@ -590,7 +654,6 @@ extension WalletHomeView {
                         .font(.inter(size: 12, weight: .semibold))
                         .foregroundStyle(Color.Theme.Text.black8)
                 }
-                
             }
             .buttonStyle(ScaleButtonStyle())
         }
@@ -601,7 +664,7 @@ extension WalletHomeView {
                     HStack {
                         content()
                     }
-                }else {
+                } else {
                     VStack {
                         content()
                     }
@@ -613,7 +676,6 @@ extension WalletHomeView {
             .background(Color.Theme.Background.grey)
             .cornerRadius(16)
         }
-        
     }
 }
 
@@ -623,11 +685,9 @@ struct VisualEffectView: UIViewRepresentable {
     func updateUIView(_ uiView: UIVisualEffectView, context: UIViewRepresentableContext<Self>) { uiView.effect = effect }
 }
 
-
 #Preview {
     Group {
         WalletHomeView()
             .preferredColorScheme(.dark)
     }
-    
 }

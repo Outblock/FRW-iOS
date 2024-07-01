@@ -56,6 +56,7 @@ class UserManager: ObservableObject {
     var isLoggedIn: Bool {
         return activatedUID != nil
     }
+    
 
     init() {
         checkIfHasOldAccount()

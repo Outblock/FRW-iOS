@@ -310,7 +310,7 @@ struct SideMenuView: View {
                         if let address = childAccount.addr {
                             AccountSideCell(address: address, 
                                             currentAddress: vm.currentAddress,
-                                            detail: vm.balanceValue(at: address)
+                                            detail: address
                             ) { _, action in
                                 if action == .card {
                                     ChildAccountManager.shared.select(childAccount)
