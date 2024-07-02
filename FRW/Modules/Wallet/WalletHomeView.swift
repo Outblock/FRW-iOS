@@ -130,7 +130,20 @@ struct WalletContentView: View {
                     vm.sideToggleAction()
                 } label: {
                     HStack {
-                        wm.currentAccount.emoji.icon(size: 24)
+                        if let url = ChildAccountManager.shared.selectedChildAccount?.icon  {
+                            KFImage.url(URL(string: url.convertedAvatarString()))
+                                .placeholder({
+                                    Image("placeholder")
+                                        .resizable()
+                                })
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 28, height: 28)
+                                .cornerRadius(14)
+                        }else {
+                            wm.currentAccount.emoji.icon(size: 24)
+                        }
+                        
                     }
                     .frame(width: 40, height: 40)
                     .background(Color.Theme.Text.white9.opacity(0.9))
@@ -226,11 +239,7 @@ struct WalletContentView: View {
             let progress = minY / (headerHeight * (minY > 0 ? 0.5 : 0.8))
             ZStack(alignment: .bottom) {
                 HStack {
-                    if WalletManager.shared.isSelectedChildAccount {
-                        childAccountBackground
-                    } else {
-                        CardBackground(value: walletCardBackrgound).renderView()
-                    }
+                    CardBackground(value: walletCardBackrgound).renderView()
                 }
                 .overlay {
                     LinearGradient(

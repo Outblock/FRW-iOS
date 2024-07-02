@@ -42,6 +42,12 @@ struct ThemeChangeView: RouteableView {
                                 .foregroundColor(.LL.Neutrals.text)
                                 
                             Spacer()
+                            
+                            CardBackground(value: walletCardBackrgound)
+                                .renderView()
+                                .frame(width: 32, height: 32)
+                                .cornerRadius(8)
+                                
                         }
                         .padding(.horizontal, 24)
                         .frame(height: 64)

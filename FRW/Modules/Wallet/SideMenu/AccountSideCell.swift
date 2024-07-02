@@ -17,6 +17,7 @@ struct AccountSideCell: View {
     
     var address: String
     var currentAddress: String
+    var name: String? = nil
     var logo: String? = nil
     var detail: String? = nil
     var onClick:(String, AccountSideCell.Action) -> ()
@@ -63,6 +64,7 @@ struct AccountSideCell: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 24, height: 24)
                         .cornerRadius(12)
+                        .padding(.trailing,18)
                 }else {
                     user.emoji.icon()
                         .padding(.trailing,18)
@@ -71,7 +73,7 @@ struct AccountSideCell: View {
                     
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
-                        Text(user.name)
+                        Text(name ?? user.name)
                             .font(.inter(size: 14))
                             .foregroundStyle(Color.Theme.Text.black8)
                             .frame(height: 22)
@@ -86,12 +88,19 @@ struct AccountSideCell: View {
                             
                     }
                     
-                    Text(detail ?? address)
+                    Text(address)
                         .font(.inter(size: 12))
                         .lineLimit(1)
                         .truncationMode(.middle)
                         .foregroundStyle(Color.Theme.Text.black3)
                         .frame(height: 20)
+                    
+                    Text(detail ?? "")
+                        .font(.inter(size: 12))
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        .foregroundStyle(Color.Theme.Text.black8)
+                        .visibility(detail == nil ? .gone : .visible)
                         
                 }
                 Spacer()
@@ -117,8 +126,8 @@ struct AccountSideCell: View {
 //                    .frame(width: 8, height: 14)
                 
             }
-            .padding(18)
-            .frame(height: 82)
+            .padding(.horizontal,18)
+            .padding(.vertical, 12)
             .background{
                 if isSelected {
                     LinearGradient(

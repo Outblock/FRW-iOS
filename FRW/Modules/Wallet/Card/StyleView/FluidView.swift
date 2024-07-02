@@ -14,6 +14,7 @@ struct FluidView: UIViewRepresentable {
         let webview = WKWebView()
         webview.backgroundColor = UIColor(hex: "#121212")
         webview.isOpaque = false
+        webview.isUserInteractionEnabled = false
         return webview
     }
  
