@@ -217,7 +217,7 @@ extension MoveTokenView {
                 }))
             }, label: {
                 HStack(spacing: 4) {
-                    KFImage.url(viewModel.token.icon)
+                    KFImage.url(viewModel.token.iconURL)
                         .placeholder({
                             Image("placeholder")
                                 .resizable()
