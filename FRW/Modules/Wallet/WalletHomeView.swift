@@ -28,19 +28,8 @@ extension WalletHomeView: AppTabBarPageProtocol {
 }
 
 struct WalletHomeView: View {
-    var body: some View {
-        GeometryReader {
-            let safeArea = $0.safeAreaInsets
-            let size = $0.size
-            WalletContentView(safeArea: safeArea, size: size)
-                .ignoresSafeArea(.container, edges: .top)
-        }
-    }
-}
-
-struct WalletContentView: View {
-    var safeArea: EdgeInsets
-    var size: CGSize
+    @State var safeArea: EdgeInsets = .zero
+    @State var size: CGSize = .zero
     
     @StateObject var um = UserManager.shared
     @StateObject var wm = WalletManager.shared
@@ -53,21 +42,30 @@ struct WalletContentView: View {
     
     private let scrollName: String = "WALLETSCROLL"
     
-    var headerHeight: CGFloat {
-        size.height * 0.3
+    var body: some View {
+        GeometryReader { proxy in
+            
+            return ZStack {
+                GuestView().visibility(um.isLoggedIn ? .gone : .visible)
+                NormalView().visibility(um.isLoggedIn ? .visible : .gone)
+            }
+            .halfSheet(showSheet: $vm.backupTipsPresent) {
+                BackupTipsView(closeAction: {
+                    vm.backupTipsPresent = false
+                })
+            }
+            .onAppear(perform: {
+                safeArea = proxy.safeAreaInsets
+                size = proxy.size
+            })
+            .navigationBarHidden(true)
+            .ignoresSafeArea(.container, edges: .top)
+        }
+        
     }
     
-    var body: some View {
-        ZStack {
-            GuestView().visibility(um.isLoggedIn ? .gone : .visible)
-            NormalView().visibility(um.isLoggedIn ? .visible : .gone)
-        }
-        .halfSheet(showSheet: $vm.backupTipsPresent) {
-            BackupTipsView(closeAction: {
-                vm.backupTipsPresent = false
-            })
-        }
-        .navigationBarHidden(true)
+    var headerHeight: CGFloat {
+        size.height * 0.3
     }
     
     @ViewBuilder
@@ -114,7 +112,6 @@ struct WalletContentView: View {
             }
         }
         .coordinateSpace(name: scrollName)
-        
         .environmentObject(vm)
         .mockPlaceholder(vm.needShowPlaceholder)
     }
@@ -498,6 +495,7 @@ struct WalletContentView: View {
 
 private let CoinIconHeight: CGFloat = 43
 private let CoinCellHeight: CGFloat = 72
+
 extension WalletHomeView {
     struct CoinCell: View {
         let coin: WalletViewModel.WalletCoinItemModel

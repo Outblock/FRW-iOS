@@ -39,7 +39,7 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
             return .init(string: "https://dev-scanner.lilico.app")!
             #endif
         case .flowAddress:
-            return .init(string: "https://key-indexer.production.flow.com")!
+            return .init(string: "https://production.key-indexer.flow.com/")!
         }
     }
     

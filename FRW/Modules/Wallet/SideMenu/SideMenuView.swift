@@ -358,7 +358,7 @@ struct SideMenuView: View {
                         VStack {
                             
                             Button {
-                                vm.isSwitchOpen.toggle()
+                                NotificationCenter.default.post(name: .toggleSideMenu)
                                 WalletManager.shared.changeNetwork(.mainnet)
                                 
                             } label: {
@@ -366,7 +366,7 @@ struct SideMenuView: View {
                             }
                             
                             Button {
-                                vm.isSwitchOpen.toggle()
+                                NotificationCenter.default.post(name: .toggleSideMenu)
                                 WalletManager.shared.changeNetwork(.testnet)
                                 
                             } label: {
@@ -375,7 +375,7 @@ struct SideMenuView: View {
                             
                             if let previewnetAddress = wm.getFlowNetworkTypeAddress(network: .previewnet) {
                                 Button {
-                                    vm.isSwitchOpen.toggle()
+                                    NotificationCenter.default.post(name: .toggleSideMenu)
                                     WalletManager.shared.changeNetwork(.previewnet)
                                     
                                 } label: {

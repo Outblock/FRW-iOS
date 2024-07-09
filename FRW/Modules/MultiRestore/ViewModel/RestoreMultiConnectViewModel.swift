@@ -26,6 +26,8 @@ class RestoreMultiConnectViewModel: ObservableObject {
     var storeItems: [[MultiBackupManager.StoreItem]] = []
     var phraseItem: MultiBackupManager.StoreItem?
     
+    private var validationErrorsOccurred: Bool = false
+    
     init(items: [MultiBackupType]) {
         self.items = items
         currentIndex = 0
@@ -41,6 +43,11 @@ extension RestoreMultiConnectViewModel {
     func onClickButton() {
         if isEnd {
             let list = checkValidUser()
+            if list.count == 0 {
+                self.enable = true
+                Router.route(to: RouteMap.RestoreLogin.restoreErrorView(.noAccountFound))
+                return
+            }
             Router.route(to: RouteMap.RestoreLogin.multiAccount(list))
             return
         }
@@ -54,10 +61,22 @@ extension RestoreMultiConnectViewModel {
         Task {
             do {
                 let list = try await MultiBackupManager.shared.getCloudDriveItems(from: currentType)
+                if list.count == 0 {
+                    self.enable = true
+                    Router.route(to: RouteMap.RestoreLogin.restoreErrorView(.notfound))
+                    return
+                }
                 if currentType.needPin {
                     Router.route(to: RouteMap.Backup.verityPin(.restore) { allow, pin in
                         if allow {
                             let verifyList = self.verify(list: list, with: pin)
+                            if list.count > 0 && self.validationErrorsOccurred {
+                                DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
+                                    self.enable = true
+                                    Router.route(to: RouteMap.RestoreLogin.restoreErrorView(.decryption))
+                                }
+                                return
+                            }
                             self.storeItem(list: verifyList)
                         }
                     })
@@ -92,6 +111,7 @@ extension RestoreMultiConnectViewModel {
     private func verify(list: [MultiBackupManager.StoreItem], with pin: String) -> [MultiBackupManager.StoreItem] {
         let pinCode = pin.toPassword() ?? pin
         var result: [MultiBackupManager.StoreItem] = []
+        validationErrorsOccurred = false
         for item in list {
             do {
                 _ = try MultiBackupManager.shared.decryptMnemonic(item.data, password: pinCode)
@@ -101,6 +121,7 @@ extension RestoreMultiConnectViewModel {
                 result.append(newItem)
             }
             catch {
+                validationErrorsOccurred = true
                 log.error(error)
             }
         }

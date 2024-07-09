@@ -74,7 +74,7 @@ struct AccountSideCell: View {
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
                         Text(name ?? user.name)
-                            .font(.inter(size: 14))
+                            .font(.inter(size: 14, weight: .semibold))
                             .foregroundStyle(Color.Theme.Text.black8)
                             .frame(height: 22)
                         

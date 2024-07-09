@@ -34,6 +34,7 @@ extension RouteMap {
         case inputMnemonic((String) -> ())
         
         case createProfile(CreateProfileWaitingViewModel)
+        case restoreErrorView(RestoreErrorView.RestoreError)
     }
 }
 
@@ -68,6 +69,8 @@ extension RouteMap.RestoreLogin: RouterTarget {
             navi.push(content: RestoreMultiInputMnemonicView(callback: callback))
         case .createProfile(let vm):
             navi.push(content: CreateProfileWaitingView(vm))
+        case .restoreErrorView(let error):
+            navi.push(content: RestoreErrorView(error: error))
         }
     }
 }

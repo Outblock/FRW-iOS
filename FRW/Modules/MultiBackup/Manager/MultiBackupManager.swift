@@ -203,6 +203,7 @@ extension MultiBackupManager {
 
 extension MultiBackupManager {
     func getCloudDriveItems(from type: MultiBackupType) async throws -> [MultiBackupManager.StoreItem] {
+
         switch type {
         case .google:
             try await login(from: type)
