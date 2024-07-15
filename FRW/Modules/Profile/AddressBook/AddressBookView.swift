@@ -224,19 +224,24 @@ extension AddressBookView {
         var addAction: (() -> Void)? = nil
 
         var body: some View {
-            HStack {
+            HStack(spacing: 20) {
                 // avatar
                 ZStack {
                     switch contact.contactType {
                     case .user:
-                        KFImage.url(URL(string: contact.avatar?.convertedAvatarString() ?? placeholder))
-                            .placeholder({
-                                Image("placeholder")
-                                    .resizable()
-                            })
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 48, height: 48)
+                        if contact.user?.emoji != nil {
+                            contact.user?.emoji.icon(size: 48)
+                        }else {
+                            KFImage.url(URL(string: contact.avatar?.convertedAvatarString() ?? placeholder))
+                                .placeholder({
+                                    Image("placeholder")
+                                        .resizable()
+                                })
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 48, height: 48)
+                        }
+                        
                     case .domain:
                         Image(contact.localAvatar ?? "")
                             .resizable()
@@ -255,7 +260,7 @@ extension AddressBookView {
 
                 // text
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(contact.contactName ?? "no name")
+                    Text(contact.contactName ?? contact.user?.name ?? "no name")
                         .foregroundColor(.LL.Neutrals.text)
                         .font(.inter(size: 14, weight: .bold))
 

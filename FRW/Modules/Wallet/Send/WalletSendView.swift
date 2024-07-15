@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftUIPager
+import SwiftUIX
 
 //struct WalletSendView_Previews: PreviewProvider {
 //    static var previews: some View {
@@ -79,13 +80,21 @@ struct WalletSendView: RouteableView {
                         SwitchButton(icon: "icon-addressbook", title: "address_book".localized, isSelected: vm.tabType == .addressBook)
                             .contentShape(Rectangle())
                     }
+                    
+                    Button {
+                        vm.changeTabTypeAction(type: .accounts)
+                    } label: {
+                        SwitchButton(icon: "profile-tab", title: "my_accounts".localized, isSelected: vm.tabType == .accounts)
+                            .contentShape(Rectangle())
+                    }
                 }
                 
                 // indicator
                 let widthPerTab = geo.size.width / CGFloat(tabCount)
-                Color.Flow.accessory
+                Color.Theme.Text.black1
                     .frame(width: widthPerTab, height: 2)
                     .padding(.leading, widthPerTab * CGFloat(vm.tabType.rawValue))
+                    .padding(.bottom, 16)
             }
         }
         .frame(height: 70)
@@ -99,6 +108,8 @@ struct WalletSendView: RouteableView {
                     recentContainerView
                 case .addressBook:
                     addressBookContainerView
+                case .accounts:
+                    accountView
                 }
             }
             .onPageChanged { newIndex in
@@ -115,13 +126,13 @@ extension WalletSendView {
         HStack(spacing: 8) {
             Image("icon-search")
                 .renderingMode(.template)
-                .foregroundStyle(Color.LL.Primary.salmonPrimary)
+                .foregroundStyle(Color.Theme.Text.black8)
             TextField("", text: $vm.searchText)
                 .disableAutocorrection(true)
                 .modifier(PlaceholderStyle(showPlaceHolder: vm.searchText.isEmpty,
                                            placeholder: "send_search_placeholder".localized,
                                            font: .inter(size: 14, weight: .medium),
-                                           color: Color.LL.Neutrals.text2))
+                                           color: Color.Theme.Text.black3))
                 .submitLabel(.search)
                 .onChange(of: vm.searchText) { st in
                     vm.searchTextDidChangeAction(text: st)
@@ -135,7 +146,9 @@ extension WalletSendView {
             Button {
                 vm.scan()
             } label: {
-                Image("icon-wallet-scan").renderingMode(.template).foregroundColor(.primary)
+                Image("icon-wallet-scan")
+                    .renderingMode(.template)
+                    .foregroundColor(.Theme.Accent.grey)
             }
         }
         .frame(height: 52)
@@ -326,6 +339,47 @@ extension WalletSendView {
     }
 }
 
+extension WalletSendView {
+    var accountView: some View {
+        VStack {
+            ZStack {
+                ScrollView {
+                    
+                    LazyVStack {
+                        ForEach(vm.ownAccountList, id: \.id) { contact in
+                            AddressBookView.ContactCell(contact: contact)
+                                .onTapGestureOnBackground {
+                                    vm.sendToTargetAction(target: contact)
+                                }
+                        }
+                    }
+                    
+                    if vm.accountList.count > 0 {
+                        HStack {
+                            Text("linked_account".localized)
+                                .font(.inter(size: 16, weight: .bold))
+                                .foregroundStyle(Color.Theme.Text.black3)
+                            Spacer()
+                        }
+                        .padding(.vertical, 20)
+                        
+                        LazyVStack {
+                            ForEach(vm.accountList, id: \.id) { contact in
+                                AddressBookView.ContactCell(contact: contact)
+                                    .onTapGestureOnBackground {
+                                        vm.sendToTargetAction(target: contact)
+                                    }
+                            }
+                        }
+                    }
+                    
+                }
+            }
+            .frame(maxHeight: .infinity)
+        }
+    }
+}
+
 // MARK: - Component
 
 extension WalletSendView {
@@ -341,11 +395,12 @@ extension WalletSendView {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 20, height: 20)
-                    .foregroundColor(isSelected ? Color.Flow.accessory : Color.Flow.accessory)
+                    .foregroundColor(Color.Theme.Accent.grey)
                 
                 Text(title)
+                    .font(.inter(size: 12))
                     .foregroundColor(.LL.Neutrals.text)
-                    .font(.inter(size: 10, weight: .medium))
+                    
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }

@@ -17,6 +17,7 @@ extension WalletSendView {
     enum TabType: Int, CaseIterable {
         case recent
         case addressBook
+        case accounts
     }
     
     enum ViewStatus {
@@ -60,6 +61,8 @@ class WalletSendViewModel: ObservableObject {
     @Published var page: Page = .first()
     
     @Published var recentList: [Contact] = []
+    @Published var accountList: [Contact] = []
+    @Published var ownAccountList: [Contact] = []
     let addressBookVM: AddressBookView.AddressBookViewModel = AddressBookView.AddressBookViewModel()
     
     @Published var localSearchResults: [WalletSendView.SearchSection] = []
@@ -88,6 +91,30 @@ class WalletSendViewModel: ObservableObject {
                 self.recentList = list
             }
         }.store(in: &cancelSets)
+        
+        var addresList:[String] = []
+        if let primaryAddr = WalletManager.shared.getPrimaryWalletAddress() {
+//            if WalletManager.shared.isSelectedEVMAccount || WalletManager.shared.isSelectedChildAccount {
+//                
+//            }
+            addresList.append(primaryAddr)
+            if WalletManager.shared.isSelectedEVMAccount == false,
+                let emvAddr = EVMAccountManager.shared.accounts.first?.showAddress {
+               addresList.append(emvAddr)
+            }
+        }
+        
+        addresList.forEach { address in
+            let user = WalletManager.shared.walletAccount.readInfo(at: address)
+            let contract = Contact(address: address, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: nil, user: user)
+            self.ownAccountList.append(contract)
+        }
+        
+        
+        ChildAccountManager.shared.childAccounts.forEach { account in
+            let contact = Contact(address: account.showAddress, avatar: account.showIcon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName)
+        }
+        
     }
     
     var remoteSearchResults: [WalletSendView.SearchSection] {
