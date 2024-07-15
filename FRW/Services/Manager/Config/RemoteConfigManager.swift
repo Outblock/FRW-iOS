@@ -16,6 +16,7 @@ class RemoteConfigManager {
     
     let emptyAddress = "0x0000000000000000"
     
+    private var EVNConfig: ENVConfig?
     var config: Config?
     var contractAddress: ContractAddress?
     
@@ -47,8 +48,6 @@ class RemoteConfigManager {
             return config?.payer.mainnet.address ?? emptyAddress
         case .testnet:
             return config?.payer.testnet.address ?? emptyAddress
-        case .crescendo:
-            return config?.payer.crescendo?.address ?? emptyAddress
         case .previewnet:
             return config?.payer.previewnet?.address ?? emptyAddress
         default:
@@ -81,8 +80,6 @@ class RemoteConfigManager {
             return contractAddress?.mainnet
         case .testnet:
             return contractAddress?.testnet
-        case .crescendo:
-            return contractAddress?.crescendo
         case .previewnet:
             return contractAddress?.previewnet
         }
@@ -90,21 +87,45 @@ class RemoteConfigManager {
     
     init() {
         do {
-            let config: Config = try FirebaseConfig.config.fetch(decoder: JSONDecoder())
-            self.config = config
+            let data: String = try FirebaseConfig.ENVConfig.fetch()
+            let key = LocalEnvManager.shared.backupAESKey
+            if let keyData = key.data(using: .utf8),
+               let ivData = key.sha256().prefix(16).data(using: .utf8) {
+                let decodeData = AES.decryptCBC(key: keyData, data: Data(hex: data), iv: ivData, mode: .pkcs7)!
+                let config = try? JSONDecoder().decode(ENVConfig.self, from: decodeData)
+                self.EVNConfig = config
+                self.config = nil
+                if  let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
+                    let version = EVNConfig?.version
+                {
+                    if version.compareVersion(to: currentVersion) != .orderedAscending {
+                        self.config = self.EVNConfig?.prod
+                    }
+                }
+                
+                if self.EVNConfig == nil {
+                    self.config = self.EVNConfig?.staging
+                }
+            } else {
+                try loadLocalConfig()
+            }
             self.contractAddress = try FirebaseConfig.contractAddress.fetch(decoder: JSONDecoder())
             try handleSecret()
         } catch {
             do {
                 log.warning("will load from local")
-                let config: Config = try FirebaseConfig.config.fetchLocal()
-                self.config = config
-                self.contractAddress = try FirebaseConfig.contractAddress.fetchLocal()
+                try loadLocalConfig()
             } catch {
                 self.isFailed = true
                 log.error("load failed")
             }
         }
+    }
+    
+    private func loadLocalConfig() throws {
+        let config: Config = try FirebaseConfig.ENVConfig.fetchLocal()
+        self.config = config
+        self.contractAddress = try FirebaseConfig.contractAddress.fetchLocal()
     }
     
     private func handleSecret() throws {
@@ -153,3 +174,5 @@ extension RemoteConfigManager: FlowSigner {
         return Data(hex: signature.envelopeSigs.sig)
     }
 }
+
+

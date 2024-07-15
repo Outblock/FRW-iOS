@@ -15,10 +15,18 @@ extension RemoteConfigManager {
         let previewnet: [String: String]?
     }
     
+    struct ENVConfig: Codable {
+        let version: String
+        let prod: Config
+        let staging: Config
+    }
+    
     struct Config: Codable {
         let features: Features
         let payer: Payer
     }
+    
+    
 
     // MARK: - Features
     struct Features: Codable {
