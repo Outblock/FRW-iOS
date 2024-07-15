@@ -340,9 +340,6 @@ extension WalletManager {
         return nil
     }
     
-    var isCrescendoEnabled: Bool {
-        return walletInfo?.wallets?.first(where: { $0.chainId == LocalUserDefaults.FlowNetworkType.crescendo.rawValue })?.getAddress != nil
-    }
     
     var isPreviewEnabled: Bool {
         return walletInfo?.wallets?.first(where: { $0.chainId == LocalUserDefaults.FlowNetworkType.previewnet.rawValue })?.getAddress != nil

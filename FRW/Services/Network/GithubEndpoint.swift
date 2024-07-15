@@ -29,8 +29,6 @@ extension GithubEndpoint: TargetType {
                 return "/Outblock/token-list-jsons/outblock/jsons/testnet/flow/reviewers/0xa51d7fe9e0080662.json"
             case .mainnet:
                 return "/Outblock/token-list-jsons/outblock/jsons/mainnet/flow/reviewers/0xa2de93114bae3e73.json"
-            case .crescendo:
-                return "/Outblock/token-list-jsons/outblock/jsons/previewnet/flow/default.json"
             case .previewnet:
                 return "/Outblock/token-list-jsons/outblock/jsons/previewnet/flow/default.json"
             }
@@ -40,8 +38,6 @@ extension GithubEndpoint: TargetType {
                 return "/Outblock/token-list-jsons/outblock/jsons/testnet/flow/nfts.json"
             case .mainnet:
                 return "/Outblock/token-list-jsons/outblock/jsons/mainnet/flow/nfts.json"
-            case .crescendo:
-                return "/Outblock/token-list-jsons/outblock/jsons/previewnet/flow/nfts.json"
             case .previewnet:
                 return "/Outblock/token-list-jsons/outblock/jsons/previewnet/flow/nfts.json"
             }

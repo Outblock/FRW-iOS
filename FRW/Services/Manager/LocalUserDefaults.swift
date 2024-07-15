@@ -49,7 +49,6 @@ extension LocalUserDefaults {
     enum FlowNetworkType: String, CaseIterable, Codable {
         case testnet
         case mainnet
-        case crescendo
         case previewnet
         
         var color: Color {
@@ -58,8 +57,6 @@ extension LocalUserDefaults {
                 return Color.LL.Primary.salmonPrimary
             case .testnet:
                 return Color(hex: "#FF8A00")
-            case .crescendo:
-                return Color(hex: "#CCAF21")
             case .previewnet:
                 return Color(hex: "#CCAF21")
             }
@@ -75,8 +72,6 @@ extension LocalUserDefaults {
                 return Flow.ChainID.testnet
             case .mainnet:
                 return Flow.ChainID.mainnet
-            case .crescendo:
-                return Flow.ChainID.crescendo
             case .previewnet:
                 return Flow.ChainID.previewnet
             }
@@ -88,8 +83,6 @@ extension LocalUserDefaults {
                 self = .testnet
             case .mainnet:
                 self = .mainnet
-            case .crescendo:
-                self = .crescendo
             case .previewnet:
                 self = .previewnet
             default:
