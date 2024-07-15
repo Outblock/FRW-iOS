@@ -88,6 +88,7 @@ extension RestoreMultiConnectViewModel {
             catch {
                 DispatchQueue.main.async {
                     self.enable = true
+                    Router.route(to: RouteMap.RestoreLogin.restoreErrorView(.notfound))
                 }
             }
         }
