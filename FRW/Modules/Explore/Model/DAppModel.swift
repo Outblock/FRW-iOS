@@ -27,8 +27,6 @@ struct DAppModel: Codable, Identifiable {
             return url
         case .testnet:
             return testnetURL
-        case .crescendo:
-            return crescendoURL
         case .previewnet:
             return previewnetURL
         }

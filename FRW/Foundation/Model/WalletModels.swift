@@ -104,8 +104,6 @@ struct TokenModel: Codable, Identifiable, Mockable {
             addressString = address.testnet ?? ""
         case .mainnet:
             addressString = address.mainnet ?? ""
-        case .crescendo:
-            addressString = address.crescendo ?? ""
         case .previewnet:
             addressString = address.previewnet ?? ""
         }
@@ -196,8 +194,6 @@ struct FlowNetworkModel: Codable {
             return mainnet
         case .testnet:
             return testnet
-        case .crescendo:
-            return crescendo
         case .previewnet:
             return previewnet
         default:
