@@ -28,13 +28,14 @@ class DAppsListViewModel: ObservableObject {
     func fetchAction() {
         Task {
             do {
-                let config: RemoteConfigManager.Config = try await FirebaseConfig.config.fetch(decoder: JSONDecoder())
                 
-                guard config.features.appList ?? false else {
+                let config: RemoteConfigManager.ENVConfig = try FirebaseConfig.ENVConfig.fetch(decoder: JSONDecoder())
+                
+                guard config.prod.features.appList ?? false else {
                     return
                 }
                 
-                let list: [DAppModel] = try await FirebaseConfig.dapp.fetch(decoder: JSONDecoder())
+                let list: [DAppModel] = try FirebaseConfig.dapp.fetch(decoder: JSONDecoder())
                 let filterdList = list.filter{ $0.networkURL != nil }
                 
                 let categories = filterdList.map { $0.category.lowercased() }.reduce(into: [String]()) { result, category in

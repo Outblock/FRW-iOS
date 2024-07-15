@@ -68,9 +68,9 @@ class ExploreTabViewModel: ViewModel {
             state.isLoading = true
             Task {
                 do {
-                    let config: RemoteConfigManager.Config = try await FirebaseConfig.config.fetch(decoder: JSONDecoder())
+                    let config: RemoteConfigManager.ENVConfig = try await FirebaseConfig.ENVConfig.fetch(decoder: JSONDecoder())
                     
-                    guard config.features.appList ?? false else {
+                    guard config.prod.features.appList ?? false else {
                         return
                     }
                     

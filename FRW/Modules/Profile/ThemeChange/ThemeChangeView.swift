@@ -37,7 +37,7 @@ struct ThemeChangeView: RouteableView {
                         Router.route(to: RouteMap.Profile.wallpaper)
                     } label: {
                         HStack {
-                            Text("Wallpaper")
+                            Text("Wallpaper".localized)
                                 .font(.inter(size: 14, weight: .semibold))
                                 .foregroundColor(.LL.Neutrals.text)
                                 
@@ -71,7 +71,7 @@ struct ThemeChangeView: RouteableView {
                     .cornerRadius(16)
                     .frame(maxHeight: .infinity, alignment: .top)
                 } header: {
-                    Text("Theme")
+                    Text("theme".localized)
                         .font(.LL.body)
                         .foregroundColor(.LL.Neutrals.text2)
                         .frame(maxWidth: .infinity, alignment: .leading)

@@ -657,7 +657,7 @@ extension WalletHomeView {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 24, height: 24)
                     
-                    Text(action.rawValue.capitalized)
+                    Text(action.rawValue.localized.capitalized)
                         .font(.inter(size: 12, weight: .semibold))
                         .foregroundStyle(Color.Theme.Text.black8)
                 }

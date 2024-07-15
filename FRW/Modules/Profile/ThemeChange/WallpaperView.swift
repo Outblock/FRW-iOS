@@ -9,7 +9,7 @@ import SwiftUI
 
 struct WallpaperView: RouteableView {
     var title: String {
-        return "Wallpaper"
+        return "Wallpaper".localized
     }
     
     private let columns = [
