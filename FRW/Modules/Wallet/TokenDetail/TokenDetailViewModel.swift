@@ -8,6 +8,7 @@
 import Combine
 import SwiftUI
 import SwiftUICharts
+import Flow
 
 extension TokenDetailView {
     struct Quote: Codable {
@@ -112,6 +113,10 @@ class TokenDetailViewModel: ObservableObject {
     @Published var rate: Double = 0
     @Published var recentTransfers: [FlowScanTransfer] = []
     
+    @Published var showSwapButton: Bool = true
+    @Published var showBuyButton: Bool = true
+    
+    
     @Published var showSheet: Bool = false
     var buttonAction: TokenDetailViewModel.Action = .none
     
@@ -121,6 +126,7 @@ class TokenDetailViewModel: ObservableObject {
         self.token = token
         setupObserver()
         fetchAllData()
+        refreshButtonState()
     }
     
     private func setupObserver() {
@@ -341,6 +347,39 @@ extension TokenDetailViewModel {
             } catch {
                 debugPrint("TokenDetailViewModel -> fetchTransactionsData request failed: \(error)")
             }
+        }
+    }
+}
+
+extension TokenDetailViewModel {
+    func refreshButtonState() {
+        
+        
+        // Swap
+        if (RemoteConfigManager.shared.config?.features.swap ?? false) == true {
+            // don't show when current is Linked account
+            if ChildAccountManager.shared.selectedChildAccount != nil {
+                self.showSwapButton = false
+            }else {
+                self.showSwapButton = true
+            }
+        }else {
+            
+            self.showSwapButton = false
+        }
+        
+       
+        // buy
+        if RemoteConfigManager.shared.config?.features.onRamp ?? false == true && flow.chainID == .mainnet {
+            if (ChildAccountManager.shared.selectedChildAccount != nil) {
+                self.showBuyButton = false
+            }
+            else {
+                self.showBuyButton = true
+            }
+            
+        }else {
+            self.showBuyButton = false
         }
     }
 }

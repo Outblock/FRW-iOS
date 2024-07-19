@@ -41,13 +41,20 @@ struct MoveSingleNFTView: View {
                         Color.clear
                             .frame(height: 20)
                         VStack(spacing: 0) {
-                            MoveUserView(user: viewModel.showFromUser,
-                                         address: viewModel.showFromAddress,
-                                         isEVM: viewModel.fromEVM)
-                            .padding(.bottom, 8)
-                            MoveUserView(user: viewModel.showToUser,
-                                         address: viewModel.showToAddress,
-                                         isEVM: !viewModel.fromEVM)
+                            MoveUserView(contact: viewModel.fromContact, isEVM: viewModel.fromIsEVM)
+                                .padding(.bottom, 8)
+                            
+                            MoveUserView(contact: viewModel.toContact, isEVM: viewModel.toIsEVM,allowChoose: viewModel.accountCount > 0, onClick: {
+                                let model = MoveAccountsViewModel { contact in
+                                    if let contact = contact {
+                                        viewModel.updateToContact(contact)
+                                    }
+                                }
+                                Router.route(to: RouteMap.Wallet.chooseChild(model))
+                            })
+                                
+                            
+                            
                             HStack {
                                 KFImage.url(viewModel.nft.imageURL)
                                     .placeholder({
@@ -114,7 +121,7 @@ struct MoveSingleNFTView: View {
             .edgesIgnoringSafeArea(.bottom)
             .overlay(alignment: .bottom) {
                 VPrimaryButton(model: ButtonStyle.primary,
-                               state: .enabled ,
+                               state: viewModel.buttonState ,
                                action: {
                     viewModel.moveAction()
                                }, title: "move".localized)

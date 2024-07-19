@@ -19,7 +19,7 @@ extension ChildAccountManager {
         }
         
         var coins: [FlowModel.TokenInfo]?
-        var collections: [FlowModel.NFTCollection]?
+        var collections: [String]?
         
         mutating func fetchFT() async throws {
             
@@ -57,7 +57,7 @@ extension ChildAccountManager {
                       let address = info.id.split(separator:".")[safe: 1] else {
                     return false
                 }
-                return contractName == model.contractName && address == modelAddr
+                return contractName == model.contractName && modelAddr.hasSuffix(address)
                 
             })
             return result?.count == 1
@@ -68,12 +68,15 @@ extension ChildAccountManager {
             guard isChildAccount() else {
                 return true
             }
-            let result = collections?.filter({ fModel in
-                guard let contractName = fModel.id.split(separator:".")[safe: 2],
-                      let address = fModel.id.split(separator:".")[safe: 1] else {
+            let result = collections?.filter({ idStr in
+                let list = idStr.split(separator:".")
+                if let contractName = list[safe:2],
+                   let address = list[safe:1] {
+                    return contractName == model.contractName && model.address.hasSuffix(address)
+                }else {
                     return false
                 }
-                return contractName == model.contractName && address == model.address
+                
             })
             return result?.count == 1
         }
@@ -82,22 +85,10 @@ extension ChildAccountManager {
             guard isChildAccount() else {
                 return true
             }
-            let result = collections?.filter({ fModel in
-                guard let contractName = fModel.id.split(separator:".")[safe: 2],
-                      let address = fModel.id.split(separator:".")[safe: 1],
-                      let targetName = model.collection?.contractName,
-                      let targetAddr = model.collection?.address
-                else {
-                    return false
-                }
-                return contractName == targetName && address == targetAddr
-            })
-            //TODO: NFT 的id 
-            guard let collection = result?.first, let targerId = UInt64(model.id) else {
+            guard let collection = model.collection else {
                 return false
             }
-            
-            return collection.idList.contains(targerId)
+            return isAccessible(collection)
         }
     }
 }

@@ -36,7 +36,13 @@ struct UserInfo: Codable {
     }
     
     func toContactWithCurrentUserAddress() -> Contact {
-        let contact = Contact(address: WalletManager.shared.getPrimaryWalletAddress(), avatar: avatar, contactName: nickname, contactType: .user, domain: nil, id: UUID().hashValue, username: username)
+        let address = WalletManager.shared.getPrimaryWalletAddress()
+        var user: WalletAccount.User? = nil
+        if let addr = address {
+            user = WalletManager.shared.walletAccount.readInfo(at: addr)
+        }
+        
+        let contact = Contact(address: address, avatar: avatar, contactName: nickname, contactType: .user, domain: nil, id: UUID().hashValue, username: username,user: user)
         return contact
     }
 }

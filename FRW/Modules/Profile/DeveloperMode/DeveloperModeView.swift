@@ -146,6 +146,7 @@ struct DeveloperModeView: RouteableView {
                         .font(.LL.footnote)
                         .foregroundColor(.LL.Neutrals.neutrals3)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 8)
                     VStack(spacing: 0) {
                         Section {
                             HStack {
@@ -157,6 +158,20 @@ struct DeveloperModeView: RouteableView {
                             }
                             .frame(height: 64)
                             .padding(.horizontal, 16)
+                            
+                            HStack {
+                                Button {
+                                    UserManager.shared.tryToRestoreOldAccountOnFirstLaunch()
+                                } label: {
+                                    Text("Reload Local Profile")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                }
+                                Spacer()
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+                            
                             if isDevModel {
                                 HStack {
                                     Button {

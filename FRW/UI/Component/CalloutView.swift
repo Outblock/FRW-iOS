@@ -26,17 +26,19 @@ struct CalloutView: View {
             HStack(alignment: .top, spacing: 5) {
                 Image(type.iconName())
                     .resizable()
+                    .renderingMode(.template)
+                    .foregroundColor(Color.Theme.Accent.orange)
                     .frame(size: CGSize(width: 16, height: 16))
                 
                 Text(content ?? "")
                     .font(Font.inter(size: 12))
-                    .foregroundColor(Color.LL.Primary.salmonPrimary)
+                    .foregroundColor(Color.Theme.Accent.orange)
             }
             .padding(.vertical, 8)
             .padding(.horizontal,16)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.Theme.Accent.red)
+        .background(Color.Theme.Accent.orange.opacity(0.16))
         .cornerRadius(corners, 8)
         .hidden((content == nil) ? true : false)
     }

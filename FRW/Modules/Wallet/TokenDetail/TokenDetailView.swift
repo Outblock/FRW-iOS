@@ -11,16 +11,6 @@ import SwiftUICharts
 import SwiftUIX
 import Flow
 
-// struct TokenDetailView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        TokenDetailView()
-//        VStack {
-//            TokenDetailView.SelectButton(isSelect: false)
-//        }
-//        .frame(maxWidth: .infinity, maxHeight: .infinity)
-//        .backgroundFill(.LL.Neutrals.background)
-//    }
-// }
 
 struct TokenDetailView: RouteableView {
     @Environment(\.colorScheme) var colorScheme
@@ -164,21 +154,19 @@ struct TokenDetailView: RouteableView {
                 }
                 .disabled(WalletManager.shared.isSelectedChildAccount)
 
-                if let swapStatus = RemoteConfigManager.shared.config?.features.swap, swapStatus == true {
-                    
-                    Button {
-                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                        Router.route(to: RouteMap.Wallet.swap(nil))
-                    } label: {
-                        ZStack {
-                            Rectangle()
-                                .fill(Color.Theme.Accent.green.opacity(0.08))
-                            Image("icon_token_move")
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                        }
+                Button {
+                    UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                    Router.route(to: RouteMap.Wallet.swap(nil))
+                } label: {
+                    ZStack {
+                        Rectangle()
+                            .fill(Color.Theme.Accent.green.opacity(0.08))
+                        Image("icon_token_move")
+                            .resizable()
+                            .frame(width: 24, height: 24)
                     }
                 }
+                .visibility(vm.showSwapButton ? .visible : .gone)
                 
                 
                 Button {
@@ -193,22 +181,20 @@ struct TokenDetailView: RouteableView {
                     }
                 }
                 
-                if currentNetwork.isMainnet || currentNetwork == .testnet  {
-                    if RemoteConfigManager.shared.config?.features.onRamp ?? false == true && flow.chainID == .mainnet {
-                        Button {
-                            Router.route(to: RouteMap.Wallet.buyCrypto)
-                            
-                        } label: {
-                            ZStack {
-                                Rectangle()
-                                    .fill(Color.Theme.Accent.green.opacity(0.08))
-                                Image("icon_token_convert")
-                                    .resizable()
-                                    .frame(width: 24, height: 24)
-                            }
-                        }
+                Button {
+                    Router.route(to: RouteMap.Wallet.buyCrypto)
+                    
+                } label: {
+                    ZStack {
+                        Rectangle()
+                            .fill(Color.Theme.Accent.green.opacity(0.08))
+                        Image("icon_token_convert")
+                            .resizable()
+                            .frame(width: 24, height: 24)
                     }
                 }
+                .visibility(vm.showBuyButton ? .visible : .gone)
+                
             }
             .frame(height: 40)
             .frame(minWidth: 0, maxWidth: .infinity)

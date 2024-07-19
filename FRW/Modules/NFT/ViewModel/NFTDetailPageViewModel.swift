@@ -14,7 +14,7 @@ class NFTDetailPageViewModel: ObservableObject {
     @Published var nft: NFTModel
     @Published var svgString: String = ""
     @Published var movable: Bool = false
-    let showSendButton: Bool
+    @Published var showSendButton: Bool = false
     
     @Published var isPresentMove = false
     
@@ -22,7 +22,6 @@ class NFTDetailPageViewModel: ObservableObject {
     
     init(nft: NFTModel) {
         self.nft = nft
-        showSendButton = RemoteConfigManager.shared.config?.features.nftTransfer ?? false
         if nft.isSVG {
             guard let rawSVGURL = nft.response.postMedia.image,
                   let rawSVGURL = URL(string: rawSVGURL.replacingOccurrences(of: "https://lilico.app/api/svg2png?url=", with: "")) else {
@@ -43,6 +42,7 @@ class NFTDetailPageViewModel: ObservableObject {
             }
         }
         fetchNFTStatus()
+        updateSendButton()
     }
     
     func sendNFTAction() {
@@ -73,12 +73,16 @@ class NFTDetailPageViewModel: ObservableObject {
             movable = false
             return
         }
-        
+        if ChildAccountManager.shared.childAccounts.count > 0 {
+            movable = true
+            return
+        }
         
         Task {
             let address = self.nft.response.contractAddress ?? ""
             let evmAddress = await NFTCollectionConfig.share.get(from: address)?.evmAddress
-            if evmAddress == nil && self.nft.collection?.flowIdentifier == nil {
+            let hasEvm = EVMAccountManager.shared.accounts.count > 0
+            if evmAddress == nil || self.nft.collection?.flowIdentifier == nil || !hasEvm {
                 DispatchQueue.main.async {
                     self.movable = false
                 }
@@ -91,5 +95,19 @@ class NFTDetailPageViewModel: ObservableObject {
                 }
             }
         }
+    }
+    
+    private func updateSendButton() {
+        let remote = RemoteConfigManager.shared.config?.features.nftTransfer ?? false
+        if remote == true {
+            if nft.isDomain {
+                showSendButton = false
+            }else {
+                showSendButton = true
+            }
+        }else {
+            showSendButton = false
+        }
+        
     }
 }

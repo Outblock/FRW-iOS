@@ -281,10 +281,6 @@ struct NFTDetailPage: RouteableView {
                 
                 
                 Button {
-                    if fromLinkedAccount {
-                        HUD.info(title: "Feature coming soon")
-                        return
-                    }
                     vm.sendNFTAction()
                 } label: {
                     HStack {
@@ -300,8 +296,7 @@ struct NFTDetailPage: RouteableView {
                 .cornerRadius(12)
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
                 .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
-                .visibility(vm.nft.isDomain || !vm.showSendButton ? .gone : .visible)
-                .disabled(WalletManager.shared.isSelectedChildAccount)
+                .visibility(vm.showSendButton ? .visible : .gone)
                 
                 Button {
                     vm.showMoveAction()
@@ -322,7 +317,7 @@ struct NFTDetailPage: RouteableView {
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
                 .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
                 .visibility(vm.movable ? .visible : .gone)
-                .disabled(WalletManager.shared.isSelectedChildAccount)
+
                 
                 Menu {
                     Button {

@@ -104,6 +104,7 @@ struct NFTModel: Codable, Hashable, Identifiable {
     var isSVG: Bool = false
     var response: NFTResponse
     let collection: NFTCollectionInfo?
+    let infoFromCollection: FlowModel.CollectionInfo?
     
     var imageURL: URL {
         if isSVG {
@@ -117,7 +118,7 @@ struct NFTModel: Codable, Hashable, Identifiable {
         collection?.contractName.trim() == "TopShot"
     }
     
-    init(_ response: NFTResponse, in collection: NFTCollectionInfo?) {
+    init(_ response: NFTResponse, in collection: NFTCollectionInfo?, from info: FlowModel.CollectionInfo? = nil) {
         if let imgUrl = response.postMedia.image, let url = URL(string: imgUrl) {
             if response.postMedia.isSvg == true {
                 image = URL(string: imgUrl) ?? URL(string: placeholder)!
@@ -144,6 +145,7 @@ struct NFTModel: Codable, Hashable, Identifiable {
         title = response.postMedia.title ?? response.collectionName ?? ""
         self.collection = collection
         self.response = response
+        self.infoFromCollection = info
     }
 
     var declare: String {
@@ -269,7 +271,7 @@ class CollectionItem: Identifiable, ObservableObject {
                         return
                     }
                     
-                    let nftModels = list.map { NFTModel($0, in: self.collection) }
+                    let nftModels = list.map { NFTModel($0, in: self.collection, from: response.info) }
                     self.appendNFTsNoDuplicated(nftModels)
                     
                     if list.count != limit {

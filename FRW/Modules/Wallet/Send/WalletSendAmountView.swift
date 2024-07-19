@@ -69,7 +69,10 @@ struct WalletSendAmountView: RouteableView {
             HStack(spacing: 15) {
                 // avatar
                 ZStack {
-                    if let avatar = vm.targetContact.avatar?.convertedAvatarString(), avatar.isEmpty == false {
+                    if vm.targetContact.user?.emoji != nil {
+                        vm.targetContact.user?.emoji.icon(size: 44)
+                    }
+                    else if let avatar = vm.targetContact.avatar?.convertedAvatarString(), avatar.isEmpty == false {
                         KFImage.url(URL(string: avatar))
                             .placeholder({
                                 Image("placeholder")
@@ -101,7 +104,7 @@ struct WalletSendAmountView: RouteableView {
 
                 // text
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(vm.targetContact.contactName ?? "no name")
+                    Text(vm.targetContact.displayName)
                         .foregroundColor(.LL.Neutrals.text)
                         .font(.inter(size: 14, weight: .bold))
                         .lineLimit(1)
@@ -384,7 +387,9 @@ extension WalletSendAmountView {
             VStack(spacing: 5) {
                 // avatar
                 ZStack {
-                    if let avatar = contact.avatar?.convertedAvatarString(), avatar.isEmpty == false {
+                    if contact.user?.emoji != nil {
+                        contact.user?.emoji.icon(size: 44)
+                    }else if let avatar = contact.avatar?.convertedAvatarString(), avatar.isEmpty == false {
                         KFImage.url(URL(string: avatar))
                             .placeholder({
                                 Image("placeholder")
@@ -409,7 +414,7 @@ extension WalletSendAmountView {
                 .clipShape(Circle())
 
                 // contact name
-                Text(contact.contactName ?? "name")
+                Text(contact.user?.name ?? contact.contactName ?? "name")
                     .foregroundColor(.LL.Neutrals.neutrals1)
                     .font(.inter(size: 14, weight: .semibold))
                     .lineLimit(1)

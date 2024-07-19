@@ -34,11 +34,19 @@ class ReceiveQRViewModel: ObservableObject {
     }
     
     private func flowName() -> String {
-        UserManager.shared.userInfo?.nickname ?? "lilico".localized
+        var name =  UserManager.shared.userInfo?.nickname ?? "lilico".localized
+        if let account = ChildAccountManager.shared.selectedChildAccount {
+            name = account.showName
+        }
+        return name
     }
     
     private func flowAddr() -> String {
-        WalletManager.shared.getPrimaryWalletAddress() ?? ""
+        var address = WalletManager.shared.getPrimaryWalletAddress() ?? ""
+        if let account = ChildAccountManager.shared.selectedChildAccount {
+            address = account.showAddress
+        }
+        return address
     }
     
     private func EVMName() -> String {

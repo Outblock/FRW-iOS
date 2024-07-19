@@ -277,33 +277,36 @@ extension ProfileView {
         var body: some View {
             VStack {
                 Section {
-                    Button {
-                        vm.linkedAccountAction()
-                    } label: {
-                        ProfileView.SettingItemCell(iconName: Row.linkedAccount.iconName, title: Row.linkedAccount.title, style: Row.linkedAccount.style, desc: Row.linkedAccount.desc)
-                    }
-                    Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
+                    if !vm.isLinkedAccount {
+                        Button {
+                            vm.linkedAccountAction()
+                        } label: {
+                            ProfileView.SettingItemCell(iconName: Row.linkedAccount.iconName, title: Row.linkedAccount.title, style: Row.linkedAccount.style, desc: Row.linkedAccount.desc)
+                        }
+                        Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
 
-                    Button {
-                        if !isDevModel && LocalUserDefaults.shared.flowNetwork != .mainnet {
-                            showAlert = true
-                        } else {
-                            Router.route(to: RouteMap.Backup.backupList)
+                        Button {
+                            if !isDevModel && LocalUserDefaults.shared.flowNetwork != .mainnet {
+                                showAlert = true
+                            } else {
+                                Router.route(to: RouteMap.Backup.backupList)
+                            }
+
+                        } label: {
+                            ProfileView.SettingItemCell(iconName: Row.backup(vm).iconName, title: Row.backup(vm).title, style: Row.backup(vm).style, desc: Row.backup(vm).desc, imageName: Row.backup(vm).imageName, sysImageColor: Row.backup(vm).sysImageColor)
+                        }
+                        .alert("wrong_network_title".localized, isPresented: $showAlert) {
+                            Button("switch_to_mainnet".localized) {
+                                WalletManager.shared.changeNetwork(.mainnet)
+                            }
+                            Button("action_cancel".localized, role: .cancel) {}
+                        } message: {
+                            Text("wrong_network_des".localized)
                         }
 
-                    } label: {
-                        ProfileView.SettingItemCell(iconName: Row.backup(vm).iconName, title: Row.backup(vm).title, style: Row.backup(vm).style, desc: Row.backup(vm).desc, imageName: Row.backup(vm).imageName, sysImageColor: Row.backup(vm).sysImageColor)
+                        Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
                     }
-                    .alert("wrong_network_title".localized, isPresented: $showAlert) {
-                        Button("switch_to_mainnet".localized) {
-                            WalletManager.shared.changeNetwork(.mainnet)
-                        }
-                        Button("action_cancel".localized, role: .cancel) {}
-                    } message: {
-                        Text("wrong_network_des".localized)
-                    }
-
-                    Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
+                    
 
                     Button {
                         vm.securityAction()
@@ -320,6 +323,9 @@ extension ProfileView {
 
 extension ProfileView {
     struct WalletConnectView: View {
+        
+        @EnvironmentObject private var vm: ProfileViewModel
+        
         enum Row {
             case walletConnect
             case devices
@@ -328,20 +334,23 @@ extension ProfileView {
         var body: some View {
             VStack {
                 Section {
-                    Button {
-                        Router.route(to: RouteMap.Profile.walletConnect)
-                    } label: {
-                        ProfileView.SettingItemCell(
-                            iconName: Row.walletConnect.iconName,
-                            title: Row.walletConnect.title,
-                            style: Row.walletConnect.style,
-                            desc: Row.walletConnect.desc,
-                            imageName: Row.walletConnect.imageName,
-                            sysImageColor: Row.walletConnect.sysImageColor)
-                    }
-                    .buttonStyle(ScaleButtonStyle())
+                    if !vm.isLinkedAccount {
+                        Button {
+                            Router.route(to: RouteMap.Profile.walletConnect)
+                        } label: {
+                            ProfileView.SettingItemCell(
+                                iconName: Row.walletConnect.iconName,
+                                title: Row.walletConnect.title,
+                                style: Row.walletConnect.style,
+                                desc: Row.walletConnect.desc,
+                                imageName: Row.walletConnect.imageName,
+                                sysImageColor: Row.walletConnect.sysImageColor)
+                        }
+                        .buttonStyle(ScaleButtonStyle())
 
-                    Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
+                        Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
+                    }
+                    
                     // TODO: diveces
                     Button {
                         Router.route(to: RouteMap.Profile.devices)

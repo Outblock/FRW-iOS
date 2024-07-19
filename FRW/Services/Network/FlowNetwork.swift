@@ -786,15 +786,15 @@ extension FlowNetwork {
         return txId
     }
     
-    static func fetchAccessibleCollection(parent: String, child: String) async throws -> [FlowModel.NFTCollection] {
-        let cadence = CadenceManager.shared.current.hybridCustody?.getAccessibleCollectionAndIdsDisplay?.toFunc() ?? ""
+    static func fetchAccessibleCollection(parent: String, child: String) async throws -> [String] {
+        let cadence = CadenceManager.shared.current.hybridCustody?.getChildAccountAllowTypes?.toFunc() ?? ""
         let cadenceString = cadence.replace(by: ScriptAddress.addressMap())
         let parentAddress = Flow.Address(hex: parent)
         let childAddress = Flow.Address(hex: child)
         let response = try await flow.accessAPI
             .executeScriptAtLatestBlock(script: Flow.Script(text: cadenceString), arguments: [.address(parentAddress), .address(childAddress)])
-            .decode([FlowModel.NFTCollection].self)
-        return response
+        let result = try response.decode([String].self)
+        return result
     }
     
     static func fetchAccessibleFT(parent: String, child: String) async throws -> [FlowModel.TokenInfo] {
@@ -806,6 +806,28 @@ extension FlowNetwork {
             .executeScriptAtLatestBlock(script: Flow.Script(text: cadenceString), arguments: [.address(parentAddress), .address(childAddress)])
             .decode([FlowModel.TokenInfo].self)
         return response
+    }
+    // on child, move nft to parent
+    static func moveNFTToParent(nftId: UInt64, childAddress: String, identifier: String, collection: NFTCollectionInfo) async throws -> Flow.ID {
+        let accessible = CadenceManager.shared.current.hybridCustody?.transferChildNFT?.toFunc() ?? ""
+        let cadenceString = collection.formatCadence(script: accessible)
+        let childAddress = Flow.Address(hex: childAddress)
+        return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(childAddress), .string(identifier),.uint64(nftId) ])
+    }
+    
+    //on parent， move nft to child
+    static func moveNFTToChild(nftId: UInt64, childAddress: String, identifier: String, collection: NFTCollectionInfo) async throws -> Flow.ID  {
+        let accessible = CadenceManager.shared.current.hybridCustody?.transferNFTToChild?.toFunc() ?? ""
+        let cadenceString = collection.formatCadence(script: accessible)
+        return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(Flow.Address(hex: childAddress)), .string(identifier),.uint64(nftId) ])
+    }
+    // send NFT from child to other wallet
+    static func sendChildNFT(nftId: UInt64, childAddress: String, toAddress: String, identifier: String, collection: NFTCollectionInfo) async throws -> Flow.ID {
+        let accessible = CadenceManager.shared.current.hybridCustody?.sendChildNFT?.toFunc() ?? ""
+        let cadenceString = collection.formatCadence(script: accessible)
+        let childAddr = Flow.Address(hex: childAddress)
+        let toAddr = Flow.Address(hex: toAddress)
+        return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(childAddr), .address(toAddr), .string(identifier),.uint64(nftId) ])
     }
 }
 

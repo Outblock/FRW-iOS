@@ -174,6 +174,11 @@ extension CadenceModel {
         let getChildAccountMeta: String?
         let getChildAccountNFT: String?
         let unlinkChildAccount: String?
+        
+        let transferChildNFT: String?
+        let transferNFTToChild: String?
+        let sendChildNFT: String?
+        let getChildAccountAllowTypes: String?
     }
     
     struct Staking: Codable {

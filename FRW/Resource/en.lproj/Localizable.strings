@@ -973,3 +973,10 @@
 "go_back" = "Go Back";
 "try_to_connect" = "Try to Connect";
 "try_again" = "Try again";
+
+"pin_hint_for_backup" = "Your PIN code will be used to securely encrypt your account backup";
+"pin_hint_for_create" = "Please enter the pin when you create this backup.";
+"Wallpaper" = "Wallpaper";
+"Dynamic" = "Dynamic";
+"Static" = "Static";
+"my_accounts" = "My Accounts";

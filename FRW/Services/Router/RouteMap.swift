@@ -184,6 +184,7 @@ extension RouteMap {
         case moveAssets
         case moveToken(TokenModel)
         case selectMoveToken(TokenModel?,(TokenModel)->())
+        case chooseChild(MoveAccountsViewModel)
     }
 }
 
@@ -268,6 +269,9 @@ extension RouteMap.Wallet: RouterTarget {
         case .selectMoveToken(let token, let callback):
             let vm = AddTokenViewModel(selectedToken: token, disableTokens: [], selectCallback: callback)
             Router.topPresentedController().present(content: AddTokenView(vm: vm))
+        case .chooseChild(let model):
+            let vc = PresentHostingController(rootView: MoveAccountsView(viewModel: model))
+            Router.topPresentedController().present(vc, animated: true, completion: nil)
         }
     }
 }

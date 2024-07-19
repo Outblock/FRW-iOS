@@ -32,15 +32,18 @@ class NFTTransferViewModel: ObservableObject {
     }
     
     var fromTargetContent: Contact {
-        if EVMAccountManager.shared.selectedAccount == nil {
-            return UserManager.shared.userInfo!.toContactWithCurrentUserAddress()
-        }else {
-            guard let account = EVMAccountManager.shared.accounts.first else {
-                return UserManager.shared.userInfo!.toContactWithCurrentUserAddress()
-            }
+        
+        if let account = EVMAccountManager.shared.selectedAccount {
             let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
             let contact = Contact(address: account.showAddress, avatar: nil, contactName: user.name, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName,user: user)
             return contact
+        }
+        else if let account = ChildAccountManager.shared.selectedChildAccount {
+            
+            let contact = Contact(address: account.showAddress, avatar: account.icon, contactName: account.aName, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName)
+            return contact
+        }else {
+            return UserManager.shared.userInfo!.toContactWithCurrentUserAddress()
         }
     }
     
@@ -79,13 +82,14 @@ class NFTTransferViewModel: ObservableObject {
             case flow
             case coa
             case eoa
+            case linked
         }
         
         if isRequesting {
             return
         }
         
-        guard let toAddress = targetContact.address, let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+        guard let toAddress = targetContact.address, let primaryAddress = WalletManager.shared.getPrimaryWalletAddress(),let currentAddress = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
             return
         }
         
@@ -101,11 +105,21 @@ class NFTTransferViewModel: ObservableObject {
         
         Task {
             do {
-                let fromAccountType = WalletManager.shared.isSelectedEVMAccount ? AccountType.coa : AccountType.flow
+                let fromAccountType = WalletManager.shared.isSelectedEVMAccount ? AccountType.coa
+                : (ChildAccountManager.shared.selectedChildAccount == nil ? AccountType.flow : AccountType.linked)
+                
                 var toAccountType = toAddress.isEVMAddress ? AccountType.coa : AccountType.flow
+                if toAccountType == .flow {
+                    let isChild = ChildAccountManager.shared.childAccounts.contains { $0.addr == toAddress }
+                    toAccountType = .linked
+                }
+                
                 if toAccountType == .coa && toAddress != EVMAccountManager.shared.accounts.first?.address {
                     toAccountType = .eoa
                 }
+                
+                let isLinkedAccount = ChildAccountManager.shared.selectedChildAccount != nil
+                
                 var tid: Flow.ID?
                 switch (fromAccountType, toAccountType) {
                 case (.flow, .flow):
@@ -141,7 +155,7 @@ class NFTTransferViewModel: ObservableObject {
                     else {
                         throw NFTError.sendInvalidAddress
                     }
-                    if fromAddress == toAddress {
+                    if primaryAddress == toAddress {
                         guard let IdInt = UInt64(nftId) else {
                             throw NFTError.sendInvalidAddress
                         }
@@ -168,13 +182,33 @@ class NFTTransferViewModel: ObservableObject {
                     log.debug("[NFT] data:\(data.hexString)")
                     tid = try await FlowNetwork.sendTransaction(amount: "0", data: data, toAddress: evmContractAddress.stripHexPrefix(), gas: WalletManager.defaultGas)
                     log.debug("[NFT] tix:\(String(describing: tid))")
+                case (.flow, .linked):
+                    // parent to child user move 'transferNFTToChild'
+                    guard let childAddress = ChildAccountManager.shared.selectedChildAccount?.showAddress,
+                          let nftId = UInt64(nft.response.id),
+                          let collection = nft.collection,
+                          let identifier = nft.infoFromCollection?.collectionData.privatePath?.identifier
+                    else { throw NFTError.sendInvalidAddress }
+//
+                    tid = try await FlowNetwork.moveNFTToChild(nftId: nftId, childAddress: toAddress, identifier: identifier, collection: collection)
+                case (.linked, .flow):
+                    guard let childAddress = ChildAccountManager.shared.selectedChildAccount?.showAddress,
+                          let nftId = UInt64(nft.response.id),
+                          let collection = nft.collection,
+                          let identifier = nft.infoFromCollection?.collectionData.privatePath?.identifier
+                    else { throw NFTError.sendInvalidAddress }
+                    if toAddress == primaryAddress {
+                        tid = try await FlowNetwork.moveNFTToParent(nftId: nftId, childAddress: currentAddress, identifier: identifier, collection: collection)
+                    }else {
+                        tid = try await FlowNetwork.sendChildNFT(nftId: nftId, childAddress: currentAddress,toAddress: toAddress, identifier: identifier, collection: collection)
+                    }
                 default:
                     failedBlock()
                     return
                 }
                 
                 
-                let model = NFTTransferModel(nft: nft, target: self.targetContact, from: fromAddress)
+                let model = NFTTransferModel(nft: nft, target: self.targetContact, from: primaryAddress)
                 guard let data = try? JSONEncoder().encode(model), let tid = tid else {
                     failedBlock()
                     return
@@ -253,7 +287,9 @@ struct NFTTransferView: View {
         VStack(spacing: 5) {
             // avatar
             ZStack {
-                if let avatar = contact.avatar?.convertedAvatarString(), avatar.isEmpty == false {
+                if contact.user?.emoji != nil {
+                    contact.user?.emoji.icon(size: 44)
+                }else if let avatar = contact.avatar?.convertedAvatarString(), avatar.isEmpty == false {
                     KFImage.url(URL(string: avatar))
                         .placeholder({
                             Image("placeholder")
@@ -281,7 +317,7 @@ struct NFTTransferView: View {
             .clipShape(Circle())
 
             // contact name
-            Text(contact.contactName ?? "name")
+            Text(contact.user?.name ?? contact.contactName ?? "name")
                 .foregroundColor(.LL.Neutrals.neutrals1)
                 .font(.inter(size: 14, weight: .semibold))
                 .lineLimit(1)

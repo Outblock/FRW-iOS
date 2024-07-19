@@ -175,7 +175,7 @@ struct AccountSwitchView: PresentActionView {
                 .cornerRadius(16)
             
             VStack(alignment: .leading, spacing: 5) {
-                Text("@\(placeholder.username)")
+                Text("\(placeholder.username)")
                     .font(.inter(size: 14, weight: .semibold))
                     .foregroundColor(Color.LL.Neutrals.text)
                 

@@ -259,10 +259,11 @@ extension AddressBookView {
                 .clipShape(Circle())
 
                 // text
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(contact.contactName ?? contact.user?.name ?? "no name")
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(contact.contactName ?? contact.user?.name ?? contact.name)
                         .foregroundColor(.LL.Neutrals.text)
                         .font(.inter(size: 14, weight: .bold))
+                        .frame(height: 18)
 
 //                    if let userName = contact.username, !userName.isEmpty {
 //                        Text("@\(userName)")
@@ -272,7 +273,8 @@ extension AddressBookView {
 
                     Text(contact.address ?? "no address")
                         .foregroundColor(.LL.Neutrals.note)
-                        .font(.inter(size: 12, weight: .regular))
+                        .font(.inter(size: 14))
+                        .frame(height: 20)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 

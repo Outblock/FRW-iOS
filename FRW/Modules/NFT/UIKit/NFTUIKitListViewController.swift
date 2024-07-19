@@ -137,6 +137,7 @@ class NFTUIKitListViewController: UIViewController {
     }
     
     @objc private func onChildAccountChanged() {
+        addButton.isHidden = ChildAccountManager.shared.selectedChildAccount != nil
         listStyleHandler.collectionView.beginRefreshing()
         gridStyleHandler.collectionView.beginRefreshing()
     }
@@ -244,6 +245,7 @@ class NFTUIKitListViewController: UIViewController {
     }
     
     @objc private func onAddButtonClick() {
+        
         Router.route(to: RouteMap.NFT.addCollection)
     }
 }

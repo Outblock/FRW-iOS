@@ -36,6 +36,8 @@ extension ProfileView {
         let version = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
         let buildVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         
+        @Published var isLinkedAccount = false
+        
         init() {
             state.colorScheme = ThemeManager.shared.style
             
@@ -68,6 +70,13 @@ extension ProfileView {
                 .map { $0 }
                 .sink { isEnabled in
                     self.state.isPushEnabled = isEnabled
+                }.store(in: &cancelSets)
+            
+            WalletManager.shared.$walletInfo
+                .receive(on: DispatchQueue.main)
+                .map { $0 }
+                .sink { [weak self] newInfo in
+                    self?.refreshWalletAccountState()
                 }.store(in: &cancelSets)
         }
 
@@ -105,6 +114,10 @@ extension ProfileView {
                     }
                 }
             }
+        }
+        
+        private func refreshWalletAccountState() {
+            isLinkedAccount = ChildAccountManager.shared.selectedChildAccount != nil
         }
     }
 }

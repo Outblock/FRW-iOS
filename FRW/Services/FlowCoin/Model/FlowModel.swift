@@ -35,7 +35,7 @@ extension FlowModel {
         struct CollectionDislay: Codable {
             var name: String
             var squareImage: String
-            var mediaType: String
+            var mediaType: FlowModel.Media
         }
         
         static func mock() -> FlowModel.NFTCollection {
@@ -43,7 +43,7 @@ extension FlowModel {
         }
         
         var id: String
-        var path: String
+        var path: String?
         var display: FlowModel.NFTCollection.CollectionDislay?
         let idList: [UInt64]
     }

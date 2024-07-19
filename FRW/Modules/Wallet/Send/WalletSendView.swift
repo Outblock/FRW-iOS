@@ -354,17 +354,17 @@ extension WalletSendView {
                         }
                     }
                     
-                    if vm.accountList.count > 0 {
+                    if vm.linkedWalletList.count > 0 {
                         HStack {
                             Text("linked_account".localized)
                                 .font(.inter(size: 16, weight: .bold))
                                 .foregroundStyle(Color.Theme.Text.black3)
                             Spacer()
                         }
-                        .padding(.vertical, 20)
+                        .padding(.horizontal, 20)
                         
                         LazyVStack {
-                            ForEach(vm.accountList, id: \.id) { contact in
+                            ForEach(vm.linkedWalletList, id: \.id) { contact in
                                 AddressBookView.ContactCell(contact: contact)
                                     .onTapGestureOnBackground {
                                         vm.sendToTargetAction(target: contact)

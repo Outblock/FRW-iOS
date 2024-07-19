@@ -401,18 +401,15 @@ struct WalletHomeView: View {
     }
     
     private func walletActionBar() -> some View {
-        let showSwap = (RemoteConfigManager.shared.config?.features.swap ?? false) == true
-        let showStake = currentNetwork.isMainnet
-        let isH = (showSwap == false && showStake == false)
         
         return HStack {
-            WalletHomeView.ActionView(isH: isH, action: .send)
+            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .send)
                 .disabled(WalletManager.shared.isSelectedChildAccount)
-            WalletHomeView.ActionView(isH: isH, action: .receive)
-            WalletHomeView.ActionView(isH: isH, action: .swap)
-                .visibility(showSwap ? .visible : .gone)
-            WalletHomeView.ActionView(isH: isH, action: .stake)
-                .visibility(showStake ? .visible : .gone)
+            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .receive)
+            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .swap)
+                .visibility(vm.showSwapButton ? .visible : .gone)
+            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .stake)
+                .visibility(vm.showStakeButton ? .visible : .gone)
                 .disabled(wm.isSelectedChildAccount)
         }
     }
@@ -426,29 +423,28 @@ struct WalletHomeView: View {
                     .foregroundStyle(Color.Theme.Text.black3)
                 Spacer()
                 
-                if RemoteConfigManager.shared.config?.features.onRamp ?? false == true && flow.chainID == .mainnet {
-                    Button {
-                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                        Router.route(to: RouteMap.Wallet.buyCrypto)
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image("icon_wallet_action_buy")
-                                .resizable()
-                                .renderingMode(.template)
-                                .foregroundColor(Color.Theme.Text.black3)
-                                .background(.clear)
-                                .frame(width: 24, height: 24)
-                            
-                            Text("buy_uppercase".localized)
-                                .font(.inter(size: 14, weight: .semibold))
-                                .foregroundColor(Color.Theme.Text.black3)
-                        }
-                        .padding(.horizontal, 8)
-                        .background(Color.Theme.Background.grey)
-                        .cornerRadius(12)
+                Button {
+                    UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                    Router.route(to: RouteMap.Wallet.buyCrypto)
+                } label: {
+                    HStack(spacing: 4) {
+                        Image("icon_wallet_action_buy")
+                            .resizable()
+                            .renderingMode(.template)
+                            .foregroundColor(Color.Theme.Text.black3)
+                            .background(.clear)
+                            .frame(width: 24, height: 24)
+                        
+                        Text("buy_uppercase".localized)
+                            .font(.inter(size: 14, weight: .semibold))
+                            .foregroundColor(Color.Theme.Text.black3)
                     }
-                    .buttonStyle(ScaleButtonStyle())
+                    .padding(.horizontal, 8)
+                    .background(Color.Theme.Background.grey)
+                    .cornerRadius(12)
                 }
+                .buttonStyle(ScaleButtonStyle())
+                .visibility(vm.showBuyButton ? .visible : .gone)
                 
                 Button {
                     Router.route(to: RouteMap.Wallet.addToken)
@@ -458,8 +454,9 @@ struct WalletHomeView: View {
                         .foregroundColor(Color.Theme.Text.black3)
                         .frame(width: 24, height: 24)
                 }
-                .disabled(wm.isSelectedChildAccount)
+                .visibility(wm.isSelectedChildAccount ? .gone : .visible)
                 .buttonStyle(ScaleButtonStyle())
+                
             }
             
             VStack(spacing: 5) {

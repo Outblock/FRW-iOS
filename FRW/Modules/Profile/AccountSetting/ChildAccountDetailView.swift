@@ -102,7 +102,7 @@ class ChildAccountDetailViewModel: ObservableObject {
         self.isLoading = true
         
         Task {
-            guard let parent = WalletManager.shared.getPrimaryWalletAddress(), let child = childAccount.addr else {
+            guard let parent = WalletManager.shared.getPrimaryWalletAddress(), let child = self.childAccount.addr else {
                 DispatchQueue.main.async {
                     self.collections = []
                     self.accessibleItems = []
@@ -113,15 +113,19 @@ class ChildAccountDetailViewModel: ObservableObject {
             do {
                 var result = try await FlowNetwork.fetchAccessibleCollection(parent: parent, child: child)
                 result = result.map { item in
-                    if let model = NFTCatalogCache.cache.find(by: item.path) {
-                        return FlowModel.NFTCollection(id: item.id, path: item.path, display: FlowModel.NFTCollection.CollectionDislay(name: model.collection.name, squareImage: model.collection.logo ?? AppPlaceholder.image, mediaType: ""), idList: item.idList)
+                    if let contractName = item.split(separator:".")[safe: 2],
+                       let address = item.split(separator:".")[safe: 1] {
+                        
                     }
+//                    if let model = NFTCatalogCache.cache.find(by: item.path ?? "") {
+//                        return FlowModel.NFTCollection(id: item.id, path: item.path, display: FlowModel.NFTCollection.CollectionDislay(name: model.collection.name, squareImage: model.collection.logo ?? AppPlaceholder.image, mediaType: FlowModel.Media(file: FlowModel.Media.File(url: ""), mediaType: "")), idList: item.idList)
+//                    }
                     return item
                 }
                 let res = result.sorted { $0.count > $1.count }
                 
                 DispatchQueue.main.async {
-                    self.collections = res
+//                    self.collections = res
                     self.accessibleItems = self.collections ?? []
                     self.isLoading = false
                 }
@@ -637,6 +641,7 @@ extension FlowModel.NFTCollection : ChildAccountAccessible {
     }
     
     var fromPath: String {
+        guard let path = path else { return "" }
         return String(path.split(separator: "/").last ?? "")
     }
     

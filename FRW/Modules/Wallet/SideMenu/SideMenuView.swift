@@ -22,7 +22,6 @@ extension SideMenuViewModel {
 class SideMenuViewModel: ObservableObject {
     @Published var nftCount: Int = 0
     @Published var accountPlaceholders: [AccountPlaceholder] = []
-    @Published var showLinkedAccount: Bool = false
     @Published var isSwitchOpen = false
     @Published var userInfoBackgroudColor = Color.LL.Neutrals.neutrals6
     @Published var walletBalance: [String: String] = [:]
@@ -47,13 +46,7 @@ class SideMenuViewModel: ObservableObject {
                 }
             }.store(in: &cancelSets)
         
-        EVMAccountManager.shared.$accounts
-            .receive(on: DispatchQueue.main)
-            .map { $0 }
-            .sink { [weak self] accounts in
-                guard let self = self else { return }
-                self.showLinkedAccount = !accounts.isEmpty
-            }.store(in: &cancelSets)
+        
         WalletManager.shared.balanceProvider.$balances
             .receive(on: DispatchQueue.main)
             .map { $0 }
@@ -424,10 +417,22 @@ struct SideMenuView: View {
 
 class SideContainerViewModel: ObservableObject {
     @Published var isOpen: Bool = false
+    @Published var isLinkedAccount: Bool = false
+    
+    private var cancellableSet = Set<AnyCancellable>()
     
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(onToggle), name: .toggleSideMenu, object: nil)
+        isLinkedAccount =  ChildAccountManager.shared.selectedChildAccount != nil
+        ChildAccountManager.shared.$selectedChildAccount
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink(receiveValue: { [weak self] newChildAccount in
+                self?.isLinkedAccount = newChildAccount != nil
+            }).store(in: &cancellableSet)
     }
+    
+    
     
     @objc func onToggle() {
         withAnimation {
@@ -498,7 +503,11 @@ struct SideContainerView: View {
         let profile = TabBarPageModel<AppTabType>(tag: ProfileView.tabTag(), iconName: ProfileView.iconName(), color: ProfileView.color()) {
             AnyView(ProfileView())
         }
-
-        TabBarView(current: .wallet, pages: [wallet, nft, explore, profile], maxWidth: UIScreen.main.bounds.width)
+        if vm.isLinkedAccount {
+            TabBarView(current: .wallet, pages: [wallet, nft, profile], maxWidth: UIScreen.main.bounds.width)
+        }else {
+            TabBarView(current: .wallet, pages: [wallet, nft, explore, profile], maxWidth: UIScreen.main.bounds.width)
+        }
+        
     }
 }

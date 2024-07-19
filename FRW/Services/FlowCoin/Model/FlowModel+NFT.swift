@@ -8,7 +8,7 @@
 import Foundation
 
 extension FlowModel {
-    struct Path: Codable {
+    struct Path: Codable ,Equatable,Hashable {
         let domain: String
         let identifier: String
     }
@@ -47,13 +47,18 @@ extension FlowModel {
         
     }
     
-    struct CollectionData: Codable {
-        let storagePath: FlowModel.Path
-        let publicPath: FlowModel.Path
-        let serial: FlowModel.Serial
-        let display: FlowModel.Display
-        let tokenId: String
-        let externalURL: FlowModel.ExternalUrl?
-        let traits: NFTTrait
+    struct CollectionInfo: Codable, Equatable,Hashable {
+        let collectionData: CollectionData
+    }
+    
+    struct CollectionData: Codable, Equatable,Hashable {
+        let storagePath: FlowModel.Path?
+        let publicPath: FlowModel.Path?
+        let privatePath: FlowModel.Path?
+//        let serial: FlowModel.Serial?
+//        let display: FlowModel.Display?
+//        let tokenId: String?
+//        let externalURL: FlowModel.ExternalUrl?
+//        let traits: NFTTrait?
     }
 }

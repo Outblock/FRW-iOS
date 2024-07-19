@@ -86,6 +86,13 @@ class WalletViewModel: ObservableObject {
     
     @Published var showHeaderMask = false
     
+    @Published var showAddButton: Bool = true
+    @Published var showSwapButton: Bool = true
+    @Published var showStakeButton: Bool = true
+    @Published var showHorLayout: Bool = false
+    
+    @Published var showBuyButton: Bool = true
+    
     var needShowPlaceholder: Bool {
         return isMock || walletState == .noAddress
     }
@@ -109,6 +116,7 @@ class WalletViewModel: ObservableObject {
     private var cancelSets = Set<AnyCancellable>()
 
     init() {
+        
         WalletManager.shared.$walletInfo
             .receive(on: DispatchQueue.main)
             .map { $0 }
@@ -119,7 +127,7 @@ class WalletViewModel: ObservableObject {
                     self?.coinItems = []
                     return
                 }
-                
+                self?.refreshButtonState()
                 self?.reloadWalletData()
             }.store(in: &cancelSets)
 
@@ -173,6 +181,7 @@ class WalletViewModel: ObservableObject {
         NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didReset), name: .didResetWallet, object: nil)
         
+        refreshButtonState()
         
     }
 
@@ -392,6 +401,53 @@ extension WalletViewModel {
         withAnimation(.default) {
             log.info("[Index] \(index)")
             currentPage = index
+        }
+    }
+}
+
+// MARK: - Change
+
+extension WalletViewModel {
+    func refreshButtonState() {
+        self.showAddButton =  ChildAccountManager.shared.selectedChildAccount == nil
+        
+        // Swap
+        if (RemoteConfigManager.shared.config?.features.swap ?? false) == true {
+            // don't show when current is Linked account
+            if ChildAccountManager.shared.selectedChildAccount != nil {
+                self.showSwapButton = false
+            }else {
+                self.showSwapButton = true
+            }
+        }else {
+            
+            self.showSwapButton = false
+        }
+        
+        // Stake
+        if currentNetwork.isMainnet {
+            if ChildAccountManager.shared.selectedChildAccount != nil {
+                self.showStakeButton = false
+            }else {
+                self.showStakeButton = true
+            }
+        }else {
+            self.showStakeButton = false
+        }
+        
+        showHorLayout = (showSwapButton == false && showStakeButton == false)
+       
+        // buy
+        if RemoteConfigManager.shared.config?.features.onRamp ?? false == true && flow.chainID == .mainnet {
+            if (ChildAccountManager.shared.selectedChildAccount != nil) {
+                self.showBuyButton = false
+            }
+            else {
+                self.showBuyButton = true
+            }
+            
+        }else {
+            self.showBuyButton = false
         }
     }
 }

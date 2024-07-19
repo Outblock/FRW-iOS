@@ -52,12 +52,13 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                         VStack(spacing: 8) {
                             ZStack {
                                 VStack(spacing: 8) {
-                                    MoveUserView(user: viewModel.showFromUser,
-                                                 address: viewModel.showFromAddress,
-                                                 isEVM: viewModel.fromEVM)
-                                    MoveUserView(user: viewModel.showToUser,
-                                                 address: viewModel.showToAddress,
-                                                 isEVM: !viewModel.fromEVM)
+                                    
+                                    MoveUserView(contact: viewModel.fromContact, isEVM: viewModel.fromIsEVM) {
+                                        
+                                    }
+                                    MoveUserView(contact: viewModel.toContact, isEVM: viewModel.toIsEVM) {
+                                        
+                                    }
                                 }
                                 
                                 Image("icon_move_exchange")
@@ -103,24 +104,38 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
 // MARK: - MoveUserView
 
 struct MoveUserView: View {
-    var user: WalletAccount.User?
-    var address: String?
+    var contact: Contact
     var isEVM: Bool = false
     var placeholder: String?
+    var allowChoose: Bool = false
+    var onClick: EmptyClosure? = nil
+    
+    var address: String {
+        contact.address ?? "0x"
+    }
     
     var body: some View {
         HStack {
-            Text(placeholder ?? "From")
-                .font(.inter(size: 16, weight: .w600))
-                .foregroundStyle(Color.Theme.Text.black3)
-                .visibility(user != nil ? .gone : .visible)
             
             HStack(spacing: 12) {
-                user?.emoji.icon(size: 32)
+                if let user = contact.user {
+                    user.emoji.icon(size: 32)
+                }else {
+                    KFImage.url(URL(string: contact.avatar ?? ""))
+                        .placeholder({
+                            Image("placeholder")
+                                .resizable()
+                        })
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 32, height: 32)
+                        .cornerRadius(16)
+                }
+                
                 
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text(user?.name ?? "")
+                        Text( contact.user?.name ?? contact.name)
                             .foregroundColor(Color.LL.Neutrals.text)
                             .font(.inter(size: 14, weight: .semibold))
                         
@@ -129,7 +144,7 @@ struct MoveUserView: View {
                     }
                     .frame(alignment: .leading)
                     
-                    Text(address ?? "")
+                    Text(address)
                         .foregroundColor(Color.Theme.Text.black3)
                         .font(.inter(size: 12))
                         .lineLimit(1)
@@ -137,15 +152,18 @@ struct MoveUserView: View {
                 }
                 .frame(alignment: .leading)
             }
-            .visibility(user == nil ? .gone : .visible)
             
             Spacer()
-            Button {} label: {
+            Button {
+                onClick?()
+            } label: {
                 Image("icon_arrow_bottom_16")
                     .resizable()
                     .frame(width: 16, height: 16)
-                    .visibility(user == nil ? .visible : .gone)
+                    .padding(8)
+                    
             }
+            .visibility(allowChoose ? .visible : .gone)
         }
         .frame(height: 56)
         .padding(.horizontal, 16)

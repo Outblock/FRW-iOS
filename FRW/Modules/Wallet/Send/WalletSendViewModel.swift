@@ -61,7 +61,7 @@ class WalletSendViewModel: ObservableObject {
     @Published var page: Page = .first()
     
     @Published var recentList: [Contact] = []
-    @Published var accountList: [Contact] = []
+    @Published var linkedWalletList: [Contact] = []
     @Published var ownAccountList: [Contact] = []
     let addressBookVM: AddressBookView.AddressBookViewModel = AddressBookView.AddressBookViewModel()
     
@@ -94,9 +94,6 @@ class WalletSendViewModel: ObservableObject {
         
         var addresList:[String] = []
         if let primaryAddr = WalletManager.shared.getPrimaryWalletAddress() {
-//            if WalletManager.shared.isSelectedEVMAccount || WalletManager.shared.isSelectedChildAccount {
-//                
-//            }
             addresList.append(primaryAddr)
             if WalletManager.shared.isSelectedEVMAccount == false,
                 let emvAddr = EVMAccountManager.shared.accounts.first?.showAddress {
@@ -112,7 +109,8 @@ class WalletSendViewModel: ObservableObject {
         
         
         ChildAccountManager.shared.childAccounts.forEach { account in
-            let contact = Contact(address: account.showAddress, avatar: account.showIcon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName)
+            let contact = Contact(address: account.showAddress, avatar: account.showIcon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.aName)
+            linkedWalletList.append(contact)
         }
         
     }

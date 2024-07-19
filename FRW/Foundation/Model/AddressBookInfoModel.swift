@@ -41,12 +41,20 @@ extension Contact {
 // MARK: - AddressBook
 
 struct Contact: Codable, Identifiable {
+    
+    enum WalletType: Codable {
+        case flow
+        case evm
+        case link
+    }
+    
     let address, avatar, contactName: String?
     let contactType: ContactType?
     let domain: Domain?
     let id: Int
     let username: String?
     var user: WalletAccount.User? = nil
+    var walletType: WalletType = .flow
     
     var needShowLocalAvatar: Bool {
         return contactType == .domain
@@ -66,6 +74,7 @@ struct Contact: Codable, Identifiable {
     }
     
     var name: String {
+        
         if let username = username, !username.isEmpty {
             return username
         }
@@ -75,6 +84,20 @@ struct Contact: Codable, Identifiable {
         }
         
         return ""
+    }
+    
+    var displayName: String {
+        if let emojiName = user?.name, !emojiName.isEmpty {
+            return emojiName
+        }
+        if let username = username, !username.isEmpty {
+            return username
+        }
+        
+        if let contactName = contactName, !contactName.isEmpty {
+            return contactName
+        }
+        return "no name"
     }
     
     var uniqueId: String {

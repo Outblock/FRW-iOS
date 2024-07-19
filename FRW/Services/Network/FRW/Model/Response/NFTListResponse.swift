@@ -11,6 +11,7 @@ import Foundation
 struct NFTListResponse: Codable {
     let nfts: [NFTResponse]?
     let nftCount: Int
+    let info: FlowModel.CollectionInfo?
 }
 
 // MARK: - NFTFavListResponse
