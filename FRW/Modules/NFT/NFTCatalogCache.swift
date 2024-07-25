@@ -84,10 +84,10 @@ class NFTCatalogCache {
         }
     }
     
-    func find(by storagePath: String ) -> NFTCollectionItem? {
-        let result = collectionList.filter { item in
-            item.collection.path.storagePath == storagePath
-        }.first
+    func find(by collectionName: String ) -> NFTCollectionItem? {
+        let result = collectionList.first { item in
+            item.collection.contractName.contains(collectionName)
+        }
         return result
     }
     

@@ -25,6 +25,26 @@ class NFTUIKitItemCell: UICollectionViewCell {
         return view
     }()
     
+    private lazy var inaccessibleLabel: UIView = {
+        let container = UIView()
+        container.layer.cornerRadius = 4
+        container.backgroundColor = UIColor.Theme.Accent.grey?.withAlphaComponent(0.16)
+        
+        let view = UILabel()
+        view.font = .inter(size: 10)
+        view.textAlignment = .center
+        view.text = "Inaccessible".localized
+        view.textColor = UIColor.Theme.Accent.grey
+        container.addSubview(view)
+        view.snp.makeConstraints { make in
+            make.left.equalTo(5)
+            make.right.equalTo(-5)
+            make.top.equalTo(5)
+            make.bottom.equalTo(-5)
+        }
+        return container
+    }()
+    
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
         view.font = .montserratBold(size: 14)
@@ -40,8 +60,9 @@ class NFTUIKitItemCell: UICollectionViewCell {
     }()
     
     private lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, descLabel])
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, descLabel, inaccessibleLabel])
         stackView.axis = .vertical
+        stackView.alignment = .leading
         stackView.spacing = 5
         return stackView
     }()
@@ -77,6 +98,13 @@ class NFTUIKitItemCell: UICollectionViewCell {
                                   placeholder: UIImage(named: "placeholder"))
         titleLabel.text = item.title
         descLabel.text = item.subtitle
+        if let info = item.collection, !WalletManager.shared.accessibleManager.isAccessible(info) {
+            descLabel.isHidden = true
+            inaccessibleLabel.isHidden = false
+        }else {
+            descLabel.isHidden = false
+            inaccessibleLabel.isHidden = true
+        }
     }
     
     static func calculateSize() -> CGSize {

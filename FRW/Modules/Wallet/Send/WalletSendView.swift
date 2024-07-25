@@ -44,7 +44,7 @@ struct WalletSendView: RouteableView {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 32) {
             searchBar
             
             ZStack {

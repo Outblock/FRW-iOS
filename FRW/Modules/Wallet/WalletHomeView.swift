@@ -364,7 +364,7 @@ struct WalletHomeView: View {
                         .renderingMode(.template)
                         .aspectRatio(contentMode: .fill)
                         .foregroundColor(Color.Theme.Text.black3)
-                        .frame(width: 12, height: 12)
+                        .frame(width: 16, height: 16)
                 }
                 .frame(width: 32, height: 32)
                 .background(.Theme.Background.grey)
@@ -541,7 +541,7 @@ extension WalletHomeView {
                             }
                             .visibility(WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .visible : .gone)
                             
-                            Text("Inaccessible")
+                            Text("Inaccessible".localized)
                                 .foregroundStyle(Color.Flow.Font.inaccessible)
                                 .font(Font.inter(size: 10, weight: .semibold))
                                 .padding(.horizontal, 5)

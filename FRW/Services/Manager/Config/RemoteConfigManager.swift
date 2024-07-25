@@ -91,6 +91,7 @@ class RemoteConfigManager {
             let key = LocalEnvManager.shared.backupAESKey
             if let keyData = key.data(using: .utf8),
                let ivData = key.sha256().prefix(16).data(using: .utf8) {
+                
                 let decodeData = AES.decryptCBC(key: keyData, data: Data(hex: data), iv: ivData, mode: .pkcs7)!
                 let config = try? JSONDecoder().decode(ENVConfig.self, from: decodeData)
                 self.EVNConfig = config
@@ -103,7 +104,7 @@ class RemoteConfigManager {
                     }
                 }
                 
-                if self.EVNConfig == nil {
+                if self.config == nil {
                     self.config = self.EVNConfig?.staging
                 }
             } else {

@@ -124,6 +124,8 @@ class NFTUIKitListViewController: UIViewController {
             }.store(in: &cancelSets)
         listStyleHandler.refreshAction()
         gridStyleHandler.refreshAction()
+        
+        addButton.isHidden = ChildAccountManager.shared.selectedChildAccount != nil
     }
     
     @objc private func didReset() {

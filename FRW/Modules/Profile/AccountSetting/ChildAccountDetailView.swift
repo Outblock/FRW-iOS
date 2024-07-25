@@ -112,20 +112,20 @@ class ChildAccountDetailViewModel: ObservableObject {
             
             do {
                 var result = try await FlowNetwork.fetchAccessibleCollection(parent: parent, child: child)
-                result = result.map { item in
+                var resultList = result.compactMap { item in
                     if let contractName = item.split(separator:".")[safe: 2],
                        let address = item.split(separator:".")[safe: 1] {
-                        
+                        if let model = NFTCatalogCache.cache.find(by: String(contractName)) {
+                            return FlowModel.NFTCollection(id: model.collection.id, path: model.collection.path.storagePath, display: FlowModel.NFTCollection.CollectionDislay(name: model.collection.name, squareImage: model.collection.logo ?? AppPlaceholder.image, mediaType: FlowModel.Media(file: FlowModel.Media.File(url: ""), mediaType: "")), idList: [])
+                        }
                     }
-//                    if let model = NFTCatalogCache.cache.find(by: item.path ?? "") {
-//                        return FlowModel.NFTCollection(id: item.id, path: item.path, display: FlowModel.NFTCollection.CollectionDislay(name: model.collection.name, squareImage: model.collection.logo ?? AppPlaceholder.image, mediaType: FlowModel.Media(file: FlowModel.Media.File(url: ""), mediaType: "")), idList: item.idList)
-//                    }
-                    return item
+                    return nil
                 }
-                let res = result.sorted { $0.count > $1.count }
+                
+                let res = resultList.sorted { $0.count > $1.count }
                 
                 DispatchQueue.main.async {
-//                    self.collections = res
+                    self.collections = res
                     self.accessibleItems = self.collections ?? []
                     self.isLoading = false
                 }

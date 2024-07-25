@@ -52,16 +52,47 @@ class NFTUIKitCollectionRegularItemCell: UICollectionViewCell {
         return view
     }()
     
+    private lazy var inaccessibleLabel: UIView = {
+        let container = UIView()
+        container.layer.cornerRadius = 4
+        container.backgroundColor = UIColor.Theme.Accent.grey?.withAlphaComponent(0.16)
+        container.setContentHuggingPriority(.required, for: .horizontal)
+        
+        let view = UILabel()
+        view.font = .inter(size: 10)
+        view.textAlignment = .center
+        view.text = "Inaccessible".localized
+        view.textColor = UIColor.Theme.Accent.grey
+        view.setContentHuggingPriority(.defaultLow, for: .horizontal)
+
+        container.addSubview(view)
+        view.snp.makeConstraints { make in
+            make.top.left.equalTo(5)
+            make.bottom.right.equalTo(-5)
+        }
+        container.frame = CGRect(x: 0, y: 0, width: 70, height: 22)
+        return container
+    }()
+    
     private lazy var hStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [titleLabel, markIcon])
         stackView.axis = .horizontal
-        stackView.spacing = 3
+        stackView.distribution = .equalSpacing
+        stackView.spacing = 5
         return stackView
     }()
     
+    private lazy var emptyView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        return view
+    }()
+    
     private lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [hStackView, descLabel])
+        let stackView = UIStackView(arrangedSubviews: [hStackView, descLabel,inaccessibleLabel])
         stackView.axis = .vertical
+        stackView.distribution = .equalSpacing
+        stackView.alignment = .leading
         stackView.spacing = 3
         return stackView
     }()
@@ -113,6 +144,13 @@ class NFTUIKitCollectionRegularItemCell: UICollectionViewCell {
         iconImageView.kf.setImage(with: item.iconURL)
         titleLabel.text = item.showName
         descLabel.text = "x_collections".localized(item.count)
+        if let info = item.collection, !WalletManager.shared.accessibleManager.isAccessible(info) {
+            descLabel.isHidden = true
+            inaccessibleLabel.isHidden = false
+        }else {
+            descLabel.isHidden = false
+            inaccessibleLabel.isHidden = true
+        }
     }
     
     static func calculateSize() -> CGSize {

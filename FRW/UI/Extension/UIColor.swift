@@ -127,3 +127,45 @@ extension UIColor {
         }
     }
 }
+
+extension UIColor {
+    enum Theme {
+        static let evm = UIColor(named: "evm")
+        enum Accent {
+            static let green = UIColor(named: "accent.green")
+            static let grey = UIColor(named: "accent.grey")
+            static let red = UIColor(named: "accent.red")
+            static let blue = UIColor(named: "accent.blue")
+            static let yellow = UIColor(named: "accent.yellow")
+            static let purple = UIColor(named: "accent.purple")
+            static let orange = UIColor(named: "accent.orange")
+        }
+
+        enum Background {
+            ///BG
+            static let white = UIColor(named: "bg.white")
+            ///BG2
+            static let grey = UIColor(named: "bg.grey")
+            ///BG3
+            static let silver = UIColor(named: "bg.silver")
+            static let white8 = UIColor(named: "bg.white8")
+            static let black3 = UIColor(named: "bg.black3")
+            /// White
+            static let pureWhite = UIColor(named: "bg.0")
+            ///icon
+            static let icon = UIColor(named: "bg.icon.black")
+        }
+
+        enum Line {
+            static let line = UIColor(named: "line.black")
+        }
+
+        enum Text {
+            static let black = UIColor(named: "text.black")
+            static let black1 = UIColor(named: "text.black.1")
+            static let black3 = UIColor(named: "text.black.3")
+            static let black8 = UIColor(named: "text.black.8")
+            static let white9 = UIColor(named: "text.white.9")
+        }
+    }
+}

@@ -160,6 +160,7 @@ extension CadenceModel {
         
         let isTokenListEnabled: String?
         let getTokenListBalance: String?
+        let isLinkedAccountTokenListEnabled: String?
     }
     
     struct HybridCustody: Codable {
@@ -179,6 +180,7 @@ extension CadenceModel {
         let transferNFTToChild: String?
         let sendChildNFT: String?
         let getChildAccountAllowTypes: String?
+        let checkChildLinkedCollections: String?
     }
     
     struct Staking: Codable {

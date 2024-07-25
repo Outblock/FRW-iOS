@@ -255,7 +255,6 @@ extension AddressBookView {
                     
                 }
                 .frame(width: 48, height: 48)
-                .background(.LL.Primary.salmonPrimary)
                 .clipShape(Circle())
 
                 // text

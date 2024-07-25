@@ -105,7 +105,7 @@ class MoveSingleNFTViewModel: ObservableObject {
             var tid = Flow.ID(hex: "")
             switch (fromContact.walletType, toContact.walletType) {
             case (.flow, .link):
-                tid = try await FlowNetwork.moveNFTToChild(nftId: nftId, childAddress: fromContact.address ?? "", identifier: identifier, collection: collection)
+                tid = try await FlowNetwork.moveNFTToChild(nftId: nftId, childAddress: toContact.address ?? "", identifier: identifier, collection: collection)
             case (.link, .flow):
                 tid = try await FlowNetwork.moveNFTToParent(nftId: nftId, childAddress: fromContact.address ?? "", identifier: identifier, collection: collection)
             default:

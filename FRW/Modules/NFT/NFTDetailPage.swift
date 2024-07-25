@@ -220,7 +220,7 @@ struct NFTDetailPage: RouteableView {
                                 .foregroundColor(theColor)
                             }
                             .padding(.horizontal, 6)
-                            .disabled(WalletManager.shared.isSelectedChildAccount)
+                            .visibility(WalletManager.shared.isSelectedChildAccount ? .gone : .visible)
                         }
                         .padding(.top, 16)
                         .padding(.horizontal, 26)

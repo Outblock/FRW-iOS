@@ -35,7 +35,7 @@ struct NFTSquareCard: View {
 
                 HStack {
                     
-                    Text("Inaccessible")
+                    Text("Inaccessible".localized)
                         .foregroundStyle(Color.LL.Primary.salmonPrimary)
                         .font(Font.inter(size: 10, weight: .semibold))
                         .padding(.horizontal, 5)

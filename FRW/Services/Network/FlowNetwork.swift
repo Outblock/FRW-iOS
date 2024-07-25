@@ -829,6 +829,28 @@ extension FlowNetwork {
         let toAddr = Flow.Address(hex: toAddress)
         return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(childAddr), .address(toAddr), .string(identifier),.uint64(nftId) ])
     }
+    
+    static func linkedAccountEnabledTokenList(address: String) async throws -> [String: Bool] {
+        let cadence = CadenceManager.shared.current.ft?.isLinkedAccountTokenListEnabled?.toFunc() ?? ""
+        return try await fetch(at: Flow.Address(hex: address), by: cadence)
+    }
+    
+    static func checkChildLinkedCollections(parent: String, child: String,identifier: String,collection: NFTCollectionInfo) async throws -> Bool {
+        let cadence = CadenceManager.shared.current.hybridCustody?.checkChildLinkedCollections?.toFunc() ?? ""
+        let cadenceString = cadence.replace(by: ScriptAddress.addressMap())
+        let parentAddress = Flow.Address(hex: parent)
+        let childAddress = Flow.Address(hex: child)
+        let response = try await flow.accessAPI
+            .executeScriptAtLatestBlock(script: Flow.Script(text: cadenceString), 
+                                        arguments: [
+                                            .address(parentAddress),
+                                            .address(childAddress),
+                                            .string(identifier)
+                                        ]
+            )
+        let result = try response.decode(Bool.self)
+        return result
+    }
 }
 
 // MARK: - Others

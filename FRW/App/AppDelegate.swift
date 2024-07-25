@@ -79,6 +79,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         CrowdinSDK.startWithConfig(crowdinSDKConfig, completion: {
             log.info("[Crowdin] SDK is ready to use")
         })
+        CrowdinSDK.addDownloadHandler {
+            log.debug("[Crowdin]")
+        }
+        CrowdinSDK.addErrorUpdateHandler { error in
+            log.debug("[Crowdin] error: \(error)")
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             self.jailbreakDetect()
         }

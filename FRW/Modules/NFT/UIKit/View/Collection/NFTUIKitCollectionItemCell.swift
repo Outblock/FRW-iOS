@@ -46,17 +46,24 @@ class NFTUIKitCollectionItemCell: UICollectionViewCell {
         return view
     }()
     
-    private lazy var inaccessibleLabel: UILabel = {
+    private lazy var inaccessibleLabel: UIView = {
+        let container = UIView()
+        container.layer.cornerRadius = 4
+        container.backgroundColor = UIColor.Theme.Accent.grey?.withAlphaComponent(0.16)
+        
         let view = UILabel()
         view.font = .inter(size: 10)
         view.textAlignment = .center
-        view.textColor = UIColor.LL.Primary.salmonPrimary
-        view.layer.cornerRadius = 4
+        view.text = "Inaccessible".localized
+        view.textColor = UIColor.Theme.Accent.grey
+        container.addSubview(view)
         view.snp.makeConstraints { make in
-            make.width.equalTo(68)
-            make.height.equalTo(22)
+            make.left.equalTo(5)
+            make.right.equalTo(-5)
+            make.top.equalTo(5)
+            make.bottom.equalTo(-5)
         }
-        return view
+        return container
     }()
     
     private lazy var descLabel: UILabel = {
@@ -74,9 +81,10 @@ class NFTUIKitCollectionItemCell: UICollectionViewCell {
     }()
     
     private lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [hStackView, descLabel])
+        let stackView = UIStackView(arrangedSubviews: [hStackView, descLabel, inaccessibleLabel])
         stackView.axis = .vertical
-        stackView.spacing = 3
+        stackView.alignment = .leading
+        stackView.spacing = 5
         return stackView
     }()
     
@@ -113,7 +121,6 @@ class NFTUIKitCollectionItemCell: UICollectionViewCell {
         
         iconImageView.kf.setImage(with: item.iconURL, placeholder: UIImage(named: "placeholder"))
         titleLabel.text = item.showName
-        //TODO: #six 这个用那个信息判断，如果collection 为空怎么处理
         if let info = item.collection, !WalletManager.shared.accessibleManager.isAccessible(info) {
             descLabel.isHidden = true
             inaccessibleLabel.isHidden = false

@@ -581,7 +581,7 @@ extension WalletView {
                             }
                             .visibility( WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .visible : .gone)
                             
-                            Text("Inaccessible")
+                            Text("Inaccessible".localized)
                                 .foregroundStyle(Color.Flow.Font.inaccessible)
                                 .font(Font.inter(size: 10, weight: .semibold))
                                 .padding(.horizontal, 5)

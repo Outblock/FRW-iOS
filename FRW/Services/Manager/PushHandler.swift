@@ -44,7 +44,7 @@ class PushHandler: NSObject, ObservableObject {
                 self.refreshPushStatus()
             }.store(in: &cancelSets)
         
-        requestPermission()
+//        requestPermission()
     }
     
     func requestPermission() {

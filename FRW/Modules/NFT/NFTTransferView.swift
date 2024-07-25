@@ -52,7 +52,6 @@ class NFTTransferViewModel: ObservableObject {
             guard let toAddress = targetContact.address, let collection = nft.collection else {
                 return
             }
-
             let result = try await FlowNetwork.checkCollectionEnable(address: Flow.Address(hex: toAddress), list: [collection])
             self.isValidNFT = result.first ?? false;
         }
@@ -111,7 +110,9 @@ class NFTTransferViewModel: ObservableObject {
                 var toAccountType = toAddress.isEVMAddress ? AccountType.coa : AccountType.flow
                 if toAccountType == .flow {
                     let isChild = ChildAccountManager.shared.childAccounts.contains { $0.addr == toAddress }
-                    toAccountType = .linked
+                    if isChild {
+                        toAccountType = .linked
+                    }
                 }
                 
                 if toAccountType == .coa && toAddress != EVMAccountManager.shared.accounts.first?.address {
@@ -184,16 +185,14 @@ class NFTTransferViewModel: ObservableObject {
                     log.debug("[NFT] tix:\(String(describing: tid))")
                 case (.flow, .linked):
                     // parent to child user move 'transferNFTToChild'
-                    guard let childAddress = ChildAccountManager.shared.selectedChildAccount?.showAddress,
-                          let nftId = UInt64(nft.response.id),
+                    guard let nftId = UInt64(nft.response.id),
                           let collection = nft.collection,
                           let identifier = nft.infoFromCollection?.collectionData.privatePath?.identifier
                     else { throw NFTError.sendInvalidAddress }
 //
                     tid = try await FlowNetwork.moveNFTToChild(nftId: nftId, childAddress: toAddress, identifier: identifier, collection: collection)
                 case (.linked, .flow):
-                    guard let childAddress = ChildAccountManager.shared.selectedChildAccount?.showAddress,
-                          let nftId = UInt64(nft.response.id),
+                    guard let nftId = UInt64(nft.response.id),
                           let collection = nft.collection,
                           let identifier = nft.infoFromCollection?.collectionData.privatePath?.identifier
                     else { throw NFTError.sendInvalidAddress }
@@ -202,6 +201,12 @@ class NFTTransferViewModel: ObservableObject {
                     }else {
                         tid = try await FlowNetwork.sendChildNFT(nftId: nftId, childAddress: currentAddress,toAddress: toAddress, identifier: identifier, collection: collection)
                     }
+                case (.linked, .linked):
+                    guard let nftId = UInt64(nft.response.id),
+                          let collection = nft.collection,
+                          let identifier = nft.infoFromCollection?.collectionData.privatePath?.identifier
+                    else { throw NFTError.sendInvalidAddress }
+                    tid = try await FlowNetwork.sendChildNFT(nftId: nftId, childAddress: currentAddress,toAddress: toAddress, identifier: identifier, collection: collection)
                 default:
                     failedBlock()
                     return
@@ -317,7 +322,7 @@ struct NFTTransferView: View {
             .clipShape(Circle())
 
             // contact name
-            Text(contact.user?.name ?? contact.contactName ?? "name")
+            Text(contact.user?.name ?? contact.contactName ?? contact.displayName)
                 .foregroundColor(.LL.Neutrals.neutrals1)
                 .font(.inter(size: 14, weight: .semibold))
                 .lineLimit(1)
@@ -398,25 +403,25 @@ struct NFTTransferView: View {
                     if step == index {
                         Image("icon-right-arrow-1")
                             .renderingMode(.template)
-                            .foregroundColor(.LL.Primary.salmonPrimary)
+                            .foregroundColor(.Theme.Accent.green)
                     } else {
                         switch index {
                         case 0:
                             Circle()
                                 .frame(width: 6, height: 6)
-                                .foregroundColor(.LL.Primary.salmon5)
+                                .foregroundColor(.Theme.Accent.green)
                         case 1:
                             Circle()
                                 .frame(width: 6, height: 6)
-                                .foregroundColor(.LL.Primary.salmon4)
+                                .foregroundColor(.Theme.Accent.green)
                         case 2:
                             Circle()
                                 .frame(width: 6, height: 6)
-                                .foregroundColor(.LL.Primary.salmon3)
+                                .foregroundColor(.Theme.Accent.green)
                         default:
                             Circle()
                                 .frame(width: 6, height: 6)
-                                .foregroundColor(.LL.Primary.salmonPrimary)
+                                .foregroundColor(.Theme.Accent.green)
                         }
                     }
                 }

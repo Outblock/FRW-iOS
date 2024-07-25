@@ -112,7 +112,7 @@ class SideMenuViewModel: ObservableObject {
         guard let value = WalletManager.shared.balanceProvider.balanceValue(at: address) else {
             return ""
         }
-        return "\(value) Flow"
+        return "\(value) FLOW"
     }
 }
 

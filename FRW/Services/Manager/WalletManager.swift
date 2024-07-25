@@ -621,7 +621,12 @@ extension WalletManager {
             return
         }
         
-        let enabledList = try await FlowNetwork.checkTokensEnable(address: Flow.Address(hex: address))
+        var enabledList: [String: Bool] = [:]
+        if let account = ChildAccountManager.shared.selectedChildAccount {
+            enabledList = try await FlowNetwork.linkedAccountEnabledTokenList(address: account.showAddress)
+        }else {
+            enabledList = try await FlowNetwork.checkTokensEnable(address: Flow.Address(hex: address))
+        }
 
         var list = [TokenModel]()
         for (_, value) in enabledList.enumerated() {
