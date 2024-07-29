@@ -237,6 +237,10 @@ extension NFTUIKitCache {
 
 extension NFTUIKitCache {
     private func loadFavCache() {
+        guard ChildAccountManager.shared.selectedChildAccount == nil else {
+            favList = []
+            return
+        }
         if !FileManager.default.fileExists(atPath: favCacheFile.relativePath) {
             return
         }
@@ -375,6 +379,10 @@ extension NFTUIKitCache {
     }
     
     func requestFav() {
+        guard ChildAccountManager.shared.selectedChildAccount == nil else {
+            favList = []
+            return
+        }
         if favIsRequesting {
             return
         }

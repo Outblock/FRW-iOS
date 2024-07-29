@@ -89,17 +89,17 @@ struct WalletSendAmountView: RouteableView {
                     } else {
                         if let contactType = vm.targetContact.contactType, let contactName = vm.targetContact.contactName, contactType == .external, contactName.isFlowOrEVMAddress {
                             Text("0x")
-                                .foregroundColor(.white)
+                                .foregroundColor(.Theme.Accent.grey)
                                 .font(.inter(size: 24, weight: .semibold))
                         } else {
                             Text(String((vm.targetContact.contactName?.first ?? "A").uppercased()))
-                                .foregroundColor(.white)
+                                .foregroundColor(.Theme.Accent.grey)
                                 .font(.inter(size: 24, weight: .semibold))
                         }
                     }
                 }
                 .frame(width: 44, height: 44)
-                .background(.LL.Primary.salmonPrimary)
+                .background(.Theme.Accent.grey.opacity(0.16))
                 .clipShape(Circle())
 
                 // text
@@ -404,13 +404,19 @@ extension WalletSendAmountView {
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 44, height: 44)
                     } else {
-                        Text(String((contact.contactName?.first ?? "A").uppercased()))
-                            .foregroundColor(.white)
-                            .font(.inter(size: 24, weight: .semibold))
+                        if let contactType = vm.targetContact.contactType, let contactName = vm.targetContact.contactName, contactType == .external, contactName.isFlowOrEVMAddress {
+                            Text("0x")
+                                .foregroundColor(.Theme.Accent.grey)
+                                .font(.inter(size: 24, weight: .semibold))
+                        } else {
+                            Text(String((vm.targetContact.contactName?.first ?? "A").uppercased()))
+                                .foregroundColor(.Theme.Accent.grey)
+                                .font(.inter(size: 24, weight: .semibold))
+                        }
                     }
                 }
                 .frame(width: 44, height: 44)
-                .background(.LL.Primary.salmonPrimary)
+                .background(.Theme.Accent.grey.opacity(0.16))
                 .clipShape(Circle())
 
                 // contact name
