@@ -918,27 +918,31 @@ extension FlowNetwork {
 
 extension Flow.TransactionResult {
     var isProcessing: Bool {
-        status < .sealed && errorMessage.isEmpty
-    }
-    
-    var isComplete: Bool {
-        status == .sealed && errorMessage.isEmpty
-    }
-    
-    var isExpired: Bool {
-        status == .expired
-    }
-    
-    var isFailed: Bool {
-        if self.isProcessing {
-            return false
+            status < .executed && errorMessage.isEmpty
         }
         
-        if self.isExpired {
-            return true
+        var isComplete: Bool {
+            status == .executed && errorMessage.isEmpty
         }
-        return !errorMessage.isEmpty
-    }
+        
+        var isExpired: Bool {
+            status == .expired
+        }
+        
+        var isSealed: Bool {
+            status == .sealed
+        }
+        
+        var isFailed: Bool {
+            if self.isProcessing {
+                return false
+            }
+            
+            if self.isExpired {
+                return true
+            }
+            return !errorMessage.isEmpty
+        }
 }
 
 // MARK: - Account Key

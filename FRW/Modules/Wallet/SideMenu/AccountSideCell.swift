@@ -116,8 +116,10 @@ struct AccountSideCell: View {
                             .renderingMode(.template)
                             .foregroundStyle(Color.Theme.Text.black3)
                             .frame(width: 20, height: 20)
-                            .padding(8)
+                            
                     }
+                    .padding(12)
+                    .offset(x:-4)
                 }
 
 //                Image("device_arrow_right")

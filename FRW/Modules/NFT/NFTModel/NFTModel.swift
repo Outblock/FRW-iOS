@@ -110,7 +110,7 @@ struct NFTModel: Codable, Hashable, Identifiable {
         if isSVG {
             return image.absoluteString.convertedSVGURL() ?? URL(string: placeholder)!
         } else {
-              return image
+            return image
         }
     }
 
@@ -119,8 +119,8 @@ struct NFTModel: Codable, Hashable, Identifiable {
     }
     
     init(_ response: NFTResponse, in collection: NFTCollectionInfo?, from info: FlowModel.CollectionInfo? = nil) {
-        if let imgUrl = response.postMedia.image, let url = URL(string: imgUrl) {
-            if response.postMedia.isSvg == true {
+        if let imgUrl = response.postMedia?.image, let url = URL(string: imgUrl) {
+            if response.postMedia?.isSvg == true {
                 image = URL(string: imgUrl) ?? URL(string: placeholder)!
                 isSVG = true
             } else {
@@ -137,19 +137,19 @@ struct NFTModel: Codable, Hashable, Identifiable {
             image = URL(string: placeholder)!
         }
 
-        if let videoUrl = response.postMedia.video {
+        if let videoUrl = response.postMedia?.video {
             video = URL(string: videoUrl)
         }
 
-        subtitle = response.postMedia.description ?? ""
-        title = response.postMedia.title ?? response.collectionName ?? ""
+        subtitle = response.postMedia?.description ?? ""
+        title = response.postMedia?.title ?? response.collectionName ?? ""
         self.collection = collection
         self.response = response
         self.infoFromCollection = info
     }
 
     var declare: String {
-        if let dec = response.postMedia.description {
+        if let dec = response.postMedia?.description {
             return dec
         }
         return response.description ?? ""

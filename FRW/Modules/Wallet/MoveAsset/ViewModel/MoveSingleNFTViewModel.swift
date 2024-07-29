@@ -24,7 +24,7 @@ class MoveSingleNFTViewModel: ObservableObject {
         self.callback = callback
         loadUserInfo()
         
-        let accountViewModel = MoveAccountsViewModel { contact in }
+        let accountViewModel = MoveAccountsViewModel(selected: "") { contact in }
         self.accountCount = accountViewModel.list.count
     }
     

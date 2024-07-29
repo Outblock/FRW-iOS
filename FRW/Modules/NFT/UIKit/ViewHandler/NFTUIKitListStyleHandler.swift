@@ -279,7 +279,7 @@ extension NFTUIKitListStyleHandler {
         Task {
             do {
                 try await dataModel.refreshCollectionAction()
-                
+                try? await WalletManager.shared.accessibleManager.fetchNFT()
                 DispatchQueue.main.async {
                     self.isRequesting = false
                     self.isInitRequested = true
@@ -294,7 +294,7 @@ extension NFTUIKitListStyleHandler {
                         self.reloadViews()
                     }
                 }
-                try await WalletManager.shared.accessibleManager.fetchNFT()
+                
             } catch {
                 log.debug("[NFT] \(error)")
                 DispatchQueue.main.async {

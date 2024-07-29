@@ -17,14 +17,14 @@ extension FlowModel {
         let number: String
     }
     
-    struct Thumbnail: Codable {
+    struct Thumbnail: Codable,Equatable,Hashable {
         let url: String
     }
     
-    struct Display: Codable {
+    struct Display: Codable,Equatable,Hashable {
         let name: String
-        let description: String
-        let thumbnail: FlowModel.Thumbnail
+        let description: String?
+//        let thumbnail: FlowModel.Thumbnail
     }
     
     struct ExternalUrl: Codable {
@@ -56,7 +56,7 @@ extension FlowModel {
         let publicPath: FlowModel.Path?
         let privatePath: FlowModel.Path?
 //        let serial: FlowModel.Serial?
-//        let display: FlowModel.Display?
+        let display: FlowModel.Display?
 //        let tokenId: String?
 //        let externalURL: FlowModel.ExternalUrl?
 //        let traits: NFTTrait?

@@ -74,16 +74,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 #endif
         
         let crowdinProviderConfig = CrowdinProviderConfig(hashString: "f4bff0f0e2ed98c2ba53a29qzvm",
-          sourceLanguage: "{source_language}")
-        let crowdinSDKConfig = CrowdinSDKConfig.config().with(crowdinProviderConfig: crowdinProviderConfig)
+          sourceLanguage: "en")
+        let crowdinSDKConfig = CrowdinSDKConfig
+            .config()
+            .with(crowdinProviderConfig: crowdinProviderConfig)
+            .with(debugEnabled: true)
         CrowdinSDK.startWithConfig(crowdinSDKConfig, completion: {
             log.info("[Crowdin] SDK is ready to use")
         })
-        CrowdinSDK.addDownloadHandler {
-            log.debug("[Crowdin]")
-        }
-        CrowdinSDK.addErrorUpdateHandler { error in
-            log.debug("[Crowdin] error: \(error)")
+        CrowdinSDK.setOnLogCallback { info in
+            log.debug("[Crowdin] \(info)")
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             self.jailbreakDetect()

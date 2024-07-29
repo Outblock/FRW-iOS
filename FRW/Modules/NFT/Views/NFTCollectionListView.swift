@@ -92,18 +92,12 @@ class NFTCollectionListViewViewModel: ObservableObject {
             
             do {
                 
+                let request = NFTCollectionDetailListRequest(address: addr, collectionIdentifier: path, offset: 0, limit: 24)
+                let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(request))
                 
-                
-                let model: FlowModel.NFTCollection = try await Network.request(FRWAPI.ChildAccount.collectionInfo(addr, path))
-                //TODO: 请求所有数据
-                let nftInfoResponse: FlowModel.NFTResponse = try await Network.request(FRWAPI.ChildAccount.nftList(addr, path, 0, 100))
                 DispatchQueue.main.async {
-                    self.collection = model.toCollectionModel()
-                    self.collection.nfts = nftInfoResponse.nfts.map({ info in
-                        NFTModel(NFTResponse(id: info.id, name: info.name, description: info.description, thumbnail: info.thumbnail, externalURL: "", contractAddress: addr, collectionID: "", collectionName: "", collectionDescription: "", collectionSquareImage: "", collectionExternalURL: "", collectionContractName: "", collectionBannerImage: "", traits: nil, postMedia: NFTPostMedia(title: info.name, image: info.thumbnail, description: info.description, video: nil, isSvg: false)), in: self.collection.collection)
-                    })
+                    self.collection = response.toCollectionItem()
                     self.nfts = self.collection.nfts
-                    
                     self.isLoading = false
                 }
                 

@@ -19,7 +19,7 @@ extension FlowModel {
             let url: String
         }
         let file: Media.File
-        let mediaType: String
+//        let mediaType: String
     }
     
 }
@@ -34,8 +34,8 @@ extension FlowModel {
     struct NFTCollection: Codable, Mockable {
         struct CollectionDislay: Codable {
             var name: String
-            var squareImage: String
-            var mediaType: FlowModel.Media
+            var mediaType: FlowModel.Media?
+            var squareImage: String?
         }
         
         static func mock() -> FlowModel.NFTCollection {
@@ -45,7 +45,7 @@ extension FlowModel {
         var id: String
         var path: String?
         var display: FlowModel.NFTCollection.CollectionDislay?
-        let idList: [UInt64]
+        var idList: [UInt64]
     }
     
     struct NFTInfo: Codable {

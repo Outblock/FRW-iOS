@@ -25,7 +25,7 @@ struct MoveSingleNFTView: View {
                             Text("move_single_nft".localized)
                                 .font(.inter(size: 18, weight: .w700))
                                 .foregroundStyle(Color.LL.Neutrals.text)
-                                .padding(.top, 6)
+                                .frame(height: 28)
                             Spacer()
                             
                             Button {
@@ -34,9 +34,11 @@ struct MoveSingleNFTView: View {
                                 Image("icon_close_circle_gray")
                                     .resizable()
                                     .frame(width: 24, height: 24)
+                                    .padding(3)
+                                    .offset(x:-3)
                             }
                         }
-                        .padding(.top, 8)
+                        .padding(.top, 18)
                         
                         Color.clear
                             .frame(height: 20)
@@ -45,7 +47,7 @@ struct MoveSingleNFTView: View {
                                 .padding(.bottom, 8)
                             
                             MoveUserView(contact: viewModel.toContact, isEVM: viewModel.toIsEVM,allowChoose: viewModel.accountCount > 0, onClick: {
-                                let model = MoveAccountsViewModel { contact in
+                                let model = MoveAccountsViewModel(selected: viewModel.toContact.address ?? "") { contact in
                                     if let contact = contact {
                                         viewModel.updateToContact(contact)
                                     }
@@ -53,7 +55,6 @@ struct MoveSingleNFTView: View {
                                 Router.route(to: RouteMap.Wallet.chooseChild(model))
                             })
                                 
-                            
                             
                             HStack {
                                 KFImage.url(viewModel.nft.imageURL)
@@ -74,9 +75,9 @@ struct MoveSingleNFTView: View {
                                         .foregroundColor(.LL.Neutrals.text)
                                         .frame(height: 28)
                                     
-                                    HStack(alignment: .center, spacing: 6) {
+                                    HStack(alignment: .center, spacing: 4) {
                                         KFImage
-                                            .url(viewModel.nft.logoUrl)
+                                            .url(viewModel.nft.collection?.logoURL)
                                             .placeholder {
                                                 Image("placeholder")
                                                     .resizable()
@@ -87,7 +88,7 @@ struct MoveSingleNFTView: View {
                                             .cornerRadius(20)
                                             .clipped()
                                         Text(viewModel.nft.collectionName)
-                                            .font(.LL.body)
+                                            .font(.inter(size:14))
                                             .fontWeight(.w400)
                                             .lineLimit(1)
                                             .foregroundColor(.LL.Neutrals.text2)
@@ -110,7 +111,7 @@ struct MoveSingleNFTView: View {
                         Spacer()
                         
                     }
-                    .padding(18)
+                    .padding(.horizontal, 18)
                     
                 }
                 

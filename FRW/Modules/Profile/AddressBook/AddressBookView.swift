@@ -249,12 +249,13 @@ extension AddressBookView {
                             .frame(width: 48, height: 48)
                     default:
                         Text(String((contact.contactName?.first ?? "A").uppercased()))
-                            .foregroundColor(.white)
+                            .foregroundColor(.Theme.Accent.grey)
                             .font(.inter(size: 24, weight: .semibold))
                     }
                     
                 }
                 .frame(width: 48, height: 48)
+                .background(.Theme.Accent.grey.opacity(0.16))
                 .clipShape(Circle())
 
                 // text

@@ -111,18 +111,38 @@ class ChildAccountDetailViewModel: ObservableObject {
             }
             
             do {
-                var result = try await FlowNetwork.fetchAccessibleCollection(parent: parent, child: child)
-                var resultList = result.compactMap { item in
-                    if let contractName = item.split(separator:".")[safe: 2],
-                       let address = item.split(separator:".")[safe: 1] {
+                let result = try await FlowNetwork.fetchAccessibleCollection(parent: parent, child: child)
+                let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(child,0,100))
+                let collectionList = response.data
+                
+                let resultList = result.compactMap { item in
+                    if let contractName = item.split(separator:".")[safe: 2] {
                         if let model = NFTCatalogCache.cache.find(by: String(contractName)) {
-                            return FlowModel.NFTCollection(id: model.collection.id, path: model.collection.path.storagePath, display: FlowModel.NFTCollection.CollectionDislay(name: model.collection.name, squareImage: model.collection.logo ?? AppPlaceholder.image, mediaType: FlowModel.Media(file: FlowModel.Media.File(url: ""), mediaType: "")), idList: [])
+                            return FlowModel.NFTCollection(
+                                id: model.collection.id,
+                                path: model.collection.path.storagePath,
+                                display: FlowModel.NFTCollection.CollectionDislay(
+                                    name: model.collection.name,
+                                    mediaType: FlowModel.Media(file: FlowModel.Media.File(url: "")),
+                                    squareImage: model.collection.logoURL.absoluteString
+                                ),
+                                idList: [])
                         }
                     }
                     return nil
                 }
                 
-                let res = resultList.sorted { $0.count > $1.count }
+                let tmpList = resultList.map { model in
+                    var model = model
+                    let collectionItem = collectionList?.first(where: { item in
+                        item.collection.id == model.id
+                    })
+                    if let item = collectionItem {
+                        model.idList = item.ids?.compactMap({ UInt64($0)}) ?? []
+                    }
+                    return model
+                }
+                let res = tmpList.sorted { $0.count > $1.count }
                 
                 DispatchQueue.main.async {
                     self.collections = res
@@ -130,6 +150,7 @@ class ChildAccountDetailViewModel: ObservableObject {
                     self.isLoading = false
                 }
             } catch {
+                log.error("\(error)")
                 print("Error")
             }
         }
@@ -369,7 +390,7 @@ struct ChildAccountDetailView: RouteableView {
             ForEach(vm.accessibleItems.indices, id: \.self) { idx in
                 AccessibleItemView(item: vm.accessibleItems[idx]) { item in
                     if let collectionInfo = item as? FlowModel.NFTCollection, let addr = vm.childAccount.addr, collectionInfo.idList.count > 0 {
-                        Router.route(to: RouteMap.NFT.collectionDetail( addr, collectionInfo.fromPath, true))
+                        Router.route(to: RouteMap.NFT.collectionDetail( addr, collectionInfo.id, true))
                     }
                     
                 }

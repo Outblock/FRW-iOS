@@ -153,7 +153,7 @@ struct NFTDetailPage: RouteableView {
                                 } label: {
                                     HStack(alignment: .center, spacing: 6) {
                                         KFImage
-                                            .url(vm.nft.logoUrl)
+                                            .url(vm.nft.collection?.logoURL)
                                             .placeholder {
                                                 Image("placeholder")
                                                     .resizable()
@@ -286,9 +286,9 @@ struct NFTDetailPage: RouteableView {
                     HStack {
                         Image(systemName: "paperplane")
                             .font(.system(size: 16))
-                            .foregroundColor(theColor)
+                            .foregroundColor(theColor.opacity(childOpacity))
                         Text("send".localized)
-                            .foregroundColor(.LL.Neutrals.text)
+                            .foregroundColor(.LL.Neutrals.text.opacity(childOpacity))
                     }
                 }
                 .padding(.horizontal, 12)
@@ -297,6 +297,7 @@ struct NFTDetailPage: RouteableView {
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
                 .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
                 .visibility(vm.showSendButton ? .visible : .gone)
+                .disabled(!WalletManager.shared.accessibleManager.isAccessible(vm.nft))
                 
                 Button {
                     vm.showMoveAction()
@@ -306,9 +307,9 @@ struct NFTDetailPage: RouteableView {
                             .resizable()
                             .renderingMode(.template)
                             .frame(width: 20, height: 20)
-                            .foregroundColor(theColor)
+                            .foregroundColor(theColor.opacity(childOpacity))
                         Text("move".localized)
-                            .foregroundColor(.LL.Neutrals.text)
+                            .foregroundColor(.LL.Neutrals.text.opacity(childOpacity))
                     }
                 }
                 .padding(.horizontal, 12)
@@ -317,7 +318,7 @@ struct NFTDetailPage: RouteableView {
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
                 .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
                 .visibility(vm.movable ? .visible : .gone)
-
+                .disabled(!WalletManager.shared.accessibleManager.isAccessible(vm.nft))
                 
                 Menu {
                     Button {
@@ -376,6 +377,10 @@ struct NFTDetailPage: RouteableView {
         )
         .animation(.spring(), value: self.showImageViewer)
         .applyRouteable(self)
+    }
+    
+    var childOpacity: CGFloat {
+        WalletManager.shared.accessibleManager.isAccessible(vm.nft) ? 1 : 0.3
     }
     
     var date: some View {

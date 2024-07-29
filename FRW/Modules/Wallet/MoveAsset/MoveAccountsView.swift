@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Kingfisher
+import SwiftUIX
 
 struct MoveAccountsView: RouteableView, PresentActionDelegate {
     var changeHeight: (() -> ())?
@@ -28,7 +29,7 @@ struct MoveAccountsView: RouteableView, PresentActionDelegate {
                     Text("choose_account".localized)
                         .font(.inter(size: 18, weight: .w700))
                         .foregroundStyle(Color.LL.Neutrals.text)
-                        .padding(.top, 6)
+                        .frame(height: 28)
                     Spacer()
                     
                     Button {
@@ -37,35 +38,41 @@ struct MoveAccountsView: RouteableView, PresentActionDelegate {
                         Image("icon_close_circle_gray")
                             .resizable()
                             .frame(width: 24, height: 24)
+                            .padding(3)
+                            .offset(x: -3)
                     }
                 }
-                .padding(.top, 8)
+                .padding(.top, 18)
                 
                 Color.clear
                     .frame(height: 20)
-                
-                ForEach(viewModel.list.indices, id: \.self) { index in
-                    let model = viewModel.list[index]
-                    MoveAccountsView.AccountCell(contact: model)
-                        .onTapGesture {
-                            viewModel.onSelect(contact: model)
-                        }
+                VStack {
+                    ForEach(viewModel.list.indices, id: \.self) { index in
+                        let model = viewModel.list[index]
+                        let isSelected = viewModel.selectedAddr == model.address
+                        MoveAccountsView.AccountCell(contact: model, isSelected: isSelected)
+                            .onTapGesture {
+                                viewModel.onSelect(contact: model)
+                            }
+                    }
                 }
                 
+                
             }
-            .padding(18)
+            .padding(.horizontal,18)
             
         }
         .backgroundFill(Color.Theme.Background.grey)
         .cornerRadius([.topLeading, .topTrailing], 16)
         .applyRouteable(self)
+        .ignoresSafeArea()
     }
 }
 
 extension MoveAccountsView {
     struct AccountCell: View {
         var contact: Contact
-        
+        var isSelected: Bool
         var name: String {
             contact.user?.name ?? contact.name
         }
@@ -96,29 +103,35 @@ extension MoveAccountsView {
                 }
                 
                 
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text(name)
                             .foregroundColor(Color.LL.Neutrals.text)
-                            .font(.inter(size: 14, weight: .semibold))
+                            .font(.inter(size: 12, weight: .semibold))
                         
                         EVMTagView()
                             .visibility(isEVM ? .visible : .gone)
                     }
                     .frame(alignment: .leading)
+                    .frame(height: 22)
                     
                     Text(address)
                         .foregroundColor(Color.Theme.Text.black3)
                         .font(.inter(size: 12))
                         .lineLimit(1)
                         .truncationMode(.middle)
+                        .frame(height: 16)
                 }
                 .frame(alignment: .leading)
                 
                 Spacer()
+                
+                Image("evm_check_1")
+                    .resizable()
+                    .frame(width: 16, height: 16)
+                    .visibility(isSelected ? .visible : .gone)
             }
-            .frame(height: 56)
-            .padding(.horizontal, 16)
+            .padding(16)
             .background(Color.Theme.Background.white)
             .cornerRadius(16)
         }
@@ -127,10 +140,11 @@ extension MoveAccountsView {
 
 class MoveAccountsViewModel: ObservableObject {
     @Published var list: [Contact] = []
-    
+    var selectedAddr: String
     var callback: (Contact?)->()
     
-    init(callback: @escaping (Contact?)->()) {
+    init(selected address: String,callback: @escaping (Contact?)->()) {
+        self.selectedAddr = address
         self.callback = callback
         let currentAddr = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress()
         
@@ -173,7 +187,7 @@ class MoveAccountsViewModel: ObservableObject {
 }
 
 #Preview {
-    MoveAccountsView(viewModel: MoveAccountsViewModel(callback: { contact in
+    MoveAccountsView(viewModel: MoveAccountsViewModel(selected: "", callback: { contact in
     
     }))
 }

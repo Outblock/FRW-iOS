@@ -342,7 +342,7 @@ struct WalletHomeView: View {
             Rectangle()
                 .foregroundColor(.clear)
                 .frame(width: 71, height: 5)
-                .background(Color(red: 0.85, green: 0.85, blue: 0.85))
+                .background(.Theme.Background.pureWhite)
                 .cornerRadius(8)
             Spacer()
         }
@@ -403,14 +403,13 @@ struct WalletHomeView: View {
     private func walletActionBar() -> some View {
         
         return HStack {
-            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .send)
-                .disabled(WalletManager.shared.isSelectedChildAccount)
-            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .receive)
-            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .swap)
+            
+            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .send, allowClick: !wm.isSelectedChildAccount)
+            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .receive, allowClick: true)
+            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .swap, allowClick: true)
                 .visibility(vm.showSwapButton ? .visible : .gone)
-            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .stake)
+            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .stake, allowClick: !wm.isSelectedChildAccount)
                 .visibility(vm.showStakeButton ? .visible : .gone)
-                .disabled(wm.isSelectedChildAccount)
         }
     }
     
@@ -641,6 +640,9 @@ extension WalletHomeView {
     struct ActionView: View {
         let isH: Bool
         let action: WalletHomeView.Action
+        
+        let allowClick: Bool
+        
         var body: some View {
             Button {
                 action.doEvent()
@@ -650,16 +652,17 @@ extension WalletHomeView {
                     Image(action.icon)
                         .resizable()
                         .renderingMode(.template)
-                        .foregroundStyle(Color.Theme.Text.black8)
+                        .foregroundStyle(Color.Theme.Text.black8.opacity(allowClick ? 1 : 0.3))
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 24, height: 24)
                     
                     Text(action.rawValue.localized.capitalized)
                         .font(.inter(size: 12, weight: .semibold))
-                        .foregroundStyle(Color.Theme.Text.black8)
+                        .foregroundStyle(Color.Theme.Text.black8.opacity(allowClick ? 1 : 0.3))
                 }
             }
             .buttonStyle(ScaleButtonStyle())
+            .disabled(!allowClick)
         }
         
         public func container<Content: View>(@ViewBuilder content: () -> Content) -> some View {

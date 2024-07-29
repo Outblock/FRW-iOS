@@ -302,6 +302,9 @@ extension NFTUIKitCache {
     }
     
     func isFav(id: String) -> Bool {
+        if ChildAccountManager.shared.selectedChildAccount != nil {
+            return false
+        }
         for nft in favList {
             if nft.id == id {
                 return true
@@ -404,6 +407,7 @@ extension NFTUIKitCache {
             } catch {
                 DispatchQueue.main.async {
                     self.favIsRequesting = false
+                    self.favList = []
                     debugPrint("NFTUIKitCache -> requestFav error: \(error)")
                 }
             }

@@ -12,6 +12,19 @@ struct NFTListResponse: Codable {
     let nfts: [NFTResponse]?
     let nftCount: Int
     let info: FlowModel.CollectionInfo?
+    let collection: NFTCollectionInfo?
+}
+
+extension NFTListResponse {
+    func toCollectionItem() -> CollectionItem {
+        let item = CollectionItem()
+        item.name = info?.collectionData.display?.name ?? collection?.name ?? ""
+        item.count = nftCount
+        item.nfts = nfts?.compactMap({ NFTModel($0, in: nil, from: info) }) ?? []
+        item.collection = collection ?? NFTCollectionInfo(id: "", name: item.name, contractName: item.name, address: "", logo: "", banner: "", officialWebsite: "", description: "", path: ContractPath(storagePath: "", publicPath: "", publicCollectionName: "", publicType: "", privateType: ""), evmAddress: nil, socials: nil, flowIdentifier: nil)
+        item.isEnd = nftCount < 24
+        return item
+    }
 }
 
 // MARK: - NFTFavListResponse
@@ -40,18 +53,18 @@ struct NFTResponse: Codable, Hashable {
     let collectionBannerImage: String?
     
     let traits: [NFTTrait]?
-    var postMedia: NFTPostMedia
+    var postMedia: NFTPostMedia?
     
     var uniqueId: String {
         return (contractAddress ?? "") + "." + (collectionName ?? "") + "-" + "\(id)"
     }
 
     func cover() -> String? {
-        return postMedia.image ?? postMedia.video
+        return postMedia?.image ?? postMedia?.video ?? ""
     }
 
     func video() -> String? {
-        return postMedia.video
+        return postMedia?.video ?? ""
     }
     
     static func mock() -> NFTResponse {

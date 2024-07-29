@@ -313,12 +313,13 @@ struct NFTTransferView: View {
                 }
                 else {
                     Text(String((contact.contactName?.first ?? "A").uppercased()))
-                        .foregroundColor(.LL.Primary.salmonPrimary)
+                        .foregroundColor(.Theme.Accent.grey)
                         .font(.inter(size: 24, weight: .semibold))
+                        
                 }
             }
             .frame(width: 44, height: 44)
-            .background(.LL.Primary.salmon5)
+            .background(.Theme.Accent.grey.opacity(0.16))
             .clipShape(Circle())
 
             // contact name
