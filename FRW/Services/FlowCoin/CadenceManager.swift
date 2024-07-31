@@ -9,7 +9,7 @@ import SwiftUI
 
 class CadenceManager {
     static let shared = CadenceManager()
-    private let localVersion = "0.3"
+    private let localVersion = "1.73"
     
     var version: String = ""
     var scripts: CadenceScript!
@@ -181,6 +181,8 @@ extension CadenceModel {
         let sendChildNFT: String?
         let getChildAccountAllowTypes: String?
         let checkChildLinkedCollections: String?
+        let batchTransferChildNFT: String?
+        let batchTransferNFTToChild: String?
     }
     
     struct Staking: Codable {

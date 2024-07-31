@@ -851,6 +851,31 @@ extension FlowNetwork {
         let result = try response.decode(Bool.self)
         return result
     }
+    
+    static func batchMoveNFTToParent(childAddr address: String, identifier: String, ids: [UInt64], collection: NFTCollectionInfo) async throws -> Flow.ID {
+        let accessible = CadenceManager.shared.current.hybridCustody?.batchTransferChildNFT?.toFunc() ?? ""
+        let cadenceString = collection.formatCadence(script: accessible)
+        let childAddress = Flow.Address(hex: address)
+        let idMaped = ids.map { Flow.Cadence.FValue.uint64($0) }
+        
+        let ident = identifier.split(separator: "/").last.map { String($0) } ?? identifier
+        
+        return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(childAddress), .string(ident),.array(idMaped)])
+    }
+    
+    static func batchMoveNFTToChild(childAddr address: String, identifier: String, ids: [UInt64], collection: NFTCollectionInfo) async throws -> Flow.ID {
+        let accessible = CadenceManager.shared.current.hybridCustody?.batchTransferNFTToChild?.toFunc() ?? ""
+        let cadenceString = collection.formatCadence(script: accessible)
+        let childAddress = Flow.Address(hex: address)
+        let idMaped = ids.map { Flow.Cadence.FValue.uint64($0) }
+        var ident = identifier.split(separator: "/").last.map { String($0) } ?? identifier
+        
+//        if let lastIden = identifier.split(separator: "/").last {
+//            ident = String(lastIden)
+//        }
+        
+        return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(childAddress), .string(ident),.array(idMaped)])
+    }
 }
 
 // MARK: - Others
@@ -922,7 +947,7 @@ extension Flow.TransactionResult {
         }
         
         var isComplete: Bool {
-            status == .executed && errorMessage.isEmpty
+            status == .sealed && errorMessage.isEmpty
         }
         
         var isExpired: Bool {

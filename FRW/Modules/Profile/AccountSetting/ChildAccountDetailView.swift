@@ -673,7 +673,7 @@ extension FlowModel.NFTCollection : ChildAccountAccessible {
         let item = CollectionItem()
         item.name = title
         item.count = idList.count
-        item.collection = NFTCollectionInfo(id: self.id, name: title, contractName: title, address: "", logo: self.img, banner: "", officialWebsite: "", description: "", path: ContractPath(storagePath: "", publicPath: "", publicCollectionName: "", publicType: "", privateType: ""), evmAddress: nil, socials: nil, flowIdentifier: nil)
+        item.collection = NFTCollectionInfo(id: self.id, name: title, contractName: title, address: "", logo: self.img, banner: "", officialWebsite: "", description: "", path: ContractPath(storagePath: "", publicPath: "", privatePath: nil, publicCollectionName: "", publicType: "", privateType: ""), evmAddress: nil, socials: nil, flowIdentifier: nil)
         item.isEnd = true
         return item
     }

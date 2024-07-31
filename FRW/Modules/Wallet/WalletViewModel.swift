@@ -93,6 +93,8 @@ class WalletViewModel: ObservableObject {
     
     @Published var showBuyButton: Bool = true
     
+    @Published var showMoveAsset: Bool = false
+    
     var needShowPlaceholder: Bool {
         return isMock || walletState == .noAddress
     }
@@ -129,6 +131,7 @@ class WalletViewModel: ObservableObject {
                 }
                 self?.refreshButtonState()
                 self?.reloadWalletData()
+                self?.updateMoveAsset()
             }.store(in: &cancelSets)
 
         WalletManager.shared.$coinBalances
@@ -193,6 +196,7 @@ class WalletViewModel: ObservableObject {
         }
         //check has notification
     }
+    
     private func refreshHiddenFlag() {
         isHidden = LocalUserDefaults.shared.walletHidden
     }
@@ -317,6 +321,10 @@ class WalletViewModel: ObservableObject {
     
     @objc private func didReset() {
         backupTipsShown = false
+    }
+    
+    private func updateMoveAsset() {
+        showMoveAsset = EVMAccountManager.shared.openEVM || ChildAccountManager.shared.childAccounts.count > 0
     }
 }
 

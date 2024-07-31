@@ -86,12 +86,13 @@ extension NFTCollectionInfo {
 struct ContractPath: Codable, Hashable, Mockable {
     let storagePath: String
     let publicPath: String
+    let privatePath: String?
     let publicCollectionName: String?
     let publicType: String?
     let privateType: String?
     
     static func mock() -> ContractPath {
-        return ContractPath(storagePath: randomString(), publicPath: randomString(), publicCollectionName: randomString(), publicType: randomString(), privateType: randomString())
+        return ContractPath(storagePath: randomString(), publicPath: randomString(), privatePath: "", publicCollectionName: randomString(), publicType: randomString(), privateType: randomString())
     }
 }
 

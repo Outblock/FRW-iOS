@@ -226,6 +226,7 @@ extension MoveNFTsView {
                     })
                     .resizable()
                     .aspectRatio(contentMode: .fill)
+                    .padding(1)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .aspectRatio(1, contentMode: .fit)
@@ -235,6 +236,7 @@ extension MoveNFTsView {
                       .inset(by: 0.5)
                       .stroke(showMask() ? Color.clear : Color.Theme.Accent.green, lineWidth: 1)
                       .background(Color.black.opacity(0.6))
+                      .zIndex(101)
                       .visibility(nft.isSelected || showMask()  ? .visible : .gone)
                     
                     Image(nft.isSelected ? "evm_check_1" : "evm_check_0")
@@ -244,8 +246,6 @@ extension MoveNFTsView {
                         .visibility(allowSelect() ? .visible : .gone)
                 }
             }
-            
-            
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .onTapGesture {
                 if allowSelect() {

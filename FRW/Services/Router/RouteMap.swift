@@ -491,7 +491,7 @@ extension RouteMap.NFT: RouterTarget {
         case .AR:
             print("")
         case .selectCollection(let vm):
-            navi.present(content: SelectCollectionView(viewModel: vm))
+            Router.topPresentedController().present(content: SelectCollectionView(viewModel: vm))
         }
     }
 }

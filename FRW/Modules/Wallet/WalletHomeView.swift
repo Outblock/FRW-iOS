@@ -161,7 +161,7 @@ struct WalletHomeView: View {
                             .frame(width: 24, height: 24)
                             .padding(8)
                     }
-                    .visibility(EVMAccountManager.shared.openEVM ? .visible : .gone)
+                    .visibility(vm.showMoveAsset ? .visible : .gone)
                     
                     Button {
                         Router.route(to: RouteMap.Wallet.transactionList(nil))
