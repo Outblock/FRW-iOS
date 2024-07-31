@@ -77,6 +77,14 @@ struct MoveNFTsView:  RouteableView,PresentActionDelegate {
                     .frame(width: 24, height: 24)
                 accountInfo(isFirst: false)
                     .frame(maxWidth: .infinity)
+                    .onTapGesture {
+                        let model = MoveAccountsViewModel(selected: viewModel.toContact.address ?? "") { contact in
+                            if let contact = contact {
+                                viewModel.updateToContact(contact)
+                            }
+                        }
+                        Router.route(to: RouteMap.Wallet.chooseChild(model))
+                    }
             }
         }
     }
