@@ -350,11 +350,12 @@ struct WalletHomeView: View {
     
     @ViewBuilder
     func WalletInfo() -> some View {
-        VStack {
+        VStack(spacing: 8) {
             HStack(spacing: 16) {
                 Text(vm.isHidden ? "****" : "\(CurrencyCache.cache.currencySymbol) \(vm.balance.formatCurrencyString(considerCustomCurrency: true))")
                     .font(.montserrat(size: 30, weight: .bold))
                     .foregroundStyle(Color.Theme.Text.black)
+                Spacer()
                 
                 Button {
                     vm.toggleHiddenStatusAction()
@@ -367,10 +368,18 @@ struct WalletHomeView: View {
                         .frame(width: 16, height: 16)
                 }
                 .frame(width: 32, height: 32)
-                .background(.Theme.Background.grey)
                 .cornerRadius(16)
                 .clipped()
                 
+            }
+            
+            HStack {
+                
+                Text(WalletManager.shared.selectedAccountAddress)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                    .font(.montserrat(size: 18))
+                    .foregroundStyle(Color.Theme.Text.black3)
                 Spacer()
                 
                 Button {
@@ -381,15 +390,15 @@ struct WalletHomeView: View {
                             .resizable()
                             .renderingMode(.template)
                             .foregroundColor(Color.Theme.Text.black3)
-                            .frame(width: 16, height: 16)
+                            .frame(width: 24, height: 24)
                     }
                     .frame(width: 32, height: 32)
-                    .background(Color.Theme.Background.grey)
                     .cornerRadius(16)
                 }
             }
             
             walletActionBar()
+                .padding(.top, 16)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 24)
