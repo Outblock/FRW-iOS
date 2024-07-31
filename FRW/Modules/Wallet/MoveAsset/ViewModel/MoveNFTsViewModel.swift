@@ -60,6 +60,9 @@ class MoveNFTsViewModel: ObservableObject {
         }
     }
     
+    func updateToContact(_ contact: Contact) {
+        self.toContact = contact
+    }
     
     func moveAction() {
         guard let collection = selectedCollection else {
