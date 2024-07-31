@@ -12,8 +12,9 @@ import Kingfisher
 struct MoveSingleNFTView: View {
     @StateObject var viewModel: MoveSingleNFTViewModel
     
-    init(nft: NFTModel, callback: @escaping ()->()) {
-        _viewModel = StateObject(wrappedValue: MoveSingleNFTViewModel(nft: nft, callback: callback))
+    
+    init(nft: NFTModel, fromChildAccount: ChildAccount? = nil,callback: @escaping ()->()) {
+        _viewModel = StateObject(wrappedValue: MoveSingleNFTViewModel(nft: nft, fromChildAccount: fromChildAccount ,callback: callback))
     }
     
     var body: some View {

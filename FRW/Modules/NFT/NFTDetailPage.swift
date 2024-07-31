@@ -59,13 +59,13 @@ struct NFTDetailPage: RouteableView {
 
     var player = AVPlayer()
     
-    @State var fromLinkedAccount = false
+    var fromChildAccount: ChildAccount?
     
 
-    init(viewModel: NFTTabViewModel, nft: NFTModel, from LinkedAccount: Bool = false) {
+    init(viewModel: NFTTabViewModel, nft: NFTModel, from childAccount: ChildAccount? = nil) {
         _viewModel = StateObject(wrappedValue: viewModel)
         _vm = StateObject(wrappedValue: NFTDetailPageViewModel(nft: nft))
-        fromLinkedAccount = LinkedAccount
+        fromChildAccount = childAccount
     }
     
     var body: some View {
@@ -260,7 +260,7 @@ struct NFTDetailPage: RouteableView {
                 }
             }
             .halfSheet(showSheet: $vm.isPresentMove) {
-                MoveSingleNFTView(nft: vm.nft) {
+                MoveSingleNFTView(nft: vm.nft,fromChildAccount: fromChildAccount) {
                     withAnimation {
                         vm.isPresentMove = false
                     }
@@ -281,7 +281,7 @@ struct NFTDetailPage: RouteableView {
                 
                 
                 Button {
-                    vm.sendNFTAction()
+                    vm.sendNFTAction(fromChildAccount: fromChildAccount)
                 } label: {
                     HStack {
                         Image(systemName: "paperplane")

@@ -243,10 +243,17 @@ extension AddressBookView {
                         }
                         
                     case .domain:
-                        Image(contact.localAvatar ?? "")
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 48, height: 48)
+                        if let localAvatar = contact.localAvatar {
+                            Image(localAvatar)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 48, height: 48)
+                        }else {
+                            Text(String((contact.contactName?.first ?? "A").uppercased()))
+                                .foregroundColor(.Theme.Accent.grey)
+                                .font(.inter(size: 24, weight: .semibold))
+                        }
+                        
                     default:
                         Text(String((contact.contactName?.first ?? "A").uppercased()))
                             .foregroundColor(.Theme.Accent.grey)

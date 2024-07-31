@@ -20,9 +20,12 @@ class NFTTransferViewModel: ObservableObject {
     
     private var isRequesting: Bool = false
     
-    init(nft: NFTModel, targetContact: Contact) {
+    var fromChildAccount: ChildAccount? = nil
+    
+    init(nft: NFTModel, targetContact: Contact, fromChildAccount: ChildAccount? = nil) {
         self.nft = nft
         self.targetContact = targetContact
+        self.fromChildAccount = fromChildAccount
         checkNFTReachable()
         NotificationCenter.default.addObserver(self, selector: #selector(onHolderChanged(noti:)), name: .transactionStatusDidChanged, object: nil)
     }
@@ -33,7 +36,10 @@ class NFTTransferViewModel: ObservableObject {
     
     var fromTargetContent: Contact {
         
-        if let account = EVMAccountManager.shared.selectedAccount {
+        if let account = fromChildAccount {
+            let contact = Contact(address: account.showAddress, avatar: account.icon, contactName: account.aName, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName)
+            return contact
+        }else if let account = EVMAccountManager.shared.selectedAccount {
             let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
             let contact = Contact(address: account.showAddress, avatar: nil, contactName: user.name, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName,user: user)
             return contact
@@ -104,8 +110,11 @@ class NFTTransferViewModel: ObservableObject {
         
         Task {
             do {
-                let fromAccountType = WalletManager.shared.isSelectedEVMAccount ? AccountType.coa
+                var fromAccountType = WalletManager.shared.isSelectedEVMAccount ? AccountType.coa
                 : (ChildAccountManager.shared.selectedChildAccount == nil ? AccountType.flow : AccountType.linked)
+                if fromChildAccount != nil {
+                    fromAccountType = .linked
+                }
                 
                 var toAccountType = toAddress.isEVMAddress ? AccountType.coa : AccountType.flow
                 if toAccountType == .flow {
@@ -196,17 +205,19 @@ class NFTTransferViewModel: ObservableObject {
                           let collection = nft.collection,
                           let identifier = nft.infoFromCollection?.collectionData.privatePath?.identifier
                     else { throw NFTError.sendInvalidAddress }
+                    let childAddr = fromChildAccount?.addr ?? currentAddress
                     if toAddress == primaryAddress {
-                        tid = try await FlowNetwork.moveNFTToParent(nftId: nftId, childAddress: currentAddress, identifier: identifier, collection: collection)
+                        tid = try await FlowNetwork.moveNFTToParent(nftId: nftId, childAddress: childAddr, identifier: identifier, collection: collection)
                     }else {
-                        tid = try await FlowNetwork.sendChildNFT(nftId: nftId, childAddress: currentAddress,toAddress: toAddress, identifier: identifier, collection: collection)
+                        tid = try await FlowNetwork.sendChildNFT(nftId: nftId, childAddress: childAddr,toAddress: toAddress, identifier: identifier, collection: collection)
                     }
                 case (.linked, .linked):
                     guard let nftId = UInt64(nft.response.id),
                           let collection = nft.collection,
                           let identifier = nft.infoFromCollection?.collectionData.privatePath?.identifier
                     else { throw NFTError.sendInvalidAddress }
-                    tid = try await FlowNetwork.sendChildNFT(nftId: nftId, childAddress: currentAddress,toAddress: toAddress, identifier: identifier, collection: collection)
+                    let childAddr = fromChildAccount?.addr ?? currentAddress
+                    tid = try await FlowNetwork.sendChildNFT(nftId: nftId, childAddress: childAddr,toAddress: toAddress, identifier: identifier, collection: collection)
                 default:
                     failedBlock()
                     return
@@ -247,8 +258,8 @@ class NFTTransferViewModel: ObservableObject {
 struct NFTTransferView: View {
     @StateObject var vm: NFTTransferViewModel
     
-    init(nft: NFTModel, target: Contact) {
-        _vm = StateObject(wrappedValue: NFTTransferViewModel(nft: nft, targetContact: target))
+    init(nft: NFTModel, target: Contact, fromChildAccount: ChildAccount? = nil) {
+        _vm = StateObject(wrappedValue: NFTTransferViewModel(nft: nft, targetContact: target, fromChildAccount: fromChildAccount))
     }
     
     var body: some View {

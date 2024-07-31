@@ -45,13 +45,13 @@ class NFTDetailPageViewModel: ObservableObject {
         updateSendButton()
     }
     
-    func sendNFTAction() {
+    func sendNFTAction(fromChildAccount: ChildAccount? = nil) {
         Router.route(to: RouteMap.AddressBook.pick({ [weak self] contact in
             Router.dismiss(animated: true) {
                 guard let self = self else {
                     return
                 }
-                Router.route(to: RouteMap.NFT.send(self.nft, contact))
+                Router.route(to: RouteMap.NFT.send(self.nft, contact, fromChildAccount))
             }
         }))
     }

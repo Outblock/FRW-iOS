@@ -464,11 +464,11 @@ extension RouteMap.PinCode: RouterTarget {
 
 extension RouteMap {
     enum NFT {
-        case detail(NFTTabViewModel, NFTModel, Bool)
+        case detail(NFTTabViewModel, NFTModel, ChildAccount?)
         case collection(NFTTabViewModel, CollectionItem)
-        case collectionDetail(String, String, Bool)
+        case collectionDetail(String, String, ChildAccount)
         case addCollection
-        case send(NFTModel, Contact)
+        case send(NFTModel, Contact, ChildAccount?)
         case AR(UIImage)
         case selectCollection(SelectCollectionViewModel)
     }
@@ -477,16 +477,16 @@ extension RouteMap {
 extension RouteMap.NFT: RouterTarget {
     func onPresent(navi: UINavigationController) {
         switch self {
-        case .detail(let vm, let nft, let fromLinkedAccount):
-            navi.push(content: NFTDetailPage(viewModel: vm, nft: nft, from: fromLinkedAccount))
+        case .detail(let vm, let nft, let childAccount):
+            navi.push(content: NFTDetailPage(viewModel: vm, nft: nft, from: childAccount))
         case .collection(let vm, let collection):
             navi.push(content: NFTCollectionListView(viewModel: vm, collection: collection))
-        case .collectionDetail(let addr, let path, let fromLinkedAccount):
-            navi.push(content: NFTCollectionListView(address: addr, path: path, from: fromLinkedAccount))
+        case .collectionDetail(let addr, let path, let childAccount):
+            navi.push(content: NFTCollectionListView(address: addr, path: path, from: childAccount))
         case .addCollection:
             navi.push(content: NFTAddCollectionView())
-        case .send(let nft, let contact):
-            let vc = CustomHostingController(rootView: NFTTransferView(nft: nft, target: contact))
+        case .send(let nft, let contact, let childAccount):
+            let vc = CustomHostingController(rootView: NFTTransferView(nft: nft, target: contact, fromChildAccount: childAccount))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .AR:
             print("")

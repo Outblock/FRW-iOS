@@ -82,10 +82,17 @@ struct WalletSendAmountView: RouteableView {
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 44, height: 44)
                     } else if vm.targetContact.needShowLocalAvatar {
-                        Image(vm.targetContact.localAvatar ?? "")
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 44, height: 44)
+                        if let localAvatar = vm.targetContact.localAvatar {
+                            Image(vm.targetContact.localAvatar ?? "")
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 44, height: 44)
+                        }else {
+                            Text(String((vm.targetContact.contactName?.first ?? "A").uppercased()))
+                                .foregroundColor(.Theme.Accent.grey)
+                                .font(.inter(size: 24, weight: .semibold))
+                        }
+                        
                     } else {
                         if let contactType = vm.targetContact.contactType, let contactName = vm.targetContact.contactName, contactType == .external, contactName.isFlowOrEVMAddress {
                             Text("0x")
@@ -399,10 +406,17 @@ extension WalletSendAmountView {
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 44, height: 44)
                     } else if contact.needShowLocalAvatar {
-                        Image(contact.localAvatar ?? "")
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 44, height: 44)
+                        if let localAvatar = contact.localAvatar {
+                            Image(localAvatar)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 44, height: 44)
+                        }else {
+                            Text(String((contact.contactName?.first ?? "A").uppercased()))
+                                .foregroundColor(.Theme.Accent.grey)
+                                .font(.inter(size: 24, weight: .semibold))
+                        }
+                        
                     } else {
                         if let contactType = vm.targetContact.contactType, let contactName = vm.targetContact.contactName, contactType == .external, contactName.isFlowOrEVMAddress {
                             Text("0x")

@@ -11,6 +11,7 @@ import Flow
 
 class MoveSingleNFTViewModel: ObservableObject {
     var nft: NFTModel
+    var fromChildAccount: ChildAccount?
     var callback: ()->()
     
     @Published var fromContact: Contact = Contact(address: "", avatar: "", contactName: "", contactType: nil, domain: nil, id: -1, username: nil)
@@ -19,8 +20,9 @@ class MoveSingleNFTViewModel: ObservableObject {
     
     var accountCount: Int = 0
     
-    init(nft: NFTModel, callback: @escaping ()->()) {
+    init(nft: NFTModel, fromChildAccount: ChildAccount? = nil, callback: @escaping ()->()) {
         self.nft = nft
+        self.fromChildAccount = fromChildAccount
         self.callback = callback
         loadUserInfo()
         
@@ -32,7 +34,9 @@ class MoveSingleNFTViewModel: ObservableObject {
         guard let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress() else {
             return
         }
-        if let account = ChildAccountManager.shared.selectedChildAccount {
+        if let account = self.fromChildAccount {
+            fromContact = Contact(address: account.showAddress, avatar: account.icon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName,walletType: .link)
+        }else if let account = ChildAccountManager.shared.selectedChildAccount {
             fromContact = Contact(address: account.showAddress, avatar: account.icon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName,walletType: .link)
         }else if let account = EVMAccountManager.shared.selectedAccount {
             let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
@@ -43,7 +47,7 @@ class MoveSingleNFTViewModel: ObservableObject {
         }
         
         
-        if ChildAccountManager.shared.selectedChildAccount != nil || EVMAccountManager.shared.selectedAccount != nil {
+        if ChildAccountManager.shared.selectedChildAccount != nil || EVMAccountManager.shared.selectedAccount != nil || fromChildAccount != nil  {
             let user = WalletManager.shared.walletAccount.readInfo(at: primaryAddr)
             toContact = Contact(address: primaryAddr, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: user.name,user: user ,walletType: .flow)
         }else if let account = EVMAccountManager.shared.accounts.first {

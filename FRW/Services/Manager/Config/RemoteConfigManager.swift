@@ -99,7 +99,7 @@ class RemoteConfigManager {
                 if  let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
                     let version = EVNConfig?.version
                 {
-                    if version.compareVersion(to: currentVersion) != .orderedAscending {
+                    if version.compareVersion(to: currentVersion) == .orderedDescending {
                         self.config = self.EVNConfig?.prod
                     }
                 }
@@ -111,7 +111,7 @@ class RemoteConfigManager {
                 try loadLocalConfig()
             }
             self.contractAddress = try FirebaseConfig.contractAddress.fetch(decoder: JSONDecoder())
-            try handleSecret()
+//            try handleSecret()
         } catch {
             do {
                 log.warning("will load from local")

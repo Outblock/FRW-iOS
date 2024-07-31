@@ -584,7 +584,7 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
         
         if !dataModel.isCollectionListStyle, let nftList = dataModel.selectedCollectionItem?.nfts, indexPath.item < nftList.count {
             let nft = nftList[indexPath.item]
-            Router.route(to: RouteMap.NFT.detail(vm, nft,false))
+            Router.route(to: RouteMap.NFT.detail(vm, nft, nil))
             return
         }
         

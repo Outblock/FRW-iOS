@@ -390,9 +390,8 @@ struct ChildAccountDetailView: RouteableView {
             ForEach(vm.accessibleItems.indices, id: \.self) { idx in
                 AccessibleItemView(item: vm.accessibleItems[idx]) { item in
                     if let collectionInfo = item as? FlowModel.NFTCollection, let addr = vm.childAccount.addr, collectionInfo.idList.count > 0 {
-                        Router.route(to: RouteMap.NFT.collectionDetail( addr, collectionInfo.id, true))
+                        Router.route(to: RouteMap.NFT.collectionDetail( addr, collectionInfo.id, vm.childAccount))
                     }
-                    
                 }
             }
             .mockPlaceholder(vm.isLoading)
