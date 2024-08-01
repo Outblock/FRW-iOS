@@ -297,8 +297,8 @@ extension MoveNFTsViewModel {
                     })
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 32, height: 32)
-                    .cornerRadius(16)
+                    .frame(width: 20, height: 20)
+                    .cornerRadius(10)
             }
         }
         

@@ -29,7 +29,7 @@ struct MoveNFTsView:  RouteableView,PresentActionDelegate {
     @StateObject var viewModel = MoveNFTsViewModel()
     
     private let columns = [
-            GridItem(.adaptive(minimum: 110), spacing: 4)
+            GridItem(.adaptive(minimum: 110, maximum: 125), spacing: 4)
         ]
     
     var body: some View {
@@ -98,24 +98,35 @@ struct MoveNFTsView:  RouteableView,PresentActionDelegate {
     
     @ViewBuilder
     func accountInfo(isFirst: Bool) -> some View {
-        VStack(alignment: .leading) {
-            HStack(spacing: 0) {
-                viewModel.accountIcon(isFirst: isFirst)
-                    .padding(.trailing, 4)
-                Text(viewModel.accountName(isFirst: isFirst))
-                    .font(.inter(size: 14))
-                    .foregroundStyle(Color.Theme.Text.black)
-                    .padding(.trailing, 8)
-                EVMTagView()
-                    .visibility(viewModel.showEVMTag(isFirst: isFirst) ? .visible : .gone)
-                Spacer()
+        HStack {
+            VStack(alignment: .leading) {
+                HStack(spacing: 0) {
+                    viewModel.accountIcon(isFirst: isFirst)
+                        .padding(.trailing, 4)
+                    Text(viewModel.accountName(isFirst: isFirst))
+                        .font(.inter(size: 14))
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        .foregroundStyle(Color.Theme.Text.black)
+                        .padding(.trailing, 8)
+                    EVMTagView()
+                        .visibility(viewModel.showEVMTag(isFirst: isFirst) ? .visible : .gone)
+                    Spacer()
+                    
+                    
+                }
+                
+                Text(viewModel.accountAddress(isFirst: isFirst))
+                    .font(.inter(size: 12))
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                    .foregroundStyle(Color.Theme.Text.black8)
             }
             
-            Text(viewModel.accountAddress(isFirst: isFirst))
-                .font(.inter(size: 12))
-                .lineLimit(1)
-                .truncationMode(.middle)
-                .foregroundStyle(Color.Theme.Text.black8)
+            Image("icon-arrow-bottom")
+                .resizable()
+                .frame(width: 12, height: 8)
+                .visibility(isFirst ? .gone : .visible)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
@@ -233,11 +244,13 @@ extension MoveNFTsView {
                             .resizable()
                     })
                     .resizable()
-                    .aspectRatio(contentMode: .fill)
+                    .aspectRatio(1, contentMode: .fill)
                     .padding(1)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .aspectRatio(1, contentMode: .fit)
+            .cornerRadius(16)
+            .clipped()
             .overlay(alignment: .topTrailing) {
                 ZStack(alignment: .topTrailing) {
                     RoundedRectangle(cornerRadius: 16)

@@ -351,62 +351,69 @@ struct WalletHomeView: View {
     @ViewBuilder
     func WalletInfo() -> some View {
         VStack(spacing: 8) {
-            HStack(spacing: 16) {
-                Text(vm.isHidden ? "****" : "\(CurrencyCache.cache.currencySymbol) \(vm.balance.formatCurrencyString(considerCustomCurrency: true))")
-                    .font(.montserrat(size: 30, weight: .bold))
-                    .foregroundStyle(Color.Theme.Text.black)
-                Spacer()
-                
-                Button {
-                    vm.toggleHiddenStatusAction()
-                } label: {
-                    Image(vm.isHidden ? "icon-wallet-hidden-on" : "icon-wallet-hidden-off")
-                        .resizable()
-                        .renderingMode(.template)
-                        .aspectRatio(contentMode: .fill)
-                        .foregroundColor(Color.Theme.Text.black3)
-                        .frame(width: 16, height: 16)
-                }
-                .frame(width: 32, height: 32)
-                .cornerRadius(16)
-                .clipped()
-                
-            }
-            
-            HStack {
-                
-                Text(WalletManager.shared.selectedAccountAddress)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                    .font(.montserrat(size: 18))
-                    .foregroundStyle(Color.Theme.Text.black3)
-                Spacer()
-                
-                Button {
-                    vm.copyAddressAction()
-                } label: {
-                    HStack {
-                        Image("icon-address-copy")
+            VStack(spacing: 4) {
+                HStack() {
+                    Text(vm.isHidden ? "****" : "\(CurrencyCache.cache.currencySymbol) \(vm.balance.formatCurrencyString(considerCustomCurrency: true))")
+                        .font(.montserrat(size: 30, weight: .bold))
+                        .foregroundStyle(Color.Theme.Text.black)
+                    
+                    Spacer()
+                    
+                    Button {
+                        vm.toggleHiddenStatusAction()
+                    } label: {
+                        Image(vm.isHidden ? "icon-wallet-hidden-on" : "icon-wallet-hidden-off")
                             .resizable()
                             .renderingMode(.template)
+                            .aspectRatio(contentMode: .fill)
                             .foregroundColor(Color.Theme.Text.black3)
                             .frame(width: 24, height: 24)
+                            .padding(4)
                     }
-                    .frame(width: 32, height: 32)
-                    .cornerRadius(16)
+                    .clipped()
                 }
+                .frame(height: 44)
+                
+                HStack {
+                    
+                    Text(WalletManager.shared.selectedAccountAddress)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        .font(.inter(size: 14, weight: .semibold))
+                        .foregroundStyle(Color.Theme.Text.black3)
+                    Spacer()
+                    
+                    Button {
+                        vm.copyAddressAction()
+                    } label: {
+                        HStack {
+                            Image("icon-address-copy")
+                                .resizable()
+                                .renderingMode(.template)
+                                .foregroundColor(Color.Theme.Text.black3)
+                                .frame(width: 24, height: 24)
+                                .padding(4)
+                        }
+                    }
+                }
+                .frame(height: 44)
+                .padding(.bottom, 12)
             }
+            .padding(.top, 18)
+            .padding(.horizontal, 24)
+            .background(Color.Theme.Background.bg3)
             
             walletActionBar()
                 .padding(.top, 16)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 20)
+                .background(.Theme.Background.white)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 24)
         .overlay(alignment: .top) {
             IndicatorBar()
                 .offset(y: -12)
         }
-        .background(.Theme.Background.white)
+        
     }
     
     private func walletActionBar() -> some View {
@@ -498,8 +505,8 @@ struct WalletHomeView: View {
     }
 }
 
-private let CoinIconHeight: CGFloat = 43
-private let CoinCellHeight: CGFloat = 72
+private let CoinIconHeight: CGFloat = 44
+private let CoinCellHeight: CGFloat = 76
 
 extension WalletHomeView {
     struct CoinCell: View {
@@ -603,6 +610,9 @@ extension WalletHomeView {
                 .padding(.leading, 19)
                 .visibility(coin.token.isFlowCoin && stakingManager.isStaked ? .visible : .gone)
             }
+            .padding(.horizontal, 16)
+            .background(Color.Theme.Background.bg2)
+            .cornerRadius(16)
         }
     }
 }

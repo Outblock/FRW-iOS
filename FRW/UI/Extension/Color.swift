@@ -228,6 +228,9 @@ extension Color {
             static let pureWhite = Color("bg.0")
             ///icon
             static let icon = Color("bg.icon.black")
+            
+            static let bg2 = Color("BG.2")
+            static let bg3 = Color("BG.3")
         }
 
         enum Line {
