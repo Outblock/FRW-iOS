@@ -183,6 +183,11 @@ extension CadenceModel {
         let checkChildLinkedCollections: String?
         let batchTransferChildNFT: String?
         let batchTransferNFTToChild: String?
+        /// child to child
+        let batchSendChildNFTToChild: String?
+        /// send NFT from child to child
+        let sendChildNFTToChild: String?
+        
     }
     
     struct Staking: Codable {

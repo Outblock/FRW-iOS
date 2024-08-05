@@ -128,7 +128,6 @@ class NFTTransferViewModel: ObservableObject {
                     toAccountType = .eoa
                 }
                 
-                let isLinkedAccount = ChildAccountManager.shared.selectedChildAccount != nil
                 
                 var tid: Flow.ID?
                 switch (fromAccountType, toAccountType) {
@@ -217,7 +216,7 @@ class NFTTransferViewModel: ObservableObject {
                           let identifier = nft.infoFromCollection?.collectionData.privatePath?.identifier
                     else { throw NFTError.sendInvalidAddress }
                     let childAddr = fromChildAccount?.addr ?? currentAddress
-                    tid = try await FlowNetwork.sendChildNFT(nftId: nftId, childAddress: childAddr,toAddress: toAddress, identifier: identifier, collection: collection)
+                    tid = try await FlowNetwork.sendChildNFTToChild(nftId: nftId, childAddress: childAddr,toAddress: toAddress, identifier: identifier, collection: collection)
                 default:
                     failedBlock()
                     return

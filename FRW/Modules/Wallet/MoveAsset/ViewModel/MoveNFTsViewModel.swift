@@ -97,7 +97,10 @@ class MoveNFTsViewModel: ObservableObject {
                     if let coll = collection as? NFTCollection, let identifier = coll.collection.path.privatePath {
                         tid = try await FlowNetwork.batchMoveNFTToParent(childAddr: fromContact.address ?? "", identifier: identifier, ids: ids, collection: coll.collection)
                     }
-                    
+                case (.link, .link):
+                    if let coll = collection as? NFTCollection, let identifier = coll.collection.path.privatePath {
+                        tid = try await FlowNetwork.batchSendChildNFTToChild(fromAddress: fromContact.address ?? "", toAddress: toContact.address ?? "", identifier: identifier, ids: ids, collection: coll.collection)
+                    }
                 default:
                     HUD.info(title: "Feature_Coming_Soon::message".localized)
                 }

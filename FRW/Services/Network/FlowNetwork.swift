@@ -829,6 +829,14 @@ extension FlowNetwork {
         let toAddr = Flow.Address(hex: toAddress)
         return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(childAddr), .address(toAddr), .string(identifier),.uint64(nftId) ])
     }
+    // Send NFT from child to child
+    static func sendChildNFTToChild(nftId: UInt64, childAddress: String, toAddress: String, identifier: String, collection: NFTCollectionInfo) async throws -> Flow.ID {
+        let accessible = CadenceManager.shared.current.hybridCustody?.sendChildNFTToChild?.toFunc() ?? ""
+        let cadenceString = collection.formatCadence(script: accessible)
+        let childAddr = Flow.Address(hex: childAddress)
+        let toAddr = Flow.Address(hex: toAddress)
+        return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(childAddr), .address(toAddr), .string(identifier),.uint64(nftId) ])
+    }
     
     static func linkedAccountEnabledTokenList(address: String) async throws -> [String: Bool] {
         let cadence = CadenceManager.shared.current.ft?.isLinkedAccountTokenListEnabled?.toFunc() ?? ""
@@ -868,13 +876,20 @@ extension FlowNetwork {
         let cadenceString = collection.formatCadence(script: accessible)
         let childAddress = Flow.Address(hex: address)
         let idMaped = ids.map { Flow.Cadence.FValue.uint64($0) }
-        var ident = identifier.split(separator: "/").last.map { String($0) } ?? identifier
-        
-//        if let lastIden = identifier.split(separator: "/").last {
-//            ident = String(lastIden)
-//        }
+        let ident = identifier.split(separator: "/").last.map { String($0) } ?? identifier
         
         return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(childAddress), .string(ident),.array(idMaped)])
+    }
+    
+    static func batchSendChildNFTToChild(fromAddress: String, toAddress: String,identifier: String, ids: [UInt64], collection: NFTCollectionInfo) async throws -> Flow.ID {
+        let accessible = CadenceManager.shared.current.hybridCustody?.batchSendChildNFTToChild?.toFunc() ?? ""
+        let cadenceString = collection.formatCadence(script: accessible)
+        let fromAddr = Flow.Address(hex: fromAddress)
+        let toAddr = Flow.Address(hex: toAddress)
+        let idMaped = ids.map { Flow.Cadence.FValue.uint64($0) }
+        let ident = identifier.split(separator: "/").last.map { String($0) } ?? identifier
+        
+        return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(fromAddr),.address(toAddr) ,.string(ident),.array(idMaped)])
     }
 }
 
