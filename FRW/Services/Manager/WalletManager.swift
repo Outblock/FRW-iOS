@@ -368,6 +368,17 @@ extension WalletManager {
     func getBalance(bySymbol symbol: String) -> Double {
         return coinBalances[symbol] ?? coinBalances[symbol.lowercased()] ?? coinBalances[symbol.uppercased()] ?? 0
     }
+    
+    func currentContact() -> Contact {
+        let address = getWatchAddressOrChildAccountAddressOrPrimaryAddress()
+        var user: WalletAccount.User? = nil
+        if let addr = address {
+            user = WalletManager.shared.walletAccount.readInfo(at: addr)
+        }
+        
+        let contact = Contact(address: address, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: nil, user: user)
+        return contact
+    }
 }
 
 // MARK: - Server Wallet

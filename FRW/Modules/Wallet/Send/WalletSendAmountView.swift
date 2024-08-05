@@ -356,6 +356,22 @@ extension WalletSendAmountView {
     struct SendConfirmView: View {
         @EnvironmentObject var vm: WalletSendAmountViewModel
 
+        var fromTargetContent: Contact {
+            
+            if let account = EVMAccountManager.shared.selectedAccount {
+                let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
+                let contact = Contact(address: account.showAddress, avatar: nil, contactName: user.name, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName,user: user)
+                return contact
+            }
+            else if let account = ChildAccountManager.shared.selectedChildAccount {
+                
+                let contact = Contact(address: account.showAddress, avatar: account.icon, contactName: account.aName, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName)
+                return contact
+            }else {
+                return UserManager.shared.userInfo!.toContactWithCurrentUserAddress()
+            }
+        }
+        
         var body: some View {
             VStack {
                 SheetHeaderView(title: "confirmation".localized)
@@ -384,7 +400,7 @@ extension WalletSendAmountView {
 
         var fromToView: some View {
             HStack(spacing: 16) {
-                contactView(contact: UserManager.shared.userInfo!.toContactWithCurrentUserAddress())
+                contactView(contact: fromTargetContent)
                 Spacer()
                 contactView(contact: vm.targetContact)
             }
