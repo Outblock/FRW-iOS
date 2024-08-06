@@ -401,7 +401,9 @@ struct WalletHomeView: View {
             }
             .padding(.top, 18)
             .padding(.horizontal, 24)
-            .background(Color.Theme.Background.bg3)
+            .background(Color.Theme.Background.bg3.opacity(0.8))
+            .shadow(color: .black.opacity(0.06), radius: 6, x: 0, y: -5)
+
             
             walletActionBar()
                 .padding(.top, 16)
