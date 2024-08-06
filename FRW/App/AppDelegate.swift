@@ -43,12 +43,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         let _ = LocalEnvManager.shared
         
-#if DEBUG
+
         let console = ConsoleDestination()
+        let file = FileDestination()
         console.format = "$DHH:mm:ss.SSS$d $C$L$c $N.$F:$l - $M - $X"
-        log.addDestination(console)
         
-#endif
+        console.logPrintWay = .logger(subsystem: "Main", category: "UI")
+        log.addDestination(console)
+        log.addDestination(file)
+        
+        log.debug("[Log] filePath: \(String(describing: file.logFileURL))")
         
         FirebaseApp.configure()
         

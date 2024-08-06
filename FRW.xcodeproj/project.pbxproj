@@ -9205,7 +9205,7 @@
 			repositoryURL = "https://github.com/SwiftyBeaver/SwiftyBeaver";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				minimumVersion = 2.1.1;
 			};
 		};
 		6AC1AE67289BACDF00F76C7A /* XCRemoteSwiftPackageReference "SnapKit" */ = {
