@@ -110,20 +110,8 @@ extension StakeAmountViewModel {
     func inputTextDidChangeAction(text: String) {
         let filtered = text.filter {"0123456789.".contains($0)}
         
-        if filtered.contains(".") {
-            let splitted = filtered.split(separator: ".")
-            if splitted.count >= 2 {
-                let preDecimal = String(splitted[0])
-                let afterDecimal = String(splitted[1])
-                inputText = "\(preDecimal).\(afterDecimal)"
-            } else {
-                inputText = filtered
-            }
-        } else {
-            inputText = filtered
-        }
-        
-        inputTextNum = Double(inputText) ?? 0
+        inputText = text
+        inputTextNum = inputText.doubleValue 
         refreshState()
     }
     
