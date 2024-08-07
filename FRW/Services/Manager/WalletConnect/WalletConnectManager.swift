@@ -376,7 +376,7 @@ extension WalletConnectManager {
                     ]
                     
                     if let model = try? JSONDecoder().decode(BaseConfigRequest.self, from: data),
-                       let nonce = model.accountProofNonce,
+                       let nonce = model.accountProofNonce ?? model.nonce,
                        let appIdentifier = model.appIdentifier,
                        let data = self.encodeAccountProof(address: address, nonce: nonce, appIdentifier: appIdentifier),
                        let signedData = try? await WalletManager.shared.sign(signableData: data)

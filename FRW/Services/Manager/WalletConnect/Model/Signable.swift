@@ -558,10 +558,11 @@ extension Array where Element: Hashable {
 public struct BaseConfigRequest: Codable {
     var app: [String: String]?
     var service: [String: String]?
-    var client: ClientInfo
+    var client: ClientInfo?
 
     var appIdentifier: String?
     var accountProofNonce: String?
+    var nonce: String?
 }
 
 public struct ClientInfo: Codable {
