@@ -12,6 +12,7 @@ private let TimerDelay: TimeInterval = 0.4
 extension SwapViewModel {
     enum ErrorType {
         case none
+        case notNum
         case insufficientBalance
         
         var desc: String {
@@ -20,6 +21,8 @@ extension SwapViewModel {
                 return ""
             case .insufficientBalance:
                 return "insufficient_balance".localized
+            case .notNum:
+                return "Not a number"
             }
         }
     }
@@ -83,11 +86,11 @@ class SwapViewModel: ObservableObject {
     }
     
     var fromAmount: Double {
-        return Double(inputFromText) ?? 0
+        return inputFromText.doubleValue
     }
     
     var toAmount: Double {
-        return Double(inputToText) ?? 0
+        return inputToText.doubleValue
     }
     
     var fromTokenRate: Double {
@@ -199,6 +202,11 @@ extension SwapViewModel {
             return
         }
         
+        if !inputFromText.isNumber {
+            errorType = .notNum
+            return
+        }
+        
         if fromAmount > WalletManager.shared.getBalance(bySymbol: fromTokenSymbol) {
             errorType = .insufficientBalance
         } else {
@@ -215,19 +223,19 @@ extension SwapViewModel {
         
         let filtered = text.filter {"0123456789.".contains($0)}
         
-        if filtered.contains(".") {
-            let splitted = filtered.split(separator: ".")
-            if splitted.count >= 2 {
-                let preDecimal = String(splitted[0])
-                let afterDecimal = String(splitted[1])
-                inputFromText = "\(preDecimal).\(afterDecimal)"
-            } else {
-                inputFromText = filtered
-            }
-        } else {
-            inputFromText = filtered
-        }
-        
+//        if filtered.contains(".") {
+//            let splitted = filtered.split(separator: ".")
+//            if splitted.count >= 2 {
+//                let preDecimal = String(splitted[0])
+//                let afterDecimal = String(splitted[1])
+//                inputFromText = "\(preDecimal).\(afterDecimal)"
+//            } else {
+//                inputFromText = filtered
+//            }
+//        } else {
+//            inputFromText = filtered
+//        }
+        inputFromText = filtered
         oldInputFromText = inputFromText
         refreshInput()
         requestEstimate(isFromInput: true)
@@ -239,20 +247,21 @@ extension SwapViewModel {
         }
         
         let filtered = text.filter {"0123456789.".contains($0)}
+//        
+//        if filtered.contains(".") {
+//            let splitted = filtered.split(separator: ".")
+//            if splitted.count >= 2 {
+//                let preDecimal = String(splitted[0])
+//                let afterDecimal = String(splitted[1])
+//                inputToText = "\(preDecimal).\(afterDecimal)"
+//            } else {
+//                inputToText = filtered
+//            }
+//        } else {
+//            inputToText = filtered
+//        }
         
-        if filtered.contains(".") {
-            let splitted = filtered.split(separator: ".")
-            if splitted.count >= 2 {
-                let preDecimal = String(splitted[0])
-                let afterDecimal = String(splitted[1])
-                inputToText = "\(preDecimal).\(afterDecimal)"
-            } else {
-                inputToText = filtered
-            }
-        } else {
-            inputToText = filtered
-        }
-        
+        inputToText = filtered
         oldInputToText = inputToText
         refreshInput()
         requestEstimate(isFromInput: false)

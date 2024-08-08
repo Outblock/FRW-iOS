@@ -147,7 +147,7 @@ extension SwapView {
             vm.selectTokenAction(isFrom: true)
         } label: {
             HStack(spacing: 0) {
-                KFImage.url(vm.fromToken?.icon)
+                KFImage.url(vm.fromToken?.iconURL)
                     .placeholder({
                         Image("placeholder-swap-token")
                             .resizable()
@@ -235,7 +235,7 @@ extension SwapView {
             vm.selectTokenAction(isFrom: false)
         } label: {
             HStack(spacing: 0) {
-                KFImage.url(vm.toToken?.icon)
+                KFImage.url(vm.toToken?.iconURL)
                     .placeholder({
                         Image("placeholder-swap-token")
                             .resizable()
