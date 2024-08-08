@@ -9,7 +9,7 @@ import SwiftUI
 
 class CadenceManager {
     static let shared = CadenceManager()
-    private let localVersion = "1.73"
+    private let localVersion = "1.77"
     
     var version: String = ""
     var scripts: CadenceScript!
@@ -308,10 +308,18 @@ public extension String {
     }
     
     func toFunc() -> String {
-        guard let result = fromBase64() else {
+        guard let decodeStr = fromBase64() else {
             log.error("[Cadence] base decode failed")
             return ""
         }
+        
+        let result = decodeStr.replacingOccurrences(of: "<platform_info>", with: platformInfo())
         return result
+    }
+    
+    private func platformInfo() -> String {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+        let buildVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
+        return "iOS-\(version)-\(buildVersion)"
     }
 }
