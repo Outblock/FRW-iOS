@@ -21,8 +21,14 @@ struct DeveloperModeView: RouteableView {
     @AppStorage("isDeveloperMode") private var isDeveloperMode = false
     @AppStorage("EVMEnable") private var isEVMEnable = false
     
+    @State private var openLogWindow = false
+    
     var title: String {
         return "developer_mode".localized
+    }
+    
+    init() {
+        openLogWindow = !(DebugViewer.shared.superview == nil || DebugViewer.shared.isHidden)
     }
     
     var body: some View {
@@ -164,7 +170,7 @@ struct DeveloperModeView: RouteableView {
                                     UserManager.shared.tryToRestoreOldAccountOnFirstLaunch()
                                 } label: {
                                     Text("Reload Local Profile")
-                                        .font(.inter(size: 14, weight: .medium))
+                                        .font(.inter(size: 17, weight: .medium))
                                         .foregroundStyle(Color.Theme.Text.black8)
                                 }
                                 Spacer()
@@ -200,31 +206,45 @@ struct DeveloperModeView: RouteableView {
                                 
                             }
                             
+                            
+                        }
+                        .background(.LL.bgForIcon)
+                    }
+                    .cornerRadius(16)
+                    
+                    Section() {
+                        VStack {
                             HStack {
-                                Text("Open Log View")
-                                    .font(.inter(size: 14, weight: .medium))
-                                    .foregroundStyle(Color.Theme.Text.black8)
-                                Spacer()
+                                
+                                Toggle(openLogWindow ? "Hide Log View" : "Open Log View",
+                                       isOn: $openLogWindow)
+                                    .toggleStyle(SwitchToggleStyle(tint: .LL.Primary.salmonPrimary))
+                                    .onChange(of: isDeveloperMode) { value in
+                                        if  !value {
+                                            walletManager.changeNetwork(.mainnet)
+                                        }
+                                    }
                             }
                             .frame(height: 64)
                             .padding(.horizontal, 16)
-                            .onTapGesture {
+                            .onChange(of: openLogWindow, perform: { value in
                                 if DebugViewer.shared.superview == nil {
-                                    DebugViewer.shared.show(theme: .light)
+                                    DebugViewer.shared.show(theme: .dark)
                                 }else {
                                     if DebugViewer.shared.isHidden {
-                                        DebugViewer.shared.show(theme: .light)
+                                        DebugViewer.shared.show(theme: .dark)
                                     }else {
                                         DebugViewer.shared.close()
                                     }
                                 }
-                                
-                                
-                            }
+                            })
+
+                            
+                            Divider()
                             
                             HStack {
                                 Text("Share Log File")
-                                    .font(.inter(size: 14, weight: .medium))
+                                    .font(.inter(size: 17, weight: .medium))
                                     .foregroundStyle(Color.Theme.Text.black8)
                                 Spacer()
                             }
@@ -238,12 +258,15 @@ struct DeveloperModeView: RouteableView {
                                 }else {
                                     HUD.error(title: "Don't find log file.")
                                 }
-                                
                             }
                         }
                         .background(.LL.bgForIcon)
+                        .cornerRadius(16)
+                    } header: {
+                        headView(title: "Log")
                     }
-                    .cornerRadius(16)
+                    
+                    
                 }
                 .padding(.horizontal, 18)
             }
@@ -252,6 +275,14 @@ struct DeveloperModeView: RouteableView {
             Color.LL.Neutrals.background.ignoresSafeArea()
         )
         .applyRouteable(self)
+    }
+    
+    private func headView(title: String) -> some View {
+        return Text(title)
+            .font(.LL.footnote)
+            .foregroundColor(.LL.Neutrals.neutrals3)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 12)
     }
 }
 

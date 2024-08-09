@@ -324,8 +324,11 @@ extension DebugViewer: UITableViewDataSource, UITableViewDelegate {
     }
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let item = items[section]
-        return item.showDetails ? 2 : 1
+        if items.count > section {
+            let item = items[section]
+            return item.showDetails ? 2 : 1
+        }
+        return 0
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

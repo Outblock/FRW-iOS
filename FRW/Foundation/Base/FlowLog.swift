@@ -61,7 +61,7 @@ extension FlowLog {
     func debug(_ message: @autoclosure () -> Any,
         file: String = #file, function: String = #function, line: Int = #line, context: Any? = nil) {
         SwiftyBeaver.custom(level: .debug, message: message(), file: file, function: function, line: line, context: context)
-        DebugViewer.shared.addViewModel(category: Category.debug.rawValue, viewModel: DebugViewModel(name: "verbose", detail: "\(message())"))
+        DebugViewer.shared.addViewModel(category: Category.debug.rawValue, viewModel: DebugViewModel(name: "\(message())", detail: " "))
     }
 
     /// log something which you are really interested but which is not an issue or error (normal priority)
@@ -69,7 +69,7 @@ extension FlowLog {
         file: String = #file, function: String = #function, line: Int = #line, context: Any? = nil) {
         
         SwiftyBeaver.custom(level: .info, message: message(), file: file, function: function, line: line, context: context)
-        DebugViewer.shared.addViewModel(category: Category.info.rawValue, viewModel: DebugViewModel(name: "info", detail: "\(message())"))
+        DebugViewer.shared.addViewModel(category: Category.info.rawValue, viewModel: DebugViewModel(name: "\(message())", detail: " "))
     }
 
     /// log something which may cause big trouble soon (high priority)
@@ -77,7 +77,7 @@ extension FlowLog {
         file: String = #file, function: String = #function, line: Int = #line, context: Any? = nil) {
 
         SwiftyBeaver.custom(level: .warning, message: message(), file: file, function: function, line: line, context: context)
-        DebugViewer.shared.addViewModel(category: Category.warning.rawValue, viewModel: DebugViewModel(name: "warning", detail: "\(message())"))
+        DebugViewer.shared.addViewModel(category: Category.warning.rawValue, viewModel: DebugViewModel(name: "\(message())", detail: " "))
     }
 
     /// log something which will keep you awake at night (highest priority)
@@ -85,7 +85,7 @@ extension FlowLog {
         file: String = #file, function: String = #function, line: Int = #line, context: Any? = nil) {
         
         SwiftyBeaver.custom(level: .error, message: message(), file: file, function: function, line: line, context: context)
-        DebugViewer.shared.addViewModel(category: Category.error.rawValue, viewModel: DebugViewModel(name: "error", detail: "\(message())"))
+        DebugViewer.shared.addViewModel(category: Category.error.rawValue, viewModel: DebugViewModel(name: "\(message())", detail: " "))
     }
 
 
