@@ -66,6 +66,7 @@ class BackupUploadViewModel: ObservableObject {
 
     @Published var process: BackupProcess = .idle
     @Published var hasError: Bool = false
+    @Published var mnemonicBlur: Bool = true
     
     var currentType: MultiBackupType = .google
     init(items: [MultiBackupType]) {
@@ -125,6 +126,10 @@ class BackupUploadViewModel: ObservableObject {
             Task {
                 do {
                     buttonState = .loading
+                    DispatchQueue.main.async {
+                        self.mnemonicBlur = true
+                    }
+                    
                     let result = try await MultiBackupManager.shared.registerKeyToChain(on: currentType)
                     if result {
                         toggleProcess(process: .upload)
@@ -155,8 +160,11 @@ class BackupUploadViewModel: ObservableObject {
                 do {
                     buttonState = .loading
                     try await MultiBackupManager.shared.syncKeyToServer(on: currentType)
+                    DispatchQueue.main.async {
+                        self.mnemonicBlur = false
+                    }
                     toggleProcess(process: .finish)
-                    onClickButton()
+//                    onClickButton()
                     buttonState = .enabled
                 } catch {
                     buttonState = .enabled

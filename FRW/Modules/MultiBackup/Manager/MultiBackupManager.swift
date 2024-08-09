@@ -39,6 +39,8 @@ class MultiBackupManager: ObservableObject {
     var backupType: BackupType = .undefined
     var backupList: [MultiBackupType] = []
     
+    @Published var mnemonic: String?
+    
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(onTransactionManagerChanged), name: .transactionManagerDidChanged, object: nil)
     }
@@ -78,6 +80,7 @@ extension MultiBackupManager {
 
 extension MultiBackupManager {
     func registerKeyToChain(on type: MultiBackupType) async throws -> Bool {
+        mnemonic = nil
         guard let username = UserManager.shared.userInfo?.username, !username.isEmpty else {
             throw BackupError.missingUserName
         }
@@ -93,6 +96,9 @@ extension MultiBackupManager {
         guard let hdWallet = WalletManager.shared.createHDWallet(), let mnemonicData = hdWallet.mnemonic.data(using: .utf8) else {
             HUD.error(title: "empty_wallet_key".localized)
             throw BackupError.missingMnemonic
+        }
+        if type == .phrase {
+            mnemonic = hdWallet.mnemonic
         }
         
         guard let pinCode = SecurityManager.shared.currentPinCode.toPassword() else {
