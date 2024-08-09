@@ -407,8 +407,8 @@ extension NFTUIKitCache {
                         self.saveCurrentFavToCache()
                         return
                     }
-                    
-                    let models = nfts.map { NFTModel($0, in: nil) }
+                    let filterNFTs = nfts.filter { $0.postMedia != nil }
+                    let models = filterNFTs.map { NFTModel($0, in: nil) }
                     self.favList = models
                     self.saveCurrentFavToCache()
                 }
