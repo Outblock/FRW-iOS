@@ -170,7 +170,7 @@ extension MultiBackupManager {
 // MARK: - Private,
 
 extension MultiBackupManager {
-    private func getTarget(with type: MultiBackupType) -> MultiBackupTarget {
+    func getTarget(with type: MultiBackupType) -> MultiBackupTarget {
         switch type {
         case .google:
             return gdTarget

@@ -55,6 +55,14 @@ struct BackupUploadView: RouteableView {
                 .padding(.top, 64)
                 .visibility(viewModel.showTimeline() ? .visible : .gone)
             
+            ScrollView(showsIndicators: false) {
+                VStack {
+                    ForEach(viewModel.items,id: \.self) { backupType in
+                        BackupedItemView(backupType: backupType)
+                    }
+                }
+            }
+            
             Spacer()
             
             VPrimaryButton(model: ButtonStyle.primary,
