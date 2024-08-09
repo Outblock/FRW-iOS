@@ -8,7 +8,14 @@
 import SwiftUI
 
 struct MultiBackupPhraseView: RouteableView {
-    @State var isBlur: Bool = true
+    
+    enum From {
+        case create
+        case backup
+    }
+    
+    @State var isBlur: Bool = false
+    var from: MultiBackupPhraseView.From = .backup
     var mnemonic: String
     private var dataSource: [WordListView.WordItem]
     init(mnemonic: String) {
@@ -74,9 +81,10 @@ struct MultiBackupPhraseView: RouteableView {
                             .onTapGesture {
                                 isBlur = true
                             }
+                            .visibility( from == .backup ? .gone : .visible )
                     }
                     .onTapGesture {
-                        isBlur.toggle()
+//                        isBlur.toggle()
                     }
                     .blur(radius: isBlur ? 10 : 0)
                     .padding(.vertical, 20)
@@ -144,6 +152,7 @@ struct MultiBackupPhraseView: RouteableView {
                            },
                            title: "next".localized)
             .padding(.bottom)
+            .visibility(from == .backup ? .gone : .visible )
         }
         
         .padding(.horizontal, 28)

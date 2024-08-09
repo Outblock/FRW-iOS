@@ -23,7 +23,6 @@ class MultiBackupPhraseTarget: MultiBackupTarget {
         let newList = try await MultiBackupManager.shared.addNewMnemonic(on: .phrase, list: list, password: password)
         if let model = newList.first {
             let mnemonic = try MultiBackupManager.shared.decryptMnemonic(model.data, password: password)
-//            Router.route(to: RouteMap.Backup.showPhrase(mnemonic))
         }
     }
     

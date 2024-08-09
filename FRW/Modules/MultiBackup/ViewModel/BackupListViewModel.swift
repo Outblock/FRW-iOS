@@ -171,11 +171,11 @@ extension BackupListViewModel {
             
             let validBackupList = allBackupList.filter { model in
                 
-                let flowAccount = account.keys.first { accountkey in
-                    model.pubkey.publicKey == accountkey.publicKey.description
+                let flowAccount = account.keys.last { accountkey in
+                    model.pubkey.publicKey == accountkey.publicKey.description && !accountkey.revoked
                 }
-                if let flowAccount = flowAccount {
-                    return !flowAccount.revoked
+                if flowAccount != nil {
+                    return true
                 }
                 return false
             }

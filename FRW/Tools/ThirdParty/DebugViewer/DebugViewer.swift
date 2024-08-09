@@ -302,7 +302,9 @@ public class DebugViewer: ResizableView {
         }
         DispatchQueue.main.async { [weak self] in
             self?.tableView.reloadData()
-            self?.collectionView.reloadSections(IndexSet(integer: 0))
+            if let count = self?.items.count, count > 1 {
+                self?.collectionView.reloadSections(IndexSet(integer: 0))
+            }
         }
     }
     
