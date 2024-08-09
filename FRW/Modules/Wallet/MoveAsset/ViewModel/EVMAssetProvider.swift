@@ -25,7 +25,7 @@ protocol CollectionMask {
 // MARK: NFTResponse
 extension NFTResponse: NFTMask {
     var maskLogo: String {
-        return thumbnail ?? ""
+        return cover() ?? thumbnail ?? ""
     }
     
     var maskId: String {
