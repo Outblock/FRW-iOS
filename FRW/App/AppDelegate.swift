@@ -24,7 +24,7 @@ import WalletConnectNotify
 import Atlantis
 #endif
 
-let log = SwiftyBeaver.self
+let log = FlowLog.shared
 
 @main
 class AppDelegate: NSObject, UIApplicationDelegate {
@@ -44,15 +44,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         let _ = LocalEnvManager.shared
         
 
-        let console = ConsoleDestination()
-        let file = FileDestination()
-        console.format = "$DHH:mm:ss.SSS$d $C$L$c $N.$F:$l - $M - $X"
-        
-        console.logPrintWay = .logger(subsystem: "Main", category: "UI")
-        log.addDestination(console)
-        log.addDestination(file)
-        
-        log.debug("[Log] filePath: \(String(describing: file.logFileURL))")
+       
         
         FirebaseApp.configure()
         

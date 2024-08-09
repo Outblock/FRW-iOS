@@ -197,6 +197,48 @@ struct DeveloperModeView: RouteableView {
                                 .onTapGesture {
                                     LocalUserDefaults.shared.showMoveAssetOnBrowser = true
                                 }
+                                
+                            }
+                            
+                            HStack {
+                                Text("Open Log View")
+                                    .font(.inter(size: 14, weight: .medium))
+                                    .foregroundStyle(Color.Theme.Text.black8)
+                                Spacer()
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+                            .onTapGesture {
+                                if DebugViewer.shared.superview == nil {
+                                    DebugViewer.shared.show(theme: .light)
+                                }else {
+                                    if DebugViewer.shared.isHidden {
+                                        DebugViewer.shared.show(theme: .light)
+                                    }else {
+                                        DebugViewer.shared.close()
+                                    }
+                                }
+                                
+                                
+                            }
+                            
+                            HStack {
+                                Text("Share Log File")
+                                    .font(.inter(size: 14, weight: .medium))
+                                    .foregroundStyle(Color.Theme.Text.black8)
+                                Spacer()
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+                            .onTapGesture {
+                                if let path = log.path {
+                                    let activityController = UIActivityViewController(activityItems: [path], applicationActivities: nil)
+                                    activityController.isModalInPresentation = true
+                                    UIApplication.shared.windows.first?.rootViewController?.present(activityController, animated: true, completion: nil)
+                                }else {
+                                    HUD.error(title: "Don't find log file.")
+                                }
+                                
                             }
                         }
                         .background(.LL.bgForIcon)

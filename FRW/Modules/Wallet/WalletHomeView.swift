@@ -12,6 +12,7 @@ import SPConfetti
 import SwiftUI
 import SwiftUIPager
 import SwiftUIX
+import LogView
 
 extension WalletHomeView: AppTabBarPageProtocol {
     static func tabTag() -> AppTabType {
@@ -42,6 +43,8 @@ struct WalletHomeView: View {
     
     private let scrollName: String = "WALLETSCROLL"
     
+    @State private var logViewPresented: Bool = false
+    
     var body: some View {
         GeometryReader { proxy in
             
@@ -60,7 +63,9 @@ struct WalletHomeView: View {
             })
             .navigationBarHidden(true)
             .ignoresSafeArea(.container, edges: .top)
+            
         }
+        
         
     }
     
@@ -350,7 +355,7 @@ struct WalletHomeView: View {
     
     @ViewBuilder
     func WalletInfo() -> some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 0) {
             VStack(spacing: 4) {
                 HStack() {
                     Text(vm.isHidden ? "****" : "\(CurrencyCache.cache.currencySymbol) \(vm.balance.formatCurrencyString(considerCustomCurrency: true))")
