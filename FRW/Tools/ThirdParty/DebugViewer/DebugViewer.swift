@@ -413,7 +413,11 @@ class DebugViewCell: UITableViewCell {
 
 extension DebugViewer: UICollectionViewDataSource {
     private func category(_ indexPath: IndexPath) -> String {
-        return Array(data.keys).sorted()[indexPath.item]
+        let list = Array(data.keys).sorted()
+        if list.count <= indexPath.item {
+            return "default"
+        }
+        return list[indexPath.item]
     }
     
     private func isCurrent(_ indexPath: IndexPath) -> Bool {
