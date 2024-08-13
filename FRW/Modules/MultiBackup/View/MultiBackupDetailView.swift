@@ -53,12 +53,12 @@ struct MultiBackupDetailView: RouteableView {
                 viewModel.onDisplayPharse()
             } label: {
                 Text("View Recovery Phrase".localized)
+                    .foregroundColor(Color.white)
+                    .font(.inter(size: 16, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 54)
                     .background(.Theme.Accent.green)
                     .cornerRadius(16)
-                    .foregroundColor(Color.white)
-                    .font(.inter(size: 16, weight: .semibold))
             }
             .padding(.horizontal, 18)
             .visibility(viewModel.showPhrase ? .visible : .gone)
@@ -70,9 +70,9 @@ struct MultiBackupDetailView: RouteableView {
                 Text("delete_backup".localized)
                     .frame(maxWidth: .infinity)
                     .frame(height: 54)
-                    .background(.LL.Warning.warning2)
+                    .background(.Theme.Accent.red.opacity(0.12))
                     .cornerRadius(16)
-                    .foregroundColor(Color.white)
+                    .foregroundColor(Color.Theme.Accent.red)
                     .font(.inter(size: 16, weight: .semibold))
             }
             .padding(.horizontal, 18)

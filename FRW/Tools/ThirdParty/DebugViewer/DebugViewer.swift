@@ -88,8 +88,8 @@ public class DebugViewer: ResizableView {
     }()
 
     private var items: CappedCollection<DebugViewModel> {
-        guard let category = selectedCategory else { return data.first?.value ?? [] }
-        return data[category] ?? []
+        guard let category = selectedCategory else { return data.first?.value ?? CappedCollection(elements: [], maxCount: 100) }
+        return data[category] ?? CappedCollection(elements: [], maxCount: 100)
     }
     
     override public var frame: CGRect {
@@ -326,8 +326,8 @@ extension DebugViewer: UITableViewDataSource, UITableViewDelegate {
     }
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if items.count > section {
-            let item = items[section]
+        
+        if let item = items[safe: section] {
             return item.showDetails ? 2 : 1
         }
         return 0

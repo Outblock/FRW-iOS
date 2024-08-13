@@ -294,6 +294,8 @@ class LocalUserDefaults: ObservableObject {
             return UserDefaults.standard.dictionary(forKey: Keys.EVMAddress.rawValue) as? [String: [String]] ?? [:]
         }
     }
+    
+    var openLogWindow: Bool = false
 }
 
 extension LocalUserDefaults {

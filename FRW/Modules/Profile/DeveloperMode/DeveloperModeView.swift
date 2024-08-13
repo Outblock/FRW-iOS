@@ -21,15 +21,12 @@ struct DeveloperModeView: RouteableView {
     @AppStorage("isDeveloperMode") private var isDeveloperMode = false
     @AppStorage("EVMEnable") private var isEVMEnable = false
     
-    @State private var openLogWindow = false
+    @State private var openLogWindow = LocalUserDefaults.shared.openLogWindow
     
     var title: String {
         return "developer_mode".localized
     }
     
-    init() {
-        openLogWindow = !(DebugViewer.shared.superview == nil || DebugViewer.shared.isHidden)
-    }
     
     var body: some View {
         ScrollView {
@@ -228,14 +225,11 @@ struct DeveloperModeView: RouteableView {
                             .frame(height: 64)
                             .padding(.horizontal, 16)
                             .onChange(of: openLogWindow, perform: { value in
-                                if DebugViewer.shared.superview == nil {
+                                LocalUserDefaults.shared.openLogWindow = value
+                                if value {
                                     DebugViewer.shared.show(theme: .dark)
                                 }else {
-                                    if DebugViewer.shared.isHidden {
-                                        DebugViewer.shared.show(theme: .dark)
-                                    }else {
-                                        DebugViewer.shared.close()
-                                    }
+                                    DebugViewer.shared.close()
                                 }
                             })
 
