@@ -42,12 +42,11 @@ final class NFTCollectionStateManager {
             
             for (index, collection) in list.enumerated() {
                 let isEnable = finalList[index]
-                if let oldIndex = tokenStateList.firstIndex(where: { $0.address == collection.address}) {
+                if let oldIndex = tokenStateList.firstIndex(where: { $0.address == collection.address && $0.name == collection.name}) {
                     tokenStateList.remove(at: oldIndex)
                 }
                 tokenStateList.append(NftCollectionState(name: collection.name, address: collection.address, isAdded: isEnable))
             }
-            
         }catch {
             debugPrint("NFTCollectionStateManager: \(error)")
         }
