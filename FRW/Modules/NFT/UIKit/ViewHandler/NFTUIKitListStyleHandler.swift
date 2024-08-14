@@ -470,7 +470,10 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
             cell.config(nft)
             return cell
         } else {
-            return UICollectionViewCell()
+            log.info("[NFT] data may be is invalid.")
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UICollectionViewCell", for: indexPath)
+            cell.contentView.backgroundColor = .clear
+            return cell
         }
     }
     
