@@ -943,6 +943,8 @@
 		4E1DD8D22B162F9B0055E510 /* SyncConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1DD8D02B162F9B0055E510 /* SyncConfirmView.swift */; };
 		4E1DD8D42B16443B0055E510 /* WalletConnectAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4E1DD8D32B16443B0055E510 /* WalletConnectAuth */; };
 		4E1DD8D62B1644480055E510 /* WalletConnectAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4E1DD8D52B1644480055E510 /* WalletConnectAuth */; };
+		4E1DE2C52C6AF412001022B7 /* ThreadSafeDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1DE2C42C6AF412001022B7 /* ThreadSafeDictionary.swift */; };
+		4E1DE2C62C6AF412001022B7 /* ThreadSafeDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1DE2C42C6AF412001022B7 /* ThreadSafeDictionary.swift */; };
 		4E2380FE2B186A6000756874 /* WalletConnect+Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2380FD2B186A6000756874 /* WalletConnect+Tools.swift */; };
 		4E2380FF2B186A6000756874 /* WalletConnect+Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2380FD2B186A6000756874 /* WalletConnect+Tools.swift */; };
 		4E2381012B186FD600756874 /* DeviceInfoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2381002B186FD600756874 /* DeviceInfoItem.swift */; };
@@ -2272,6 +2274,7 @@
 		4E1B2FE52BA061F700F30379 /* QRCodeEyeShareFillCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeEyeShareFillCircle.swift; sourceTree = "<group>"; };
 		4E1DD8CA2B1629560055E510 /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
 		4E1DD8D02B162F9B0055E510 /* SyncConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncConfirmView.swift; sourceTree = "<group>"; };
+		4E1DE2C42C6AF412001022B7 /* ThreadSafeDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreadSafeDictionary.swift; sourceTree = "<group>"; };
 		4E2380FD2B186A6000756874 /* WalletConnect+Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WalletConnect+Tools.swift"; sourceTree = "<group>"; };
 		4E2381002B186FD600756874 /* DeviceInfoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoItem.swift; sourceTree = "<group>"; };
 		4E2381032B18707D00756874 /* SyncAddDeviceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncAddDeviceViewModel.swift; sourceTree = "<group>"; };
@@ -4784,6 +4787,7 @@
 		4E8DD9FA282E505B0016A931 /* Tools */ = {
 			isa = PBXGroup;
 			children = (
+				4E1DE2C42C6AF412001022B7 /* ThreadSafeDictionary.swift */,
 				4E51B4FA2854A76500EDE4FE /* CaptureView.swift */,
 				6ABAE52D2836297C00C97AE2 /* ThirdParty */,
 				4E8DD9FB282E52110016A931 /* JSONStorage.swift */,
@@ -6623,6 +6627,7 @@
 				6AF95B452848C8D70012C837 /* BMChineseSort.swift in Sources */,
 				158832E528942D6300142B35 /* SessionInfo.swift in Sources */,
 				15DC1F7327819B74000B187A /* SpinnerStyle.swift in Sources */,
+				4E1DE2C62C6AF412001022B7 /* ThreadSafeDictionary.swift in Sources */,
 				4E2381022B186FD600756874 /* DeviceInfoItem.swift in Sources */,
 				15DC20A927819C56000B187A /* VWebLink.swift in Sources */,
 				4EB9A7C12AE9EF53004DA67F /* AccountKeyRevokeView.swift in Sources */,
@@ -7384,6 +7389,7 @@
 				15C58AE22868A4EE00BD4FC6 /* BMChineseSort.swift in Sources */,
 				158832E428942D6300142B35 /* SessionInfo.swift in Sources */,
 				15C58AE32868A4EE00BD4FC6 /* SpinnerStyle.swift in Sources */,
+				4E1DE2C52C6AF412001022B7 /* ThreadSafeDictionary.swift in Sources */,
 				4E2381012B186FD600756874 /* DeviceInfoItem.swift in Sources */,
 				15C58AE42868A4EE00BD4FC6 /* VWebLink.swift in Sources */,
 				4EB9A7C02AE9EF53004DA67F /* AccountKeyRevokeView.swift in Sources */,

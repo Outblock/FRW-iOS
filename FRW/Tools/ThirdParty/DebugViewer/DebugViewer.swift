@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import UIKit
 import SnapKit
+import UIKit
 
 public class DebugViewer: ResizableView {
     public static let shared = DebugViewer()
@@ -16,10 +16,12 @@ public class DebugViewer: ResizableView {
             updateTheme()
         }
     }
+
     
-    private var data: [String: CappedCollection<DebugViewModel>] = [:]
+    private var data = ThreadSafeDictionary<String,CappedCollection<DebugViewModel>>()
+    
     private var selectedCategory: String?
-    
+
     private var latestSize = CGSize(width: 300, height: 300)
     private let buttonSize = CGSize(width: 28, height: 28)
 
@@ -42,7 +44,7 @@ public class DebugViewer: ResizableView {
         collectionView.register(DebugViewCategoryCell.self, forCellWithReuseIdentifier: DebugViewCategoryCell.description())
         return collectionView
     }()
-    
+
     private lazy var clearAllButton: UIButton = {
         let button = UIButton()
         button.setTitle("Clear", for: .normal)
@@ -54,7 +56,7 @@ public class DebugViewer: ResizableView {
     public enum Theme {
         case dark
         case light
-        
+
         var baseColor: UIColor {
             switch self {
             case .dark:
@@ -63,7 +65,7 @@ public class DebugViewer: ResizableView {
                 return .white
             }
         }
-        
+
         var backgroundColor: UIColor {
             switch self {
             case .dark:
@@ -72,7 +74,7 @@ public class DebugViewer: ResizableView {
                 return UIColor.white.withAlphaComponent(0.8)
             }
         }
-        
+
         var fontColor: UIColor {
             switch self {
             case .dark:
@@ -82,16 +84,16 @@ public class DebugViewer: ResizableView {
             }
         }
     }
-    
-    private lazy var viewerFrameKey: String = {
-        return "com.dapperlabs.mobile.debug-viewer.frame.\(String(describing: type(of: self)))"
-    }()
+
+    private lazy var viewerFrameKey: String = "com.dapperlabs.mobile.debug-viewer.frame.\(String(describing: type(of: self)))"
 
     private var items: CappedCollection<DebugViewModel> {
-        guard let category = selectedCategory else { return data.first?.value ?? CappedCollection(elements: [], maxCount: 100) }
+        guard let category = selectedCategory, data.keys.contains(category) else {
+            return data.first?.value ?? CappedCollection(elements: [], maxCount: 100)
+        }
         return data[category] ?? CappedCollection(elements: [], maxCount: 100)
     }
-    
+
     override public var frame: CGRect {
         didSet {
             guard frame != .zero else { return }
@@ -110,20 +112,20 @@ public class DebugViewer: ResizableView {
         layer.borderColor = theme.baseColor.cgColor
         layer.borderWidth = 2.0
         backgroundColor = theme.backgroundColor
-        
+
         collapseButton.backgroundColor = theme.baseColor
         squareButton.backgroundColor = theme.fontColor
-        
+
         shapeLayer.strokeColor = layer.borderColor
         shapeLayer.fillColor = theme.fontColor.withAlphaComponent(0.7).cgColor
-        
+
         clearAllButton.setTitleColor(theme.fontColor, for: .normal)
         clearAllButton.backgroundColor = theme.baseColor
 
         collectionView.reloadData()
         tableView.reloadData()
     }
-    
+
     override init(
         frame: CGRect
     ) {
@@ -131,9 +133,9 @@ public class DebugViewer: ResizableView {
 
         isUserInteractionEnabled = true
         clipsToBounds = true
-        
+
         minSubviewSize = buttonSize
-        
+
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 200
         tableView.backgroundColor = .clear
@@ -143,7 +145,7 @@ public class DebugViewer: ResizableView {
         tableView.indicatorStyle = .white
         tableView.register(DebugViewCell.self, forCellReuseIdentifier: DebugViewCell.description())
         addSubview(tableView)
-        tableView.snp.makeConstraints { (make) in
+        tableView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(buttonSize.height)
             make.left.right.bottom.equalToSuperview()
         }
@@ -151,12 +153,12 @@ public class DebugViewer: ResizableView {
         draggablePoint.frame = CGRect(origin: .zero, size: buttonSize)
         draggablePoint.backgroundColor = .clear
         addSubview(draggablePoint)
-        draggablePoint.snp.makeConstraints { (make) in
+        draggablePoint.snp.makeConstraints { make in
             make.right.equalToSuperview()
             make.bottom.equalToSuperview()
             make.size.equalTo(buttonSize)
         }
-        
+
         let path = UIBezierPath()
         path.move(to: CGPoint(x: 8, y: buttonSize.height))
         path.addLine(to: CGPoint(x: buttonSize.width, y: buttonSize.height))
@@ -164,23 +166,23 @@ public class DebugViewer: ResizableView {
         shapeLayer.path = path.cgPath
         shapeLayer.lineWidth = 0
         draggablePoint.layer.addSublayer(shapeLayer)
-        
+
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.distribution = .fill
         stackView.spacing = 5
         stackView.alignment = .center
-        
+
         addSubview(stackView)
         stackView.addArrangedSubview(collapseButton)
         stackView.addArrangedSubview(collectionView)
         stackView.addArrangedSubview(clearAllButton)
-        
+
         stackView.snp.makeConstraints { make in
             make.height.equalTo(buttonSize.height)
             make.left.right.top.equalToSuperview()
         }
-        
+
         collapseButton.addTarget(self, action: #selector(didPressCollapseButton), for: .touchUpInside)
 
         collapseButton.snp.makeConstraints { make in
@@ -189,7 +191,7 @@ public class DebugViewer: ResizableView {
 
         squareButton.isUserInteractionEnabled = false
         collapseButton.addSubview(squareButton)
-        squareButton.snp.makeConstraints { (make) in
+        squareButton.snp.makeConstraints { make in
             make.center.equalToSuperview()
             make.size.equalTo(collapseButton).multipliedBy(0.4)
         }
@@ -214,10 +216,11 @@ public class DebugViewer: ResizableView {
             name: UIWindow.didResignKeyNotification,
             object: nil
         )
-        
+
         updateTheme()
     }
 
+    @available(*, unavailable)
     required init?(
         coder: NSCoder
     ) {
@@ -242,7 +245,7 @@ public class DebugViewer: ResizableView {
             tableView.isHidden = isCollapsed
         }
     }
-    
+
     @objc private func didPressCollapseButton() {
         if !isCollapsed {
             latestSize = frame.size
@@ -251,14 +254,14 @@ public class DebugViewer: ResizableView {
         isCollapsed = !isCollapsed
         UIView.animate(withDuration: 0.1) {
             self.frame.size = targetSize
-        } completion: { (true) in
+        } completion: { _ in
         }
     }
 
     private var keyWindow: UIWindow? {
         return UIApplication.shared.windows.first(where: { $0.isKeyWindow })
     }
-    
+
     @objc private func keyWindowChanged() {
         guard superview != keyWindow else { return }
         removeFromSuperview()
@@ -271,7 +274,7 @@ public class DebugViewer: ResizableView {
             keyWindow?.addSubview(self)
         }
         if let storedFrame = UserDefaults.standard.string(forKey: viewerFrameKey),
-            NSCoder.cgRect(for: storedFrame) != CGRect.zero
+           NSCoder.cgRect(for: storedFrame) != CGRect.zero
         {
             frame = NSCoder.cgRect(for: storedFrame)
         } else {
@@ -292,7 +295,7 @@ public class DebugViewer: ResizableView {
         guard !isHidden else { return }
         keyWindow?.bringSubviewToFront(self)
     }
-    
+
     public func addViewModel(category: String, viewModel: DebugViewModel) {
         var dataSource: CappedCollection<DebugViewModel> = data[category] ?? CappedCollection(elements: [], maxCount: 100)
         dataSource.append(viewModel)
@@ -307,9 +310,9 @@ public class DebugViewer: ResizableView {
             }
         }
     }
-    
+
     @objc private func clearAll() {
-        for ( category , collection) in data {
+        for (category, collection) in data {
             var mutableCollection = collection
             mutableCollection.removeAllElements()
             data[category] = mutableCollection
@@ -326,7 +329,6 @@ extension DebugViewer: UITableViewDataSource, UITableViewDelegate {
     }
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
         if let item = items[safe: section] {
             return item.showDetails ? 2 : 1
         }
@@ -349,10 +351,10 @@ extension DebugViewer: UITableViewDataSource, UITableViewDelegate {
             tableView.reloadSections(IndexSet(integer: indexPath.section), with: .automatic)
         }
     }
-    
+
     public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let item = items[indexPath.section]
-        let contextItem = UIContextualAction(style: .normal, title: "Copy") {  (contextualAction, view, boolValue) in
+        let contextItem = UIContextualAction(style: .normal, title: "Copy") { _, _, boolValue in
             if indexPath.row == 0 {
                 UIPasteboard.general.string = item.name
             } else {
@@ -379,14 +381,15 @@ class DebugViewCell: UITableViewCell {
 
         textLabel?.numberOfLines = 0
 
-        textLabel?.snp.remakeConstraints({ (make) in
+        textLabel?.snp.remakeConstraints { make in
             make.top.equalToSuperview().offset(7)
             make.left.equalToSuperview().offset(10)
             make.right.equalToSuperview().offset(-10)
             make.bottom.equalToSuperview().offset(-7)
-        })
+        }
     }
 
+    @available(*, unavailable)
     required init?(
         coder aDecoder: NSCoder
     ) {
@@ -398,15 +401,15 @@ class DebugViewCell: UITableViewCell {
         if showDetails {
             textLabel?.font = DebugViewCell.detailFont
             textLabel?.text = event.detail
-            textLabel?.snp.updateConstraints({ make in
+            textLabel?.snp.updateConstraints { make in
                 make.top.equalToSuperview().offset(0)
-            })
+            }
         } else {
             textLabel?.font = DebugViewCell.font
             textLabel?.text = event.name
-            textLabel?.snp.updateConstraints({ make in
+            textLabel?.snp.updateConstraints { make in
                 make.top.equalToSuperview().offset(7)
-            })
+            }
         }
     }
 }
@@ -421,16 +424,16 @@ extension DebugViewer: UICollectionViewDataSource {
         }
         return list[indexPath.item]
     }
-    
+
     private func isCurrent(_ indexPath: IndexPath) -> Bool {
         guard let selectedCategory = selectedCategory else { return indexPath.item == 0 }
         return selectedCategory == category(indexPath)
     }
-    
+
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return data.keys.count
     }
-    
+
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DebugViewCategoryCell.description(), for: indexPath) as! DebugViewCategoryCell
         cell.theme = theme
@@ -452,8 +455,8 @@ extension DebugViewer: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let category = category(indexPath)
         let boundingRect = category.boundingRect(with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: buttonSize.height),
-                              options: [.usesLineFragmentOrigin, .usesFontLeading],
-                              context: nil)
+                                                 options: [.usesLineFragmentOrigin, .usesFontLeading],
+                                                 context: nil)
         return CGSize(width: boundingRect.width + 40, height: buttonSize.height)
     }
 }
@@ -465,22 +468,24 @@ class DebugViewCategoryCell: UICollectionViewCell {
             label.text = category
         }
     }
+
     var current: Bool = false {
         didSet {
             contentView.backgroundColor = current ? theme.baseColor : .clear
         }
     }
+
     var theme: DebugViewer.Theme = .dark {
         didSet {
             label.textColor = theme.fontColor
         }
     }
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         contentView.backgroundColor = .black
-        
+
         label.font = UIFont(name: "CourierNewPS-BoldMT", size: 12.0)
         label.textAlignment = .center
         contentView.addSubview(label)
@@ -488,7 +493,8 @@ class DebugViewCategoryCell: UICollectionViewCell {
             make.edges.equalToSuperview()
         }
     }
-    
+
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
