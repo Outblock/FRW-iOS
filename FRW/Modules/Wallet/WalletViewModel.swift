@@ -186,6 +186,16 @@ class WalletViewModel: ObservableObject {
         
         refreshButtonState()
         
+        EVMAccountManager.shared.$accounts
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.updateMoveAsset()
+            }.store(in: &cancelSets)
+        ChildAccountManager.shared.$childAccounts
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.updateMoveAsset()
+            }.store(in: &cancelSets)
     }
 
     private func updateTheme() {
@@ -324,7 +334,8 @@ class WalletViewModel: ObservableObject {
     }
     
     private func updateMoveAsset() {
-        showMoveAsset = EVMAccountManager.shared.openEVM || ChildAccountManager.shared.childAccounts.count > 0
+        log.info("[Home] update move asset status")
+        showMoveAsset = EVMAccountManager.shared.accounts.count > 0 || ChildAccountManager.shared.childAccounts.count > 0
     }
 }
 

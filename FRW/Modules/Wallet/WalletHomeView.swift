@@ -407,7 +407,11 @@ struct WalletHomeView: View {
             .padding(.top, 18)
             .padding(.horizontal, 24)
             .background(Color.Theme.Background.bg3.opacity(0.8))
+            .background(content: {
+                VisualEffectBlur(effect: .systemMaterial)
+            })
             .shadow(color: .black.opacity(0.06), radius: 6, x: 0, y: -5)
+            
 
             
             walletActionBar()
@@ -723,5 +727,19 @@ struct VisualEffectView: UIViewRepresentable {
     Group {
         WalletHomeView()
             .preferredColorScheme(.dark)
+    }
+}
+
+
+struct VisualEffectBlur: UIViewRepresentable {
+    var effect: UIBlurEffect.Style
+
+    func makeUIView(context: Context) -> UIVisualEffectView {
+        let view = UIVisualEffectView(effect: UIBlurEffect(style: effect))
+        return view
+    }
+
+    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
+        uiView.effect = UIBlurEffect(style: effect)
     }
 }
