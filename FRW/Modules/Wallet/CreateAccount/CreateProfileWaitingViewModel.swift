@@ -34,7 +34,8 @@ class CreateProfileWaitingViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .map { $0 }
             .sink { walletInfo in
-                if walletInfo?.currentNetworkWalletModel?.isEmptyBlockChain ?? true {
+                let isEmptyBlockChain = walletInfo?.currentNetworkWalletModel?.isEmptyBlockChain ?? true
+                if !isEmptyBlockChain {
                     self.createFinished = true
                 }
                 
