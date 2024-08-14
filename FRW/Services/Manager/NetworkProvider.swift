@@ -11,7 +11,7 @@ extension LocalUserDefaults.FlowNetworkType {
     var networkID: Int {
         switch self {
         case .testnet:
-            return 0
+            return 545
         case .mainnet:
             return 747
         case .previewnet:

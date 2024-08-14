@@ -43,6 +43,8 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
             return .previewnet
         case "747":
             return .mainnet
+        case "545":
+            return .testnet
         default:
             return .unknown
         }
