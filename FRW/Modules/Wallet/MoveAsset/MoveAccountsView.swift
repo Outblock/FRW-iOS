@@ -151,7 +151,7 @@ class MoveAccountsViewModel: ObservableObject {
         let isChild = ChildAccountManager.shared.selectedChildAccount != nil
         let isEVM = EVMAccountManager.shared.selectedAccount != nil
         
-        if let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress() , currentAddr != primaryAddr {
+        if let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress() {
             let user = WalletManager.shared.walletAccount.readInfo(at: primaryAddr)
             let contact = Contact(address: primaryAddr, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: user.name, user: user, walletType: .flow)
             list.append(contact)

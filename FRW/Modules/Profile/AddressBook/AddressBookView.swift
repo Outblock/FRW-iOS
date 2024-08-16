@@ -279,6 +279,7 @@ extension AddressBookView {
 //                    }
 
                     Text(contact.address ?? "no address")
+                        .truncationMode(.middle)
                         .foregroundColor(.LL.Neutrals.note)
                         .font(.inter(size: 14))
                         .frame(height: 20)

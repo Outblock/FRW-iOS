@@ -27,9 +27,8 @@ extension LLCadence where T == LLCadenceAction.token {
     
     static func tokenTransfer(token: TokenModel, at network: Flow.ChainID) -> String {
         
-        let transferTokenWithInbox = CadenceManager.shared.current.domain?.transferInboxTokens?.toFunc() ?? ""
         let transferTokenCadence = CadenceManager.shared.current.ft?.transferTokens?.toFunc() ?? ""
-        let script = network == .previewnet ? transferTokenCadence : transferTokenWithInbox
+        let script = transferTokenCadence
         return script
             .replace(by: ScriptAddress.addressMap())
             .buildTokenInfo(token, chainId: network)

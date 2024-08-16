@@ -106,9 +106,7 @@ struct WalletHomeView: View {
                     .zIndex(1)
                 WalletInfo()
                     .zIndex(10)
-                ErrorView()
-                    .visibility(vm.walletState == .error ? .visible : .gone)
-                    .zIndex(11)
+
                 CoinListView()
                     .zIndex(20)
             }

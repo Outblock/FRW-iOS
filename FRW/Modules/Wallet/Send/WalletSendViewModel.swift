@@ -95,10 +95,7 @@ class WalletSendViewModel: ObservableObject {
         var addresList:[String] = []
         if let primaryAddr = WalletManager.shared.getPrimaryWalletAddress() {
             addresList.append(primaryAddr)
-            if WalletManager.shared.isSelectedEVMAccount == false,
-                let emvAddr = EVMAccountManager.shared.accounts.first?.showAddress {
-               addresList.append(emvAddr)
-            }
+            
         }
         
         addresList.forEach { address in
@@ -107,6 +104,17 @@ class WalletSendViewModel: ObservableObject {
             self.ownAccountList.append(contract)
         }
         
+        if WalletManager.shared.isSelectedEVMAccount == false,
+            let emvAddr = EVMAccountManager.shared.accounts.first?.showAddress {
+            
+        }
+        
+        EVMAccountManager.shared.accounts.forEach { account in
+            let evmAddr = account.showAddress
+            let user = WalletManager.shared.walletAccount.readInfo(at: evmAddr)
+            let contract = Contact(address: evmAddr, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: nil, user: user)
+            linkedWalletList.append(contract)
+        }
         
         ChildAccountManager.shared.childAccounts.forEach { account in
             let contact = Contact(address: account.showAddress, avatar: account.showIcon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.aName)

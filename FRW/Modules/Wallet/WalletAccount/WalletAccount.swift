@@ -37,7 +37,8 @@ extension WalletAccount {
             if let user = lastUser {
                 return user
             } else {
-                let existList = list.map { $0.emoji }
+                let filterList = list.filter { $0.network == currentNetwork }
+                let existList = filterList.map { $0.emoji }
                 let nEmoji = self.generalInfo(count: 1, excluded: existList)?.first ?? .koala
                 let user = WalletAccount.User(emoji: nEmoji, address: address)
                 list.append(user)
@@ -70,7 +71,7 @@ extension WalletAccount {
     
     private func generalInfo(count: Int, excluded: [Emoji]) -> [WalletAccount.Emoji]? {
         let list = Emoji.allCases
-        return list.randomDifferentElements(count: count, excluded: excluded)
+        return list.randomDifferentElements(limitCount: count, excluded: excluded)
     }
 }
 
@@ -180,19 +181,24 @@ extension WalletAccount {
 }
 
 extension Array where Element: Equatable {
-    func randomDifferentElements(count: Int, excluded: [Element]) -> [Element]? {
-        guard self.count >= count else {
+    func randomDifferentElements(limitCount: Int, excluded: [Element]) -> [Element]? {
+        guard self.count >= limitCount else {
             return nil // 确保数组中至少有指定数量的元素
         }
         
         var selectedElements: [Element] = []
         
-        while selectedElements.count < count {
+        var num = self.count * 36;
+        for i in 0..<num {
             let element = self.randomElement()!
             if !selectedElements.contains(element) && !excluded.contains(element) {
                 selectedElements.append(element)
             }
+            if selectedElements.count == limitCount {
+                break
+            }
         }
+        
         
         return selectedElements
     }
