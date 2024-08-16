@@ -41,19 +41,19 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
     var path: String {
         switch self {
         case .gridDetailList:
-            if LocalUserDefaults.shared.flowNetwork == .previewnet {
-                    return "v2/nft/list"
+            if CadenceManager.shared.isGreaterVerson1(){
+                return "v2/nft/list"
             }
             return "nft/list"
         case .userCollection:
-            if LocalUserDefaults.shared.flowNetwork == .previewnet {
+            if CadenceManager.shared.isGreaterVerson1() {
                     return "v2/nft/id"
             }
             return "nft/id"
         case .collections:
             return "nft/collections"
         case .collectionDetailList:
-            if LocalUserDefaults.shared.flowNetwork == .previewnet {
+            if CadenceManager.shared.isGreaterVerson1() {
                 return "v2/nft/collectionList"
             }
             return "nft/collectionList"
