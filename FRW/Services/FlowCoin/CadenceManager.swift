@@ -9,7 +9,7 @@ import SwiftUI
 
 class CadenceManager {
     static let shared = CadenceManager()
-    private let localVersion = "1.77"
+    private let localVersion = "1.83"
     
     var version: String = ""
     var scripts: CadenceScript!
@@ -34,6 +34,7 @@ class CadenceManager {
     
     private init() {
         self.version = localVersion
+        log.info("[Cadence] local version is \(localVersion)")
         do {
             guard let filePath = Bundle.main.path(forResource: "cloudfunctions", ofType: "json") else {
                 log.error("CadenceManager -> loadFromLocalFile error: no local file")
@@ -44,6 +45,7 @@ class CadenceManager {
             let providers = try JSONDecoder().decode(CadenceResponse.self, from: data)
             self.scripts = providers.scripts
             self.version = providers.version ?? localVersion
+            log.info("[Cadence] romote version is \(String(describing: providers.version))")
         }
         catch {
             log.error("CadenceManager -> decode failer: \(error)")
