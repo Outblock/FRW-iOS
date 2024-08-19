@@ -418,11 +418,14 @@ struct SideMenuView: View {
 class SideContainerViewModel: ObservableObject {
     @Published var isOpen: Bool = false
     @Published var isLinkedAccount: Bool = false
+    @Published var openBrowser: Bool = false
     
     private var cancellableSet = Set<AnyCancellable>()
     
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(onToggle), name: .toggleSideMenu, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onRemoteConfigDidChange), name: .remoteConfigDidUpdate, object: nil)
+
         isLinkedAccount =  ChildAccountManager.shared.selectedChildAccount != nil
         ChildAccountManager.shared.$selectedChildAccount
             .receive(on: DispatchQueue.main)
@@ -438,6 +441,10 @@ class SideContainerViewModel: ObservableObject {
         withAnimation {
             isOpen.toggle()
         }
+    }
+    
+    @objc func onRemoteConfigDidChange() {
+        openBrowser =  !(RemoteConfigManager.shared.config?.features.hideBrowser ?? false)
     }
 }
 
@@ -503,10 +510,17 @@ struct SideContainerView: View {
         let profile = TabBarPageModel<AppTabType>(tag: ProfileView.tabTag(), iconName: ProfileView.iconName(), color: ProfileView.color()) {
             AnyView(ProfileView())
         }
+        
         if vm.isLinkedAccount {
             TabBarView(current: .wallet, pages: [wallet, nft, profile], maxWidth: UIScreen.main.bounds.width)
         }else {
-            TabBarView(current: .wallet, pages: [wallet, nft, explore, profile], maxWidth: UIScreen.main.bounds.width)
+            
+            if vm.openBrowser {
+                TabBarView(current: .wallet, pages: [wallet, nft, profile], maxWidth: UIScreen.main.bounds.width)
+            }else {
+                TabBarView(current: .wallet, pages: [wallet, nft, explore, profile], maxWidth: UIScreen.main.bounds.width)
+            }
+            
         }
         
     }

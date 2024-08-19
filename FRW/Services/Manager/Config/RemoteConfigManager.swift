@@ -111,6 +111,8 @@ class RemoteConfigManager {
                 try loadLocalConfig()
             }
             self.contractAddress = try FirebaseConfig.contractAddress.fetch(decoder: JSONDecoder())
+            
+            NotificationCenter.default.post(name: .remoteConfigDidUpdate, object: nil)
 //            try handleSecret()
         } catch {
             do {

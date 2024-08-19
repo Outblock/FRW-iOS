@@ -41,4 +41,6 @@ public extension Notification.Name {
     static let syncDeviceStatusDidChanged = Notification.Name("syncDeviceStatusDidChanged")
     
     static let nftDidChangedByMoving = Notification.Name("nftDidChangedByMoving")
+    
+    static let remoteConfigDidUpdate = Notification.Name("remoteConfigDidUpdate")
 }

@@ -37,6 +37,7 @@ extension RemoteConfigManager {
         let swap: Bool?
         let browser: Bool?
         let nftTransfer: Bool?
+        let hideBrowser: Bool?
 
         enum CodingKeys: String, CodingKey {
             case freeGas = "free_gas"
@@ -46,6 +47,7 @@ extension RemoteConfigManager {
             case swap = "swap"
             case browser = "browser"
             case nftTransfer = "nft_transfer"
+            case hideBrowser = "hide_browser"
         }
     }
 
