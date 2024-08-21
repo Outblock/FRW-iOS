@@ -80,15 +80,35 @@ extension ChildAccountManager {
             })
             return result?.count == 1
         }
+        
+        private func isAccessible(contractName: String, address: String) -> Bool {
+            let result = collections?.filter({ idStr in
+                let list = idStr.split(separator:".")
+                if let contractName = list[safe:2],
+                   let addr = list[safe:1] {
+                    return contractName == contractName && address.hasSuffix(addr)
+                }else {
+                    return false
+                }
+            })
+            return result?.count == 1
+        }
+        
         // check nft
         func isAccessible(_ model: NFTModel) ->Bool {
             guard isChildAccount() else {
                 return true
             }
-            guard let collection = model.collection else {
-                return false
+            
+            if let collection = model.collection {
+                return isAccessible(collection)
             }
-            return isAccessible(collection)
+            
+            if let address = model.response.contractAddress, let name = model.response.collectionContractName {
+                return isAccessible(contractName: name, address: address)
+            }
+             
+            return false
         }
     }
 }
