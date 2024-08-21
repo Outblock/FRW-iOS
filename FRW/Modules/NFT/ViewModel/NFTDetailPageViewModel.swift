@@ -41,6 +41,7 @@ class NFTDetailPageViewModel: ObservableObject {
                 }
             }
         }
+        updateCollectionIfNeed()
         fetchNFTStatus()
         updateSendButton()
     }
@@ -109,5 +110,17 @@ class NFTDetailPageViewModel: ObservableObject {
             showSendButton = false
         }
         
+    }
+    
+    private func updateCollectionIfNeed() {
+        guard let contractAddress = nft.response.contractAddress else {
+            return
+        }
+        Task {
+            let nftCollection = await NFTCollectionConfig.share.get(from: contractAddress)
+            if self.nft.collection == nil {
+                self.nft.collection = nftCollection
+            }
+        }
     }
 }

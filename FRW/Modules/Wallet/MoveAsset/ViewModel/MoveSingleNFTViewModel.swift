@@ -101,7 +101,7 @@ class MoveSingleNFTViewModel: ObservableObject {
     
     private func moveForLinkedAccount(nftId: UInt64) async {
         guard let collection = nft.collection,
-                 let identifier = nft.infoFromCollection?.collectionData.privatePath?.identifier
+                 let identifier = nft.publicIdentifier
                     else {
             return
         }

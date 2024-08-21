@@ -107,7 +107,7 @@ struct NFTModel: Codable, Hashable, Identifiable {
     let subtitle: String
     var isSVG: Bool = false
     var response: NFTResponse
-    let collection: NFTCollectionInfo?
+    var collection: NFTCollectionInfo?
     let infoFromCollection: FlowModel.CollectionInfo?
     
     var imageURL: URL {
@@ -161,9 +161,14 @@ struct NFTModel: Codable, Hashable, Identifiable {
 
     var logoUrl: URL {
         if let logoString = collection?.logo {
+            if logoString.hasSuffix("svg") {
+                return logoString.convertedSVGURL() ?? URL(string: placeholder)!
+            }
             return URL(string: logoString) ?? URL(string: placeholder)!
         }
-        
+        if let logoString = response.collectionSquareImage {
+            return URL(string: logoString) ?? URL(string: placeholder)!
+        }
         return URL(string: placeholder)!
     }
     
@@ -171,7 +176,9 @@ struct NFTModel: Codable, Hashable, Identifiable {
         if let name = collection?.name {
             return name
         }
-        
+        if let name = response.collectionContractName {
+            return name
+        }
         return ""
     }
 
@@ -194,6 +201,16 @@ struct NFTModel: Codable, Hashable, Identifiable {
         let url = response.externalURL ?? ""
         
         return name.hasSuffix(".meow") || url.hasSuffix(".meow")
+    }
+    
+    var publicIdentifier: String? {
+        if let ident = infoFromCollection?.collectionData.privatePath?.identifier {
+            return ident
+        }
+        guard let path = collection?.path.privatePath, let identifier = path.split(separator: "/").last else {
+            return nil
+        }
+        return String(identifier)
     }
 }
 

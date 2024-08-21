@@ -153,7 +153,7 @@ struct NFTDetailPage: RouteableView {
                                 } label: {
                                     HStack(alignment: .center, spacing: 6) {
                                         KFImage
-                                            .url(vm.nft.collection?.logoURL)
+                                            .url(vm.nft.logoUrl)
                                             .placeholder {
                                                 Image("placeholder")
                                                     .resizable()
