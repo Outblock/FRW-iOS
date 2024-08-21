@@ -357,7 +357,7 @@ extension MultiBackupManager {
     private func addKeyToFlow(key: String) async throws -> Bool {
         let address = WalletManager.shared.address
         let accountKey = Flow.AccountKey(publicKey: Flow.PublicKey(hex: key), signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 500)
-        let flowId = try await FlowNetwork.addKeyToAccount(address: address, accountKey: accountKey, signers: [WalletManager.shared, RemoteConfigManager.shared])
+        let flowId = try await FlowNetwork.addKeyToAccount(address: address, accountKey: accountKey, signers: WalletManager.shared.defaultSigners)
         guard let data = try? JSONEncoder().encode(key) else {
             return false
         }

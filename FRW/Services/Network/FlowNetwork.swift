@@ -39,7 +39,7 @@ extension FlowNetwork {
         let cadenceString = token.formatCadence(cadence: originCadence)
         let fromKeyIndex = WalletManager.shared.keyIndex
 
-        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners) {
             cadence {
                 cadenceString
             }
@@ -66,7 +66,7 @@ extension FlowNetwork {
         let cadenceString = TokenCadence.tokenTransfer(token: token, at: flow.chainID)
         let currentAdd = WalletManager.shared.getPrimaryWalletAddress() ?? ""
         let keyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
             cadence {
                 cadenceString
             }
@@ -117,7 +117,7 @@ extension FlowNetwork {
         let originCadence = CadenceManager.shared.current.collection?.enableNFTStorage?.toFunc() ?? ""
         let cadenceString = collection.formatCadence(script: originCadence)
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
             cadence {
                 cadenceString
             }
@@ -167,7 +167,7 @@ extension FlowNetwork {
         
         let cadenceString = collection.formatCadence(script: nft.isNBA ? nbaNFTTransfer : nftTransfer)
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
             cadence {
                 cadenceString
             }
@@ -224,7 +224,7 @@ extension FlowNetwork {
         }
         let cadenceString = coin.formatCadence(cadence: CadenceManager.shared.current.domain?.claimFTFromInbox?.toFunc() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
             cadence {
                 cadenceString
             }
@@ -259,7 +259,7 @@ extension FlowNetwork {
         }
         let cadenceString = collection.formatCadence(script: CadenceManager.shared.current.domain?.claimNFTFromInbox?.toFunc() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
             cadence {
                 cadenceString
             }
@@ -322,7 +322,7 @@ extension FlowNetwork {
         args.append(.path(Flow.Argument.Path(domain: "public", identifier: tokenOutReceiverPath)))
         args.append(.path(Flow.Argument.Path(domain: "public", identifier: tokenOutBalancePath)))
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
             cadence {
                 cadenceString
             }
@@ -377,7 +377,7 @@ extension FlowNetwork {
         let address = Flow.Address(hex: walletAddress)
         let cadenceOrigin = CadenceManager.shared.current.staking?.withdrawUnstaked?.toFunc() ?? ""
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners) {
             cadence {
                 cadenceOrigin.replace(by: ScriptAddress.addressMap())
             }
@@ -408,7 +408,7 @@ extension FlowNetwork {
         let address = Flow.Address(hex: walletAddress)
         let cadenceOrigin = CadenceManager.shared.current.staking?.restakeUnstaked?.toFunc() ?? ""
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners) {
             cadence {
                 cadenceOrigin.replace(by: ScriptAddress.addressMap())
             }
@@ -439,7 +439,7 @@ extension FlowNetwork {
         let address = Flow.Address(hex: walletAddress)
         let cadenceOrigin = CadenceManager.shared.current.staking?.withdrawReward?.toFunc() ?? ""
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners) {
             cadence {
                 cadenceOrigin.replace(by: ScriptAddress.addressMap())
             }
@@ -470,7 +470,7 @@ extension FlowNetwork {
         let address = Flow.Address(hex: walletAddress)
         let cadenceOrigin = CadenceManager.shared.current.staking?.restakeReward?.toFunc() ?? ""
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners) {
             cadence {
                 cadenceOrigin.replace(by: ScriptAddress.addressMap())
             }
@@ -502,7 +502,7 @@ extension FlowNetwork {
         }
         let address = Flow.Address(hex: walletAddress)
         let fromKeyIndex = WalletManager.shared.keyIndex
-        let txId = try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+        let txId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
             cadence {
                 cadenceString
             }
@@ -535,7 +535,7 @@ extension FlowNetwork {
         let cadenceString = cadenceOrigin.replace(by: ScriptAddress.addressMap())
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
-        let txId = try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+        let txId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
             cadence {
                 cadenceString
             }
@@ -568,7 +568,7 @@ extension FlowNetwork {
         let cadenceString = cadenceOrigin.replace(by: ScriptAddress.addressMap())
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
-        let txId = try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+        let txId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
             cadence {
                 cadenceString
             }
@@ -602,7 +602,7 @@ extension FlowNetwork {
         let cadenceString = cadenceOrigin.replace(by: ScriptAddress.addressMap())
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
-        let txId = try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+        let txId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
             cadence {
                 cadenceString
             }
@@ -696,7 +696,7 @@ extension FlowNetwork {
         let cadenceString = cadenceOrigin.replace(by: ScriptAddress.addressMap())
         let walletAddress = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
-        let txId = try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+        let txId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
             cadence {
                 cadenceString
             }
@@ -757,7 +757,7 @@ extension FlowNetwork {
         let cadenceString = editChildAccount.replace(by: ScriptAddress.addressMap())
         let walletAddress = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
-        let txId = try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+        let txId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
             cadence {
                 cadenceString
             }
@@ -990,7 +990,7 @@ extension Flow.TransactionResult {
 extension FlowNetwork {
     static func revokeAccountKey(by index: Int, at address: Flow.Address) async throws -> Flow.ID {
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared], builder: {
+        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
             cadence {
                 CadenceManager.shared.current.basic?.revokeKey?.toFunc() ?? ""
             }
@@ -1082,7 +1082,7 @@ extension FlowNetwork {
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         let fromKeyIndex = WalletManager.shared.keyIndex
 
-        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners) {
             cadence {
                 cadenceStr
             }
@@ -1301,7 +1301,7 @@ extension FlowNetwork {
         guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
         }
-        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners) {
             cadence {
                 cadenceStr
             }

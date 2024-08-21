@@ -35,7 +35,7 @@ class SyncAddDeviceViewModel: ObservableObject {
             do {
                 let flowAccount = try await findFlowAccount(at:  WalletManager.shared.keyIndex)
                 let sequenceNumber = flowAccount?.sequenceNumber ?? 0
-                let flowId = try await FlowNetwork.addKeyWithMulti(address: address, keyIndex: WalletManager.shared.keyIndex, sequenceNum: sequenceNumber, accountKey: accountKey, signers: [WalletManager.shared, RemoteConfigManager.shared])
+                let flowId = try await FlowNetwork.addKeyWithMulti(address: address, keyIndex: WalletManager.shared.keyIndex, sequenceNum: sequenceNumber, accountKey: accountKey, signers: WalletManager.shared.defaultSigners)
                 guard let data = try? JSONEncoder().encode(model) else {
                     return
                 }

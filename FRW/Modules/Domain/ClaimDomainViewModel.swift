@@ -91,7 +91,7 @@ class ClaimDomainViewModel: ObservableObject {
             }
         }
         
-        let signedTransaction = try await transaction.signPayload(signers: [WalletManager.shared, RemoteConfigManager.shared])
+        let signedTransaction = try await transaction.signPayload(signers: WalletManager.shared.defaultSigners)
         
         return signedTransaction.buildSignPayerRequest()
     }

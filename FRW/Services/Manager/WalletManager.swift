@@ -18,7 +18,7 @@ import WalletCore
 extension WalletManager {
     static let flowPath = "m/44'/539'/0'/0/0"
     static let mnemonicStrength: Int32 = 160
-    static let defaultGas: UInt64 = 30_000_000
+    static let defaultGas: UInt64 = 30000000
     private static let defaultBundleID = "com.flowfoundation.wallet"
     private static let mnemonicStoreKeyPrefix = "lilico.mnemonic"
     private static let walletFetchInterval: TimeInterval = 20
@@ -56,11 +56,18 @@ class WalletManager: ObservableObject {
     private var walletInfoRetryTimer: Timer?
     private var cancellableSet = Set<AnyCancellable>()
     
-    var walletAccount: WalletAccount = WalletAccount()
+    var walletAccount: WalletAccount = .init()
     let balanceProvider = BalanceProvider()
     
     var currentAccount: WalletAccount.User {
         WalletManager.shared.walletAccount.readInfo(at: getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? "")
+    }
+    
+    var defaultSigners: [FlowSigner] {
+        if RemoteConfigManager.shared.freeGasEnabled {
+            return [WalletManager.shared, RemoteConfigManager.shared]
+        }
+        return [WalletManager.shared]
     }
 
     init() {
@@ -208,7 +215,6 @@ extension WalletManager {
     }
     
     func changeNetwork(_ type: LocalUserDefaults.FlowNetworkType) {
-        
         if LocalUserDefaults.shared.flowNetwork == type {
             if isSelectedChildAccount {
                 ChildAccountManager.shared.select(nil)
@@ -233,8 +239,7 @@ extension WalletManager {
         Task {
             do {
                 try await findFlowAccount()
-            }
-            catch {
+            } catch {
                 log.error("[wallet] fetch flow account failed.")
             }
         }
@@ -339,7 +344,6 @@ extension WalletManager {
         
         return nil
     }
-    
     
     var isPreviewEnabled: Bool {
         return walletInfo?.wallets?.first(where: { $0.chainId == LocalUserDefaults.FlowNetworkType.previewnet.rawValue })?.getAddress != nil
@@ -635,7 +639,7 @@ extension WalletManager {
         var enabledList: [String: Bool] = [:]
         if let account = ChildAccountManager.shared.selectedChildAccount {
             enabledList = try await FlowNetwork.linkedAccountEnabledTokenList(address: account.showAddress)
-        }else {
+        } else {
             enabledList = try await FlowNetwork.checkTokensEnable(address: Flow.Address(hex: address))
         }
 
@@ -832,11 +836,10 @@ extension WalletManager: FlowSigner {
     public var keyIndex: Int {
         // TODO: FIX ME, make it dynamic
         if userSecretSign() {
-           return flowAccountKey?.index ?? 0
+            return flowAccountKey?.index ?? 0
         }
         return 0
     }
-    
     
     public func sign(transaction: Flow.Transaction, signableData: Data) async throws -> Data {
         if flowAccountKey == nil {
@@ -915,7 +918,6 @@ extension WalletManager: FlowSigner {
                 return nil
             }
         }
-        
         
         guard let hdWallet = hdWallet else {
             return nil
@@ -1054,4 +1056,3 @@ extension String {
 }
 
 // MARK: Account
-
