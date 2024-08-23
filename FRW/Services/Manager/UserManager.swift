@@ -12,11 +12,13 @@ import Flow
 import FlowWalletCore
 import Foundation
 import Alamofire
+import WalletCore
 
 extension UserManager {
     enum UserType: Codable {
         case phrase
         case secure
+        case fromImport
     }
 }
 
@@ -342,6 +344,62 @@ extension UserManager {
         
         try await finishLogin(mnemonic: "", customToken: customToken)
     }
+    
+    func restoreLogin(account: ImportAccountInfo, privateKey: WalletCore.PrivateKey, isImport: Bool = false)  async throws {
+        if Auth.auth().currentUser?.isAnonymous != true {
+            try await Auth.auth().signInAnonymously()
+            DispatchQueue.main.async {
+                self.activatedUID = nil
+                self.userInfo = nil
+            }
+        }
+
+        guard let token = try? await getIDToken(), !token.isEmpty else {
+            loginAnonymousIfNeeded()
+            throw LLError.restoreLoginFailed
+        }
+    
+        guard let signData = token.AddUserMessage(),
+              let publicKey = account.publicKey,
+              !publicKey.isEmpty
+        else {
+            throw LLError.signFailed
+        }
+        let handler = KeyStoreHandler(privateKey: privateKey, curve: account.curve())
+        guard let signature = handler.sign(data: signData)?.hexValue else {
+            throw LLError.signFailed
+        }
+        
+        await IPManager.shared.fetch()
+        // TODO: hash & sign algo
+        let key = AccountKey(hashAlgo: Flow.HashAlgorithm.SHA2_256.index,
+                             publicKey: publicKey,
+                             signAlgo: Flow.SignatureAlgorithm.ECDSA_SECP256k1.index)
+        var tmpToken: String?
+        if isImport {
+            let request = RestoreImportRequest(username: "", accountKey: key, deviceInfo: IPManager.shared.toParams(), address: account.address ?? "")
+            let response: Network.Response<LoginResponse> = try await Network.requestWithRawModel(FRWAPI.User.loginWithImport(request))
+            if response.httpCode == 404 {
+                throw LLError.accountNotFound
+            }
+            tmpToken = response.data?.customToken
+        }else {
+            let request = LoginRequest(signature: signature, accountKey: key, deviceInfo: IPManager.shared.toParams())
+            let response: Network.Response<LoginResponse> = try await Network.requestWithRawModel(FRWAPI.User.login(request))
+            if response.httpCode == 404 {
+                throw LLError.accountNotFound
+            }
+            tmpToken = response.data?.customToken
+        }
+        
+        userType = .fromImport
+        guard let customToken = tmpToken, !customToken.isEmpty else {
+            throw LLError.restoreLoginFailed
+        }
+        
+        try await finishLogin(mnemonic: "", customToken: customToken)
+    }
+    
 }
 
 // MARK: - Switch Account
@@ -552,7 +610,7 @@ extension UserManager {
 extension UserManager {
     struct AccountResponse: Codable {
         let publicKey: String?
-        let accounts: [AccountInfo]?
+        var accounts: [AccountInfo]?
     }
     
     struct AccountInfo: Codable {

@@ -35,6 +35,9 @@ extension RouteMap {
         
         case createProfile(CreateProfileWaitingViewModel)
         case restoreErrorView(RestoreErrorView.RestoreError)
+        
+        case keystore
+        case importAddress(ImportAccountsViewModel)
     }
 }
 
@@ -71,6 +74,11 @@ extension RouteMap.RestoreLogin: RouterTarget {
             navi.push(content: CreateProfileWaitingView(vm))
         case .restoreErrorView(let error):
             navi.push(content: RestoreErrorView(error: error))
+        case .keystore:
+            navi.push(content: KeyStoreLoginView())
+        case .importAddress(let viewModel):
+            let vc = PresentHostingController(rootView: ImportAccountsView(viewModel: viewModel))
+            navi.present(vc, animated: true, completion: nil)
         }
     }
 }

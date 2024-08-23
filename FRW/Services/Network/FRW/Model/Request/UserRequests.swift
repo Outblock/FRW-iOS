@@ -29,6 +29,13 @@ struct LoginRequest: Codable {
     let deviceInfo: DeviceInfoRequest
 }
 
+struct RestoreImportRequest: Codable {
+    let username: String?
+    let accountKey: AccountKey
+    let deviceInfo: DeviceInfoRequest
+    let address: String
+}
+
 struct DeviceInfoRequest: Codable {
     let deviceId: String
     let ip: String?
