@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Hero
 
-let BrowserActionBarViewHeight: CGFloat = 60
+let BrowserActionBarViewHeight: CGFloat = 94
 private let BtnWidth: CGFloat = 50
 private let BtnHeight: CGFloat = 40
 private let ProgressViewHeight: CGFloat = 4
@@ -21,7 +21,6 @@ class BrowserActionBarView: UIView {
     private lazy var contentView: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
-        view.layer.cornerRadius = 16
         view.clipsToBounds = true
         return view
     }()
@@ -169,13 +168,15 @@ class BrowserActionBarView: UIView {
         
         contentView.addSubview(stackView)
         stackView.snp.makeConstraints { make in
-            make.left.right.centerY.equalToSuperview()
+            make.left.equalTo(24)
+            make.right.equalTo(-24)
+            make.top.equalTo(8)
             make.height.equalTo(BtnHeight)
         }
         
         contentView.addSubview(progressView)
         progressView.snp.makeConstraints { make in
-            make.left.right.bottom.equalToSuperview()
+            make.left.right.top.equalToSuperview()
         }
     }
     

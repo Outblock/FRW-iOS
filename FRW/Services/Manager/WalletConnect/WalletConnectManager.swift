@@ -290,6 +290,15 @@ extension WalletConnectManager {
             self.rejectSession(proposal: sessionProposal)
             return
         }
+        guard network == LocalUserDefaults.shared.flowNetwork.toFlowType() else {
+            self.rejectSession(proposal: sessionProposal)
+            let current = LocalUserDefaults.shared.flowNetwork
+            guard let toNetwork = LocalUserDefaults.FlowNetworkType(chainId: network) else { return }
+            Router.route(to: RouteMap.Explore.switchNetwork(current, toNetwork))
+            return
+        }
+
+        
         let info = self.handler.sessionInfo(sessionProposal: sessionProposal)
         var address = WalletManager.shared.getPrimaryWalletAddress()
         if self.handler.currentType(sessionProposal: sessionProposal) == .evm {
