@@ -35,6 +35,7 @@ struct WalletHomeView: View {
     @StateObject var um = UserManager.shared
     @StateObject var wm = WalletManager.shared
     @StateObject private var vm = WalletViewModel()
+    @StateObject var newsHandler = WalletNewsHandler.shared
     @State var isRefreshing: Bool = false
     @State private var showActionSheet = false
     @AppStorage("WalletCardBackrgound")
@@ -262,10 +263,10 @@ struct WalletHomeView: View {
                 
                 VStack(alignment: .trailing) {
                     Spacer()
-                    if vm.notiList.count > 1 {
+                    if newsHandler.list.count > 1 {
                         HStack {
                             HStack(spacing: 15) {
-                                ForEach(vm.notiList.indices, id: \.self) { index in
+                                ForEach(newsHandler.list.indices, id: \.self) { index in
                                     Capsule()
                                         .fill(vm.currentPage == index ? Color.Theme.Accent.green : Color.Theme.Line.line)
                                         .frame(width: vm.currentPage == index ? 20 : 7, height: 7)
@@ -280,13 +281,18 @@ struct WalletHomeView: View {
                         }
                     }
                     
-                    Pager(page: vm.page, data: 0 ..< vm.notiList.count, id: \.self) { index in
-                        let item = vm.notiList[index]
-                        WalletNotificationView(data: item) {} onAction: {}
+                    Pager(page: vm.page, data: 0 ..< newsHandler.list.count, id: \.self) { index in
+                        let item = newsHandler.list[index]
+                        WalletNotificationView(item: item) { idStr in
+                            newsHandler.onCloseItem(idStr)
+                        } onAction: { idStr in
+                            newsHandler.onClickItem(idStr)
+                        }
                     }
                     .itemSpacing(10)
                     .onPageWillChange { willIndex in
                         vm.onPageIndexChangeAction(willIndex)
+                        newsHandler.onScroll(index: willIndex)
                     }
                     .frame(height: 72)
                     .padding(.bottom, 32)
@@ -305,6 +311,9 @@ struct WalletHomeView: View {
                 Button("change wallpaper") {
                     showWallpaper()
                 }
+            }
+            .onAppear {
+                newsHandler.checkFirstNews()
             }
         }
         .frame(height: headerHeight + safeArea.top)

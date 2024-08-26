@@ -22,6 +22,7 @@ enum FirebaseConfig: String {
     case contractAddress = "contract_address"
     case appSecret = "app_secret"
     case ENVConfig = "i_config"
+    case news = "news"
     
     static func start() {
         Task {

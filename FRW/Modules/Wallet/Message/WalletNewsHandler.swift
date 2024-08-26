@@ -1,0 +1,97 @@
+//
+//  WalletNewsHandler.swift
+//  FRW
+//
+//  Created by cat on 2024/8/26.
+//
+
+import Foundation
+import SwiftUI
+
+class WalletNewsHandler: ObservableObject {
+    
+    static let shared = WalletNewsHandler()
+    
+    @Published var list: [RemoteConfigManager.News] = []
+    
+    var removeIds: [String] = [] {
+        didSet {
+            LocalUserDefaults.shared.removedNewsIds = removeIds
+        }
+    }
+    
+    private init() {
+        removeIds = LocalUserDefaults.shared.removedNewsIds
+    }
+    /// Call only once when receive Firebase Config
+    func addRemoteNews(_ news: [RemoteConfigManager.News]) {
+        list.removeAll()
+        list.append(contentsOf: news)
+        removeExpiryNew()
+        removeMarkedNews()
+        orderNews()
+    }
+    
+    private func removeExpiryNew() {
+        let currentData = Date()
+        list = list.filter { $0.expiryTime > currentData }
+    }
+    
+    private func removeMarkedNews() {
+        list = list.filter { !removeIds.contains($0.id) }
+    }
+    
+    private func orderNews() {
+        list.sort(by: <)
+    }
+    
+    @discardableResult
+    private func markItemIfNeed(_ itemId: String, displatyType: RemoteConfigManager.NewDisplayType = .once) -> Bool {
+        let item = list.first { $0.id == itemId }
+        if item?.displayType == displatyType {
+            removeIds.append(itemId)
+            return true
+        }
+        
+        return false
+    }
+    
+    /// Call only once when view appear
+    func checkFirstNews() {
+        if let item = list.first {
+            markItemIfNeed(item.id, displatyType: .once)
+        }
+    }
+}
+
+//MARK: User Action
+extension WalletNewsHandler {
+    func onCloseItem(_ itemId: String) {
+        markItemIfNeed(itemId)
+        withAnimation {
+            list.removeAll { $0.id == itemId }
+        }
+    }
+    
+    func onClickItem(_ itemId: String) {
+        let result = markItemIfNeed(itemId, displatyType: .click)
+        defer {
+            if result {
+                list.removeAll { $0.id == itemId }
+            }
+        }
+        let item = list.first { $0.id == itemId }
+        if let url = URL(string: item?.url ?? "") {
+            Router.route(to: RouteMap.Explore.browser(url))
+        }
+    }
+    
+    func onScroll(index: Int) {
+        if index < list.count {
+            let item = list[index]
+            if item.displayType == .once {
+                removeIds.append(item.id)
+            }
+        }
+    }
+}

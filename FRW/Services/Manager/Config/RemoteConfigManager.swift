@@ -86,6 +86,7 @@ class RemoteConfigManager {
     }
     
     init() {
+        fetchNews()
         do {
             let data: String = try FirebaseConfig.ENVConfig.fetch()
             let key = LocalEnvManager.shared.backupAESKey
@@ -121,6 +122,21 @@ class RemoteConfigManager {
             } catch {
                 self.isFailed = true
                 log.error("load failed")
+            }
+        }
+    }
+    
+    private func fetchNews() {
+        Task {
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let list: [RemoteConfigManager.News] = try FirebaseConfig.news.fetch(decoder: decoder)
+                WalletNewsHandler.shared.addRemoteNews(list)
+            }
+            catch {
+                log.error("[Firebase] fetch news failed. \(error)")
             }
         }
     }
