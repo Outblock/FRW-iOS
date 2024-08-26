@@ -10,7 +10,7 @@ import SnapKit
 import Hero
 
 let BrowserActionBarViewHeight: CGFloat = 94
-private let BtnWidth: CGFloat = 50
+private let BtnWidth: CGFloat = 44
 private let BtnHeight: CGFloat = 40
 private let ProgressViewHeight: CGFloat = 4
 
@@ -116,7 +116,7 @@ class BrowserActionBarView: UIView {
         view.layer.borderColor = UIColor.white.withAlphaComponent(0.24).cgColor
         view.layer.cornerRadius = 12
         view.alpha = 0.8
-        view.isUserInteractionEnabled = false
+//        view.isUserInteractionEnabled = false
         return view
     }()
     
@@ -168,8 +168,8 @@ class BrowserActionBarView: UIView {
         
         contentView.addSubview(stackView)
         stackView.snp.makeConstraints { make in
-            make.left.equalTo(24)
-            make.right.equalTo(-24)
+            make.left.equalTo(14)
+            make.right.equalTo(-14)
             make.top.equalTo(8)
             make.height.equalTo(BtnHeight)
         }
@@ -183,16 +183,18 @@ class BrowserActionBarView: UIView {
     private func setupAddressBarView() {
         addressBarContainer.addSubview(addressBarBgView)
         addressBarBgView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.left.equalTo(12)
+            make.right.equalTo(-12)
+            make.top.bottom.equalToSuperview()
         }
         
-        addressBarContainer.addSubview(addressLabel)
+        addressBarBgView.addSubview(addressLabel)
         addressLabel.snp.makeConstraints { make in
             make.left.equalTo(12)
             make.centerY.equalToSuperview()
         }
         
-        addressBarContainer.addSubview(reloadBtn)
+        addressBarBgView.addSubview(reloadBtn)
         reloadBtn.snp.makeConstraints { make in
             make.left.equalTo(addressLabel.snp.right).offset(0)
             make.centerY.equalToSuperview()
