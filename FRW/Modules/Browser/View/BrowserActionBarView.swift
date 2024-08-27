@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Hero
 
-let BrowserActionBarViewHeight: CGFloat = 94
+let BrowserActionBarViewHeight: CGFloat = 83
 private let BtnWidth: CGFloat = 44
 private let BtnHeight: CGFloat = 40
 private let ProgressViewHeight: CGFloat = 4
@@ -170,7 +170,7 @@ class BrowserActionBarView: UIView {
         stackView.snp.makeConstraints { make in
             make.left.equalTo(14)
             make.right.equalTo(-14)
-            make.top.equalTo(8)
+            make.top.equalTo(9)
             make.height.equalTo(BtnHeight)
         }
         
