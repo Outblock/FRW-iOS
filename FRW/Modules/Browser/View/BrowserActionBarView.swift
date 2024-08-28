@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Hero
 
-let BrowserActionBarViewHeight: CGFloat = 83
+let BrowserActionBarViewHeight: CGFloat = 78
 private let BtnWidth: CGFloat = 44
 private let BtnHeight: CGFloat = 40
 private let ProgressViewHeight: CGFloat = 4
@@ -159,10 +159,10 @@ class BrowserActionBarView: UIView {
             make.edges.equalToSuperview()
         }
         
-        contentView.addSubview(blurView)
-        blurView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
+//        contentView.addSubview(blurView)
+//        blurView.snp.makeConstraints { make in
+//            make.edges.equalToSuperview()
+//        }
         
         setupAddressBarView()
         
@@ -170,7 +170,7 @@ class BrowserActionBarView: UIView {
         stackView.snp.makeConstraints { make in
             make.left.equalTo(14)
             make.right.equalTo(-14)
-            make.top.equalTo(9)
+            make.top.equalTo(4)
             make.height.equalTo(BtnHeight)
         }
         

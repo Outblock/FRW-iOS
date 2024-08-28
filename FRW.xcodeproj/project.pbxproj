@@ -102,7 +102,6 @@
 		156E84AA281CDE7500415896 /* FlowNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156E84A8281CDE7500415896 /* FlowNetwork.swift */; };
 		156E84AE281CDF4F00415896 /* WalletModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156E84AC281CDF4F00415896 /* WalletModels.swift */; };
 		156E84B2281CF01000415896 /* EventLoop+Future.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156E84B0281CF01000415896 /* EventLoop+Future.swift */; };
-		1570466927930E6A00D1747B /* CollectionViewPagingLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 1570466827930E6A00D1747B /* CollectionViewPagingLayout */; };
 		1570466D27930EB200D1747B /* NFTTabScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1570466B27930EB200D1747B /* NFTTabScreen.swift */; };
 		1570467027931F5100D1747B /* AlchemyEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1570466E27931F5100D1747B /* AlchemyEndpoint.swift */; };
 		157046752793241A00D1747B /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 157046742793241A00D1747B /* Kingfisher */; };
@@ -1220,6 +1219,8 @@
 		4ECF45352BB4F20E00F5B3B7 /* WalletHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECF45332BB4F20E00F5B3B7 /* WalletHomeView.swift */; };
 		4ED041F72C7C25DF0016848A /* WalletNewsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED041F62C7C25DF0016848A /* WalletNewsHandler.swift */; };
 		4ED041F82C7C25DF0016848A /* WalletNewsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED041F62C7C25DF0016848A /* WalletNewsHandler.swift */; };
+		4ED041FB2C7F07930016848A /* CollectionViewPagingLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 4ED041FA2C7F07930016848A /* CollectionViewPagingLayout */; };
+		4ED041FD2C7F07CC0016848A /* CollectionViewPagingLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 4ED041FC2C7F07CC0016848A /* CollectionViewPagingLayout */; };
 		4ED06E372ABABABA00F49A1A /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */; };
 		4ED06E382ABABABA00F49A1A /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */; };
 		4ED06E3B2ABABABA00F49A1A /* WalletCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E342ABABABA00F49A1A /* WalletCore.xcframework */; };
@@ -2799,7 +2800,6 @@
 				15DC1D53278165DB000B187A /* Haneke in Frameworks */,
 				4E5D4FAE2AEF9A7400DC419B /* DeviceGuru in Frameworks */,
 				156AC7AD27802FAC00ED5E3E /* GoogleAPIClientForRESTCore in Frameworks */,
-				1570466927930E6A00D1747B /* CollectionViewPagingLayout in Frameworks */,
 				4ED6DD10285A22A800105133 /* IrregularGradient in Frameworks */,
 				154B891D276A1EEB00780E93 /* FirebaseCrashlytics in Frameworks */,
 				6A46754828F2D46500F705A8 /* FMDB in Frameworks */,
@@ -2819,6 +2819,7 @@
 				1552DC6A2787090D00EAA7D5 /* Introspect in Frameworks */,
 				15D3BA7228C3B90A009AEA6E /* ViewAnimator in Frameworks */,
 				4E5F2F0F2C11F036008589C4 /* CrowdinSDK in Frameworks */,
+				4ED041FD2C7F07CC0016848A /* CollectionViewPagingLayout in Frameworks */,
 				154B8920276A1EEB00780E93 /* SwiftUIX in Frameworks */,
 				6AC1AE6B289BAD0600F76C7A /* SnapKit in Frameworks */,
 				158832D42894277600142B35 /* Starscream in Frameworks */,
@@ -2838,6 +2839,7 @@
 				6A46754628F2D44800F705A8 /* FMDB in Frameworks */,
 				15D3BA6B28C3B1EE009AEA6E /* ColorKit in Frameworks */,
 				15F517FB28C6574C00504FDC /* Atlantis in Frameworks */,
+				4ED041FB2C7F07930016848A /* CollectionViewPagingLayout in Frameworks */,
 				4E5F2F152C192F4F008589C4 /* WalletConnectNotify in Frameworks */,
 				15C58C402868A4EE00BD4FC6 /* FirebaseAuth in Frameworks */,
 				6AADFB56293CB81A00E5D6B2 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
@@ -5961,7 +5963,6 @@
 				1552DC692787090D00EAA7D5 /* Introspect */,
 				15185ED7278A73A3006B74A9 /* SPConfetti */,
 				15F22F19278B21B600FCF772 /* BiometricAuthentication */,
-				1570466827930E6A00D1747B /* CollectionViewPagingLayout */,
 				157046742793241A00D1747B /* Kingfisher */,
 				4EC56B2C281D3ED000246878 /* FirebaseRemoteConfig */,
 				4ED6DD0F285A22A800105133 /* IrregularGradient */,
@@ -6002,6 +6003,7 @@
 				4E5F2F0E2C11F036008589C4 /* CrowdinSDK */,
 				4E5F2F122C192F3B008589C4 /* WalletConnectNotify */,
 				4E2E8CBC2C61B9A800095D5B /* LogView */,
+				4ED041FC2C7F07CC0016848A /* CollectionViewPagingLayout */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 154B8928276A1EEB00780E93 /* FRW-dev.app */;
@@ -6084,6 +6086,7 @@
 				4E5F2F102C12B1C2008589C4 /* CrowdinSDK */,
 				4E5F2F142C192F4F008589C4 /* WalletConnectNotify */,
 				4E2E8CBE2C61BB2300095D5B /* LogView */,
+				4ED041FA2C7F07930016848A /* CollectionViewPagingLayout */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 15C58C6D2868A4EE00BD4FC6 /* FRW.app */;
@@ -6226,7 +6229,6 @@
 				1552DC66278708AB00EAA7D5 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				1599F7752789734B0094B196 /* XCRemoteSwiftPackageReference "SPConfetti" */,
 				15F22F16278B20A800FCF772 /* XCRemoteSwiftPackageReference "BiometricAuthentication" */,
-				1570466227906F7F00D1747B /* XCRemoteSwiftPackageReference "CollectionViewPagingLayout" */,
 				157046712793237300D1747B /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				4ED6DD0E285A22A800105133 /* XCRemoteSwiftPackageReference "IrregularGradient" */,
 				1500783028682B8900A00109 /* XCRemoteSwiftPackageReference "SPIndicator" */,
@@ -6257,6 +6259,7 @@
 				4E3682C52BB6A59100B24785 /* XCRemoteSwiftPackageReference "web3swift" */,
 				4E5F2F0D2C11F036008589C4 /* XCRemoteSwiftPackageReference "mobile-sdk-ios" */,
 				4E2E8CBB2C61B9A800095D5B /* XCRemoteSwiftPackageReference "LogView" */,
+				4ED041F92C7F07930016848A /* XCRemoteSwiftPackageReference "CollectionViewPagingLayout" */,
 			);
 			productRefGroup = 15EC9DEF274FD1FC00F70CD9 /* Products */;
 			projectDirPath = "";
@@ -8912,14 +8915,6 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		1570466227906F7F00D1747B /* XCRemoteSwiftPackageReference "CollectionViewPagingLayout" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/amirdew/CollectionViewPagingLayout";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.3;
-			};
-		};
 		157046712793237300D1747B /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher";
@@ -9281,6 +9276,14 @@
 				kind = branch;
 			};
 		};
+		4ED041F92C7F07930016848A /* XCRemoteSwiftPackageReference "CollectionViewPagingLayout" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Outblock/CollectionViewPagingLayout?tab=readme-ov-file";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		4ED6DD0E285A22A800105133 /* XCRemoteSwiftPackageReference "IrregularGradient" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/joogps/IrregularGradient";
@@ -9447,11 +9450,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 156AC7A527802F4F00ED5E3E /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
 			productName = GoogleAPIClientForRESTCore;
-		};
-		1570466827930E6A00D1747B /* CollectionViewPagingLayout */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1570466227906F7F00D1747B /* XCRemoteSwiftPackageReference "CollectionViewPagingLayout" */;
-			productName = CollectionViewPagingLayout;
 		};
 		157046742793241A00D1747B /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -9837,6 +9835,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4EC8524F2B0AD88D00C5CD52 /* XCRemoteSwiftPackageReference "Flow-Wallet-Core" */;
 			productName = FlowWalletCore;
+		};
+		4ED041FA2C7F07930016848A /* CollectionViewPagingLayout */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4ED041F92C7F07930016848A /* XCRemoteSwiftPackageReference "CollectionViewPagingLayout" */;
+			productName = CollectionViewPagingLayout;
+		};
+		4ED041FC2C7F07CC0016848A /* CollectionViewPagingLayout */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4ED041F92C7F07930016848A /* XCRemoteSwiftPackageReference "CollectionViewPagingLayout" */;
+			productName = CollectionViewPagingLayout;
 		};
 		4ED6DD0F285A22A800105133 /* IrregularGradient */ = {
 			isa = XCSwiftPackageProductDependency;

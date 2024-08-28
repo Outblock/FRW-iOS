@@ -21,10 +21,11 @@ class BrowserViewController: UIViewController {
     
     let trustProvider = TrustWeb3Provider.flowConfig()
 
+    private var commonColor: UIColor? =  UIColor(named: "bg.silver")
     
     private lazy var contentView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(named: "bg.silver")
+        view.backgroundColor = commonColor
         return view
     }()
     
@@ -37,6 +38,8 @@ class BrowserViewController: UIViewController {
         let view = WKWebView(frame: .zero, configuration: generateWebViewConfiguration())
         view.navigationDelegate = self
         view.uiDelegate = self
+        view.backgroundColor = commonColor
+        view.scrollView.backgroundColor = commonColor
         view.allowsBackForwardNavigationGestures = true
         view.allowsLinkPreview = true
         view.layer.cornerRadius = 24
@@ -110,7 +113,7 @@ class BrowserViewController: UIViewController {
     }
     
     private func setup() {
-        view.backgroundColor = .black
+        view.backgroundColor = commonColor
         
         view.addSubview(contentView)
         contentView.snp.makeConstraints { make in

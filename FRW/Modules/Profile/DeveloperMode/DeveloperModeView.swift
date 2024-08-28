@@ -201,8 +201,20 @@ struct DeveloperModeView: RouteableView {
                                     LocalUserDefaults.shared.showMoveAssetOnBrowser = true
                                 }
                                 
+                                HStack {
+                                    Text("Remove Wallet Home News")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                    Spacer()
+                                }
+                                .frame(height: 64)
+                                .padding(.horizontal, 16)
+                                .onTapGesture {
+                                    LocalUserDefaults.shared.removedNewsIds = []
+                                    RemoteConfigManager.shared.fetchNews()
+                                }
+                                
                             }
-                            
                             
                         }
                         .background(.LL.bgForIcon)

@@ -74,24 +74,38 @@ extension WalletNewsHandler {
     }
     
     func onClickItem(_ itemId: String) {
-        let result = markItemIfNeed(itemId, displatyType: .click)
-        defer {
-            if result {
+        guard let item = list.first(where: { $0.id == itemId }) else { return }
+        
+        let shouldRemove = markItemIfNeed(itemId, displatyType: .click)
+        
+        if let urlStr = item.url, let url = URL(string: urlStr) {
+            Router.route(to: RouteMap.Explore.browser(url))
+        }
+        
+        if shouldRemove {
+            withAnimation {
                 list.removeAll { $0.id == itemId }
             }
         }
-        let item = list.first { $0.id == itemId }
-        if let url = URL(string: item?.url ?? "") {
-            Router.route(to: RouteMap.Explore.browser(url))
+    }
+    
+    func nextItem(_ itemId: String) -> String? {
+        guard let index = list.firstIndex(where: { $0.id == itemId }) else {
+            return nil
         }
+        guard index + 1 < list.count else {
+            return nil
+        }
+        let item = list[index + 1]
+        return item.id
     }
     
     func onScroll(index: Int) {
-        if index < list.count {
-            let item = list[index]
-            if item.displayType == .once {
-                removeIds.append(item.id)
-            }
+        guard index < list.count else { return }
+    
+        let item = list[index]
+        if item.displayType == .once {
+            removeIds.append(item.id)
         }
     }
 }

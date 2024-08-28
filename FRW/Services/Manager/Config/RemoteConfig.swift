@@ -128,7 +128,7 @@ extension RemoteConfigManager {
         }
     }
 
-    struct News: Codable, Comparable {
+    struct News: Codable, Comparable, Identifiable {
         let id: String
         let priority: NewsPriority
         let type: NewsType

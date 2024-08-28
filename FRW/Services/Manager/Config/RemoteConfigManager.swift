@@ -126,7 +126,7 @@ class RemoteConfigManager {
         }
     }
     
-    private func fetchNews() {
+    func fetchNews() {
         Task {
             do {
                 let decoder = JSONDecoder()

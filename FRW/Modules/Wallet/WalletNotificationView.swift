@@ -12,6 +12,8 @@ struct WalletNotificationView: View {
     let item: RemoteConfigManager.News
     var onClose: (String) -> Void
     var onAction: (String) -> Void
+    
+    @State private var opacity: Double = 1.0
         
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -54,10 +56,7 @@ struct WalletNotificationView: View {
                                     .lineLimit(1)
                                     .foregroundStyle(Color.Theme.Text.black8)
                             }
-                            .buttonStyle(PlainButtonStyle())
-                            .simultaneousGesture(
-                                DragGesture().onChanged { _ in }
-                            )
+                            .highPriorityGesture(DragGesture())
                         }
                     }
                     
@@ -92,10 +91,11 @@ struct WalletNotificationView: View {
             }
         })
         .frame(maxWidth: .infinity)
-        .frame(height: 66)
-        .background(Color.Theme.Background.grey.opacity(0.8))
+        .frame(height: 72)
+        .background(Color.Theme.Background.grey)
         .cornerRadius(16)
         .shadow(color: Color(red: 0.2, green: 0.2, blue: 0.2).opacity(0.32), radius: 2, x: 0, y: 4)
+        .opacity(opacity)
     }
     
     
