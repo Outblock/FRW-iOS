@@ -28,6 +28,17 @@
 		152EEC7328E4F61600C37A67 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 152EEC7228E4F61200C37A67 /* config.plist */; };
 		152EEC7528E4F68100C37A67 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152EEC7428E4F68100C37A67 /* Env.swift */; };
 		152EEC7628E4F68100C37A67 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152EEC7428E4F68100C37A67 /* Env.swift */; };
+		154016012C6EE7F70040687C /* ProviderNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154015FC2C6EE7F60040687C /* ProviderNetwork.swift */; };
+		154016022C6EE7F70040687C /* ProviderNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154015FC2C6EE7F60040687C /* ProviderNetwork.swift */; };
+		154016032C6EE7F70040687C /* trust-min.js in Resources */ = {isa = PBXBuildFile; fileRef = 154015FD2C6EE7F60040687C /* trust-min.js */; };
+		154016042C6EE7F70040687C /* trust-min.js in Resources */ = {isa = PBXBuildFile; fileRef = 154015FD2C6EE7F60040687C /* trust-min.js */; };
+		154016052C6EE7F70040687C /* TrustWeb3Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154015FE2C6EE7F60040687C /* TrustWeb3Provider.swift */; };
+		154016062C6EE7F70040687C /* TrustWeb3Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154015FE2C6EE7F60040687C /* TrustWeb3Provider.swift */; };
+		154016072C6EE7F70040687C /* WKWebView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154015FF2C6EE7F60040687C /* WKWebView+Extension.swift */; };
+		154016082C6EE7F70040687C /* WKWebView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154015FF2C6EE7F60040687C /* WKWebView+Extension.swift */; };
+		1540160D2C6EED2E0040687C /* FlowWalletCore in Frameworks */ = {isa = PBXBuildFile; productRef = 1540160C2C6EED2E0040687C /* FlowWalletCore */; };
+		1540160F2C6EED360040687C /* FlowWalletCore in Frameworks */ = {isa = PBXBuildFile; productRef = 1540160E2C6EED360040687C /* FlowWalletCore */; };
+		154016112C6F1A7E0040687C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 154016102C6F1A7E0040687C /* GoogleService-Info.plist */; };
 		1544C62828C812E700B6BA52 /* GoogleOAuth2.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1544C62728C812E500B6BA52 /* GoogleOAuth2.plist */; };
 		1545705029461AB7004A278E /* MJRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = 1545704F29461AB7004A278E /* MJRefresh */; };
 		1545705229461ABD004A278E /* FMDB in Frameworks */ = {isa = PBXBuildFile; productRef = 1545705129461ABD004A278E /* FMDB */; };
@@ -1095,8 +1106,6 @@
 		4E9D8F1A2BF7479E00E11CC7 /* MoveNFTsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D8F182BF7479E00E11CC7 /* MoveNFTsViewModel.swift */; };
 		4E9D8F1E2BF87A0400E11CC7 /* TitleWithClosedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D8F1D2BF87A0400E11CC7 /* TitleWithClosedView.swift */; };
 		4E9D8F1F2BF87A0400E11CC7 /* TitleWithClosedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D8F1D2BF87A0400E11CC7 /* TitleWithClosedView.swift */; };
-		4E9D98DD2B9DEAE300A70879 /* TrustWeb3Provider in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9D98DC2B9DEAE300A70879 /* TrustWeb3Provider */; };
-		4E9D98DF2B9DEAEF00A70879 /* TrustWeb3Provider in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9D98DE2B9DEAEF00A70879 /* TrustWeb3Provider */; };
 		4E9D98E22B9DEC0800A70879 /* TrustProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D98E12B9DEC0800A70879 /* TrustProvider.swift */; };
 		4E9D98E32B9DEC0800A70879 /* TrustProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D98E12B9DEC0800A70879 /* TrustProvider.swift */; };
 		4E9D98E52B9DF48B00A70879 /* TrustJSMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D98E42B9DF48B00A70879 /* TrustJSMessageHandler.swift */; };
@@ -1203,8 +1212,6 @@
 		4EC5E06A2BD8B20D003A1A24 /* EVMModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC5E0682BD8B20D003A1A24 /* EVMModels.swift */; };
 		4EC626092AE8A28100318720 /* UUIDManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC626082AE8A28100318720 /* UUIDManager.swift */; };
 		4EC6260A2AE8A28100318720 /* UUIDManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC626082AE8A28100318720 /* UUIDManager.swift */; };
-		4EC852512B0AD88E00C5CD52 /* FlowWalletCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC852502B0AD88E00C5CD52 /* FlowWalletCore */; };
-		4EC852532B0AD89E00C5CD52 /* FlowWalletCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC852522B0AD89E00C5CD52 /* FlowWalletCore */; };
 		4EC97652286A07060066811D /* NFTCollectionEnableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC97651286A07060066811D /* NFTCollectionEnableView.swift */; };
 		4EC97653286A07060066811D /* NFTCollectionEnableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC97651286A07060066811D /* NFTCollectionEnableView.swift */; };
 		4ECA7E66284371CA0039A210 /* NFTBlurImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECA7E64284371CA0039A210 /* NFTBlurImageView.swift */; };
@@ -1415,7 +1422,6 @@
 		6A3221392927B49B000B8E1F /* StakingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3221382927B49B000B8E1F /* StakingDetailView.swift */; };
 		6A32213A2927B49B000B8E1F /* StakingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3221382927B49B000B8E1F /* StakingDetailView.swift */; };
 		6A35EADA2859BD36005A85B8 /* EditAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A35EAD82859BD36005A85B8 /* EditAvatarView.swift */; };
-		6A37AD9428BDAA310047E5F7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A37AD9328BDAA300047E5F7 /* GoogleService-Info.plist */; };
 		6A37AD9728BE0DE40047E5F7 /* TransactionProcessStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A37AD9628BE0DE40047E5F7 /* TransactionProcessStatusView.swift */; };
 		6A37AD9828BE0DE40047E5F7 /* TransactionProcessStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A37AD9628BE0DE40047E5F7 /* TransactionProcessStatusView.swift */; };
 		6A37AD9B28BE15700047E5F7 /* SendAmountTransactionProcessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A37AD9A28BE15700047E5F7 /* SendAmountTransactionProcessView.swift */; };
@@ -1903,6 +1909,11 @@
 		153C44002751CFA4006D1E8D /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		153C440227520752006D1E8D /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		153C440B27525D04006D1E8D /* BackgroundModifer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundModifer.swift; sourceTree = "<group>"; };
+		154015FC2C6EE7F60040687C /* ProviderNetwork.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProviderNetwork.swift; sourceTree = "<group>"; };
+		154015FD2C6EE7F60040687C /* trust-min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "trust-min.js"; sourceTree = "<group>"; };
+		154015FE2C6EE7F60040687C /* TrustWeb3Provider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrustWeb3Provider.swift; sourceTree = "<group>"; };
+		154015FF2C6EE7F60040687C /* WKWebView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WKWebView+Extension.swift"; sourceTree = "<group>"; };
+		154016102C6F1A7E0040687C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Downloads/Env 2/Prod/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1544C62728C812E500B6BA52 /* GoogleOAuth2.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GoogleOAuth2.plist; sourceTree = "<group>"; };
 		154866EB28D0ECE400D012B8 /* FlixAuditEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlixAuditEndpoint.swift; sourceTree = "<group>"; };
 		154866EF28D0EEF000D012B8 /* FlowTransactionTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowTransactionTemplate.swift; sourceTree = "<group>"; };
@@ -2432,7 +2443,6 @@
 		4ED9C5BD2C0487D1004276D1 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		4ED9C5C32C05CE12004276D1 /* WalletListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletListView.swift; sourceTree = "<group>"; };
 		4EDDAA22285F5DC600EB8AF9 /* NFTAddCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTAddCollectionView.swift; sourceTree = "<group>"; };
-		4EE6AC582B1D5DD60051EC5C /* Flow-Wallet-Core */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Flow-Wallet-Core"; path = "../Flow-Wallet-Core"; sourceTree = "<group>"; };
 		4EE6FA882B19677B006A827B /* SyncConfirmViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncConfirmViewModel.swift; sourceTree = "<group>"; };
 		4EE6FA8B2B196B16006A827B /* Dictionary+Add.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Add.swift"; sourceTree = "<group>"; };
 		4EE8E4942834DC7100DFEF59 /* NFTModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTModel.swift; sourceTree = "<group>"; };
@@ -2530,7 +2540,6 @@
 		6A2D35BC283B6B5A008293D9 /* ThemeChangeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeChangeViewModel.swift; sourceTree = "<group>"; };
 		6A3221382927B49B000B8E1F /* StakingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StakingDetailView.swift; sourceTree = "<group>"; };
 		6A35EAD82859BD36005A85B8 /* EditAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAvatarView.swift; sourceTree = "<group>"; };
-		6A37AD9328BDAA300047E5F7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6A37AD9628BE0DE40047E5F7 /* TransactionProcessStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionProcessStatusView.swift; sourceTree = "<group>"; };
 		6A37AD9A28BE15700047E5F7 /* SendAmountTransactionProcessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendAmountTransactionProcessView.swift; sourceTree = "<group>"; };
 		6A382E1D289BC93400163564 /* Shake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shake.swift; sourceTree = "<group>"; };
@@ -2760,7 +2769,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4EC852532B0AD89E00C5CD52 /* FlowWalletCore in Frameworks */,
+				1540160F2C6EED360040687C /* FlowWalletCore in Frameworks */,
 				150D3E392A58719A00F7F2DC /* QRCode in Frameworks */,
 				4ED06E442ABABB9900F49A1A /* WalletCore.xcframework in Frameworks */,
 				156AC7AB27802F9D00ED5E3E /* GoogleAPIClientForREST_Drive in Frameworks */,
@@ -2785,7 +2794,6 @@
 				15185ED8278A73A3006B74A9 /* SPConfetti in Frameworks */,
 				6ABFE5A129A711ED00AA1688 /* Gzip in Frameworks */,
 				15832B642867641D0066046D /* GTMSessionFetcherCore in Frameworks */,
-				4E9D98DF2B9DEAEF00A70879 /* TrustWeb3Provider in Frameworks */,
 				6A7C080F286EE95E00020987 /* SwiftUICharts in Frameworks */,
 				1588332428943F7D00142B35 /* NativeUIKit in Frameworks */,
 				15D5775B277C23BF00045E79 /* Moya in Frameworks */,
@@ -2828,7 +2836,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4EC852512B0AD88E00C5CD52 /* FlowWalletCore in Frameworks */,
+				1540160D2C6EED2E0040687C /* FlowWalletCore in Frameworks */,
 				15C58C3D2868A4EE00BD4FC6 /* GoogleAPIClientForREST_Drive in Frameworks */,
 				15C58C3E2868A4EE00BD4FC6 /* Flow in Frameworks */,
 				15C58C3F2868A4EE00BD4FC6 /* GoogleSignIn in Frameworks */,
@@ -2871,7 +2879,6 @@
 				4E5D4FAC2AEF9A5A00DC419B /* DeviceGuru in Frameworks */,
 				15C58C4D2868A4EE00BD4FC6 /* IrregularGradient in Frameworks */,
 				15C58C4F2868A4EE00BD4FC6 /* FirebaseCrashlytics in Frameworks */,
-				4E9D98DD2B9DEAE300A70879 /* TrustWeb3Provider in Frameworks */,
 				15C58C502868A4EE00BD4FC6 /* FirebaseRemoteConfig in Frameworks */,
 				15C58C512868A4EE00BD4FC6 /* CombineMoya in Frameworks */,
 				158832CA2894262B00142B35 /* WalletConnect in Frameworks */,
@@ -3079,6 +3086,17 @@
 			path = Modifier;
 			sourceTree = "<group>";
 		};
+		154016002C6EE7F60040687C /* TrustWeb3Provider */ = {
+			isa = PBXGroup;
+			children = (
+				154015FC2C6EE7F60040687C /* ProviderNetwork.swift */,
+				154015FD2C6EE7F60040687C /* trust-min.js */,
+				154015FE2C6EE7F60040687C /* TrustWeb3Provider.swift */,
+				154015FF2C6EE7F60040687C /* WKWebView+Extension.swift */,
+			);
+			path = TrustWeb3Provider;
+			sourceTree = "<group>";
+		};
 		154866EE28D0EECE00D012B8 /* FlixAuditEndpoint */ = {
 			isa = PBXGroup;
 			children = (
@@ -3124,7 +3142,7 @@
 				1544C62728C812E500B6BA52 /* GoogleOAuth2.plist */,
 				15DDFB8F2750D03E008263A2 /* Info.plist */,
 				152EEC6F28E4F5EC00C37A67 /* config.plist */,
-				6A37AD9328BDAA300047E5F7 /* GoogleService-Info.plist */,
+				154016102C6F1A7E0040687C /* GoogleService-Info.plist */,
 				6A0C6E1529540696005F0EF6 /* EnvDefine.swift */,
 				4E9DCE442B50E845005DE911 /* InstabugConfig.swift */,
 			);
@@ -4530,7 +4548,6 @@
 		15EC9DE5274FD1FC00F70CD9 = {
 			isa = PBXGroup;
 			children = (
-				4EE6AC582B1D5DD60051EC5C /* Flow-Wallet-Core */,
 				4E08604A2AB8AF9B0037F582 /* FRWDevWidgetsExtension.entitlements */,
 				4E0860492AB8AF9B0037F582 /* FRWWidgetsExtension.entitlements */,
 				15EC9DF0274FD1FC00F70CD9 /* FRW */,
@@ -5642,6 +5659,7 @@
 		6ABAE52D2836297C00C97AE2 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				154016002C6EE7F60040687C /* TrustWeb3Provider */,
 				4E3138052C658FB2003A73E5 /* DebugViewer */,
 				4E5646532C0606A300890E61 /* PopupView */,
 				4ED9C5BE2C0487D1004276D1 /* FloatingButton */,
@@ -5980,16 +5998,15 @@
 				150D3E382A58719A00F7F2DC /* QRCode */,
 				6A19A74D2A612FAB00B84F09 /* FirebaseMessaging */,
 				4E5D4FAD2AEF9A7400DC419B /* DeviceGuru */,
-				4EC852522B0AD89E00C5CD52 /* FlowWalletCore */,
 				4E1DD8D32B16443B0055E510 /* WalletConnectAuth */,
 				4E1DD8C82B16222A0055E510 /* Instabug */,
-				4E9D98DE2B9DEAEF00A70879 /* TrustWeb3Provider */,
 				4E3682C62BB6A59100B24785 /* web3swift */,
 				4E539C882BC6269E0080BAF8 /* Web3Wallet */,
 				4EEE9DC62BD243DB00685AAA /* FirebaseAnalytics */,
 				4E5F2F0E2C11F036008589C4 /* CrowdinSDK */,
 				4E5F2F122C192F3B008589C4 /* WalletConnectNotify */,
 				4E2E8CBC2C61B9A800095D5B /* LogView */,
+				1540160E2C6EED360040687C /* FlowWalletCore */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 154B8928276A1EEB00780E93 /* FRW-dev.app */;
@@ -6063,15 +6080,14 @@
 				150D3E362A58718700F7F2DC /* QRCode */,
 				6A19A74F2A612FC600B84F09 /* FirebaseMessaging */,
 				4E5D4FAB2AEF9A5A00DC419B /* DeviceGuru */,
-				4EC852502B0AD88E00C5CD52 /* FlowWalletCore */,
 				4E1DD8D52B1644480055E510 /* WalletConnectAuth */,
 				4E1DD8C62B1622030055E510 /* Instabug */,
-				4E9D98DC2B9DEAE300A70879 /* TrustWeb3Provider */,
 				4E947C912BBEB2E300E87A85 /* web3swift */,
 				4E539C862BC626770080BAF8 /* Web3Wallet */,
 				4E5F2F102C12B1C2008589C4 /* CrowdinSDK */,
 				4E5F2F142C192F4F008589C4 /* WalletConnectNotify */,
 				4E2E8CBE2C61BB2300095D5B /* LogView */,
+				1540160C2C6EED2E0040687C /* FlowWalletCore */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 15C58C6D2868A4EE00BD4FC6 /* FRW.app */;
@@ -6239,12 +6255,11 @@
 				6A5F15F62A3185300035AC38 /* XCRemoteSwiftPackageReference "SwiftyBeaver" */,
 				150D3E352A58718700F7F2DC /* XCRemoteSwiftPackageReference "QRCode" */,
 				4E5D4FAA2AEF9A5A00DC419B /* XCRemoteSwiftPackageReference "DeviceGuru" */,
-				4EC8524F2B0AD88D00C5CD52 /* XCRemoteSwiftPackageReference "Flow-Wallet-Core" */,
 				4E1DD8C52B1622030055E510 /* XCRemoteSwiftPackageReference "Instabug-SP" */,
-				4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */,
 				4E3682C52BB6A59100B24785 /* XCRemoteSwiftPackageReference "web3swift" */,
 				4E5F2F0D2C11F036008589C4 /* XCRemoteSwiftPackageReference "mobile-sdk-ios" */,
 				4E2E8CBB2C61B9A800095D5B /* XCRemoteSwiftPackageReference "LogView" */,
+				1540160B2C6EED230040687C /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */,
 			);
 			productRefGroup = 15EC9DEF274FD1FC00F70CD9 /* Products */;
 			projectDirPath = "";
@@ -6299,6 +6314,7 @@
 				4E0D34A62A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf in Resources */,
 				1565FBA528B16FD70086A652 /* Category.json in Resources */,
 				1565FB9928B1677F0086A652 /* Grid.json in Resources */,
+				154016042C6EE7F70040687C /* trust-min.js in Resources */,
 				1565FBA328B16FD70086A652 /* Compass.json in Resources */,
 				15D3BA7B28C4D2A4009AEA6E /* LaunchScreen.storyboard in Resources */,
 				154B8929276A1F4600780E93 /* GoogleService-Info.plist in Resources */,
@@ -6338,6 +6354,7 @@
 				15C58C5D2868A4EE00BD4FC6 /* remote_config_defaults.plist in Resources */,
 				1565FB6728B14F140086A652 /* Account.json in Resources */,
 				1565FB9E28B16B580086A652 /* CoinHover.json in Resources */,
+				154016032C6EE7F70040687C /* trust-min.js in Resources */,
 				4ED40AF72B1A190B00C25EBF /* Loading_animation.json in Resources */,
 				1544C62828C812E700B6BA52 /* GoogleOAuth2.plist in Resources */,
 				15CC8A6928C4EA63001D2696 /* shapes.riv in Resources */,
@@ -6351,7 +6368,6 @@
 				4E0D34A32A8B4E2900BC6E43 /* e-Ukraine-Light.ttf in Resources */,
 				15C628AB29F6A53200ED6A93 /* LocalEnv in Resources */,
 				1565FB6328B14F140086A652 /* Chat.json in Resources */,
-				6A37AD9428BDAA310047E5F7 /* GoogleService-Info.plist in Resources */,
 				4E3138062C658FB2003A73E5 /* codeql-analysis.yml in Resources */,
 				4E0D34A52A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf in Resources */,
 				15C58C612868A4EE00BD4FC6 /* Montserrat-Italic.ttf in Resources */,
@@ -6375,6 +6391,7 @@
 				15D6D8ED28CB730800CBA152 /* inAR.json in Resources */,
 				1565FB9B28B1681F0086A652 /* Coin.json in Resources */,
 				15C58C662868A4EE00BD4FC6 /* Montserrat-Bold.ttf in Resources */,
+				154016112C6F1A7E0040687C /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6952,6 +6969,7 @@
 				6A382E1F289BC93400163564 /* Shake.swift in Sources */,
 				15DC212927819C56000B187A /* VProgressBar.swift in Sources */,
 				15DC209B27819C56000B187A /* VBaseHeaderFooterView.swift in Sources */,
+				154016062C6EE7F70040687C /* TrustWeb3Provider.swift in Sources */,
 				15DC213327819C56000B187A /* VSegmentedPickerModel.swift in Sources */,
 				4EBE49272AA1B732000FFFFE /* AppUpdateManager.swift in Sources */,
 				4E1B2FE72BA061F700F30379 /* QRCodeEyeShareFillCircle.swift in Sources */,
@@ -7041,6 +7059,7 @@
 				4E31380D2C658FB2003A73E5 /* DebugViewer.swift in Sources */,
 				6A998DAA2936769000EF133B /* StakingManager.swift in Sources */,
 				15DC21D327819C56000B187A /* StateColors_EFSEPD.swift in Sources */,
+				154016022C6EE7F70040687C /* ProviderNetwork.swift in Sources */,
 				4E5054252C3D17A300D4BA56 /* RestoreErrorView.swift in Sources */,
 				6AEA374E28A4E3FD004545D4 /* NFTUIKitListView.swift in Sources */,
 				1570466D27930EB200D1747B /* NFTTabScreen.swift in Sources */,
@@ -7169,6 +7188,7 @@
 				4EC482D1284A3D75000A7E1B /* ColorThief.swift in Sources */,
 				1586873B28A170330037635B /* FadeAnimationBackground.swift in Sources */,
 				15DC217727819C56000B187A /* _VDialog.swift in Sources */,
+				154016082C6EE7F70040687C /* WKWebView+Extension.swift in Sources */,
 				15DC20DF27819C56000B187A /* VListLayoutType.swift in Sources */,
 				154B8916276A1EEB00780E93 /* BackgroundModifer.swift in Sources */,
 				158CE8892782DAD7006A8394 /* UserResponses.swift in Sources */,
@@ -7714,6 +7734,7 @@
 				15C58B922868A4EE00BD4FC6 /* VBaseHeaderFooterView.swift in Sources */,
 				15C58B932868A4EE00BD4FC6 /* VSegmentedPickerModel.swift in Sources */,
 				15C58B942868A4EE00BD4FC6 /* StateColors_EFD.swift in Sources */,
+				154016052C6EE7F70040687C /* TrustWeb3Provider.swift in Sources */,
 				4EBE49262AA1B732000FFFFE /* AppUpdateManager.swift in Sources */,
 				6A9CFE4C2A69331100AEA847 /* JailbreakAlertView.swift in Sources */,
 				4E1B2FE62BA061F700F30379 /* QRCodeEyeShareFillCircle.swift in Sources */,
@@ -7803,6 +7824,7 @@
 				4E31380C2C658FB2003A73E5 /* DebugViewer.swift in Sources */,
 				6AEA374D28A4E3FD004545D4 /* NFTUIKitListView.swift in Sources */,
 				15C58BBA2868A4EE00BD4FC6 /* NFTTabScreen.swift in Sources */,
+				154016012C6EE7F70040687C /* ProviderNetwork.swift in Sources */,
 				4E5054242C3D17A300D4BA56 /* RestoreErrorView.swift in Sources */,
 				15C58BBB2868A4EE00BD4FC6 /* VModalModel.swift in Sources */,
 				15C58BBC2868A4EE00BD4FC6 /* FRWAPI.swift in Sources */,
@@ -7931,6 +7953,7 @@
 				1586873A28A170330037635B /* FadeAnimationBackground.swift in Sources */,
 				15C58C082868A4EE00BD4FC6 /* _VDialog.swift in Sources */,
 				15C58C092868A4EE00BD4FC6 /* VListLayoutType.swift in Sources */,
+				154016072C6EE7F70040687C /* WKWebView+Extension.swift in Sources */,
 				15C58C0B2868A4EE00BD4FC6 /* BackgroundModifer.swift in Sources */,
 				15C58C0C2868A4EE00BD4FC6 /* UserResponses.swift in Sources */,
 				4EEDA38D2B4D788A0000D382 /* MultiBackupDetailViewModel.swift in Sources */,
@@ -8279,7 +8302,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = FRW/App/Env/Prod/FRW.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_ASSET_PATHS = "\"FRW/Resource/Preview Content\"";
 				DEVELOPMENT_TEAM = 444MY26W7F;
 				ENABLE_PREVIEWS = YES;
@@ -8304,7 +8327,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = "$(CFBundleShortVersionString)";
+				MARKETING_VERSION = 2.1.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG LILICOPROD";
@@ -8323,7 +8346,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = FRW/App/Env/Prod/FRW.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = "$(CFBundleVersion)";
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_ASSET_PATHS = "\"FRW/Resource/Preview Content\"";
 				DEVELOPMENT_TEAM = 444MY26W7F;
 				ENABLE_PREVIEWS = YES;
@@ -8345,7 +8368,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = "$(CFBundleShortVersionString)";
+				MARKETING_VERSION = 2.1.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = LILICOPROD;
@@ -8818,6 +8841,14 @@
 				minimumVersion = 3.0.0;
 			};
 		};
+		1540160B2C6EED230040687C /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Outblock/Flow-Wallet-Kit";
+			requirement = {
+				kind = revision;
+				revision = 332d1ea41571d1ed0cd852a5fe3dd6dc9465bc3e;
+			};
+		};
 		1549CF01299A10C2002B37A5 /* XCRemoteSwiftPackageReference "GzipSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/1024jp/GzipSwift";
@@ -9251,22 +9282,6 @@
 				revision = adac48c96aaa72e153f32b3271432c263f0da54f;
 			};
 		};
-		4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/trustwallet/trust-web3-provider";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
-		4EC8524F2B0AD88D00C5CD52 /* XCRemoteSwiftPackageReference "Flow-Wallet-Core" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Outblock/Flow-Wallet-Core/";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 		4ED6DD0E285A22A800105133 /* XCRemoteSwiftPackageReference "IrregularGradient" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/joogps/IrregularGradient";
@@ -9363,6 +9378,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 152BB09228AE8FD100B2A2AA /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
+		};
+		1540160C2C6EED2E0040687C /* FlowWalletCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1540160B2C6EED230040687C /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */;
+			productName = FlowWalletCore;
+		};
+		1540160E2C6EED360040687C /* FlowWalletCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1540160B2C6EED230040687C /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */;
+			productName = FlowWalletCore;
 		};
 		1545704F29461AB7004A278E /* MJRefresh */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -9799,30 +9824,10 @@
 			package = 4E3682C52BB6A59100B24785 /* XCRemoteSwiftPackageReference "web3swift" */;
 			productName = web3swift;
 		};
-		4E9D98DC2B9DEAE300A70879 /* TrustWeb3Provider */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */;
-			productName = TrustWeb3Provider;
-		};
-		4E9D98DE2B9DEAEF00A70879 /* TrustWeb3Provider */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */;
-			productName = TrustWeb3Provider;
-		};
 		4EC56B2C281D3ED000246878 /* FirebaseRemoteConfig */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 154B887C2765EBA700780E93 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseRemoteConfig;
-		};
-		4EC852502B0AD88E00C5CD52 /* FlowWalletCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4EC8524F2B0AD88D00C5CD52 /* XCRemoteSwiftPackageReference "Flow-Wallet-Core" */;
-			productName = FlowWalletCore;
-		};
-		4EC852522B0AD89E00C5CD52 /* FlowWalletCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4EC8524F2B0AD88D00C5CD52 /* XCRemoteSwiftPackageReference "Flow-Wallet-Core" */;
-			productName = FlowWalletCore;
 		};
 		4ED6DD0F285A22A800105133 /* IrregularGradient */ = {
 			isa = XCSwiftPackageProductDependency;

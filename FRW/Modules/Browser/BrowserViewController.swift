@@ -9,7 +9,6 @@ import Combine
 import Hero
 import SnapKit
 import SwiftUI
-import TrustWeb3Provider
 import UIKit
 import WebKit
 

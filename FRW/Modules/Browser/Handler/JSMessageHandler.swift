@@ -8,7 +8,6 @@
 import UIKit
 import WebKit
 import Flow
-import TrustWeb3Provider
 
 enum JSMessageType: String {
     case ready = "FCL:VIEW:READY"

@@ -7,7 +7,6 @@
 
 import UIKit
 import WebKit
-import TrustWeb3Provider
 
 private let jsListenWindowFCLMessage = """
     window.addEventListener('message', function (event) {

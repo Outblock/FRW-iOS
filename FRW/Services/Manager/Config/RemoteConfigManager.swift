@@ -38,6 +38,13 @@ class RemoteConfigManager {
         return false
     }
     
+    func signers() -> [FlowSigner] {
+        if RemoteConfigManager.shared.freeGasEnabled {
+            return [WalletManager.shared, RemoteConfigManager.shared]
+        }
+        return [WalletManager.shared]
+    }
+    
     var payer: String {
         if !freeGasEnabled {
             return WalletManager.shared.selectedAccountAddress

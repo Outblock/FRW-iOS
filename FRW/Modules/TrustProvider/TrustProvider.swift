@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import TrustWeb3Provider
 import WalletCore
 
 extension TrustWeb3Provider {

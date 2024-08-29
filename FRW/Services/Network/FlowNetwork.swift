@@ -39,7 +39,7 @@ extension FlowNetwork {
         let cadenceString = token.formatCadence(cadence: originCadence)
         let fromKeyIndex = WalletManager.shared.keyIndex
 
-        return try await flow.sendTransaction(signers: [WalletManager.shared, RemoteConfigManager.shared]) {
+        return try await flow.sendTransaction(signers: RemoteConfigManager.shared.signers()) {
             cadence {
                 cadenceString
             }

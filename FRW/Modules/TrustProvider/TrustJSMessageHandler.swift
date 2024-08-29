@@ -8,7 +8,6 @@
 import BigInt
 import Flow
 import Foundation
-import TrustWeb3Provider
 import WalletCore
 import Web3Core
 import web3swift
@@ -16,8 +15,6 @@ import WebKit
 import CryptoKit
 import Combine
 import Web3Wallet
-
-
 
 class TrustJSMessageHandler: NSObject {
     weak var webVC: BrowserViewController?
