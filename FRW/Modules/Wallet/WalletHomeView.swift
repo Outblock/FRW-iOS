@@ -287,21 +287,26 @@ struct WalletHomeView: View {
                     StackPageView(newsHandler.list, selection: $selectedNewsId) { news in
                         WalletNotificationView(item: news) { idStr in
                             if let nextId = newsHandler.nextItem(idStr) {
-                                selectedNewsId =  nextId
-                                scrollNext = true
+//                                selectedNewsId =  nextId
                             }
+                            selectedNewsId = idStr
                             newsHandler.onCloseItem(idStr)
-//                            scrollNext = false
                         } onAction: { idStr in
-                            newsHandler.onClickItem(idStr)
+                            
                         }
                     }
                     .options(.flowStack)
+                    .scrollToSelectedPage(false)
                     .numberOfVisibleItems(2)
-                    .scrollToSelectedPage(scrollNext)
                     .pagePadding(
                         horizontal: .absolute(16)
                     )
+                    .onTapPage({ idStr in
+                        newsHandler.onClickItem(idStr)
+                    })
+                    .valueChanged(value: selectedNewsId ?? "", onChange: { id in
+                        newsHandler.onShowItem(id)
+                    })
                     .frame(height: 104) // 72 + 16* 2
                     .padding(.bottom, 16)
                     
