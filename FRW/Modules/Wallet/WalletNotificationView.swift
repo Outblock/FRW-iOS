@@ -37,38 +37,24 @@ struct WalletNotificationView: View {
                     Text(item.title)
                         .font(.inter(size: 16, weight: .semibold))
                         .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                         .foregroundStyle(Color.Theme.Text.black)
                         .frame(height: 24)
                         .allowsHitTesting(false)
                     
                     if let subtitle = item.body {
-                        if item.url == nil {
-                            Text(subtitle)
-                                .font(.inter(size: 14))
-                                .lineLimit(2)
-                                .foregroundStyle(Color.Theme.Text.black8)
-                                .allowsHitTesting(false)
-                        }else {
-                            Button {
-                                onAction(item.id)
-                            } label: {
-                                Text(subtitle)
-                                    .font(.inter(size: 14))
-                                    .underline()
-                                    .lineLimit(2)
-                                    .foregroundStyle(Color.Theme.Text.black8)
-                            }
-                            .highPriorityGesture(DragGesture())
-                        }
+                        Text(subtitle)
+                            .font(.inter(size: 14))
+                            .underline(item.url != nil)
+                            .lineLimit(2)
+                            .foregroundStyle(Color.Theme.Text.black8)
                     }
-                    
-                    
                 }
                 
                 Spacer()
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+//            .padding(.vertical, 12)
 
         }
         .background(content: {

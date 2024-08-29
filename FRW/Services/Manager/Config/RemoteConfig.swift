@@ -124,7 +124,7 @@ extension RemoteConfigManager {
         init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
             let rawValue = try? container.decode(String.self)
-            self = NewDisplayType(rawValue: rawValue ?? "") ?? .once
+            self = NewDisplayType(rawValue: rawValue ?? "") ?? .expiry
         }
     }
 

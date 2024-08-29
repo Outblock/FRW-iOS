@@ -30,6 +30,7 @@ class WalletNewsHandler: ObservableObject {
         removeExpiryNew()
         removeMarkedNews()
         orderNews()
+        log.debug("[NEWS] count:\(list.count)")
     }
     
     private func removeExpiryNew() {
@@ -46,26 +47,30 @@ class WalletNewsHandler: ObservableObject {
     }
     
     @discardableResult
-    private func markItemIfNeed(_ itemId: String, displatyType: RemoteConfigManager.NewDisplayType = .once) -> Bool {
+    private func markItemIfNeed(_ itemId: String, displatyType: [RemoteConfigManager.NewDisplayType] = [.once]) -> Bool {
         let item = list.first { $0.id == itemId }
-        if item?.displayType == displatyType {
-            removeIds.append(itemId)
-            return true
+        guard let type = item?.displayType, displatyType.contains(type) else {
+            return false
         }
-        
-        return false
+        removeIds.append(itemId)
+        return true
     }
     
     /// Call only once when view appear
     func checkFirstNews() {
         if let item = list.first {
-            markItemIfNeed(item.id, displatyType: .once)
+            markItemIfNeed(item.id, displatyType: [.once])
         }
     }
 }
 
 //MARK: User Action
 extension WalletNewsHandler {
+    
+    func onShowItem(_ itemId: String) {
+        markItemIfNeed(itemId,displatyType: [.once])
+    }
+    
     func onCloseItem(_ itemId: String) {
         markItemIfNeed(itemId)
         withAnimation {
@@ -76,9 +81,9 @@ extension WalletNewsHandler {
     func onClickItem(_ itemId: String) {
         guard let item = list.first(where: { $0.id == itemId }) else { return }
         
-        let shouldRemove = markItemIfNeed(itemId, displatyType: .click)
+        let shouldRemove = markItemIfNeed(itemId, displatyType: [.click, .once])
         
-        if let urlStr = item.url, let url = URL(string: urlStr) {
+        if let urlStr = item.url, !urlStr.isEmpty, let url = URL(string: urlStr) {
             Router.route(to: RouteMap.Explore.browser(url))
         }
         
@@ -98,6 +103,17 @@ extension WalletNewsHandler {
         }
         let item = list[index + 1]
         return item.id
+    }
+    
+    func nextIndex(_ itemId: String) -> Int? {
+        guard let index = list.firstIndex(where: { $0.id == itemId }) else {
+            return nil
+        }
+        let nextIndex = index + 1
+        guard nextIndex < list.count else {
+            return nil
+        }
+        return nextIndex
     }
     
     func onScroll(index: Int) {
