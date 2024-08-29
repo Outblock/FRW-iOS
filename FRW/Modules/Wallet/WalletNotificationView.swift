@@ -36,6 +36,7 @@ struct WalletNotificationView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(item.title)
                         .font(.inter(size: 16, weight: .semibold))
+                        .lineLimit(1)
                         .foregroundStyle(Color.Theme.Text.black)
                         .frame(height: 24)
                         .allowsHitTesting(false)
@@ -44,6 +45,7 @@ struct WalletNotificationView: View {
                         if item.url == nil {
                             Text(subtitle)
                                 .font(.inter(size: 14))
+                                .lineLimit(2)
                                 .foregroundStyle(Color.Theme.Text.black8)
                                 .allowsHitTesting(false)
                         }else {
@@ -53,7 +55,7 @@ struct WalletNotificationView: View {
                                 Text(subtitle)
                                     .font(.inter(size: 14))
                                     .underline()
-                                    .lineLimit(1)
+                                    .lineLimit(2)
                                     .foregroundStyle(Color.Theme.Text.black8)
                             }
                             .highPriorityGesture(DragGesture())
