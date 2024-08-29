@@ -71,6 +71,7 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
               let id = json["id"] as? Int64,
               let network = extractNetwork(json: json)
         else {
+            log.error("[Trust] json:\(json)")
             return
         }
 
@@ -111,6 +112,7 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
             log.info("[Trust] addEthereumChain")
         case .switchEthereumChain:
             log.info("[Trust] switchEthereumChain")
+            handleSwitchChain(network: network, id: id, json: json)
         case .switchChain:
             log.info("[Trust] switchChain")
         }
@@ -267,7 +269,9 @@ extension TrustJSMessageHandler {
         Router.route(to: RouteMap.Explore.authz(vm))
     }
     
-    
+    private func handleSwitchChain(network: ProviderNetwork, id: Int64, json: [String: Any]) {
+        
+    }
     
     
     
