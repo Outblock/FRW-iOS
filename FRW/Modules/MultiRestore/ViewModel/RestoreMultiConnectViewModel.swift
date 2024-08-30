@@ -114,18 +114,13 @@ extension RestoreMultiConnectViewModel {
         var result: [MultiBackupManager.StoreItem] = []
         validationErrorsOccurred = false
         for item in list {
-            do {
-                _ = try MultiBackupManager.shared.decryptMnemonic(item.data, password: pinCode)
+            if let _ = try? MultiBackupManager.shared.decryptMnemonic(item.data, password: pinCode) {
                 var newItem = item
-                
                 newItem.code = pin
                 result.append(newItem)
             }
-            catch {
-                validationErrorsOccurred = true
-                log.error(error)
-            }
         }
+        
         return result
     }
     
