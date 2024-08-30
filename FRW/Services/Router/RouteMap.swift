@@ -14,6 +14,7 @@ import UIKit
 enum RouteMap {}
 
 typealias EmptyClosure = ()->()
+typealias SwitchNetworkClosure = (LocalUserDefaults.FlowNetworkType)->()
 
 // MARK: - Restore Login
 
@@ -531,7 +532,7 @@ extension RouteMap {
         case bookmark
         case linkChildAccount(ChildAccountLinkViewModel)
         case dapps
-        case switchNetwork(LocalUserDefaults.FlowNetworkType, LocalUserDefaults.FlowNetworkType)
+        case switchNetwork(LocalUserDefaults.FlowNetworkType, LocalUserDefaults.FlowNetworkType, SwitchNetworkClosure?)
     }
 }
 
@@ -586,7 +587,7 @@ extension RouteMap.Explore: RouterTarget {
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .dapps:
             navi.present(content: DAppsListView())
-        case .switchNetwork(let from, let to):
+        case .switchNetwork(let from, let to, let callback):
             let vc = CustomHostingController(rootView: NetworkSwitchPopView(from: from, to: to))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         }

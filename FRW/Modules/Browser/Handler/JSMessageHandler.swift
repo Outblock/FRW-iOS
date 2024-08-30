@@ -194,7 +194,7 @@ extension JSMessageHandler {
                 self.finishService()
                 
                 if let network = fcl.network, let toNetwork = LocalUserDefaults.FlowNetworkType(rawValue: network.lowercased()) {
-                    Router.route(to: RouteMap.Explore.switchNetwork(current, toNetwork))
+                    Router.route(to: RouteMap.Explore.switchNetwork(current, toNetwork, nil))
                 }
                 
                 return
