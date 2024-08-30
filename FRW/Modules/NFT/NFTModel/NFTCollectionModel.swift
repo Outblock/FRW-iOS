@@ -32,6 +32,8 @@ extension NFTCollectionConfig {
         do {
             
             var list: [NFTCollectionInfo]
+            //TODO: check
+            // CadenceManager.shared.isGreaterVerson1() && EVMAccountManager.shared.selectedAccount != nil
             if LocalUserDefaults.shared.flowNetwork == .previewnet {
                 let response: EVMNFTCollectionResponse = try await Network.requestWithRawModel(GithubEndpoint.EVMNFTList)
                 list = response.tokens

@@ -31,14 +31,14 @@ extension FRWAPI.EVM: TargetType, AccessTokenAuthorizable {
         switch self {
         case .tokenList(let addr):
             if let addr = addr {
-                return "evm/\(addr)/fts"
+                return "v2/evm/\(addr)/fts"
             }
-            return "evm/fts"
+            return "v2/evm/fts"
         case .nfts(let addr):
             if let addr = addr {
-                return "evm/\(addr)/nfts"
+                return "v2/evm/\(addr)/nfts"
             }
-            return "evm/nfts"
+            return "v2/evm/nfts"
         }
     }
     
@@ -47,9 +47,11 @@ extension FRWAPI.EVM: TargetType, AccessTokenAuthorizable {
     }
     
     var task: Task {
+        let network = LocalUserDefaults.shared.flowNetwork.rawValue
+        
         switch self {
         case .tokenList, .nfts:
-            return .requestPlain
+            return .requestParameters(parameters: ["network": network], encoding: URLEncoding.queryString)
         }
     }
     
