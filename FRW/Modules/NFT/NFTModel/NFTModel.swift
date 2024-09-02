@@ -110,6 +110,8 @@ struct NFTModel: Codable, Hashable, Identifiable {
     var collection: NFTCollectionInfo?
     let infoFromCollection: FlowModel.CollectionInfo?
     
+    var imageData: String? = nil
+    
     var imageURL: URL {
         if isSVG {
             return image.absoluteString.convertedSVGURL() ?? URL(string: placeholder)!
@@ -127,7 +129,12 @@ struct NFTModel: Codable, Hashable, Identifiable {
             if response.postMedia?.isSvg == true {
                 image = URL(string: imgUrl) ?? URL(string: placeholder)!
                 isSVG = true
-            } else {
+            } else if let data = imgUrl.toBase64String() {
+                imageData = data
+                isSVG = true
+                image = URL(string: placeholder)!
+            }
+            else {
                 if imgUrl.hasPrefix("https://lilico.infura-ipfs.io/ipfs/") {
                     let newImgURL = imgUrl.replace(by: ["https://lilico.infura-ipfs.io/ipfs/": "https://lilico.app/api/ipfs/"])
                     image = URL(string: newImgURL)!
@@ -333,5 +340,16 @@ class CollectionItem: Identifiable, ObservableObject {
     private func saveNFTsToCache() {
         let models = nfts.map { $0.response }
         NFTUIKitCache.cache.saveNFTsToCache(models, collectionId: collectionId)
+    }
+}
+
+extension String {
+    fileprivate func toBase64String() -> String? {
+        if self.contains("data:image/svg+xml;base64,") {
+            if let baseStr =  self.components(separatedBy: "base64,").last {
+                return baseStr
+            }
+        }
+        return nil
     }
 }

@@ -90,7 +90,8 @@ struct NFTDetailPage: RouteableView {
                                 .onAppear {
                                     fetchColor()
                                 }
-                        } else if let video = vm.nft.video {
+                        } 
+                        else if let video = vm.nft.video {
                             VideoPlayer(player: player)
                                 .onAppear {
                                     if player.currentItem == nil {
@@ -102,7 +103,45 @@ struct NFTDetailPage: RouteableView {
                                     }
                                 }
                                 .frame(width: UIScreen.screenWidth - 16 * 2, height: UIScreen.screenWidth - 16 * 2)
-                        } else {
+                        } 
+//                        else if let base64ImageData = vm.nft.imageData {
+//                            let provider = Base64ImageDataProvider.init(base64String: base64ImageData, cacheKey: vm.nft.id)
+//                            KFImage.source(.provider(provider))
+//                                .placeholder {
+//                                    Image("placeholder")
+//                                        .resizable()
+//                                }
+//                                .onSuccess { _ in
+//                                    fetchColor()
+//                                }
+//                                .resizable()
+//                                .aspectRatio(contentMode: .fit)
+//                                .frame(alignment: .center)
+//                                .cornerRadius(8)
+//                                .padding(.horizontal, 18)
+//                                .clipped()
+//                                .scaleEffect(isDragging ? 0.9 : 1)
+//                                .animation(.timingCurve(0.2, 0.8, 0.2, 1, duration: 0.8), value: isDragging)
+//                            
+//                                .rotation3DEffect(Angle(degrees: 5), axis: (x: viewState.width, y: viewState.height, z: 0))
+//                                .modifier(DragGestureViewModifier(onStart: nil, onUpdate: { value in
+//                                    self.viewState = value.translation
+//                                    self.isDragging = true
+//                                }, onEnd: {
+//                                    self.viewState = .zero
+//                                    self.isDragging = false
+//                                }, onCancel: {
+//                                    self.viewState = .zero
+//                                    self.isDragging = false
+//                                }))
+//                                .coordinateSpace(name: "NFTImage")
+//                                .onTapGesture {
+//                                    showImageViewer.toggle()
+//                                }
+//                                .matchedGeometryEffect(id: "imageView", in: heroAnimation)
+//                                .visible(!showImageViewer)
+//                        }
+                        else {
                             KFImage
                                 .url(vm.nft.imageURL)
                                 .placeholder {
