@@ -25,10 +25,10 @@ func serviceDefinition(address: String, keyId: Int, type: FCLServiceType) -> Ser
         service.provider = Provider(fType: "ServiceProvider",
                                     fVsn: "1.0.0",
                                     address: address,
-                                    name: "Lilico Wallet",
-                                    description: "A Mobile crypto wallet on Flow built for explorers, collectors, and gamers.",
-                                    color: "#FC814A",
-                                    supportEmail: "hi@lilico.app",
+                                    name: "Flow Wallet",
+                                    description: "Flow Wallet is built from the ground up for Flow Blockchain!",
+                                    color: "#41CC5D",
+                                    supportEmail: "wallet@flow.com",
                                     website: "https://link.lilico.app/wc")
         
     }
