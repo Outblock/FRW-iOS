@@ -151,18 +151,33 @@ extension CreateProfileWaitingView {
                         .cornerRadius(16)
                     }
                 } else {
-                    HStack {
-                        Text("Creating your Profile")
-                            .font(.inter(size: 14, weight: .bold))
-                            .foregroundStyle(Color.Theme.Accent.green)
-                        ActivityIndicator()
+                    VStack {
+                        HStack {
+                            Text("😃")
+                                .font(.inter(size: 14, weight: .bold))
+                            Text("take_mins".localized)
+                                .font(.inter(size: 14))
+                                .foregroundStyle(Color.Theme.Accent.green)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.Theme.Accent.green.opacity(0.12))
+                        .cornerRadius(8)
+                        
+                        HStack {
+                            Text("Creating your Profile")
+                                .font(.inter(size: 14, weight: .bold))
+                                .foregroundStyle(Color.Theme.Accent.green)
+                            ActivityIndicator()
+                        }
+                        .frame(width: 220, height: 56)
+                        .border(Color.Theme.Accent.green, cornerRadius: 16)
                     }
-                    .frame(width: 220, height: 56)
-                    .border(Color.Theme.Accent.green, cornerRadius: 16)
+                    
                 }
                 Spacer()
             }
-            .padding(.bottom, 40)
+            .padding(.bottom, 30)
         }
     }
 }
