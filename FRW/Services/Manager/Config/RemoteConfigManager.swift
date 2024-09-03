@@ -16,26 +16,25 @@ class RemoteConfigManager {
     
     let emptyAddress = "0x0000000000000000"
     
-    private var EVNConfig: ENVConfig?
+    private var envConfig: ENVConfig?
     var config: Config?
     var contractAddress: ContractAddress?
     
     var isFailed: Bool = false
     
     var freeGasEnabled: Bool {
-        return remoteGreeGas
-//        if !remoteGreeGas {
-//            return false
-//        }
-//        return localGreeGas
+        if !remoteGreeGas {
+            return false
+        }
+        return localGreeGas
     }
     
     @AppStorage(LocalUserDefaults.Keys.freeGas.rawValue) private var localGreeGas = true
-    private var remoteGreeGas: Bool {
+    var remoteGreeGas: Bool {
         if let config = config {
             return config.features.freeGas
         }
-        return false
+        return true
     }
     
     var payer: String {
@@ -86,6 +85,15 @@ class RemoteConfigManager {
     }
     
     init() {
+        do {
+            try loadLocalConfig()
+        }catch {
+            log.error("[Firebase] load local file config failed:\(error)")
+        }
+        updateFromRemote()
+    }
+    
+    func updateFromRemote() {
         fetchNews()
         do {
             let data: String = try FirebaseConfig.ENVConfig.fetch()
@@ -95,26 +103,23 @@ class RemoteConfigManager {
                 
                 let decodeData = AES.decryptCBC(key: keyData, data: Data(hex: data), iv: ivData, mode: .pkcs7)!
                 let config = try? JSONDecoder().decode(ENVConfig.self, from: decodeData)
-                self.EVNConfig = config
+                self.envConfig = config
                 self.config = nil
                 if  let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
-                    let version = EVNConfig?.version
+                    let version = envConfig?.version
                 {
                     if version.compareVersion(to: currentVersion) == .orderedDescending {
-                        self.config = self.EVNConfig?.prod
+                        self.config = self.envConfig?.prod
                     }
                 }
                 
                 if self.config == nil {
-                    self.config = self.EVNConfig?.staging
+                    self.config = self.envConfig?.staging
                 }
-            } else {
-                try loadLocalConfig()
             }
             self.contractAddress = try FirebaseConfig.contractAddress.fetch(decoder: JSONDecoder())
             
             NotificationCenter.default.post(name: .remoteConfigDidUpdate, object: nil)
-//            try handleSecret()
         } catch {
             do {
                 log.warning("will load from local")
@@ -146,21 +151,6 @@ class RemoteConfigManager {
         self.config = config
         self.contractAddress = try FirebaseConfig.contractAddress.fetchLocal()
     }
-    
-    private func handleSecret() throws {
-        let data: String = try FirebaseConfig.appSecret.fetch()
-        let key = LocalEnvManager.shared.backupAESKey
-        guard let keyData = key.data(using: .utf8),
-              let ivData = key.sha256().prefix(16).data(using: .utf8) else{
-            return
-        }
-        let decodeData = AES.decryptCBC(key: keyData, data: Data(hex: data), iv: ivData, mode: .pkcs7)!
-        let config = try? JSONDecoder().decode(Config.self, from: decodeData)
-        if config != nil {
-            self.config = config
-        }
-    }
-    
 }
 
 extension RemoteConfigManager: FlowSigner {

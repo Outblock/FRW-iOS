@@ -329,6 +329,7 @@ public extension String {
     private func platformInfo() -> String {
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
         let buildVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
-        return "iOS-\(version)-\(buildVersion)"
+        let model = isDevModel ? "(Dev)" : ""
+        return "iOS-\(version)-\(buildVersion)\(model)"
     }
 }

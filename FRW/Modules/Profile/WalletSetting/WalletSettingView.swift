@@ -117,6 +117,7 @@ struct WalletSettingView: RouteableView {
                                 .tint(.LL.Primary.salmonPrimary)
                                 .onChange(of: localGreeGas) { value in
                                 }
+                                .disabled(!RemoteConfigManager.shared.remoteGreeGas)
                                 
                             }
                             
