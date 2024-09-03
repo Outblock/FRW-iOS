@@ -21,7 +21,7 @@ extension NFTListResponse {
         item.name = info?.collectionData.display?.name ?? collection?.name ?? ""
         item.count = nftCount
         item.nfts = nfts?.compactMap({ NFTModel($0, in: collection, from: info) }) ?? []
-        item.collection = collection ?? NFTCollectionInfo(id: "", name: item.name, contractName: item.name, address: "", logo: "", banner: "", officialWebsite: "", description: "", path: ContractPath(storagePath: "", publicPath: "", privatePath: nil, publicCollectionName: "", publicType: "", privateType: ""), evmAddress: nil, socials: nil, flowIdentifier: nil)
+        item.collection = collection ?? NFTCollectionInfo(id: "", name: item.name, contractName: item.name, address: "", logo: "", banner: "", officialWebsite: "", description: "", path: ContractPath(storagePath: "", publicPath: "", privatePath: nil, publicCollectionName: "", publicType: "", privateType: ""), evmAddress: nil, flowIdentifier: nil)
         item.isEnd = nftCount < 24
         return item
     }

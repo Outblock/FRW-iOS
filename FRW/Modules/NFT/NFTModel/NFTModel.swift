@@ -26,7 +26,7 @@ struct NFTCollection: Codable {
 }
 
 struct EVMNFTCollectionResponse: Codable {
-    let tokens: [NFTCollectionInfo]
+    let tokens: [NFTCollectionInfo]?
     let chainId: Int?
     let network: String?
 }
@@ -45,7 +45,7 @@ struct NFTCollectionInfo: Codable, Hashable, Mockable {
     let path: ContractPath
     
     let evmAddress: String?
-    var socials: NFTCollectionInfo.Social?
+//    var socials: NFTCollectionInfo.Social?
     let flowIdentifier: String?
     
     var logoURL: URL {
@@ -68,7 +68,7 @@ struct NFTCollectionInfo: Codable, Hashable, Mockable {
     }
     
     static func mock() -> NFTCollectionInfo {
-        return NFTCollectionInfo(id: randomString(), name: randomString(), contractName: randomString(), address: randomString(), logo: randomString(), banner: randomString(), officialWebsite: randomString(), description: randomString(), path: ContractPath.mock(), evmAddress: nil, socials: nil, flowIdentifier: nil)
+        return NFTCollectionInfo(id: randomString(), name: randomString(), contractName: randomString(), address: randomString(), logo: randomString(), banner: randomString(), officialWebsite: randomString(), description: randomString(), path: ContractPath.mock(), evmAddress: nil, flowIdentifier: nil)
     }
 }
 

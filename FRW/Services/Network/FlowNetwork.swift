@@ -1301,7 +1301,7 @@ extension FlowNetwork {
         guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
         }
-        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners) {
+        let tranId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners) {
             cadence {
                 cadenceStr
             }
@@ -1324,6 +1324,8 @@ extension FlowNetwork {
                 9999
             }
         }
+        log.info("[Flow] transaction Id:\(tranId.description)")
+        return tranId
     }
 }
 

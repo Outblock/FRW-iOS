@@ -124,7 +124,7 @@ class NFTTransferViewModel: ObservableObject {
                     }
                 }
                 
-                if toAccountType == .coa && toAddress != EVMAccountManager.shared.accounts.first?.address {
+                if toAccountType == .coa && toAddress != EVMAccountManager.shared.accounts.first?.showAddress {
                     toAccountType = .eoa
                 }
                 
@@ -141,7 +141,6 @@ class NFTTransferViewModel: ObservableObject {
                         throw NFTError.sendInvalidAddress
                     }
                     tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: nftAddress, contractName: nftName, ids: [IdInt], fromEvm: false)
-                    log.error("========")
                 case (.flow, .eoa):
                     log.debug("[NFT] flow to eoa send")
                     let erc721 = try await FlowProvider.Web3.erc721NFTContract()

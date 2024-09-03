@@ -51,6 +51,9 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
             }
             return "nft/id"
         case .collections:
+            if CadenceManager.shared.isGreaterVerson1() {
+                    return "v2/nft/collections"
+            }
             return "nft/collections"
         case .collectionDetailList:
             if CadenceManager.shared.isGreaterVerson1() {
