@@ -14,7 +14,18 @@ import WalletCore
 class RemoteConfigManager {
     static let shared = RemoteConfigManager()
     
-    let emptyAddress = "0x0000000000000000"
+    var emptyAddress: String {
+        switch LocalUserDefaults.shared.flowNetwork.toFlowType() {
+        case .mainnet:
+            return "0x319e67f2ef9d937f"
+        case .testnet:
+            return "0xcb1cf3196916f9e2"
+        case .previewnet:
+            return "0xa460a24643b45e74"
+        default:
+            return "0x319e67f2ef9d937f"
+        }
+    }
     
     private var envConfig: ENVConfig?
     var config: Config?
