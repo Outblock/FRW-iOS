@@ -9,7 +9,7 @@ import SwiftUI
 
 class CadenceManager {
     static let shared = CadenceManager()
-    private let localVersion = "1.83"
+    private let localVersion = "1.90"
     
     var version: String = ""
     var scripts: CadenceScript!
@@ -33,24 +33,36 @@ class CadenceManager {
     }
     
     private init() {
-        self.version = localVersion
-        log.info("[Cadence] local version is \(localVersion)")
-        do {
-            guard let filePath = Bundle.main.path(forResource: "cloudfunctions", ofType: "json") else {
-                log.error("CadenceManager -> loadFromLocalFile error: no local file")
-                return
-            }
-            
-            let data = try Data(contentsOf: URL(fileURLWithPath: filePath))
-            let providers = try JSONDecoder().decode(CadenceResponse.self, from: data)
-            self.scripts = providers.scripts
-            self.version = providers.version ?? localVersion
-            log.info("[Cadence] romote version is \(String(describing: providers.version))")
-        }
-        catch {
-            log.error("CadenceManager -> decode failer: \(error)")
-        }
+        loadLocalCache()
         fetchScript()
+        
+        log.info("[Cadence] current version is \(String(describing: self.version))")
+    }
+    
+    private func loadLocalCache() {
+        
+        if let response = loadCache() {
+            self.scripts = response.scripts
+            self.version = response.version ?? localVersion
+            log.info("[Cadence] local cache version is \(String(describing: response.version))")
+        }
+        else {
+            do {
+                guard let filePath = Bundle.main.path(forResource: "cloudfunctions", ofType: "json") else {
+                    log.error("CadenceManager -> loadFromLocalFile error: no local file")
+                    return
+                }
+                
+                let data = try Data(contentsOf: URL(fileURLWithPath: filePath))
+                let providers = try JSONDecoder().decode(CadenceResponse.self, from: data)
+                self.scripts = providers.scripts
+                self.version = providers.version ?? localVersion
+                log.info("[Cadence] romote version is \(String(describing: providers.version))")
+            }
+            catch {
+                log.error("CadenceManager -> decode failer: \(error)")
+            }
+        }
     }
     
     private func fetchScript() {
@@ -58,6 +70,8 @@ class CadenceManager {
             do {
                 let response: CadenceRemoteResponse = try await Network.requestWithRawModel(FRWAPI.Cadence.list)
                 DispatchQueue.main.async {
+                    // first call before
+                    self.saveCache(response: response.data)
                     self.scripts = response.data.scripts
                     if let version = response.data.version {
                         self.version = version
@@ -68,6 +82,52 @@ class CadenceManager {
                 log.error("CadenceManager -> fetch failed: \(error)")
             }
         }
+    }
+    
+    private func saveCache(response: CadenceResponse) {
+        guard response.version != self.version, let file = filePath() else {
+            log.info("[Cadence] same version")
+            return
+        }
+        do {
+            let data = try JSONEncoder().encode(response)
+            try data.write(to: file)
+        }catch {
+            log.error("[Cadence] save data failed.\(error)")
+        }
+    }
+    
+    private func loadCache() -> CadenceResponse? {
+        guard let file = filePath() else {
+            return nil
+        }
+        
+        if !FileManager.default.fileExists(atPath: file.relativePath) {
+            return nil
+        }
+        
+        do {
+            let data = try Data(contentsOf: file)
+            let response = try JSONDecoder().decode(CadenceResponse.self, from: data)
+            return response
+        } catch {
+            log.error("[Cadence] load cache \(error)")
+            return nil
+        }
+    }
+    
+    private func filePath() -> URL? {
+        do {
+            var root = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("cadence")
+            if !FileManager.default.fileExists(atPath: root.relativePath) {
+                try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+            }
+            let file = root.appendingPathComponent("script")
+            return file
+        }catch {
+            log.warning("[Cadence] create failed. \(error)")
+        }
+        return nil
     }
 }
 

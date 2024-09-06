@@ -44,6 +44,7 @@ enum BackupError: Error {
     case decryptMnemonicFailed
     case topVCNotFound
     case fileIsNotExistOnCloud
+    case CloudFileData
 }
 
 enum GoogleBackupError: Error {

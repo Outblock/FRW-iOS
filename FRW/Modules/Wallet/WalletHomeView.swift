@@ -266,23 +266,6 @@ struct WalletHomeView: View {
                 
                 VStack(alignment: .trailing) {
                     Spacer()
-//                    if newsHandler.list.count > 1 {
-//                        HStack {
-//                            HStack(spacing: 15) {
-//                                ForEach(newsHandler.list.indices, id: \.self) { index in
-//                                    Capsule()
-//                                        .fill(vm.currentPage == index ? Color.Theme.Accent.green : Color.Theme.Line.line)
-//                                        .frame(width: vm.currentPage == index ? 20 : 7, height: 7)
-//                                }
-//                            }
-//                            .overlay(alignment: .leading) {
-//                                Capsule()
-//                                    .fill(Color.Theme.Accent.green)
-//                                    .frame(width: 20, height: 7)
-//                                    .offset(x: CGFloat(22 * vm.currentPage))
-//                            }
-//                        }
-//                    }
                     
                     StackPageView(newsHandler.list, selection: $selectedNewsId) { news in
                         WalletNotificationView(item: news) { idStr in
@@ -327,6 +310,7 @@ struct WalletHomeView: View {
             .onAppear {
                 newsHandler.checkFirstNews()
             }
+            .visibility(vm.needShowPlaceholder ? .gone : .visible)
         }
         .frame(height: headerHeight + safeArea.top)
     }

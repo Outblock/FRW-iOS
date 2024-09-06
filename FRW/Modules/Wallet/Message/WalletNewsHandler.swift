@@ -43,7 +43,7 @@ class WalletNewsHandler: ObservableObject {
     }
     
     private func orderNews() {
-        list.sort(by: <)
+        list.sort(by: >)
     }
     
     @discardableResult

@@ -227,34 +227,55 @@ extension WalletConnectView {
         let network: String
         let icon: String
         
+        @State var svgString: String? = nil
+        
         var color: SwiftUI.Color {
             network == "testnet" ? Color.LL.flow : Color.LL.Primary.salmonPrimary
+        }
+        
+        init(title: String, url: String, network: String, icon: String) {
+            self.title = title
+            self.url = url
+            self.network = network
+            self.icon = icon
+            fetchSVG()
         }
         
         var body: some View {
             HStack(spacing: 0) {
                 
-                KFImage.url(URL(string: icon))
-                    .placeholder({
-                        Image("placeholder")
-                            .resizable()
-                    })
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 40, height: 40)
-                    .clipShape(Circle())
-                    .padding(.trailing, 12)
+                if let svg = svgString {
+                    SVGWebView(svg: svg)
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .frame(width: 40, height: 40)
+                        .clipShape(Circle())
+                        .padding(.trailing, 12)
+                }else {
+                    KFImage.url(URL(string: icon))
+                        .placeholder({
+                            Image("placeholder")
+                                .resizable()
+                        })
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 40, height: 40)
+                        .clipShape(Circle())
+                        .padding(.trailing, 12)
+                }
+                
                 
                 
                 VStack {
                     Text(title)
                         .font(.LL.body)
                         .fontWeight(.semibold)
+                        .lineLimit(1)
                         .foregroundColor(Color.LL.Neutrals.text)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     Text(URL(string: url)?.host ?? url)
                         .font(.LL.footnote)
+                        .lineLimit(1)
                         .foregroundColor(Color.LL.Neutrals.neutrals9)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -278,6 +299,18 @@ extension WalletConnectView {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 64)
+        }
+        
+        func fetchSVG() {
+            if icon.lowercased().hasSuffix("svg"), let svgURL = URL(string: icon) {
+                Task {
+                    if let svg = await SVGCache.cache.getSVG(svgURL) {
+                        DispatchQueue.main.async {
+                            self.svgString = svg
+                        }
+                    }
+                }
+            }
         }
     }
 }

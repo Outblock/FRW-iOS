@@ -98,7 +98,7 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
     }
 
     var headers: [String: String]? {
-        var headers = FRWAPI.commonHeaders
+        let headers = FRWAPI.commonHeaders
 
 //        #if DEBUG
 //            // TODO: current nft is error on testnet, remove this code if testnet nft is working someday.

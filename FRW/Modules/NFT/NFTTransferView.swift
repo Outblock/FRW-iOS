@@ -167,7 +167,7 @@ class NFTTransferViewModel: ObservableObject {
                         guard let IdInt = UInt64(nftId) else {
                             throw NFTError.sendInvalidAddress
                         }
-                        tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: nftAddress, contractName: nftName, ids: [IdInt], fromEvm: false)
+                        tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: nftAddress, contractName: nftName, ids: [IdInt], fromEvm: true)
                     }else {
                         tid = try await FlowNetwork.bridgeNFTFromEVMToAnyFlow(nftContractAddress: nftAddress, nftContractName: nftName, id: nftId, receiver: toAddress)
                     }

@@ -149,7 +149,10 @@ class RemoteConfigManager {
                 decoder.dateDecodingStrategy = .iso8601
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 let list: [RemoteConfigManager.News] = try FirebaseConfig.news.fetch(decoder: decoder)
-                WalletNewsHandler.shared.addRemoteNews(list)
+                DispatchQueue.main.async {
+                    WalletNewsHandler.shared.addRemoteNews(list)
+                }
+                
             }
             catch {
                 log.error("[Firebase] fetch news failed. \(error)")
@@ -158,8 +161,20 @@ class RemoteConfigManager {
     }
     
     private func loadLocalConfig() throws {
-        let config: Config = try FirebaseConfig.ENVConfig.fetchLocal()
-        self.config = config
+        do {
+            let data: String = try FirebaseConfig.ENVConfig.fetch()
+            let key = LocalEnvManager.shared.backupAESKey
+            if let keyData = key.data(using: .utf8),
+               let ivData = key.sha256().prefix(16).data(using: .utf8) {
+                
+                let decodeData = AES.decryptCBC(key: keyData, data: Data(hex: data), iv: ivData, mode: .pkcs7)!
+                let config = try? JSONDecoder().decode(ENVConfig.self, from: decodeData)
+                self.config = config?.staging
+            }
+        }catch {
+            log.warning("[firebase] load local error.\(error)")
+        }
+        
         self.contractAddress = try FirebaseConfig.contractAddress.fetchLocal()
     }
 }
