@@ -44,29 +44,29 @@ struct CreateProfileWaitingView: RouteableView {
             }else {
                 bodyContainer
                     .padding(.bottom, 12)
-            }
-            
-            HStack {
-                Spacer()
-                HStack(spacing: 15) {
-                    ForEach(items.indices, id: \.self) { index in
+                HStack {
+                    Spacer()
+                    HStack(spacing: 15) {
+                        ForEach(items.indices, id: \.self) { index in
+                            let item = items[viewModel.currentPage]
+                            Capsule()
+                                .fill(viewModel.currentPage == index ? item.color : Color.Theme.Line.line)
+                                .frame(width: viewModel.currentPage == index ? 20 : 7, height: 7)
+                        }
+                    }
+                    .overlay(alignment: .leading) {
                         let item = items[viewModel.currentPage]
                         Capsule()
-                            .fill(viewModel.currentPage == index ? item.color : Color.Theme.Line.line)
-                            .frame(width: viewModel.currentPage == index ? 20 : 7, height: 7)
+                            .fill(item.color)
+                            .frame(width: 20, height: 7)
+                            .offset(x: getOffset())
                     }
+                    Color.clear
+                        .frame(width: 48, height: 1)
                 }
-                .overlay(alignment: .leading) {
-                    let item = items[viewModel.currentPage]
-                    Capsule()
-                        .fill(item.color)
-                        .frame(width: 20, height: 7)
-                        .offset(x: getOffset())
-                }
-                Color.clear
-                    .frame(width: 48, height: 1)
+                .padding(.bottom, 32)
             }
-            .padding(.bottom, 32)
+             
             
             HStack(alignment: .center) {
                 Spacer()
