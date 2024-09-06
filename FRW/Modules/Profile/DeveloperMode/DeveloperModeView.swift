@@ -19,7 +19,7 @@ struct DeveloperModeView: RouteableView {
     @StateObject private var walletManager = WalletManager.shared
     
     @AppStorage("isDeveloperMode") private var isDeveloperMode = false
-    @AppStorage("EVMEnable") private var isEVMEnable = false
+    
     
     @State private var openLogWindow = LocalUserDefaults.shared.openLogWindow
     
@@ -152,15 +152,6 @@ struct DeveloperModeView: RouteableView {
                         .padding(.vertical, 8)
                     VStack(spacing: 0) {
                         Section {
-                            HStack {
-                                Toggle("evm_on_flow".localized, isOn: $isEVMEnable)
-                                    .toggleStyle(SwitchToggleStyle(tint: .LL.Primary.salmonPrimary))
-                                    .onChange(of: isEVMEnable) { _ in
-                                        EVMAccountManager.shared.updateWhenDevChange()
-                                    }
-                            }
-                            .frame(height: 64)
-                            .padding(.horizontal, 16)
                             
                             HStack {
                                 Button {
