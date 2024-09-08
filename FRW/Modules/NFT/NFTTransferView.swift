@@ -193,16 +193,15 @@ class NFTTransferViewModel: ObservableObject {
                 case (.flow, .linked):
                     // parent to child user move 'transferNFTToChild'
                     guard let nftId = UInt64(nft.response.id),
-                          let collection = nft.collection,
-                          let identifier = nft.publicIdentifier
+                          let collection = nft.collection
                     else { throw NFTError.sendInvalidAddress }
-//
+                    let identifier = nft.publicIdentifier
                     tid = try await FlowNetwork.moveNFTToChild(nftId: nftId, childAddress: toAddress, identifier: identifier, collection: collection)
                 case (.linked, .flow):
                     guard let nftId = UInt64(nft.response.id),
-                          let collection = nft.collection,
-                          let identifier = nft.publicIdentifier
+                          let collection = nft.collection
                     else { throw NFTError.sendInvalidAddress }
+                    let identifier = nft.publicIdentifier
                     let childAddr = fromChildAccount?.addr ?? currentAddress
                     if toAddress == primaryAddress {
                         tid = try await FlowNetwork.moveNFTToParent(nftId: nftId, childAddress: childAddr, identifier: identifier, collection: collection)
@@ -211,9 +210,9 @@ class NFTTransferViewModel: ObservableObject {
                     }
                 case (.linked, .linked):
                     guard let nftId = UInt64(nft.response.id),
-                          let collection = nft.collection,
-                          let identifier = nft.publicIdentifier
+                          let collection = nft.collection
                     else { throw NFTError.sendInvalidAddress }
+                    let identifier = nft.publicIdentifier
                     let childAddr = fromChildAccount?.addr ?? currentAddress
                     tid = try await FlowNetwork.sendChildNFTToChild(nftId: nftId, childAddress: childAddr,toAddress: toAddress, identifier: identifier, collection: collection)
                 default:
