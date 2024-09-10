@@ -9,7 +9,7 @@ import Combine
 import Firebase
 import FirebaseAuth
 import Flow
-import FlowWalletCore
+import FlowWalletKit
 import Foundation
 import Alamofire
 import WalletCore
@@ -176,8 +176,11 @@ extension UserManager {
             }
         }
         
-        let sec = try WallectSecureEnclave()
-        let key = try sec.accountKey()
+        let seWallet = try SEWallet.create()
+        let key = try seWallet.flowAccountKey()
+        
+//        let sec = try WallectSecureEnclave()
+//        let key = try sec.accountKey()
         
         if IPManager.shared.info == nil {
             await IPManager.shared.fetch()
@@ -188,11 +191,12 @@ extension UserManager {
         try await finishLogin(mnemonic: "", customToken: model.customToken, isRegiter: true)
         WalletManager.shared.asyncCreateWalletAddressFromServer()
         userType = .secure
-        if let privateKey = sec.key.privateKey {
-            try WallectSecureEnclave.Store.store(key: model.id, value: privateKey.dataRepresentation)
-        } else {
-            log.error("store public key on iPhone failed")
-        }
+        try seWallet.store(id: model.id)
+//        if let privateKey = sec.key.privateKey {
+//            try WallectSecureEnclave.Store.store(key: model.id, value: privateKey.dataRepresentation)
+//        } else {
+//            log.error("store public key on iPhone failed")
+//        }
         
         return model.txId
     }
@@ -213,21 +217,41 @@ extension UserManager {
         HUD.loading()
         Task {
             do {
-                let list = try WallectSecureEnclave.Store.fetch()
+                
+                let seWallet = try SEWallet.create()
+                let list = seWallet.allKeys()
                 var addressList: [String: String] = [:]
-                for item in list {
-                    do {
-                        let sec = try WallectSecureEnclave(privateKey: item.publicKey)
-                        guard let publicKey = sec.key.publickeyValue else { continue }
+                
+                for userId in list {
+                    if let se = try? SEWallet.wallet(id: userId),
+                       let publicKey = try? se.publicKey()?.hexValue {
                         let response: AccountResponse = try await Network.requestWithRawModel(FRWAPI.Utils.flowAddress(publicKey))
                         let account = response.accounts?.filter { ($0.weight ?? 0) >= 1000 && $0.address != nil }.first
                         if let model = account {
-                            addressList[item.uniq] = model.address ?? "0x"
+                            addressList[userId] = model.address ?? "0x"
                         }
-                    } catch {
-                        log.error("[Launch] first login check failed:\(item.uniq):\(error)")
+                    } else {
+                        log.error("[Launch] first login check failed:\(userId)")
                     }
                 }
+                
+                
+                
+//                let list = try WallectSecureEnclave.Store.fetch()
+//                var addressList: [String: String] = [:]
+//                for item in list {
+//                    do {
+//                        let sec = try WallectSecureEnclave(privateKey: item.publicKey)
+//                        guard let publicKey = sec.key.publickeyValue else { continue }
+//                        let response: AccountResponse = try await Network.requestWithRawModel(FRWAPI.Utils.flowAddress(publicKey))
+//                        let account = response.accounts?.filter { ($0.weight ?? 0) >= 1000 && $0.address != nil }.first
+//                        if let model = account {
+//                            addressList[item.uniq] = model.address ?? "0x"
+//                        }
+//                    } catch {
+//                        log.error("[Launch] first login check failed:\(item.uniq):\(error)")
+//                    }
+//                }
                 let uidList = addressList.map{ $0.key }
                 let userAddress = addressList
                 DispatchQueue.main.async {
@@ -312,27 +336,36 @@ extension UserManager {
             loginAnonymousIfNeeded()
             throw LLError.restoreLoginFailed
         }
+        let seWallet = try SEWallet.wallet(id: userId)
         
-        guard let publicData = try WallectSecureEnclave.Store.fetch(by: userId), !publicData.isEmpty else {
-            throw LLError.restoreLoginFailed
-        }
-        
-        let sec = try WallectSecureEnclave(privateKey: publicData)
-    
-        guard let signData = token.AddUserMessage(),
-              let publicKey = sec.key.publickeyValue,
+        guard let signData = token.addUserMessage(),
+              let publicKey = try seWallet.publicKey()?.hexValue,
               !publicKey.isEmpty
         else {
             throw LLError.signFailed
         }
-        let signature = try sec.sign(data: signData).hexValue
+        let signature = try seWallet.sign(data: signData, hashAlgo: .SHA2_256)
+
+//        guard let publicData = try WallectSecureEnclave.Store.fetch(by: userId), !publicData.isEmpty else {
+//            throw LLError.restoreLoginFailed
+//        }
+        
+//        let sec = try WallectSecureEnclave(privateKey: publicData)
+    
+//        guard let signData = token.AddUserMessage(),
+//              let publicKey = sec.key.publickeyValue,
+//              !publicKey.isEmpty
+//        else {
+//            throw LLError.signFailed
+//        }
+//        let signature = try sec.sign(data: signData).hexValue
         await IPManager.shared.fetch()
         // TODO: hash & sign algo
         let key = AccountKey(hashAlgo: Flow.HashAlgorithm.SHA2_256.index,
                              publicKey: publicKey,
                              signAlgo: Flow.SignatureAlgorithm.ECDSA_P256.index)
         
-        let request = LoginRequest(signature: signature, accountKey: key, deviceInfo: IPManager.shared.toParams())
+        let request = LoginRequest(signature: signature.hexValue, accountKey: key, deviceInfo: IPManager.shared.toParams())
         let response: Network.Response<LoginResponse> = try await Network.requestWithRawModel(FRWAPI.User.login(request))
         if response.httpCode == 404 {
             throw LLError.accountNotFound
@@ -345,7 +378,8 @@ extension UserManager {
         try await finishLogin(mnemonic: "", customToken: customToken)
     }
     
-    func restoreLogin(account: ImportAccountInfo, privateKey: WalletCore.PrivateKey, isImport: Bool = false)  async throws {
+    //TODO: 新的SDK #cat
+    func restoreLogin(account: ImportAccountInfo, pkWallet: PKWallet, isImport: Bool = false)  async throws {
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
             DispatchQueue.main.async {
@@ -359,22 +393,25 @@ extension UserManager {
             throw LLError.restoreLoginFailed
         }
     
-        guard let signData = token.AddUserMessage(),
+        guard let signData = token.addUserMessage(),
               let publicKey = account.publicKey,
               !publicKey.isEmpty
         else {
             throw LLError.signFailed
         }
-        let handler = KeyStoreHandler(privateKey: privateKey, curve: account.curve())
-        guard let signature = handler.sign(data: signData)?.hexValue else {
-            throw LLError.signFailed
-        }
+        
+        let signature = try pkWallet.sign(data: signData, signAlgo: account.signAlgo, hashAlgo: account.hashAlgo).hexValue
+        
+//        let handler = KeyStoreHandler(privateKey: privateKey, curve: account.curve())
+//        guard let signature = handler.sign(data: signData)?.hexValue else {
+//            throw LLError.signFailed
+//        }
         
         await IPManager.shared.fetch()
         // TODO: hash & sign algo
-        let key = AccountKey(hashAlgo: Flow.HashAlgorithm.SHA2_256.index,
+        let key = AccountKey(hashAlgo: account.hashAlgo.index,
                              publicKey: publicKey,
-                             signAlgo: Flow.SignatureAlgorithm.ECDSA_SECP256k1.index)
+                             signAlgo: account.signAlgo.index)
         var tmpToken: String?
         if isImport {
             let request = RestoreImportRequest(username: "", accountKey: key, deviceInfo: IPManager.shared.toParams(), address: account.address ?? "")
@@ -432,11 +469,13 @@ extension UserManager {
                 return
             }
         }
-        
-        if try (WallectSecureEnclave.Store.fetch(by: uid)) != nil {
-            try await restoreLogin(userId: uid)
-            return
-        }
+        //TODO: option
+        let seWallet = try SEWallet.wallet(id: uid)
+        try await restoreLogin(userId: uid)
+//        if try (WallectSecureEnclave.Store.fetch(by: uid)) != nil {
+//            try await restoreLogin(userId: uid)
+//            return
+//        }
         
         throw WalletError.mnemonicMissing
     }

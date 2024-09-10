@@ -119,7 +119,7 @@ struct ImportAccountsView:  RouteableView, PresentActionDelegate {
     
     private func buttonTitle() -> String {
         if selectedAccount == nil {
-            return "import".localized
+            return "import_btn_text".localized.uppercasedFirstLetter()
         }
         return "import_x_wallet".localized("1")
     }

@@ -6,7 +6,7 @@
 //
 
 import Flow
-import FlowWalletCore
+import FlowWalletKit
 import Foundation
 import WalletConnectSign
 import WalletConnectUtils

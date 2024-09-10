@@ -8,6 +8,8 @@
 import Foundation
 import Web3Core
 import WalletCore
+import FlowWalletKit
+import Flow
 
 class KeyStoreLoginViewModel: ObservableObject {
     @Published var json: String = ""
@@ -18,43 +20,40 @@ class KeyStoreLoginViewModel: ObservableObject {
     
     var p256Accounts: [ImportAccountInfo]? = []
     var secp256Accounts: [ImportAccountInfo]? = []
-    var privateKey: WalletCore.PrivateKey?
     
-    private var keystore: KeystoreParamsV3?
+    private var pkWallet: PKWallet?
     
     
     func update(json: String) {
-        keystore = nil
-        guard let data = json.data(using: .utf8) else {
-            return
-        }
-        let jsonDecoder = JSONDecoder()
-        jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
-        do {
-            let adapter = try jsonDecoder.decode(Keystore.self, from: data)
-            keystore = KeystoreParamsV3(address: adapter.address, crypto: adapter.crypto, id: adapter.id ?? "", version: adapter.version)
-            updateButtonState()
-            log.debug("[Import] keystore init success.")
-        }catch {
-            log.error("[Import] keystore init failed.\(error)")
-        }
+        update()
     }
     
     func update(password: String) {
-        updateButtonState()
+        update()
     }
+    
+    private func update() {
+        do {
+            pkWallet = try PKWallet.restore(json: json, password: password, storage: PKWallet.PKStorage)
+            updateButtonState()
+            log.debug("[Import] keystore init success.")
+        }catch {
+            log.error("[Import] keystore init failed.")
+        }
+    }
+    
     
     func update(address: String) {
         
     }
     
     private func updateButtonState() {
-        buttonState =  (json.isEmpty || password.isEmpty || keystore == nil) ? .disabled : .enabled
+        buttonState =  (json.isEmpty || password.isEmpty || pkWallet == nil) ? .disabled : .enabled
     }
     
     func onSumbit() {
         
-        guard let curretnKeyStore = keystore,let target = EthereumKeystoreV3(curretnKeyStore), let address = target.getAddress() else {
+        guard let privateKey = pkWallet?.pk  else {
             return
         }
         Task {
@@ -62,26 +61,29 @@ class KeyStoreLoginViewModel: ObservableObject {
                 HUD.loading()
                 log.info("[Import] start")
                 // pk store
-                let data = try target.UNSAFE_getPrivateKeyData(password: password, account: address)
-                
-                privateKey = WalletCore.PrivateKey(data: data)
                 log.info("[Import] get private key")
-                let p256PubKey = privateKey?.getPublicKeyNist256p1().uncompressed.data.hexValue.dropPrefix("04")
-                let secp256PubKey = privateKey?.getPublicKeySecp256k1(compressed: false).data.hexValue.dropPrefix("04")
-                log.info("[Import] get public key,\(String(describing: p256PubKey))\n \(String(describing: secp256PubKey))")
+                
+                let p256PubKey = (try? pkWallet?.publicKey(signAlgo: .ECDSA_P256))?.hexValue.dropPrefix("04")
+                
+                log.info("[Import] get p256PubKey,\(String(describing: p256PubKey))")
+                
                 if let p256PubKey = p256PubKey {
-                    let response = try await fetchAddress(from: p256PubKey)
-                    p256Accounts = response.accounts?.map({ ImportAccountInfo(address: $0.address, weight: $0.weight, keyId: $0.keyId, publicKey: response.publicKey, publicKeyType: .nist256p1) })
-                    let addrStr = p256Accounts?.reduce("", { $0 + ($1.address ?? "") + "-"})
-                    log.info("[Import] get p256 public key.\(String(describing: addrStr))")
+                    let p256response = try await self.fetchAddress(from: p256PubKey)
+                    p256Accounts = p256response.accounts?.map({ ImportAccountInfo(address: $0.address, weight: $0.weight, keyId: $0.keyId, publicKey: p256response.publicKey, signAlgo: .ECDSA_P256) })
+                    let p256AddrStr = p256Accounts?.reduce("", { $0 + ($1.address ?? "") + "-"})
+                    log.info("[Import] get p256 public key.\(String(describing: p256AddrStr))")
                 }
                 
+                let secp256PubKey = (try? pkWallet?.publicKey(signAlgo: .ECDSA_SECP256k1))?.hexValue.dropPrefix("04")
+                log.info("[Import] get secp256PubKey,\(String(describing: secp256PubKey))")
                 if let secp256PubKey = secp256PubKey {
-                    let response = try await fetchAddress(from: secp256PubKey)
-                    secp256Accounts = response.accounts?.map({ ImportAccountInfo(address: $0.address, weight: $0.weight, keyId: $0.keyId, publicKey: response.publicKey, publicKeyType: .secp256k1) })
-                    let addrStr = secp256Accounts?.reduce("", { $0 + ($1.address ?? "") + "-"})
-                    log.info("[Import] get secp256 public key.\(String(describing: addrStr))")
+                    let secp256response = try await fetchAddress(from: secp256PubKey)
+                    secp256Accounts = secp256response.accounts?.map({ ImportAccountInfo(address: $0.address, weight: $0.weight, keyId: $0.keyId, publicKey: secp256response.publicKey, signAlgo: .ECDSA_SECP256k1) })
+                    let secp256AddrStr = secp256Accounts?.reduce("", { $0 + ($1.address ?? "") + "-"})
+                    log.info("[Import] get secp256 public key.\(String(describing: secp256AddrStr))")
                 }
+                
+                
                 DispatchQueue.main.async {
                     self.onSelectedAddress()
                     HUD.dismissLoading()
@@ -111,20 +113,32 @@ class KeyStoreLoginViewModel: ObservableObject {
     }
     
     private func checkOwn(account: ImportAccountInfo) {
-        guard let publicKey = account.publicKey, let privateKey = privateKey else {
+        guard let publicKey = account.publicKey, let pkWallet = pkWallet else {
             log.error("[Import] public key is empty.")
             return
         }
-        Task {
+        Task() {
             do {
                 let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.checkimport(publicKey))
                 if response.httpCode == 409 {
-                    try await UserManager.shared.restoreLogin(account: account, privateKey: privateKey)
+                    try await UserManager.shared.restoreLogin(account: account, pkWallet: pkWallet)
                 }else if response.httpCode == 200 {
-                    try await UserManager.shared.restoreLogin(account: account, privateKey: privateKey, isImport: true)
+                    try await UserManager.shared.restoreLogin(account: account, pkWallet: pkWallet, isImport: true)
+                    Router.popToRoot()
                 }
             }
-            catch {
+            catch  {
+                if let code = error.moyaCode() {
+                    if code == 409 {
+                        do {
+                            try await UserManager.shared.restoreLogin(account: account, pkWallet: pkWallet)
+                            Router.popToRoot()
+                        }catch {
+                            log.error("[Import] login 409 :\(error)")
+                        }
+                        
+                    }
+                }
                 log.error("[Import] check public key own error:\(error)")
             }
         }
@@ -145,16 +159,6 @@ struct ImportAccountInfo {
     let weight: Int?
     let keyId: Int?
     let publicKey: String?
-    let publicKeyType: WalletCore.PublicKeyType
-    
-    func curve() -> WalletCore.Curve {
-        switch publicKeyType {
-        case .secp256k1:
-            return .secp256k1
-        case .nist256p1:
-            return .nist256p1
-        default:
-            return .nist256p1
-        }
-    }
+    let signAlgo: Flow.SignatureAlgorithm
+    let hashAlgo: Flow.HashAlgorithm = .SHA2_256
 }

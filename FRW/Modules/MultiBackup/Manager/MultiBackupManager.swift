@@ -8,7 +8,7 @@
 import CryptoKit
 import FirebaseAuth
 import Flow
-import FlowWalletCore
+import FlowWalletKit
 import Foundation
 import GoogleAPIClientForREST_Drive
 import GoogleAPIClientForRESTCore
@@ -413,8 +413,10 @@ extension MultiBackupManager {
         
         let address = Flow.Address(hex: addressDes)
         
-        let sec = try WallectSecureEnclave()
-        let key = try sec.accountKey()
+        let seWallet = try SEWallet.create()
+        let key = try seWallet.flowAccountKey()
+//        let sec = try WallectSecureEnclave()
+//        let key = try sec.accountKey()
         do {
             HUD.loading()
             let tx = try await FlowNetwork.addKeyWithMulti(address: address, keyIndex: firstItem.keyIndex, sequenceNum: sequenNum, accountKey: key, signers: [firstSigner, secondSigner, RemoteConfigManager.shared])
@@ -451,10 +453,10 @@ extension MultiBackupManager {
                 if response.httpCode != 200 {
                     log.info("[Multi-backup] sync failed")
                 } else {
-                    print("")
-                    if let privateKey = sec.key.privateKey {
-                        try WallectSecureEnclave.Store.store(key: firstItem.userId, value: privateKey.dataRepresentation)
-                    }
+                    try seWallet.store(id: firstItem.userId)
+//                    if let privateKey = sec.key.privateKey {
+//                        try WallectSecureEnclave.Store.store(key: firstItem.userId, value: privateKey.dataRepresentation)
+//                    }
                     
                     try await UserManager.shared.restoreLogin(userId: firstItem.userId)
                     Router.popToRoot()

@@ -8,7 +8,7 @@
 import Foundation
 import WalletCore
 import CryptoKit
-import FlowWalletCore
+import FlowWalletKit
 import Flow
 
 public struct KeyStoreHandler {
