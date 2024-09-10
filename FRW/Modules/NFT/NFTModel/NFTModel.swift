@@ -26,7 +26,7 @@ struct NFTCollection: Codable {
 }
 
 struct EVMNFTCollectionResponse: Codable {
-    let tokens: [NFTCollectionInfo]
+    let tokens: [NFTCollectionInfo]?
     let chainId: Int?
     let network: String?
 }
@@ -45,7 +45,7 @@ struct NFTCollectionInfo: Codable, Hashable, Mockable {
     let path: ContractPath
     
     let evmAddress: String?
-    var socials: NFTCollectionInfo.Social?
+//    var socials: NFTCollectionInfo.Social?
     let flowIdentifier: String?
     
     var logoURL: URL {
@@ -68,7 +68,7 @@ struct NFTCollectionInfo: Codable, Hashable, Mockable {
     }
     
     static func mock() -> NFTCollectionInfo {
-        return NFTCollectionInfo(id: randomString(), name: randomString(), contractName: randomString(), address: randomString(), logo: randomString(), banner: randomString(), officialWebsite: randomString(), description: randomString(), path: ContractPath.mock(), evmAddress: nil, socials: nil, flowIdentifier: nil)
+        return NFTCollectionInfo(id: randomString(), name: randomString(), contractName: randomString(), address: randomString(), logo: randomString(), banner: randomString(), officialWebsite: randomString(), description: randomString(), path: ContractPath.mock(), evmAddress: nil, flowIdentifier: nil)
     }
 }
 
@@ -107,8 +107,10 @@ struct NFTModel: Codable, Hashable, Identifiable {
     let subtitle: String
     var isSVG: Bool = false
     var response: NFTResponse
-    let collection: NFTCollectionInfo?
-    let infoFromCollection: FlowModel.CollectionInfo?
+    var collection: NFTCollectionInfo?
+    
+    
+    var imageData: String? = nil
     
     var imageURL: URL {
         if isSVG {
@@ -127,7 +129,12 @@ struct NFTModel: Codable, Hashable, Identifiable {
             if response.postMedia?.isSvg == true {
                 image = URL(string: imgUrl) ?? URL(string: placeholder)!
                 isSVG = true
-            } else {
+            } else if let data = imgUrl.toBase64String() {
+                imageData = data
+                isSVG = true
+                image = URL(string: placeholder)!
+            }
+            else {
                 if imgUrl.hasPrefix("https://lilico.infura-ipfs.io/ipfs/") {
                     let newImgURL = imgUrl.replace(by: ["https://lilico.infura-ipfs.io/ipfs/": "https://lilico.app/api/ipfs/"])
                     image = URL(string: newImgURL)!
@@ -149,7 +156,6 @@ struct NFTModel: Codable, Hashable, Identifiable {
         title = response.postMedia?.title ?? response.collectionName ?? ""
         self.collection = collection
         self.response = response
-        self.infoFromCollection = info
     }
 
     var declare: String {
@@ -161,9 +167,14 @@ struct NFTModel: Codable, Hashable, Identifiable {
 
     var logoUrl: URL {
         if let logoString = collection?.logo {
+            if logoString.hasSuffix("svg") {
+                return logoString.convertedSVGURL() ?? URL(string: placeholder)!
+            }
             return URL(string: logoString) ?? URL(string: placeholder)!
         }
-        
+        if let logoString = response.collectionSquareImage {
+            return URL(string: logoString) ?? URL(string: placeholder)!
+        }
         return URL(string: placeholder)!
     }
     
@@ -171,7 +182,9 @@ struct NFTModel: Codable, Hashable, Identifiable {
         if let name = collection?.name {
             return name
         }
-        
+        if let name = response.collectionContractName {
+            return name
+        }
         return ""
     }
 
@@ -194,6 +207,13 @@ struct NFTModel: Codable, Hashable, Identifiable {
         let url = response.externalURL ?? ""
         
         return name.hasSuffix(".meow") || url.hasSuffix(".meow")
+    }
+    
+    var publicIdentifier: String {
+        guard let path = collection?.path.privatePath, let identifier = path.split(separator: "/").last else {
+            return ""
+        }
+        return String(identifier)
     }
 }
 
@@ -275,7 +295,7 @@ class CollectionItem: Identifiable, ObservableObject {
                         return
                     }
                     
-                    let nftModels = list.map { NFTModel($0, in: self.collection, from: response.info) }
+                    let nftModels = list.map { NFTModel($0, in: self.collection) }
                     self.appendNFTsNoDuplicated(nftModels)
                     
                     if list.count != limit {
@@ -288,6 +308,7 @@ class CollectionItem: Identifiable, ObservableObject {
                     self.loadCallback2?(true)
                 }
             } catch {
+                log.error("[NFT] load NFTs of \(name): \(error)")
                 DispatchQueue.main.async {
                     self.isRequesting = false
                     self.loadCallback?(false)
@@ -316,5 +337,16 @@ class CollectionItem: Identifiable, ObservableObject {
     private func saveNFTsToCache() {
         let models = nfts.map { $0.response }
         NFTUIKitCache.cache.saveNFTsToCache(models, collectionId: collectionId)
+    }
+}
+
+extension String {
+    fileprivate func toBase64String() -> String? {
+        if self.contains("data:image/svg+xml;base64,") {
+            if let baseStr =  self.components(separatedBy: "base64,").last {
+                return baseStr
+            }
+        }
+        return nil
     }
 }

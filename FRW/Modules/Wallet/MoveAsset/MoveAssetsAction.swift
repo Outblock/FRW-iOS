@@ -14,7 +14,7 @@ class MoveAssetsAction {
     private var appName: String? = nil
     
     var allowMoveAssets: Bool {
-        return LocalUserDefaults.shared.flowNetwork == .previewnet
+        return CadenceManager.shared.isGreaterVerson1()
     }
     
     var showNote: String? {

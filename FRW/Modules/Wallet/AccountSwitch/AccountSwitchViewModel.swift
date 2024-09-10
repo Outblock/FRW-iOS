@@ -34,7 +34,7 @@ class AccountSwitchViewModel: ObservableObject {
                     if address == "0x" {
                         address = LocalUserDefaults.shared.userAddressOfDeletedApp[uid] ?? "0x"
                     }
-                    var username = userInfo?.username
+                    var username = userInfo?.nickname
                     if username == nil {
                         username = "Profile \(index)"
                         index += 1

@@ -21,7 +21,12 @@ import Web3Wallet
 
 class TrustJSMessageHandler: NSObject {
     weak var webVC: BrowserViewController?
-    
+ 
+    var supportChainID: [Int: Flow.ChainID] = [
+        LocalUserDefaults.FlowNetworkType.mainnet.networkID: .mainnet,
+        LocalUserDefaults.FlowNetworkType.testnet.networkID: .testnet,
+        LocalUserDefaults.FlowNetworkType.previewnet.networkID: .previewnet,
+    ]
 }
 
 // MARK: - helper
@@ -62,6 +67,18 @@ extension TrustJSMessageHandler {
         }
         return obj
     }
+    
+    private func extractEthereumChainId(json: [String: Any]) -> Int? {
+        guard
+            let params = json["object"] as? [String: Any],
+            let string = params["chainId"] as? String,
+            let chainId = Int(String(string.dropFirst(2)), radix: 16),
+            chainId > 0
+        else {
+            return nil
+        }
+        return chainId
+    }
 }
 
 extension TrustJSMessageHandler: WKScriptMessageHandler {
@@ -71,6 +88,7 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
               let id = json["id"] as? Int64,
               let network = extractNetwork(json: json)
         else {
+            log.error("[Trust] json:\(json)")
             return
         }
 
@@ -111,6 +129,18 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
             log.info("[Trust] addEthereumChain")
         case .switchEthereumChain:
             log.info("[Trust] switchEthereumChain")
+            switch network {
+            case .ethereum:
+                guard
+                    let chainId = extractEthereumChainId(json: json)
+                else {
+                    print("chain id is invalid")
+                    return
+                }
+                handleSwitchEthereumChain(id: id, chainId: chainId)
+            case .solana, .aptos, .cosmos:
+                fatalError()
+            }
         case .switchChain:
             log.info("[Trust] switchChain")
         }
@@ -267,7 +297,38 @@ extension TrustJSMessageHandler {
         Router.route(to: RouteMap.Explore.authz(vm))
     }
     
-    
+    private func handleSwitchEthereumChain(id: Int64, chainId: Int) {
+        guard let targetID = supportChainID[chainId] else {
+            log.error("Unknown chain id: \(chainId)")
+            HUD.error(title: "Unsupported ChainId: \(chainId)")
+            webVC?.webView.tw.send(network: .ethereum, error: "Unknown chain id", to: id)
+            return
+        }
+
+        let currentChainId = LocalUserDefaults.shared.flowNetwork.toFlowType()
+
+        if targetID == currentChainId {
+            log.info("No need to switch, already on chain \(chainId)")
+            webVC?.webView.tw.sendNull(network: .ethereum, id: id)
+        } else {
+            guard let fromId = currentChainId.networkType, let toId = targetID.networkType else {
+                log.error("Unknown chain id: \(chainId)")
+                HUD.error(title: "Unsupported ChainId: \(chainId)")
+                webVC?.webView.tw.send(network: .ethereum, error: "Unknown chain id", to: id)
+                return
+            }
+            let callback: SwitchNetworkClosure = { [weak self] curId in
+                if curId.toFlowType() == targetID {
+                    log.info("Switch to \(chainId)")
+                    self?.webVC?.webView.tw.sendNull(network: .ethereum, id: id)
+                } else {
+                    log.error("Unknown chain id: \(chainId)")
+                    self?.webVC?.webView.tw.send(network: .ethereum, error: "Unknown chain id", to: id)
+                }
+            }
+            Router.route(to: RouteMap.Explore.switchNetwork(fromId, toId, callback))
+        }
+    }
     
     
     

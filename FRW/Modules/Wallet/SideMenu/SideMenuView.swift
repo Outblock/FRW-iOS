@@ -418,7 +418,7 @@ struct SideMenuView: View {
 class SideContainerViewModel: ObservableObject {
     @Published var isOpen: Bool = false
     @Published var isLinkedAccount: Bool = false
-    @Published var openBrowser: Bool = false
+    @Published var hideBrowser: Bool = false
     
     private var cancellableSet = Set<AnyCancellable>()
     
@@ -444,7 +444,9 @@ class SideContainerViewModel: ObservableObject {
     }
     
     @objc func onRemoteConfigDidChange() {
-        openBrowser =  !(RemoteConfigManager.shared.config?.features.hideBrowser ?? false)
+        DispatchQueue.main.async {
+            self.hideBrowser =  RemoteConfigManager.shared.config?.features.hideBrowser ?? true
+        }
     }
 }
 
@@ -515,7 +517,7 @@ struct SideContainerView: View {
             TabBarView(current: .wallet, pages: [wallet, nft, profile], maxWidth: UIScreen.main.bounds.width)
         }else {
             
-            if vm.openBrowser {
+            if vm.hideBrowser {
                 TabBarView(current: .wallet, pages: [wallet, nft, profile], maxWidth: UIScreen.main.bounds.width)
             }else {
                 TabBarView(current: .wallet, pages: [wallet, nft, explore, profile], maxWidth: UIScreen.main.bounds.width)

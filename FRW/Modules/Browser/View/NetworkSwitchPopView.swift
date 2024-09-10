@@ -11,6 +11,8 @@ class NetworkSwitchPopViewModel: ObservableObject {
     @Published var fromNetwork: LocalUserDefaults.FlowNetworkType
     @Published var toNetwork: LocalUserDefaults.FlowNetworkType
     
+    var callback: SwitchNetworkClosure?
+    
     var descString: AttributedString {
         let normalDict = [NSAttributedString.Key.foregroundColor: UIColor.LL.Neutrals.text2]
         let fromHighlightDict = [NSAttributedString.Key.foregroundColor: fromNetwork.color.toUIColor()!]
@@ -26,15 +28,16 @@ class NetworkSwitchPopViewModel: ObservableObject {
         return AttributedString(str)
     }
     
-    init(fromNetwork: LocalUserDefaults.FlowNetworkType, toNetwork: LocalUserDefaults.FlowNetworkType) {
+    init(fromNetwork: LocalUserDefaults.FlowNetworkType, toNetwork: LocalUserDefaults.FlowNetworkType, callback:  SwitchNetworkClosure? = nil) {
         self.fromNetwork = fromNetwork
         self.toNetwork = toNetwork
+        self.callback = callback
     }
     
     func switchAction() {
         HUD.loading()
         WalletManager.shared.changeNetwork(toNetwork)
-        
+        callback?(toNetwork)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             HUD.dismissLoading()
             Router.dismiss()
@@ -45,13 +48,15 @@ class NetworkSwitchPopViewModel: ObservableObject {
 struct NetworkSwitchPopView: View {
     @StateObject private var vm: NetworkSwitchPopViewModel
     
-    init(from: LocalUserDefaults.FlowNetworkType, to: LocalUserDefaults.FlowNetworkType) {
-        _vm = StateObject(wrappedValue: NetworkSwitchPopViewModel(fromNetwork: from, toNetwork: to))
+    init(from: LocalUserDefaults.FlowNetworkType, to: LocalUserDefaults.FlowNetworkType, callback: SwitchNetworkClosure? = nil) {
+        _vm = StateObject(wrappedValue: NetworkSwitchPopViewModel(fromNetwork: from, toNetwork: to, callback: callback))
     }
     
     var body: some View {
         VStack {
-            SheetHeaderView(title: "switch_network_tips_title".localized)
+            SheetHeaderView(title: "switch_network_tips_title".localized) {
+                vm.callback?(vm.fromNetwork)
+            }
             
             Text(vm.descString)
                 .font(.inter(size: 14, weight: .regular))

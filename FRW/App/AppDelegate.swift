@@ -235,12 +235,12 @@ extension AppDelegate {
             let deviceTokenString = deviceToken.map { data in String(format: "%02.2hhx", data) }
             UserDefaults.standard.set(deviceTokenString.joined(), forKey: "deviceToken")
             log.debug("[Push] web3wallet register before \(deviceTokenString.joined())")
-            do {
-                try await Web3Wallet.instance.register(deviceToken: deviceToken, enableEncrypted: true)
-                log.debug("[Push] web3wallet register after")
-            }catch {
-                log.error("[Push] web3wallet register error")
-            }
+//            do {
+//                try await Web3Wallet.instance.register(deviceToken: deviceToken, enableEncrypted: true)
+//                log.debug("[Push] web3wallet register after")
+//            }catch {
+//                log.error("[Push] web3wallet register error")
+//            }
             
         }
         #if DEBUG

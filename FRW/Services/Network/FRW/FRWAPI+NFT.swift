@@ -51,6 +51,9 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
             }
             return "nft/id"
         case .collections:
+            if CadenceManager.shared.isGreaterVerson1() {
+                    return "v2/nft/collections"
+            }
             return "nft/collections"
         case .collectionDetailList:
             if CadenceManager.shared.isGreaterVerson1() {
@@ -95,7 +98,7 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
     }
 
     var headers: [String: String]? {
-        var headers = FRWAPI.commonHeaders
+        let headers = FRWAPI.commonHeaders
 
 //        #if DEBUG
 //            // TODO: current nft is error on testnet, remove this code if testnet nft is working someday.

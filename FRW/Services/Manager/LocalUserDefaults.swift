@@ -44,6 +44,7 @@ extension LocalUserDefaults {
         case walletAccountInfo
         case EVMAddress
         case showMoveAssetOnBrowser
+        case removedNewsIds
     }
 
     enum FlowNetworkType: String, CaseIterable, Codable {
@@ -296,6 +297,15 @@ class LocalUserDefaults: ObservableObject {
     }
     
     var openLogWindow: Bool = false
+    
+    var removedNewsIds: [String] {
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: Keys.removedNewsIds.rawValue)
+        }
+        get {
+            return UserDefaults.standard.array(forKey: Keys.removedNewsIds.rawValue) as? [String] ?? []
+        }
+    }
 }
 
 extension LocalUserDefaults {

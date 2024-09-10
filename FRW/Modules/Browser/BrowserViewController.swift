@@ -21,10 +21,11 @@ class BrowserViewController: UIViewController {
     
     let trustProvider = TrustWeb3Provider.flowConfig()
 
+    private var commonColor: UIColor? =  UIColor(named: "bg.silver")
     
     private lazy var contentView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = commonColor
         return view
     }()
     
@@ -37,8 +38,12 @@ class BrowserViewController: UIViewController {
         let view = WKWebView(frame: .zero, configuration: generateWebViewConfiguration())
         view.navigationDelegate = self
         view.uiDelegate = self
+        view.backgroundColor = commonColor
+        view.scrollView.backgroundColor = commonColor
         view.allowsBackForwardNavigationGestures = true
         view.allowsLinkPreview = true
+        view.layer.cornerRadius = 24
+        view.layer.masksToBounds = true
         #if DEBUG
             if #available(iOS 16.4, *) {
                 view.isInspectable = true
@@ -108,7 +113,7 @@ class BrowserViewController: UIViewController {
     }
     
     private func setup() {
-        view.backgroundColor = .black
+        view.backgroundColor = commonColor
         
         view.addSubview(contentView)
         contentView.snp.makeConstraints { make in
@@ -125,7 +130,7 @@ class BrowserViewController: UIViewController {
     private func setupWebView() {
         contentView.addSubview(webView)
         webView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.left.right.equalToSuperview()
         }
         
         webView.scrollView.delegate = self
@@ -134,9 +139,10 @@ class BrowserViewController: UIViewController {
     private func setupActionBarView() {
         contentView.addSubview(actionBarView)
         actionBarView.snp.makeConstraints { make in
-            make.left.equalTo(18)
-            make.right.equalTo(-18)
-            make.bottom.equalTo(contentView.safeAreaLayoutGuide.snp.bottomMargin).offset(-20)
+            make.left.equalTo(0)
+            make.right.equalTo(0)
+            make.top.equalTo(webView.snp.bottom).offset(0)
+            make.bottom.equalToSuperview()
         }
     }
     
@@ -190,28 +196,28 @@ extension BrowserViewController {
     }
     
     private func hideActionBarView() {
-        if actionBarIsHiddenFlag {
-            return
-        }
-        
-        actionBarIsHiddenFlag = true
-        
-        UIView.animate(withDuration: 0.25) {
-            let y = Router.coordinator.window.safeAreaInsets.bottom + 20 + BrowserActionBarViewHeight
-            self.actionBarView.transform = CGAffineTransform(translationX: 0, y: y)
-        }
+//        if actionBarIsHiddenFlag {
+//            return
+//        }
+//        
+//        actionBarIsHiddenFlag = true
+//        
+//        UIView.animate(withDuration: 0.25) {
+//            let y = Router.coordinator.window.safeAreaInsets.bottom + 20 + BrowserActionBarViewHeight
+//            self.actionBarView.transform = CGAffineTransform(translationX: 0, y: y)
+//        }
     }
     
     private func showActionBarView() {
-        if !actionBarIsHiddenFlag {
-            return
-        }
-        
-        actionBarIsHiddenFlag = false
-        
-        UIView.animate(withDuration: 0.25) {
-            self.actionBarView.transform = .identity
-        }
+//        if !actionBarIsHiddenFlag {
+//            return
+//        }
+//        
+//        actionBarIsHiddenFlag = false
+//        
+//        UIView.animate(withDuration: 0.25) {
+//            self.actionBarView.transform = .identity
+//        }
     }
     
     @objc private func onBackBtnClick() {
@@ -324,13 +330,39 @@ extension BrowserViewController: WKNavigationDelegate {
 extension BrowserViewController: WKUIDelegate {
     func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
         if navigationAction.targetFrame == nil, let url = navigationAction.request.url {
-            if url.description.lowercased().range(of: "http://") != nil ||
+            if url.absoluteString.hasPrefix("https://fcw-link.lilico.app") {
+                var uri = url.absoluteString.deletingPrefix("https://fcw-link.lilico.app/wc?uri=")
+                uri = uri.deletingPrefix("fcw://")
+                WalletConnectManager.shared.onClientConnected = {
+                    WalletConnectManager.shared.connect(link: uri)
+                }
+                WalletConnectManager.shared.connect(link: uri)
+                
+            }
+            else if url.absoluteString.hasPrefix("https://frw-link.lilico.app") {
+                var uri = url.absoluteString.deletingPrefix("https://frw-link.lilico.app/wc?uri=")
+                uri = uri.deletingPrefix("frw://")
+                WalletConnectManager.shared.onClientConnected = {
+                    WalletConnectManager.shared.connect(link: uri)
+                }
+                WalletConnectManager.shared.connect(link: uri)
+                
+            }
+            else if url.absoluteString.hasPrefix("https://link.lilico.app") {
+                var uri = url.absoluteString.deletingPrefix("https://link.lilico.app/wc?uri=")
+                uri = uri.deletingPrefix("lilico://")
+                WalletConnectManager.shared.onClientConnected = {
+                    WalletConnectManager.shared.connect(link: uri)
+                }
+                WalletConnectManager.shared.connect(link: uri)
+            }else if url.description.lowercased().range(of: "http://") != nil ||
                 url.description.lowercased().range(of: "https://") != nil ||
                 url.description.lowercased().range(of: "mailto:") != nil
             {
                 UIApplication.shared.openURL(url)
             }
         }
+        
         return nil
     }
 }

@@ -12,7 +12,6 @@ import SwiftUI
 class EVMAccountManager: ObservableObject {
     static let shared = EVMAccountManager()
     
-    @AppStorage("EVMEnable") private var EVMEnable = false
 
     @Published var hasAccount: Bool = false
     @Published var showEVM: Bool = false
@@ -25,7 +24,7 @@ class EVMAccountManager: ObservableObject {
     private var cacheAccounts: [String: [String]] = LocalUserDefaults.shared.EVMAddress
     
     var openEVM: Bool {
-        return (CadenceManager.shared.current.evm?.createCoaEmpty) != nil && EVMEnable
+        return (CadenceManager.shared.current.evm?.createCoaEmpty) != nil
     }
 
     var balance: Decimal = 0
@@ -89,7 +88,7 @@ class EVMAccountManager: ObservableObject {
     }
     
     private func checkValid() {
-        if (CadenceManager.shared.current.evm?.createCoaEmpty) != nil && EVMEnable {
+        if (CadenceManager.shared.current.evm?.createCoaEmpty) != nil  {
             self.hasAccount = !self.accounts.isEmpty
             self.showEVM = self.accounts.isEmpty
         }else {
@@ -137,7 +136,7 @@ extension EVMAccountManager {
     
     func refreshSync() async {
         
-        if (CadenceManager.shared.current.evm?.createCoaEmpty) == nil || !EVMEnable {
+        if (CadenceManager.shared.current.evm?.createCoaEmpty) == nil  {
             clean()
             return
         }
@@ -196,9 +195,7 @@ extension EVMAccountManager {
         }
     }
     
-    func updateWhenDevChange() {
-        checkValid()
-    }
+    
     
     
 }

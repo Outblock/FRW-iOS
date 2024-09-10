@@ -26,33 +26,94 @@ struct CreateProfileWaitingView: RouteableView {
     
     var body: some View {
         VStack(alignment: .center) {
-            bodyContainer
-                .overlay(alignment: .bottomTrailing) {
-                    HStack {
-                        Spacer()
-                        HStack(spacing: 15) {
-                            ForEach(items.indices, id: \.self) { index in
-                                let item = items[viewModel.currentPage]
-                                Capsule()
-                                    .fill(viewModel.currentPage == index ? item.color : Color.Theme.Line.line)
-                                    .frame(width: viewModel.currentPage == index ? 20 : 7, height: 7)
-                            }
-                        }
-                        .overlay(alignment: .leading) {
+            
+            HStack {
+                Image("lilico-app-icon")
+                    .resizable()
+                    .frame(width: 32, height: 32)
+                Text("app_name_full".localized)
+                    .font(.inter(size: 18, weight: .semibold))
+                    .foregroundStyle(Color.Theme.Text.black)
+                Spacer()
+            }
+            .padding(.leading, 32)
+            
+            Spacer()
+            if viewModel.createFinished {
+                SuccessView()
+            }else {
+                bodyContainer
+                    .padding(.bottom, 12)
+                HStack {
+                    Spacer()
+                    HStack(spacing: 15) {
+                        ForEach(items.indices, id: \.self) { index in
                             let item = items[viewModel.currentPage]
                             Capsule()
-                                .fill(item.color)
-                                .frame(width: 20, height: 7)
-                                .offset(x: getOffset())
+                                .fill(viewModel.currentPage == index ? item.color : Color.Theme.Line.line)
+                                .frame(width: viewModel.currentPage == index ? 20 : 7, height: 7)
                         }
-                        Color.clear
-                            .frame(width: 48, height: 1)
                     }
-                    .padding(.bottom, 150)
+                    .overlay(alignment: .leading) {
+                        let item = items[viewModel.currentPage]
+                        Capsule()
+                            .fill(item.color)
+                            .frame(width: 20, height: 7)
+                            .offset(x: getOffset())
+                    }
+                    Color.clear
+                        .frame(width: 48, height: 1)
                 }
+                .padding(.bottom, 32)
+            }
+             
+            
+            HStack(alignment: .center) {
+                Spacer()
+                if viewModel.createFinished {
+                    Button {
+                        viewModel.onConfirm()
+                    } label: {
+                        HStack {
+                            Text("Go with the FLOW")
+                                .font(.inter(size: 14, weight: .bold))
+                                .foregroundStyle(Color.Theme.Text.white9)
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 16)
+                        .background(Color.Theme.Accent.green)
+                        .cornerRadius(16)
+                    }
+                } else {
+                    VStack {
+                        HStack {
+                            Text("😃")
+                                .font(.inter(size: 14, weight: .bold))
+                            Text("take_mins".localized)
+                                .font(.inter(size: 14))
+                                .foregroundStyle(Color.Theme.Accent.green)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.Theme.Accent.green.opacity(0.12))
+                        .cornerRadius(8)
+                        
+                        HStack {
+                            Text("Creating your Profile")
+                                .font(.inter(size: 14, weight: .bold))
+                                .foregroundStyle(Color.Theme.Accent.green)
+                            ActivityIndicator()
+                        }
+                        .frame(width: 220, height: 56)
+                        .border(Color.Theme.Accent.green, cornerRadius: 16)
+                    }
+                    
+                }
+                Spacer()
+            }
+            .padding(.bottom, 30)
         }
         .padding(.top, 40)
-        .padding(.leading, 32)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .backgroundFill(Color.Theme.Background.grey)
         .applyRouteable(self)
@@ -93,22 +154,13 @@ extension CreateProfileWaitingView {
     
     func createPageView(item: CreateProfileWaitingView.Item) -> some View {
         VStack(alignment: .leading) {
-            HStack {
-                Image("lilico-app-icon")
-                    .resizable()
-                    .frame(width: 32, height: 32)
-                Text("app_name_full".localized)
-                    .font(.inter(size: 18, weight: .semibold))
-                    .foregroundStyle(Color.Theme.Text.black)
-                Spacer()
-            }
+            
             Spacer()
             VStack(alignment: .leading, spacing: 25) {
                 HStack(alignment: .top) {
                     VStack {
                         Text(item.title)
                             .font(.montserrat(size: 48, weight: .light))
-                            .fontWeight(.thin)
                             .foregroundStyle(Color.Theme.Text.black)
                             .padding(.trailing, 32)
 
@@ -134,35 +186,58 @@ extension CreateProfileWaitingView {
             }
             
             Spacer()
-            HStack(alignment: .center) {
+        }
+        .padding(.leading, 32)
+    }
+}
+
+extension CreateProfileWaitingView {
+    struct SuccessView: View {
+        let item = CreateProfileWaitingView.Item.finishedItem
+        var body: some View {
+            VStack(alignment: .leading) {
+                
                 Spacer()
-                if viewModel.createFinished {
-                    Button {
-                        viewModel.onConfirm()
-                    } label: {
-                        HStack {
-                            Text("Go with the FLOW")
-                                .font(.inter(size: 14, weight: .bold))
+                VStack(alignment: .leading, spacing: 25) {
+                    HStack(alignment: .top) {
+                        VStack(alignment: .leading,spacing: 32) {
+                            Text(item.title)
+                                .font(.montserrat(size: 48, weight: .light))
+                                .foregroundStyle(Color.Theme.Text.black)
+//                                .padding(.leading, 32)
+                            Text("#onFlow.")
+                                .font(.montserrat(size: 48, weight: .thin))
+                                .fontWeight(.thin)
                                 .foregroundStyle(Color.Theme.Text.white9)
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 4)
+                                .background(Color.Theme.Accent.green)
+                                .cornerRadius(29)
+                            
+                            Spacer()
                         }
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 16)
-                        .background(Color.Theme.Accent.green)
-                        .cornerRadius(16)
+                        Spacer()
                     }
-                } else {
-                    HStack {
-                        Text("Creating your Profile")
-                            .font(.inter(size: 14, weight: .bold))
-                            .foregroundStyle(Color.Theme.Accent.green)
-                        ActivityIndicator()
+                    .frame(height: 327)
+                    .background {
+                        VStack {
+                            HStack {
+                                Spacer()
+                                Image(item.image)
+                                    .offset(y: 30)
+                            }
+                        }
                     }
-                    .frame(width: 220, height: 56)
-                    .border(Color.Theme.Accent.green, cornerRadius: 16)
+                    
+                    Text(item.desc)
+                        .font(.inter(size: 18, weight: .light))
+                        .foregroundStyle(Color.Theme.Text.black8)
+                        .padding(.trailing, 32)
                 }
+                
                 Spacer()
             }
-            .padding(.bottom, 40)
+            .padding(.leading, 32)
         }
     }
 }
@@ -181,6 +256,8 @@ extension CreateProfileWaitingView {
                 Item(title: "you just,\nunlocked\nTrue\nOwnership.", desc: "Your assets are secured by your device, unlocking true ownership of your assets on Flow.", image: "create_profile_bg_2", color: Color.Theme.Accent.blue)
             ]
         }
+        
+        static var finishedItem = Item(title: "ready to\nget started", desc: "Your Flow account is ready,let’s get started!", image: "create_profile_bg", color: .Theme.Background.pureWhite)
     }
 }
 

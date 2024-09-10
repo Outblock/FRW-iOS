@@ -31,16 +31,10 @@ extension NFTCollectionConfig {
     private func fetchData() async {
         do {
             
-            var list: [NFTCollectionInfo]
-            if LocalUserDefaults.shared.flowNetwork == .previewnet {
-                let response: EVMNFTCollectionResponse = try await Network.requestWithRawModel(GithubEndpoint.EVMNFTList)
-                list = response.tokens
-            }else {
-                list = try await Network.request(FRWAPI.NFT.collections)
-            }
+            var list: [NFTCollectionInfo] = try await Network.request(FRWAPI.NFT.collections)
             config = list
         } catch {
-            debugPrint("NFTCollectionConfig -> fetchData failed: \(error)")
+            log.error("NFTCollectionConfig -> fetchData failed: \(error)")
         }
     }
 }

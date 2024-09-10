@@ -22,6 +22,7 @@ enum FirebaseConfig: String {
     case contractAddress = "contract_address"
     case appSecret = "app_secret"
     case ENVConfig = "i_config"
+    case news = "news"
     
     static func start() {
         Task {
@@ -37,6 +38,7 @@ enum FirebaseConfig: String {
     static func onConfigLoadFinish() {
         Task {
             await NFTCollectionConfig.share.reload()
+            RemoteConfigManager.shared.updateFromRemote()
         }
     }
 }
@@ -91,9 +93,9 @@ extension FirebaseConfig {
             remoteConfig.fetchAndActivate(completionHandler: { status, error in
                 if status == .error {
                     continuation.resume(throwing: FirebaseConfigError.fetch)
-                    print("Firbase fetch Error: \(error?.localizedDescription ?? "No error available.")")
+                    log.error("[Firebase] fetch Error: \(error?.localizedDescription ?? "No error available.")")
                 } else {
-                    print("Config fetched!")
+                    log.info("[Firebase] Config fetched!")
                     let configValues: RemoteConfigValue = remoteConfig.configValue(forKey: self.rawValue)
                     continuation.resume(returning: configValues)
                 }

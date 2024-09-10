@@ -104,12 +104,9 @@ class WalletConnectManager: ObservableObject {
                 {
                     // TODO: commit
                     #if DEBUG
-                    if Pair.instance.getPairings().contains(where: { $0.topic == uri.topic }) {
-                        try await Pair.instance.disconnect(topic: uri.topic)
-                    }
-//                                        if Sign.instance.getPairings().contains(where: { $0.topic == uri.topic }) {
-//                                            try await Sign.instance.disconnect(topic: uri.topic)
-//                                        }
+//                    if Pair.instance.getPairings().contains(where: { $0.topic == uri.topic }) {
+//                        try await Pair.instance.disconnect(topic: uri.topic)
+//                    }
                     #endif
                     try await Pair.instance.pair(uri: uri)
                 }
@@ -281,15 +278,24 @@ extension WalletConnectManager {
     
     private func handleSessionProposal(_ sessionProposal: Session.Proposal) {
         let pairings = Pair.instance.getPairings()
-//        if pairings.contains(where: { $0.peer == sessionProposal.proposer }) {
-//            self.approveSession(proposal: sessionProposal)
-//            return
-//        }
         
         guard let network = self.handler.chainId(sessionProposal: sessionProposal) else {
             self.rejectSession(proposal: sessionProposal)
             return
         }
+        guard network == LocalUserDefaults.shared.flowNetwork.toFlowType() else {
+            self.rejectSession(proposal: sessionProposal)
+            let current = LocalUserDefaults.shared.flowNetwork
+            guard let toNetwork = LocalUserDefaults.FlowNetworkType(chainId: network) else { return }
+            Router.route(to: RouteMap.Explore.switchNetwork(current, toNetwork, nil))
+            return
+        }
+
+        if pairings.contains(where: { $0.peer == sessionProposal.proposer }) {
+            self.approveSession(proposal: sessionProposal)
+            return
+        }
+        
         let info = self.handler.sessionInfo(sessionProposal: sessionProposal)
         var address = WalletManager.shared.getPrimaryWalletAddress()
         if self.handler.currentType(sessionProposal: sessionProposal) == .evm {

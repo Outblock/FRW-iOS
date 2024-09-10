@@ -100,11 +100,11 @@ class MoveSingleNFTViewModel: ObservableObject {
     }
     
     private func moveForLinkedAccount(nftId: UInt64) async {
-        guard let collection = nft.collection,
-                 let identifier = nft.infoFromCollection?.collectionData.privatePath?.identifier
+        guard let collection = nft.collection
                     else {
             return
         }
+        let identifier = nft.publicIdentifier
         do {
             var tid = Flow.ID(hex: "")
             switch (fromContact.walletType, toContact.walletType) {

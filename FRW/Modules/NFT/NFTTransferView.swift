@@ -124,7 +124,7 @@ class NFTTransferViewModel: ObservableObject {
                     }
                 }
                 
-                if toAccountType == .coa && toAddress != EVMAccountManager.shared.accounts.first?.address {
+                if toAccountType == .coa && toAddress != EVMAccountManager.shared.accounts.first?.showAddress {
                     toAccountType = .eoa
                 }
                 
@@ -141,7 +141,6 @@ class NFTTransferViewModel: ObservableObject {
                         throw NFTError.sendInvalidAddress
                     }
                     tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: nftAddress, contractName: nftName, ids: [IdInt], fromEvm: false)
-                    log.error("========")
                 case (.flow, .eoa):
                     log.debug("[NFT] flow to eoa send")
                     let erc721 = try await FlowProvider.Web3.erc721NFTContract()
@@ -168,7 +167,7 @@ class NFTTransferViewModel: ObservableObject {
                         guard let IdInt = UInt64(nftId) else {
                             throw NFTError.sendInvalidAddress
                         }
-                        tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: nftAddress, contractName: nftName, ids: [IdInt], fromEvm: false)
+                        tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: nftAddress, contractName: nftName, ids: [IdInt], fromEvm: true)
                     }else {
                         tid = try await FlowNetwork.bridgeNFTFromEVMToAnyFlow(nftContractAddress: nftAddress, nftContractName: nftName, id: nftId, receiver: toAddress)
                     }
@@ -194,16 +193,15 @@ class NFTTransferViewModel: ObservableObject {
                 case (.flow, .linked):
                     // parent to child user move 'transferNFTToChild'
                     guard let nftId = UInt64(nft.response.id),
-                          let collection = nft.collection,
-                          let identifier = nft.infoFromCollection?.collectionData.privatePath?.identifier
+                          let collection = nft.collection
                     else { throw NFTError.sendInvalidAddress }
-//
+                    let identifier = nft.publicIdentifier
                     tid = try await FlowNetwork.moveNFTToChild(nftId: nftId, childAddress: toAddress, identifier: identifier, collection: collection)
                 case (.linked, .flow):
                     guard let nftId = UInt64(nft.response.id),
-                          let collection = nft.collection,
-                          let identifier = nft.infoFromCollection?.collectionData.privatePath?.identifier
+                          let collection = nft.collection
                     else { throw NFTError.sendInvalidAddress }
+                    let identifier = nft.publicIdentifier
                     let childAddr = fromChildAccount?.addr ?? currentAddress
                     if toAddress == primaryAddress {
                         tid = try await FlowNetwork.moveNFTToParent(nftId: nftId, childAddress: childAddr, identifier: identifier, collection: collection)
@@ -212,9 +210,9 @@ class NFTTransferViewModel: ObservableObject {
                     }
                 case (.linked, .linked):
                     guard let nftId = UInt64(nft.response.id),
-                          let collection = nft.collection,
-                          let identifier = nft.infoFromCollection?.collectionData.privatePath?.identifier
+                          let collection = nft.collection
                     else { throw NFTError.sendInvalidAddress }
+                    let identifier = nft.publicIdentifier
                     let childAddr = fromChildAccount?.addr ?? currentAddress
                     tid = try await FlowNetwork.sendChildNFTToChild(nftId: nftId, childAddress: childAddr,toAddress: toAddress, identifier: identifier, collection: collection)
                 default:

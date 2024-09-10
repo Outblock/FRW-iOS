@@ -982,7 +982,6 @@
 "my_accounts" = "My Accounts";
 "Inaccessible" = "Inaccessible";
 "View Recovery Phrase" = "View Recovery Phrase";
-
 "import_google_desc" = "Retrieve the legacy backup from Google Drive.";
 "import_icloud_desc" = "Retrieve the legacy backup from iCloud.";
 "import_phrase_desc" = "Support 12 words seed phrase.";
@@ -996,4 +995,4 @@
 "import_x_wallet" = "Import %@ Wallet";
 "import_no_account_found" = "Sorry, we can not find your address on flow with this key.\nPlease check your input and try again.";
 "private_key_placeholder" = "Enter your Private key";
-
+"take_mins" = "It might take 1-2 mins";

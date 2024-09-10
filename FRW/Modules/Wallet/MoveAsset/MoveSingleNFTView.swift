@@ -78,7 +78,7 @@ struct MoveSingleNFTView: View {
                                     
                                     HStack(alignment: .center, spacing: 4) {
                                         KFImage
-                                            .url(viewModel.nft.collection?.logoURL)
+                                            .url(viewModel.nft.logoUrl)
                                             .placeholder {
                                                 Image("placeholder")
                                                     .resizable()

@@ -80,7 +80,6 @@ class WalletViewModel: ObservableObject {
     @Published var moveAssetsPresent: Bool = false
     @Published var moveTokenPresent: Bool = false
     
-    @Published var notiList: [NotificationData] = []
     @Published var currentPage: Int = 0
     @Published var page: Page = .first()
     

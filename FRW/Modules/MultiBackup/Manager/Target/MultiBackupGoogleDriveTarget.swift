@@ -72,13 +72,15 @@ extension MultiBackupGoogleDriveTarget {
         try await prepare()
         
         guard let fileId = try await api?.getFileId(fileName: MultiBackupManager.backupFileName) else {
-            return []
+            log.error("[Google] getfile failed.")
+            throw BackupError.fileIsNotExistOnCloud
         }
         
         guard let data = try await api?.getFileData(fileId: fileId), !data.isEmpty,
               let hexString = String(data: data, encoding: .utf8)?.trim()
         else {
-            return []
+            log.error("[Google] getfile failed.")
+            throw BackupError.CloudFileData
         }
         
         // Compatible extension problem

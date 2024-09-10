@@ -185,7 +185,7 @@ extension UserManager {
         let request = RegisterRequest(username: username, accountKey: key.toCodableModel(), deviceInfo: IPManager.shared.toParams())
         let model: RegisterResponse = try await Network.request(FRWAPI.User.register(request))
 
-        try await finishLogin(mnemonic: "", customToken: model.customToken)
+        try await finishLogin(mnemonic: "", customToken: model.customToken, isRegiter: true)
         WalletManager.shared.asyncCreateWalletAddressFromServer()
         userType = .secure
         if let privateKey = sec.key.privateKey {
@@ -445,7 +445,7 @@ extension UserManager {
 // MARK: - Internal Login Logic
 
 extension UserManager {
-    private func finishLogin(mnemonic: String, customToken: String) async throws {
+    private func finishLogin(mnemonic: String, customToken: String, isRegiter: Bool = false) async throws {
         try await firebaseLogin(customToken: customToken)
         var info = try await fetchUserInfo()
         info.type = self.userType
@@ -459,7 +459,7 @@ extension UserManager {
             try WalletManager.shared.storeAndActiveMnemonicToKeychain(mnemonic, uid: uid)
         }
         
-        if !loginUIDList.contains(uid) {
+        if !loginUIDList.contains(uid) && !isRegiter {
             ConfettiManager.show()
         }
         DispatchQueue.main.async {

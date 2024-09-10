@@ -13,6 +13,7 @@ import SwiftUI
 import SwiftUIPager
 import SwiftUIX
 import LogView
+import CollectionViewPagingLayout
 
 extension WalletHomeView: AppTabBarPageProtocol {
     static func tabTag() -> AppTabType {
@@ -35,11 +36,14 @@ struct WalletHomeView: View {
     @StateObject var um = UserManager.shared
     @StateObject var wm = WalletManager.shared
     @StateObject private var vm = WalletViewModel()
+    @StateObject var newsHandler = WalletNewsHandler.shared
     @State var isRefreshing: Bool = false
     @State private var showActionSheet = false
     @AppStorage("WalletCardBackrgound")
     private var walletCardBackrgound: String = "fade:0"
     
+    @State var selectedNewsId: String? = nil
+    @State var scrollNext: Bool = false
     
     private let scrollName: String = "WALLETSCROLL"
     
@@ -262,37 +266,34 @@ struct WalletHomeView: View {
                 
                 VStack(alignment: .trailing) {
                     Spacer()
-                    if vm.notiList.count > 1 {
-                        HStack {
-                            HStack(spacing: 15) {
-                                ForEach(vm.notiList.indices, id: \.self) { index in
-                                    Capsule()
-                                        .fill(vm.currentPage == index ? Color.Theme.Accent.green : Color.Theme.Line.line)
-                                        .frame(width: vm.currentPage == index ? 20 : 7, height: 7)
-                                }
+                    
+                    StackPageView(newsHandler.list, selection: $selectedNewsId) { news in
+                        WalletNotificationView(item: news) { idStr in
+                            if let nextId = newsHandler.nextItem(idStr) {
+//                                selectedNewsId =  nextId
                             }
-                            .overlay(alignment: .leading) {
-                                Capsule()
-                                    .fill(Color.Theme.Accent.green)
-                                    .frame(width: 20, height: 7)
-                                    .offset(x: CGFloat(22 * vm.currentPage))
-                            }
+                            selectedNewsId = idStr
+                            newsHandler.onCloseItem(idStr)
+                        } onAction: { idStr in
+                            
                         }
                     }
+                    .options(.flowStack)
+                    .scrollToSelectedPage(false)
+                    .numberOfVisibleItems(2)
+                    .pagePadding(
+                        horizontal: .absolute(16)
+                    )
+                    .onTapPage({ idStr in
+                        newsHandler.onClickItem(idStr)
+                    })
+                    .valueChanged(value: selectedNewsId ?? "", onChange: { id in
+                        newsHandler.onShowItem(id)
+                    })
+                    .frame(height: 104) // 72 + 16* 2
+                    .padding(.bottom, 16)
                     
-                    Pager(page: vm.page, data: 0 ..< vm.notiList.count, id: \.self) { index in
-                        let item = vm.notiList[index]
-                        WalletNotificationView(data: item) {} onAction: {}
-                    }
-                    .itemSpacing(10)
-                    .onPageWillChange { willIndex in
-                        vm.onPageIndexChangeAction(willIndex)
-                    }
-                    .frame(height: 72)
-                    .padding(.bottom, 32)
                 }
-                .padding(.horizontal, 16)
-                .clipped()
             }
             .frame(width: size.width, height: size.height + (minY > 0 ? minY : 0))
             .clipped()
@@ -306,6 +307,10 @@ struct WalletHomeView: View {
                     showWallpaper()
                 }
             }
+            .onAppear {
+                newsHandler.checkFirstNews()
+            }
+            .visibility(vm.needShowPlaceholder ? .gone : .visible)
         }
         .frame(height: headerHeight + safeArea.top)
     }
@@ -740,4 +745,34 @@ struct VisualEffectBlur: UIViewRepresentable {
     func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
         uiView.effect = UIBlurEffect(style: effect)
     }
+}
+
+extension StackTransformViewOptions {
+    static let flowStack: StackTransformViewOptions = {
+        StackTransformViewOptions(
+            scaleFactor: 0.06,
+            minScale: 0.00,
+            maxScale: 1.00,
+            maxStackSize: 4,
+            spacingFactor: 0.12,
+            maxSpacing: nil,
+            alphaFactor: 0.05,
+            bottomStackAlphaSpeedFactor: 10.00,
+            topStackAlphaSpeedFactor: 0.10,
+            perspectiveRatio: 0.00,
+            shadowEnabled: true,
+            shadowColor: .black,
+            shadowOpacity: 0.06,
+            shadowOffset: .zero,
+            shadowRadius: 10.00,
+            stackRotateAngel: 0.00,
+            popAngle: 0.00,
+            popOffsetRatio: .init(width: -0.50, height: 0.30),
+            stackPosition: .init(x: -0.08, y: 1.00),
+            reverse: false,
+            blurEffectEnabled: false,
+            maxBlurEffectRadius: 0.00,
+            blurEffectStyle: .light
+        )
+    }()
 }

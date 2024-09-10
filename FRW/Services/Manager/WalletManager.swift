@@ -21,7 +21,7 @@ extension WalletManager {
     static let defaultGas: UInt64 = 30000000
     private static let defaultBundleID = "com.flowfoundation.wallet"
     private static let mnemonicStoreKeyPrefix = "lilico.mnemonic"
-    private static let walletFetchInterval: TimeInterval = 20
+    private static let walletFetchInterval: TimeInterval = 5
     
     private enum CacheKeys: String {
         case walletInfo
@@ -69,7 +69,9 @@ class WalletManager: ObservableObject {
         }
         return [WalletManager.shared]
     }
-
+    
+    private var retryCheckCount = 1
+    
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(reset), name: .willResetWallet, object: nil)
         
@@ -448,6 +450,7 @@ extension WalletManager {
     }
 
     /// polling wallet info, if wallet address is not exists
+    
     private func pollingWalletInfoIfNeeded() {
         debugPrint("WalletManager -> pollingWalletInfoIfNeeded")
         let isEmptyBlockChain = walletInfo?.currentNetworkWalletModel?.isEmptyBlockChain ?? true
@@ -456,7 +459,10 @@ extension WalletManager {
             
             Task {
                 do {
-                    let _: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.manualCheck)
+                    if retryCheckCount % 4 == 0 {
+                        let _: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.manualCheck)
+                    }
+                    retryCheckCount += 1
                 } catch {
                     debugPrint(error)
                 }

@@ -154,10 +154,10 @@ extension PushHandler: MessagingDelegate, UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
-        let userInfo = response.notification.request.content.userInfo
-        log.debug("user did click a notification", context: userInfo)
         
-        DispatchQueue.main.async {
+        await MainActor.run {
+            let userInfo = response.notification.request.content.userInfo
+            log.debug("user did click a notification", context: userInfo)
             if let transactionId = userInfo["transactionId"] as? String, let url = transactionId.toFlowScanTransactionDetailURL {
                 Router.route(to: RouteMap.Explore.browser(url))
             }

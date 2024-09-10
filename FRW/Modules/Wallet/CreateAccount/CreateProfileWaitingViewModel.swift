@@ -77,6 +77,7 @@ class CreateProfileWaitingViewModel: ObservableObject {
         HUD.success(title: "create_user_success".localized)
         stopTimer()
         callback(true)
+        ConfettiManager.show()
     }
     
     private func startTimer() {

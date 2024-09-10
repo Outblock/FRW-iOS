@@ -65,7 +65,7 @@ class MultiBackupiCloudTarget: MultiBackupTarget {
         guard let data = try await api?.getFileData(), !data.isEmpty,
               let hexString = String(data: data, encoding: .utf8)?.trim()
         else {
-            return []
+            throw BackupError.CloudFileData
         }
         
         return try MultiBackupManager.shared.decryptHexString(hexString)

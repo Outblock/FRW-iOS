@@ -33,7 +33,12 @@ class NFTDetailPageViewModel: ObservableObject {
                     DispatchQueue.main.async {
                         self.svgString = svg
                     }
-                } else {
+                } else if let data = nft.imageData, let svg = decodeBase64ToString(data) {
+                    DispatchQueue.main.async {
+                        self.svgString = svg
+                    }
+                }
+                else {
                     DispatchQueue.main.async {
                         self.nft.isSVG = false
                         self.nft.response.postMedia?.image = self.nft.response.postMedia?.image?.convertedSVGURL()?.absoluteString
@@ -41,8 +46,30 @@ class NFTDetailPageViewModel: ObservableObject {
                 }
             }
         }
+        updateCollectionIfNeed()
         fetchNFTStatus()
         updateSendButton()
+    }
+    
+    func decodeBase64ToString(_ base64String: String) -> String? {
+        // 清理 Base64 字符串，去除无效字符和空白字符
+        let cleanedBase64String = base64String
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "[^A-Za-z0-9+/=]", with: "", options: .regularExpression)
+
+        // 计算所需的填充字符数量（如果需要）
+        let requiredPadding = cleanedBase64String.count % 4
+        let paddingLength = (4 - requiredPadding) % 4
+        let paddedBase64String = cleanedBase64String + String(repeating: "=", count: paddingLength)
+
+        // 尝试将 Base64 字符串解码为 Data
+        if let data = Data(base64Encoded: paddedBase64String) {
+            // 使用指定的字符编码（例如 UTF-8）将 Data 转换回字符串
+            return String(data: data, encoding: .utf8)
+        } else {
+            // 解码失败，返回 nil
+            return nil
+        }
     }
     
     func sendNFTAction(fromChildAccount: ChildAccount? = nil) {
@@ -109,5 +136,17 @@ class NFTDetailPageViewModel: ObservableObject {
             showSendButton = false
         }
         
+    }
+    
+    private func updateCollectionIfNeed() {
+        guard let contractAddress = nft.response.contractAddress else {
+            return
+        }
+        Task {
+            let nftCollection = await NFTCollectionConfig.share.get(from: contractAddress)
+            if self.nft.collection == nil {
+                self.nft.collection = nftCollection
+            }
+        }
     }
 }

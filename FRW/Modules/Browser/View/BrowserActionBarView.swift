@@ -9,8 +9,8 @@ import UIKit
 import SnapKit
 import Hero
 
-let BrowserActionBarViewHeight: CGFloat = 60
-private let BtnWidth: CGFloat = 50
+let BrowserActionBarViewHeight: CGFloat = 78
+private let BtnWidth: CGFloat = 44
 private let BtnHeight: CGFloat = 40
 private let ProgressViewHeight: CGFloat = 4
 
@@ -21,7 +21,6 @@ class BrowserActionBarView: UIView {
     private lazy var contentView: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
-        view.layer.cornerRadius = 16
         view.clipsToBounds = true
         return view
     }()
@@ -117,7 +116,7 @@ class BrowserActionBarView: UIView {
         view.layer.borderColor = UIColor.white.withAlphaComponent(0.24).cgColor
         view.layer.cornerRadius = 12
         view.alpha = 0.8
-        view.isUserInteractionEnabled = false
+//        view.isUserInteractionEnabled = false
         return view
     }()
     
@@ -160,38 +159,42 @@ class BrowserActionBarView: UIView {
             make.edges.equalToSuperview()
         }
         
-        contentView.addSubview(blurView)
-        blurView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
+//        contentView.addSubview(blurView)
+//        blurView.snp.makeConstraints { make in
+//            make.edges.equalToSuperview()
+//        }
         
         setupAddressBarView()
         
         contentView.addSubview(stackView)
         stackView.snp.makeConstraints { make in
-            make.left.right.centerY.equalToSuperview()
+            make.left.equalTo(14)
+            make.right.equalTo(-14)
+            make.top.equalTo(4)
             make.height.equalTo(BtnHeight)
         }
         
         contentView.addSubview(progressView)
         progressView.snp.makeConstraints { make in
-            make.left.right.bottom.equalToSuperview()
+            make.left.right.top.equalToSuperview()
         }
     }
     
     private func setupAddressBarView() {
         addressBarContainer.addSubview(addressBarBgView)
         addressBarBgView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.left.equalTo(12)
+            make.right.equalTo(-12)
+            make.top.bottom.equalToSuperview()
         }
         
-        addressBarContainer.addSubview(addressLabel)
+        addressBarBgView.addSubview(addressLabel)
         addressLabel.snp.makeConstraints { make in
             make.left.equalTo(12)
             make.centerY.equalToSuperview()
         }
         
-        addressBarContainer.addSubview(reloadBtn)
+        addressBarBgView.addSubview(reloadBtn)
         reloadBtn.snp.makeConstraints { make in
             make.left.equalTo(addressLabel.snp.right).offset(0)
             make.centerY.equalToSuperview()

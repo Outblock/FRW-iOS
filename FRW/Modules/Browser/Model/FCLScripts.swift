@@ -95,7 +95,7 @@ class FCLScripts {
                   "f_type": "ServiceProvider",
                   "f_vsn": "1.0.0",
                   "address": "$ADDRESS_REPLACEMENT",
-                  "name": "Lilico Wallet"
+                  "name": "Flow Wallet"
                 }
               },
               $PRE_AUTHZ_REPLACEMENT
