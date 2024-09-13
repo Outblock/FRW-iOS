@@ -413,8 +413,8 @@ extension MultiBackupManager {
         
         let address = Flow.Address(hex: addressDes)
         
-        let seWallet = try SEWallet.create()
-        let key = try seWallet.flowAccountKey()
+        let secureKey = try SecureEnclaveKey.create()
+        let key = try secureKey.flowAccountKey()
 //        let sec = try WallectSecureEnclave()
 //        let key = try sec.accountKey()
         do {
@@ -453,7 +453,7 @@ extension MultiBackupManager {
                 if response.httpCode != 200 {
                     log.info("[Multi-backup] sync failed")
                 } else {
-                    try seWallet.store(id: firstItem.userId)
+                    try secureKey.store(id: firstItem.userId)
 //                    if let privateKey = sec.key.privateKey {
 //                        try WallectSecureEnclave.Store.store(key: firstItem.userId, value: privateKey.dataRepresentation)
 //                    }

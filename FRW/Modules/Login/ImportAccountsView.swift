@@ -10,11 +10,10 @@ import SwiftUIX
 
 class ImportAccountsViewModel: ObservableObject {
     
-    var list: [ImportAccountInfo] = []
+    var list: [String] = []
+    var onSelectAddress: (String)->()
     
-    var onSelectAddress: (ImportAccountInfo)->()
-    
-    init(list: [ImportAccountInfo], onSelectAddress: @escaping (ImportAccountInfo) -> ()) {
+    init(list: [String], onSelectAddress: @escaping (String) -> ()) {
         self.list = list
         self.onSelectAddress = onSelectAddress
     }
@@ -28,7 +27,7 @@ struct ImportAccountsView:  RouteableView, PresentActionDelegate {
     var changeHeight: (() -> ())?
     
     @StateObject var viewModel: ImportAccountsViewModel
-    @State private var selectedAccount: ImportAccountInfo?
+    @State private var selectedAccount: String?
     
     init(viewModel: ImportAccountsViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -68,8 +67,8 @@ struct ImportAccountsView:  RouteableView, PresentActionDelegate {
                 VStack {
                     ForEach(0..<viewModel.list.count, id: \.self) { index in
                         let account = viewModel.list[index]
-                        let isSelected = (account.address == selectedAccount?.address)
-                        ImportAccountsView.Item(account: account, isSelected: isSelected) { model in
+                        let isSelected = (account == selectedAccount)
+                        ImportAccountsView.Item(address: account, isSelected: isSelected) { model in
                             self.selectedAccount = model
                         }
                     }
@@ -87,16 +86,15 @@ struct ImportAccountsView:  RouteableView, PresentActionDelegate {
             
             Spacer()
             
-            VStack {
-                VPrimaryButton(model: ButtonStyle.primary,
-                               state: buttonState(),
-                               action: {
-                    if let account = selectedAccount {
-                        viewModel.onSelectAddress(account)
-                    }
-                    
-                }, title: buttonTitle())
-            }
+            VPrimaryButton(model: ButtonStyle.primary,
+                           state: buttonState(),
+                           action: {
+                if let account = selectedAccount {
+                    onClose()
+                    viewModel.onSelectAddress(account)
+                }
+                
+            }, title: buttonTitle())
             .padding(.bottom, 42)
         }
         .padding(.horizontal,18)
@@ -125,20 +123,20 @@ struct ImportAccountsView:  RouteableView, PresentActionDelegate {
     }
     
     func onClose() {
-        
+        Router.dismiss()
     }
 }
 
 extension ImportAccountsView {
     struct Item: View {
-        let account: ImportAccountInfo
+        let address: String
         var isSelected: Bool = false
-        var onClick: (ImportAccountInfo) -> ()
+        var onClick: (String) -> ()
         
         var body: some View {
             
             HStack {
-                Text(account.address ?? "0x")
+                Text(address)
                     .font(.inter(size: 14, weight: isSelected ? .semibold : .regular))
                     .truncationMode(.middle)
                     .lineLimit(1)
@@ -156,7 +154,7 @@ extension ImportAccountsView {
             .contentShape(Rectangle())
             .background(isSelected ? Color.Theme.Background.bg3 : .clear )
             .onTapGesture {
-                onClick(account)
+                onClick(address)
             }
             .cornerRadius(16)
         }

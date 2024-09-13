@@ -1,5 +1,5 @@
 //
-//  SEWallet+Add.swift
+//  SecureEnclaveKey+Add.swift
 //  FRW
 //
 //  Created by cat on 2024/9/10.
@@ -9,18 +9,18 @@ import Foundation
 import FlowWalletKit
 import Flow
 
-extension SEWallet {
+extension SecureEnclaveKey {
     
-    static func create() throws -> SEWallet {
+    static func create() throws -> SecureEnclaveKey {
         
-        let SEWallet = try SEWallet.create(storage: SEWallet.KeychainStorage)
-        return SEWallet
+        let SecureEnclaveKey = try SecureEnclaveKey.create(storage: SecureEnclaveKey.KeychainStorage)
+        return SecureEnclaveKey
     }
     
-    static func wallet(id: String) throws -> SEWallet {
+    static func wallet(id: String) throws -> SecureEnclaveKey {
         let pw = password(by: id)
-        let SEWallet = try SEWallet.get(id: id, password: pw, storage: SEWallet.KeychainStorage)
-        return SEWallet
+        let SecureEnclaveKey = try SecureEnclaveKey.get(id: id, password: pw, storage: SecureEnclaveKey.KeychainStorage)
+        return SecureEnclaveKey
     }
     
     func flowAccountKey(signAlgo: Flow.SignatureAlgorithm = .ECDSA_P256 ,weight: Int = 1000) throws -> Flow.AccountKey {
@@ -32,16 +32,16 @@ extension SEWallet {
     }
     
     func store(id: String ) throws {
-        let pw = SEWallet.password(by: id)
+        let pw = SecureEnclaveKey.password(by: id)
         try store(id: id, password: pw)
     }
 }
 
 //MARK: - Private
-extension SEWallet {
+extension SecureEnclaveKey {
     static var KeychainStorage: FlowWalletKit.KeychainStorage {
         let service = (Bundle.main.bundleIdentifier ?? AppBundleName) + ".SE"
-        let storage = FlowWalletKit.KeychainStorage(service: service, label: "SEWallet")
+        let storage = FlowWalletKit.KeychainStorage(service: service, label: "SecureEnclaveKey", synchronizable: false)
         return storage
     }
     

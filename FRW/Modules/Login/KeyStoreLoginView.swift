@@ -49,7 +49,7 @@ struct KeyStoreLoginView: RouteableView {
                     }
                     
                     Section() {
-                        AnimatedSecureTextField(placeholder: "keystore_address".localized, text: $viewModel.address) { text in
+                        AnimatedSecureTextField(placeholder: "keystore_address".localized, text: $viewModel.wantedAddress) { text in
                             viewModel.update(address: text)
                         }
                             .frame(height: 64)
@@ -64,11 +64,12 @@ struct KeyStoreLoginView: RouteableView {
                            state: viewModel.buttonState,
                            action: {
                 viewModel.onSumbit()
-            }, title: "import_btn_text".localized)
+            }, title: "import_btn_text".localized.lowercased().uppercasedFirstLetter())
             .padding(.bottom)
         }
         .padding(.horizontal, 24)
         .backgroundFill(Color.LL.background)
+        .hideKeyboardWhenTappedAround()
         .applyRouteable(self)
         
     }

@@ -99,12 +99,12 @@ extension WalletConnectSyncDevice {
             await IPManager.shared.fetch()
         }
         
-        let SEWallet = try SEWallet.create()
-        let key = try SEWallet.flowAccountKey()
+        let secureKey = try SecureEnclaveKey.create()
+        let key = try secureKey.flowAccountKey()
         
         let requestParam = RegisterRequest(username: "", accountKey: key.toCodableModel(), deviceInfo: IPManager.shared.toParams())
         let response = SyncInfo.SyncResponse<RegisterRequest>(method: FCLWalletConnectMethod.addDeviceInfo.rawValue, data: requestParam)
-        try SEWallet.store(id: userId)
+        try secureKey.store(id: userId)
         log.debug("[Sync] Public Key: \(key.publicKey.data.hexString)")
         return AnyCodable(response)
     }

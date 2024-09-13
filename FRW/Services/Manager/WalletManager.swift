@@ -855,8 +855,8 @@ extension WalletManager: FlowSigner {
         if userSecretSign() {
             
             if let userId = walletInfo?.id {
-                let SEWallet = try SEWallet.wallet(id: userId)
-                let signature = try SEWallet.sign(data: signableData, hashAlgo: .SHA2_256)
+                let secureKey = try SecureEnclaveKey.wallet(id: userId)
+                let signature = try secureKey.sign(data: signableData, hashAlgo: .SHA2_256)
                 return signature
             }
             
@@ -894,8 +894,8 @@ extension WalletManager: FlowSigner {
         }
         if userSecretSign() {
             if let userId = walletInfo?.id {
-                let seWallet = try SEWallet.wallet(id: userId)
-                let signature = try seWallet.sign(data: signableData, hashAlgo: .SHA2_256)
+                let secureKey = try SecureEnclaveKey.wallet(id: userId)
+                let signature = try secureKey.sign(data: signableData, hashAlgo: .SHA2_256)
                 return signature
             }
             
@@ -930,8 +930,8 @@ extension WalletManager: FlowSigner {
         if userSecretSign() {
             do {
                 if let userId = walletInfo?.id {
-                    let seWallet = try SEWallet.wallet(id: userId)
-                    let signature = try seWallet.sign(data: signableData, hashAlgo: .SHA2_256)
+                    let secureKey = try SecureEnclaveKey.wallet(id: userId)
+                    let signature = try secureKey.sign(data: signableData, hashAlgo: .SHA2_256)
                     return signature
                 }
                 
@@ -980,8 +980,8 @@ extension WalletManager: FlowSigner {
     
     func findFlowAccount(with userId: String, at address: String) async throws {
         
-        guard let seWallet = try? SEWallet.wallet(id: userId),
-              let publicKey = try? seWallet.publicKey()?.hexValue else {
+        guard let secureKey = try? SecureEnclaveKey.wallet(id: userId),
+              let publicKey = try? secureKey.publicKey()?.hexValue else {
             return
         }
         

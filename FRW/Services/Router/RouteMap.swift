@@ -39,6 +39,7 @@ extension RouteMap {
         
         case keystore
         case importAddress(ImportAccountsViewModel)
+        case importUserName(ImportUserNameViewModel)
     }
 }
 
@@ -80,6 +81,8 @@ extension RouteMap.RestoreLogin: RouterTarget {
         case .importAddress(let viewModel):
             let vc = PresentHostingController(rootView: ImportAccountsView(viewModel: viewModel))
             navi.present(vc, animated: true, completion: nil)
+        case .importUserName(let viewModel):
+            navi.push(content: ImportUserNameView(viewModel: viewModel))
         }
     }
 }

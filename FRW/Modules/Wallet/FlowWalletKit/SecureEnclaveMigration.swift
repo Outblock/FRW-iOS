@@ -28,16 +28,14 @@ struct SecureEnclaveMigration {
         var finishCount = 0
         for item in users {
             if let privateKey = try? SecureEnclave.P256.Signing.PrivateKey(dataRepresentation: item.publicKey) {
-                let seWallet = SEWallet(key: privateKey, storage: SEWallet.KeychainStorage)
-                try? seWallet.store(id: item.uniq, password: SEWallet.password(by: item.uniq))
+                let secureKey = SecureEnclaveKey(key: privateKey, storage: SecureEnclaveKey.KeychainStorage)
+                try? secureKey.store(id: item.uniq, password: SecureEnclaveKey.password(by: item.uniq))
                 finishCount += 1
             }
         }
         let endAt = CFAbsoluteTimeGetCurrent()
         log.debug("[Migration] total: \(users.count), finish: \(finishCount), time:\((endAt - startAt))")
         
-        let seWallet = try? SEWallet.create()
-        seWallet?.allKeys()
     }
 }
 
