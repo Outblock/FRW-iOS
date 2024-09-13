@@ -79,6 +79,16 @@ extension MultiBackupManager {
 // MARK: - Steps to create a backup
 
 extension MultiBackupManager {
+    
+    func preLogin(with type: MultiBackupType) async throws {
+        switch type {
+        case .google:
+            try await gdTarget.loginCloud()
+        default:
+            log.info("")
+        }
+    }
+    
     func registerKeyToChain(on type: MultiBackupType) async throws -> Bool {
         mnemonic = nil
         guard let username = UserManager.shared.userInfo?.username, !username.isEmpty else {
@@ -144,7 +154,7 @@ extension MultiBackupManager {
         switch type {
         case .google:
             backupType = .google
-            try await gdTarget.loginCloud()
+//            try await gdTarget.loginCloud()
             try await gdTarget.upload(password: password)
         case .passkey:
             backupType = .passkey

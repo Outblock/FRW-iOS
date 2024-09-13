@@ -129,7 +129,7 @@ class BackupUploadViewModel: ObservableObject {
                     DispatchQueue.main.async {
                         self.mnemonicBlur = true
                     }
-                    
+                    try await MultiBackupManager.shared.preLogin(with: currentType)
                     let result = try await MultiBackupManager.shared.registerKeyToChain(on: currentType)
                     if result {
                         toggleProcess(process: .upload)
