@@ -160,7 +160,7 @@ extension CreateProfileWaitingView {
                 HStack(alignment: .top) {
                     VStack {
                         Text(item.title)
-                            .font(.montserrat(size: 48, weight: .light))
+                            .font(.Ukraine(size: 48, weight: .light))
                             .foregroundStyle(Color.Theme.Text.black)
                             .padding(.trailing, 32)
 
@@ -202,11 +202,11 @@ extension CreateProfileWaitingView {
                     HStack(alignment: .top) {
                         VStack(alignment: .leading,spacing: 32) {
                             Text(item.title)
-                                .font(.montserrat(size: 48, weight: .light))
+                                .font(.Ukraine(size: 48, weight: .light))
                                 .foregroundStyle(Color.Theme.Text.black)
 //                                .padding(.leading, 32)
                             Text("#onFlow.")
-                                .font(.montserrat(size: 48, weight: .thin))
+                                .font(.Ukraine(size: 48, weight: .thin))
                                 .fontWeight(.thin)
                                 .foregroundStyle(Color.Theme.Text.white9)
                                 .padding(.horizontal, 24)

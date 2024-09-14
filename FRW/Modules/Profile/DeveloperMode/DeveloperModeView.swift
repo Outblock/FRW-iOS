@@ -166,46 +166,6 @@ struct DeveloperModeView: RouteableView {
                             .frame(height: 64)
                             .padding(.horizontal, 16)
                             
-                            if isDevModel {
-                                HStack {
-                                    Button {
-                                        Router.route(to: RouteMap.Profile.keychain)
-                                    } label: {
-                                        Text("KeyChain")
-                                            .font(.inter(size: 14, weight: .medium))
-                                            .foregroundStyle(Color.Theme.Text.black8)
-                                    }
-                                    Spacer()
-                                }
-                                .frame(height: 64)
-                                .padding(.horizontal, 16)
-                                
-                                HStack {
-                                    Text("Reset the move asset configuration in the built-in browser")
-                                        .font(.inter(size: 14, weight: .medium))
-                                        .foregroundStyle(Color.Theme.Text.black8)
-                                    Spacer()
-                                }
-                                .frame(height: 64)
-                                .padding(.horizontal, 16)
-                                .onTapGesture {
-                                    LocalUserDefaults.shared.showMoveAssetOnBrowser = true
-                                }
-                                
-                                HStack {
-                                    Text("Remove Wallet Home News")
-                                        .font(.inter(size: 14, weight: .medium))
-                                        .foregroundStyle(Color.Theme.Text.black8)
-                                    Spacer()
-                                }
-                                .frame(height: 64)
-                                .padding(.horizontal, 16)
-                                .onTapGesture {
-                                    LocalUserDefaults.shared.removedNewsIds = []
-                                    RemoteConfigManager.shared.fetchNews()
-                                }
-                                
-                            }
                             
                         }
                         .background(.LL.bgForIcon)
@@ -262,7 +222,66 @@ struct DeveloperModeView: RouteableView {
                     } header: {
                         headView(title: "Log")
                     }
-                    
+                    if isDeveloperMode {
+                        Section() {
+                            VStack {
+                                HStack {
+                                    Button {
+                                        Router.route(to: RouteMap.Profile.keychain)
+                                    } label: {
+                                        Text("KeyChain")
+                                            .font(.inter(size: 14, weight: .medium))
+                                            .foregroundStyle(Color.Theme.Text.black8)
+                                    }
+                                    Spacer()
+                                }
+                                .frame(height: 64)
+                                .padding(.horizontal, 16)
+                                
+                                HStack {
+                                    Text("Reset the move asset configuration in the built-in browser")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                    Spacer()
+                                }
+                                .frame(height: 64)
+                                .padding(.horizontal, 16)
+                                .onTapGesture {
+                                    LocalUserDefaults.shared.showMoveAssetOnBrowser = true
+                                    HUD.success(title: "done.")
+                                }
+                                
+                                HStack {
+                                    Text("Remove Wallet Home News(click)")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                    Spacer()
+                                }
+                                .frame(height: 64)
+                                .padding(.horizontal, 16)
+                                .onTapGesture {
+                                    LocalUserDefaults.shared.removedNewsIds = []
+                                    RemoteConfigManager.shared.fetchNews()
+                                    HUD.success(title: "done.")
+                                }
+                                
+                                HStack {
+                                    Text("Remove What is Backup Deail (click)")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                    Spacer()
+                                }
+                                .frame(height: 64)
+                                .padding(.horizontal, 16)
+                                .onTapGesture {
+                                    LocalUserDefaults.shared.clickedWhatIsBack = false
+                                    HUD.success(title: "done.")
+                                }
+                            }
+                        } header: {
+                            headView(title: "只在Dev显示")
+                        }
+                    }
                     
                 }
                 .padding(.horizontal, 18)

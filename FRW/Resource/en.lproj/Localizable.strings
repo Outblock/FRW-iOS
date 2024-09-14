@@ -983,3 +983,15 @@
 "Inaccessible" = "Inaccessible";
 "View Recovery Phrase" = "View Recovery Phrase";
 "take_mins" = "It might take 1-2 mins";
+"what_is" = "What is a";
+"multi_backup_detail" = "A multi-backup stores multiple partial-weight keys across your accounts on trusted providers like Google Drive and iCloud, or a Recovery Phrase.
+
+Two partial-weight keys must be used together to recover access to your account. Each key individually cannot be used.
+
+This means, that to recover access to your account, Flow Wallet requires access to two of your backups.
+
+Your backups are encrypted using your wallet PIN code. You must remember or write down your PIN code and store it in a safe place.
+";
+
+"what_is_multi" = "What is Multi-Backup?";
+"what_is_multi_short" = "Multi-backup is where Flow Wallet creates multiple partial-weight keys (500 weight) and stores them across your desired platforms, iCloud, Google Drive or Seed Phrase";

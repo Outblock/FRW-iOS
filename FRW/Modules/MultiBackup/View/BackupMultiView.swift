@@ -26,10 +26,6 @@ struct BackupMultiView: RouteableView {
                     .font(.inter(size: 16))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(Color.Theme.Accent.grey)
-//                Text("multi_backup_guide_note".localized)
-//                    .font(.inter(size: 12))
-//                    .multilineTextAlignment(.center)
-//                    .foregroundStyle(Color.Theme.Accent.grey)
             }
             .padding(.horizontal, 40)
             
@@ -44,6 +40,32 @@ struct BackupMultiView: RouteableView {
             }
             .padding(.horizontal, 64)
             .padding(.top, 64)
+            
+            Spacer()
+            
+            VStack(alignment: .center) {
+                VStack(alignment: .center) {
+                    Text("what_is_multi".localized)
+                        .font(.inter(size: 16, weight: .bold))
+                        .foregroundStyle(Color.Theme.Accent.grey)
+                        .frame(height: 18)
+                    Text("what_is_multi_short".localized)
+                        .font(.inter(size: 14))
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(Color.Theme.Accent.grey)
+                }
+                .padding(.horizontal, 28)
+                
+                Button(action: {
+                    onLearnMore()
+                }, label: {
+                    Text("Learn More")
+                        .font(.inter(size:14, weight: .semibold))
+                        .foregroundStyle(Color.Theme.Accent.blue)
+                    
+                })
+                .frame(height: 50)
+            }
             
             Spacer()
             
@@ -71,6 +93,10 @@ struct BackupMultiView: RouteableView {
     
     func onNext() {
         viewModel.onNext()
+    }
+    
+    func onLearnMore() {
+        viewModel.onLearnMore()
     }
 }
 

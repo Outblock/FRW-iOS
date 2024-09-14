@@ -62,7 +62,7 @@ extension Font {
         return Font.custom("Inter", size: size).weight(weight)
     }
     
-    static func montserrat(size: CGFloat = 16, weight: Weight = .regular) -> Font {
+    static func Ukraine(size: CGFloat = 16, weight: Weight = .regular) -> Font {
         switch weight {
             case .regular:
                 return Font.custom("e-Ukraine-Regular", size: size)
@@ -74,6 +74,19 @@ extension Font {
                 return Font.custom("e-Ukraine-Light", size: size)
             case .bold:
                 return Font.custom("e-Ukraine-Bold", size: size)
+            default:
+                return Font.custom("e-Ukraine-Regular", size: size)
+        }
+    }
+    
+    static func Montserrat(size: CGFloat, weight: Weight = .regular) -> Font {
+        switch weight {
+            case .regular:
+                return Font.custom("Montserrat-Regular", size: size)
+            case .semibold:
+                return Font.custom("Montserrat-SemiBold", size: size)
+            case .light:
+                return Font.custom("Montserrat-Italic", size: size)
             default:
                 return Font.custom("e-Ukraine-Regular", size: size)
         }

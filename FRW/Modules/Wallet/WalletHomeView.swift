@@ -362,7 +362,7 @@ struct WalletHomeView: View {
             VStack(spacing: 4) {
                 HStack() {
                     Text(vm.isHidden ? "****" : "\(CurrencyCache.cache.currencySymbol) \(vm.balance.formatCurrencyString(considerCustomCurrency: true))")
-                        .font(.montserrat(size: 30, weight: .bold))
+                        .font(.Ukraine(size: 30, weight: .bold))
                         .foregroundStyle(Color.Theme.Text.black)
                     
                     Spacer()

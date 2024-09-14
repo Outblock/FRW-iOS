@@ -62,7 +62,7 @@ struct BrowserBookmarkView: RouteableView {
             
             VStack(alignment: .leading, spacing: 8) {
                 Text(bookmark.title)
-                    .font(.montserrat(size: 14, weight: .bold))
+                    .font(.Ukraine(size: 14, weight: .bold))
                     .foregroundColor(Color.LL.Neutrals.text)
                     .lineLimit(1)
                 

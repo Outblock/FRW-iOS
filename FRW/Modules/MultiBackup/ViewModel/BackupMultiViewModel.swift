@@ -61,6 +61,13 @@ class BackupMultiViewModel: ObservableObject {
             Router.route(to: RouteMap.Backup.uploadMulti(list))
         }
     }
+    
+    func onLearnMore() {
+        let callback = {
+            Router.dismiss()
+        }
+        Router.route(to: RouteMap.Backup.whatisback(false,callback))
+    }
 }
 
 // MARK: - MultiItem

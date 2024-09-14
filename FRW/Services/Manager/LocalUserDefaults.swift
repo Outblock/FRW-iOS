@@ -45,6 +45,8 @@ extension LocalUserDefaults {
         case EVMAddress
         case showMoveAssetOnBrowser
         case removedNewsIds
+        
+        case whatIsBack
     }
 
     enum FlowNetworkType: String, CaseIterable, Codable {
@@ -306,6 +308,8 @@ class LocalUserDefaults: ObservableObject {
             return UserDefaults.standard.array(forKey: Keys.removedNewsIds.rawValue) as? [String] ?? []
         }
     }
+    
+    @AppStorage(Keys.whatIsBack.rawValue) var clickedWhatIsBack: Bool = false
 }
 
 extension LocalUserDefaults {

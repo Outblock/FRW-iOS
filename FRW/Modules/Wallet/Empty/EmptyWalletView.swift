@@ -50,11 +50,11 @@ struct EmptyWalletView: View {
                 .frame(width: 160, height: 160)
             VStack(spacing: 12) {
                 Text("app_name_full".localized)
-                    .font(.montserrat(size: 24, weight: .bold))
+                    .font(.Ukraine(size: 24, weight: .bold))
                     .foregroundColor(Color.LL.text)
                 
                 Text("welcome_sub_desc".localized)
-                    .font(.montserrat(size: 16, weight: .light))
+                    .font(.Ukraine(size: 16, weight: .light))
                     .foregroundColor(.LL.note)
             }
         }

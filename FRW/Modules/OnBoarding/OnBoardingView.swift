@@ -91,7 +91,7 @@ extension OnBoardingView {
         } label: {
             HStack(spacing: 24) {
                 Text("start".localized)
-                    .font(.montserrat(size: 20, weight: .regular))
+                    .font(.Ukraine(size: 20, weight: .regular))
                     .foregroundColor(.white)
                 Image("onboarding-arrow-right")
             }
@@ -127,7 +127,7 @@ extension OnBoardingView {
             Spacer()
             
             Text(type.title)
-                .font(.montserrat(size: 34, weight: .semibold))
+                .font(.Ukraine(size: 34, weight: .semibold))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)
