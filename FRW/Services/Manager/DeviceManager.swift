@@ -59,12 +59,21 @@ class DeviceManager: ObservableObject {
             return validDevices.count > 0
         }
         
+        var seenNames = Set<String>()
+        var uniqueList = [DeviceInfoModel]()
+        for info in filterList {
+            if let id = info.id, !seenNames.contains(id) {
+                uniqueList.append(info)
+                seenNames.insert(id)
+            }
+        }
+        
         let validDevices = filterList.filter { $0.id != uuid }
         let current = filterList.last { $0.id == uuid }
         
         self.validAccounts = validAccount
         self.validKeys = validKeys
-        self.validDevice = filterList
+        self.validDevice = uniqueList
         self.currentDevice = current
         
         return (current, validDevices)
