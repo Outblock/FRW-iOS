@@ -64,9 +64,9 @@ class BackupMultiViewModel: ObservableObject {
     
     func onLearnMore() {
         let callback = {
-            Router.dismiss()
+//            Router.dismiss()
         }
-        Router.route(to: RouteMap.Backup.whatisback(false,callback))
+        Router.route(to: RouteMap.Backup.introduction(.whatMultiBackup, callback, false))
     }
 }
 

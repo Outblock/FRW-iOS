@@ -68,12 +68,24 @@ class BackupUploadViewModel: ObservableObject {
     @Published var hasError: Bool = false
     @Published var mnemonicBlur: Bool = true
     
+    //TODO: 
+    @Published var checkAllPhrase: Bool = true {
+        didSet {
+            if checkAllPhrase {
+                buttonState = .enabled
+            }
+        }
+    }
+    
     var currentType: MultiBackupType = .google
     init(items: [MultiBackupType]) {
         self.items = items
         currentIndex = 0
         if !self.items.isEmpty {
             currentType = self.items[0]
+        }
+        if currentType == .phrase {
+            buttonState = .disabled
         }
     }
     
@@ -118,6 +130,11 @@ class BackupUploadViewModel: ObservableObject {
     
     func showTimeline() -> Bool {
         return process == .upload || process == .regist
+    }
+    
+    func learnMore() {
+        let closure = {}
+        Router.route(to: RouteMap.Backup.introduction(.aboutRecoveryPhrase, closure, true))
     }
     
     func onClickButton() {

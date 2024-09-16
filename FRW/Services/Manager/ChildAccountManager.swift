@@ -195,7 +195,7 @@ class ChildAccountManager: ObservableObject {
         isLoading = true
         Task {
             do {
-                let list = try await FlowNetwork.queryChildAccountMeta(address)
+                    let list = try await FlowNetwork.queryChildAccountMeta(address)
                 
                 DispatchQueue.main.async {
                     if UserManager.shared.activatedUID != uid { return }

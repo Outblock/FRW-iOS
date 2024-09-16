@@ -59,7 +59,7 @@ struct BackupMultiView: RouteableView {
                 Button(action: {
                     onLearnMore()
                 }, label: {
-                    Text("Learn More")
+                    Text("Learn__more::message".localized)
                         .font(.inter(size:14, weight: .semibold))
                         .foregroundStyle(Color.Theme.Accent.blue)
                     

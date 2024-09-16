@@ -162,10 +162,10 @@ struct BackupListView: RouteableView {
     func onClickMultiBackup() {
         if !LocalUserDefaults.shared.clickedWhatIsBack {
             let closure = {
-                Router.pop()
+//                Router.pop()
                 viewModel.onShowMultiBackup()
             }
-            Router.route(to: RouteMap.Backup.whatisback(true,closure))
+            Router.route(to: RouteMap.Backup.introduction(.whatMultiBackup, closure, true))
             LocalUserDefaults.shared.clickedWhatIsBack = true
         }else {
             viewModel.onShowMultiBackup()

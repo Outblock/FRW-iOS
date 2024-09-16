@@ -115,7 +115,7 @@ extension RouteMap {
         case confirmPin(String)
         case verityPin(MultiBackupVerifyPinViewModel.From, MultiBackupVerifyPinViewModel.VerifyCallback)
         
-        case whatisback(Bool,EmptyClosure)
+        case introduction(IntroductionView.Topic, EmptyClosure, Bool)
     }
 }
 
@@ -154,11 +154,11 @@ extension RouteMap.Backup: RouterTarget {
             navi.push(content: MultiBackupConfirmPinView(lastPin: pin))
         case .verityPin(let from, let callback):
             navi.push(content: MultiBackupVerifyPinView(from: from, callback: callback))
-        case .whatisback(let isPush,let closure):
+        case .introduction(let topic, let closure, let isPush):
             if isPush {
-                navi.push(content: WhatIsMultibackupView(confirmClosure: closure))
+                navi.push(content: IntroductionView(topic: topic, confirmClosure: closure))
             }else {
-                navi.present(content: WhatIsMultibackupView(confirmClosure: closure))
+                navi.present(content: IntroductionView(topic: topic, confirmClosure: closure))
             }
             
         }

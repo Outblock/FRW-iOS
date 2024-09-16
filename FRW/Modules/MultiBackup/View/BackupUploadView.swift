@@ -20,68 +20,98 @@ struct BackupUploadView: RouteableView {
     }
     
     var body: some View {
-        VStack {
+        VStack(alignment: .center) {
             BackupUploadView.ProgressView(items: viewModel.items,
                                           currentIndex: $viewModel.currentIndex)
                 .padding(.top, 24)
                 .padding(.horizontal, 56)
                 .visibility(viewModel.process == .end ? .gone : .visible)
             
-            VStack(spacing: 24) {
-                if viewModel.process != .end {
-                    Image(viewModel.currentIcon)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 120, height: 120)
-                        .background(.Theme.Background.white)
-                        .cornerRadius(60)
-                        .clipped()
-                        .visibility((viewModel.currentType == .phrase && viewModel.process != .idle) ? .gone : .visible)
-                }
-                
-                BackupUploadView.CompletedView(items: viewModel.items)
-                    .visibility(viewModel.process == .end ? .visible : .gone)
-                
-                
-                Text(viewModel.currentTitle)
-                    .font(.inter(size: 20, weight: .bold))
-                    .foregroundStyle(Color.Theme.Text.black)
-
-                Text(viewModel.currentNote)
-                    .font(.inter(size: 12))
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.Theme.Accent.grey)
-                    .frame(alignment: .top)
-                    .visibility(viewModel.process == .end ? .gone : .visible)
-            }
-            .padding(.top, 32)
-            .padding(.horizontal, 40)
-            
-            if viewModel.currentType != .phrase {
-                BackupUploadTimeline(backupType: viewModel.currentType, isError: viewModel.hasError, process: viewModel.process)
-                    .padding(.top, 64)
-                    .visibility(viewModel.showTimeline() ? .visible : .gone)
-            }
-            
-            
-            ScrollView(showsIndicators: false, content: {
-                if  let mnemonic = MultiBackupManager.shared.mnemonic {
-                    BackupUploadView.PhraseWords(isBlur: viewModel.mnemonicBlur ,mnemonic:mnemonic)
-                        .padding(.horizontal, 24)
-                }
-            })
-            .visibility( viewModel.currentType == .phrase && (viewModel.process == .regist || viewModel.process == .upload || viewModel.process == .finish) ? .visible : .gone)
-            
-            if viewModel.process == .end {
-                ScrollView(showsIndicators: false) {
-                    VStack {
-                        ForEach(viewModel.items,id: \.self) { backupType in
-                            BackupedItemView(backupType: backupType)
-                        }
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 24) {
+                    if viewModel.process != .end {
+                        Image(viewModel.currentIcon)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 120, height: 120)
+                            .background(.Theme.Background.white)
+                            .cornerRadius(60)
+                            .clipped()
+                            .visibility((viewModel.currentType == .phrase && viewModel.process != .idle) ? .gone : .visible)
                     }
-                    .padding(.horizontal, 18)
+                    
+                    BackupUploadView.CompletedView(items: viewModel.items)
+                        .visibility(viewModel.process == .end ? .visible : .gone)
+                    
+                    
+                    Text(viewModel.currentTitle)
+                        .font(.inter(size: 20, weight: .bold))
+                        .foregroundStyle(Color.Theme.Text.black)
+
+                    Text(viewModel.currentNote)
+                        .font(.inter(size: 12))
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.Theme.Accent.grey)
+                        .frame(alignment: .top)
+                        .visibility(viewModel.process == .end ? .gone : .visible)
+                }
+                .padding(.top, 32)
+                .padding(.horizontal, 40)
+                
+                
+                if viewModel.currentType != .phrase {
+                    BackupUploadTimeline(backupType: viewModel.currentType, isError: viewModel.hasError, process: viewModel.process)
+                        .padding(.top, 64)
+                        .visibility(viewModel.showTimeline() ? .visible : .gone)
+                }
+                
+                if viewModel.currentType == .phrase{
+                    ScrollView(showsIndicators: false, content: {
+                        if viewModel.process == .idle {
+                            VStack {
+                                TextCheckListView(titles: [
+                                    "multi_check_phrase_1".localized,
+                                    "multi_check_phrase_2".localized,
+                                    "multi_check_phrase_3".localized
+                                ], allChecked: $viewModel.checkAllPhrase)
+                                
+                                Button {
+                                    viewModel.learnMore()
+                                } label: {
+                                    Text("Learn__more::message".localized)
+                                        .font(.inter(size:14, weight: .semibold))
+                                        .foregroundStyle(Color.Theme.Accent.blue)
+                                        .padding(.vertical, 16)
+                                }
+                            }
+                            .padding(.top, 16)
+                        }
+                        else if viewModel.process == .regist || viewModel.process == .upload || viewModel.process == .finish {
+                            if  let mnemonic = MultiBackupManager.shared.mnemonic {
+                                BackupUploadView.PhraseWords(isBlur: viewModel.mnemonicBlur ,mnemonic:mnemonic)
+                                    .padding(.horizontal, 24)
+                            }
+                        }
+                    })
+                }
+                
+                
+                if viewModel.process == .end {
+                    VStack {
+                        VStack {
+                            ForEach(viewModel.items,id: \.self) { backupType in
+                                BackupedItemView(backupType: backupType)
+                            }
+                            Spacer()
+                        }
+                        .padding(.horizontal, 18)
+                    }
+                    .padding(.top, 8)
                 }
             }
+            .clipped()
+            
+            
             
             
             Spacer()

@@ -995,3 +995,16 @@ Your backups are encrypted using your wallet PIN code. You must remember or writ
 
 "what_is_multi" = "What is Multi-Backup?";
 "what_is_multi_short" = "Multi-backup is where Flow Wallet creates multiple partial-weight keys (500 weight) and stores them across your desired platforms, iCloud, Google Drive or Seed Phrase";
+"multi_check_phrase_1" = "I understand if I lose my recovery phrase, I may not be able to recover my account.";
+"multi_check_phrase_2" = "I understand this is a partial-weight recovery phrase that on its own does not grant me full control of my account.";
+"multi_check_phrase_3" = "I understand this partial-weight recovery phrase must be used together with my other multi-backups to recover access to my account.";
+
+"about_phrase_title_top" = "About your";
+"about_phrase_title_bottom" = "Recovery Phrase";
+"about_phrase_title_content" = "You have selected to use a 15-word partial-weight recovery phrase.
+
+Your partial-weight recovery will correspond to a partial-weight recovery key on your Flow account.
+
+Your partial-weight recovery phrase on its own does not secure full access to your account. It must be used together with your other multi-backups to recover access to your account.
+";
+
