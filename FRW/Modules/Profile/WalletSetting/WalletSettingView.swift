@@ -91,6 +91,20 @@ struct WalletSettingView: RouteableView {
                         
                         VStack(spacing: 0) {
                             Button {
+                                Router.route(to: RouteMap.Profile.secureEnclavePrivateKey)
+                            } label: {
+                                ProfileSecureView.ItemCell(title: "private_key".localized, style: .arrow, isOn: false, toggleAction: nil)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 64)
+                        .padding(.horizontal, 16)
+                        .roundedBg()
+                        .visibility( UserManager.shared.userType == .secure ? .visible : .gone)
+                        
+                        
+                        VStack(spacing: 0) {
+                            Button {
                                 Router.route(to: RouteMap.Profile.accountKeys)
                             } label: {
                                 ProfileSecureView.ItemCell(title: "wallet_account_key".localized, style: .arrow, isOn: false, toggleAction: nil)

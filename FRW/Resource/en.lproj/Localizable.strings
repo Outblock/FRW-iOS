@@ -589,7 +589,7 @@
 "backup_to_x_failed" = "Backup to %@ failed";
 "No__Activity::message" = "No Activity";
 "backup_to_x_succeeded" = "Backup to %@ succeeded";
-"Learn__more::message" = "Learn more";
+"Learn__more::message" = "Learn More";
 "cancel" = "Cancel";
 "Validated__address::message" = "Validated address";
 "saved" = "Saved";
@@ -1008,3 +1008,10 @@ Your partial-weight recovery will correspond to a partial-weight recovery key on
 Your partial-weight recovery phrase on its own does not secure full access to your account. It must be used together with your other multi-backups to recover access to your account.
 ";
 
+"private_key_secured_hint" = "Flow Wallet uses your device's Secure Enclave to protect your account and assets. This private key cannot be retrieved.
+
+Secure Enclave protects your Private Key using the hardware-level security of your device, eliminating the need for a seed phrase.
+
+Please create backups for your wallet to ensure you retain access to your Flow account and assets in the event you lose your device.";
+
+"secured_by_se" = "Secured by Secure Enclave";

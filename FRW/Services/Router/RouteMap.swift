@@ -321,6 +321,7 @@ extension RouteMap {
         case walletList
         
         case wallpaper
+        case secureEnclavePrivateKey
     }
 }
 
@@ -405,6 +406,8 @@ extension RouteMap.Profile: RouterTarget {
             navi.push(content: WalletListView())
         case .wallpaper:
             navi.push(content: WallpaperView())
+        case .secureEnclavePrivateKey:
+            navi.push(content: SecureEnclavePrivateKeyView())
         }
     }
 }

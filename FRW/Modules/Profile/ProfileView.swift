@@ -351,7 +351,6 @@ extension ProfileView {
                         Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
                     }
                     
-                    // TODO: diveces
                     Button {
                         Router.route(to: RouteMap.Profile.devices)
                     } label: {
