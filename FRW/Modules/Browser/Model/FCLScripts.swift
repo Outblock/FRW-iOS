@@ -95,7 +95,12 @@ class FCLScripts {
                   "f_type": "ServiceProvider",
                   "f_vsn": "1.0.0",
                   "address": "$ADDRESS_REPLACEMENT",
-                  "name": "Flow Wallet"
+                  "name": "Flow Wallet",
+                  "description": "Flow Wallet is built from the ground up for Flow Blockchain!",
+                  "color": "#41CC5D",
+                  "supportEmail": "wallet@flow.com",
+                  "website": "https://link.lilico.app/wc",
+                  "icon": "https://lilico.app/fcw-logo.png"
                 }
               },
               $PRE_AUTHZ_REPLACEMENT

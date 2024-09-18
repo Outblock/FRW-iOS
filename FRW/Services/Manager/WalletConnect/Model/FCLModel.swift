@@ -161,6 +161,7 @@ struct Provider: Codable {
     public let color: String?
     public let supportEmail: String?
     public let website: String?
+    public let icon: String?
     
     enum CodingKeys: String, CodingKey {
         case fType = "f_type"
@@ -171,6 +172,7 @@ struct Provider: Codable {
         case color
         case supportEmail
         case website
+        case icon
     }
 }
 

@@ -29,7 +29,9 @@ func serviceDefinition(address: String, keyId: Int, type: FCLServiceType) -> Ser
                                     description: "Flow Wallet is built from the ground up for Flow Blockchain!",
                                     color: "#41CC5D",
                                     supportEmail: "wallet@flow.com",
-                                    website: "https://link.lilico.app/wc")
+                                    website: "https://link.lilico.app/wc",
+                                    icon: "https://lilico.app/fcw-logo.png"
+        )
         
     }
     service.endpoint = FCLWalletConnectMethod(type: type)?.rawValue
