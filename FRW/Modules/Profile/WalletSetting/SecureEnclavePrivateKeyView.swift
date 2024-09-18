@@ -14,8 +14,7 @@ struct SecureEnclavePrivateKeyView: RouteableView {
     }
     
     var learnMoreUrl: String {
-        //TODO: what is it
-        return "https://wallet.flow.com/secure-enclave"
+        return "https://frw.gitbook.io/doc/faq/faq#where-is-my-seed-phrase-i-cant-find-it-on-flow-wallet-ios-or-android"
     }
     
     var publicKey: String {
