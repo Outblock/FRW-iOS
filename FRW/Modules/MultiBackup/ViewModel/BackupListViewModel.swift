@@ -7,6 +7,7 @@
 
 import Flow
 import SwiftUI
+import WalletCore
 
 class BackupListViewModel: ObservableObject {
 //    @Published var muiltList: [BackupListViewModel.Item] = []
@@ -14,6 +15,7 @@ class BackupListViewModel: ObservableObject {
     
     @Published var backupList: [KeyDeviceModel] = []
     @Published var deviceList: [DeviceInfoModel] = []
+    @Published var phraseList: [KeyDeviceModel] = []
     @Published var showCurrent: Bool = false
     @Published var showOther: Bool = false
     @Published var current: DeviceInfoModel?
@@ -23,6 +25,7 @@ class BackupListViewModel: ObservableObject {
     
     @Published var showRemoveTipView = false
     var removeIndex: Int?
+    private var removingPhrase = false
     
     private let showCount = 2
     
@@ -43,7 +46,7 @@ class BackupListViewModel: ObservableObject {
     }
     
     private func isValidAddress() -> Bool {
-        guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
+        guard WalletManager.shared.getPrimaryWalletAddress() != nil else {
             HUD.error(title: "invalid_address".localized)
             return false
         }
@@ -53,6 +56,12 @@ class BackupListViewModel: ObservableObject {
     func onShowMultiBackup() {
         if isValidAddress() {
             Router.route(to: RouteMap.Backup.multiBackup([]))
+        }
+    }
+    
+    func onCreatePhrase() {
+        if isValidAddress() {
+            Router.route(to: RouteMap.Backup.thingsNeedKnowOnBackup)
         }
     }
     
@@ -68,6 +77,19 @@ class BackupListViewModel: ObservableObject {
     }
     
     func onDelete(index: Int) {
+        removingPhrase = false
+        if showRemoveTipView {
+            showRemoveTipView = false
+        }
+        
+        removeIndex = index
+        withAnimation(.easeOut(duration: 0.2)) {
+            showRemoveTipView = true
+        }
+    }
+    
+    func onDeletePhrase(index: Int) {
+        removingPhrase = true
         if showRemoveTipView {
             showRemoveTipView = false
         }
@@ -80,6 +102,14 @@ class BackupListViewModel: ObservableObject {
     
     func onCancelTip() {
         showRemoveTipView = false
+    }
+    
+    func removeBackup() {
+        if removingPhrase {
+            removePhraseBackup()
+        }else {
+            removeMultiBackup()
+        }
     }
     
     func removeMultiBackup() {
@@ -102,6 +132,27 @@ class BackupListViewModel: ObservableObject {
             HUD.dismissLoading()
         }
     }
+    
+    func removePhraseBackup() {
+        guard let index = removeIndex, phraseList.count > index else { return }
+        let item = phraseList[index]
+        guard let keyIndex = item.backupInfo?.keyIndex else { return }
+        if keyIndex == 0 {
+            log.error("[Flow] don't revoke key at index 0")
+            return
+        }
+        Task {
+            HUD.loading()
+            let res = try await AccountKeyManager.revokeKey(at: keyIndex)
+            if res {
+                
+                await fetchMultiBackup()
+                showRemoveTipView = false
+            }
+            
+            HUD.dismissLoading()
+        }
+    }
 }
 
 // MARK: - UI
@@ -113,6 +164,10 @@ extension BackupListViewModel {
     
     var hasMultiBackup: Bool {
         return backupList.count > 0
+    }
+    
+    var hasPhraseBackup: Bool {
+        return phraseList.count > 0
     }
 }
 
@@ -150,7 +205,30 @@ extension BackupListViewModel {
 }
 
 extension BackupListViewModel {
+    
+    
     func fetchMultiBackup() async {
+        
+        func phraseAction(model: KeyDeviceModel) -> Bool {
+            if model.pubkey.weight < 1000 {
+                return false
+            }
+            if let info = model.backupInfo, info.backupType() == .fullWeightSeedPhrase {
+                return true
+            }
+            return false
+        }
+        
+        func multiBackupAction(model: KeyDeviceModel) -> Bool {
+            if model.pubkey.weight >= 1000 {
+                return false
+            }
+            if let info = model.backupInfo {
+                return info.backupType() != .undefined
+            }
+            return false
+        }
+        
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             return
         }
@@ -159,37 +237,14 @@ extension BackupListViewModel {
             let devices: KeyResponse = try await Network.request(FRWAPI.User.keys)
             let deviceList = devices.result?.reversed() ?? []
             
-            let allBackupList = deviceList.filter { model in
-                if model.pubkey.weight >= 1000 {
-                    return false
-                }
-                if let info = model.backupInfo {
-                    return info.backupType() != .undefined
-                }
-                return false
-            }
+            let phraseFilterList = filterBackup(account: account, deviceList: deviceList, by: phraseAction)
+            let multiBackFilterList = filterBackup(account: account, deviceList: deviceList, by: multiBackupAction)
             
-            let validBackupList = allBackupList.filter { model in
-                
-                let flowAccount = account.keys.last { accountkey in
-                    model.pubkey.publicKey == accountkey.publicKey.description && !accountkey.revoked
-                }
-                if flowAccount != nil {
-                    return true
-                }
-                return false
-            }
-            let fixBackupList = validBackupList.map { model in
-                var item = model
-                let flowAccount = account.keys.first { accountkey in
-                    model.pubkey.publicKey == accountkey.publicKey.description
-                }
-                item.backupInfo?.keyIndex = flowAccount?.index
-                return item
-            }
+            
             DispatchQueue.main.async {
-                self.backupList = fixBackupList
-                if fixBackupList.count >= 2, let uid = UserManager.shared.activatedUID {
+                self.phraseList = phraseFilterList
+                self.backupList = multiBackFilterList
+                if multiBackFilterList.count >= 2, let uid = UserManager.shared.activatedUID {
                     MultiAccountStorage.shared.setBackupType(.multi, uid: uid)
                 }
             }
@@ -199,10 +254,38 @@ extension BackupListViewModel {
         }
     }
     
+    func filterBackup(account: Flow.Account, deviceList: [KeyDeviceModel], by action: ((KeyDeviceModel) -> Bool)) -> [KeyDeviceModel] {
+        let allBackupList = deviceList.filter { model in
+            return action(model)
+        }
+        
+        let validBackupList = allBackupList.filter { model in
+            
+            let flowAccount = account.keys.last { accountkey in
+                model.pubkey.publicKey == accountkey.publicKey.description && !accountkey.revoked
+            }
+            if flowAccount != nil {
+                return true
+            }
+            return false
+        }
+        let fixBackupList = validBackupList.map { model in
+            var item = model
+            let flowAccount = account.keys.first { accountkey in
+                model.pubkey.publicKey == accountkey.publicKey.description
+            }
+            item.backupInfo?.keyIndex = flowAccount?.index
+            return item
+        }
+        return fixBackupList
+    }
+    
     func currentMultiBackup() -> [MultiBackupType] {
         return backupList.compactMap { $0.multiBackupType() }
     }
 }
+
+
 
 extension KeyDeviceModel {
     func multiBackupType() -> MultiBackupType? {
@@ -215,6 +298,8 @@ extension KeyDeviceModel {
             return MultiBackupType.phrase
         case .passkey:
             return MultiBackupType.passkey
+        case .fullWeightSeedPhrase:
+            return MultiBackupType.phrase
         default:
             return nil
         }

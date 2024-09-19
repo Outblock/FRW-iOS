@@ -38,6 +38,7 @@ struct EVMTokenResponse: Codable {
         guard let bal = balance, let value = BigUInt(bal) else {
             return 0
         }
+        let result = Utilities.parseToBigUInt(bal, decimals: decimals)
         return Utilities.formatToPrecision(value, formattingDecimals: decimals).doubleValue
     }
 }

@@ -41,6 +41,8 @@ struct BackupInfoModel: Codable {
             return .manual
         case 3:
             return .passkey
+        case 4:
+            return .fullWeightSeedPhrase
         default:
             return .undefined
         }
@@ -64,6 +66,7 @@ enum BackupType: Int, Codable {
     case iCloud = 1
     case manual = 2
     case passkey = 3
+    case fullWeightSeedPhrase = 4
 
     var title: String {
         switch self {
@@ -75,6 +78,8 @@ enum BackupType: Int, Codable {
             return "iCloud"
         case .manual:
             return "Recovery Phrase"
+        case .fullWeightSeedPhrase:
+            return "Full Weight Seed Phrase"
         default:
             return "Undefined"
         }
@@ -90,6 +95,8 @@ enum BackupType: Int, Codable {
             return "icon_key_phrase"
         case .passkey:
             return ""
+        case .fullWeightSeedPhrase:
+            return "icon_key_phrase"
         case .undefined:
             return ""
         }

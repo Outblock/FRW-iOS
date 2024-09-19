@@ -10,6 +10,8 @@ import SwiftUI
 struct BackupListView: RouteableView {
     @StateObject var viewModel = BackupListViewModel()
     
+    @State var deletePhrase = false
+    
     var title: String {
         return "backup".localized
     }
@@ -31,6 +33,12 @@ struct BackupListView: RouteableView {
                 .visibility(viewModel.hasMultiBackup ? .gone : .visible)
                 .mockPlaceholder(viewModel.isLoading)
                 
+                BackupPatternItem(style: .phrase) { _ in
+                    onClickPhrase()
+                }
+                .visibility(viewModel.hasPhraseBackup ? .gone : .visible)
+                .mockPlaceholder(viewModel.isLoading)
+                
                 Divider()
                     .foregroundStyle(.clear)
                     .background(Color.Theme.Line.line)
@@ -42,6 +50,8 @@ struct BackupListView: RouteableView {
                 multiListView
                     .visibility(viewModel.hasMultiBackup ? .visible : .gone)
                 
+                phraseView
+                    .visibility(viewModel.hasPhraseBackup ? .visible : .gone)
                 Spacer()
             }
             .padding(.horizontal, 18)
@@ -52,7 +62,7 @@ struct BackupListView: RouteableView {
             DangerousTipSheetView(title: "account_key_revoke_title".localized, 
                                   detail: "account_key_revoke_content".localized,
                                   buttonTitle: "hold_to_revoke".localized) {
-                viewModel.removeMultiBackup()
+                viewModel.removeBackup()
             } onCancel: {
                 viewModel.onCancelTip()
             }
@@ -140,7 +150,35 @@ struct BackupListView: RouteableView {
             ForEach(0..<viewModel.backupList.count, id: \.self) { index in
                 let item = viewModel.backupList[index]
                 BackupListView.BackupFinishItem(item: item, index: index) { _, deleteIndex in
+                    deletePhrase = false
                     viewModel.onDelete(index: deleteIndex)
+                }
+            }
+        }
+    }
+    
+    var phraseView: some View {
+        VStack {
+            HStack {
+                Text("Seed Phease Backup".localized)
+                    .font(.inter(size: 16, weight: .semibold))
+                    .foregroundStyle(Color.Theme.Text.black8)
+                Spacer()
+                Button {
+                    onClickPhrase()
+                } label: {
+                    Image("icon-wallet-coin-add")
+                        .renderingMode(.template)
+                        .foregroundColor(.LL.Neutrals.neutrals1)
+                }
+            }
+            .padding(.top, 24)
+            
+            ForEach(0..<viewModel.phraseList.count, id: \.self) { index in
+                let item = viewModel.phraseList[index]
+                BackupListView.BackupFinishItem(item: item, index: index) { _, deleteIndex in
+                    deletePhrase = true
+                    viewModel.onDeletePhrase(index: deleteIndex)
                 }
             }
         }
@@ -172,6 +210,10 @@ struct BackupListView: RouteableView {
         }
     }
     
+    func onClickPhrase() {
+        viewModel.onCreatePhrase()
+    }
+    
     func onAddMulti() {
         viewModel.onAddMultiBackup()
     }
@@ -183,6 +225,7 @@ struct BackupPatternItem: View {
     enum ItemStyle {
         case device
         case multi
+        case phrase
     }
     
     var style: ItemStyle = .device
@@ -213,6 +256,19 @@ struct BackupPatternItem: View {
         }
         .frame(minWidth: 0, maxWidth: .infinity)
         .background(color.fixedOpacity())
+        .overlay(alignment: .topTrailing, {
+            Text("Recommended".localized)
+                .font(.inter(size: 10, weight: .bold))
+                .kerning(0.16)
+                .foregroundStyle(Color.Theme.Accent.green)
+                .padding(.vertical, 4)
+                .padding(.horizontal, 8)
+                .background(.Theme.Accent.green.fixedOpacity())
+                .visibility( style != .phrase ? .visible : .gone )
+                .cornerRadius(12)
+                .offset(x: -16, y: 12)
+                
+        })
         .cornerRadius(24, style: .continuous)
         .onTapGesture {
             onClick(style)
@@ -225,6 +281,8 @@ struct BackupPatternItem: View {
             return "icon.device"
         case .multi:
             return "icon.multi"
+        case .phrase:
+            return "icon.phrase"
         }
     }
     
@@ -234,6 +292,8 @@ struct BackupPatternItem: View {
             return "create_device_backup_title".localized
         case .multi:
             return "create_multi_backup_title".localized
+        case .phrase:
+            return "create_phrase_backup_title".localized
         }
     }
     
@@ -243,6 +303,8 @@ struct BackupPatternItem: View {
             return "create_device_backup_note".localized
         case .multi:
             return "create_multi_backup_note".localized
+        case .phrase:
+            return "create_phrase_backup_note".localized
         }
     }
     
@@ -252,6 +314,8 @@ struct BackupPatternItem: View {
             return Color.Theme.Accent.blue
         case .multi:
             return Color.Theme.Accent.purple
+        case .phrase:
+            return Color.Theme.Accent.grey
         }
     }
 }
@@ -269,11 +333,11 @@ extension BackupListView {
                 Router.route(to: RouteMap.Backup.backupDetail(item))
             } label: {
                 HStack(alignment: .top) {
-                    Image(item.multiBackupType()?.iconName() ?? "")
+                    Image(iconName())
                         .resizable()
                         .frame(width: 24, height: 24)
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("\(item.multiBackupType()?.title ?? "") Backup")
+                        Text(itemTitle())
                             .font(.inter(size: 16))
                             .foregroundStyle(Color.Theme.Text.black8)
                             .foregroundColor(.black.opacity(0.8))
@@ -303,6 +367,20 @@ extension BackupListView {
             }
             .buttonStyle(ScaleButtonStyle())
             
+        }
+        
+        func iconName() -> String {
+            if item.backupInfo?.backupType() == .fullWeightSeedPhrase {
+                return MultiBackupType.phrase.iconName()
+            }
+            return item.multiBackupType()?.iconName() ?? ""
+        }
+        
+        func itemTitle() -> String {
+            if item.backupInfo?.backupType() == .fullWeightSeedPhrase {
+                return BackupType.fullWeightSeedPhrase.title + " Backup"
+            }
+            return "\(item.multiBackupType()?.title ?? "") Backup"
         }
     }
 }

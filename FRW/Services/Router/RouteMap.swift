@@ -116,6 +116,9 @@ extension RouteMap {
         case verityPin(MultiBackupVerifyPinViewModel.From, MultiBackupVerifyPinViewModel.VerifyCallback)
         
         case introduction(IntroductionView.Topic, EmptyClosure, Bool)
+        case thingsNeedKnowOnBackup
+        case createPhraseBackup
+        case backupCompleted(String)
     }
 }
 
@@ -160,7 +163,12 @@ extension RouteMap.Backup: RouterTarget {
             }else {
                 navi.present(content: IntroductionView(topic: topic, confirmClosure: closure))
             }
-            
+        case .thingsNeedKnowOnBackup:
+            navi.push(content: ThingsNeedKnowView())
+        case .createPhraseBackup:
+            navi.push(content: CreateRecoveryPhraseBackup())
+        case .backupCompleted(let mnemonic):
+            navi.push(content: RecoveryPhraseBackupResultView(mnemonic: mnemonic))
         }
     }
 }

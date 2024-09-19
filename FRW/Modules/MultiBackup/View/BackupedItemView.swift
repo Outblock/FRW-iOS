@@ -10,6 +10,9 @@ import SwiftUI
 struct BackupedItemView: View {
     
     let backupType: MultiBackupType
+    var mnemonic: String? = nil
+    var deviceInfo: DeviceInfoRequest? = nil
+
     
     var body: some View {
         VStack {
@@ -51,9 +54,9 @@ struct BackupedItemView: View {
                     
                     HStack {
                         Spacer()
-                        WordListView(data: Array(mnemonicList().prefix(8)))
+                        WordListView(data: Array(mnemonicList().prefix(colum())))
                         Spacer()
-                        WordListView(data: Array(mnemonicList().suffix(from: 8)))
+                        WordListView(data: Array(mnemonicList().suffix(from: colum())))
                         Spacer()
                     }
                     .padding(.top, 8)
@@ -62,7 +65,7 @@ struct BackupedItemView: View {
                     HStack(alignment: .center) {
                         Spacer()
                         Button {
-                            UIPasteboard.general.string = mnemonic()
+                            UIPasteboard.general.string = validMnemonic()
                             HUD.success(title: "copied".localized)
                         } label: {
                             Image("icon-copy-phrase")
@@ -84,7 +87,8 @@ struct BackupedItemView: View {
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 16)
                     .foregroundColor(.LL.warning2)
                     .background {
                         RoundedRectangle(cornerRadius: 12)
@@ -103,22 +107,28 @@ struct BackupedItemView: View {
     }
     
     private func showApp() -> String {
+        if let info = deviceInfo {
+            return info.showApp()
+        }
         let item = MultiBackupManager.shared.getTarget(with: backupType)
         return item.registeredDeviceInfo?.deviceInfo.showApp() ?? ""
     }
     
     private func showLocation() -> String {
+        if let info = deviceInfo {
+            return info.showLocation()
+        }
         let item = MultiBackupManager.shared.getTarget(with: backupType)
         return item.registeredDeviceInfo?.deviceInfo.showLocation() ?? ""
     }
     
-    private func mnemonic() -> String? {
+    private func validMnemonic() -> String? {
+        
+        if let mnemonic = mnemonic {
+            return mnemonic
+        }
         
         guard let mnemonic = MultiBackupManager.shared.mnemonic else {
-//            #if DEBUG
-//            let str = "timber bulk peace tree cannon vault tomorrow case violin decade bread song song song song"
-//            return str
-//            #endif
             return nil
         }
         if backupType != .phrase {
@@ -128,7 +138,7 @@ struct BackupedItemView: View {
     }
     
     private func mnemonicList() -> [WordListView.WordItem] {
-        guard let mnemonic = mnemonic() else {
+        guard let mnemonic = validMnemonic() else {
             return []
         }
         
@@ -136,6 +146,10 @@ struct BackupedItemView: View {
             WordListView.WordItem(id: item.offset + 1, word: String(item.element))
         }
         return list
+    }
+    
+    private func colum() -> Int {
+        return Int(ceil(Double(mnemonicList().count) / 2.0))
     }
     
     
