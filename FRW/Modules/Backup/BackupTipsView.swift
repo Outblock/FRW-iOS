@@ -10,6 +10,8 @@ import SwiftUI
 struct BackupTipsView: View {
     var closeAction: () -> ()
     
+    @State var isChecked = false
+    
     var body: some View {
         VStack(spacing: 0) {
             SheetHeaderView(title: "backup".localized) {
@@ -33,6 +35,32 @@ struct BackupTipsView: View {
             Image("backup-tips-safe-img")
             
             Spacer()
+            
+            HStack {
+                Spacer()
+                if isChecked {
+                    Image("icon_check_rounde_1")
+                        .resizable()
+                        .frame(width: 16, height: 16)
+                } else {
+                    Image("icon_check_rounde_0")
+                        .resizable()
+                        .renderingMode(.template)
+                        .foregroundStyle(Color.Theme.Text.black8)
+                        .frame(width: 16, height: 16)
+                }
+                    
+                Text("do_not_ask".localized)
+                    .font(.inter(size: 16))
+                    .foregroundStyle(Color.Theme.Text.black8)
+                Spacer()
+            }
+            .padding(.bottom, 24)
+            .onTapGesture {
+                isChecked.toggle()
+                LocalUserDefaults.shared.backupSheetNotAsk = isChecked
+            }
+            
             
             Button {
                 onBackupAction()
@@ -68,5 +96,11 @@ extension BackupTipsView {
     private func onBackupAction() {
         onCloseAction()
         Router.route(to: RouteMap.Backup.backupList)
+    }
+}
+
+#Preview {
+    BackupTipsView {
+        
     }
 }

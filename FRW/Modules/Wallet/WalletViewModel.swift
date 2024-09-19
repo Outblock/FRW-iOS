@@ -293,6 +293,9 @@ class WalletViewModel: ObservableObject {
             return
         }
         
+        if LocalUserDefaults.shared.backupSheetNotAsk {
+            return
+        }
         
         backupTipsPresent = true
         backupTipsShown = true
