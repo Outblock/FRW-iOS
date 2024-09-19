@@ -8,8 +8,8 @@
 import Foundation
 
 let AppGroupName = "group.com.flowfoundation.wallet.dev"
+let AppBundleName = "com.flowfoundation.wallet.dev"
 let isDevModel = true
-
 let FirstFavNFTImageURL = "FirstFavNFTImageURL"
 
 func groupUserDefaults() -> UserDefaults? {

@@ -108,7 +108,7 @@ struct NFTModel: Codable, Hashable, Identifiable {
     var isSVG: Bool = false
     var response: NFTResponse
     var collection: NFTCollectionInfo?
-    let infoFromCollection: FlowModel.CollectionInfo?
+    
     
     var imageData: String? = nil
     
@@ -156,7 +156,6 @@ struct NFTModel: Codable, Hashable, Identifiable {
         title = response.postMedia?.title ?? response.collectionName ?? ""
         self.collection = collection
         self.response = response
-        self.infoFromCollection = info
     }
 
     var declare: String {
@@ -210,12 +209,9 @@ struct NFTModel: Codable, Hashable, Identifiable {
         return name.hasSuffix(".meow") || url.hasSuffix(".meow")
     }
     
-    var publicIdentifier: String? {
-        if let ident = infoFromCollection?.collectionData.privatePath?.identifier {
-            return ident
-        }
+    var publicIdentifier: String {
         guard let path = collection?.path.privatePath, let identifier = path.split(separator: "/").last else {
-            return nil
+            return ""
         }
         return String(identifier)
     }
@@ -299,7 +295,7 @@ class CollectionItem: Identifiable, ObservableObject {
                         return
                     }
                     
-                    let nftModels = list.map { NFTModel($0, in: self.collection, from: response.info) }
+                    let nftModels = list.map { NFTModel($0, in: self.collection) }
                     self.appendNFTsNoDuplicated(nftModels)
                     
                     if list.count != limit {
@@ -312,6 +308,7 @@ class CollectionItem: Identifiable, ObservableObject {
                     self.loadCallback2?(true)
                 }
             } catch {
+                log.error("[NFT] load NFTs of \(name): \(error)")
                 DispatchQueue.main.async {
                     self.isRequesting = false
                     self.loadCallback?(false)

@@ -53,6 +53,19 @@ extension FlowLog {
     }
 }
 
+extension FlowLog {
+    enum Prefix {
+        case cadence
+        case netword
+        case ui
+        case walletconnect
+        
+        case main
+        case evm
+        case linked
+    }
+}
+
 // MARK: Levels
 extension FlowLog {
     

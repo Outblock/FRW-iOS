@@ -11,16 +11,15 @@ import Foundation
 struct NFTListResponse: Codable {
     let nfts: [NFTResponse]?
     let nftCount: Int
-    let info: FlowModel.CollectionInfo?
     let collection: NFTCollectionInfo?
 }
 
 extension NFTListResponse {
     func toCollectionItem() -> CollectionItem {
         let item = CollectionItem()
-        item.name = info?.collectionData.display?.name ?? collection?.name ?? ""
+        item.name = collection?.name ?? ""
         item.count = nftCount
-        item.nfts = nfts?.compactMap({ NFTModel($0, in: collection, from: info) }) ?? []
+        item.nfts = nfts?.compactMap({ NFTModel($0, in: collection) }) ?? []
         item.collection = collection ?? NFTCollectionInfo(id: "", name: item.name, contractName: item.name, address: "", logo: "", banner: "", officialWebsite: "", description: "", path: ContractPath(storagePath: "", publicPath: "", privatePath: nil, publicCollectionName: "", publicType: "", privateType: ""), evmAddress: nil, flowIdentifier: nil)
         item.isEnd = nftCount < 24
         return item
