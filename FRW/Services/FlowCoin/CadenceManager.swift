@@ -9,7 +9,7 @@ import SwiftUI
 
 class CadenceManager {
     static let shared = CadenceManager()
-    private let localVersion = "1.90"
+    private let localVersion = "2.04"
     
     var version: String = ""
     var scripts: CadenceScript!

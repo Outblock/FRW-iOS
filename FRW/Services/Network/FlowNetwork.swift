@@ -107,10 +107,12 @@ extension FlowNetwork {
 // MARK: - NFT
 
 extension FlowNetwork {
-    static func checkCollectionEnable(address: Flow.Address, list: [NFTCollectionInfo]) async throws -> [Bool] {
-        //TODO: #six
-        let cadence = NFTCadence.collectionListCheckEnabled(with: list, on: flow.chainID)
-        return try await fetch(at: address, by: cadence)
+    static func checkCollectionEnable(address: Flow.Address) async throws -> [String: Bool] {
+        let originCadence = CadenceManager.shared.current.nft?.checkNFTListEnabled?.toFunc() ?? ""
+        let cadence = originCadence.replace(by: ScriptAddress.addressMap())
+//        let cadence = NFTCadence.collectionListCheckEnabled(with: list, on: flow.chainID)
+        let result: [String: Bool] = try await fetch(at: address, by: cadence)
+        return result
     }
     
     static func addCollection(at address: Flow.Address, collection: NFTCollectionInfo) async throws -> Flow.ID {

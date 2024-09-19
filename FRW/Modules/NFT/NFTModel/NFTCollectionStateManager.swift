@@ -26,22 +26,11 @@ final class NFTCollectionStateManager {
         }
         
         do {
-            var tempList = list
-            var finalList: [Bool] = []
-            repeat {
-                let pendingRequestList = Array(tempList.prefix(60))
-                tempList = Array(tempList.dropFirst(60))
-                let isEnableList = try await FlowNetwork.checkCollectionEnable(address: Flow.Address(hex: address), list: pendingRequestList);
-                finalList.append(contentsOf: isEnableList)
-            } while (tempList.count > 0)
-            
-            guard finalList.count == list.count else {
-                debugPrint("NFTCollectionStateManager: finalList.count != list.count")
-                return
-            }
+            let result: [String: Bool] = try await FlowNetwork.checkCollectionEnable(address: Flow.Address(hex: address));
             
             for (index, collection) in list.enumerated() {
-                let isEnable = finalList[index]
+                let key = "A." + collection.address.stripHexPrefix() + "." + collection.contractName
+                let isEnable = result[key] ?? false
                 if let oldIndex = tokenStateList.firstIndex(where: { $0.address == collection.address && $0.name == collection.contractName}) {
                     tokenStateList.remove(at: oldIndex)
                 }

@@ -55,11 +55,12 @@ class NFTTransferViewModel: ObservableObject {
     
     func checkNFTReachable() {
         Task {
+            
             guard let toAddress = targetContact.address, let collection = nft.collection else {
                 return
             }
-            let result = try await FlowNetwork.checkCollectionEnable(address: Flow.Address(hex: toAddress), list: [collection])
-            self.isValidNFT = result.first ?? false;
+            let result = NFTCollectionStateManager.share.isTokenAdded(toAddress)
+            self.isValidNFT = result
         }
     }
     
