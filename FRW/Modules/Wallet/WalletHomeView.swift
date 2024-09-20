@@ -658,8 +658,13 @@ extension WalletHomeView {
             case .receive:
                 Router.route(to: RouteMap.Wallet.receiveQR)
             case .swap:
-                UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                Router.route(to: RouteMap.Wallet.swap(nil))
+                
+                if let url = URL(string: incrementUrl()) {
+                    UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                    UIApplication.shared.open(url)
+                }
+                
+//                Router.route(to: RouteMap.Wallet.swap(nil))
             case .stake:
                 if !LocalUserDefaults.shared.stakingGuideDisplayed && !StakingManager.shared.isStaked {
                     Router.route(to: RouteMap.Wallet.stakeGuide)
@@ -667,6 +672,14 @@ extension WalletHomeView {
                 }
                 
                 Router.route(to: RouteMap.Wallet.stakingList)
+            }
+        }
+        
+        private func incrementUrl() -> String {
+            if LocalUserDefaults.shared.flowNetwork == .mainnet {
+                return "https://app.increment.fi/swap"
+            }else {
+                return "https://demo.increment.fi/swap"
             }
         }
     }
