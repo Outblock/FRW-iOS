@@ -121,7 +121,7 @@ class ChildAccountDetailViewModel: ObservableObject {
                         if let model = NFTCatalogCache.cache.find(by: String(contractName)) {
                             return FlowModel.NFTCollection(
                                 id: model.collection.id,
-                                path: model.collection.path.storagePath,
+                                path: model.collection.path?.storagePath,
                                 display: FlowModel.NFTCollection.CollectionDislay(
                                     name: model.collection.name,
                                     mediaType: FlowModel.Media(file: FlowModel.Media.File(url: "")),

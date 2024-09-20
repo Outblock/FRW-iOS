@@ -42,7 +42,7 @@ struct NFTCollectionInfo: Codable, Hashable, Mockable {
     let officialWebsite: String?
     let description: String?
     
-    let path: ContractPath
+    let path: ContractPath?
     
     let evmAddress: String?
 //    var socials: NFTCollectionInfo.Social?
@@ -210,7 +210,7 @@ struct NFTModel: Codable, Hashable, Identifiable {
     }
     
     var publicIdentifier: String {
-        guard let path = collection?.path.privatePath, let identifier = path.split(separator: "/").last else {
+        guard let path = collection?.path?.privatePath, let identifier = path.split(separator: "/").last else {
             return ""
         }
         return String(identifier)

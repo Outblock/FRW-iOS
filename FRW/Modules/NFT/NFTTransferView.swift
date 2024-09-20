@@ -56,7 +56,7 @@ class NFTTransferViewModel: ObservableObject {
     func checkNFTReachable() {
         Task {
             
-            guard let toAddress = targetContact.address, let collection = nft.collection else {
+            guard let toAddress = targetContact.address else {
                 return
             }
             let result = NFTCollectionStateManager.share.isTokenAdded(toAddress)

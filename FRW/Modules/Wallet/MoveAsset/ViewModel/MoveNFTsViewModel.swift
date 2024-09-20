@@ -90,15 +90,18 @@ class MoveNFTsViewModel: ObservableObject {
                 case (.evm, .flow):
                     tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: address, contractName: name, ids: ids, fromEvm: true)
                 case (.flow, .link):
-                    if let coll = collection as? NFTCollection, let identifier = coll.collection.path.privatePath {
+                    if let coll = collection as? NFTCollection {
+                        let identifier = coll.collection.path?.privatePath ?? ""
                         tid = try await FlowNetwork.batchMoveNFTToChild(childAddr: toContact.address ?? "", identifier: identifier, ids: ids, collection: coll.collection)
                     }
                 case (.link, .flow):
-                    if let coll = collection as? NFTCollection, let identifier = coll.collection.path.privatePath {
+                    if let coll = collection as? NFTCollection {
+                        let identifier = coll.collection.path?.privatePath ?? ""
                         tid = try await FlowNetwork.batchMoveNFTToParent(childAddr: fromContact.address ?? "", identifier: identifier, ids: ids, collection: coll.collection)
                     }
                 case (.link, .link):
-                    if let coll = collection as? NFTCollection, let identifier = coll.collection.path.privatePath {
+                    if let coll = collection as? NFTCollection {
+                        let identifier = coll.collection.path?.privatePath ?? ""
                         tid = try await FlowNetwork.batchSendChildNFTToChild(fromAddress: fromContact.address ?? "", toAddress: toContact.address ?? "", identifier: identifier, ids: ids, collection: coll.collection)
                     }
                 default:
