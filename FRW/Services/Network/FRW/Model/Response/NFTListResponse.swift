@@ -43,6 +43,9 @@ struct NFTResponse: Codable, Hashable {
     let externalURL: String?
     let contractAddress: String?
     
+    let evmAddress: String?
+    let address: String?
+    
     let collectionID: String?
     let collectionName: String?
     let collectionDescription: String?
@@ -67,7 +70,7 @@ struct NFTResponse: Codable, Hashable {
     }
     
     static func mock() -> NFTResponse {
-        NFTResponse(id: "", name: "", description: "", thumbnail: "", externalURL: "", contractAddress: "", collectionID: "", collectionName: "", collectionDescription: "", collectionSquareImage: "", collectionExternalURL: "", collectionContractName: "", collectionBannerImage: "", traits: [], postMedia: NFTPostMedia(title: "", description: "", video: "", isSvg: false))
+        NFTResponse(id: "", name: "", description: "", thumbnail: "", externalURL: "", contractAddress: "", evmAddress: "", address: "",collectionID: "", collectionName: "", collectionDescription: "", collectionSquareImage: "", collectionExternalURL: "", collectionContractName: "", collectionBannerImage: "", traits: [], postMedia: NFTPostMedia(title: "", description: "", video: "", isSvg: false))
     }
 }
 

@@ -223,7 +223,7 @@ class CollectionItem: Identifiable, ObservableObject {
         let item = CollectionItem()
         item.isEnd = true
         item.nfts = [0,1,2,3].map({ index in
-            NFTModel(NFTResponse(id: "", name: "", description: "", thumbnail: "", externalURL: "", contractAddress: "", collectionID: "", collectionName: "", collectionDescription: "", collectionSquareImage: "", collectionExternalURL: "", collectionContractName: "", collectionBannerImage: "", traits: [], postMedia: NFTPostMedia(title: "", description: "", video: "", isSvg: false)), in: nil)
+            NFTModel(NFTResponse(id: "", name: "", description: "", thumbnail: "", externalURL: "", contractAddress: "", evmAddress: "", address: "", collectionID: "", collectionName: "", collectionDescription: "", collectionSquareImage: "", collectionExternalURL: "", collectionContractName: "", collectionBannerImage: "", traits: [], postMedia: NFTPostMedia(title: "", description: "", video: "", isSvg: false)), in: nil)
         })
         return item
     }
