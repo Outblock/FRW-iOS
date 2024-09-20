@@ -82,7 +82,7 @@ class CreateProfileWaitingViewModel: ObservableObject {
     
     private func startTimer() {
         stopTimer()
-        let timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(onTimer), userInfo: nil, repeats: true)
+        let timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(onTimer), userInfo: nil, repeats: true)
         self.timer = timer
         RunLoop.main.add(timer, forMode: .common)
     }
