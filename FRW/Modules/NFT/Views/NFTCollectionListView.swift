@@ -86,14 +86,15 @@ class NFTCollectionListViewViewModel: ObservableObject {
     
     func fetch() {
         Task {
-            guard let addr = address, let path = collectionPath else {
+            guard let path = collectionPath else {
                 return
             }
             
             do {
-                
-                let request = NFTCollectionDetailListRequest(address: addr, collectionIdentifier: path, offset: 0, limit: 24)
-                let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(request))
+                let address = WalletManager.shared.selectedAccountAddress
+                let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount != nil ? .evm : .main
+                let request = NFTCollectionDetailListRequest(address: address, collectionIdentifier: path, offset: 0, limit: 24)
+                let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(request, from))
                 
                 DispatchQueue.main.async {
                     self.collection = response.toCollectionItem()

@@ -183,14 +183,16 @@ class MoveNFTsViewModel: ObservableObject {
         Task {
             do {
                 let address = WalletManager.shared.selectedAccountAddress
-                let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(address, 0, 100))
+                let offset = FRWAPI.Offset(start: 0, length: 100)
+                let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount != nil ? .evm : .main
+                let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(address, offset, from))
                 DispatchQueue.main.async {
                     self.collectionList = response.data?.sorted(by: { $0.count > $1.count }) ?? []
                     if self.selectedCollection == nil {
                         self.selectedCollection = self.collectionList.first
                     }
                     if self.selectedCollection != nil {
-                        self.fetchFlowNFTs()
+                        self.fetchNFTs()
                     }else {
                         DispatchQueue.main.async {
                             self.nfts = []
@@ -207,13 +209,40 @@ class MoveNFTsViewModel: ObservableObject {
     }
     
     func fetchNFTs(_ offset: Int = 0) {
-        if EVMAccountManager.shared.selectedAccount == nil {
-            fetchFlowNFTs(offset)
-        }else {
-            fetchEVMNFTs()
+        
+        buttonState = .loading
+        guard let collection = selectedCollection else {
+            fetchCollection()
+            return
+        }
+        Task {
+            do {
+                let isEVM = EVMAccountManager.shared.selectedAccount != nil
+                let address = WalletManager.shared.selectedAccountAddress
+                let request = NFTCollectionDetailListRequest(address: address, collectionIdentifier: collection.maskId, offset: offset, limit: 30)
+                let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(request, (isEVM ? .evm : .main)))
+                DispatchQueue.main.async {
+                    if let list = response.nfts {
+                        self.nfts = list.map { MoveNFTsViewModel.NFT(isSelected: false, model: $0) }
+                    }
+                    else {
+                        self.nfts = []
+                    }
+                    self.isMock = false
+                    self.resetButtonState()
+                }
+            }
+            catch {
+                DispatchQueue.main.async {
+                    self.nfts = []
+                    self.isMock = false
+                    self.resetButtonState()
+                }
+                log.error("[MoveAsset] fetch NFTs failed:\(error)")
+            }
         }
     }
-    
+    /*
     private func fetchFlowNFTs(_ offset: Int = 0) {
         buttonState = .loading
         guard let collection = selectedCollection else {
@@ -224,7 +253,7 @@ class MoveNFTsViewModel: ObservableObject {
             do {
                 let address = WalletManager.shared.selectedAccountAddress
                 let request = NFTCollectionDetailListRequest(address: address, collectionIdentifier: collection.maskId, offset: offset, limit: 30)
-                let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(request))
+                let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(request, .main))
                 DispatchQueue.main.async {
                     if let list = response.nfts {
                         self.nfts = list.map { MoveNFTsViewModel.NFT(isSelected: false, model: $0) }
@@ -279,6 +308,7 @@ class MoveNFTsViewModel: ObservableObject {
             }
         }
     }
+    */
 }
 
 extension MoveNFTsViewModel {

@@ -270,14 +270,6 @@ class CollectionItem: Identifiable, ObservableObject {
             return
         }
         
-        if EVMAccountManager.shared.selectedAccount != nil {
-            DispatchQueue.main.async {
-                self.loadCallback?(true)
-                self.loadCallback2?(true)
-                self.isEnd = true
-            }
-            return
-        }
         
         isRequesting = true
         
@@ -329,8 +321,10 @@ class CollectionItem: Identifiable, ObservableObject {
     }
     
     private func requestCollectionListDetail(offset: Int, limit: Int = 24) async throws -> NFTListResponse {
-        let request = NFTCollectionDetailListRequest(address: address, collectionIdentifier: collection?.id ?? "", offset: offset, limit: limit)
-        let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(request))
+        let addr = WalletManager.shared.selectedAccountAddress
+        let request = NFTCollectionDetailListRequest(address: addr, collectionIdentifier: collection?.id ?? "", offset: offset, limit: limit)
+        let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount == nil ? .main : .evm
+        let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(request, from))
         return response
     }
     

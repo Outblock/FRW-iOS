@@ -79,9 +79,6 @@ extension EditAvatarView {
         private var isEnd: Bool = false
         private var isRequesting: Bool = false
         
-        // TODO: Use real address
-        private var owner: String = "0x85fa94a5aec10607"
-
         init() {
             var cachedItems = [AvatarItemModel]()
             
@@ -229,8 +226,10 @@ extension EditAvatarView.EditAvatarViewModel {
     }
     
     private func requestGrid(offset: Int, limit: Int = 24) async throws -> [NFTModel] {
-        let request = NFTGridDetailListRequest(address: owner, offset: offset, limit: limit)
-        let response: Network.Response<NFTListResponse> = try await Network.requestWithRawModel(FRWAPI.NFT.gridDetailList(request))
+        let address =  WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? ""
+        let request = NFTGridDetailListRequest(address: address, offset: offset, limit: limit)
+        let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount != nil ? .evm : .main
+        let response: Network.Response<NFTListResponse> = try await Network.requestWithRawModel(FRWAPI.NFT.gridDetailList(request, from))
         
         guard let nfts = response.data?.nfts else {
             return []

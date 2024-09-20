@@ -53,15 +53,16 @@ class NFTUIKitListGridDataModel {
             return []
         }
         
-        if EVMAccountManager.shared.selectedAccount != nil {
-            let response: [EVMCollection] =  try await Network.request(FRWAPI.EVM.nfts(address))
-            let list = response.map { $0.toNFTCollection() }
-            let nfts = list.compactMap { $0.evmNFTs }
-            return Array(nfts.joined())
-        }
+//        if EVMAccountManager.shared.selectedAccount != nil {
+//            let response: [EVMCollection] =  try await Network.request(FRWAPI.EVM.nfts(address))
+//            let list = response.map { $0.toNFTCollection() }
+//            let nfts = list.compactMap { $0.evmNFTs }
+//            return Array(nfts.joined())
+//        }
         
         let request = NFTGridDetailListRequest(address: address, offset: offset, limit: limit)
-        let response: Network.Response<NFTListResponse> = try await Network.requestWithRawModel(FRWAPI.NFT.gridDetailList(request))
+        let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount != nil ? .evm : .main
+        let response: Network.Response<NFTListResponse> = try await Network.requestWithRawModel(FRWAPI.NFT.gridDetailList(request, from))
         
         guard let nfts = response.data?.nfts else {
             return []
@@ -197,14 +198,14 @@ class NFTUIKitListNormalDataModel {
             return []
         }
         
-        if EVMAccountManager.shared.selectedAccount != nil {
-            let response: [EVMCollection] =  try await Network.request(FRWAPI.EVM.nfts(address))
-            let list = response.map({ $0.toNFTCollection() }).filter { $0.count > 0 }
-            
-            return list
-        }
-        
-        let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(address,0,100))
+//        if EVMAccountManager.shared.selectedAccount != nil {
+//            let response: [EVMCollection] =  try await Network.request(FRWAPI.EVM.nfts(address))
+//            let list = response.map({ $0.toNFTCollection() }).filter { $0.count > 0 }
+//            
+//            return list
+//        }
+        let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount != nil ? .evm : .main
+        let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(address,FRWAPI.Offset(start: 0, length: 100),from))
         if let list = response.data {
             return list
         } else {

@@ -35,7 +35,9 @@ class SelectCollectionViewModel: ObservableObject {
         Task {
             do {
                 let address = WalletManager.shared.selectedAccountAddress
-                let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(address,0,100))
+                let offset = FRWAPI.Offset(start: 0, length: 100)
+                let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount != nil ? .evm : .main
+                let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(address,offset,from))
                 DispatchQueue.main.async {
                     self.list = response.data ?? []
                     if self.selectedItem == nil {

@@ -9,11 +9,36 @@ import Foundation
 import Moya
 
 extension FRWAPI {
+    
+    typealias Address = String
+    
+    struct Offset {
+        let start: Int
+        let length: Int
+        
+        func next() -> FRWAPI.Offset {
+            Offset(start: start + length, length: length)
+        }
+        
+        static var `default`: FRWAPI.Offset {
+            Offset(start: 0, length: 24)
+        }
+    }
+    
+    
+}
+
+extension FRWAPI {
+    enum From {
+        case main
+        case evm
+    }
+    
     enum NFT {
         case collections
-        case userCollection(String,Int,Int)
-        case collectionDetailList(NFTCollectionDetailListRequest)
-        case gridDetailList(NFTGridDetailListRequest)
+        case userCollection(String, FRWAPI.Offset, FRWAPI.From)
+        case collectionDetailList(NFTCollectionDetailListRequest,FRWAPI.From)
+        case gridDetailList(NFTGridDetailListRequest,FRWAPI.From)
         case favList(String)
         case addFav(NFTAddFavRequest)
         case updateFav(NFTUpdateFavRequest)
@@ -40,13 +65,22 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
 
     var path: String {
         switch self {
-        case .gridDetailList:
+        case .gridDetailList(_, let from):
+            if from == .evm {
+                return "v3/evm/nft/list"
+            }
             return "v2/nft/list"
-        case .userCollection:
+        case .userCollection(_,_,let from):
+            if from == .evm {
+                return "v3/evm/nft/id"
+            }
             return "v2/nft/id"
         case .collections:
             return "v2/nft/collections"
-        case .collectionDetailList:
+        case .collectionDetailList(_, let from):
+            if from == .evm {
+                return "v3/evm/nft/collectionList"
+            }
             return "v2/nft/collectionList"
         case .addFav, .updateFav:
             return "v2/nft/favorite"
@@ -68,9 +102,9 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
 
     var task: Task {
         switch self {
-        case let .gridDetailList(request):
+        case let .gridDetailList(request, _):
             return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding())
-        case let .collectionDetailList(request):
+        case let .collectionDetailList(request, _):
             return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding())
         case .collections:
             return .requestParameters(parameters: [:], encoding: URLEncoding())
@@ -80,18 +114,14 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
             return .requestJSONEncodable(request)
         case let .updateFav(request):
             return .requestJSONEncodable(request)
-        case let .userCollection(address,offset,limit):
-            return .requestParameters(parameters: ["address": address,"offset": offset,"limit": limit], encoding: URLEncoding())
+        case let .userCollection(address, offset, _):
+            return .requestParameters(parameters: ["address": address,"offset": offset.start,"limit": offset.length], encoding: URLEncoding())
         }
     }
 
     var headers: [String: String]? {
         let headers = FRWAPI.commonHeaders
-
-//        #if DEBUG
-//            // TODO: current nft is error on testnet, remove this code if testnet nft is working someday.
-//            headers["Network"] = LocalUserDefaults.FlowNetworkType.mainnet.rawValue
-//        #endif
         return headers
     }
 }
+

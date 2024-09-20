@@ -112,7 +112,8 @@ class ChildAccountDetailViewModel: ObservableObject {
             
             do {
                 let result = try await FlowNetwork.fetchAccessibleCollection(parent: parent, child: child)
-                let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(child,0,100))
+                let offset = FRWAPI.Offset(start: 0, length: 100)
+                let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(child, offset, .main))
                 let collectionList = response.data
                 
                 let resultList = result.compactMap { item in

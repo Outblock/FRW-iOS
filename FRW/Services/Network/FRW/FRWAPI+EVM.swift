@@ -30,9 +30,6 @@ extension FRWAPI.EVM: TargetType, AccessTokenAuthorizable {
     var path: String {
         switch self {
         case .tokenList(var addr):
-            #if DEBUG
-            addr = "0x0000000000000000000000020c260f03355ff69d"
-            #endif
             if let addr = addr {
                 return "v2/evm/\(addr)/fts"
             }
