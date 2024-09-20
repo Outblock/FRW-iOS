@@ -36,6 +36,8 @@ extension CryptoSummaryResponse {
         let contractName: String
         var rateToFLOW: Double = 0
         var rateToUSD: Double = 0
+        var symbol: String?
+        var evmAddress: String?
     }
 }
 

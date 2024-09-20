@@ -170,8 +170,13 @@ extension CoinRateCache {
     }
     
     private func createFixedRateResponse(fixedRate: Decimal, for token: TokenModel) -> CryptoSummaryResponse {
+        var model: CryptoSummaryResponse.AddPrice?
         
-        let model = addPrices.first { $0.contractName.uppercased() == token.contractName.uppercased() }
+        if EVMAccountManager.shared.selectedAccount != nil {
+            model = addPrices.first { ($0.evmAddress == token.getAddress()) && ($0.evmAddress != nil) }
+        }else {
+            model = addPrices.first { $0.contractName.uppercased() == token.contractName.uppercased() }
+        }
         
         let change = CryptoSummaryResponse.Change(absolute: 0, percentage: 0)
         let price = CryptoSummaryResponse.Price(last: model?.rateToUSD ?? fixedRate.doubleValue,

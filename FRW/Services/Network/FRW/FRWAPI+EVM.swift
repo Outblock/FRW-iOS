@@ -10,7 +10,7 @@ import Moya
 
 extension FRWAPI {
     enum EVM {
-        case tokenList(String?)
+        case tokenList(String)
         case nfts(String?)
     }
 }
@@ -29,11 +29,8 @@ extension FRWAPI.EVM: TargetType, AccessTokenAuthorizable {
     
     var path: String {
         switch self {
-        case .tokenList(var addr):
-            if let addr = addr {
-                return "v2/evm/\(addr)/fts"
-            }
-            return "v2/evm/fts"
+        case .tokenList(let addr):
+            return "v3/evm/\(addr)/fts"
         case .nfts(let addr):
             if let addr = addr {
                 return "v2/evm/\(addr)/nfts"
