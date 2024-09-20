@@ -9,7 +9,7 @@ import SwiftUI
 
 class CadenceManager {
     static let shared = CadenceManager()
-    private let localVersion = "2.04"
+    private let localVersion = "2.06"
     
     var version: String = ""
     var scripts: CadenceScript!
@@ -279,6 +279,8 @@ extension CadenceModel {
         let withdrawLocked: String?
         let withdrawReward: String?
         let withdrawUnstaked: String?
+        
+        let checkStakingEnabled: String?
     }
     
     struct Storage: Codable {
