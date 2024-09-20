@@ -38,9 +38,9 @@ struct EVMTokenResponse: Codable {
         guard let bal = balance, let value = BigUInt(bal) else {
             return 0
         }
-        //TODO: 
-//        let result = Utilities.formatToPrecision(value, units: .custom(decimals)).doubleValue
-        return Utilities.formatToPrecision(value, formattingDecimals: decimals).doubleValue
+        
+        let result = Utilities.formatToPrecision(value, units: .custom(decimals)).doubleValue
+        return result
     }
 }
 
@@ -76,10 +76,10 @@ struct EVMNFT: Codable {
     let thumbnail: String
     
     func toNFT() -> NFTResponse {
-        NFTResponse(id: id, name: name, description: nil, thumbnail: thumbnail, externalURL: nil, contractAddress: nil, collectionID: nil, collectionName: nil, collectionDescription: nil, collectionSquareImage: nil, collectionExternalURL: nil, collectionContractName: nil, collectionBannerImage: nil, traits: nil, postMedia: NFTPostMedia(title: nil, image: thumbnail,description: nil, video: nil, isSvg: nil))
+        NFTResponse(id: id, name: name, description: nil, thumbnail: thumbnail, externalURL: nil, contractAddress: nil, evmAddress: nil, address: nil,collectionID: nil, collectionName: nil, collectionDescription: nil, collectionSquareImage: nil, collectionExternalURL: nil, collectionContractName: nil, collectionBannerImage: nil, traits: nil, postMedia: NFTPostMedia(title: nil, image: thumbnail,description: nil, video: nil, isSvg: nil))
     }
     
     func toNFT(collectionAddress: String, contractName: String) -> NFTResponse {
-        NFTResponse(id: id, name: name, description: nil, thumbnail: thumbnail, externalURL: nil, contractAddress: collectionAddress, collectionID: nil, collectionName: nil, collectionDescription: nil, collectionSquareImage: nil, collectionExternalURL: nil, collectionContractName: contractName, collectionBannerImage: nil, traits: nil, postMedia: NFTPostMedia(title: nil, image: thumbnail,description: nil, video: nil, isSvg: nil))
+        NFTResponse(id: id, name: name, description: nil, thumbnail: thumbnail, externalURL: nil, contractAddress: collectionAddress,evmAddress: nil, address: nil, collectionID: nil, collectionName: nil, collectionDescription: nil, collectionSquareImage: nil, collectionExternalURL: nil, collectionContractName: contractName, collectionBannerImage: nil, traits: nil, postMedia: NFTPostMedia(title: nil, image: thumbnail,description: nil, video: nil, isSvg: nil))
     }
 }
