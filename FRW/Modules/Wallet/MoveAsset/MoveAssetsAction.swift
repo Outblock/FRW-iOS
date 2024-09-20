@@ -14,7 +14,7 @@ class MoveAssetsAction {
     private var appName: String? = nil
     
     var allowMoveAssets: Bool {
-        return CadenceManager.shared.isGreaterVerson1()
+        return true
     }
     
     var showNote: String? {

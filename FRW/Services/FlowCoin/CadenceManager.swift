@@ -25,12 +25,7 @@ class CadenceManager {
         }
     }
     
-    func isGreaterVerson1() -> Bool {
-        guard let version = current.version else {
-            return false
-        }
-        return "1.0".compareVersion(to: version) != .orderedDescending
-    }
+    
     
     private init() {
         loadLocalCache()
