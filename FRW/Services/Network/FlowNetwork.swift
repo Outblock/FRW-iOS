@@ -1277,9 +1277,8 @@ extension FlowNetwork {
         ])
     }
     
-    
-    static func bridgeNFTFromEVMToAnyFlow(nftContractAddress: String, nftContractName: String, id: String, receiver: String) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.bridge?.bridgeNFTFromEvmToFlow?.toFunc() ?? ""
+    static func bridgeNFTFromEVMToAnyFlow(identifier: String, id: String, receiver: String) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.bridge?.bridgeNFTFromEvmToFlowV2?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         
         guard let nftId = BigUInt(id) else {
@@ -1287,12 +1286,12 @@ extension FlowNetwork {
         }
         
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
-            .address(Flow.Address(hex: nftContractAddress)),
-            .string(nftContractName),
+            .string(identifier),
             .uint256(nftId),
             .address(Flow.Address(hex: receiver))
         ])
     }
+    
     
 }
 

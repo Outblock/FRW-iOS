@@ -160,18 +160,17 @@ class NFTTransferViewModel: ObservableObject {
                     tid = try await FlowNetwork.bridgeNFTToAnyEVM(nftContractAddress: nftAddress, nftContractName: nftName, id: nftId, contractEVMAddress: evmContractAddress.stripHexPrefix(), data: data, gas: WalletManager.defaultGas)
                 case (.coa, .flow):
                     let nftId = nft.response.id
-                    guard let nftAddress = self.nft.collection?.address, let nftName = nft.collection?.contractName
-                    else {
-                        throw NFTError.sendInvalidAddress
+                    guard let identifier = nft.collection?.flowIdentifier else {
+                        throw NFTError.noCollectionInfo
                     }
                     if primaryAddress == toAddress {
-                        guard let IdInt = UInt64(nftId) , let identifier = nft.collection?.flowIdentifier else {
+                        guard let IdInt = UInt64(nftId)  else {
                             throw NFTError.sendInvalidAddress
                         }
                         
                         tid = try await FlowNetwork.bridgeNFTToEVM(identifier: identifier, ids: [IdInt], fromEvm: true)
                     }else {
-                        tid = try await FlowNetwork.bridgeNFTFromEVMToAnyFlow(nftContractAddress: nftAddress, nftContractName: nftName, id: nftId, receiver: toAddress)
+                        tid = try await FlowNetwork.bridgeNFTFromEVMToAnyFlow(identifier: identifier, id: nftId, receiver: toAddress)
                     }
                     
                     

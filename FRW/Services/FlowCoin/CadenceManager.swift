@@ -93,6 +93,7 @@ class CadenceManager {
     }
     
     private func loadCache() -> CadenceResponse? {
+        
         guard let file = filePath() else {
             return nil
         }
@@ -361,7 +362,7 @@ extension CadenceModel {
         let bridgeTokensFromEvmToFlow: String?
         /// nft flow to any evm
         let bridgeNFTToEvmAddress: String?
-        let bridgeNFTFromEvmToFlow: String?
+        let bridgeNFTFromEvmToFlowV2: String?
     }
 }
 
