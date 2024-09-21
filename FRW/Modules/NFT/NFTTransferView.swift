@@ -148,16 +148,13 @@ class NFTTransferViewModel: ObservableObject {
                     let nftId = nft.response.id
                     
                     guard let nftAddress = self.nft.collection?.address, let nftName = nft.collection?.contractName,
-                          let coaAddress = EVMAccountManager.shared.accounts.first?.showAddress,
-                          let evmContractAddress = await NFTCollectionConfig.share.get(from: nftAddress)?.evmAddress
+                          let identifier = nft.collection?.flowIdentifier ?? nft.response.flowIdentifier,
+                          let evmContractAddress = await NFTCollectionConfig.share.get(from: nftAddress)?.evmAddress?.stripHexPrefix()
                     else {
                         throw NFTError.sendInvalidAddress
                     }
-                    guard let data = erc721?.contract.method("safeTransferFrom", parameters: [coaAddress,toAddress, nftId], extraData: nil) else {
-                        throw NFTError.sendInvalidAddress
-                    }
+                    tid = try await FlowNetwork.bridgeNFTToAnyEVM(identifier: identifier, id: nftId, contractEVMAddress: evmContractAddress)
                     
-                    tid = try await FlowNetwork.bridgeNFTToAnyEVM(nftContractAddress: nftAddress, nftContractName: nftName, id: nftId, contractEVMAddress: evmContractAddress.stripHexPrefix(), data: data, gas: WalletManager.defaultGas)
                 case (.coa, .flow):
                     let nftId = nft.response.id
                     guard let identifier = nft.collection?.flowIdentifier else {

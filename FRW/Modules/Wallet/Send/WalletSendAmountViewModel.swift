@@ -335,15 +335,12 @@ extension WalletSendAmountViewModel {
                     if token.isFlowCoin {
                         txId = try await FlowNetwork.sendFlowTokenFromCoaToFlow(amount: amount, address: targetAddress)
                     }else {
-                        guard let contractAddress = self.token.flowIdentifier?.split(separator: ".")[1],
-                              let contractName = self.token.flowIdentifier?.split(separator: ".")[2],
-                                let bigUIntValue = Utilities.parseToBigUInt(amount.description, units: .ether)
-                        else {
+                        guard let bigUIntValue = Utilities.parseToBigUInt(amount.description, units: .ether) else {
                             failureBlock()
                             return
                         }
-                        
-                        txId = try await FlowNetwork.bridgeTokensFromEvmToFlow(contractAddress: String(contractAddress), contractName: String(contractName), amount: bigUIntValue, receiver: targetAddress)
+                        let flowIdentifier = self.token.contractId + ".Vault"
+                        txId = try await FlowNetwork.bridgeTokensFromEvmToFlow(identifier: flowIdentifier, amount: bigUIntValue, receiver: targetAddress)
                     }
                     
                 case (.coa, .coa):

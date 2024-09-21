@@ -231,10 +231,10 @@ extension MoveTokenViewModel {
                 log.info("[EVM] bridge token \(fromIsEVM ? "FromEVM" : "ToEVM")")
                 let amount = self.inputTokenNum.decimalValue
         
-                let address = (fromIsEVM ? token.evmBridgeAddress() : token.getAddress()) ?? ""
+                let vaultIdentifier = (fromIsEVM ? (token.flowIdentifier ?? "") : token.contractId + ".Vault")
                 let name = fromIsEVM ? (token.evmBridgeContractName() ?? "") : token.contractName
                 
-                let txid = try await FlowNetwork.bridgeToken(address: address, contractName: name, amount: amount, fromEvm: fromIsEVM, decimals: token.decimal)
+                let txid = try await FlowNetwork.bridgeToken(vaultIdentifier: vaultIdentifier, amount: amount, fromEvm: fromIsEVM, decimals: token.decimal)
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
                 

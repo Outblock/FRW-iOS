@@ -351,17 +351,17 @@ extension CadenceModel {
     
     struct Bridge: Codable {
         let batchOnboardByIdentifier: String?
-        let bridgeTokensFromEvm: String?
-        let bridgeTokensToEvm: String?
+        let bridgeTokensFromEvmV2: String?
+        let bridgeTokensToEvmV2: String?
         
         let batchBridgeNFTToEvmV2: String?
         let batchBridgeNFTFromEvmV2: String?
         /// send Not Flow Token to Evm
         let bridgeTokensToEvmAddressV2: String?
         /// evm to other flow
-        let bridgeTokensFromEvmToFlow: String?
+        let bridgeTokensFromEvmToFlowV2: String?
         /// nft flow to any evm
-        let bridgeNFTToEvmAddress: String?
+        let bridgeNFTToEvmAddressV2: String?
         let bridgeNFTFromEvmToFlowV2: String?
     }
 }
