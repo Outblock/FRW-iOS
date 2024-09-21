@@ -75,7 +75,17 @@ class MoveSingleNFTViewModel: ObservableObject {
             if fromContact.walletType == .link || toContact.walletType == .link {
                 await moveForLinkedAccount(nftId: nftId)
             }else {
-                await moveForEVM(nftId: nftId, address: address, name: name)
+                let identifier = nft.collection?.flowIdentifier ?? nft.response.maskFlowIdentifier
+                guard let identifier = identifier else {
+                    log.error("Empty identifier on NFT>collection>")
+                    HUD.debugError(title: "Empty identifier on NFT>collection>")
+                    DispatchQueue.main.async {
+                        self.buttonState = .enabled
+                    }
+                    return
+                }
+                
+                await moveForEVM(identifier: identifier, nftId: nftId)
             }
             DispatchQueue.main.async {
                 self.buttonState = .enabled
@@ -83,12 +93,12 @@ class MoveSingleNFTViewModel: ObservableObject {
         }
     }
     
-    private func moveForEVM(nftId: UInt64, address: String, name: String) async {
+    private func moveForEVM(identifier:String, nftId: UInt64) async {
         do {
             
             let ids: [UInt64] = [nftId]
             let fromEvm = EVMAccountManager.shared.selectedAccount != nil
-            let tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: address, contractName: name, ids: ids, fromEvm: fromEvm)
+            let tid = try await FlowNetwork.bridgeNFTToEVM(identifier: identifier, ids: ids, fromEvm: fromEvm)
             let holder = TransactionManager.TransactionHolder(id: tid, type: .moveAsset)
             TransactionManager.shared.newTransaction(holder: holder)
             closeAction()

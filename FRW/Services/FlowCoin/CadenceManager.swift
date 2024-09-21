@@ -9,7 +9,7 @@ import SwiftUI
 
 class CadenceManager {
     static let shared = CadenceManager()
-    private let localVersion = "2.06"
+    private let localVersion = "2.05"
     
     var version: String = ""
     var scripts: CadenceScript!
@@ -21,7 +21,7 @@ class CadenceManager {
         case .mainnet:
             return scripts.mainnet
         case .previewnet:
-            return scripts.previewnet ?? scripts.testnet
+            return scripts.testnet
         }
     }
     
@@ -113,7 +113,7 @@ class CadenceManager {
     
     private func filePath() -> URL? {
         do {
-            var root = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("cadence")
+            let root = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("cadence")
             if !FileManager.default.fileExists(atPath: root.relativePath) {
                 try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
             }
@@ -138,8 +138,6 @@ struct CadenceResponse: Codable {
 
 struct CadenceScript: Codable {
     let testnet: CadenceModel
-    let previewnet: CadenceModel?
-    let crescendo: CadenceModel?
     let mainnet: CadenceModel
 }
 
@@ -355,10 +353,10 @@ extension CadenceModel {
         let bridgeTokensFromEvm: String?
         let bridgeTokensToEvm: String?
         
-        let batchBridgeNFTToEvm: String?
-        let batchBridgeNFTFromEvm: String?
+        let batchBridgeNFTToEvmV2: String?
+        let batchBridgeNFTFromEvmV2: String?
         /// send Not Flow Token to Evm
-        let bridgeTokensToEvmAddress: String?
+        let bridgeTokensToEvmAddressV2: String?
         /// evm to other flow
         let bridgeTokensFromEvmToFlow: String?
         /// nft flow to any evm

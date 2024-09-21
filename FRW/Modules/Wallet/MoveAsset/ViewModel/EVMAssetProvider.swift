@@ -11,6 +11,7 @@ protocol NFTMask {
     
     var maskLogo: String { get }
     var maskId: String { get }
+    var maskFlowIdentifier: String? { get }
 }
 
 protocol CollectionMask {
@@ -20,6 +21,7 @@ protocol CollectionMask {
     var maskLogo: URL? { get }
     var maskId: String { get }
     var maskCount: Int { get }
+    var maskFlowIdentifier: String? { get }
 }
 
 // MARK: NFTResponse
@@ -30,6 +32,10 @@ extension NFTResponse: NFTMask {
     
     var maskId: String {
         return id
+    }
+    
+    var maskFlowIdentifier: String? {
+        flowIdentifier
     }
 }
 
@@ -59,6 +65,9 @@ extension NFTCollection: CollectionMask {
         return count
     }
     
+    var maskFlowIdentifier: String? {
+        collection.flowIdentifier
+    }
 }
 
 // MARK: EVMNFT
@@ -69,6 +78,10 @@ extension EVMNFT: NFTMask {
     
     var maskId: String {
         id
+    }
+    
+    var maskFlowIdentifier: String? {
+        return nil
     }
 }
 
@@ -104,5 +117,8 @@ extension EVMCollection: CollectionMask {
         nfts.count
     }
     
+    var maskFlowIdentifier: String? {
+        flowIdentifier
+    }
     
 }

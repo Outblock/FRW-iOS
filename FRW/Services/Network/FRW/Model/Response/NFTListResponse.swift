@@ -54,8 +54,11 @@ struct NFTResponse: Codable, Hashable {
     let collectionContractName: String?
     let collectionBannerImage: String?
     
+    
     let traits: [NFTTrait]?
     var postMedia: NFTPostMedia?
+    
+    var flowIdentifier: String? = nil
     
     var uniqueId: String {
         return (contractAddress ?? "") + "." + (collectionName ?? "") + "-" + "\(id)"

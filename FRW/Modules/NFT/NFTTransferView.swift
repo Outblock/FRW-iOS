@@ -136,12 +136,12 @@ class NFTTransferViewModel: ObservableObject {
                     tid = try await FlowNetwork.transferNFT(to: Flow.Address(hex: toAddress), nft: nft)
                 case (.flow, .coa):
                     let nftId = nft.response.id
-                    guard let nftAddress = self.nft.collection?.address, let nftName = self.nft.collection?.contractName,
-                        let IdInt = UInt64(nftId)
+                    guard let identifier = self.nft.collection?.flowIdentifier, 
+                            let IdInt = UInt64(nftId)
                     else {
                         throw NFTError.sendInvalidAddress
                     }
-                    tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: nftAddress, contractName: nftName, ids: [IdInt], fromEvm: false)
+                    tid = try await FlowNetwork.bridgeNFTToEVM(identifier: identifier, ids: [IdInt], fromEvm: false)
                 case (.flow, .eoa):
                     log.debug("[NFT] flow to eoa send")
                     let erc721 = try await FlowProvider.Web3.erc721NFTContract()
@@ -165,10 +165,11 @@ class NFTTransferViewModel: ObservableObject {
                         throw NFTError.sendInvalidAddress
                     }
                     if primaryAddress == toAddress {
-                        guard let IdInt = UInt64(nftId) else {
+                        guard let IdInt = UInt64(nftId) , let identifier = nft.collection?.flowIdentifier else {
                             throw NFTError.sendInvalidAddress
                         }
-                        tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: nftAddress, contractName: nftName, ids: [IdInt], fromEvm: true)
+                        
+                        tid = try await FlowNetwork.bridgeNFTToEVM(identifier: identifier, ids: [IdInt], fromEvm: true)
                     }else {
                         tid = try await FlowNetwork.bridgeNFTFromEVMToAnyFlow(nftContractAddress: nftAddress, nftContractName: nftName, id: nftId, receiver: toAddress)
                     }

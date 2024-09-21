@@ -354,15 +354,12 @@ extension WalletSendAmountViewModel {
                         txId = try await FlowNetwork.sendFlowToEvm(evmAddress: targetAddress.stripHexPrefix(), amount: amount, gas: gas)
                     }
                     else {
-                        let erc20Contract = try await FlowProvider.Web3.defaultContract()
-                        guard let contractAddress = token.getAddress(), 
-                                let EVMAddress = token.evmAddress,
-                              let data = erc20Contract?.contract.method("transfer", parameters: [targetAddress, Utilities.parseToBigUInt(amount.description, units: .ether)!], extraData: nil)
-                        else {
+                        let flowIdentifier = "\(self.token.contractId).Vault"
+                        guard let evmAddress = token.evmAddress?.stripHexPrefix() else {
                             failureBlock()
                             return
                         }
-                        txId =  try await FlowNetwork.sendNoFlowTokenToEvm(amount: amount, contractAddress:contractAddress , contractName: token.contractName, contractEVMAddress: EVMAddress.stripHexPrefix(), data: data, gas: gas)
+                        txId = try await FlowNetwork.sendNoFlowTokenToEVM(vaultIdentifier: flowIdentifier, amount: amount, recipient: evmAddress)
                     }
                     
                 case (.coa,.eoa):

@@ -71,8 +71,7 @@ class MoveNFTsViewModel: ObservableObject {
         buttonState = .loading
         Task {
             do {
-                let address = collection.maskAddress
-                let name = collection.maskContractName
+                let identifier = collection.maskFlowIdentifier ?? nfts.first?.model.maskFlowIdentifier ?? nil
                 let ids: [UInt64] = nfts.compactMap { nft in
                     if !nft.isSelected {
                         return nil
@@ -83,12 +82,15 @@ class MoveNFTsViewModel: ObservableObject {
                     }
                     return resultId
                 }
+                guard let identifier = identifier else {
+                    return
+                }
                 var tid: Flow.ID?
                 switch(fromContact.walletType, toContact.walletType) {
                 case (.flow,.evm):
-                    tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: address, contractName: name, ids: ids, fromEvm: false)
+                    tid = try await FlowNetwork.bridgeNFTToEVM(identifier: identifier, ids: ids, fromEvm: false)
                 case (.evm, .flow):
-                    tid = try await FlowNetwork.bridgeNFTToEVM(contractAddress: address, contractName: name, ids: ids, fromEvm: true)
+                    tid = try await FlowNetwork.bridgeNFTToEVM(identifier: identifier, ids: ids, fromEvm: true)
                 case (.flow, .link):
                     if let coll = collection as? NFTCollection {
                         let identifier = coll.collection.path?.privatePath ?? ""

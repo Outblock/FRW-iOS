@@ -1206,20 +1206,18 @@ extension FlowNetwork {
         ])
     }
     
-    static func sendNoFlowTokenToEvm(amount: Decimal,contractAddress: String, contractName: String, contractEVMAddress:String, data: Data, gas: UInt64) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.bridge?.bridgeTokensToEvmAddress?.toFunc() ?? ""
+    static func sendNoFlowTokenToEVM(vaultIdentifier: String, amount: Decimal, recipient: String) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.bridge?.bridgeTokensToEvmAddressV2?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         let amountValue = Flow.Cadence.FValue.ufix64(amount)
         
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
-            .address(Flow.Address(hex: contractAddress)),
-            .string(contractName),
+            .string(vaultIdentifier),
             amountValue,
-            .string(contractEVMAddress),
-            data.cadenceValue,
-            .uint64(gas)
+            .string(recipient),
         ])
     }
+    
     
     static func bridgeToken(address: String,contractName: String, amount: Decimal, fromEvm: Bool, decimals: Int) async throws -> Flow.ID {
         let originCadence = (fromEvm ? CadenceManager.shared.current.bridge?.bridgeTokensFromEvm?.toFunc()
@@ -1248,18 +1246,19 @@ extension FlowNetwork {
         ])
     }
     //
-    static func bridgeNFTToEVM(contractAddress address: String, contractName name: String, ids: [UInt64], fromEvm: Bool) async throws -> Flow.ID {
-        let originCadence = (fromEvm ? CadenceManager.shared.current.bridge?.batchBridgeNFTFromEvm?.toFunc()
-        : CadenceManager.shared.current.bridge?.batchBridgeNFTToEvm?.toFunc()) ?? ""
+    
+    static func bridgeNFTToEVM(identifier: String, ids: [UInt64], fromEvm: Bool) async throws -> Flow.ID {
+        let originCadence = (fromEvm ? CadenceManager.shared.current.bridge?.batchBridgeNFTFromEvmV2?.toFunc()
+        : CadenceManager.shared.current.bridge?.batchBridgeNFTToEvmV2?.toFunc()) ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         let idMaped = fromEvm ? ids.map{ Flow.Cadence.FValue.uint256(BigUInt($0))} : ids.map { Flow.Cadence.FValue.uint64($0) }
         
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
-            .address(Flow.Address(hex: address)),
-            .string(name),
+            .string(identifier),
             .array(idMaped)
         ])
     }
+    
     
     static func bridgeNFTToAnyEVM(nftContractAddress: String, nftContractName: String, id: String, contractEVMAddress:String, data: Data, gas: UInt64) async throws -> Flow.ID {
         let originCadence = CadenceManager.shared.current.bridge?.bridgeNFTToEvmAddress?.toFunc() ?? ""
