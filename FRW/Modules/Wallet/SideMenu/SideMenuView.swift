@@ -8,7 +8,6 @@
 import Combine
 import Kingfisher
 import SwiftUI
-import SwiftUIX
 
 private let SideOffset: CGFloat = 65
 

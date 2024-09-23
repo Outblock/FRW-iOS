@@ -173,7 +173,7 @@ extension CoinRateCache {
         var model: CryptoSummaryResponse.AddPrice?
         
         if EVMAccountManager.shared.selectedAccount != nil {
-            model = addPrices.first { ($0.evmAddress == token.getAddress()) && ($0.evmAddress != nil) }
+            model = addPrices.first { ($0.evmAddress == token.getAddress()) }
         }else {
             model = addPrices.first { $0.contractName.uppercased() == token.contractName.uppercased() }
         }

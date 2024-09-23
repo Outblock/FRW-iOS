@@ -34,7 +34,12 @@ extension WalletManager {
 class WalletManager: ObservableObject {
     static let shared = WalletManager()
 
-    @Published var walletInfo: UserWalletResponse?
+    @Published var walletInfo: UserWalletResponse? {
+        didSet {
+            //TODO: remove after update new Flow Wallet SDK
+            updateFlowAccount()
+        }
+    }
     @Published var supportedCoins: [TokenModel]?
     @Published var activatedCoins: [TokenModel] = []
     @Published var coinBalances: [String: Double] = [:]
@@ -47,6 +52,8 @@ class WalletManager: ObservableObject {
 
     private var hdWallet: HDWallet?
     var flowAccountKey: Flow.AccountKey?
+    //TODO: remove after update Flow Wallet SDK
+    var phraseAccountkey: Flow.AccountKey?
 
     var mainKeychain = Keychain(service: (Bundle.main.bundleIdentifier ?? defaultBundleID) + ".local")
         .label("Lilico app backup")
@@ -502,14 +509,7 @@ extension WalletManager {
             encodedData = Data()
         }
         
-        if let existingMnemonic = getMnemonicFromKeychain(uid: uid), !existingMnemonic.isEmpty {
-            if existingMnemonic != mnemonic {
-                log.error("existingMnemonic should equal the current")
-                throw WalletError.existingMnemonicMismatch
-            }
-        } else {
-            try set(toMainKeychain: encodedData, forKey: getMnemonicStoreKey(uid: uid), comment: "Lilico user uid: \(uid)")
-        }
+        try set(toMainKeychain: encodedData, forKey: getMnemonicStoreKey(uid: uid), comment: "Lilico user uid: \(uid)")
         
         DispatchQueue.main.async {
             self.resetProperties()
@@ -542,6 +542,9 @@ extension WalletManager {
         if let uid = UserManager.shared.activatedUID {
             if !restoreMnemonicFromKeychain(uid: uid), UserManager.shared.userType == .phrase {
                 HUD.error(title: "no_private_key".localized)
+            }
+            if let hdWallet = hdWallet {
+                //TODO:
             }
         }
     }
@@ -606,6 +609,7 @@ extension WalletManager {
         
         try await fetchSupportedCoins()
         try await fetchActivatedCoins()
+        await fetchEVMCoins()
         try await fetchBalance()
         try await fetchAccessible()
         ChildAccountManager.shared.refresh()
@@ -666,6 +670,21 @@ extension WalletManager {
         
         PageCache.cache.set(value: list, forKey: CacheKeys.activatedCoins.rawValue)
     }
+    
+    private func fetchEVMCoins() async {
+        guard EVMAccountManager.shared.selectedAccount != nil else {
+            return
+        }
+        do {
+            let tokenResponse: SingleTokenResponse = try await Network.requestWithRawModel(GithubEndpoint.EVMTokenList)
+            let coins: [TokenModel] = tokenResponse.conversion()
+            DispatchQueue.main.async {
+                self.supportedCoins?.append(contentsOf: coins)
+            }
+        }catch {
+            log.error("[EVM] fetch token list failed.\(error.localizedDescription)")
+        }
+    }
 
     func fetchBalance() async throws {
         let address = selectedAccountAddress
@@ -723,7 +742,14 @@ extension WalletManager {
             log.info("[EVM] load evm token and balance")
             list.forEach { item in
                 if item.flowBalance > 0 {
-                    self.activatedCoins.append(item.toTokenModel())
+                    let result = self.supportedCoins?.first(where: { model in
+                        model.getAddress() == item.address
+                    })
+                    if let result = result {
+                        self.activatedCoins.append(result)
+                    }else {
+                        self.activatedCoins.append(item.toTokenModel())
+                    }
                     self.coinBalances[item.symbol] = item.flowBalance
                 }
             }
@@ -828,7 +854,7 @@ extension WalletManager: FlowSigner {
         if userSecretSign() {
             return flowAccountKey?.hashAlgo ?? .SHA2_256
         }
-        return .SHA2_256
+        return phraseAccountkey?.hashAlgo ?? .SHA2_256
     }
     
     public var signatureAlgo: Flow.SignatureAlgorithm {
@@ -836,7 +862,7 @@ extension WalletManager: FlowSigner {
         if userSecretSign() {
             return flowAccountKey?.signAlgo ?? .ECDSA_SECP256k1
         }
-        return .ECDSA_SECP256k1
+        return phraseAccountkey?.signAlgo ?? .ECDSA_SECP256k1
     }
     
     public var keyIndex: Int {
@@ -844,7 +870,7 @@ extension WalletManager: FlowSigner {
         if userSecretSign() {
             return flowAccountKey?.index ?? 0
         }
-        return 0
+        return phraseAccountkey?.index ?? 0
     }
     
     public func sign(transaction: Flow.Transaction, signableData: Data) async throws -> Data {
@@ -975,6 +1001,30 @@ extension WalletManager: FlowSigner {
         if flowAccountKey == nil {
             log.error("[Account] not find account")
         }
+    }
+    
+    func updateFlowAccount() {
+        guard let userId = walletInfo?.id,
+                let hdWallet = hdWallet,
+                let address = getPrimaryWalletAddress() else {
+            return
+        }
+        Task {
+            do {
+                let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
+                let sortedAccount = account.keys.filter { $0.weight >= 1000 }
+                phraseAccountkey = sortedAccount.filter {
+                    $0.publicKey.description == hdWallet.getPublicKey()
+                }.first
+                if phraseAccountkey == nil {
+                    log.error("[Account] import Phrase flow account key not find.")
+                }
+            }catch {
+                log.error("[Account] import Phrase fetch fail.\(error.localizedDescription)")
+            }
+        }
+        
+        
     }
 }
 

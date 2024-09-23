@@ -12,6 +12,7 @@ enum GithubEndpoint {
     case collections
     case ftTokenList
     case EVMNFTList
+    case EVMTokenList
 }
 
 extension GithubEndpoint: TargetType {
@@ -53,6 +54,13 @@ extension GithubEndpoint: TargetType {
             case .previewnet:
                 return "/Outblock/token-list-jsons/outblock/jsons/previewnet/flow/nfts.json"
             }
+        case .EVMTokenList:
+            switch LocalUserDefaults.shared.flowNetwork {
+            case .mainnet:
+                return "/Outblock/token-list-jsons/outblock/jsons/mainnet/evm/default.json"
+            default:
+                return "/Outblock/token-list-jsons/outblock/jsons/testnet/evm/default.json"
+            }
         }
     }
 
@@ -62,7 +70,7 @@ extension GithubEndpoint: TargetType {
 
     var task: Task {
         switch self {
-        case .collections, .ftTokenList, .EVMNFTList:
+        case .collections, .ftTokenList, .EVMNFTList, .EVMTokenList:
             return .requestPlain
         }
     }

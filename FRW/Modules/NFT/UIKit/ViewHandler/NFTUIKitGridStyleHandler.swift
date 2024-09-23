@@ -38,6 +38,7 @@ class NFTUIKitGridStyleHandler: NSObject {
         view.showsHorizontalScrollIndicator = false
         view.showsVerticalScrollIndicator = false
         view.register(NFTUIKitItemCell.self, forCellWithReuseIdentifier: "NFTUIKitItemCell")
+        view.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "UICollectionViewCell")
         
         view.setRefreshingAction { [weak self] in
             guard let self = self else {
@@ -221,9 +222,13 @@ extension NFTUIKitGridStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let nft = dataModel.nfts[indexPath.item]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NFTUIKitItemCell", for: indexPath) as! NFTUIKitItemCell
-        cell.config(nft)
+        
+        if let nft = dataModel.nfts[safe: indexPath.item] {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NFTUIKitItemCell", for: indexPath) as! NFTUIKitItemCell
+            cell.config(nft)
+            return cell
+        }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UICollectionViewCell", for: indexPath)
         return cell
     }
     

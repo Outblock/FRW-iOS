@@ -9210,8 +9210,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftUIX/SwiftUIX";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.2;
 			};
 		};
 		15DE22D7277DD53000B5EE03 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
@@ -9284,7 +9284,7 @@
 			repositoryURL = "https://github.com/web3swift-team/web3swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.2.0;
+				minimumVersion = 3.2.1;
 			};
 		};
 		4E5D4FAA2AEF9A5A00DC419B /* XCRemoteSwiftPackageReference "DeviceGuru" */ = {

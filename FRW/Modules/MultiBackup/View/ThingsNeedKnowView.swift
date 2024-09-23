@@ -19,27 +19,25 @@ struct ThingsNeedKnowView: RouteableView {
     }
     
     var body: some View {
-        VStack {
-            VStack(alignment: .leading) {
+        VStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text("things_you".localized)
-                    .font(.LL.largeTitle)
-                    .bold()
-                    .foregroundColor(Color.LL.rebackground)
+                    .font(.inter(size: 36, weight: .heavy))
+                    .foregroundColor(Color.Theme.Text.black)
                 HStack {
                     Text("need_to".localized)
-                        .bold()
-                        .foregroundColor(Color.LL.rebackground)
+                        .font(.inter(size: 36, weight: .heavy))
+                        .foregroundColor(Color.Theme.Text.black)
 
                     Text("know".localized)
-                        .bold()
-                        .foregroundColor(Color.LL.orange)
+                        .font(.inter(size: 36, weight: .heavy))
+                        .foregroundColor(Color.Theme.Accent.green)
                 }
-                .font(.LL.largeTitle)
 
                 Text("secret_phrase_tips".localized)
-                    .font(.LL.body)
-                    .foregroundColor(.LL.note)
-                    .padding(.top, 1)
+                    .font(.inter(size: 14))
+                    .foregroundColor(.Theme.Text.black8)
+                    .padding(.top, 24)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -50,6 +48,7 @@ struct ThingsNeedKnowView: RouteableView {
                     "multi_check_phrase_3".localized
                 ], allChecked: $allCheck)
             }
+            .padding(.top, 24)
             Spacer()
             VPrimaryButton(model: ButtonStyle.primary,
                            state: buttonState,

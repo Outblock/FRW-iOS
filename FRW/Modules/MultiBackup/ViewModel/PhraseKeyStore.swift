@@ -28,15 +28,8 @@ struct PhraseKeyStore {
         defer {
             encodedData = Data()
         }
-        
-        if let existingMnemonic = getMnemonicFromKeychain(uid: userId) {
-            if existingMnemonic != mnemonic {
-                log.error("existingMnemonic should equal the current")
-                throw WalletError.existingMnemonicMismatch
-            }
-        } else {
-            try mainKeychain.comment("Flow User Id:\(userId)").set(encodedData, key: userId)
-        }
+        let key = createCurrentKey(userId: userId)
+        try mainKeychain.comment("Flow User Id:\(userId)").set(encodedData, key: userId)
     }
     
     func getMnemonicFromKeychain(uid: String) -> String? {
@@ -55,5 +48,12 @@ struct PhraseKeyStore {
         }
         
         return nil
+    }
+    
+    func createCurrentKey(userId: String) -> String {
+        let tag = userId + "-backup-"
+        let list =  mainKeychain.allKeys()
+        let backupList = list.filter{ $0.contains(tag) }
+        return tag + "\(backupList)"
     }
 }

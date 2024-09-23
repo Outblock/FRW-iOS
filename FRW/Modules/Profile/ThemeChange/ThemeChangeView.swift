@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import SwiftUIX
+
 
 struct ThemeChangeView: RouteableView {
     @StateObject private var vm = ThemeChangeViewModel()
@@ -64,7 +64,7 @@ struct ThemeChangeView: RouteableView {
                         themeItemView.padding(.vertical, 24)
                         BaseDivider()
                         autoItemView
-                            .hoverEffect(.lift)
+                            .hoverEffect(SwiftUI.HoverEffect.lift)
                     }
                     //            .roundedBg(cornerRadius: 16, fillColor: .LL.bgForIcon)
                     .background(.LL.bgForIcon)

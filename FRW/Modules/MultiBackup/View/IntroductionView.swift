@@ -49,8 +49,8 @@ struct IntroductionView: RouteableView {
     }
     
     func onClick() {
-        confirmClosure()
         Router.pop()
+        confirmClosure()
     }
 }
 

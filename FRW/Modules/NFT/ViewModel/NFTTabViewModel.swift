@@ -9,7 +9,7 @@ import Foundation
 import Haneke
 import Kingfisher
 
-import SwiftUIX
+import SwiftUI
 
 extension NFTTabScreen {
     enum ViewStyle {

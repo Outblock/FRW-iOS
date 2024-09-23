@@ -450,7 +450,7 @@ extension WalletSendAmountView {
                 .clipShape(Circle())
 
                 // contact name
-                Text(contact.user?.name ?? contact.contactName ?? "name")
+                Text(contact.displayName)
                     .foregroundColor(.LL.Neutrals.neutrals1)
                     .font(.inter(size: 14, weight: .semibold))
                     .lineLimit(1)

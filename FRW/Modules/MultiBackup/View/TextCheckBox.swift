@@ -15,10 +15,9 @@ struct TextCheckBox: View {
     
     var body: some View {
         HStack(alignment: .center, spacing: 18) {
-            // Body2
             Text(text)
                 .font(.inter(size: 14))
-                .foregroundStyle(Color.Theme.Text.black3)
+                .foregroundStyle(Color.Theme.Text.black)
                 .frame(alignment: .topLeading)
             Spacer()
             Image(isCheck ? "icon_check_rounde_1" : "icon_check_rounde_0")

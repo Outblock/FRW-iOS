@@ -447,7 +447,7 @@ extension WalletViewModel {
         
         // Stake
         if currentNetwork.isMainnet {
-            if ChildAccountManager.shared.selectedChildAccount != nil {
+            if ChildAccountManager.shared.selectedChildAccount != nil || EVMAccountManager.shared.selectedAccount != nil {
                 self.showStakeButton = false
             }else {
                 self.showStakeButton = true

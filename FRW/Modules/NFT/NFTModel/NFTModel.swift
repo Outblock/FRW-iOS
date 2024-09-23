@@ -129,7 +129,7 @@ struct NFTModel: Codable, Hashable, Identifiable {
             if response.postMedia?.isSvg == true {
                 image = URL(string: imgUrl) ?? URL(string: placeholder)!
                 isSVG = true
-            } else if let data = imgUrl.toBase64String() {
+            } else if let data = imgUrl.parseBase64ToSVG() {
                 imageData = data
                 isSVG = true
                 image = URL(string: placeholder)!
@@ -335,7 +335,7 @@ class CollectionItem: Identifiable, ObservableObject {
 }
 
 extension String {
-    fileprivate func toBase64String() -> String? {
+    func parseBase64ToSVG() -> String? {
         if self.contains("data:image/svg+xml;base64,") {
             if let baseStr =  self.components(separatedBy: "base64,").last {
                 return baseStr
