@@ -483,7 +483,7 @@ struct WalletHomeView: View {
                         .foregroundColor(Color.Theme.Text.black3)
                         .frame(width: 24, height: 24)
                 }
-                .visibility(wm.isSelectedChildAccount ? .gone : .visible)
+                .visibility(vm.showAddTokenButton ? .visible : .gone )
                 .buttonStyle(ScaleButtonStyle())
                 
             }

@@ -85,7 +85,7 @@ class WalletViewModel: ObservableObject {
     
     @Published var showHeaderMask = false
     
-    @Published var showAddButton: Bool = true
+    @Published var showAddTokenButton: Bool = true
     @Published var showSwapButton: Bool = true
     @Published var showStakeButton: Bool = true
     @Published var showHorLayout: Bool = false
@@ -188,11 +188,13 @@ class WalletViewModel: ObservableObject {
         EVMAccountManager.shared.$accounts
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
+                self?.refreshButtonState()
                 self?.updateMoveAsset()
             }.store(in: &cancelSets)
         ChildAccountManager.shared.$childAccounts
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
+                self?.refreshButtonState()
                 self?.updateMoveAsset()
             }.store(in: &cancelSets)
     }
@@ -430,12 +432,18 @@ extension WalletViewModel {
 
 extension WalletViewModel {
     func refreshButtonState() {
-        self.showAddButton =  ChildAccountManager.shared.selectedChildAccount == nil
+        let isNotPrimary = ChildAccountManager.shared.selectedChildAccount != nil || EVMAccountManager.shared.selectedAccount != nil
+        if  isNotPrimary {
+            self.showAddTokenButton =  false
+        }else {
+            self.showAddTokenButton =  true
+        }
+        
         
         // Swap
         if (RemoteConfigManager.shared.config?.features.swap ?? false) == true {
             // don't show when current is Linked account
-            if ChildAccountManager.shared.selectedChildAccount != nil {
+            if isNotPrimary {
                 self.showSwapButton = false
             }else {
                 self.showSwapButton = true
@@ -447,7 +455,7 @@ extension WalletViewModel {
         
         // Stake
         if currentNetwork.isMainnet {
-            if ChildAccountManager.shared.selectedChildAccount != nil || EVMAccountManager.shared.selectedAccount != nil {
+            if isNotPrimary {
                 self.showStakeButton = false
             }else {
                 self.showStakeButton = true
@@ -460,7 +468,7 @@ extension WalletViewModel {
        
         // buy
         if RemoteConfigManager.shared.config?.features.onRamp ?? false == true && flow.chainID == .mainnet {
-            if (ChildAccountManager.shared.selectedChildAccount != nil) {
+            if isNotPrimary {
                 self.showBuyButton = false
             }
             else {
