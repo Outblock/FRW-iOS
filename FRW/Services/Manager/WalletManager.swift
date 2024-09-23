@@ -64,7 +64,7 @@ class WalletManager: ObservableObject {
     private var cancellableSet = Set<AnyCancellable>()
     
     var walletAccount: WalletAccount = .init()
-    let balanceProvider = BalanceProvider()
+    @Published var balanceProvider = BalanceProvider()
     
     var currentAccount: WalletAccount.User {
         WalletManager.shared.walletAccount.readInfo(at: getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? "")
@@ -743,7 +743,7 @@ extension WalletManager {
             list.forEach { item in
                 if item.flowBalance > 0 {
                     let result = self.supportedCoins?.first(where: { model in
-                        model.getAddress() == item.address
+                        model.evmAddress == item.address
                     })
                     if let result = result {
                         self.activatedCoins.append(result)

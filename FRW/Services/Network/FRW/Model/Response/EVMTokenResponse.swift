@@ -24,7 +24,7 @@ struct EVMTokenResponse: Codable {
     func toTokenModel() -> TokenModel {
         
         let model = TokenModel(name: name,
-                               address: FlowNetworkModel(mainnet: nil, testnet: nil, crescendo: nil, previewnet: address),
+                               address: FlowNetworkModel(mainnet: address, testnet: address, crescendo: address, previewnet: address),
                                contractName: "",
                                storagePath: FlowTokenStoragePath(balance: "", vault: "", receiver: ""),
                                decimal: decimals,

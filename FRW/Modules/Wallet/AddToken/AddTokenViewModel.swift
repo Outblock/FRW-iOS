@@ -5,9 +5,9 @@
 //  Created by Selina on 27/6/2022.
 //
 
-import SwiftUI
 import Combine
 import Flow
+import SwiftUI
 
 extension AddTokenViewModel {
     class Section: ObservableObject, Identifiable, Indexable {
@@ -67,7 +67,17 @@ class AddTokenViewModel: ObservableObject {
             return
         }
         
-        regroup(supportedTokenList)
+        var seenNames = Set<String>()
+        var uniqueList = [TokenModel]()
+            
+        for token in supportedTokenList {
+            if !seenNames.contains(token.contractId) {
+                uniqueList.append(token)
+                seenNames.insert(token.contractId)
+            }
+        }
+        
+        regroup(uniqueList)
     }
     
     private func regroup(_ tokens: [TokenModel]) {
@@ -96,12 +106,12 @@ class AddTokenViewModel: ObservableObject {
 extension AddTokenViewModel {
     var searchResults: [AddTokenViewModel.Section] {
         if searchText.isEmpty {
-            return self.sections
+            return sections
         }
 
         var searchSections: [AddTokenViewModel.Section] = []
 
-        for section in self.sections {
+        for section in sections {
             var list = [TokenModel]()
 
             for token in section.tokenList {
@@ -130,7 +140,6 @@ extension AddTokenViewModel {
         }
 
         return searchSections
-
     }
     
     func isDisabledToken(_ token: TokenModel) -> Bool {
