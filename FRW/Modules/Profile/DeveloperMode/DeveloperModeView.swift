@@ -70,18 +70,6 @@ struct DeveloperModeView: RouteableView {
                                 .onTapGestureOnBackground {
                                     walletManager.changeNetwork(.testnet)
                                 }
-                            
-                            Divider()
-                            Cell(sysImageTuple: (isPreviewnet ? .checkmarkSelected : .checkmarkUnselected, isPreviewnet ? LocalUserDefaults.FlowNetworkType.previewnet.color : .LL.Neutrals.neutrals1), title: "Previewnet", desc: isPreviewnet ? "Selected" : "", btnTitle: walletManager.isPreviewEnabled ? nil : "Enable", btnAction: {
-                                if !walletManager.isPreviewEnabled {
-                                    vm.enablePreviewnetAction()
-                                }
-                            }, titleAlpha: walletManager.isPreviewEnabled ? 1 : 0.5)
-                                .onTapGestureOnBackground {
-                                    if walletManager.isPreviewEnabled {
-                                        walletManager.changeNetwork(.previewnet)
-                                    }
-                                }
                         }
                         .background(.LL.bgForIcon)
                     }
@@ -167,6 +155,31 @@ struct DeveloperModeView: RouteableView {
                             .padding(.horizontal, 16)
                             
                             
+                            HStack {
+                                Text("Script Version")
+                                    .font(.inter(size: 17, weight: .medium))
+                                    .foregroundStyle(Color.Theme.Text.black8)
+                                Spacer()
+                                
+                                Text("\(CadenceManager.shared.version)")
+                                    .font(.inter(size: 17))
+                                    .foregroundStyle(Color.Theme.Text.black8)
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+                            
+                            HStack {
+                                Text("Cadence Version")
+                                    .font(.inter(size: 17, weight: .medium))
+                                    .foregroundStyle(Color.Theme.Text.black8)
+                                Spacer()
+                                
+                                Text("\(CadenceManager.shared.current.version)")
+                                    .font(.inter(size: 17))
+                                    .foregroundStyle(Color.Theme.Text.black8)
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
                         }
                         .background(.LL.bgForIcon)
                     }
