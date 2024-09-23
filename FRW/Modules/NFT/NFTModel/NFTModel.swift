@@ -110,7 +110,7 @@ struct NFTModel: Codable, Hashable, Identifiable {
     var collection: NFTCollectionInfo?
     
     
-    var imageData: String? = nil
+    var imageSVGStr: String? = nil
     
     var imageURL: URL {
         if isSVG {
@@ -129,8 +129,8 @@ struct NFTModel: Codable, Hashable, Identifiable {
             if response.postMedia?.isSvg == true {
                 image = URL(string: imgUrl) ?? URL(string: placeholder)!
                 isSVG = true
-            } else if let data = imgUrl.parseBase64ToSVG() {
-                imageData = data
+            } else if let svgStr = imgUrl.parseBase64ToSVG() {
+                imageSVGStr = svgStr.decodeBase64WithFixed()
                 isSVG = true
                 image = URL(string: placeholder)!
             }
@@ -342,5 +342,22 @@ extension String {
             }
         }
         return nil
+    }
+    
+    func decodeBase64WithFixed() -> String? {
+        let cleanedBase64String = self
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "[^A-Za-z0-9+/=]", with: "", options: .regularExpression)
+
+        let requiredPadding = cleanedBase64String.count % 4
+        let paddingLength = (4 - requiredPadding) % 4
+        let paddedBase64String = cleanedBase64String + String(repeating: "=", count: paddingLength)
+
+        
+        if let data = Data(base64Encoded: paddedBase64String) {
+            return String(data: data, encoding: .utf8)
+        } else {
+            return nil
+        }
     }
 }

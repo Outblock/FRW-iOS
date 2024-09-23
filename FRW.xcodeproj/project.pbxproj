@@ -917,6 +917,8 @@
 		4E0D34A42A8B4E2900BC6E43 /* e-Ukraine-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349D2A8B4E2900BC6E43 /* e-Ukraine-Light.ttf */; };
 		4E0D34A52A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349E2A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf */; };
 		4E0D34A62A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E0D349E2A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf */; };
+		4E131A9A2CA17389002B258D /* PocketSVG in Frameworks */ = {isa = PBXBuildFile; productRef = 4E131A992CA17389002B258D /* PocketSVG */; };
+		4E131A9C2CA1739A002B258D /* PocketSVG in Frameworks */ = {isa = PBXBuildFile; productRef = 4E131A9B2CA1739A002B258D /* PocketSVG */; };
 		4E1A8B662B71A47A00485EDE /* MultiBackupCreatePinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B652B71A47A00485EDE /* MultiBackupCreatePinView.swift */; };
 		4E1A8B672B71A47A00485EDE /* MultiBackupCreatePinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B652B71A47A00485EDE /* MultiBackupCreatePinView.swift */; };
 		4E1A8B692B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B682B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift */; };
@@ -2813,6 +2815,7 @@
 				6AEA375A28A51792004545D4 /* MJRefresh in Frameworks */,
 				4E539C892BC6269E0080BAF8 /* Web3Wallet in Frameworks */,
 				15185ED8278A73A3006B74A9 /* SPConfetti in Frameworks */,
+				4E131A9A2CA17389002B258D /* PocketSVG in Frameworks */,
 				6ABFE5A129A711ED00AA1688 /* Gzip in Frameworks */,
 				15832B642867641D0066046D /* GTMSessionFetcherCore in Frameworks */,
 				4E9D98DF2B9DEAEF00A70879 /* TrustWeb3Provider in Frameworks */,
@@ -2881,6 +2884,7 @@
 				152BB09428AE8FD100B2A2AA /* Lottie in Frameworks */,
 				6AEA374028A49DBE004545D4 /* MJRefresh in Frameworks */,
 				4E539C872BC626770080BAF8 /* Web3Wallet in Frameworks */,
+				4E131A9C2CA1739A002B258D /* PocketSVG in Frameworks */,
 				15C58C442868A4EE00BD4FC6 /* SPConfetti in Frameworks */,
 				1549CF03299A10C2002B37A5 /* Gzip in Frameworks */,
 				15C58C452868A4EE00BD4FC6 /* GTMSessionFetcherCore in Frameworks */,
@@ -6038,6 +6042,7 @@
 				4E5F2F122C192F3B008589C4 /* WalletConnectNotify */,
 				4E2E8CBC2C61B9A800095D5B /* LogView */,
 				4E660F1D2C80B43E00E5239E /* CollectionViewPagingLayout */,
+				4E131A992CA17389002B258D /* PocketSVG */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 154B8928276A1EEB00780E93 /* FRW-dev.app */;
@@ -6120,6 +6125,7 @@
 				4E5F2F142C192F4F008589C4 /* WalletConnectNotify */,
 				4E2E8CBE2C61BB2300095D5B /* LogView */,
 				4E660F1B2C80B42F00E5239E /* CollectionViewPagingLayout */,
+				4E131A9B2CA1739A002B258D /* PocketSVG */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 15C58C6D2868A4EE00BD4FC6 /* FRW.app */;
@@ -6293,6 +6299,7 @@
 				4E5F2F0D2C11F036008589C4 /* XCRemoteSwiftPackageReference "mobile-sdk-ios" */,
 				4E2E8CBB2C61B9A800095D5B /* XCRemoteSwiftPackageReference "LogView" */,
 				4E660F1A2C80B42F00E5239E /* XCRemoteSwiftPackageReference "CollectionViewPagingLayout" */,
+				4E131A982CA17389002B258D /* XCRemoteSwiftPackageReference "PocketSVG" */,
 			);
 			productRefGroup = 15EC9DEF274FD1FC00F70CD9 /* Products */;
 			projectDirPath = "";
@@ -9263,6 +9270,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		4E131A982CA17389002B258D /* XCRemoteSwiftPackageReference "PocketSVG" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pocketsvg/PocketSVG";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.7.3;
+			};
+		};
 		4E1DD8C52B1622030055E510 /* XCRemoteSwiftPackageReference "Instabug-SP" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Instabug/Instabug-SP";
@@ -9748,6 +9763,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 15F517F928C6574C00504FDC /* XCRemoteSwiftPackageReference "atlantis" */;
 			productName = Atlantis;
+		};
+		4E131A992CA17389002B258D /* PocketSVG */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E131A982CA17389002B258D /* XCRemoteSwiftPackageReference "PocketSVG" */;
+			productName = PocketSVG;
+		};
+		4E131A9B2CA1739A002B258D /* PocketSVG */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E131A982CA17389002B258D /* XCRemoteSwiftPackageReference "PocketSVG" */;
+			productName = PocketSVG;
 		};
 		4E1DD8C62B1622030055E510 /* Instabug */ = {
 			isa = XCSwiftPackageProductDependency;

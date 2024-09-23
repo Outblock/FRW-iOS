@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import Kingfisher
 import SwiftUI
+import PocketSVG
 
 class NFTUIKitItemCell: UICollectionViewCell {
     private var item: NFTModel?
@@ -93,7 +94,12 @@ class NFTUIKitItemCell: UICollectionViewCell {
     
     func config(_ item: NFTModel) {
         self.item = item
-        if let svg = isSVGImage(url: item.image.absoluteString) {
+        if let svgStr = item.imageSVGStr {
+            if let img = generateSVGImage(svgString: svgStr) {
+                iconImageView.image = img
+            }else {
+                iconImageView.image = UIImage(named: "placeholder")
+            }
             
         }else {
             iconImageView.kf.setImage(with: item.isSVG ? item.image.absoluteString.convertedSVGURL() : item.image,
@@ -111,33 +117,26 @@ class NFTUIKitItemCell: UICollectionViewCell {
         }
     }
     
-    func isSVGImage(url: String) -> String? {
-        if let str = url.parseBase64ToSVG() {
-            return str
-        }
-        return nil
+    
+    func generateSVGImage(svgString: String) -> UIImage? {
+        let width = NFTUIKitItemCell.itemWidth()
+        
+        let svgLayer = SVGLayer()
+        svgLayer.paths = SVGBezierPath.paths(fromSVGString: svgString)
+        let originRect = SVGBoundingRectForPaths(svgLayer.paths)
+        svgLayer.frame = CGRect(x: 0, y: 0, width: width, height: width * originRect.height / originRect.width)
+        return snapshotImage(for: svgLayer)
     }
     
-    func decodeBase64ToString(_ base64String: String) -> String? {
-        // 清理 Base64 字符串，去除无效字符和空白字符
-        let cleanedBase64String = base64String
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .replacingOccurrences(of: "[^A-Za-z0-9+/=]", with: "", options: .regularExpression)
-
-        // 计算所需的填充字符数量（如果需要）
-        let requiredPadding = cleanedBase64String.count % 4
-        let paddingLength = (4 - requiredPadding) % 4
-        let paddedBase64String = cleanedBase64String + String(repeating: "=", count: paddingLength)
-
-        // 尝试将 Base64 字符串解码为 Data
-        if let data = Data(base64Encoded: paddedBase64String) {
-            // 使用指定的字符编码（例如 UTF-8）将 Data 转换回字符串
-            return String(data: data, encoding: .utf8)
-        } else {
-            // 解码失败，返回 nil
-            return nil
-        }
+    func snapshotImage(for layer: CALayer) -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(layer.bounds.size, false, UIScreen.main.scale)
+        guard let context = UIGraphicsGetCurrentContext() else { return nil }
+        layer.render(in: context)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image
     }
+
     
     static func calculateSize() -> CGSize {
         let width = itemWidth()
