@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ThingsNeedKnowView: RouteableView {
+    
+    @StateObject var viewModel = ThingsNeedKnowViewModel()
+    
     var title: String {
         return ""
     }
@@ -54,7 +57,7 @@ struct ThingsNeedKnowView: RouteableView {
                            state: buttonState,
                            action: {
                 onConfirm()
-            }, title: "confirm_tag".localized)
+            }, title: "create_backup".localized)
             .padding(.bottom)
         }
         .padding(.horizontal, 28)
@@ -63,7 +66,7 @@ struct ThingsNeedKnowView: RouteableView {
     }
     
     func onConfirm() {
-        Router.route(to: RouteMap.Backup.createPhraseBackup)
+        viewModel.onCreate()
     }
 }
 

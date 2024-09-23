@@ -26,6 +26,15 @@ class NFTUIKitItemCell: UICollectionViewCell {
         return view
     }()
     
+    private lazy var svgView: SVGUIView = {
+        let view = SVGUIView()
+        view.clipsToBounds = true
+        view.snp.makeConstraints { make in
+            make.width.equalTo(view.snp.height)
+        }
+        return view
+    }()
+    
     private lazy var inaccessibleLabel: UIView = {
         let container = UIView()
         container.layer.cornerRadius = 4
@@ -85,6 +94,12 @@ class NFTUIKitItemCell: UICollectionViewCell {
             make.left.top.right.equalToSuperview()
         }
         
+        contentView.addSubview(svgView)
+        svgView.alpha = 0
+        svgView.snp.makeConstraints { make in
+            make.left.top.right.equalToSuperview()
+        }
+        
         contentView.addSubview(stackView)
         stackView.snp.makeConstraints { make in
             make.left.right.equalTo(iconImageView)
@@ -95,13 +110,17 @@ class NFTUIKitItemCell: UICollectionViewCell {
     func config(_ item: NFTModel) {
         self.item = item
         if let svgStr = item.imageSVGStr {
-            if let img = generateSVGImage(svgString: svgStr) {
-                iconImageView.image = img
-            }else {
-                iconImageView.image = UIImage(named: "placeholder")
-            }
+            svgView.alpha = 1
+            svgView.loadSVG(svg: svgStr)
+            iconImageView.image = nil
+//            if let img = generateSVGImage(svgString: svgStr) {
+//                iconImageView.image = img
+//            }else {
+//                iconImageView.image = UIImage(named: "placeholder")
+//            }
             
         }else {
+            svgView.alpha = 0
             iconImageView.kf.setImage(with: item.isSVG ? item.image.absoluteString.convertedSVGURL() : item.image,
                                       placeholder: UIImage(named: "placeholder"))
         }

@@ -7,14 +7,18 @@
 
 import SwiftUI
 
-struct CreateRecoveryPhraseBackup: RouteableView {
+struct ShowRecoveryPhraseBackup: RouteableView {
     
-    @StateObject var viewModel = CreateRecoveryPhraseBackupViewModel()
+    @StateObject var viewModel: CreateRecoveryPhraseBackupViewModel
     
     var title: String {
         return "backup".localized
     }
     
+    
+    init(mnemonic: String) {
+        _viewModel = StateObject(wrappedValue: CreateRecoveryPhraseBackupViewModel(mnemonic: mnemonic))
+    }
     
     var body: some View {
         VStack {
@@ -42,7 +46,6 @@ struct CreateRecoveryPhraseBackup: RouteableView {
                             Spacer()
                         }
                     }
-                    .blur(radius: viewModel.isBlur ? 10 : 0)
                     .padding(.vertical, 20)
                     .padding(.horizontal, 20)
                     .overlay {
@@ -52,7 +55,6 @@ struct CreateRecoveryPhraseBackup: RouteableView {
                         }
                         .allowsHitTesting(false)
                     }
-                    .animation(.linear(duration: 0.2), value: viewModel.isBlur)
                     .padding(.top, 20)
                     
                     VStack(alignment: .leading) {
@@ -94,7 +96,7 @@ struct CreateRecoveryPhraseBackup: RouteableView {
             VPrimaryButton(model: ButtonStyle.primary,
                            action: {
                                viewModel.onCreate()
-                           }, title: "create_backup".localized)
+                           }, title: "done".localized)
 
             .padding(.bottom, 20)
         }
@@ -107,5 +109,5 @@ struct CreateRecoveryPhraseBackup: RouteableView {
 }
 
 #Preview {
-    CreateRecoveryPhraseBackup()
+    ShowRecoveryPhraseBackup(mnemonic: "")
 }

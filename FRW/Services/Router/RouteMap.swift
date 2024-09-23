@@ -117,7 +117,7 @@ extension RouteMap {
         
         case introduction(IntroductionView.Topic, EmptyClosure, Bool)
         case thingsNeedKnowOnBackup
-        case createPhraseBackup
+        case showRecoveryPhraseBackup(String)
         case backupCompleted(String)
     }
 }
@@ -165,8 +165,8 @@ extension RouteMap.Backup: RouterTarget {
             }
         case .thingsNeedKnowOnBackup:
             navi.push(content: ThingsNeedKnowView())
-        case .createPhraseBackup:
-            navi.push(content: CreateRecoveryPhraseBackup())
+        case .showRecoveryPhraseBackup(let mnemonic):
+            navi.push(content: ShowRecoveryPhraseBackup(mnemonic: mnemonic))
         case .backupCompleted(let mnemonic):
             navi.push(content: RecoveryPhraseBackupResultView(mnemonic: mnemonic))
         }
