@@ -54,14 +54,19 @@ class NFTTransferViewModel: ObservableObject {
     }
     
     func checkNFTReachable() {
-        Task {
-            
-            guard let toAddress = targetContact.address else {
-                return
-            }
-            let result = NFTCollectionStateManager.share.isTokenAdded(toAddress)
-            self.isValidNFT = result
+        guard let toAddress = targetContact.address else {
+            return
         }
+        if fromTargetContent.address == toAddress {
+            self.isValidNFT = true
+            return
+        }
+        if EVMAccountManager.shared.selectedAccount != nil ,let identifier = nft.response.flowIdentifier {
+            self.isValidNFT = true
+            return
+        }
+        let result = NFTCollectionStateManager.share.isTokenAdded(toAddress)
+        self.isValidNFT = result
     }
     
     func sendAction() {
@@ -136,18 +141,15 @@ class NFTTransferViewModel: ObservableObject {
                     tid = try await FlowNetwork.transferNFT(to: Flow.Address(hex: toAddress), nft: nft)
                 case (.flow, .coa):
                     let nftId = nft.response.id
-                    guard let identifier = self.nft.collection?.flowIdentifier, 
-                            let IdInt = UInt64(nftId)
-                    else {
+                    let identifier = self.nft.collection?.flowIdentifier ?? nft.response.flowIdentifier
+                    guard let identifier, let IdInt = UInt64(nftId) else {
                         throw NFTError.sendInvalidAddress
                     }
                     tid = try await FlowNetwork.bridgeNFTToEVM(identifier: identifier, ids: [IdInt], fromEvm: false)
                 case (.flow, .eoa):
                     log.debug("[NFT] flow to eoa send")
-                    let erc721 = try await FlowProvider.Web3.erc721NFTContract()
                     let nftId = nft.response.id
-                    
-                    guard let nftAddress = self.nft.collection?.address, let nftName = nft.collection?.contractName,
+                    guard let nftAddress = self.nft.collection?.address,
                           let identifier = nft.collection?.flowIdentifier ?? nft.response.flowIdentifier,
                           let evmContractAddress = await NFTCollectionConfig.share.get(from: nftAddress)?.evmAddress?.stripHexPrefix()
                     else {
@@ -157,10 +159,10 @@ class NFTTransferViewModel: ObservableObject {
                     
                 case (.coa, .flow):
                     let nftId = nft.response.id
-                    guard let identifier = nft.collection?.flowIdentifier else {
+                    guard let identifier = nft.collection?.flowIdentifier ?? nft.response.flowIdentifier else {
                         throw NFTError.noCollectionInfo
                     }
-                    if primaryAddress == toAddress {
+                    if primaryAddress.lowercased() == toAddress.lowercased() {
                         guard let IdInt = UInt64(nftId)  else {
                             throw NFTError.sendInvalidAddress
                         }
@@ -201,7 +203,7 @@ class NFTTransferViewModel: ObservableObject {
                     else { throw NFTError.sendInvalidAddress }
                     let identifier = nft.publicIdentifier
                     let childAddr = fromChildAccount?.addr ?? currentAddress
-                    if toAddress == primaryAddress {
+                    if toAddress.lowercased() == primaryAddress.lowercased() {
                         tid = try await FlowNetwork.moveNFTToParent(nftId: nftId, childAddress: childAddr, identifier: identifier, collection: collection)
                     }else {
                         tid = try await FlowNetwork.sendChildNFT(nftId: nftId, childAddress: childAddr,toAddress: toAddress, identifier: identifier, collection: collection)

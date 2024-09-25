@@ -187,7 +187,7 @@ extension EVMAccountManager {
     }
     
     func select(_ account: EVMAccountManager.Account?) {
-        if selectedAccount?.address == account?.address {
+        if selectedAccount?.address.lowercased() == account?.address.lowercased() {
             return
         }
         DispatchQueue.main.async {
@@ -253,7 +253,7 @@ extension EVMAccountManager {
         
         var isSelected: Bool {
             if let selectedAccount = EVMAccountManager.shared.selectedAccount,
-               selectedAccount.address == address, !address.isEmpty
+               selectedAccount.address.lowercased() == address.lowercased(), !address.isEmpty
             {
                 return true
             }

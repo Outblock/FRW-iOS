@@ -129,7 +129,6 @@ class MoveNFTsViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self?.updateCollection(item: item)
             }
-            
         }
         Router.route(to: RouteMap.NFT.selectCollection(vm))
     }
@@ -139,14 +138,10 @@ class MoveNFTsViewModel: ObservableObject {
             return
         }
         self.selectedCollection = item
-        if EVMAccountManager.shared.selectedAccount == nil {
-            self.nfts = []
-            fetchNFTs()
-        }else {
-            self.nfts = []
-            guard let col = self.selectedCollection as? EVMCollection else { return  }
-            self.nfts = col.nfts.map { MoveNFTsViewModel.NFT(isSelected: false, model: $0) }
-        }
+        
+        self.nfts = []
+        fetchNFTs()
+        
     }
     
     func closeAction() {

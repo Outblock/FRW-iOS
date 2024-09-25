@@ -1014,6 +1014,11 @@ Secure Enclave protects your Private Key using the hardware-level security of yo
 
 Please create backups for your wallet to ensure you retain access to your Flow account and assets in the event you lose your device.";
 
+"things_need_know_des" = "You have selected to use a 12-word recovery phrase backup.\n\nThis recovery phrase backup will have full control of your account.";
+"things_need_know_check_1" = "If I lose my recovery phrase, I may not be able to recover my account.";
+"things_need_know_check_2" = "If I expose my recovery phrase anywhere, my account and assets can be stolen.";
+"things_need_know_check_3" = "It is my full responsibility to secure my recovery phrase.";
+
 "secured_by_se" = "Secured by Secure Enclave";
 "create_phrase_backup_title" = "Create Recovery Phrase Backup";
 "create_phrase_backup_note" = "Create a 12 word recovery phrase";

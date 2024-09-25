@@ -37,7 +37,6 @@ struct ChildAccount: Codable {
         return pinTime > 0
     }
     
-
     struct Thumbnail: Codable {
         let url: String?
     }
@@ -60,10 +59,8 @@ struct ChildAccount: Codable {
 }
 
 extension ChildAccount: ChildAccountSideCellItem {
-    
-    
     var showAddress: String {
-        return self.addr ?? ""
+        return addr ?? ""
     }
     
     var showIcon: String {
@@ -77,8 +74,6 @@ extension ChildAccount: ChildAccountSideCellItem {
     var isEVM: Bool {
         false
     }
-    
-    
 }
 
 class ChildAccountManager: ObservableObject {
@@ -132,7 +127,7 @@ class ChildAccountManager: ObservableObject {
         
         NotificationCenter.default.publisher(for: .networkChange)
             .receive(on: DispatchQueue.main)
-            .sink { name in
+            .sink { _ in
                 self.clean()
             }.store(in: &cancelSets)
         
@@ -195,7 +190,7 @@ class ChildAccountManager: ObservableObject {
         isLoading = true
         Task {
             do {
-                    let list = try await FlowNetwork.queryChildAccountMeta(address)
+                let list = try await FlowNetwork.queryChildAccountMeta(address)
                 
                 DispatchQueue.main.async {
                     if UserManager.shared.activatedUID != uid { return }

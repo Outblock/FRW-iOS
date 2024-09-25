@@ -37,7 +37,7 @@ struct ThingsNeedKnowView: RouteableView {
                         .foregroundColor(Color.Theme.Accent.green)
                 }
 
-                Text("secret_phrase_tips".localized)
+                Text("things_need_know_des".localized)
                     .font(.inter(size: 14))
                     .foregroundColor(.Theme.Text.black8)
                     .padding(.top, 24)
@@ -46,9 +46,9 @@ struct ThingsNeedKnowView: RouteableView {
 
             VStack(spacing: 12) {
                 TextCheckListView(titles: [
-                    "multi_check_phrase_1".localized,
-                    "multi_check_phrase_2".localized,
-                    "multi_check_phrase_3".localized
+                    "things_need_know_check_1".localized,
+                    "things_need_know_check_2".localized,
+                    "things_need_know_check_3".localized
                 ], allChecked: $allCheck)
             }
             .padding(.top, 24)

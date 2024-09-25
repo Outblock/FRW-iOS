@@ -40,7 +40,7 @@ struct AccountSideCell: View {
     
     private var isEVM: Bool {
         if let evmAddress = EVMAccountManager.shared.accounts.first?.showAddress {
-            return evmAddress == address
+            return evmAddress.lowercased() == address.lowercased()
         }
         return false
     }

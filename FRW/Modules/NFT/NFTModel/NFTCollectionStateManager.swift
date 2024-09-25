@@ -31,7 +31,7 @@ final class NFTCollectionStateManager {
             for (index, collection) in list.enumerated() {
                 let key = "A." + collection.address.stripHexPrefix() + "." + collection.contractName
                 let isEnable = result[key] ?? false
-                if let oldIndex = tokenStateList.firstIndex(where: { $0.address == collection.address && $0.name == collection.contractName}) {
+                if let oldIndex = tokenStateList.firstIndex(where: { $0.address.lowercased() == collection.address.lowercased() && $0.name == collection.contractName}) {
                     tokenStateList.remove(at: oldIndex)
                 }
                 tokenStateList.append(NftCollectionState(name: collection.contractName, address: collection.address, isAdded: isEnable))
@@ -41,7 +41,7 @@ final class NFTCollectionStateManager {
         }
     }
     func isTokenAdded(_ address: String) -> Bool {
-        tokenStateList.first { $0.address == address }?.isAdded ?? false
+        tokenStateList.first { $0.address.lowercased() == address.lowercased() }?.isAdded ?? false
     }
     
 

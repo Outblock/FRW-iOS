@@ -590,40 +590,43 @@ extension WalletHomeView {
                 }
                 .frame(minHeight: CoinCellHeight)
                 
-                HStack(spacing: 0) {
-                    Divider()
-                        .frame(width: 1, height: 10)
-                        .foregroundColor(Color.LL.Neutrals.neutrals4)
-                    
-                    Spacer()
-                }
-                .padding(.leading, 24)
-                .offset(y: -5)
-                .visibility(coin.token.isFlowCoin && stakingManager.isStaked ? .visible : .gone)
-                
-                Button {
-                    StakingManager.shared.goStakingAction()
-                } label: {
+                if EVMAccountManager.shared.selectedAccount == nil && ChildAccountManager.shared.selectedChildAccount == nil {
                     HStack(spacing: 0) {
-                        Circle()
-                            .frame(width: 10, height: 10)
+                        Divider()
+                            .frame(width: 1, height: 10)
                             .foregroundColor(Color.LL.Neutrals.neutrals4)
                         
-                        Text("staked_flow".localized)
-                            .foregroundColor(.LL.Neutrals.text)
-                            .font(.inter(size: 14, weight: .semibold))
-                            .padding(.leading, 31)
-                        
                         Spacer()
-                        
-                        Text("\(vm.isHidden ? "****" : stakingManager.stakingCount.formatCurrencyString()) FLOW")
-                            .foregroundColor(.LL.Neutrals.text)
-                            .font(.inter(size: 14, weight: .medium))
                     }
+                    .padding(.leading, 24)
+                    .offset(y: -5)
+                    .visibility(coin.token.isFlowCoin && stakingManager.isStaked ? .visible : .gone)
+                    
+                    Button {
+                        StakingManager.shared.goStakingAction()
+                    } label: {
+                        HStack(spacing: 0) {
+                            Circle()
+                                .frame(width: 10, height: 10)
+                                .foregroundColor(Color.LL.Neutrals.neutrals4)
+                            
+                            Text("staked_flow".localized)
+                                .foregroundColor(.LL.Neutrals.text)
+                                .font(.inter(size: 14, weight: .semibold))
+                                .padding(.leading, 31)
+                            
+                            Spacer()
+                            
+                            Text("\(vm.isHidden ? "****" : stakingManager.stakingCount.formatCurrencyString()) FLOW")
+                                .foregroundColor(.LL.Neutrals.text)
+                                .font(.inter(size: 14, weight: .medium))
+                        }
+                    }
+                    .padding(.leading, 19)
+                    .padding(.bottom, 12)
+                    .visibility(coin.token.isFlowCoin && stakingManager.isStaked ? .visible : .gone)
                 }
-                .padding(.leading, 19)
-                .padding(.bottom, 12)
-                .visibility(coin.token.isFlowCoin && stakingManager.isStaked ? .visible : .gone)
+                
             }
             .padding(.horizontal, 16)
             .background(Color.Theme.Background.bg2)

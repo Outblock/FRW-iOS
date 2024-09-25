@@ -100,6 +100,7 @@ extension CoinRateCache {
         guard let supportedCoins = WalletManager.shared.supportedCoins else {
             return
         }
+        let evmCoins = WalletManager.shared.evmSupportedCoins
 
         debugPrint("CoinRateCache -> start refreshing")
         isRefreshing = true
@@ -120,6 +121,15 @@ extension CoinRateCache {
                         }
                     }
                 }
+                evmCoins?.forEach({ coin in
+                    group.addTask { [weak self] in
+                        do {
+                            try await self?.fetchCoinRate(coin)
+                        } catch {
+                            debugPrint("CoinRateCache -> fetchCoinRate:\(coin.symbol ?? "") failed: \(error)")
+                        }
+                    }
+                })
             }
 
             isRefreshing = false
@@ -173,7 +183,7 @@ extension CoinRateCache {
         var model: CryptoSummaryResponse.AddPrice?
         
         if EVMAccountManager.shared.selectedAccount != nil {
-            model = addPrices.first { ($0.evmAddress == token.getAddress()) }
+            model = addPrices.first { ($0.evmAddress?.lowercased() == token.getAddress()?.lowercased()) }
         }else {
             model = addPrices.first { $0.contractName.uppercased() == token.contractName.uppercased() }
         }

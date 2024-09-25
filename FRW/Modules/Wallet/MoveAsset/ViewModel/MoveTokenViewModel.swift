@@ -129,11 +129,11 @@ class MoveTokenViewModel: ObservableObject {
 extension MoveTokenViewModel {
     
     var fromIsEVM: Bool {
-        EVMAccountManager.shared.accounts.contains { $0.showAddress == fromContact.address }
+        EVMAccountManager.shared.accounts.contains { $0.showAddress.lowercased() == fromContact.address?.lowercased() }
     }
     
     var toIsEVM: Bool {
-        EVMAccountManager.shared.accounts.contains { $0.showAddress == toContact.address }
+        EVMAccountManager.shared.accounts.contains { $0.showAddress.lowercased() == toContact.address?.lowercased() }
     }
     
     var balanceAsCurrentCurrencyString: String {

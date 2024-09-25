@@ -27,6 +27,13 @@ protocol CollectionMask {
 // MARK: NFTResponse
 extension NFTResponse: NFTMask {
     var maskLogo: String {
+        if let media = postMedia {
+            if let imgUrl = media.image, let url = URL(string: imgUrl), media.isSvg == true {
+                if let result = url.absoluteString.convertedSVGURL()?.absoluteString {
+                    return result
+                }
+            }
+        }
         return cover() ?? thumbnail ?? ""
     }
     
@@ -37,6 +44,7 @@ extension NFTResponse: NFTMask {
     var maskFlowIdentifier: String? {
         flowIdentifier
     }
+    
 }
 
 // MARK: NFTCollection

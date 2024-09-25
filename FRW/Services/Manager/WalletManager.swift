@@ -41,6 +41,7 @@ class WalletManager: ObservableObject {
         }
     }
     @Published var supportedCoins: [TokenModel]?
+    @Published var evmSupportedCoins: [TokenModel]?
     @Published var activatedCoins: [TokenModel] = []
     @Published var coinBalances: [String: Double] = [:]
     @Published var childAccount: ChildAccount? = nil
@@ -609,7 +610,7 @@ extension WalletManager {
         
         try await fetchSupportedCoins()
         try await fetchActivatedCoins()
-        await fetchEVMCoins()
+        
         try await fetchBalance()
         try await fetchAccessible()
         ChildAccountManager.shared.refresh()
@@ -626,7 +627,7 @@ extension WalletManager {
         DispatchQueue.main.sync {
             self.supportedCoins = validCoins
         }
-        
+        await fetchEVMCoins()
         PageCache.cache.set(value: validCoins, forKey: CacheKeys.supportedCoins.rawValue)
     }
 
@@ -679,7 +680,7 @@ extension WalletManager {
             let tokenResponse: SingleTokenResponse = try await Network.requestWithRawModel(GithubEndpoint.EVMTokenList)
             let coins: [TokenModel] = tokenResponse.conversion()
             DispatchQueue.main.async {
-                self.supportedCoins?.append(contentsOf: coins)
+                self.evmSupportedCoins = coins
             }
         }catch {
             log.error("[EVM] fetch token list failed.\(error.localizedDescription)")
@@ -694,7 +695,7 @@ extension WalletManager {
         balanceProvider.refreshBalance()
         if isSelectedEVMAccount {
             try await fetchEVMBalance()
-            try await fetchEVMTokenAndBalance()
+//            try await fetchEVMTokenAndBalance()
             return
         }
 
@@ -721,29 +722,25 @@ extension WalletManager {
     
     private func fetchEVMBalance() async throws {
         log.info("[EVM] load balance")
-        guard let evmAccount = EVMAccountManager.shared.accounts.first else { return }
+        guard let evmAccount = EVMAccountManager.shared.selectedAccount else { return }
         try await EVMAccountManager.shared.refreshBalance(address: evmAccount.address)
+        
         let tokenModel = supportedCoins?.first { $0.name.lowercased() == "flow" }
         let balance = EVMAccountManager.shared.balance
         guard var tokenModel = tokenModel, let symbol = tokenModel.symbol else { return }
+        
+        let list = try await EVMAccountManager.shared.fetchTokens()
         
         DispatchQueue.main.sync {
             log.info("[EVM] load balance success \(balance)")
             tokenModel.flowIdentifier = tokenModel.contractId
             self.activatedCoins = [tokenModel]
             self.coinBalances = [symbol: balance.doubleValue]
-        }
-    }
-    
-    private func fetchEVMTokenAndBalance() async throws {
-        log.info("[EVM] fetch evm other token and balance")
-        let list = try await EVMAccountManager.shared.fetchTokens()
-        DispatchQueue.main.sync {
-            log.info("[EVM] load evm token and balance")
+            
             list.forEach { item in
                 if item.flowBalance > 0 {
-                    let result = self.supportedCoins?.first(where: { model in
-                        model.evmAddress == item.address
+                    let result = self.evmSupportedCoins?.first(where: { model in
+                        model.getAddress()?.lowercased() == item.address.lowercased()
                     })
                     if let result = result {
                         self.activatedCoins.append(result)
@@ -755,6 +752,27 @@ extension WalletManager {
             }
         }
     }
+    
+//    private func fetchEVMTokenAndBalance() async throws {
+//        log.info("[EVM] fetch evm other token and balance")
+//        let list = try await EVMAccountManager.shared.fetchTokens()
+//        DispatchQueue.main.sync {
+//            log.info("[EVM] load evm token and balance")
+//            list.forEach { item in
+//                if item.flowBalance > 0 {
+//                    let result = self.evmSupportedCoins?.first(where: { model in
+//                        model.getAddress()?.lowercased() == item.address.lowercased()
+//                    })
+//                    if let result = result {
+//                        self.activatedCoins.append(result)
+//                    }else {
+//                        self.activatedCoins.append(item.toTokenModel())
+//                    }
+//                    self.coinBalances[item.symbol] = item.flowBalance
+//                }
+//            }
+//        }
+//    }
     
     func fetchAccessible() async throws {
         try await accessibleManager.fetchFT()

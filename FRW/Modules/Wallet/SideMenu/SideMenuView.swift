@@ -113,6 +113,10 @@ class SideMenuViewModel: ObservableObject {
         }
         return "\(value) FLOW"
     }
+    
+    func switchProfile() {
+        LocalUserDefaults.shared.recentToken = nil
+    }
 }
 
 struct SideMenuView: View {
@@ -265,6 +269,7 @@ struct SideMenuView: View {
                                     currentAddress: vm.currentAddress,
                                     detail: vm.balanceValue(at: WalletManager.shared.getPrimaryWalletAddress() ?? "") ) { _, action in
                         if action == .card {
+                            vm.switchProfile()
                             WalletManager.shared.changeNetwork(LocalUserDefaults.shared.flowNetwork)
                         }
                     }
@@ -293,6 +298,8 @@ struct SideMenuView: View {
                                         detail: vm.balanceValue(at: address)
                         ) { _, action in
                             if action == .card {
+                                vm.switchProfile()
+                                ChildAccountManager.shared.select(nil)
                                 EVMAccountManager.shared.select(account)
                             }
                         }
@@ -306,6 +313,8 @@ struct SideMenuView: View {
                                             logo: childAccount.icon
                             ) { _, action in
                                 if action == .card {
+                                    vm.switchProfile()
+                                    EVMAccountManager.shared.select(nil)
                                     ChildAccountManager.shared.select(childAccount)
                                 }
                             }
@@ -324,6 +333,8 @@ struct SideMenuView: View {
             }
         }
     }
+    
+    
     
     var bottomMenu: some View {
         VStack {
@@ -412,6 +423,7 @@ struct SideMenuView: View {
             }
         }
     }
+    
 }
 
 class SideContainerViewModel: ObservableObject {

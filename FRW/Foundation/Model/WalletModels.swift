@@ -233,6 +233,7 @@ struct SingleToken: Codable {
     let logoURI: String?
     let extensions: TokenExtension?
     let evmAddress: String?
+    let flowIdentifier: String?
     
     func toTokenModel(network: LocalUserDefaults.FlowNetworkType) -> TokenModel {
         
@@ -240,7 +241,7 @@ struct SingleToken: Codable {
         
         let model = TokenModel(name: name,
                                address: FlowNetworkModel(mainnet: network == .mainnet ? address : nil, testnet: network == .testnet ? address : nil, crescendo: nil, previewnet: network == .previewnet ? address : nil),
-                               contractName: contractName ?? "", storagePath: path ?? FlowTokenStoragePath(balance: "", vault: "", receiver: ""), decimal: decimals, icon: logo, symbol: symbol, website: extensions?.website, evmAddress: evmAddress, flowIdentifier: nil)
+                               contractName: contractName ?? "", storagePath: path ?? FlowTokenStoragePath(balance: "", vault: "", receiver: ""), decimal: decimals, icon: logo, symbol: symbol, website: extensions?.website, evmAddress: evmAddress, flowIdentifier: flowIdentifier)
         return model
     }
 }

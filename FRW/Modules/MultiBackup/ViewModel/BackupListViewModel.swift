@@ -89,7 +89,8 @@ class BackupListViewModel: ObservableObject {
     }
     
     func onDeletePhrase(index: Int) {
-        guard let index = removeIndex, phraseList.count > index else { return }
+        guard phraseList.count > index else { return }
+        removeIndex = index
         let item = phraseList[index]
         if item.pubkey.publicKey == WalletManager.shared.getCurrentPublicKey() {
             HUD.info(title: "account_key_current_tips".localized)
