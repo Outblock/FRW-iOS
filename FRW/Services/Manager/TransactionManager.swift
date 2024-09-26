@@ -144,6 +144,7 @@ extension TransactionManager {
             self.createTime = createTime
             self.type = type
             self.data = data
+            log.info("[Cadence] txi:\(id.hex)")
         }
         
         func decodedObject<T: Decodable>(_ type: T.Type) -> T? {

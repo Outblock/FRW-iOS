@@ -110,8 +110,7 @@ class MoveSingleNFTViewModel: ObservableObject {
     }
     
     private func moveForLinkedAccount(nftId: UInt64) async {
-        guard let collection = nft.collection
-                    else {
+        guard let collection = nft.collection else {
             return
         }
         let identifier = nft.publicIdentifier

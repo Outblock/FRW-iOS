@@ -7,7 +7,7 @@
 
 import Combine
 import Flow
-import FlowWalletCore
+import FlowWalletKit
 import Foundation
 import KeychainAccess
 import Kingfisher
@@ -897,11 +897,19 @@ extension WalletManager: FlowSigner {
         }
         
         if userSecretSign() {
-            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
-                let sec = try WallectSecureEnclave(privateKey: data)
-                let signature = try sec.sign(data: signableData)
+            
+            if let userId = walletInfo?.id {
+                let secureKey = try SecureEnclaveKey.wallet(id: userId)
+                let signature = try secureKey.sign(data: signableData, hashAlgo: .SHA2_256)
                 return signature
             }
+            
+//            
+//            if let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+//                let sec = try WallectSecureEnclave(privateKey: data)
+//                let signature = try sec.sign(data: signableData)
+//                return signature
+//            }
         }
         
         guard let hdWallet = hdWallet else {
@@ -929,11 +937,17 @@ extension WalletManager: FlowSigner {
             try await findFlowAccount()
         }
         if userSecretSign() {
-            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
-                let sec = try WallectSecureEnclave(privateKey: data)
-                let signature = try sec.sign(data: signableData)
+            if let userId = walletInfo?.id {
+                let secureKey = try SecureEnclaveKey.wallet(id: userId)
+                let signature = try secureKey.sign(data: signableData, hashAlgo: .SHA2_256)
                 return signature
             }
+            
+//            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+//                let sec = try WallectSecureEnclave(privateKey: data)
+//                let signature = try sec.sign(data: signableData)
+//                return signature
+//            }
         }
         
         guard let hdWallet = hdWallet else {
@@ -959,11 +973,17 @@ extension WalletManager: FlowSigner {
     public func signSync(signableData: Data) -> Data? {
         if userSecretSign() {
             do {
-                if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
-                    let sec = try WallectSecureEnclave(privateKey: data)
-                    let signature = try sec.sign(data: signableData)
+                if let userId = walletInfo?.id {
+                    let secureKey = try SecureEnclaveKey.wallet(id: userId)
+                    let signature = try secureKey.sign(data: signableData, hashAlgo: .SHA2_256)
                     return signature
                 }
+                
+//                if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+//                    let sec = try WallectSecureEnclave(privateKey: data)
+//                    let signature = try sec.sign(data: signableData)
+//                    return signature
+//                }
             } catch {
                 return nil
             }
@@ -1003,14 +1023,12 @@ extension WalletManager: FlowSigner {
     }
     
     func findFlowAccount(with userId: String, at address: String) async throws {
-        guard let data = try WallectSecureEnclave.Store.fetch(by: userId) else {
+        
+        guard let secureKey = try? SecureEnclaveKey.wallet(id: userId),
+              let publicKey = try? secureKey.publicKey()?.hexValue else {
             return
         }
         
-        let sec = try WallectSecureEnclave(privateKey: data)
-        guard let publicKey = sec.key.publickeyValue else {
-            return
-        }
         let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
         let sortedAccount = account.keys.sorted { $0.weight > $1.weight }
         flowAccountKey = sortedAccount.filter {
