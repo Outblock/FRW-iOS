@@ -19,8 +19,8 @@ extension SecureEnclaveKey {
     
     static func wallet(id: String) throws -> SecureEnclaveKey {
         let pw = password(by: id)
-        let SecureEnclaveKey = try SecureEnclaveKey.get(id: id, password: pw, storage: SecureEnclaveKey.KeychainStorage)
-        return SecureEnclaveKey
+        let secureEnclaveKey = try SecureEnclaveKey.get(id: id, password: pw, storage: SecureEnclaveKey.KeychainStorage)
+        return secureEnclaveKey
     }
     
     func flowAccountKey(signAlgo: Flow.SignatureAlgorithm = .ECDSA_P256 ,weight: Int = 1000) throws -> Flow.AccountKey {

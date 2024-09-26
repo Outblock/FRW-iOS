@@ -11,6 +11,11 @@ import Flow
 
 extension FlowWalletKit.PrivateKey {
     
+    static func wallet(id: String) throws -> FlowWalletKit.PrivateKey {
+        let pw = password(by: id)
+        let privateKey = try FlowWalletKit.PrivateKey.get(id: id, password: pw, storage: PrivateKey.PKStorage)
+        return privateKey
+    }
     
     func store(id: String ) throws {
         let pw = PrivateKey.password(by: id)

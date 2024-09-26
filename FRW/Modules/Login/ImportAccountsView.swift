@@ -7,13 +7,14 @@
 
 import SwiftUI
 import SwiftUIX
+import Flow
 
 class ImportAccountsViewModel: ObservableObject {
     
-    var list: [String] = []
-    var onSelectAddress: (String)->()
+    var list: [Flow.Account] = []
+    var onSelectAddress: (Flow.Account)->()
     
-    init(list: [String], onSelectAddress: @escaping (String) -> ()) {
+    init(list: [Flow.Account], onSelectAddress: @escaping (Flow.Account) -> ()) {
         self.list = list
         self.onSelectAddress = onSelectAddress
     }
@@ -27,7 +28,7 @@ struct ImportAccountsView:  RouteableView, PresentActionDelegate {
     var changeHeight: (() -> ())?
     
     @StateObject var viewModel: ImportAccountsViewModel
-    @State private var selectedAccount: String?
+    @State private var selectedAccount: Flow.Account?
     
     init(viewModel: ImportAccountsViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -65,11 +66,11 @@ struct ImportAccountsView:  RouteableView, PresentActionDelegate {
             
             ScrollView(showsIndicators: false) {
                 VStack {
-                    ForEach(0..<viewModel.list.count, id: \.self) { index in
+                    ForEach(viewModel.list.indices, id: \.self) { index in
                         let account = viewModel.list[index]
-                        let isSelected = (account == selectedAccount)
-                        ImportAccountsView.Item(address: account, isSelected: isSelected) { model in
-                            self.selectedAccount = model
+                        let isSelected = (account.address.hex == selectedAccount?.address.hex)
+                        ImportAccountsView.Item(account: account, isSelected: isSelected) { itemAccount in
+                            self.selectedAccount = itemAccount
                         }
                     }
                 }
@@ -129,14 +130,14 @@ struct ImportAccountsView:  RouteableView, PresentActionDelegate {
 
 extension ImportAccountsView {
     struct Item: View {
-        let address: String
+        let account: Flow.Account
         var isSelected: Bool = false
-        var onClick: (String) -> ()
+        var onClick: (Flow.Account) -> ()
         
         var body: some View {
             
             HStack {
-                Text(address)
+                Text(account.address.hex)
                     .font(.inter(size: 14, weight: isSelected ? .semibold : .regular))
                     .truncationMode(.middle)
                     .lineLimit(1)
@@ -154,7 +155,7 @@ extension ImportAccountsView {
             .contentShape(Rectangle())
             .background(isSelected ? Color.Theme.Background.bg3 : .clear )
             .onTapGesture {
-                onClick(address)
+                onClick(account)
             }
             .cornerRadius(16)
         }

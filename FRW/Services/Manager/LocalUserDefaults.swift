@@ -48,6 +48,7 @@ extension LocalUserDefaults {
         
         case whatIsBack
         case backupSheetNotAsk
+        case userList
     }
 
     enum FlowNetworkType: String, CaseIterable, Codable {
@@ -313,6 +314,30 @@ class LocalUserDefaults: ObservableObject {
     @AppStorage(Keys.whatIsBack.rawValue) var clickedWhatIsBack: Bool = false
     
     @AppStorage(Keys.backupSheetNotAsk.rawValue) var backupSheetNotAsk: Bool = false
+    
+    var userList: [UserManager.StoreUser] {
+        set {
+            if let data = try? JSONEncoder().encode(newValue) {
+                UserDefaults.standard.set(data, forKey: Keys.userList.rawValue)
+            } else {
+                UserDefaults.standard.removeObject(forKey: Keys.userList.rawValue)
+            }
+        }
+        get {
+            if let data = UserDefaults.standard.data(forKey: Keys.userList.rawValue),
+                let model = try? JSONDecoder().decode([UserManager.StoreUser].self, from: data) {
+                return model
+            } else {
+                return []
+            }
+        }
+    }
+    
+    func addUser(user: UserManager.StoreUser) {
+        var list = userList
+        list.append(user)
+        userList = list
+    }
 }
 
 extension LocalUserDefaults {

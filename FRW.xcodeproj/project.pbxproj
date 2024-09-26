@@ -1264,18 +1264,6 @@
 		4ED041F42C7785410016848A /* KeystoreSign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED041F22C77853D0016848A /* KeystoreSign.swift */; };
 		4ED041F72C7C25DF0016848A /* WalletNewsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED041F62C7C25DF0016848A /* WalletNewsHandler.swift */; };
 		4ED041F82C7C25DF0016848A /* WalletNewsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED041F62C7C25DF0016848A /* WalletNewsHandler.swift */; };
-		4ED06E372ABABABA00F49A1A /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */; };
-		4ED06E382ABABABA00F49A1A /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */; };
-		4ED06E3B2ABABABA00F49A1A /* WalletCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E342ABABABA00F49A1A /* WalletCore.xcframework */; };
-		4ED06E3C2ABABABA00F49A1A /* WalletCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E342ABABABA00F49A1A /* WalletCore.xcframework */; };
-		4ED06E3F2ABABB9400F49A1A /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */; };
-		4ED06E402ABABB9400F49A1A /* SwiftProtobuf.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4ED06E422ABABB9500F49A1A /* WalletCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E342ABABABA00F49A1A /* WalletCore.xcframework */; };
-		4ED06E432ABABB9500F49A1A /* WalletCore.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E342ABABABA00F49A1A /* WalletCore.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4ED06E442ABABB9900F49A1A /* WalletCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E342ABABABA00F49A1A /* WalletCore.xcframework */; };
-		4ED06E452ABABB9900F49A1A /* WalletCore.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E342ABABABA00F49A1A /* WalletCore.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4ED06E462ABABB9D00F49A1A /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */; };
-		4ED06E472ABABB9D00F49A1A /* SwiftProtobuf.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4ED21F38284E2E6E00320AD0 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED21F36284E2E6E00320AD0 /* ShareSheet.swift */; };
 		4ED21F42284E4C0A00320AD0 /* NFTShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED21F40284E4C0A00320AD0 /* NFTShareView.swift */; };
 		4ED21F45284E5A6700320AD0 /* DashLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED21F43284E5A6700320AD0 /* DashLine.swift */; };
@@ -1895,8 +1883,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4ED06E472ABABB9D00F49A1A /* SwiftProtobuf.xcframework in Embed Frameworks */,
-				4ED06E452ABABB9900F49A1A /* WalletCore.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1907,8 +1893,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4ED06E402ABABB9400F49A1A /* SwiftProtobuf.xcframework in Embed Frameworks */,
-				4ED06E432ABABB9500F49A1A /* WalletCore.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2495,8 +2479,6 @@
 		4ECF45332BB4F20E00F5B3B7 /* WalletHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletHomeView.swift; sourceTree = "<group>"; };
 		4ED041F22C77853D0016848A /* KeystoreSign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeystoreSign.swift; sourceTree = "<group>"; };
 		4ED041F62C7C25DF0016848A /* WalletNewsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletNewsHandler.swift; sourceTree = "<group>"; };
-		4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = FRW/Library/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
-		4ED06E342ABABABA00F49A1A /* WalletCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WalletCore.xcframework; path = FRW/Library/WalletCore.xcframework; sourceTree = "<group>"; };
 		4ED21F36284E2E6E00320AD0 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		4ED21F40284E4C0A00320AD0 /* NFTShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTShareView.swift; sourceTree = "<group>"; };
 		4ED21F43284E5A6700320AD0 /* DashLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashLine.swift; sourceTree = "<group>"; };
@@ -2840,7 +2822,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				150D3E392A58719A00F7F2DC /* QRCode in Frameworks */,
-				4ED06E442ABABB9900F49A1A /* WalletCore.xcframework in Frameworks */,
 				156AC7AB27802F9D00ED5E3E /* GoogleAPIClientForREST_Drive in Frameworks */,
 				154B891A276A1EEB00780E93 /* Flow in Frameworks */,
 				154B891B276A1EEB00780E93 /* FirebaseAuth in Frameworks */,
@@ -2884,7 +2865,6 @@
 				15D57759277C23BF00045E79 /* CombineMoya in Frameworks */,
 				154B891F276A1EEB00780E93 /* FirebaseDynamicLinks in Frameworks */,
 				158832CC2894267700142B35 /* WalletConnect in Frameworks */,
-				4ED06E462ABABB9D00F49A1A /* SwiftProtobuf.xcframework in Frameworks */,
 				157046752793241A00D1747B /* Kingfisher in Frameworks */,
 				6A204C6C2860784B00D0D3A4 /* FirebaseStorage in Frameworks */,
 				15D3BA7728C45F21009AEA6E /* Hero in Frameworks */,
@@ -2927,7 +2907,6 @@
 				4E1DD8C72B1622030055E510 /* Instabug in Frameworks */,
 				15C58C422868A4EE00BD4FC6 /* UIKit.framework in Frameworks */,
 				6A0454CD28768E9E00A9131C /* SwiftUIPager in Frameworks */,
-				4ED06E422ABABB9500F49A1A /* WalletCore.xcframework in Frameworks */,
 				152BB09428AE8FD100B2A2AA /* Lottie in Frameworks */,
 				6AEA374028A49DBE004545D4 /* MJRefresh in Frameworks */,
 				4E539C872BC626770080BAF8 /* Web3Wallet in Frameworks */,
@@ -2955,7 +2934,6 @@
 				15C58C502868A4EE00BD4FC6 /* FirebaseRemoteConfig in Frameworks */,
 				15C58C512868A4EE00BD4FC6 /* CombineMoya in Frameworks */,
 				158832CA2894262B00142B35 /* WalletConnect in Frameworks */,
-				4ED06E3F2ABABB9400F49A1A /* SwiftProtobuf.xcframework in Frameworks */,
 				15C58C522868A4EE00BD4FC6 /* FirebaseDynamicLinks in Frameworks */,
 				15C58C532868A4EE00BD4FC6 /* Kingfisher in Frameworks */,
 				15C58C542868A4EE00BD4FC6 /* FirebaseStorage in Frameworks */,
@@ -2996,9 +2974,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A0C6E3229542EC9005F0EF6 /* Kingfisher in Frameworks */,
-				4ED06E3C2ABABABA00F49A1A /* WalletCore.xcframework in Frameworks */,
 				6A0C6E1D29542DFC005F0EF6 /* SwiftUI.framework in Frameworks */,
-				4ED06E382ABABABA00F49A1A /* SwiftProtobuf.xcframework in Frameworks */,
 				6A0C6E1C29542DFC005F0EF6 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3008,9 +2984,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A9DFBDA2951A1F900E10EAC /* Kingfisher in Frameworks */,
-				4ED06E3B2ABABABA00F49A1A /* WalletCore.xcframework in Frameworks */,
 				6A9DFBC729519D9800E10EAC /* SwiftUI.framework in Frameworks */,
-				4ED06E372ABABABA00F49A1A /* SwiftProtobuf.xcframework in Frameworks */,
 				6A9DFBC529519D9800E10EAC /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3571,8 +3545,6 @@
 		15B1A67A276A2D670006B621 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4ED06E332ABABABA00F49A1A /* SwiftProtobuf.xcframework */,
-				4ED06E342ABABABA00F49A1A /* WalletCore.xcframework */,
 				4E9BFF5C2867631300601339 /* UIKit.framework */,
 				15C6F4B9278A8965003CADF2 /* AuthenticationServices.framework */,
 				6A9DFBC429519D9800E10EAC /* WidgetKit.framework */,

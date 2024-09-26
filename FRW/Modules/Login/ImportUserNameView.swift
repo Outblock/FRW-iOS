@@ -62,7 +62,6 @@ struct ImportUserNameView: RouteableView {
             }, onClear: .clearAndCustom {
                 viewModel.onEditingChanged(viewModel.userName)
             })
-//            .disabled(viewModel.state.isRegisting)
             .padding(.bottom, 10)
             
             VPrimaryButton(model: ButtonStyle.primary,
@@ -105,13 +104,8 @@ struct ImportUserNameView: RouteableView {
     }
     
     var buttonState: VPrimaryButtonState {
-//        if isRegisting {
-//            return .loading
-//        }
-        
-        return highlight == .success ? .enabled : .disabled
+        return viewModel.userName.isEmpty ? .disabled : .enabled
     }
-    
     
 }
 
