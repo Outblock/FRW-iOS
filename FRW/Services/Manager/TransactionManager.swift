@@ -30,11 +30,11 @@ extension Flow.ID {
     var transactionFlowScanURL: URL? {
         switch LocalUserDefaults.shared.flowNetwork {
         case .testnet:
-            return URL(string: "https://testnet.flowdiver.io/tx/\(self.hex)")
+            return URL(string: "https://testnet.flowscan.io/tx/\(self.hex)")
         case .mainnet:
-            return URL(string: "https://flowdiver.io/tx/\(self.hex)")
+            return URL(string: "https://flowscan.io/tx/\(self.hex)")
         case .previewnet:
-            return URL(string: "https://previewnet.flowdiver.io/tx/\(self.hex)")
+            return URL(string: "https://previewnet.flowscan.io/tx/\(self.hex)")
         }
     }
 }
