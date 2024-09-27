@@ -664,7 +664,7 @@ extension WalletHomeView {
                 
                 if let url = URL(string: incrementUrl()) {
                     UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                    UIApplication.shared.open(url)
+                    Router.route(to: RouteMap.Explore.browser(url))
                 }
                 
 //                Router.route(to: RouteMap.Wallet.swap(nil))

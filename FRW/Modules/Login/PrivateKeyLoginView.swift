@@ -13,7 +13,7 @@ struct PrivateKeyLoginView: RouteableView {
         return "import_wallet".localized
     }
     
-    private let backupType: RestoreWalletViewModel.ImportType = .keyStore
+    private let backupType: RestoreWalletViewModel.ImportType = .privateKey
     
     @StateObject var viewModel = PrivateKeyLoginViewModel()
     
@@ -28,7 +28,7 @@ struct PrivateKeyLoginView: RouteableView {
                     Section() {
                         
                         ImportTextView(content: $viewModel.key, placeholder: "private_key_placeholder".localized) { value in
-                            log.debug("\(value)")
+                            viewModel.update(key: value)
                         }
                         .frame(height: 120)
 
@@ -37,7 +37,8 @@ struct PrivateKeyLoginView: RouteableView {
                     }
                     
                     Section() {
-                        AnimatedSecureTextField(placeholder: "keystore_address".localized, text: $viewModel.address){ text in
+                        AnimatedSecureTextField(placeholder: "keystore_address".localized, text: $viewModel.wantedAddress){ text in
+                            viewModel.update(address: text)
                         }
                             .frame(height: 64)
                         
@@ -47,11 +48,11 @@ struct PrivateKeyLoginView: RouteableView {
                 }
             }
             
-            VPrimaryButton(model: ButtonStyle.primary,
+            VPrimaryButton(model: ButtonStyle.normal,
                            state: viewModel.buttonState,
                            action: {
-                               
-            }, title: "import_btn_text".localized)
+                viewModel.onSumbit()
+            }, title: "import_btn_text".localized.lowercased().uppercasedFirstLetter())
             .padding(.bottom)
         }
         .padding(.horizontal, 24)

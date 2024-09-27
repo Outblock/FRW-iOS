@@ -87,16 +87,23 @@ struct ImportAccountsView:  RouteableView, PresentActionDelegate {
             
             Spacer()
             
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: buttonState(),
-                           action: {
+            Button {
                 if let account = selectedAccount {
                     onClose()
                     viewModel.onSelectAddress(account)
                 }
-                
-            }, title: buttonTitle())
+            } label: {
+                Text("next".localized)
+                    .font(.inter(size: 16, weight: .semibold))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 54)
+                    .foregroundColor(Color.LL.frontColor)
+                    .background(selectedAccount == nil ? Color.LL.disable : Color.LL.rebackground)
+                    .cornerRadius(16)
+            }
+            .disabled(selectedAccount == nil)
             .padding(.bottom, 42)
+            
         }
         .padding(.horizontal,18)
         .backgroundFill(Color.Theme.Background.grey)
@@ -110,10 +117,6 @@ struct ImportAccountsView:  RouteableView, PresentActionDelegate {
             return "no_account_found".localized
         }
         return "x_account_found_title".localized("\(viewModel.list.count)")
-    }
-    
-    private func buttonState() -> VPrimaryButtonState {
-        viewModel.list.count > 0 ? .enabled : .disabled
     }
     
     private func buttonTitle() -> String {

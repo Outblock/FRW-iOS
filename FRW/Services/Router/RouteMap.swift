@@ -40,6 +40,7 @@ extension RouteMap {
         case keystore
         case importAddress(ImportAccountsViewModel)
         case importUserName(ImportUserNameViewModel)
+        case privateKey
     }
 }
 
@@ -83,6 +84,8 @@ extension RouteMap.RestoreLogin: RouterTarget {
             navi.present(vc, animated: true, completion: nil)
         case .importUserName(let viewModel):
             navi.push(content: ImportUserNameView(viewModel: viewModel))
+        case .privateKey:
+            navi.push(content: PrivateKeyLoginView())
         }
     }
 }
