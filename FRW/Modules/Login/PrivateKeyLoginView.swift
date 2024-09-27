@@ -47,6 +47,7 @@ struct PrivateKeyLoginView: RouteableView {
                     }
                 }
             }
+            .padding(.bottom, 24)
             
             VPrimaryButton(model: ButtonStyle.primary,
                            state: viewModel.buttonState,
@@ -56,7 +57,7 @@ struct PrivateKeyLoginView: RouteableView {
             .padding(.bottom)
         }
         .padding(.horizontal, 24)
-        .backgroundFill(Color.LL.background)
+        .backgroundFill(Color.Theme.Background.grey)
         .applyRouteable(self)
     }
 }

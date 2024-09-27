@@ -61,7 +61,7 @@ struct RestoreWalletView: RouteableView {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 28)
-        .backgroundFill(Color.LL.background)
+        .backgroundFill(Color.Theme.Background.grey)
         .applyRouteable(self)
     }
 }
@@ -99,7 +99,7 @@ extension RestoreWalletView {
             }
             .padding(24)
             .frame(maxWidth: .infinity)
-            .background(.Theme.Background.pureWhite)
+            .background(.Theme.Background.bg2)
             .cornerRadius(16)
         }
     }

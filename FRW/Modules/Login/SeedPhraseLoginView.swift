@@ -93,6 +93,7 @@ struct SeedPhraseLoginView: RouteableView {
                     
                 }
             }
+            .padding(.bottom, 24)
             
             Spacer()
             
@@ -104,7 +105,7 @@ struct SeedPhraseLoginView: RouteableView {
             .padding(.bottom)
         }
         .padding(.horizontal, 24)
-        .backgroundFill(Color.LL.background)
+        .backgroundFill(Color.Theme.Background.grey)
         .hideKeyboardWhenTappedAround()
         .applyRouteable(self)
         

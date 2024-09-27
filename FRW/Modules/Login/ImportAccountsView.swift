@@ -35,7 +35,7 @@ struct ImportAccountsView:  RouteableView, PresentActionDelegate {
     }
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             ZStack(alignment: .topTrailing) {
                 HStack(alignment: .center) {
                     Spacer()
@@ -62,6 +62,7 @@ struct ImportAccountsView:  RouteableView, PresentActionDelegate {
                 .font(.inter(size: 14))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.Theme.Text.black3)
+                .padding(.top, 20)
                 .visibility(viewModel.list.count == 0 ? .gone : .visible)
             
             ScrollView(showsIndicators: false) {
@@ -75,6 +76,7 @@ struct ImportAccountsView:  RouteableView, PresentActionDelegate {
                     }
                 }
             }
+            .padding(.top, 28)
             .visibility(viewModel.list.count == 0 ? .gone : .visible)
             
             Spacer()
@@ -93,7 +95,7 @@ struct ImportAccountsView:  RouteableView, PresentActionDelegate {
                     viewModel.onSelectAddress(account)
                 }
             } label: {
-                Text("next".localized)
+                Text(buttonTitle())
                     .font(.inter(size: 16, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 54)
@@ -106,7 +108,7 @@ struct ImportAccountsView:  RouteableView, PresentActionDelegate {
             
         }
         .padding(.horizontal,18)
-        .backgroundFill(Color.Theme.Background.grey)
+        .backgroundFill(.Theme.Background.bg2)
         .cornerRadius([.topLeading, .topTrailing], 16)
         .applyRouteable(self)
         .ignoresSafeArea()
@@ -156,7 +158,7 @@ extension ImportAccountsView {
             .padding(.horizontal, 24)
             .frame(height: 56)
             .contentShape(Rectangle())
-            .background(isSelected ? Color.Theme.Background.bg3 : .clear )
+            .background(isSelected ? Color.Theme.Background.pureWhite : .clear )
             .onTapGesture {
                 onClick(account)
             }
