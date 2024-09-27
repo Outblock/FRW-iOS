@@ -319,11 +319,11 @@ extension String {
     }
     
     var toFlowScanTransactionDetailURL: URL? {
-        var string = "https://flowdiver.io/tx/\(self)"
+        var string = "https://www.flowscan.io/tx/\(self)"
         if LocalUserDefaults.shared.flowNetwork == .testnet {
-            string = "https://testnet.flowdiver.io/tx/\(self)"
+            string = "https://www.testnet.flowscan.io/tx/\(self)"
         } else if LocalUserDefaults.shared.flowNetwork == .previewnet {
-            string = "https://previewnet.flowdiver.io/tx/\(self)"
+            string = "https://www.previewnet.flowscan.io/tx/\(self)"
         }
         
         return URL(string: string)
