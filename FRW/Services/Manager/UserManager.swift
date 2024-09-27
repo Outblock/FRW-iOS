@@ -445,7 +445,7 @@ extension UserManager {
         
         var loginResponse: LoginResponse?
         if isImport {
-            let request = RestoreImportRequest(username: "", accountKey: key, deviceInfo: IPManager.shared.toParams(), address: address)
+            let request = RestoreImportRequest(username: userName, accountKey: key, deviceInfo: IPManager.shared.toParams(), address: address)
             let response: Network.Response<LoginResponse> = try await Network.requestWithRawModel(FRWAPI.User.loginWithImport(request))
             if response.httpCode == 404 {
                 throw LLError.accountNotFound

@@ -142,8 +142,9 @@ class BackupUploadViewModel: ObservableObject {
         case .idle:
             Task {
                 do {
-                    buttonState = .loading
+                    
                     DispatchQueue.main.async {
+                        self.buttonState = .loading
                         self.mnemonicBlur = true
                     }
                     try await MultiBackupManager.shared.preLogin(with: currentType)
@@ -152,11 +153,16 @@ class BackupUploadViewModel: ObservableObject {
                         toggleProcess(process: .upload)
                         onClickButton()
                     } else {
-                        buttonState = .enabled
+                        DispatchQueue.main.async {
+                            self.buttonState = .enabled
+                        }
+                        
                         HUD.error(title: "create error on chain")
                     }
                 } catch {
-                    buttonState = .enabled
+                    DispatchQueue.main.async {
+                        self.buttonState = .enabled
+                    }
                 }
             }
         case .upload:

@@ -35,11 +35,11 @@ class SeedPhraseLoginViewModel: ObservableObject {
     
     func onSubmit() {
         UIApplication.shared.endEditing()
-        HUD.loading()
         let chainId = LocalUserDefaults.shared.flowNetwork.toFlowType()
         let rawMnemonic = words.condenseWhitespace()
         Task {
             guard let hdWallet = HDWallet(mnemonic: rawMnemonic, passphrase: passphrase) else {
+                
                 return
             }
             if isAdvanced && !derivationPath.isEmpty {
@@ -48,9 +48,11 @@ class SeedPhraseLoginViewModel: ObservableObject {
                 providerKey = FlowWalletKit.SeedPhraseKey(hdWallet: hdWallet, storage: FlowWalletKit.SeedPhraseKey.seedPhraseStorage)
             }
             guard let providerKey = providerKey  else {
+                
                 return
             }
             wallet = FlowWalletKit.Wallet(type: .key(providerKey), networks: [chainId])
+            HUD.loading()
             try await fetchAllAddresses()
             HUD.dismissLoading()
             if wantedAddress.isEmpty {
@@ -61,10 +63,10 @@ class SeedPhraseLoginViewModel: ObservableObject {
                     return
                 }
                 guard let account = keys.filter({ $0.address.hex == wantedAddress }).first else {
+                    //TODO: if not find
                     return
                 }
                 selectedAccount(by: account)
-                //TODO: if not find
             }
         }
     }
@@ -124,17 +126,20 @@ class SeedPhraseLoginViewModel: ObservableObject {
                     createUserName { name in
                         Task {
                             try await UserManager.shared.importLogin(by: address, userName: name, flowKey: selectedKey, privateKey: privateKey, isImport: true)
+                            HUD.dismissLoading()
                             Router.popToRoot()
                         }
                     }
                 }
-                HUD.dismissLoading()
             }
             catch  {
+                HUD.dismissLoading()
                 if let code = error.moyaCode() {
                     if code == 409 {
                         do {
+                            HUD.loading()
                             try await UserManager.shared.importLogin(by: address, userName: "", flowKey: selectedKey, privateKey: privateKey)
+                            HUD.dismissLoading()
                             Router.popToRoot()
                         }catch {
                             log.error("[Import] login 409 :\(error)")
@@ -142,7 +147,7 @@ class SeedPhraseLoginViewModel: ObservableObject {
                     }
                 }
                 log.error("[Import] check public key own error:\(error)")
-                HUD.dismissLoading()
+                
             }
         }
     }
