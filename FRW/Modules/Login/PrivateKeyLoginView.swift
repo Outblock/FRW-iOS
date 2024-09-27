@@ -48,7 +48,7 @@ struct PrivateKeyLoginView: RouteableView {
                 }
             }
             
-            VPrimaryButton(model: ButtonStyle.normal,
+            VPrimaryButton(model: ButtonStyle.primary,
                            state: viewModel.buttonState,
                            action: {
                 viewModel.onSumbit()

@@ -12,13 +12,13 @@ import Flow
 extension FlowWalletKit.PrivateKey {
     
     static func wallet(id: String) throws -> FlowWalletKit.PrivateKey {
-        let pw = password(by: id)
+        let pw = KeyProvider.password(with: id)
         let privateKey = try FlowWalletKit.PrivateKey.get(id: id, password: pw, storage: PrivateKey.PKStorage)
         return privateKey
     }
     
     func store(id: String ) throws {
-        let pw = PrivateKey.password(by: id)
+        let pw = KeyProvider.password(with: id)
         try store(id: id, password: pw)
     }
 }
@@ -31,8 +31,4 @@ extension FlowWalletKit.PrivateKey {
         return storage
     }
     
-    static func password(by id: String) -> String {
-        let aseKey = LocalEnvManager.shared.backupAESKey
-        return aseKey
-    }
 }

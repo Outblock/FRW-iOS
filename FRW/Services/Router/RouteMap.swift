@@ -41,6 +41,7 @@ extension RouteMap {
         case importAddress(ImportAccountsViewModel)
         case importUserName(ImportUserNameViewModel)
         case privateKey
+        case seedPhrase
     }
 }
 
@@ -86,6 +87,8 @@ extension RouteMap.RestoreLogin: RouterTarget {
             navi.push(content: ImportUserNameView(viewModel: viewModel))
         case .privateKey:
             navi.push(content: PrivateKeyLoginView())
+        case .seedPhrase:
+            navi.push(content: SeedPhraseLoginView())
         }
     }
 }

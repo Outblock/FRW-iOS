@@ -415,7 +415,7 @@ extension UserManager {
         try await finishLogin(mnemonic: "", customToken: customToken)
     }
     
-    func importLogin(by address: String, userName:String, flowKey: Flow.AccountKey, privateKey: FlowWalletKit.PrivateKey, isImport: Bool = false)  async throws {
+    func importLogin(by address: String, userName:String, flowKey: Flow.AccountKey, privateKey: any KeyProtocol, isImport: Bool = false)  async throws {
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
             DispatchQueue.main.async {
@@ -465,7 +465,7 @@ extension UserManager {
             throw LLError.restoreLoginFailed
         }
         try await finishLogin(mnemonic: "", customToken: customToken)
-        try privateKey.store(id: uid)
+        try privateKey.store(id: uid, password: KeyProvider.password(with: uid))
         DispatchQueue.main.async {
             let store = StoreUser(publicKey: publicKey, address: address, userId: uid, keyType: .keyStore)
             WalletManager.shared.updateKeyProvider(provider: privateKey, user: store)

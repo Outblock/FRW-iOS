@@ -29,7 +29,7 @@ struct SecureEnclaveMigration {
         for item in users {
             if let privateKey = try? SecureEnclave.P256.Signing.PrivateKey(dataRepresentation: item.publicKey) {
                 let secureKey = SecureEnclaveKey(key: privateKey, storage: SecureEnclaveKey.KeychainStorage)
-                try? secureKey.store(id: item.uniq, password: SecureEnclaveKey.password(by: item.uniq))
+                try? secureKey.store(id: item.uniq, password: KeyProvider.password(with: item.uniq))
                 finishCount += 1
             }
         }

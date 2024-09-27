@@ -112,6 +112,7 @@ extension RestoreWalletViewModel {
         case phrase
         case keyStore
         case privateKey
+        case seedPhrase
 
         
         var title: String {
@@ -126,6 +127,8 @@ extension RestoreWalletViewModel {
                 return "Key Store"
             case .privateKey:
                 return "Private Key"
+            case .seedPhrase:
+                return "Seed Phrase"
             }
         }
         
@@ -141,6 +144,8 @@ extension RestoreWalletViewModel {
                 return "icon_import_keystore_40"
             case .privateKey:
                 return "icon_import_privatekey_40"
+            case .seedPhrase:
+                return "icon_import_phrase_40"
             }
         }
         
@@ -156,6 +161,8 @@ extension RestoreWalletViewModel {
                 return "import_keystore_desc".localized
             case .privateKey:
                 return "import_privatekey_desc".localized
+            case .seedPhrase:
+                return "import_phrase_desc".localized
             }
         }
     }

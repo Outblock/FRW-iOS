@@ -18,7 +18,7 @@ extension SecureEnclaveKey {
     }
     
     static func wallet(id: String) throws -> SecureEnclaveKey {
-        let pw = password(by: id)
+        let pw = KeyProvider.password(with: id)
         let secureEnclaveKey = try SecureEnclaveKey.get(id: id, password: pw, storage: SecureEnclaveKey.KeychainStorage)
         return secureEnclaveKey
     }
@@ -32,7 +32,7 @@ extension SecureEnclaveKey {
     }
     
     func store(id: String ) throws {
-        let pw = SecureEnclaveKey.password(by: id)
+        let pw = KeyProvider.password(with: id)
         try store(id: id, password: pw)
     }
 }
@@ -43,11 +43,6 @@ extension SecureEnclaveKey {
         let service = (Bundle.main.bundleIdentifier ?? AppBundleName) + ".SE"
         let storage = FlowWalletKit.KeychainStorage(service: service, label: "SecureEnclaveKey", synchronizable: false)
         return storage
-    }
-    
-    static func password(by id: String) -> String {
-        let aseKey = LocalEnvManager.shared.backupAESKey
-        return aseKey
     }
 }
 

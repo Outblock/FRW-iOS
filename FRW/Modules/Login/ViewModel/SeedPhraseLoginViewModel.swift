@@ -1,86 +1,70 @@
 //
-//  KeyStoreLoginViewModel.swift
+//  SeedPhraseLoginViewModel.swift
 //  FRW
 //
-//  Created by cat on 2024/8/19.
+//  Created by cat on 2024/9/27.
 //
 
 import Foundation
-import Web3Core
-import WalletCore
-
-import Flow
-import SwiftUI
+import UIKit
 import FlowWalletKit
+import WalletCore
+import Flow
 
 
-class KeyStoreLoginViewModel: ObservableObject {
-    @Published var json: String = ""
-    @Published var password: String = ""
+class SeedPhraseLoginViewModel: ObservableObject {
+    @Published var words: String = ""
     @Published var wantedAddress: String = ""
+    @Published var derivationPath: String = ""
+    @Published var passphrase: String = ""
     
     @Published var buttonState: VPrimaryButtonState = .disabled
+    @Published var isAdvanced: Bool = false
     
-    var userName: String = ""
-    
-    private var privateKey: FlowWalletKit.PrivateKey?
-    @Published var wallet: FlowWalletKit.Wallet? = nil
-    
+    private var providerKey: FlowWalletKit.SeedPhraseKey?
+    private var wallet: FlowWalletKit.Wallet? = nil
     private var account: Flow.Account? = nil
     
-    
-    @MainActor func update(json: String) {
-        update()
+    func updateState() {
+        if isAdvanced {
+            buttonState = words.isEmpty || derivationPath.isEmpty ? .disabled : .enabled
+        }else {
+            buttonState = words.isEmpty ? .disabled : .enabled
+        }
     }
     
-    @MainActor func update(password: String) {
-        update()
-    }
-    
-    @MainActor private func update() {
-        updateButtonState()
-    }
-    
-    
-    func update(address: String) {
-        
-    }
-    
-    private func updateButtonState() {
-        buttonState =  (json.isEmpty || password.isEmpty ) ? .disabled : .enabled
-    }
-    
-    func onSumbit() {
+    func onSubmit() {
         UIApplication.shared.endEditing()
         HUD.loading()
+        let chainId = LocalUserDefaults.shared.flowNetwork.toFlowType()
+        let rawMnemonic = words.condenseWhitespace()
         Task {
-            do {
-                
+            guard let hdWallet = HDWallet(mnemonic: rawMnemonic, passphrase: passphrase) else {
+                return
+            }
+            if isAdvanced && !derivationPath.isEmpty {
+                providerKey = FlowWalletKit.SeedPhraseKey(hdWallet: hdWallet, storage: FlowWalletKit.SeedPhraseKey.seedPhraseStorage, derivationPath: derivationPath, passphrase: passphrase)
+            }else {
+                providerKey = FlowWalletKit.SeedPhraseKey(hdWallet: hdWallet, storage: FlowWalletKit.SeedPhraseKey.seedPhraseStorage)
+            }
+            guard let providerKey = providerKey  else {
+                return
+            }
+            wallet = FlowWalletKit.Wallet(type: .key(providerKey), networks: [chainId])
+            try await fetchAllAddresses()
+            HUD.dismissLoading()
+            if wantedAddress.isEmpty {
+                await self.showAllAccounts()
+            }else {
                 let chainId = LocalUserDefaults.shared.flowNetwork.toFlowType()
-                privateKey = try PrivateKey.restore(json: json, password: password, storage: FlowWalletKit.PrivateKey.PKStorage)
-                guard let privateKey = privateKey  else {
+                guard let keys = wallet?.flowAccounts?[chainId] else {
                     return
                 }
-                wallet = FlowWalletKit.Wallet(type: .key(privateKey), networks: [chainId])
-                
-                try await fetchAllAddresses()
-                HUD.dismissLoading()
-                
-                if wantedAddress.isEmpty {
-                    await self.showAllAccounts()
-                }else {
-                    let chainId = LocalUserDefaults.shared.flowNetwork.toFlowType()
-                    guard let keys = wallet?.flowAccounts?[chainId] else {
-                        return
-                    }
-                    guard let account = keys.filter({ $0.address.hex == wantedAddress }).first else {
-                        return
-                    }
-                    selectedAccount(by: account)
+                guard let account = keys.filter({ $0.address.hex == wantedAddress }).first else {
+                    return
                 }
-                
-            }catch {
-                HUD.dismissLoading()
+                selectedAccount(by: account)
+                //TODO: if not find
             }
         }
     }
@@ -94,7 +78,6 @@ class KeyStoreLoginViewModel: ObservableObject {
         }
         
     }
-    
     
     // select one address
     @MainActor private func showAllAccounts() {
@@ -125,7 +108,7 @@ class KeyStoreLoginViewModel: ObservableObject {
     func checkPublicKey() {
         let keys = account?.keys.filter({ $0.publicKey.description == p256PublicKey || $0.publicKey.description == secp256PublicKey })
         guard let selectedKey = keys?.first,
-        let address = account?.address.hex, let privateKey = privateKey
+        let address = account?.address.hex, let privateKey = providerKey
         else {
             log.error("[Import] keys of account not match the public:\(String(describing: p256PublicKey)) or \(String(describing: secp256PublicKey)) ")
             return
@@ -155,7 +138,7 @@ class KeyStoreLoginViewModel: ObservableObject {
                             Router.popToRoot()
                         }catch {
                             log.error("[Import] login 409 :\(error)")
-                        }
+                        }   
                     }
                 }
                 log.error("[Import] check public key own error:\(error)")
@@ -164,32 +147,19 @@ class KeyStoreLoginViewModel: ObservableObject {
         }
     }
     
+    
+    func onAdvance() {
+        isAdvanced.toggle()
+        
+    }
 }
 
-extension KeyStoreLoginViewModel {
+extension SeedPhraseLoginViewModel {
     private var p256PublicKey: String? {
-        return (try? privateKey?.publicKey(signAlgo: .ECDSA_P256))?.hexValue.dropPrefix("04")
+        return (try? providerKey?.publicKey(signAlgo: .ECDSA_P256))?.hexValue.dropPrefix("04")
     }
     
     private var secp256PublicKey: String? {
-        return (try? privateKey?.publicKey(signAlgo: .ECDSA_SECP256k1))?.hexValue.dropPrefix("04")
+        return (try? providerKey?.publicKey(signAlgo: .ECDSA_SECP256k1))?.hexValue.dropPrefix("04")
     }
-}
-
-// MARK: - Model
-struct Keystore: Codable {
-    var address: String?
-    var crypto: CryptoParamsV3
-    var id: String?
-    var version: Int
-}
-
-struct ImportAccountInfo {
-    
-    let address: String?
-    let weight: Int?
-    let keyId: Int?
-    let publicKey: String?
-    let signAlgo: Flow.SignatureAlgorithm
-    let hashAlgo: Flow.HashAlgorithm = .SHA2_256
 }

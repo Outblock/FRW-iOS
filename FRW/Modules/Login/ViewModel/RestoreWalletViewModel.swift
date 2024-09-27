@@ -16,7 +16,8 @@ class RestoreWalletViewModel {
 
 extension RestoreWalletViewModel {
     func restoreWithManualAction() {
-        Router.route(to: RouteMap.RestoreLogin.restoreManual)
+        Router.route(to: RouteMap.RestoreLogin.seedPhrase)
+//        Router.route(to: RouteMap.RestoreLogin.restoreManual)
     }
     
     func restoreWithCloudAction(type: BackupManager.BackupType) {
