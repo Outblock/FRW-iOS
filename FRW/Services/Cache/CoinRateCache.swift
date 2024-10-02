@@ -107,8 +107,8 @@ extension CoinRateCache {
         Task {
             do {
                 addPrices = try await Network.request(FRWAPI.Crypto.prices)
-            }catch {
-                log.error("[Wallet] CoinRateCache -> fetch add price")
+            } catch let error {
+                log.error("[Wallet] CoinRateCache -> fetch add price", context: error)
             }
             
             await withTaskGroup(of: Void.self) { group in

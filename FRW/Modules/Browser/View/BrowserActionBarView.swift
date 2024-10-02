@@ -170,7 +170,7 @@ class BrowserActionBarView: UIView {
         stackView.snp.makeConstraints { make in
             make.left.equalTo(14)
             make.right.equalTo(-14)
-            make.top.equalTo(4)
+            make.top.equalTo(10)
             make.height.equalTo(BtnHeight)
         }
         

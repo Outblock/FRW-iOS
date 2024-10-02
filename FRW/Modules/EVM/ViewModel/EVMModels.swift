@@ -11,8 +11,14 @@ import Web3Core
 import BigInt
 
 struct EVMTransactionExecuted: Codable {
-    let hash: String?
-    let blockHash: String?    
+    let hash: [UInt8]?
+    
+    var hashString: String? {
+        guard let hash = hash else {
+            return nil
+        }
+        return Data(hash).hexValue
+    }
 }
 
 struct EVMTransactionReceive: Codable {

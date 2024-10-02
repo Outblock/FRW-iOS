@@ -42,7 +42,6 @@ class BrowserViewController: UIViewController {
         view.scrollView.backgroundColor = commonColor
         view.allowsBackForwardNavigationGestures = true
         view.allowsLinkPreview = true
-        view.layer.cornerRadius = 24
         view.layer.masksToBounds = true
         #if DEBUG
             if #available(iOS 16.4, *) {
@@ -163,7 +162,7 @@ class BrowserViewController: UIViewController {
     private func reloadBgPaths() {
         bgMaskLayer.frame = contentView.bounds
         
-        let path = UIBezierPath(roundedRect: contentView.bounds, byRoundingCorners: [.topLeft, .topRight], cornerRadii: CGSize(width: 24.0, height: 24.0))
+        let path = UIBezierPath(roundedRect: contentView.bounds, byRoundingCorners: [.topLeft, .topRight], cornerRadii: CGSize(width: 20.0, height: 20.0))
         bgMaskLayer.path = path.cgPath
     }
 }

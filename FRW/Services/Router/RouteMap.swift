@@ -560,10 +560,6 @@ extension RouteMap.Explore: RouterTarget {
     func onPresent(navi: UINavigationController) {
         switch self {
         case .browser(let url):
-            if let host = url.host, host.contains("flowdiver.io") {
-                UIApplication.shared.open(url)
-                return
-            }
             if let isIn = RemoteConfigManager.shared.config?.features.browser, isIn{
                 
                 let vc = BrowserViewController()
