@@ -127,8 +127,14 @@ extension RemoteConfigManager {
             self = NewDisplayType(rawValue: rawValue ?? "") ?? .expiry
         }
     }
+    
+    enum NewsFlag: String, Codable {
+        case normal
+        case walletconnect
+        case upgrade
+    }
 
-    struct News: Codable, Comparable, Identifiable {
+    struct News: Codable, Comparable, Identifiable, Hashable {
         let id: String
         let priority: NewsPriority
         let type: NewsType
@@ -140,6 +146,8 @@ extension RemoteConfigManager {
         let url: String?
         let expiryTime: Date
         let displayType: NewDisplayType
+        
+        var flag: NewsFlag? = .normal
 
         var iconURL: URL? {
             if let logoString = icon {

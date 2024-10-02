@@ -55,7 +55,7 @@ class CadenceManager {
                 log.info("[Cadence] romote version is \(String(describing: providers.version))")
             }
             catch {
-                log.error("CadenceManager -> decode failer: \(error)")
+                log.error("CadenceManager -> decode failed", context: error)
             }
         }
     }
@@ -74,7 +74,7 @@ class CadenceManager {
                 }
             }
             catch {
-                log.error("CadenceManager -> fetch failed: \(error)")
+                log.error("CadenceManager -> fetch failed", context: error)
             }
         }
     }

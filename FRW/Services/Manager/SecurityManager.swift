@@ -38,7 +38,7 @@ extension SecurityManager {
 class SecurityManager {
     static let shared = SecurityManager()
     private let PinCodeKey = "PinCodeKey"
-    private var isLocked: Bool = false
+    var isLocked: Bool = false
     
     var securityType: SecurityType {
         return LocalUserDefaults.shared.securityType

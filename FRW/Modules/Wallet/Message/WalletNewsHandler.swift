@@ -12,6 +12,7 @@ class WalletNewsHandler: ObservableObject {
     
     static let shared = WalletNewsHandler()
     
+    // TODO: Change it to Set
     @Published var list: [RemoteConfigManager.News] = []
     
     var removeIds: [String] = [] {
@@ -31,6 +32,34 @@ class WalletNewsHandler: ObservableObject {
         removeMarkedNews()
         orderNews()
         log.debug("[NEWS] count:\(list.count)")
+    }
+    
+    func addRemoteNews(_ news: RemoteConfigManager.News) {
+        if list.contains(where: { $0.id == news.id }) {
+            return
+        }
+        
+        list.append(news)
+        orderNews()
+    }
+    
+    func removeNews(_ news: RemoteConfigManager.News) {
+        if let index = list.firstIndex(where: { $0.id == news.id }) {
+            list.remove(at: index)
+            orderNews()
+        }
+    }
+    
+    func refreshWalletConnectNews(_ news: [RemoteConfigManager.News]) {
+        for (index, new) in list.enumerated() {
+            if new.flag == .walletconnect {
+                list.remove(at: index)
+            }
+        }
+        
+        for item in news {
+            addRemoteNews(item)
+        }
     }
     
     private func removeExpiryNew() {
@@ -85,6 +114,10 @@ extension WalletNewsHandler {
         
         if let urlStr = item.url, !urlStr.isEmpty, let url = URL(string: urlStr) {
             Router.route(to: RouteMap.Explore.browser(url))
+        }
+        
+        if item.flag == .walletconnect, let request = WalletConnectManager.shared.pendingRequests.first(where: { $0.topic == item.id }) {
+            WalletConnectManager.shared.handleRequest(request)
         }
         
         if shouldRemove {

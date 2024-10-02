@@ -87,7 +87,8 @@ extension FlowLog {
         file: String = #file, function: String = #function, line: Int = #line, context: Any? = nil) {
         
         SwiftyBeaver.custom(level: .error, message: message(), file: file, function: function, line: line, context: context)
-        addLogModel(category: .error, viewModel: DebugViewModel(name: "\(message())", detail: " "))
+        addLogModel(category: .error, viewModel: DebugViewModel(name: "\(message())",
+                                                                        detail: (context as? Error)?.localizedDescription ?? ""))
     }
 
     private func addLogModel(category: FlowLog.Category, viewModel: DebugViewModel) {

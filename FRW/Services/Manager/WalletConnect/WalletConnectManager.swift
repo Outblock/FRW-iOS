@@ -204,8 +204,9 @@ class WalletConnectManager: ObservableObject {
             .sink { [weak self] data in
                 print("[RESPONDER] WC: Did receive session request")
                 log.info("[Session] request top:\(data.request.topic) ")
-                self?.handleRequest(data.request)
-
+                if !SecurityManager.shared.isLocked {
+                    self?.handleRequest(data.request)
+                }
             }.store(in: &publishers)
         
         Sign.instance.sessionDeletePublisher
@@ -250,7 +251,7 @@ extension WalletConnectManager {
     private func startPendingRequestCheckTimer() {
         stopPendingRequestCheckTimer()
         
-        let timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(reloadPendingRequests), userInfo: nil, repeats: true)
+        let timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(reloadPendingRequests), userInfo: nil, repeats: true)
         RunLoop.main.add(timer, forMode: .common)
         
         pendingRequestCheckTimer = timer
@@ -268,6 +269,8 @@ extension WalletConnectManager {
             pendingRequests = Sign.instance.getPendingRequests().map { (request: Request, _: VerifyContext?) in
                 request
             }
+            
+            WalletNewsHandler.shared.refreshWalletConnectNews(pendingRequests.map{ $0.toLocalNews() })
         }
     }
 }
@@ -801,5 +804,22 @@ extension WalletConnectManager {
 
     func findSession(topic: String) -> Session? {
         return activeSessions.first(where: { $0.topic == topic })
+    }
+}
+
+
+extension WalletConnectSign.Request {
+    func toLocalNews() -> RemoteConfigManager.News {
+        return RemoteConfigManager.News(id: self.topic,
+                                                priority: .urgent,
+                                                type: .message,
+                                                 title: "Pending Request - \((self.name) ?? "Unknown")",
+                                                body: "You have a pending request from \((dappURL?.host) ?? "Unknown").",
+                                                icon: logoURL?.absoluteString ?? AppPlaceholder.image,
+                                                image: nil,
+                                                url: nil,
+                                                expiryTime: .distantFuture,
+                                                displayType: .click,
+                                                flag: .walletconnect)
     }
 }
