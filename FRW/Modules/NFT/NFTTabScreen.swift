@@ -10,9 +10,9 @@
 import CollectionViewPagingLayout
 import IrregularGradient
 import Kingfisher
+import Lottie
 import SwiftUI
 import WebKit
-import Lottie
 
 extension NFTTabScreen: AppTabBarPageProtocol {
     static func tabTag() -> AppTabType {
@@ -77,15 +77,13 @@ extension NFTTabScreen {
         var body: some View {
             VStack(spacing: 0) {
                 Spacer()
-                
+
                 HStack(alignment: .center) {
                     NFTSegmentControl(currentTab: $listStyle, styles: [.normal, .grid])
-                    
+
                     Spacer()
 
-                    Button {
-                        
-                    } label: {
+                    Button {} label: {
                         Image(systemName: "plus")
                             .foregroundColor(.white)
                             .padding(8)
@@ -160,7 +158,6 @@ extension NFTTabScreen {
         }
     }
 }
-
 
 // MARK: Preview
 

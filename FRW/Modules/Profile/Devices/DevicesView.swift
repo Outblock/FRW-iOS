@@ -9,11 +9,11 @@ import SwiftUI
 
 struct DevicesView: RouteableView {
     @StateObject private var vm = DevicesViewModel()
-    
+
     var title: String {
         return "devices".localized
     }
-    
+
     var body: some View {
         ScrollView {
             Text("Scan_to_Sync_Extension_Wallet".localized)
@@ -47,17 +47,17 @@ struct DevicesView: RouteableView {
                 .background(Color.LL.Neutrals.background)
                 .padding(.horizontal, 18)
                 .padding(.top, 24)
-            
+
             LazyVStack(alignment: .leading) {
                 VStack(alignment: .leading) {
                     Text("current_device".localized)
                         .font(.inter(size: 14, weight: .bold))
                         .foregroundColor(Color.Theme.Text.black3)
-                      
+
                     DevicesView.Cell(model: vm.current ?? DeviceInfoModel.empty(), isCurrent: true)
                 }
                 .visibility(vm.showCurrent ? .visible : .gone)
-                
+
                 VStack(alignment: .leading) {
                     Text("other_device".localized)
                         .font(.inter(size: 14, weight: .bold))

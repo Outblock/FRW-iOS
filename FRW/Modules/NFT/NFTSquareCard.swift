@@ -18,10 +18,10 @@ struct NFTSquareCard: View {
             VStack(alignment: .leading) {
                 KFImage
                     .url(nft.imageURL)
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: geo.size.width, height: geo.size.width, alignment: .center)
@@ -34,7 +34,6 @@ struct NFTSquareCard: View {
                     .lineLimit(1)
 
                 HStack {
-                    
                     Text("Inaccessible".localized)
                         .foregroundStyle(Color.LL.Primary.salmonPrimary)
                         .font(Font.inter(size: 10, weight: .semibold))
@@ -43,21 +42,20 @@ struct NFTSquareCard: View {
                         .background(.LL.Primary.salmon5.opacity(0.75))
                         .cornerRadius(4, style: .continuous)
                         .visibility(isAccessible() ? .gone : .visible)
-                    
+
                     Text(nft.subtitle)
                         .font(.LL.body)
                         .foregroundColor(.LL.note)
                         .lineLimit(1)
                         .visibility(isAccessible() ? .visible : .gone)
                 }
-                
             }
         }
         .onTapGesture {
             onClick(nft)
         }
     }
-    
+
     private func isAccessible() -> Bool {
         let nftAccessible = WalletManager.shared.accessibleManager.isAccessible(nft)
         guard let collection = nft.collection else {

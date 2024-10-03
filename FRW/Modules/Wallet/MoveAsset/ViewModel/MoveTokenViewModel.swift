@@ -9,7 +9,7 @@ import SwiftUI
 
 class MoveTokenViewModel: ObservableObject {
     @Published var inputDollarNum: Double = 0
-    
+
     @Published var inputText: String = ""
     @Published var inputTokenNum: Double = 0
     @Published var amountBalance: Double = 0
@@ -17,46 +17,45 @@ class MoveTokenViewModel: ObservableObject {
     @Published var errorType: WalletSendAmountView.ErrorType = .none
 
     @Published var buttonState: VPrimaryButtonState = .disabled
-    
-    @Published var fromContact: Contact = Contact(address: "", avatar: "", contactName: "", contactType: nil, domain: nil, id: -1, username: nil)
-    @Published var toContact: Contact = Contact(address: "", avatar: "", contactName: "", contactType: nil, domain: nil, id: -1, username: nil)
-    
+
+    @Published var fromContact = Contact(address: "", avatar: "", contactName: "", contactType: nil, domain: nil, id: -1, username: nil)
+    @Published var toContact = Contact(address: "", avatar: "", contactName: "", contactType: nil, domain: nil, id: -1, username: nil)
+
     var token: TokenModel
     @Binding var isPresent: Bool
-    
+
     init(token: TokenModel, isPresent: Binding<Bool>) {
         self.token = token
         _isPresent = isPresent
         loadUserInfo()
         refreshTokenData()
     }
-    
+
     private func loadUserInfo() {
         guard let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress() else {
             return
         }
         if let account = ChildAccountManager.shared.selectedChildAccount {
             fromContact = Contact(address: account.showAddress, avatar: account.icon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName, walletType: .link)
-        }else if let account = EVMAccountManager.shared.selectedAccount {
+        } else if let account = EVMAccountManager.shared.selectedAccount {
             let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
-            fromContact = Contact(address: account.showAddress, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName,user: user, walletType: .evm)
-        }else  {
+            fromContact = Contact(address: account.showAddress, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName, user: user, walletType: .evm)
+        } else {
             let user = WalletManager.shared.walletAccount.readInfo(at: primaryAddr)
             fromContact = Contact(address: primaryAddr, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: user.name, user: user, walletType: .flow)
         }
-        
-        
+
         if ChildAccountManager.shared.selectedChildAccount != nil || EVMAccountManager.shared.selectedAccount != nil {
             let user = WalletManager.shared.walletAccount.readInfo(at: primaryAddr)
-            toContact = Contact(address: primaryAddr, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: user.name,user: user, walletType: .flow)
-        }else if let account = EVMAccountManager.shared.accounts.first {
+            toContact = Contact(address: primaryAddr, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: user.name, user: user, walletType: .flow)
+        } else if let account = EVMAccountManager.shared.accounts.first {
             let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
-            toContact = Contact(address: account.showAddress, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName,user: user, walletType: .evm)
-        }else if let account = ChildAccountManager.shared.childAccounts.first {
+            toContact = Contact(address: account.showAddress, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName, user: user, walletType: .evm)
+        } else if let account = ChildAccountManager.shared.childAccounts.first {
             toContact = Contact(address: account.showAddress, avatar: account.icon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName, walletType: .link)
         }
     }
-    
+
     func changeTokenModelAction(token: TokenModel) {
         if token.contractId == self.token.contractId {
             return
@@ -66,17 +65,17 @@ class MoveTokenViewModel: ObservableObject {
         errorType = .none
         refreshTokenData()
     }
-    
+
     private func refreshTokenData() {
         amountBalance = WalletManager.shared.getBalance(bySymbol: token.symbol ?? "")
         coinRate = CoinRateCache.cache.getSummary(for: token.symbol ?? "")?.getLastRate() ?? 0
     }
-    
-    func inputTextDidChangeAction(text: String) {
+
+    func inputTextDidChangeAction(text _: String) {
         refreshSummary()
         updateState()
     }
-    
+
     func refreshSummary() {
         if inputText.isEmpty {
             inputTokenNum = 0.0
@@ -84,7 +83,7 @@ class MoveTokenViewModel: ObservableObject {
             errorType = .none
             return
         }
-        
+
         if !inputText.isNumber {
             inputTokenNum = 0.0
             inputDollarNum = 0.0
@@ -97,21 +96,21 @@ class MoveTokenViewModel: ObservableObject {
             errorType = .insufficientBalance
             return
         }
-        
+
 //        if amountBalance - inputTokenNum < 0.001 {
 //            errorType = .belowMinimum
 //            return
 //        }
         errorType = .none
     }
-    
+
     func maxAction() {
         let num = max(amountBalance, 0)
         inputText = num.formatCurrencyString()
         refreshSummary()
         updateState()
     }
-    
+
     private func updateState() {
         buttonState = isReadyForSend ? .enabled : .disabled
     }
@@ -119,7 +118,7 @@ class MoveTokenViewModel: ObservableObject {
     var isReadyForSend: Bool {
         return errorType == .none && inputText.isNumber && !inputText.isEmpty
     }
-    
+
     var currentBalance: String {
         let totalStr = amountBalance.formatCurrencyString()
         return "Balance: \(totalStr)"
@@ -127,15 +126,14 @@ class MoveTokenViewModel: ObservableObject {
 }
 
 extension MoveTokenViewModel {
-    
     var fromIsEVM: Bool {
         EVMAccountManager.shared.accounts.contains { $0.showAddress.lowercased() == fromContact.address?.lowercased() }
     }
-    
+
     var toIsEVM: Bool {
         EVMAccountManager.shared.accounts.contains { $0.showAddress.lowercased() == toContact.address?.lowercased() }
     }
-    
+
     var balanceAsCurrentCurrencyString: String {
         return inputDollarNum.formatCurrencyString(considerCustomCurrency: true)
     }
@@ -143,7 +141,7 @@ extension MoveTokenViewModel {
 
 extension MoveTokenViewModel {
     func onNext() {
-        //TODO: #six 新的cadence
+        // TODO: #six 新的cadence
         if fromContact.walletType == .link || toContact.walletType == .link {
             HUD.info(title: "Features are coming.")
             return
@@ -151,20 +149,16 @@ extension MoveTokenViewModel {
         if token.isFlowCoin {
             if WalletManager.shared.isSelectedEVMAccount {
                 withdrawCoa()
-            }
-            else {
+            } else {
                 fundCoa()
             }
-        }
-        else {
+        } else {
             bridgeToken()
         }
     }
-    
-    func onChooseAccount() {
-        
-    }
-    
+
+    func onChooseAccount() {}
+
     private func withdrawCoa() {
         Task {
             do {
@@ -177,14 +171,13 @@ extension MoveTokenViewModel {
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
                 HUD.dismissLoading()
-                
+
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
                     self.closeAction()
                     self.buttonState = .enabled
                 }
-            }
-            catch {
+            } catch {
                 DispatchQueue.main.async {
                     self.buttonState = .enabled
                 }
@@ -192,7 +185,7 @@ extension MoveTokenViewModel {
             }
         }
     }
-    
+
     private func fundCoa() {
         Task {
             do {
@@ -204,14 +197,13 @@ extension MoveTokenViewModel {
                 let txid = try await FlowNetwork.fundCoa(amount: amount)
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
-                
+
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
                     self.closeAction()
                     self.buttonState = .enabled
                 }
-            }
-            catch {
+            } catch {
                 DispatchQueue.main.async {
                     self.buttonState = .enabled
                 }
@@ -219,30 +211,29 @@ extension MoveTokenViewModel {
             }
         }
     }
-    
+
     private func bridgeToken() {
         Task {
             do {
-                //TODO:
-                
+                // TODO:
+
                 DispatchQueue.main.async {
                     self.buttonState = .loading
                 }
                 log.info("[EVM] bridge token \(fromIsEVM ? "FromEVM" : "ToEVM")")
                 let amount = self.inputTokenNum.decimalValue
-        
+
                 let vaultIdentifier = (fromIsEVM ? (token.flowIdentifier ?? "") : token.contractId + ".Vault")
                 let txid = try await FlowNetwork.bridgeToken(vaultIdentifier: vaultIdentifier, amount: amount, fromEvm: fromIsEVM, decimals: token.decimal)
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
-                
+
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
                     self.closeAction()
                     self.buttonState = .enabled
                 }
-            }
-            catch {
+            } catch {
                 DispatchQueue.main.async {
                     self.buttonState = .enabled
                 }
@@ -250,9 +241,9 @@ extension MoveTokenViewModel {
             }
         }
     }
-    
+
     func closeAction() {
-        Router.dismiss(){
+        Router.dismiss {
             MoveAssetsAction.shared.endBrowser()
         }
     }

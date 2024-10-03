@@ -10,7 +10,7 @@ import Foundation
 class LocalEnvManager {
     static let shared = LocalEnvManager()
     private let dict: [String: String]
-    
+
     init() {
         do {
             let path = Bundle.main.url(forResource: "LocalEnv", withExtension: nil)!
@@ -27,11 +27,11 @@ extension LocalEnvManager {
     var backupAESKey: String {
         return dict["BackupAESKey"]!
     }
-    
+
     var walletConnectProjectID: String {
         return dict["WalletConnectProjectID"]!
     }
-    
+
     var aesIV: String {
         return dict["AESIV"]!
     }

@@ -8,13 +8,12 @@
 import SwiftUI
 
 struct NetworkMenuItem: View {
-    
     var network: LocalUserDefaults.FlowNetworkType
     var currentNetwork: LocalUserDefaults.FlowNetworkType
     var isSelected: Bool {
         network == currentNetwork
     }
-    
+
     var body: some View {
         HStack {
             Text(network.rawValue.uppercasedFirstLetter())
@@ -26,7 +25,7 @@ struct NetworkMenuItem: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 16, height: 16)
-            }else {
+            } else {
                 Image("check_fill_0")
                     .resizable()
                     .renderingMode(.template)

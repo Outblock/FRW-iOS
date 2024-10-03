@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-//import RiveRuntime
+// import RiveRuntime
 
 struct NFTEmptyView: View {
     var body: some View {
@@ -14,20 +14,20 @@ struct NFTEmptyView: View {
 //            Image("nft_empty_bg")
 //                .resizable()
 //                .aspectRatio(contentMode: .fill)
-            
+
             Color.LL.background
                 .ignoresSafeArea()
-            
+
 //            RiveViewModel(fileName: "shapes").view()
 //                .frame(maxWidth: .infinity, maxHeight: .infinity)
 //                .ignoresSafeArea()
 //                .blur(radius: 30)
 //                .blendMode(.hardLight)
-            
+
             Image("Spline")
                 .blur(radius: 50)
                 .offset(x: 200, y: 100)
-            
+
 //            VStack {
 //                Text("nft_empty".localized)
 //                    .font(.LL.mindTitle)
@@ -53,8 +53,8 @@ struct NFTEmptyView: View {
     }
 }
 
-//struct EmptyNFTView_Previews: PreviewProvider {
+// struct EmptyNFTView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        NFTEmptyView()
 //    }
-//}
+// }

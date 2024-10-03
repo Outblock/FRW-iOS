@@ -20,7 +20,7 @@ extension FRWAPI.Flowns: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
         return .bearer
     }
-    
+
     var baseURL: URL {
         switch self {
         case .queryInbox:
@@ -29,18 +29,18 @@ extension FRWAPI.Flowns: TargetType, AccessTokenAuthorizable {
             return Config.get(.lilico)
         }
     }
-    
+
     var path: String {
         switch self {
         case .domainPrepare:
             return "/v1/flowns/prepare"
         case .domainSignature:
             return "/v1/flowns/signature"
-        case .queryInbox(let domain):
+        case let .queryInbox(domain):
             return "/api/data/domain/\(domain)"
         }
     }
-    
+
     var method: Moya.Method {
         switch self {
         case .domainPrepare:
@@ -51,19 +51,19 @@ extension FRWAPI.Flowns: TargetType, AccessTokenAuthorizable {
             return .get
         }
     }
-    
+
     var task: Task {
         switch self {
         case .domainPrepare:
             return .requestParameters(parameters: [:], encoding: URLEncoding.queryString)
-        case .domainSignature(let request):
+        case let .domainSignature(request):
             return .requestJSONEncodable(request)
         case .queryInbox:
             return .requestParameters(parameters: [:], encoding: URLEncoding.queryString)
         }
     }
-    
-    var headers: [String : String]? {
+
+    var headers: [String: String]? {
         return FRWAPI.commonHeaders
     }
 }

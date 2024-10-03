@@ -76,7 +76,7 @@ enum StakingError: Error {
     case stakingSetupFailed
     case stakingCreateDelegatorIdFailed
     case unknown
-    
+
     var desc: String {
         switch self {
         case .stakingDisabled:

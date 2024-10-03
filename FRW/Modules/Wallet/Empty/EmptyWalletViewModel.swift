@@ -5,10 +5,10 @@
 //  Created by Hao Fu on 25/12/21.
 //
 
+import Alamofire
 import Combine
 import Foundation
 import SwiftUI
-import Alamofire
 
 extension EmptyWalletViewModel {
     struct Placeholder {
@@ -45,7 +45,7 @@ class EmptyWalletViewModel: ObservableObject {
                 }
             }.store(in: &cancelSets)
     }
-    
+
     func switchAccountAction(_ uid: String) {
         Task {
             do {
@@ -59,34 +59,33 @@ class EmptyWalletViewModel: ObservableObject {
             }
         }
     }
-    
+
     func createNewAccountAction() {
         Router.route(to: RouteMap.Register.root(nil))
     }
-    
+
     func loginAccountAction() {
         Router.route(to: RouteMap.RestoreLogin.restoreList)
     }
-    
+
     func syncAccountAction() {
         Router.route(to: RouteMap.RestoreLogin.syncQC)
     }
-    
+
     func tryToRestoreAccountWhenFirstLaunch() {
         if LocalUserDefaults.shared.tryToRestoreAccountFlag {
             // has been triggered or no old account to restore
             return
         }
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                
             guard let isReachable = self.net?.isReachable else { return }
-            
+
             if isReachable {
                 self.net?.stopListening()
                 UserManager.shared.tryToRestoreOldAccountOnFirstLaunch()
                 return
-            }else {
+            } else {
                 self.net?.startListening(onQueue: .main, onUpdatePerforming: { status in
                     log.info("[NET] network changed")
                     switch status {

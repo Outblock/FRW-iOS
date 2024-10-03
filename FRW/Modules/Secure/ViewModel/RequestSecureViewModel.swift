@@ -8,7 +8,6 @@
 import BiometricAuthentication
 import Foundation
 
-
 class RequestSecureViewModel: ViewModel {
     @Published
     private(set) var state: RequestSecureView.ViewState = .init()

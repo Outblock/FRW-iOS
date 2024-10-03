@@ -8,16 +8,14 @@
 import SwiftUI
 
 struct IntroductionView: RouteableView {
-    
     var topic: IntroductionView.Topic
     var confirmClosure: EmptyClosure
-    
+
     var title: String {
         return ""
     }
-    
+
     var body: some View {
-        
         VStack(alignment: .leading, spacing: 32) {
             VStack(alignment: .leading) {
                 Text(topic.titleTop)
@@ -35,19 +33,19 @@ struct IntroductionView: RouteableView {
                     .font(.inter(size: 14))
                     .foregroundStyle(Color.Theme.Text.black8)
             }
-            
+
             Spacer()
-            
+
             VPrimaryButton(model: ButtonStyle.primary,
                            state: .enabled,
                            action: {
-                              onClick()
-            }, title: "ok".localized)
+                               onClick()
+                           }, title: "ok".localized)
         }
         .padding(.horizontal, 28)
         .applyRouteable(self)
     }
-    
+
     func onClick() {
         Router.pop()
         confirmClosure()
@@ -58,7 +56,7 @@ extension IntroductionView {
     enum Topic {
         case whatMultiBackup
         case aboutRecoveryPhrase
-        
+
         var titleTop: String {
             switch self {
             case .whatMultiBackup:
@@ -67,7 +65,7 @@ extension IntroductionView {
                 return "about_phrase_title_top".localized
             }
         }
-        
+
         var titleBottom: String {
             switch self {
             case .whatMultiBackup:
@@ -76,7 +74,7 @@ extension IntroductionView {
                 return "about_phrase_title_bottom".localized
             }
         }
-        
+
         var content: String {
             switch self {
             case .whatMultiBackup:
@@ -86,11 +84,8 @@ extension IntroductionView {
             }
         }
     }
-    
 }
 
 #Preview {
-    IntroductionView(topic: .whatMultiBackup) {
-        
-    }
+    IntroductionView(topic: .whatMultiBackup) {}
 }

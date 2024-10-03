@@ -20,7 +20,7 @@ extension View {
 extension UINavigationController {
     func push<T: RouteableView>(content: T, animated: Bool = true) {
         let vc = RouteableUIHostingController(rootView: content)
-        self.pushViewController(vc, animated: animated)
+        pushViewController(vc, animated: animated)
     }
 }
 
@@ -30,9 +30,9 @@ extension UIViewController {
         if wrapWithNavi {
             let navi = RouterNavigationController(rootViewController: vc)
             navi.modalPresentationCapturesStatusBarAppearance = true
-            self.present(navi, animated: animated)
+            present(navi, animated: animated)
         } else {
-            self.present(vc, animated: animated)
+            present(vc, animated: animated)
         }
     }
 }

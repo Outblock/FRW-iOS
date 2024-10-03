@@ -15,7 +15,7 @@ struct ProfileEditNameView_Previews: PreviewProvider {
 
 struct ProfileEditNameView: RouteableView {
     @StateObject private var vm = ProfileEditNameViewModel()
-    
+
     var title: String {
         return "edit_nickname".localized
     }

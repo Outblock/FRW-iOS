@@ -9,23 +9,21 @@ import SwiftUI
 
 class WalletResetConfirmViewModel: ObservableObject {
     @Published var text: String = ""
-    
+
     func resetWalletAction() {
         if text != "delete_wallet_desc_2".localized {
             HUD.error(title: "reset_warning_text".localized)
             return
         }
-        
-        HUD.showAlert(title: "reset_warning_alert_title".localized, msg: "delete_warning_alert_desc".localized, cancelAction: {
-            
-        }, confirmTitle: "delete_wallet".localized) {
+
+        HUD.showAlert(title: "reset_warning_alert_title".localized, msg: "delete_warning_alert_desc".localized, cancelAction: {}, confirmTitle: "delete_wallet".localized) {
             self.doReset()
         }
     }
-    
+
     private func doReset() {
         HUD.loading()
-        
+
         Task {
             do {
                 try await UserManager.shared.reset()

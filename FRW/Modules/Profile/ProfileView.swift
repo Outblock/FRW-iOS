@@ -233,8 +233,8 @@ extension ProfileView {
                 }
 
 //                ProfileView.InfoActionButton(iconName: "icon-inbox", title: "inbox".localized) {
-////                    HUD.present(title: "Feature coming soon")
-////                    Router.route(to: RouteMap.Explore.claimDomain)
+                ////                    HUD.present(title: "Feature coming soon")
+                ////                    Router.route(to: RouteMap.Explore.claimDomain)
 //                    Router.route(to: RouteMap.Profile.inbox)
 //                }
             }
@@ -306,7 +306,6 @@ extension ProfileView {
 
                         Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
                     }
-                    
 
                     Button {
                         vm.securityAction()
@@ -323,9 +322,8 @@ extension ProfileView {
 
 extension ProfileView {
     struct WalletConnectView: View {
-        
         @EnvironmentObject private var vm: ProfileViewModel
-        
+
         enum Row {
             case walletConnect
             case devices
@@ -344,13 +342,14 @@ extension ProfileView {
                                 style: Row.walletConnect.style,
                                 desc: Row.walletConnect.desc,
                                 imageName: Row.walletConnect.imageName,
-                                sysImageColor: Row.walletConnect.sysImageColor)
+                                sysImageColor: Row.walletConnect.sysImageColor
+                            )
                         }
                         .buttonStyle(ScaleButtonStyle())
 
                         Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
                     }
-                    
+
                     Button {
                         Router.route(to: RouteMap.Profile.devices)
                     } label: {
@@ -360,7 +359,8 @@ extension ProfileView {
                             style: Row.devices.style,
                             desc: Row.devices.desc,
                             imageName: Row.devices.imageName,
-                            sysImageColor: Row.devices.sysImageColor)
+                            sysImageColor: Row.devices.sysImageColor
+                        )
                     }
                 }
             }
@@ -436,7 +436,7 @@ extension ProfileView.ActionSectionView.Row {
 
     var style: ProfileView.SettingItemCell.Style {
         switch self {
-        case .backup(let vm):
+        case let .backup(vm):
             return .arrow
         case .security:
             return .arrow
@@ -447,7 +447,7 @@ extension ProfileView.ActionSectionView.Row {
 
     var desc: String {
         switch self {
-        case .backup(let vm):
+        case let .backup(vm):
             switch vm.state.backupFetchingState {
             case .manually:
                 return ""
@@ -465,7 +465,7 @@ extension ProfileView.ActionSectionView.Row {
 
     var imageName: String {
         switch self {
-        case .backup(let vm):
+        case let .backup(vm):
             return ""
 
         default:
@@ -475,7 +475,7 @@ extension ProfileView.ActionSectionView.Row {
 
     var sysImageColor: Color {
         switch self {
-        case .backup(let vm):
+        case let .backup(vm):
             return .clear
         default:
             return .clear
@@ -731,7 +731,7 @@ extension ProfileView.AboutSectionView.Row {
             return "about".localized
         case .plugin:
             return ""
-        case .developerMode(let lud):
+        case let .developerMode(lud):
             return lud.flowNetwork.rawValue.capitalized
         }
     }

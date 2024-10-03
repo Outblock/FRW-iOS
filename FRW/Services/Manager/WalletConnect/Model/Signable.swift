@@ -54,7 +54,7 @@ struct Signable: Codable {
         case fVsn = "f_vsn"
         case roles, data, message, keyId, addr, cadence, args
     }
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         fType = try container.decode(String.self, forKey: .fType)
@@ -66,7 +66,7 @@ struct Signable: Codable {
         roles = try container.decode(Role.self, forKey: .roles)
         cadence = try? container.decode(String.self, forKey: .cadence)
         args = try container.decode([Flow.Argument].self, forKey: .args)
-        
+
 //        voucher = try container.decode(Voucher.self, forKey: .voucher)
 //        interaction = try container.decode(Interaction.self, forKey: .interaction)
     }
@@ -125,7 +125,7 @@ struct PreSignable: Encodable {
     var args: [Flow.Argument] = []
     let data = [String: String]()
     var interaction = Interaction()
-    
+
     var voucher: Voucher {
         let insideSigners: [Singature] = interaction.findInsideSigners.compactMap { id in
             guard let account = interaction.accounts[id] else { return nil }
@@ -220,7 +220,6 @@ struct Interaction: Codable {
     var account = Account()
     var collection = Id()
 
-    
     enum Status: String, CaseIterable, Codable {
         case ok = "OK"
         case bad = "BAD"
@@ -291,7 +290,6 @@ struct Interaction: Codable {
     }
 
     func createFlowProposalKey() async throws -> Flow.TransactionProposalKey {
-
         guard let proposer = proposer,
               var account = accounts[proposer],
               let address = account.addr,
@@ -303,17 +301,16 @@ struct Interaction: Codable {
         let flowAddress = Flow.Address(hex: address)
 
         if account.sequenceNum == nil {
-            let  accountData = try await flow.accessAPI.getAccountAtLatestBlock(address: flowAddress)
+            let accountData = try await flow.accessAPI.getAccountAtLatestBlock(address: flowAddress)
             account.sequenceNum = Int(accountData.keys[keyID].sequenceNumber)
             return Flow.TransactionProposalKey(address: Flow.Address(hex: address),
-                                                  keyIndex: keyID,
-                                                  sequenceNumber: Int64(account.sequenceNum ?? 0))
+                                               keyIndex: keyID,
+                                               sequenceNumber: Int64(account.sequenceNum ?? 0))
         }
-        
+
         return Flow.TransactionProposalKey(address: Flow.Address(hex: address),
                                            keyIndex: keyID,
                                            sequenceNumber: Int64(account.sequenceNum ?? 0))
-        
     }
 
     func buildPreSignable(role: Role) -> PreSignable {
@@ -422,12 +419,12 @@ struct Voucher: Codable {
     let authorizers: [String]?
     let payloadSigs: [Singature]?
     let envelopeSigs: [Singature]?
-    
+
     func toFCLVoucher() -> FCLVoucher {
         let pkey = FCLVoucher.ProposalKey(address: Flow.Address(hex: proposalKey.address ?? ""), keyId: proposalKey.keyID ?? 0, sequenceNum: UInt64(proposalKey.sequenceNum ?? 0))
         let authorArray = authorizers?.map { Flow.Address(hex: $0) } ?? [Flow.Address]()
         let payloadSigsArray = payloadSigs?.map { FCLVoucher.Signature(address: Flow.Address(hex: $0.address ?? ""), keyId: $0.keyId ?? 0, sig: $0.sig ?? "") } ?? [FCLVoucher.Signature]()
-        
+
         let v = FCLVoucher(cadence: Flow.Script(text: cadence ?? ""), payer: Flow.Address(hex: payer ?? ""), refBlock: Flow.ID(hex: refBlock ?? ""), arguments: arguments, proposalKey: pkey, computeLimit: UInt64(computeLimit ?? 0), authorizers: authorArray, payloadSigs: payloadSigsArray)
         return v
     }
@@ -465,7 +462,7 @@ struct SignableUser: Codable {
         case keyID = "keyId"
         case sequenceNum, signature, role
     }
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         kind = try? container.decode(String.self, forKey: .kind)
@@ -529,11 +526,7 @@ struct NullDecodable<T>: Decodable where T: Decodable {
 //        case .none: try container.encodeNil()
 //        }
 //    }
-    
-    
 }
-
-
 
 extension String {
     func sansPrefix() -> String {

@@ -17,9 +17,8 @@ public class DebugViewer: ResizableView {
         }
     }
 
-    
-    private var data = ThreadSafeDictionary<String,CappedCollection<DebugViewModel>>()
-    
+    private var data = ThreadSafeDictionary<String, CappedCollection<DebugViewModel>>()
+
     private var selectedCategory: String?
 
     private var latestSize = CGSize(width: 300, height: 300)
@@ -222,7 +221,7 @@ public class DebugViewer: ResizableView {
 
     @available(*, unavailable)
     required init?(
-        coder: NSCoder
+        coder _: NSCoder
     ) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -324,11 +323,11 @@ public class DebugViewer: ResizableView {
 // MARK: UITableViewDataSource, UITableViewDelegate
 
 extension DebugViewer: UITableViewDataSource, UITableViewDelegate {
-    public func numberOfSections(in tableView: UITableView) -> Int {
+    public func numberOfSections(in _: UITableView) -> Int {
         return items.count
     }
 
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let item = items[safe: section] {
             return item.showDetails ? 2 : 1
         }
@@ -352,7 +351,7 @@ extension DebugViewer: UITableViewDataSource, UITableViewDelegate {
         }
     }
 
-    public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    public func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let item = items[indexPath.section]
         let contextItem = UIContextualAction(style: .normal, title: "Copy") { _, _, boolValue in
             if indexPath.row == 0 {
@@ -372,7 +371,7 @@ class DebugViewCell: UITableViewCell {
     static var detailFont = UIFont(name: "CourierNewPS-BoldMT", size: 8)!
 
     override init(
-        style: UITableViewCell.CellStyle, reuseIdentifier: String?
+        style _: UITableViewCell.CellStyle, reuseIdentifier: String?
     ) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
 
@@ -391,7 +390,7 @@ class DebugViewCell: UITableViewCell {
 
     @available(*, unavailable)
     required init?(
-        coder aDecoder: NSCoder
+        coder _: NSCoder
     ) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -430,7 +429,7 @@ extension DebugViewer: UICollectionViewDataSource {
         return selectedCategory == category(indexPath)
     }
 
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         return data.keys.count
     }
 
@@ -452,7 +451,7 @@ extension DebugViewer: UICollectionViewDelegate {
 }
 
 extension DebugViewer: UICollectionViewDelegateFlowLayout {
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    public func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let category = category(indexPath)
         let boundingRect = category.boundingRect(with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: buttonSize.height),
                                                  options: [.usesLineFragmentOrigin, .usesFontLeading],
@@ -495,7 +494,7 @@ class DebugViewCategoryCell: UICollectionViewCell {
     }
 
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

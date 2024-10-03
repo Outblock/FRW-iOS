@@ -9,32 +9,30 @@ import SwiftUI
 import SwiftUIX
 
 struct MoveAssetsView: RouteableView, PresentActionDelegate {
-    var changeHeight: (() -> ())?
-    
+    var changeHeight: (() -> Void)?
+
     var title: String {
         return ""
     }
-    
-    
+
     var token: TokenModel?
     var showCheck: Bool {
         MoveAssetsAction.shared.showCheckOnMoveAsset
     }
-    
+
     var showNote: String {
-        
         if let note = MoveAssetsAction.shared.showNote {
             return note
         }
         return "move_assets_note".localized
     }
-    
+
     @State private var notAsk: Bool = LocalUserDefaults.shared.showMoveAssetOnBrowser {
         didSet {
             LocalUserDefaults.shared.showMoveAssetOnBrowser = notAsk
         }
     }
-    
+
     var body: some View {
         ScrollView {
             VStack {
@@ -44,13 +42,13 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
                     })
                 })
                 .padding(.top, 24)
-                
+
                 Text(showNote)
                     .font(.inter(size: 14))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(Color.Theme.Text.black8)
                     .frame(height: 72)
-                
+
                 HStack {
                     Button {
                         onClose()
@@ -74,8 +72,7 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
                     .buttonStyle(ScaleButtonStyle())
                 }
                 .padding(.top, 32)
-                
-                
+
                 if showCheck {
                     VPrimaryButton(model: ButtonStyle.primary,
                                    state: .enabled,
@@ -85,8 +82,8 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
                                        })
                                    },
                                    title: "skip".localized)
-                    .padding(.top, 24)
-                    
+                        .padding(.top, 24)
+
                     HStack {
                         Spacer()
                         if notAsk {
@@ -100,7 +97,7 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
                                 .resizable()
                                 .frame(width: 16, height: 16)
                         }
-                            
+
                         Text("do_not_ask".localized)
                             .font(.inter(size: 16))
                             .foregroundStyle(Color.Theme.Text.black8)
@@ -111,32 +108,30 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
                         notAsk.toggle()
                     }
                     .padding(.bottom, 43)
-                }else {
+                } else {
                     Spacer()
                 }
             }
             .padding(.horizontal, 18)
-            
         }
         .backgroundFill(Color.Theme.Background.grey)
         .cornerRadius([.topLeading, .topTrailing], 16)
         .applyRouteable(self)
         .edgesIgnoringSafeArea(.all)
-
     }
-    
+
     func toName() -> String {
         EVMAccountManager.shared.selectedAccount == nil ? "Flow" : "EVM"
     }
-    
+
     @ViewBuilder
     func card(isNFT: Bool) -> some View {
         VStack {
             Image(cardHead(isNFT: isNFT))
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-                .frame(width: isNFT ? (showCheck ? 128 : 134) : (showCheck ? 96 : 140) ,  height: showCheck ? 56 : 96)
-                
+                .frame(width: isNFT ? (showCheck ? 128 : 134) : (showCheck ? 96 : 140), height: showCheck ? 56 : 96)
+
             Text(isNFT ? "move_nft".localized : "move_token".localized)
                 .font(.inter(size: 18, weight: .semibold))
                 .foregroundStyle(Color.Theme.Text.black)
@@ -150,21 +145,21 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
                 .clipped()
         }
     }
-    
+
     private func cardHead(isNFT: Bool) -> String {
         if showCheck {
             return isNFT ? "evm_move_nft_header_s" : "evm_move_token_header_s"
         }
         return isNFT ? "evm_move_nft_header" : "evm_move_token_header"
     }
-    
+
     private func cardBG(isNFT: Bool) -> String {
         if showCheck {
             return "move_assets_bg_s_\(isNFT ? "0" : "1")"
         }
         return "move_assets_bg_\(isNFT ? "0" : "1")"
     }
-        
+
     private func currentToken() -> TokenModel? {
         if let current = token {
             return current
@@ -178,11 +173,11 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
         }
         return nil
     }
-    
+
     private func onClose() {
         Router.dismiss()
     }
-    
+
     func customViewDidDismiss() {
         MoveAssetsAction.shared.endBrowser()
     }
@@ -193,5 +188,4 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
         Spacer()
         MoveAssetsView(token: TokenModel.mock())
     }
-    
 }

@@ -11,7 +11,7 @@ struct BackupUploadTimeline: View {
     var backupType: MultiBackupType
     var isError: Bool
     var process: BackupProcess
-    
+
     var body: some View {
         ZStack(alignment: .leading) {
             GeometryReader(content: { geometry in
@@ -21,7 +21,7 @@ struct BackupUploadTimeline: View {
                     .offset(x: 3, y: 12)
             })
             .layoutPriority(-1)
-            
+
             VStack(alignment: .leading, spacing: 0) {
                 BackupUploadTimeline.Item(title: "backup.upload.key.x".localized(backupType.title),
                                           backupType: backupType,
@@ -38,7 +38,7 @@ struct BackupUploadTimeline: View {
         }
         .frame(height: 120)
     }
-    
+
     var lineColor: Color {
         (process == .regist || process == .finish) ? Color.Theme.Text.black8 : Color.Theme.Text.black3
     }
@@ -51,7 +51,7 @@ extension BackupUploadTimeline {
         var isError: Bool = true
         var process: BackupProcess
         var currentProcess: BackupProcess
-        
+
         var body: some View {
             HStack {
                 Circle()
@@ -67,7 +67,7 @@ extension BackupUploadTimeline {
                     .visibility(showIcon() ? .visible : .gone)
             }
         }
-        
+
         func themeColor() -> Color {
             if isError && process == currentProcess {
                 return Color.Theme.Accent.red
@@ -77,7 +77,7 @@ extension BackupUploadTimeline {
             }
             return Color.Theme.Text.black3
         }
-        
+
         func showIcon() -> Bool {
             isError || currentProcess == process.next
         }

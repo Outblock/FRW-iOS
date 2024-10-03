@@ -17,7 +17,7 @@ extension Contact {
         case find = 1
         case flowns = 2
         case meow = 3
-        
+
         var domain: String {
             switch self {
             case .unknown:
@@ -41,13 +41,12 @@ extension Contact {
 // MARK: - AddressBook
 
 struct Contact: Codable, Identifiable {
-    
     enum WalletType: Codable {
         case flow
         case evm
         case link
     }
-    
+
     let address, avatar, contactName: String?
     let contactType: ContactType?
     let domain: Domain?
@@ -55,11 +54,11 @@ struct Contact: Codable, Identifiable {
     let username: String?
     var user: WalletAccount.User? = nil
     var walletType: WalletType? = .flow
-    
+
     var needShowLocalAvatar: Bool {
         return contactType == .domain
     }
-    
+
     var localAvatar: String? {
         switch domain?.domainType {
         case .find:
@@ -72,20 +71,19 @@ struct Contact: Codable, Identifiable {
             return nil
         }
     }
-    
+
     var name: String {
-        
         if let username = username, !username.isEmpty {
             return username
         }
-        
+
         if let contactName = contactName, !contactName.isEmpty {
             return contactName
         }
-        
+
         return ""
     }
-    
+
     var displayName: String {
         if let emojiName = user?.name, !emojiName.isEmpty {
             return emojiName
@@ -93,13 +91,13 @@ struct Contact: Codable, Identifiable {
         if let username = username, !username.isEmpty {
             return username
         }
-        
+
         if let contactName = contactName, !contactName.isEmpty {
             return contactName
         }
         return "no name"
     }
-    
+
     var uniqueId: String {
         return "\(address ?? "")-\(domain?.domainType?.rawValue ?? 0)-\(name)-\(contactType?.rawValue ?? 0)"
     }

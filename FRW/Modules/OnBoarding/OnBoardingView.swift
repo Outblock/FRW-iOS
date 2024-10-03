@@ -5,13 +5,13 @@
 //  Created by Selina on 1/6/2023.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 import SwiftUIPager
 
 struct OnBoardingView: View {
     @StateObject private var vm = OnBoardingViewModel()
-    
+
     var body: some View {
         VStack {
             headerContainer
@@ -31,6 +31,7 @@ struct OnBoardingView: View {
 }
 
 // MARK: - top bottom view
+
 extension OnBoardingView {
     var headerContainer: some View {
         HStack {
@@ -40,7 +41,7 @@ extension OnBoardingView {
         .frame(height: 63)
         .padding(.horizontal, 24)
     }
-    
+
     var skipBtn: some View {
         Button {
             vm.onSkipBtnAction()
@@ -56,12 +57,12 @@ extension OnBoardingView {
         }
         .transition(.opacity)
     }
-    
+
     var bottomContainer: some View {
         HStack {
             OnBoardingView.PageControl(numberOfPages: OnBoardingViewModel.installPage().count, currentPage: $vm.currentPageIndex)
             Spacer()
-            
+
             if vm.isLastPage {
                 startBtn
                     .transition(.opacity)
@@ -72,7 +73,7 @@ extension OnBoardingView {
         .frame(height: 63)
         .padding(.horizontal, 24)
     }
-    
+
     var nextBtn: some View {
         Button {
             vm.onNextBtnAction()
@@ -84,7 +85,7 @@ extension OnBoardingView {
             .background(Circle().strokeBorder(.white, lineWidth: 1))
         }
     }
-    
+
     var startBtn: some View {
         Button {
             vm.onStartBtnAction()
@@ -103,6 +104,7 @@ extension OnBoardingView {
 }
 
 // MARK: - body view
+
 extension OnBoardingView {
     var bodyContainer: some View {
         GeometryReader { geoProxy in
@@ -110,34 +112,34 @@ extension OnBoardingView {
                 createPageView(type, size: geoProxy.size)
             }
             .bounces(false)
-            .onPageWillChange({ willIndex in
+            .onPageWillChange { willIndex in
                 vm.onPageIndexChangeAction(willIndex)
-            })
+            }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
-    
+
     private func createPageView(_ type: OnBoardingViewModel.PageType, size: CGSize) -> some View {
         VStack(spacing: 0) {
             Image(type.imageName)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: .infinity)
-            
+
             Spacer()
-            
+
             Text(type.title)
                 .font(.Ukraine(size: 34, weight: .semibold))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)
-            
+
 //            Text(type.desc)
 //                .font(.inter(size: 14, weight: .medium))
 //                .foregroundColor(.white)
 //                .frame(maxWidth: .infinity, alignment: .leading)
 //                .multilineTextAlignment(.leading)
-            
+
             Spacer()
         }
         .padding(.horizontal, 24)
@@ -147,14 +149,15 @@ extension OnBoardingView {
 }
 
 // MARK: - components
+
 extension OnBoardingView {
     struct PageControl: View {
         @State var numberOfPages: Int
         @Binding var currentPage: Int
-        
+
         var body: some View {
             HStack(spacing: 12) {
-                ForEach(0..<numberOfPages, id: \.self) { index in
+                ForEach(0 ..< numberOfPages, id: \.self) { index in
                     Circle()
                         .frame(width: 8, height: 8)
                         .foregroundColor(currentPage == index ? Color(hex: "#579AF2") : Color.white)

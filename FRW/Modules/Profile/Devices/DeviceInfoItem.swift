@@ -10,7 +10,7 @@ import SwiftUI
 struct DeviceInfoItem: View {
     var title: String
     var detail: String
-    
+
     var body: some View {
         HStack {
             // Body1

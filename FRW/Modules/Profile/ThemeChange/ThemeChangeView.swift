@@ -8,20 +8,19 @@
 import Foundation
 import SwiftUI
 
-
 struct ThemeChangeView: RouteableView {
     @StateObject private var vm = ThemeChangeViewModel()
-    
+
     @AppStorage("WalletCardBackrgound")
     private var walletCardBackrgound: String = "fade:0"
-    
+
     @State
     private var cardColor: Color
-    
+
     var title: String {
         return "theme".localized
     }
-    
+
     init() {
         let value = UserDefaults.standard.string(forKey: "WalletCardBackrgound") ?? "fade:0"
         let card = CardBackground(value: value)
@@ -31,7 +30,6 @@ struct ThemeChangeView: RouteableView {
     var body: some View {
         ZStack {
             ScrollView {
-                
                 Section {
                     Button {
                         Router.route(to: RouteMap.Profile.wallpaper)
@@ -40,14 +38,13 @@ struct ThemeChangeView: RouteableView {
                             Text("Wallpaper".localized)
                                 .font(.inter(size: 14, weight: .semibold))
                                 .foregroundColor(.LL.Neutrals.text)
-                                
+
                             Spacer()
-                            
+
                             CardBackground(value: walletCardBackrgound)
                                 .renderView()
                                 .frame(width: 32, height: 32)
                                 .cornerRadius(8)
-                                
                         }
                         .padding(.horizontal, 24)
                         .frame(height: 64)
@@ -57,8 +54,7 @@ struct ThemeChangeView: RouteableView {
                 }
                 .padding(.horizontal, 18)
                 .padding(.bottom, 12)
-                
-                
+
                 Section {
                     VStack {
                         themeItemView.padding(.vertical, 24)
@@ -156,29 +152,29 @@ extension ThemeChangeView {
     }
 }
 
-
 extension ThemeChangeView {
     struct Cell<Content>: View where Content: View {
         let isSelected: Bool
         let title: String
         let content: Content
-    
+
         init(isSelected: Bool, title: String,
-             @ViewBuilder content: @escaping () -> Content) {
+             @ViewBuilder content: @escaping () -> Content)
+        {
             self.isSelected = isSelected
             self.title = title
             self.content = content()
         }
-        
+
         var body: some View {
             HStack {
-                Image(systemName: isSelected ? .checkmarkSelected : .checkmarkUnselected )
+                Image(systemName: isSelected ? .checkmarkSelected : .checkmarkUnselected)
                     .foregroundColor(isSelected ? .Flow.accessory : .LL.Neutrals.neutrals1)
                 Text(title)
                     .font(.inter())
                     .foregroundColor(.LL.text)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 content
             }
             .frame(height: 64)

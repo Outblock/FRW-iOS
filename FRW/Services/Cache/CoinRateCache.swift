@@ -14,11 +14,11 @@ extension CoinRateCache {
         static func == (lhs: CoinRateCache.CoinRateModel, rhs: CoinRateCache.CoinRateModel) -> Bool {
             return lhs.symbol == rhs.symbol
         }
-        
+
         func hash(into hasher: inout Hasher) {
             hasher.combine(symbol)
         }
-        
+
         let updateTime: TimeInterval
         let symbol: String
         let summary: CryptoSummaryResponse
@@ -57,14 +57,14 @@ class CoinRateCache {
                 self.refresh()
             }
         }.store(in: &cancelSets)
-        
+
         NotificationCenter.default.publisher(for: .willResetWallet)
             .receive(on: DispatchQueue.main)
             .sink { _ in
                 self.willReset()
             }.store(in: &cancelSets)
     }
-    
+
     @objc private func willReset() {
         queue.sync {
             _summarys.removeAll()
@@ -96,7 +96,7 @@ extension CoinRateCache {
         if isRefreshing {
             return
         }
-        
+
         guard let supportedCoins = WalletManager.shared.supportedCoins else {
             return
         }
@@ -110,7 +110,7 @@ extension CoinRateCache {
             } catch {
                 log.error("[Wallet] CoinRateCache -> fetch add price", context: error)
             }
-            
+
             await withTaskGroup(of: Void.self) { group in
                 supportedCoins.forEach { coin in
                     group.addTask { [weak self] in
@@ -121,7 +121,7 @@ extension CoinRateCache {
                         }
                     }
                 }
-                evmCoins?.forEach({ coin in
+                evmCoins?.forEach { coin in
                     group.addTask { [weak self] in
                         do {
                             try await self?.fetchCoinRate(coin)
@@ -129,7 +129,7 @@ extension CoinRateCache {
                             debugPrint("CoinRateCache -> fetchCoinRate:\(coin.symbol ?? "") failed: \(error)")
                         }
                     }
-                })
+                }
             }
 
             isRefreshing = false
@@ -151,10 +151,9 @@ extension CoinRateCache {
         }
 
         guard let listedToken = coin.listedToken else {
-            
             return
         }
-        
+
         switch listedToken.priceAction {
         case let .query(coinPair):
             let market = LocalUserDefaults.shared.market
@@ -165,29 +164,29 @@ extension CoinRateCache {
             guard let mirrorTokenModel = WalletManager.shared.supportedCoins?.first(where: { $0.symbol == token.rawValue }) else {
                 break
             }
-            
+
             try await fetchCoinRate(mirrorTokenModel)
-            
+
             guard let mirrorResponse = getSummary(for: token.rawValue) else {
                 break
             }
-            
+
             await set(summary: mirrorResponse, forSymbol: symbol)
-        case let .fixed(price): 
+        case let .fixed(price):
             let response = createFixedRateResponse(fixedRate: price, for: coin)
             await set(summary: response, forSymbol: symbol)
         }
     }
-    
+
     private func createFixedRateResponse(fixedRate: Decimal, for token: TokenModel) -> CryptoSummaryResponse {
         var model: CryptoSummaryResponse.AddPrice?
-        
+
         if EVMAccountManager.shared.selectedAccount != nil {
-            model = addPrices.first { ($0.evmAddress?.lowercased() == token.getAddress()?.lowercased()) }
-        }else {
+            model = addPrices.first { $0.evmAddress?.lowercased() == token.getAddress()?.lowercased() }
+        } else {
             model = addPrices.first { $0.contractName.uppercased() == token.contractName.uppercased() }
         }
-        
+
         let change = CryptoSummaryResponse.Change(absolute: 0, percentage: 0)
         let price = CryptoSummaryResponse.Price(last: model?.rateToUSD ?? fixedRate.doubleValue,
                                                 low: fixedRate.doubleValue,
@@ -200,7 +199,7 @@ extension CoinRateCache {
     @MainActor
     private func set(summary: CryptoSummaryResponse, forSymbol: String) {
         let model = CoinRateModel(updateTime: Date().timeIntervalSince1970, symbol: forSymbol, summary: summary)
-        let _ = queue.sync {
+        _ = queue.sync {
             _summarys.update(with: model)
         }
         saveToCache()

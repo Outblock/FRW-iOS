@@ -22,7 +22,7 @@ struct CreatePinCodeView: RouteableView {
     @State var text: String = ""
     @State var focuse: Bool = false
     @FocusState private var pinCodeViewIsFocus: Bool
-    
+
     var title: String {
         return ""
     }
@@ -49,7 +49,7 @@ struct CreatePinCodeView: RouteableView {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.bottom, 30)
-            
+
             PinCodeTextField(text: $text)
                 .keyboardType(.numberPad)
                 .fixedSize()

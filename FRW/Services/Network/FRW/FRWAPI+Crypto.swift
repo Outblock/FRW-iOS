@@ -28,7 +28,6 @@ extension FRWAPI.Crypto: TargetType, AccessTokenAuthorizable {
         default:
             return Config.get(.lilico)
         }
-        
     }
 
     var path: String {
@@ -44,7 +43,7 @@ extension FRWAPI.Crypto: TargetType, AccessTokenAuthorizable {
 
     var method: Moya.Method {
         switch self {
-        case .summary, .history,.prices:
+        case .summary, .history, .prices:
             return .get
         }
     }

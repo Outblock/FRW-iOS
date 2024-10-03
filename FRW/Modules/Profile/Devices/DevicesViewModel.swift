@@ -13,14 +13,14 @@ class DevicesViewModel: ObservableObject {
     @Published var status: PageStatus = .loading
     @Published var showCurrent: Bool = false
     @Published var showOther: Bool = false
-    
+
     @Published var current: DeviceInfoModel?
-    
+
     init() {
         devices = [DeviceInfoModel.empty()]
         fetch()
     }
-    
+
     func fetch() {
         Task {
             do {
@@ -35,8 +35,7 @@ class DevicesViewModel: ObservableObject {
                     self.showOther = self.devices.count > 0
                     self.status = .finished
                 }
-            }
-            catch {
+            } catch {
                 DispatchQueue.main.async {
                     self.devices = []
                     self.current = nil
@@ -47,13 +46,9 @@ class DevicesViewModel: ObservableObject {
             }
         }
     }
-    
-    
 }
 
-
-
-struct DeviceInfoModel: Codable,Identifiable {
+struct DeviceInfoModel: Codable, Identifiable {
     let city: String?
     let continent: String?
     let continentCode: String?
@@ -77,50 +72,52 @@ struct DeviceInfoModel: Codable,Identifiable {
     let wallettestId: Int?
     let zip: String?
     let country: String?
-    
+
     static func empty() -> DeviceInfoModel {
         DeviceInfoModel(city: "", continent: "", continentCode: "", createdAt: "", currency: "", deviceName: "", deviceType: nil, district: "", id: "", ip: "", isp: "", lat: 0.0, lon: 0.0, org: "", regionName: "", updatedAt: "", userAgent: "", userId: "", walletId: nil, walletsandId: nil, wallettestId: nil, zip: "", country: "")
     }
+
     // like iPhone 15 Pro Max
     func showName() -> String {
         return deviceName ?? ""
     }
+
     // like Flow Wallet macOS 8.4.1
     func showApp() -> String {
         return userAgent ?? ""
     }
-    
+
     func showIP() -> String {
         return ip ?? ""
     }
-    
+
     func showLocation() -> String {
         var res = ""
-        if city != nil && !city!.isEmpty {
+        if city != nil, !city!.isEmpty {
             res += city!
         }
-        if country != nil && !country!.isEmpty {
+        if country != nil, !country!.isEmpty {
             res += ",\(country!)"
         }
         return res
     }
-    
+
     func showLocationAndDate() -> String {
         var res = ""
         if !showLocation().isEmpty {
             res = showLocation()
         }
         let date = showDate()
-        if !date.isEmpty && !res.isEmpty {
+        if !date.isEmpty, !res.isEmpty {
             res += " · "
         }
-        
-        if !date.isEmpty  {
+
+        if !date.isEmpty {
             res += date
         }
         return res
     }
-    
+
     func showDate() -> String {
         guard let created = updatedAt else { return "" }
         let dateFormatter = DateFormatter()
@@ -131,13 +128,11 @@ struct DeviceInfoModel: Codable,Identifiable {
         let res = dateFormatter.string(from: date)
         return res
     }
-    
+
     func coordinate() -> CLLocationCoordinate2D {
-        
         guard let latitude = lat, let longitude = lon else {
             return CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
         }
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
-    
 }

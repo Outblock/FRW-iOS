@@ -16,34 +16,34 @@ struct StakingNode: Codable {
     let tokensRewarded: Double
     let tokensUnstaked: Double
     let tokensRequestedToUnstake: Double
-    
+
     var stakingCount: Double {
         return tokensCommitted + tokensStaked
     }
-    
+
     var isLilico: Bool {
         return StakingProviderCache.cache.providers.first { $0.isLilico }?.id == nodeID
     }
-    
+
     var tokenStakedASUSD: Double {
         let rate = CoinRateCache.cache.getSummary(for: "flow")?.getLastRate() ?? 0.0
         return tokensStaked * rate
     }
-    
+
     var dayRewards: Double {
         let apy = isLilico ? StakingManager.shared.apy : StakingDefaultNormalApy
         return stakingCount * apy / 365.0
     }
-    
+
     var monthRewards: Double {
         return dayRewards * 30
     }
-    
+
     var dayRewardsASUSD: Double {
         let coinRate = CoinRateCache.cache.getSummary(for: "flow")?.getLastRate() ?? 0
         return dayRewards * coinRate
     }
-    
+
     var monthRewardsASUSD: Double {
         let coinRate = CoinRateCache.cache.getSummary(for: "flow")?.getLastRate() ?? 0
         return monthRewards * coinRate
@@ -76,7 +76,7 @@ extension StakingDelegatorInner.Value1.Value2 {
         let type: String?
         let value: String?
     }
-    
+
     struct Value: Codable {
         let type: String?
         let value: [StakingDelegatorInner.Value1.Value2.Value.Value3?]?

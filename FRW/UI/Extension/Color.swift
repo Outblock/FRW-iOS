@@ -33,22 +33,22 @@ extension Color {
 extension UIColor {
     func adjustbyTheme(by percentage: CGFloat = 30.0) -> UIColor {
         if UIScreen.main.traitCollection.userInterfaceStyle == .dark {
-            return self.lighter(by: percentage)
+            return lighter(by: percentage)
         }
-        return self.darker(by: percentage)
+        return darker(by: percentage)
     }
 
     func lighter(by percentage: CGFloat = 30.0) -> UIColor {
-        return self.adjust(by: abs(percentage))
+        return adjust(by: abs(percentage))
     }
 
     func darker(by percentage: CGFloat = 30.0) -> UIColor {
-        return self.adjust(by: -1 * abs(percentage))
+        return adjust(by: -1 * abs(percentage))
     }
 
     func adjust(by percentage: CGFloat = 30.0) -> UIColor {
         var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
-        if self.getRed(&red, green: &green, blue: &blue, alpha: &alpha) {
+        if getRed(&red, green: &green, blue: &blue, alpha: &alpha) {
             return UIColor(red: min(red + percentage / 100, 1.0),
                            green: min(green + percentage / 100, 1.0),
                            blue: min(blue + percentage / 100, 1.0),
@@ -216,19 +216,19 @@ extension Color {
         }
 
         enum Background {
-            ///BG
+            /// BG
             static let white = Color("bg.white")
-            ///BG2
+            /// BG2
             static let grey = Color("bg.grey")
-            ///BG3
+            /// BG3
             static let silver = Color("bg.silver")
             static let white8 = Color("bg.white8")
             static let black3 = Color("bg.black3")
             /// White
             static let pureWhite = Color("bg.0")
-            ///icon
+            /// icon
             static let icon = Color("bg.icon.black")
-            
+
             static let bg2 = Color("BG.2")
             static let bg3 = Color("BG.3")
         }
@@ -250,6 +250,6 @@ extension Color {
 extension Color {
     /// opacity is 0.16
     func fixedOpacity() -> Color {
-        return self.opacity(0.16)
+        return opacity(0.16)
     }
 }

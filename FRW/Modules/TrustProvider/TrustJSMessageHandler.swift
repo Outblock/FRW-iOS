@@ -6,22 +6,20 @@
 //
 
 import BigInt
+import Combine
+import CryptoKit
 import Flow
 import Foundation
 import TrustWeb3Provider
 import WalletCore
 import Web3Core
 import web3swift
-import WebKit
-import CryptoKit
-import Combine
 import Web3Wallet
-
-
+import WebKit
 
 class TrustJSMessageHandler: NSObject {
     weak var webVC: BrowserViewController?
- 
+
     var supportChainID: [Int: Flow.ChainID] = [
         LocalUserDefaults.FlowNetworkType.mainnet.networkID: .mainnet,
         LocalUserDefaults.FlowNetworkType.testnet.networkID: .testnet,
@@ -49,7 +47,7 @@ extension TrustJSMessageHandler {
         }
         return ProviderNetwork(rawValue: network)
     }
-    
+
     private func extractMessage(json: [String: Any]) -> Data? {
         guard
             let params = json["object"] as? [String: Any],
@@ -60,14 +58,14 @@ extension TrustJSMessageHandler {
         }
         return data
     }
-    
+
     private func extractObject(json: [String: Any]) -> [String: Any]? {
         guard let obj = json["object"] as? [String: Any] else {
             return nil
         }
         return obj
     }
-    
+
     private func extractEthereumChainId(json: [String: Any]) -> Int? {
         guard
             let params = json["object"] as? [String: Any],
@@ -82,7 +80,7 @@ extension TrustJSMessageHandler {
 }
 
 extension TrustJSMessageHandler: WKScriptMessageHandler {
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
         let json = message.json
         guard let method = extractMethod(json: json),
               let id = json["id"] as? Int64,
@@ -108,7 +106,7 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
             handleSendTransaction(network: network, id: id, info: obj)
         case .signMessage:
             log.info("[Trust] signMessage")
-            
+
         case .signTypedMessage:
             log.info("[Trust] signTypedMessage")
         case .signPersonalMessage:
@@ -119,7 +117,7 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
             handleSignPersonal(network: network, id: id, data: data, addPrefix: true)
         case .sendTransaction:
             log.info("[Trust] sendTransaction")
-            
+
         case .ecRecover:
             log.info("[Trust] ecRecover")
 
@@ -149,9 +147,6 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
 
 extension TrustJSMessageHandler {
     private func handleRequestAccounts(network: ProviderNetwork, id: Int64) {
-        
-        
-        
         let callback = { [weak self] in
             guard let self = self else {
                 return
@@ -165,12 +160,11 @@ extension TrustJSMessageHandler {
                                            url: url?.host ?? "unknown",
                                            logo: url?.absoluteString.toFavIcon()?.absoluteString,
                                            walletAddress: address,
-                                           network: chainID)
-            { [weak self] result in
+                                           network: chainID) { [weak self] result in
                 guard let self = self else {
                     return
                 }
-                
+
                 if result {
                     switch network {
                     case .ethereum:
@@ -184,16 +178,14 @@ extension TrustJSMessageHandler {
                     log.debug("handle authn cancelled")
                 }
             }
-            
+
             Router.route(to: RouteMap.Explore.authn(vm))
         }
-        
+
         MoveAssetsAction.shared.startBrowserWithMoveAssets(appName: webVC?.webView.title, callback: callback)
-        
     }
-    
-    private func handleSignPersonal(network: ProviderNetwork, id: Int64, data: Data, addPrefix: Bool) {
-        
+
+    private func handleSignPersonal(network _: ProviderNetwork, id: Int64, data: Data, addPrefix _: Bool) {
         var title = webVC?.webView.title ?? "unknown"
         if title.isEmpty {
             title = "unknown"
@@ -202,20 +194,19 @@ extension TrustJSMessageHandler {
         let vm = BrowserSignMessageViewModel(title: title,
                                              url: url?.absoluteString ?? "unknown",
                                              logo: url?.absoluteString.toFavIcon()?.absoluteString,
-                                             cadence: data.hexString)
-        { [weak self] result in
+                                             cadence: data.hexString) { [weak self] result in
             guard let self = self else {
                 return
             }
-            
+
             if result {
                 guard let addrStr = WalletManager.shared.getPrimaryWalletAddress() else {
                     HUD.error(title: "invalid_address".localized)
                     return
                 }
-                
+
                 let address = Flow.Address(hex: addrStr)
-                guard let hashedData = Utilities.hashPersonalMessage(data) else { return  }
+                guard let hashedData = Utilities.hashPersonalMessage(data) else { return }
                 let joinData = Flow.DomainTag.user.normalize + hashedData
                 guard let sig = signWithMessage(data: joinData) else {
                     HUD.error(title: "sign failed")
@@ -230,80 +221,74 @@ extension TrustJSMessageHandler {
             } else {
                 webVC?.webView.tw.send(network: .ethereum, error: "Canceled", to: id)
             }
-
         }
-        
+
         Router.route(to: RouteMap.Explore.signMessage(vm))
     }
-    
-    private func handleSendTransaction(network: ProviderNetwork, id: Int64, info: [String: Any])  {
-        
+
+    private func handleSendTransaction(network _: ProviderNetwork, id: Int64, info: [String: Any]) {
         var title = webVC?.webView.title ?? "unknown"
         if title.isEmpty {
             title = "unknown"
         }
         let url = webVC?.webView.url
-        
+
         let originCadence = CadenceManager.shared.current.evm?.callContract?.toFunc() ?? ""
-        
+
         guard let data = info.jsonData,
               let receiveModel = try? JSONDecoder().decode(EVMTransactionReceive.self, from: data),
-              let toAddr = receiveModel.toAddress else {
-            self.cancel(id: id)
+              let toAddr = receiveModel.toAddress
+        else {
+            cancel(id: id)
             return
         }
-        
+
         let args: [Flow.Cadence.FValue] = [
             .string(toAddr),
             .ufix64(Decimal(string: receiveModel.amount) ?? .nan),
             receiveModel.dataValue?.cadenceValue ?? .array([]),
-            .uint64(receiveModel.gasValue)
-           ]
-        
+            .uint64(receiveModel.gasValue),
+        ]
+
         let vm = BrowserAuthzViewModel(title: title,
                                        url: url?.absoluteString ?? "unknown",
                                        logo: url?.absoluteString.toFavIcon()?.absoluteString,
                                        cadence: originCadence,
-                                       arguments: args.toArguments()
-        )
-        { [weak self] result in
-            
+                                       arguments: args.toArguments()) { [weak self] result in
+
             guard let self = self else {
                 self?.webVC?.webView.tw.send(network: .ethereum, error: "Canceled", to: id)
                 return
             }
-            
+
             if !result {
                 self.webVC?.webView.tw.send(network: .ethereum, error: "Canceled", to: id)
                 return
             }
-               
-                Task {
-                    do {
-                        
-                        let tix = try await FlowNetwork.sendTransaction(amount: receiveModel.amount, data: receiveModel.dataValue, toAddress: toAddr, gas: receiveModel.gasValue)
-                        let result = try await tix.onceSealed()
-                        if result.isFailed {
-                            HUD.error(title: "transaction failed")
-                            self.cancel(id: id)
-                            return
-                        }
-                        let model = try await FlowNetwork.fetchEVMTransactionResult(txid: tix.hex)
-                        DispatchQueue.main.async {
-                            self.webVC?.webView.tw.send(network: .ethereum, result: model.hashString ?? "", to: id)
-                        }
-                    }
-                    catch {
-                        log.error("\(error)")
+
+            Task {
+                do {
+                    let tix = try await FlowNetwork.sendTransaction(amount: receiveModel.amount, data: receiveModel.dataValue, toAddress: toAddr, gas: receiveModel.gasValue)
+                    let result = try await tix.onceSealed()
+                    if result.isFailed {
+                        HUD.error(title: "transaction failed")
                         self.cancel(id: id)
+                        return
                     }
+                    let model = try await FlowNetwork.fetchEVMTransactionResult(txid: tix.hex)
+                    DispatchQueue.main.async {
+                        self.webVC?.webView.tw.send(network: .ethereum, result: model.hashString ?? "", to: id)
+                    }
+                } catch {
+                    log.error("\(error)")
+                    self.cancel(id: id)
                 }
-                
+            }
         }
-        
+
         Router.route(to: RouteMap.Explore.authz(vm))
     }
-    
+
     private func handleSwitchEthereumChain(id: Int64, chainId: Int) {
         guard let targetID = supportChainID[chainId] else {
             log.error("Unknown chain id: \(chainId)")
@@ -336,13 +321,11 @@ extension TrustJSMessageHandler {
             Router.route(to: RouteMap.Explore.switchNetwork(fromId, toId, callback))
         }
     }
-    
-    
-    
+
     private func signWithMessage(data: Data) -> Data? {
         return WalletManager.shared.signSync(signableData: data)
     }
-    
+
     private func cancel(id: Int64) {
         DispatchQueue.main.async {
             self.webVC?.webView.tw.send(network: .ethereum, error: "Canceled", to: id)

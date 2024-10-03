@@ -51,7 +51,7 @@ extension Encodable {
         guard let data = try? JSONEncoder().encode(self) else { return nil }
         return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)).flatMap { $0 as? [String: Any] }
     }
-    
+
     func jsonPrettyPrinted() throws -> String {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
@@ -61,7 +61,7 @@ extension Encodable {
         }
         return string
     }
-    
+
     func jsonPrettyPrint() -> String? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted

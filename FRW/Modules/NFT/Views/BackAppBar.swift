@@ -22,11 +22,11 @@ struct BackAppBar: View {
                     .foregroundColor(.LL.Button.color)
                     .frame(width: 54, height: 30)
             }
-            
+
             Spacer()
             if showShare {
                 Button {
-                   onShare?()
+                    onShare?()
                 } label: {
                     Image(systemName: "square.and.arrow.up")
                         .foregroundColor(.LL.Button.color)
@@ -34,7 +34,7 @@ struct BackAppBar: View {
                 }
             }
         }
-        .overlay() {
+        .overlay {
             if let title = self.title {
                 Text(title)
                     .font(.title2)

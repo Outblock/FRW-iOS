@@ -9,11 +9,11 @@ import SwiftUI
 
 struct TermsAndPolicy: RouteableView {
     let mnemonic: String?
-    
+
     var title: String {
         return ""
     }
-    
+
     var body: some View {
         VStack {
             Spacer()
@@ -34,7 +34,7 @@ struct TermsAndPolicy: RouteableView {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             Spacer()
-            
+
             VStack(alignment: .leading) {
                 Link(destination: URL(string: "https://lilico.app/about/terms")!) {
                     Text("terms_of_service".localized)
@@ -44,9 +44,9 @@ struct TermsAndPolicy: RouteableView {
                     Image(systemName: "chevron.right")
                         .font(Font.caption2.weight(.bold))
                 }.padding()
-                
+
                 Divider().foregroundColor(Color.LL.outline)
-                
+
                 Link(destination: URL(string: "https://lilico.app/about/privacy-policy")!) {
                     Text("privacy_policy".localized)
                         .font(.LL.body)
@@ -57,19 +57,19 @@ struct TermsAndPolicy: RouteableView {
                 }.padding()
             }
             .foregroundColor(Color.LL.text)
-            
+
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(Color.LL.outline,
                             lineWidth: 1)
             )
             .padding(.bottom, 40)
-            
+
             VPrimaryButton(model: ButtonStyle.primary,
                            action: {
-                Router.route(to: RouteMap.Register.username(mnemonic))
-            }, title: "i_accept".localized)
-            .padding(.bottom, 20)
+                               Router.route(to: RouteMap.Register.username(mnemonic))
+                           }, title: "i_accept".localized)
+                .padding(.bottom, 20)
         }
         .padding(.horizontal, 28)
         .background(Color.LL.background, ignoresSafeAreaEdges: .all)

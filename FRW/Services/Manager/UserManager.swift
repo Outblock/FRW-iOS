@@ -5,13 +5,13 @@
 //  Created by Hao Fu on 30/12/21.
 //
 
+import Alamofire
 import Combine
 import Firebase
 import FirebaseAuth
 import Flow
 import FlowWalletCore
 import Foundation
-import Alamofire
 
 extension UserManager {
     enum UserType: Codable {
@@ -31,7 +31,7 @@ class UserManager: ObservableObject {
             }
         }
     }
-    
+
     @Published var userInfo: UserInfo? {
         didSet {
             do {
@@ -42,84 +42,82 @@ class UserManager: ObservableObject {
             }
         }
     }
-    
+
     @Published var loginUIDList: [String] = [] {
         didSet {
             LocalUserDefaults.shared.loginUIDList = loginUIDList
         }
     }
-    
+
     @Published var isMeowDomainEnabled: Bool = false
-    
+
     var userType: UserManager.UserType = .secure
-    
+
     var isLoggedIn: Bool {
         return activatedUID != nil
     }
-    
 
     init() {
         checkIfHasOldAccount()
-        
-        self.loginUIDList = LocalUserDefaults.shared.loginUIDList
-        
+
+        loginUIDList = LocalUserDefaults.shared.loginUIDList
+
         if let activatedUID = activatedUID {
-            self.userInfo = MultiAccountStorage.shared.getUserInfo(activatedUID)
+            userInfo = MultiAccountStorage.shared.getUserInfo(activatedUID)
             uploadUserNameIfNeeded()
             initRefreshUserInfo()
             verifyUserType(by: activatedUID)
         }
-        
+
         loginAnonymousIfNeeded()
     }
-    
+
     private func initRefreshUserInfo() {
         if !isLoggedIn {
             return
         }
-        
+
         guard let uid = activatedUID else { return }
-        
+
         Task {
             do {
                 var info = try await self.fetchUserInfo()
                 info.type = self.userInfo?.type
                 let userInfo = info
                 if activatedUID != uid { return }
-                
+
                 DispatchQueue.main.async {
                     self.userInfo = userInfo
                 }
-                
+
                 self.fetchMeowDomainStatus(info.username)
             } catch {
                 log.error("init refresh user info failed", context: error)
             }
         }
     }
-    
+
     private func checkIfHasOldAccount() {
         if LocalUserDefaults.shared.tryToRestoreAccountFlag == true {
             return
         }
     }
-    
-    func verifyUserType(by userId: String) {
+
+    func verifyUserType(by _: String) {
         Task {
             do {
                 userType = try await checkUserType()
-            }
-            catch {
+            } catch {
                 log.error("[User] check user type:\(error)")
             }
         }
     }
-    
+
     private func checkUserType() async throws -> UserManager.UserType {
         guard let address = WalletManager.shared.getPrimaryWalletAddress(), let uid = activatedUID else { return .secure }
-        
+
         let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
-        
+
         if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid), !mnemonic.isEmpty {
             let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic)
             let accountKeys = account.keys.first { $0.publicKey.description == hdWallet?.getPublicKey() }
@@ -129,7 +127,7 @@ class UserManager: ObservableObject {
         }
         return .secure
     }
-    
+
     private func clearWhenUserChanged() {
         BrowserViewController.deleteCookie()
     }
@@ -140,23 +138,23 @@ class UserManager: ObservableObject {
 extension UserManager {
     func reset() async throws {
         log.debug("reset start")
-        
+
         guard let willResetUID = activatedUID else {
             log.warning("willResetUID is nil")
             return
         }
-        
+
         try await Auth.auth().signInAnonymously()
-        
+
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: .willResetWallet)
-            
+
             self.activatedUID = nil
             self.userInfo = nil
             self.deleteLoginUID(willResetUID)
-            
+
             NotificationCenter.default.post(name: .didResetWallet)
-            
+
             Router.popToRoot()
         }
     }
@@ -165,7 +163,7 @@ extension UserManager {
 // MARK: - Register
 
 extension UserManager {
-    func register(_ username: String, mnemonic: String? = nil) async throws -> String? {
+    func register(_ username: String, mnemonic _: String? = nil) async throws -> String? {
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
             DispatchQueue.main.async {
@@ -173,10 +171,10 @@ extension UserManager {
                 self.userInfo = nil
             }
         }
-        
+
         let sec = try WallectSecureEnclave()
         let key = try sec.accountKey()
-        
+
         if IPManager.shared.info == nil {
             await IPManager.shared.fetch()
         }
@@ -191,7 +189,7 @@ extension UserManager {
         } else {
             log.error("store public key on iPhone failed")
         }
-        
+
         return model.txId
     }
 }
@@ -203,10 +201,10 @@ extension UserManager {
         if let user = Auth.auth().currentUser, !user.isAnonymous {
             return true
         }
-        
+
         return false
     }
-    
+
     func tryToRestoreOldAccountOnFirstLaunch() {
         HUD.loading()
         Task {
@@ -226,16 +224,16 @@ extension UserManager {
                         log.error("[Launch] first login check failed:\(item.uniq):\(error)")
                     }
                 }
-                let uidList = addressList.map{ $0.key }
+                let uidList = addressList.map { $0.key }
                 let userAddress = addressList
                 DispatchQueue.main.async {
                     self.loginUIDList = uidList
                     LocalUserDefaults.shared.userAddressOfDeletedApp = userAddress
                     LocalUserDefaults.shared.tryToRestoreAccountFlag = true
                 }
-                
+
                 HUD.dismissLoading()
-                
+
             } catch {
                 HUD.dismissLoading()
                 HUD.showAlert(title: "", msg: "restore_account_failed".localized, cancelAction: {}, confirmTitle: "retry".localized) {
@@ -244,14 +242,14 @@ extension UserManager {
             }
         }
     }
-    
+
     func restoreLogin(withMnemonic mnemonic: String, userId: String? = nil) async throws {
         if let uid = userId {
             if let address = MultiAccountStorage.shared.getWalletInfo(uid)?.currentNetworkWalletModel?.getAddress {
                 try? await WalletManager.shared.findFlowAccount(with: uid, at: address)
             }
         }
-        
+
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
             DispatchQueue.main.async {
@@ -275,7 +273,7 @@ extension UserManager {
             signature = signToken
             mnemonicStr = hdWallet.mnemonic
         }
-        
+
         userType = .phrase
         await IPManager.shared.fetch()
         let hashAlgo = Flow.HashAlgorithm.SHA2_256.index
@@ -283,7 +281,7 @@ extension UserManager {
         let key = AccountKey(hashAlgo: hashAlgo,
                              publicKey: publicKey,
                              signAlgo: signAlgo)
-        
+
         let request = LoginRequest(signature: signature, accountKey: key, deviceInfo: IPManager.shared.toParams())
         let response: Network.Response<LoginResponse> = try await Network.requestWithRawModel(FRWAPI.User.login(request))
         if response.httpCode == 404 {
@@ -296,7 +294,7 @@ extension UserManager {
 
         try await finishLogin(mnemonic: mnemonicStr, customToken: customToken)
     }
-    
+
     func restoreLogin(userId: String) async throws {
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
@@ -310,13 +308,13 @@ extension UserManager {
             loginAnonymousIfNeeded()
             throw LLError.restoreLoginFailed
         }
-        
+
         guard let publicData = try WallectSecureEnclave.Store.fetch(by: userId), !publicData.isEmpty else {
             throw LLError.restoreLoginFailed
         }
-        
+
         let sec = try WallectSecureEnclave(privateKey: publicData)
-    
+
         guard let signData = token.AddUserMessage(),
               let publicKey = sec.key.publickeyValue,
               !publicKey.isEmpty
@@ -329,7 +327,7 @@ extension UserManager {
         let key = AccountKey(hashAlgo: Flow.HashAlgorithm.SHA2_256.index,
                              publicKey: publicKey,
                              signAlgo: Flow.SignatureAlgorithm.ECDSA_P256.index)
-        
+
         let request = LoginRequest(signature: signature, accountKey: key, deviceInfo: IPManager.shared.toParams())
         let response: Network.Response<LoginResponse> = try await Network.requestWithRawModel(FRWAPI.User.login(request))
         if response.httpCode == 404 {
@@ -339,7 +337,7 @@ extension UserManager {
         guard let customToken = response.data?.customToken, !customToken.isEmpty else {
             throw LLError.restoreLoginFailed
         }
-        
+
         try await finishLogin(mnemonic: "", customToken: customToken)
     }
 }
@@ -351,12 +349,12 @@ extension UserManager {
         if !currentNetwork.isMainnet {
             WalletManager.shared.changeNetwork(.mainnet)
         }
-        
+
         if uid == activatedUID {
             log.warning("switching the same account")
             return
         }
-        
+
         if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid), !mnemonic.isEmpty {
             var addressStr = LocalUserDefaults.shared.userAddressOfDeletedApp[uid]
             if addressStr == nil {
@@ -374,12 +372,12 @@ extension UserManager {
                 return
             }
         }
-        
+
         if try (WallectSecureEnclave.Store.fetch(by: uid)) != nil {
             try await restoreLogin(userId: uid)
             return
         }
-        
+
         throw WalletError.mnemonicMissing
     }
 }
@@ -390,7 +388,7 @@ extension UserManager {
     private func finishLogin(mnemonic: String, customToken: String, isRegiter: Bool = false) async throws {
         try await firebaseLogin(customToken: customToken)
         var info = try await fetchUserInfo()
-        info.type = self.userType
+        info.type = userType
         let userInfo = info
         fetchMeowDomainStatus(info.username)
 
@@ -400,7 +398,7 @@ extension UserManager {
         if !mnemonic.isEmpty {
             try WalletManager.shared.storeAndActiveMnemonicToKeychain(mnemonic, uid: uid)
         }
-        
+
         if !loginUIDList.contains(uid) && !isRegiter {
             ConfettiManager.show()
         }
@@ -412,7 +410,7 @@ extension UserManager {
             self.uploadUserNameIfNeeded()
         }
     }
-    
+
     private func insertLoginUID(_ uid: String) {
         if LocalUserDefaults.shared.flowNetwork != .mainnet {
             return
@@ -422,7 +420,7 @@ extension UserManager {
         oldList.insert(uid, at: 0)
         loginUIDList = oldList
     }
-    
+
     private func deleteLoginUID(_ uid: String) {
         var oldList = loginUIDList
         oldList.removeAll { $0 == uid }
@@ -441,14 +439,14 @@ extension UserManager {
         if info.username.isEmpty {
             throw LLError.fetchUserInfoFailed
         }
-        
+
         return info
     }
-    
+
     private func fetchMeowDomainStatus(_ username: String) {
         Task {
             do {
-                let _ = try await FlowNetwork.queryAddressByDomainFlowns(domain: username, root: Contact.DomainType.meow.domain)
+                _ = try await FlowNetwork.queryAddressByDomainFlowns(domain: username, root: Contact.DomainType.meow.domain)
                 if userInfo?.username == username {
                     DispatchQueue.main.async {
                         self.isMeowDomainEnabled = true
@@ -554,7 +552,7 @@ extension UserManager {
         let publicKey: String?
         let accounts: [AccountInfo]?
     }
-    
+
     struct AccountInfo: Codable {
         let address: String?
         let weight: Int?

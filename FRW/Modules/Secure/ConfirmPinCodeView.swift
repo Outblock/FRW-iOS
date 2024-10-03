@@ -22,11 +22,11 @@ extension ConfirmPinCodeView {
 struct ConfirmPinCodeView: RouteableView {
     @StateObject var viewModel: ConfirmPinCodeViewModel
     @FocusState private var pinCodeViewIsFocus: Bool
-    
+
     init(lastPin: String) {
         _viewModel = StateObject(wrappedValue: ConfirmPinCodeViewModel(pin: lastPin))
     }
-    
+
     var title: String {
         return ""
     }
@@ -57,7 +57,7 @@ struct ConfirmPinCodeView: RouteableView {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.bottom, 30)
-            
+
             PinCodeTextField(text: $viewModel.state.text)
                 .keyboardType(.numberPad)
                 .fixedSize()

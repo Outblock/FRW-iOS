@@ -5,15 +5,14 @@
 //  Created by cat on 2023/10/25.
 //
 
-import SwiftUI
 import KeychainAccess
-
+import SwiftUI
 
 struct UUIDManager {
     static func appUUID() -> String {
         var service = Bundle.main.bundleIdentifier ?? "com.flowfoundation.wallet"
         service += ".uuid"
-        let mainKeychain = Keychain(service:service)
+        let mainKeychain = Keychain(service: service)
             .label("Flow Core UUID")
             .synchronizable(false)
             .accessibility(.whenUnlocked)
@@ -21,7 +20,7 @@ struct UUIDManager {
         do {
             let uuid = try mainKeychain.getString("uuid")
             return uuid ?? applicationUUID
-        }catch {
+        } catch {
             return applicationUUID
         }
     }

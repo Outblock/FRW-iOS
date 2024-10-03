@@ -19,10 +19,8 @@ extension WalletListViewModel {
 class WalletListViewModel: ObservableObject {
     @Published var mainWallets: [WalletListViewModel.Item] = []
     @Published var multiVMWallets: [WalletListViewModel.Item] = []
-    
-    
+
     func reload() {
-        
         mainWallets = []
         if let mainAddress = WalletManager.shared.getPrimaryWalletAddress() {
             let user = WalletManager.shared.walletAccount.readInfo(at: mainAddress)
@@ -32,7 +30,6 @@ class WalletListViewModel: ObservableObject {
             }
             let mainWallet = WalletListViewModel.Item(user: user, address: mainAddress, balance: balance, isEvm: false)
             mainWallets.append(mainWallet)
-            
         }
         multiVMWallets = []
         EVMAccountManager.shared.accounts.forEach { account in
@@ -45,7 +42,7 @@ class WalletListViewModel: ObservableObject {
             multiVMWallets.append(model)
         }
     }
-    
+
     func addAccount() {
         Router.route(to: RouteMap.Register.root(nil))
     }
@@ -55,7 +52,7 @@ struct WalletListView: RouteableView {
     var title: String {
         return "wallet_list".localized
     }
-    
+
     @StateObject var viewModel = WalletListViewModel()
 
     var body: some View {
@@ -77,7 +74,7 @@ struct WalletListView: RouteableView {
                         Spacer()
                     }
                 }
-                
+
                 Section {
                     ForEach(viewModel.multiVMWallets, id: \.address) { item in
                         Button {
@@ -140,8 +137,6 @@ extension WalletListView {
                     Text("\(item.balance)")
                         .font(.inter(size: 14))
                         .foregroundStyle(Color.Theme.Text.black3)
-                    
-                    
                 }
                 Spacer()
                 Image("icon_arrow_right_28")

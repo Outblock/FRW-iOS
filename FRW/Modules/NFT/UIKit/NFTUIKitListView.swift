@@ -9,15 +9,13 @@ import SwiftUI
 
 struct NFTUIKitListView: UIViewControllerRepresentable {
     var vm: NFTTabViewModel
-    
-    func makeUIViewController(context: Context) -> NFTUIKitListViewController {
+
+    func makeUIViewController(context _: Context) -> NFTUIKitListViewController {
         let vc = NFTUIKitListViewController()
         vc.listStyleHandler.vm = vm
         vc.gridStyleHandler.vm = vm
         return vc
     }
-    
-    func updateUIViewController(_ uiViewController: NFTUIKitListViewController, context: Context) {
-        
-    }
+
+    func updateUIViewController(_: NFTUIKitListViewController, context _: Context) {}
 }

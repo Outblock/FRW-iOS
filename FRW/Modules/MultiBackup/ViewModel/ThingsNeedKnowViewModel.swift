@@ -5,24 +5,21 @@
 //  Created by cat on 2024/9/23.
 //
 
-
+import Flow
 import Foundation
+import KeychainAccess
 import UIKit
 import WalletCore
-import Flow
-import KeychainAccess
 
 class ThingsNeedKnowViewModel: ObservableObject {
-    
     private var hdWallet: HDWallet?
     private let mnemonicStrength: Int32 = 128
     private let store = PhraseKeyStore()
-    
-    
+
     init() {
         hdWallet = HDWallet(strength: mnemonicStrength, passphrase: "")
     }
-    
+
     func onCreate() {
         guard let hdWallet = hdWallet else {
             HUD.error(title: "fetch public key failed.")
@@ -42,7 +39,7 @@ class ThingsNeedKnowViewModel: ObservableObject {
                     HUD.dismissLoading()
                     Router.route(to: RouteMap.Backup.showRecoveryPhraseBackup(hdWallet.mnemonic))
                 }
-            }catch {
+            } catch {
                 HUD.error(title: "\(error.localizedDescription)")
                 DispatchQueue.main.async {
                     HUD.dismissLoading()
@@ -50,12 +47,11 @@ class ThingsNeedKnowViewModel: ObservableObject {
             }
         }
     }
-    
+
     private func addKeyToFlow(hdWallet: HDWallet) async throws -> Bool {
-        
         let publicKey = hdWallet.getPublicKey()
         let address = WalletManager.shared.address
-        
+
         let flowKey = flowKey(with: publicKey)
         let flowId = try await FlowNetwork.addKeyToAccount(address: address, accountKey: flowKey, signers: WalletManager.shared.defaultSigners)
         guard let data = try? JSONEncoder().encode(publicKey) else {
@@ -69,17 +65,15 @@ class ThingsNeedKnowViewModel: ObservableObject {
         }
         return true
     }
-    
+
     private func addKeyToService(hdWallet: HDWallet) async throws {
-        
         let publicKey = hdWallet.getPublicKey()
         let type = BackupType.fullWeightSeedPhrase
         let backupName = type.title
-        
+
         let flowKey = flowKey(with: publicKey)
         let deviceInfo = SyncInfo.DeviceInfo(accountKey: flowKey.toCodableModel(), deviceInfo: IPManager.shared.toParams(), backupInfo: BackupInfoModel(createTime: nil, name: backupName, type: type.rawValue))
-        
-        
+
         do {
             let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.syncDevice(deviceInfo))
             if response.httpCode != 200 {
@@ -89,13 +83,13 @@ class ThingsNeedKnowViewModel: ObservableObject {
             log.error("sync account error \(error.localizedDescription)")
         }
     }
-    
+
     private func flowKey(with publicKey: String) -> Flow.AccountKey {
         let flowPublicKey = Flow.PublicKey(hex: publicKey)
         let flowKey = Flow.AccountKey(publicKey: flowPublicKey, signAlgo: .ECDSA_SECP256k1, hashAlgo: .SHA2_256, weight: 1000)
         return flowKey
     }
-    
+
     private func fetchKeyIndex(publicKey: String) async throws -> Int {
         let address = WalletManager.shared.getPrimaryWalletAddress() ?? ""
         let accounts = try await FlowNetwork.getAccountAtLatestBlock(address: address)
@@ -105,12 +99,11 @@ class ThingsNeedKnowViewModel: ObservableObject {
         }
         return accountModel.index
     }
-    
+
     private func addKeyToLocal(hdWallet: HDWallet) throws {
         guard let uid = UserManager.shared.activatedUID else {
             throw BackupError.missingUid
         }
         try? store.addMnemonic(mnemonic: hdWallet.mnemonic, userId: uid)
     }
-    
 }

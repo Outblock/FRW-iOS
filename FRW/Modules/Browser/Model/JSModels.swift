@@ -59,7 +59,7 @@ struct FCLClient: Codable {
 
 struct FCLServices: Codable {
     let openIDScopes: String?
-    
+
     enum CodingKeys: String, CodingKey {
         case openIDScopes = "OpenID.scopes"
     }
@@ -77,20 +77,20 @@ struct FCLSimpleResponse: Codable {
     let service: FCLSimpleService
     let type: String
     let config: FCLResponseConfig?
-    
+
     var serviceType: FCLServiceType {
         return service.type
     }
-    
+
     var network: String? {
         return config?.client?.network
     }
-    
+
     var networkIsMatch: Bool {
         guard let network = network, !network.isEmpty else {
             return true
         }
-        
+
         return network.lowercased() == LocalUserDefaults.shared.flowNetwork.rawValue
     }
 }

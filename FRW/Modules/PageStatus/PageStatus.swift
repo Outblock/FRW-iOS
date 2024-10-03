@@ -8,5 +8,5 @@
 import Foundation
 
 enum PageStatus {
-    case idle,loading,error,empty,finished
+    case idle, loading, error, empty, finished
 }

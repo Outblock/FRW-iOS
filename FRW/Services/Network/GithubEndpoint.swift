@@ -34,7 +34,7 @@ extension GithubEndpoint: TargetType {
                 case .previewnet:
                     return "/Outblock/token-list-jsons/outblock/jsons/previewnet/flow/default.json"
                 }
-            }else {
+            } else {
                 switch LocalUserDefaults.shared.flowNetwork {
                 case .mainnet:
                     return "/Outblock/token-list-jsons/outblock/jsons/mainnet/flow/default.json"
@@ -44,7 +44,7 @@ extension GithubEndpoint: TargetType {
                     return "/Outblock/token-list-jsons/outblock/jsons/previewnet/flow/default.json"
                 }
             }
-            
+
         case .EVMNFTList:
             switch LocalUserDefaults.shared.flowNetwork {
             case .testnet:

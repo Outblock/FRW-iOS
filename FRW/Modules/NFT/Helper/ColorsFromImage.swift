@@ -5,29 +5,29 @@
 //  Created by cat on 2022/6/8.
 //
 
-import Foundation
-import SwiftUI
 import ColorKit
+import Foundation
 import Kingfisher
+import SwiftUI
 
 extension UIImage {
     func colors() async -> [Color] {
-        
         guard let colors = try? dominantColors(),
-              let palette = ColorPalette(orderedColors: colors, ignoreContrastRatio: true) else {
+              let palette = ColorPalette(orderedColors: colors, ignoreContrastRatio: true)
+        else {
             return [.LL.text]
         }
-        
+
         return [Color(palette.background), Color(palette.primary), (palette.secondary != nil) ? Color(palette.secondary!) : .LL.text]
     }
-    
+
     func mostFrequentColor() -> Color? {
-        guard let cgImage = self.cgImage else { return nil }
+        guard let cgImage = cgImage else { return nil }
 
         // 把图片缩小以加快处理速度
         let width = 100
         let height = Int(CGFloat(cgImage.height) * CGFloat(100) / CGFloat(cgImage.width))
-        
+
         let bitmapInfo = CGImageAlphaInfo.premultipliedLast.rawValue
         guard let context = CGContext(
             data: nil,
@@ -50,7 +50,7 @@ extension UIImage {
 
         var colorCounts: [UInt32: Int] = [:]
 
-        for i in 0..<length {
+        for i in 0 ..< length {
             let pixelIndex = i * 4
             let r = data[pixelIndex]
             let g = data[pixelIndex + 1]
@@ -77,9 +77,7 @@ extension UIImage {
     }
 }
 
-
 enum ImageHelper {
-    
     static func mostFrequentColor(from url: String) async -> Color {
         return await withCheckedContinuation { continuation in
             ImageCache.default.retrieveImage(forKey: url) { result in
@@ -87,11 +85,12 @@ enum ImageHelper {
                 case let .success(value):
                     Task {
                         guard let image = value.image,
-                              let color = image.mostFrequentColor() else {
+                              let color = image.mostFrequentColor()
+                        else {
                             continuation.resume(returning: Color.LL.text)
                             return
                         }
-                        continuation.resume(returning: color )
+                        continuation.resume(returning: color)
                     }
 
                 case .failure:
@@ -100,7 +99,7 @@ enum ImageHelper {
             }
         }
     }
-    
+
     static func colors(from url: String) async -> [Color] {
         return await withCheckedContinuation { continuation in
             ImageCache.default.retrieveImage(forKey: url) { result in
@@ -121,7 +120,7 @@ enum ImageHelper {
             }
         }
     }
-    
+
     static func image(from url: String) async -> UIImage? {
         return await withCheckedContinuation { continuation in
             ImageCache.default.retrieveImage(forKey: url) { result in
@@ -135,6 +134,4 @@ enum ImageHelper {
             }
         }
     }
-    
 }
-

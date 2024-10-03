@@ -5,29 +5,28 @@
 //  Created by cat on 2024/1/29.
 //
 
-import Foundation
 import Flow
+import Foundation
 
 class DeviceManager: ObservableObject {
     static let shared = DeviceManager()
-    
+
     private var validAccounts: [Flow.AccountKey] = []
     private var validKeys: [KeyDeviceModel] = []
     private var validDevice: [DeviceInfoModel] = []
     private var currentDevice: DeviceInfoModel?
-    
+
     func updateDevice() {
         Task {
             do {
                 let uuid = UUIDManager.appUUID()
                 let _: Network.EmptyResponse = try await Network.request(FRWAPI.User.updateDevice(uuid))
-            }
-            catch {
+            } catch {
                 log.error("[Start] upload device")
             }
         }
     }
-    
+
     func fetch() async throws -> (DeviceInfoModel?, [DeviceInfoModel]) {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
@@ -37,7 +36,7 @@ class DeviceManager: ObservableObject {
         let list: [DeviceInfoModel] = try await Network.request(FRWAPI.User.devices(uuid))
         let keyResponse: KeyResponse = try await Network.request(FRWAPI.User.keys)
         let keyList = keyResponse.result ?? []
-        
+
         // filter unrevoke key
         let validAccount = account.keys.filter { !$0.revoked }
         // filter valid key
@@ -58,7 +57,7 @@ class DeviceManager: ObservableObject {
             }
             return validDevices.count > 0
         }
-        
+
         var seenNames = Set<String>()
         var uniqueList = [DeviceInfoModel]()
         for info in filterList {
@@ -67,49 +66,48 @@ class DeviceManager: ObservableObject {
                 seenNames.insert(id)
             }
         }
-        
+
         let validDevices = filterList.filter { $0.id != uuid }
         let current = filterList.last { $0.id == uuid }
-        
-        self.validAccounts = validAccount
+
+        validAccounts = validAccount
         self.validKeys = validKeys
-        self.validDevice = uniqueList
-        self.currentDevice = current
-        
+        validDevice = uniqueList
+        currentDevice = current
+
         return (current, validDevices)
     }
-    
+
     func findFlowAccount(deviceId: String) -> Flow.AccountKey? {
         let key = findUserKey(deviceId: deviceId)
         guard let keyModel = key else {
             return nil
         }
-        
-        let accountKey = self.validAccounts.last { model in
+
+        let accountKey = validAccounts.last { model in
             model.publicKey.description == keyModel.pubkey.publicKey
         }
         guard let accountKeyModel = accountKey else {
             return nil
         }
-        
+
         return accountKeyModel
     }
-    
+
     func findUserKey(deviceId: String) -> KeyDeviceModel? {
-        let key = self.validKeys.last { model in
+        let key = validKeys.last { model in
             model.device.id == deviceId
         }
         return key
     }
-    
+
     func isCurrent(deviceId: String) -> Bool {
         if deviceId.isEmpty {
             return false
         }
-        if let current = self.currentDevice {
+        if let current = currentDevice {
             return deviceId == current.id
         }
         return false
     }
-    
 }

@@ -5,8 +5,8 @@
 //  Created by Selina on 4/8/2022.
 //
 
-import SwiftUI
 import BiometricAuthentication
+import SwiftUI
 
 struct BionicErrorHandler {
     static func handleError(_ error: AuthenticationError) {
@@ -21,7 +21,6 @@ struct BionicErrorHandler {
             break
         default:
             HUD.error(title: error.localizedDescription)
-            break
         }
     }
 }

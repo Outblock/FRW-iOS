@@ -11,14 +11,14 @@ struct GradientButton: View {
     var buttonTitle: String
     var buttonAction: () -> Void
     var gradient1: [Color] = [
-        Color.init(red: 101/255, green: 134/255, blue: 1),
-        Color.init(red: 1, green: 64/255, blue: 80/255),
-        Color.init(red: 109/255, green: 1, blue: 185/255),
-        Color.init(red: 39/255, green: 232/255, blue: 1),
+        Color(red: 101 / 255, green: 134 / 255, blue: 1),
+        Color(red: 1, green: 64 / 255, blue: 80 / 255),
+        Color(red: 109 / 255, green: 1, blue: 185 / 255),
+        Color(red: 39 / 255, green: 232 / 255, blue: 1),
     ]
-    
+
     @State private var angle: Double = 0
-    
+
     var body: some View {
         Button(action: buttonAction, label: {
             GeometryReader { geometry in
@@ -73,15 +73,14 @@ struct GradientText: View {
     var body: some View {
         Text(text)
 //            .gradientForeground(colors: [Color(#colorLiteral(red: 0.6196078431, green: 0.6784313725, blue: 1, alpha: 1)), Color(#colorLiteral(red: 1, green: 0.5607843137, blue: 0.9803921569, alpha: 1))])
-
     }
 }
 
-extension View {
-    public func gradientForeground(colors: [Color]) -> some View {
-        self.overlay(LinearGradient(gradient: .init(colors: colors),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing))
+public extension View {
+    func gradientForeground(colors: [Color]) -> some View {
+        overlay(LinearGradient(gradient: .init(colors: colors),
+                               startPoint: .topLeading,
+                               endPoint: .bottomTrailing))
             .mask(self)
     }
 }

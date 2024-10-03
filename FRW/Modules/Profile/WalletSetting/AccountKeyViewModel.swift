@@ -5,27 +5,27 @@
 //  Created by cat on 2023/10/20.
 //
 
-import SwiftUI
 import Flow
+import SwiftUI
 
 class AccountKeyViewModel: ObservableObject {
     @Published var allKeys: [AccountKeyModel] = []
     @Published var status: PageStatus = .loading
-    
+
     @Published var showRovekeView = false
     var revokeModel: AccountKeyModel?
-    
+
     init() {
         addMock()
         fetch()
     }
-    
+
     func addMock() {
         let model = Flow.AccountKey(publicKey: Flow.PublicKey(hex: "test"), signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 1000)
         allKeys = [AccountKeyModel(accountKey: model)]
     }
-    
-    func fetch()  {
+
+    func fetch() {
         Task {
             do {
                 DispatchQueue.main.async {
@@ -36,7 +36,7 @@ class AccountKeyViewModel: ObservableObject {
                 let devices: KeyResponse = try await Network.request(FRWAPI.User.keys)
                 DispatchQueue.main.async {
                     self.allKeys = account.keys.map { AccountKeyModel(accountKey: $0) }
-                    self.allKeys = self.allKeys.map({ model in
+                    self.allKeys = self.allKeys.map { model in
                         var model = model
                         let result = devices.result ?? []
                         let devicesInfo = result.first { response in
@@ -44,38 +44,35 @@ class AccountKeyViewModel: ObservableObject {
                         }
                         if let info = devicesInfo {
                             model.deviceType = DeviceType(value: info.device.deviceType)
-                            if let backupInfo = info.backupInfo, backupInfo.backupType() != .undefined  {
+                            if let backupInfo = info.backupInfo, backupInfo.backupType() != .undefined {
                                 model.backupType = backupInfo.backupType()
                                 model.name = "backup".localized + " - " + backupInfo.backupType().title
-                            }else {
+                            } else {
                                 model.name = info.device.deviceName ?? ""
                             }
                         }
-                        return model;
-                    })
+                        return model
+                    }
                     self.status = self.allKeys.count == 0 ? .empty : .finished
                 }
-                
+
             } catch {
                 allKeys = []
                 status = .error
             }
         }
     }
-    
-    
+
     func revokeKey(at model: AccountKeyModel) {
-        
-        
         if showRovekeView {
             showRovekeView = false
         }
-        self.revokeModel = model
+        revokeModel = model
         withAnimation(.easeOut(duration: 0.2)) {
             showRovekeView = true
         }
     }
-    
+
     func revokeKeyAction() {
         Task {
             guard let model = self.revokeModel else {
@@ -92,7 +89,7 @@ class AccountKeyViewModel: ObservableObject {
             HUD.dismissLoading()
         }
     }
-    
+
     func cancelRevoke() {
         DispatchQueue.main.async {
             self.revokeModel = nil
@@ -102,27 +99,25 @@ class AccountKeyViewModel: ObservableObject {
 }
 
 struct AccountKeyModel {
-    
     enum ContentType: Int {
-        case publicKey,curve,hash,number,weight,keyIndex
+        case publicKey, curve, hash, number, weight, keyIndex
     }
-    
+
     let accountKey: Flow.AccountKey
     var expanding: Bool = false
     var name: String = ""
     var backupType: BackupType = .undefined
     var deviceType: DeviceType = .iOS
-    
+
     init(accountKey: Flow.AccountKey) {
         self.accountKey = accountKey
     }
-    
+
     func deviceName() -> String {
-        
         if backupType != .undefined {
             return "backup".localized + " - " + backupType.title
         }
-        
+
         if isCurrent() {
             return "current_device".localized
         }
@@ -131,15 +126,15 @@ struct AccountKeyModel {
         }
         return name
     }
-    
+
     func deviceNameColor() -> Color {
         if isCurrent() {
             return Color.Theme.Accent.blue
         }
-        
+
         return Color.Theme.Text.black3
     }
-    
+
     func statusText() -> String {
         if accountKey.revoked {
             return "revoked".localized
@@ -149,7 +144,7 @@ struct AccountKeyModel {
         }
         return "multi_sign".localized
     }
-    
+
     func statusColor() -> Color {
         if accountKey.revoked {
             return Color.Theme.Accent.red
@@ -159,28 +154,28 @@ struct AccountKeyModel {
         }
         return Color.Theme.Text.black3
     }
-    
+
     func isCurrent() -> Bool {
         guard let cur = WalletManager.shared.getCurrentPublicKey() else {
             return false
         }
-        
+
         return cur == accountKey.publicKey.description
     }
-    
+
     func titleIcon() -> String {
         if backupType != .undefined {
             return backupType.smallIcon
         }
         return deviceType.smallIcon
     }
-    
+
     func icon(at type: ContentType) -> some View {
         return Image("key.icon.\(type.rawValue)")
-                .renderingMode(.template)
-                .foregroundColor(Color.Theme.Text.black3)
+            .renderingMode(.template)
+            .foregroundColor(Color.Theme.Text.black3)
     }
-    
+
     func tag(at type: ContentType) -> String {
         switch type {
         case .publicKey:
@@ -197,7 +192,7 @@ struct AccountKeyModel {
             return "account_key_index".localized
         }
     }
-    
+
     func content(at type: ContentType) -> String {
         switch type {
         case .publicKey:
@@ -218,12 +213,12 @@ struct AccountKeyModel {
     func weightDes() -> String {
         return "\(accountKey.weight)/1000"
     }
-    
+
     func weightPadding() -> Double {
-        let res = Double(accountKey.weight)/1000.0 * 72.0
+        let res = Double(accountKey.weight) / 1000.0 * 72.0
         return min(72.0, res)
     }
-    
+
     func weightBG() -> Color {
         return Color.Theme.Background.silver
     }

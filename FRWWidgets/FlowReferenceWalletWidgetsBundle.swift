@@ -5,8 +5,8 @@
 //  Created by Selina on 20/12/2022.
 //
 
-import WidgetKit
 import SwiftUI
+import WidgetKit
 
 @main
 struct FlowReferenceWalletWidgetsBundle: WidgetBundle {

@@ -7,61 +7,66 @@
 
 import SwiftUI
 
-extension View {
-
-    public func popup<PopupContent: View>(
+public extension View {
+    func popup<PopupContent: View>(
         isPresented: Binding<Bool>,
         @ViewBuilder view: @escaping () -> PopupContent,
         customize: @escaping (Popup<PopupContent>.PopupParameters) -> Popup<PopupContent>.PopupParameters
-        ) -> some View {
-            self.modifier(
-                FullscreenPopup<Int, PopupContent>(
-                    isPresented: isPresented,
-                    isBoolMode: true,
-                    params: customize(Popup<PopupContent>.PopupParameters()),
-                    view: view,
-                    itemView: nil)
+    ) -> some View {
+        modifier(
+            FullscreenPopup<Int, PopupContent>(
+                isPresented: isPresented,
+                isBoolMode: true,
+                params: customize(Popup<PopupContent>.PopupParameters()),
+                view: view,
+                itemView: nil
             )
-        }
+        )
+    }
 
-    public func popup<Item: Equatable, PopupContent: View>(
+    func popup<Item: Equatable, PopupContent: View>(
         item: Binding<Item?>,
         @ViewBuilder itemView: @escaping (Item) -> PopupContent,
         customize: @escaping (Popup<PopupContent>.PopupParameters) -> Popup<PopupContent>.PopupParameters
-        ) -> some View {
-            self.modifier(
-                FullscreenPopup<Item, PopupContent>(
-                    item: item,
-                    isBoolMode: false,
-                    params: customize(Popup<PopupContent>.PopupParameters()),
-                    view: nil,
-                    itemView: itemView)
+    ) -> some View {
+        modifier(
+            FullscreenPopup<Item, PopupContent>(
+                item: item,
+                isBoolMode: false,
+                params: customize(Popup<PopupContent>.PopupParameters()),
+                view: nil,
+                itemView: itemView
             )
-        }
+        )
+    }
 
-    public func popup<PopupContent: View>(
+    func popup<PopupContent: View>(
         isPresented: Binding<Bool>,
-        @ViewBuilder view: @escaping () -> PopupContent) -> some View {
-            self.modifier(
-                FullscreenPopup<Int, PopupContent>(
-                    isPresented: isPresented,
-                    isBoolMode: true,
-                    params: Popup<PopupContent>.PopupParameters(),
-                    view: view,
-                    itemView: nil)
+        @ViewBuilder view: @escaping () -> PopupContent
+    ) -> some View {
+        modifier(
+            FullscreenPopup<Int, PopupContent>(
+                isPresented: isPresented,
+                isBoolMode: true,
+                params: Popup<PopupContent>.PopupParameters(),
+                view: view,
+                itemView: nil
             )
-        }
+        )
+    }
 
-    public func popup<Item: Equatable, PopupContent: View>(
+    func popup<Item: Equatable, PopupContent: View>(
         item: Binding<Item?>,
-        @ViewBuilder itemView: @escaping (Item) -> PopupContent) -> some View {
-            self.modifier(
-                FullscreenPopup<Item, PopupContent>(
-                    item: item,
-                    isBoolMode: false,
-                    params: Popup<PopupContent>.PopupParameters(),
-                    view: nil,
-                    itemView: itemView)
+        @ViewBuilder itemView: @escaping (Item) -> PopupContent
+    ) -> some View {
+        modifier(
+            FullscreenPopup<Item, PopupContent>(
+                item: item,
+                isBoolMode: false,
+                params: Popup<PopupContent>.PopupParameters(),
+                view: nil,
+                itemView: itemView
             )
-        }
+        )
+    }
 }

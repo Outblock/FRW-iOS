@@ -8,6 +8,7 @@
 import Foundation
 
 // MARK: - FlowTransactionTemplate
+
 struct FlowTransactionTemplate: Codable, Equatable {
     let fType, fVersion, id: String
     let data: FlowTransactionTemplateData
@@ -17,13 +18,14 @@ struct FlowTransactionTemplate: Codable, Equatable {
         case fVersion = "f_version"
         case id, data
     }
-    
+
     static func == (lhs: FlowTransactionTemplate, rhs: FlowTransactionTemplate) -> Bool {
         return lhs.id == rhs.id
     }
 }
 
 // MARK: - DataClass
+
 struct FlowTransactionTemplateData: Codable {
     let type, interface: String
     let messages: Messages?
@@ -31,8 +33,8 @@ struct FlowTransactionTemplateData: Codable {
 //    let arguments: Arguments
 }
 
-
 // MARK: - Description
+
 struct Description: Codable {
     let i18N: I18N?
 
@@ -42,6 +44,7 @@ struct Description: Codable {
 }
 
 // MARK: - I18N
+
 struct I18N: Codable {
     let enUS: String?
 
@@ -50,8 +53,8 @@ struct I18N: Codable {
     }
 }
 
-
 // MARK: - DataMessages
+
 struct Messages: Codable {
     let title: Description?
     let messagesDescription: Description?
@@ -61,4 +64,3 @@ struct Messages: Codable {
         case messagesDescription = "description"
     }
 }
-

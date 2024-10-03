@@ -9,7 +9,7 @@ import Foundation
 import Starscream
 import WalletConnectRelay
 
-extension WebSocket: WebSocketConnecting { }
+extension WebSocket: WebSocketConnecting {}
 
 class SocketFactory: WebSocketFactory {
     var socket: WebSocket?

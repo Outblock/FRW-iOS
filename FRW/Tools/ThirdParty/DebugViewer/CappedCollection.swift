@@ -1,6 +1,6 @@
 //
 //  CappedCollection.swift
-//  
+//
 //
 //  Created by Jin Kim on 6/13/22.
 //
@@ -33,9 +33,7 @@ extension CappedCollection: Collection, ExpressibleByArrayLiteral {
     var startIndex: Index { return elements.startIndex }
     var endIndex: Index { return elements.endIndex }
 
-    subscript(index: Index) -> Element {
-        get { return elements[index] }
-    }
+    subscript(index: Index) -> Element { return elements[index] }
 
     func index(after i: Index) -> Index {
         return elements.index(after: i)
@@ -69,11 +67,11 @@ extension CappedCollection: Collection, ExpressibleByArrayLiteral {
         guard elements.count > maxCount else { return [] }
 
         var poppedElements: [Element] = []
-        poppedElements.append(contentsOf: elements[maxCount..<elements.count])
+        poppedElements.append(contentsOf: elements[maxCount ..< elements.count])
         elements.removeLast(elements.count - maxCount)
         return poppedElements
     }
-    
+
     mutating func removeAllElements() {
         elements.removeAll()
     }

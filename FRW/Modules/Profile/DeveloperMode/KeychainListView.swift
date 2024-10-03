@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct KeychainListView: RouteableView {
-    
     private let viewModel = KeychainListViewModel()
     var title: String {
         return "Keychain"
     }
+
     var body: some View {
-        ScrollView() {
+        ScrollView {
             Section {
-                ForEach(0..<viewModel.localList.count, id:\.self) { index in
+                ForEach(0 ..< viewModel.localList.count, id: \.self) { index in
                     let item = viewModel.localList[index]
                     itemView(item)
                 }
@@ -24,9 +24,9 @@ struct KeychainListView: RouteableView {
                 Text("Local(\(viewModel.localList.count))")
             }
             .visibility(viewModel.localList.count > 0 ? .visible : .gone)
-            
+
             Section {
-                ForEach(0..<viewModel.remoteList.count, id:\.self) { index in
+                ForEach(0 ..< viewModel.remoteList.count, id: \.self) { index in
                     let item = viewModel.remoteList[index]
                     itemView(item)
                 }
@@ -37,7 +37,7 @@ struct KeychainListView: RouteableView {
         }
         .applyRouteable(self)
     }
-    
+
     func itemView(_ item: [String: Any]) -> some View {
         return HStack {
             VStack(alignment: .leading) {
@@ -53,8 +53,8 @@ struct KeychainListView: RouteableView {
             Spacer()
             Button {
                 UIPasteboard.general.string =
-                viewModel.getKey(item: item) + "\n" +
-                viewModel.mnemonicValue(item: item)
+                    viewModel.getKey(item: item) + "\n" +
+                    viewModel.mnemonicValue(item: item)
             } label: {
                 Image(systemName: "doc.on.doc.fill")
                     .frame(width: 24, height: 24)

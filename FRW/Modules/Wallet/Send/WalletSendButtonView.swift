@@ -8,24 +8,21 @@
 import SwiftUI
 
 struct WalletSendButtonView: View {
-    
     @GestureState
     var tap = false
-    
+
     @State
     var press = false
-    
+
     @State
     var isLoading: Bool = false
-    
+
     @Binding var allowEnable: Bool
-    
-    
-    
+
     var buttonText: String = "hold_to_send".localized
-    var activeColor: Color = Color.LL.Button.color
-    var action: () -> ()
-    
+    var activeColor = Color.LL.Button.color
+    var action: () -> Void
+
     var body: some View {
         HStack {
             ZStack {
@@ -48,7 +45,7 @@ struct WalletSendButtonView: View {
                     // Magic HERE !
                     .animation(.easeInOut)
                     .visible(!isLoading)
-                
+
                 Circle()
                     .trim(from: 0, to: 0.3)
                     .stroke(
@@ -63,7 +60,6 @@ struct WalletSendButtonView: View {
                     .rotationEffect(Angle(degrees: isLoading ? 360 : 0))
                     .animation(.linear(duration: 1).repeatForever(autoreverses: false), value: isLoading)
                     .visible(isLoading)
-                
             }
             .frame(width: 25, height: 25)
             Text(buttonText)
@@ -73,50 +69,48 @@ struct WalletSendButtonView: View {
         }
         .frame(height: 54)
         .frame(maxWidth: .infinity)
-        .background( allowEnable ? activeColor : Color.LL.Neutrals.neutrals6)
+        .background(allowEnable ? activeColor : Color.LL.Neutrals.neutrals6)
         .cornerRadius(12)
         .scaleEffect(tap ? 0.95 : 1)
         .gesture(
-            LongPressGesture().updating($tap) { currentState, gestureState, transaction in
+            LongPressGesture().updating($tap) { currentState, gestureState, _ in
                 gestureState = currentState
             }
-                .onEnded { value in
-                    self.press.toggle()
-                    self.isLoading = true
-                    
-                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                    
-                    action()
-                }
+            .onEnded { _ in
+                self.press.toggle()
+                self.isLoading = true
+
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+
+                action()
+            }
         )
         .animation(.spring(response: 0.5, dampingFraction: 0.5, blendDuration: 0), value: tap)
         .disabled(!allowEnable)
         //            .buttonStyle(ScaleButtonStyle())
-        
     }
 }
 
 class MyAnimations: NSObject, ObservableObject {
     @Published var progress: Double = 0
-    
-    private var displaylink: CADisplayLink!       // << here !!
+
+    private var displaylink: CADisplayLink! // << here !!
     func createDisplayLink() {
-        if nil == displaylink {
+        if displaylink == nil {
             displaylink = CADisplayLink(target: self, selector: #selector(step))
             displaylink.add(to: .main, forMode: .common)
         }
     }
-    
-    @objc func step(link: CADisplayLink) {
+
+    @objc func step(link _: CADisplayLink) {
         progress += 0.05
     }
-    
+
     func stop() {
         if displaylink != nil {
             displaylink.invalidate()
         }
     }
-    
 }
 
 struct ScaleButtonStyle: SwiftUI.ButtonStyle {
@@ -128,14 +122,13 @@ struct ScaleButtonStyle: SwiftUI.ButtonStyle {
     }
 }
 
-
 struct WalletSendButtonView_Previews: PreviewProvider {
     @State static var isEnable = true
     @State static var isNot = false
     static var previews: some View {
-        WalletSendButtonView(allowEnable: $isEnable){}
+        WalletSendButtonView(allowEnable: $isEnable) {}
             .previewLayout(.sizeThatFits)
-        WalletSendButtonView(allowEnable: $isNot){}
+        WalletSendButtonView(allowEnable: $isNot) {}
             .previewLayout(.sizeThatFits)
     }
 }

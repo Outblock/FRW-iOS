@@ -8,19 +8,18 @@
 import Foundation
 import SwiftUI
 
-
 enum CardBackground: CaseIterable {
     enum Style {
         case flow
         case evm
     }
-    
+
     static var dynamicCases: [CardBackground] = [
         .fluid,
         .matrix,
-        .fade(imageIndex: 0)
+        .fade(imageIndex: 0),
     ]
-    
+
     static var imageCases: [CardBackground] = [
         .image(imageIndex: 0),
         .image(imageIndex: 1),
@@ -29,20 +28,20 @@ enum CardBackground: CaseIterable {
         .image(imageIndex: 4),
         .image(imageIndex: 5),
     ]
-    
-    
+
     static var allCases: [CardBackground] = [
         .fluid,
         .matrix,
         .color(color: UIColor.LL.Primary.salmonPrimary),
-        .fade(imageIndex: 0)]
-    
+        .fade(imageIndex: 0),
+    ]
+
     case color(color: UIColor)
     case image(imageIndex: Int)
     case fade(imageIndex: Int)
     case fluid
     case matrix
-    
+
     @ViewBuilder
     func renderView() -> some View {
         switch self {
@@ -54,7 +53,7 @@ enum CardBackground: CaseIterable {
             ZStack {
                 Color(color)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
+
                 Image("bg-circles")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -67,11 +66,11 @@ enum CardBackground: CaseIterable {
                 .aspectRatio(contentMode: .fill)
         }
     }
-    
+
     var imageList: [Image] {
-        return [Image("wallpaper_0"), Image("wallpaper_1"),Image("wallpaper_2"),Image("wallpaper_3"),Image("wallpaper_4"),Image("wallpaper_5")]
+        return [Image("wallpaper_0"), Image("wallpaper_1"), Image("wallpaper_2"), Image("wallpaper_3"), Image("wallpaper_4"), Image("wallpaper_5")]
     }
-    
+
     var fadeList: [Image] {
         switch self {
         case .fade:
@@ -85,7 +84,7 @@ enum CardBackground: CaseIterable {
             return [Image("flow-line")]
         }
     }
-    
+
     var fadeColor: Color {
         switch self {
         case .fade:
@@ -99,11 +98,11 @@ enum CardBackground: CaseIterable {
             return Color.Theme.Accent.green
         }
     }
-    
+
     private var cardStyle: CardBackground.Style {
         WalletManager.shared.isSelectedEVMAccount ? CardBackground.Style.evm : CardBackground.Style.flow
     }
-    
+
     var rawValue: String {
         switch self {
         case let .color(color):
@@ -118,7 +117,7 @@ enum CardBackground: CaseIterable {
             return identify
         }
     }
-    
+
     var identify: String {
         switch self {
         case .color:
@@ -133,7 +132,7 @@ enum CardBackground: CaseIterable {
             return "matrix"
         }
     }
-    
+
     var color: Color {
         switch self {
         case let .color(color):
@@ -146,7 +145,7 @@ enum CardBackground: CaseIterable {
             return Color.LL.outline
         }
     }
-    
+
     init(value: String) {
         let list = value.split(separator: ":", omittingEmptySubsequences: true)
         switch list[0] {
@@ -160,14 +159,14 @@ enum CardBackground: CaseIterable {
                 return
             }
             self = .color(color: UIColor(hex: String(hex)))
-            
+
         case CardBackground.fade(imageIndex: 0).identify:
             guard let imageString = list[safe: 1], let index = Int(imageString) else {
                 self = .fade(imageIndex: 0)
                 return
             }
             self = .fade(imageIndex: index)
-            
+
         case CardBackground.image(imageIndex: 0).identify:
             guard let imageString = list[safe: 1], let index = Int(imageString) else {
                 self = .image(imageIndex: 0)
@@ -178,7 +177,7 @@ enum CardBackground: CaseIterable {
             self = .fade(imageIndex: 0)
         }
     }
-    
+
     struct Key: PreferenceKey {
         public typealias Value = CardBackground
         public static var defaultValue = CardBackground.fluid

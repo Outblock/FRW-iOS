@@ -10,37 +10,37 @@ import SwiftUI
 struct VerifyPinView: RouteableView {
     @StateObject private var vm: VerifyPinViewModel
     @FocusState private var pinCodeViewIsFocus: Bool
-    var callback: VerifyPinViewModel.VerifyCallback? = nil
-    
+    var callback: VerifyPinViewModel.VerifyCallback?
+
     var title: String {
         return ""
     }
-    
+
     func backButtonAction() {
         Router.dismiss()
         callback?(false)
     }
-    
+
     init(callback: VerifyPinViewModel.VerifyCallback?) {
         self.callback = callback
         _vm = StateObject(wrappedValue: VerifyPinViewModel(callback: callback))
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             Spacer()
-            
+
             VStack(spacing: 70) {
                 Text("verify_x".localized("pin_code".localized))
                     .font(.inter(size: 24, weight: .bold))
                     .foregroundColor(Color.LL.Neutrals.text)
                     .visibility(vm.currentVerifyType == .pin ? .visible : .gone)
-                
+
                 Text("verify_x".localized(SecurityManager.shared.supportedBionic.desc))
                     .font(.inter(size: 24, weight: .bold))
                     .foregroundColor(Color.LL.Neutrals.text)
                     .visibility(vm.currentVerifyType == .bionic ? .visible : .gone)
-                
+
                 PinCodeTextField(text: $vm.inputPin)
                     .keyboardType(.numberPad)
                     .fixedSize()
@@ -57,7 +57,7 @@ struct VerifyPinView: RouteableView {
                         }
                     }
                     .visibility(vm.currentVerifyType == .pin ? .visible : .gone)
-                
+
                 Button {
                     vm.verifyBionicAction()
                 } label: {
@@ -76,7 +76,7 @@ struct VerifyPinView: RouteableView {
             .padding(.bottom, 100)
 
             Spacer()
-            
+
             Button {
                 vm.changeVerifyTypeAction(type: vm.currentVerifyType == .bionic ? .pin : .bionic)
             } label: {

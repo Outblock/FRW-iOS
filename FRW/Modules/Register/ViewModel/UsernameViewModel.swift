@@ -22,7 +22,7 @@ class UsernameViewModel: ViewModel {
     var mnemonic: String?
 
     init(mnemonic: String?) {
-        self.state = .init()
+        state = .init()
         self.mnemonic = mnemonic
     }
 
@@ -45,14 +45,14 @@ class UsernameViewModel: ViewModel {
             }
         }
     }
-    
+
     private func registerAction() {
         state.isRegisting = true
-        
+
         Task {
             do {
                 let txid = try await UserManager.shared.register(currentText, mnemonic: nil)
-                let viewModel = CreateProfileWaitingViewModel(txId: txid ?? "") { finished in
+                let viewModel = CreateProfileWaitingViewModel(txId: txid ?? "") { _ in
 
                     DispatchQueue.main.async {
                         self.changeBackupTypeIfNeeded()
@@ -61,8 +61,7 @@ class UsernameViewModel: ViewModel {
                     }
                 }
                 Router.route(to: RouteMap.RestoreLogin.createProfile(viewModel))
-                
-                
+
             } catch {
                 DispatchQueue.main.async {
                     self.state.isRegisting = false
@@ -71,13 +70,13 @@ class UsernameViewModel: ViewModel {
             }
         }
     }
-    
+
     /// if mnemonic is not nil, means this is a custom mnemonic login, should change the backup type to manual
     private func changeBackupTypeIfNeeded() {
         guard mnemonic != nil else {
             return
         }
-        
+
         guard let uid = UserManager.shared.activatedUID else { return }
         MultiAccountStorage.shared.setBackupType(.manual, uid: uid)
     }

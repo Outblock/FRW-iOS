@@ -19,10 +19,9 @@ enum Config {
         let dic = NSDictionary(contentsOfFile: path) as! [String: Any]
         return dic[key.rawValue] as! String
     }
-    
+
     static func get(_ key: ConfigKey) -> URL {
         let value: String = get(key)
         return URL(string: value)!
     }
 }
-

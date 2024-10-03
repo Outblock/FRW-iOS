@@ -65,7 +65,7 @@ enum Network {
                 let filterdResponse = try response.filterSuccessfulStatusCodes()
 
                 let model = try decoder.decode(Response<T>.self, from: filterdResponse.data)
-                
+
                 guard let data = model.data else {
                     throw NetworkError.emptyData
                 }

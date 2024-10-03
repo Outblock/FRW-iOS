@@ -8,15 +8,14 @@
 import SwiftUI
 
 struct TextCheckListView: View {
-    
     var titles: [String]
     @Binding var allChecked: Bool
-    
-    @State var result:[String: Bool] = [:]
-    
+
+    @State var result: [String: Bool] = [:]
+
     var body: some View {
         VStack {
-            ForEach(titles.indices,id:\.self) { index in
+            ForEach(titles.indices, id: \.self) { index in
                 TextCheckBox(text: titles[index]) { str, isSelected in
                     self.result[str] = isSelected
                     checkStatus()
@@ -24,13 +23,13 @@ struct TextCheckListView: View {
             }
         }
     }
-    
+
     private func checkStatus() {
         guard result.count == titles.count else {
             allChecked = false
             return
         }
-        let list = self.result.values.filter { !$0 }
+        let list = result.values.filter { !$0 }
         allChecked = list.isEmpty
     }
 }

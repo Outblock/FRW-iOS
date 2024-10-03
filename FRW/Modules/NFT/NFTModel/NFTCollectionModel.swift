@@ -5,9 +5,8 @@
 //  Created by cat on 2022/6/22.
 //
 
-import Foundation
 import Flow
-
+import Foundation
 
 final class NFTCollectionConfig {
     static let share = NFTCollectionConfig()
@@ -30,7 +29,6 @@ final class NFTCollectionConfig {
 extension NFTCollectionConfig {
     private func fetchData() async {
         do {
-            
             var list: [NFTCollectionInfo] = try await Network.request(FRWAPI.NFT.collections)
             config = list
         } catch {

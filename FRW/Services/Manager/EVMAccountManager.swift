@@ -11,7 +11,6 @@ import SwiftUI
 
 class EVMAccountManager: ObservableObject {
     static let shared = EVMAccountManager()
-    
 
     @Published var hasAccount: Bool = false
     @Published var showEVM: Bool = false
@@ -20,24 +19,24 @@ class EVMAccountManager: ObservableObject {
             checkValid()
         }
     }
-    
+
     private var cacheAccounts: [String: [String]] = LocalUserDefaults.shared.EVMAddress
-    
+
     var openEVM: Bool {
         return (CadenceManager.shared.current.evm?.createCoaEmpty) != nil
     }
 
     var balance: Decimal = 0
-    
+
     private var cancelSets = Set<AnyCancellable>()
-    
+
     @Published var selectedAccount: EVMAccountManager.Account? = LocalUserDefaults.shared.selectedEVMAccount {
         didSet {
             LocalUserDefaults.shared.selectedEVMAccount = selectedAccount
             NotificationCenter.default.post(name: .watchAddressDidChanged, object: nil)
         }
     }
-    
+
     init() {
         UserManager.shared.$activatedUID
             .receive(on: DispatchQueue.main)
@@ -58,19 +57,19 @@ class EVMAccountManager: ObservableObject {
 //                        self.loadCache()
 //                        return
 //                    }
-                    
+
                     self.refresh()
                 }
             }.store(in: &cancelSets)
-        
+
 //        NotificationCenter.default.publisher(for: .networkChange)
 //            .receive(on: DispatchQueue.main)
 //            .sink { _ in
 //                self.clean()
 //            }.store(in: &cancelSets)
-        
+
         NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
-        
+
         NotificationCenter.default.publisher(for: .transactionStatusDidChanged)
             .receive(on: DispatchQueue.main)
             .map { $0 }
@@ -78,7 +77,7 @@ class EVMAccountManager: ObservableObject {
                 self?.onTransactionStatusChanged(noti)
             }.store(in: &cancelSets)
     }
-    
+
     private func clean() {
         log.debug("cleaned")
         DispatchQueue.main.async {
@@ -86,17 +85,17 @@ class EVMAccountManager: ObservableObject {
             self.selectedAccount = nil
         }
     }
-    
+
     private func checkValid() {
-        if (CadenceManager.shared.current.evm?.createCoaEmpty) != nil  {
-            self.hasAccount = !self.accounts.isEmpty
-            self.showEVM = self.accounts.isEmpty
-        }else {
-            self.hasAccount = false
-            self.showEVM = false
+        if (CadenceManager.shared.current.evm?.createCoaEmpty) != nil {
+            hasAccount = !accounts.isEmpty
+            showEVM = accounts.isEmpty
+        } else {
+            hasAccount = false
+            showEVM = false
         }
     }
-    
+
     private func addAddress(_ address: String) {
         guard let primaryAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             return
@@ -108,16 +107,16 @@ class EVMAccountManager: ObservableObject {
             LocalUserDefaults.shared.EVMAddress = cacheAccounts
         }
     }
-    
+
     @objc private func willReset() {
         clean()
     }
-    
+
     @objc private func onTransactionStatusChanged(_ noti: Notification) {
         guard let obj = noti.object as? TransactionManager.TransactionHolder, obj.type == .editChildAccount else {
             return
         }
-        
+
         switch obj.internalStatus {
         case .success:
             refresh()
@@ -133,32 +132,30 @@ extension EVMAccountManager {
             await refreshSync()
         }
     }
-    
+
     func refreshSync() async {
-        
-        if (CadenceManager.shared.current.evm?.createCoaEmpty) == nil  {
+        if (CadenceManager.shared.current.evm?.createCoaEmpty) == nil {
             clean()
             return
         }
-        
+
         guard let primaryAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             return
         }
-        
-        if let EVMAddress = cacheAccounts[primaryAddress]?.first
-        {
+
+        if let EVMAddress = cacheAccounts[primaryAddress]?.first {
             DispatchQueue.main.async {
                 let account = EVMAccountManager.Account(address: EVMAddress)
                 self.accounts = [account]
             }
             do {
                 try await refreshBalance(address: EVMAddress)
-            }catch {
+            } catch {
                 log.error("[EVM] fetch balance failed")
             }
             return
         }
-        
+
         do {
             let address = try await fetchAddress()
             if let address = address, !address.isEmpty {
@@ -176,7 +173,7 @@ extension EVMAccountManager {
             log.error("[EVM] get address failed.\(error)")
         }
     }
-    
+
     func refreshBalance(address: String) async throws {
         log.info("[EVM] refresh balance at \(address)")
         let balance = try await fetchBalance(address)
@@ -185,7 +182,7 @@ extension EVMAccountManager {
             self.balance = balance
         }
     }
-    
+
     func select(_ account: EVMAccountManager.Account?) {
         if selectedAccount?.address.lowercased() == account?.address.lowercased() {
             return
@@ -194,10 +191,6 @@ extension EVMAccountManager {
             self.selectedAccount = account
         }
     }
-    
-    
-    
-    
 }
 
 extension EVMAccountManager {
@@ -209,21 +202,21 @@ extension EVMAccountManager {
             throw EVMError.createAccount
         }
     }
-    
+
     func fetchAddress() async throws -> String? {
         let address = try await FlowNetwork.findEVMAddress()
         return address
     }
-    
+
     func fetchBalance(_ address: String) async throws -> Decimal {
         return try await FlowNetwork.fetchEVMBalance(address: address)
     }
-    
+
     func fetchTokens() async throws -> [EVMTokenResponse] {
-        guard let address = self.accounts.first?.showAddress else {
+        guard let address = accounts.first?.showAddress else {
             return []
         }
-        let response: [EVMTokenResponse] =  try await Network.request(FRWAPI.EVM.tokenList(address))
+        let response: [EVMTokenResponse] = try await Network.request(FRWAPI.EVM.tokenList(address))
         return response
     }
 }
@@ -231,26 +224,26 @@ extension EVMAccountManager {
 extension EVMAccountManager {
     struct Account: ChildAccountSideCellItem, Codable {
         var address: String
-        
+
         var showAddress: String {
             if address.hasPrefix("0x") {
                 return address
             }
             return "0x" + address
         }
-        
+
         var showIcon: String {
             "https://firebasestorage.googleapis.com/v0/b/lilico-334404.appspot.com/o/asset%2Feth.png?alt=media&token=1b926945-5459-4aee-b8ef-188a9b4acade"
         }
-        
+
         var showName: String {
             "EVM wallet"
         }
-        
+
         var isEVM: Bool {
             true
         }
-        
+
         var isSelected: Bool {
             if let selectedAccount = EVMAccountManager.shared.selectedAccount,
                selectedAccount.address.lowercased() == address.lowercased(), !address.isEmpty

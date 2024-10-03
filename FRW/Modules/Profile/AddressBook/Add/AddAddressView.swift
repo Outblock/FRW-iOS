@@ -20,7 +20,7 @@ struct AddAddressView: RouteableView {
         _vm = StateObject(wrappedValue: AddAddressViewModel(contact: editingContact, addressBookVM: addressBookVM))
         confirmedTitle = "edit_contact".localized
     }
-    
+
     var title: String {
         return confirmedTitle
     }
@@ -99,10 +99,10 @@ struct AddAddressView: RouteableView {
     }
 }
 
-//struct AddAddressView_Previews: PreviewProvider {
+// struct AddAddressView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        NavigationView {
 //            AddAddressView()
 //        }
 //    }
-//}
+// }

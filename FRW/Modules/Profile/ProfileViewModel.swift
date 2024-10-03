@@ -17,7 +17,7 @@ extension ProfileView {
         case failed
         case synced
     }
-    
+
     struct ProfileState {
         var isLogin: Bool = false
         var currency: String = CurrencyCache.cache.currentCurrency.rawValue
@@ -35,12 +35,12 @@ extension ProfileView {
 
         let version = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
         let buildVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-        
+
         @Published var isLinkedAccount = false
-        
+
         init() {
             state.colorScheme = ThemeManager.shared.style
-            
+
             CurrencyCache.cache.$currentCurrency.sink { currency in
                 DispatchQueue.main.async {
                     self.state.currency = currency.rawValue
@@ -50,20 +50,20 @@ extension ProfileView {
             ThemeManager.shared.$style.sink(receiveValue: { [weak self] newScheme in
                 self?.state.colorScheme = newScheme
             }).store(in: &cancelSets)
-            
+
             UserManager.shared.$activatedUID
                 .receive(on: DispatchQueue.main)
                 .map { $0 }
-                .sink { [weak self] activatedUID in
+                .sink { [weak self] _ in
 //                    self?.refreshBackupState()
                 }.store(in: &cancelSets)
-            
+
             NotificationCenter.default.publisher(for: .backupTypeDidChanged)
                 .receive(on: DispatchQueue.main)
                 .sink { _ in
 //                    self.refreshBackupState()
                 }.store(in: &cancelSets)
-            
+
             PushHandler.shared.$isPushEnabled
                 .dropFirst()
                 .receive(on: DispatchQueue.main)
@@ -71,23 +71,23 @@ extension ProfileView {
                 .sink { isEnabled in
                     self.state.isPushEnabled = isEnabled
                 }.store(in: &cancelSets)
-            
+
             WalletManager.shared.$walletInfo
                 .receive(on: DispatchQueue.main)
                 .map { $0 }
-                .sink { [weak self] newInfo in
+                .sink { [weak self] _ in
                     self?.refreshWalletAccountState()
                 }.store(in: &cancelSets)
         }
 
         func trigger(_: ProfileInput) {}
-        
+
         private func refreshBackupState() {
             guard let uid = UserManager.shared.activatedUID else {
                 state.backupFetchingState = .none
                 return
             }
-            
+
             let backupType = MultiAccountStorage.shared.getBackupType(uid)
             switch backupType {
             case .manual:
@@ -99,9 +99,9 @@ extension ProfileView {
             default:
                 break
             }
-            
+
             state.backupFetchingState = .fetching
-            
+
             Task {
                 do {
                     let exist = try await BackupManager.shared.isExistOnCloud(backupType)
@@ -115,7 +115,7 @@ extension ProfileView {
                 }
             }
         }
-        
+
         private func refreshWalletAccountState() {
             isLinkedAccount = ChildAccountManager.shared.selectedChildAccount != nil
         }
@@ -128,7 +128,7 @@ extension ProfileView.ProfileViewModel {
             Router.route(to: RouteMap.Profile.security(true))
             return
         }
-        
+
         Task {
             let result = await SecurityManager.shared.inAppVerify()
             if result {
@@ -136,15 +136,15 @@ extension ProfileView.ProfileViewModel {
             }
         }
     }
-    
-    func linkedAccountAction()  {
+
+    func linkedAccountAction() {
         Router.route(to: RouteMap.Profile.linkedAccount)
     }
-    
+
     func showSwitchProfileAction() {
         Router.route(to: RouteMap.Profile.switchProfile)
     }
-    
+
     func showSystemSettingAction() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {

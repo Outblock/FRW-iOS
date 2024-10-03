@@ -7,19 +7,18 @@
 
 import Foundation
 import SPConfetti
-import WalletCore
 import SwiftUI
+import WalletCore
 
 class ManualBackupViewModel: ViewModel {
     @Published
     private(set) var state: ManualBackupView.ViewState = .initScreen
 
     func loadScreen() {
-        
-        SPConfettiConfiguration.particlesConfig.colors = [ Color.LL.Primary.salmonPrimary.toUIColor()!,
-                                                           Color.LL.Secondary.mangoNFT.toUIColor()!,
-                                                           Color.LL.Secondary.navy4.toUIColor()!,
-                                                           Color.LL.Secondary.violetDiscover.toUIColor()!]
+        SPConfettiConfiguration.particlesConfig.colors = [Color.LL.Primary.salmonPrimary.toUIColor()!,
+                                                          Color.LL.Secondary.mangoNFT.toUIColor()!,
+                                                          Color.LL.Secondary.navy4.toUIColor()!,
+                                                          Color.LL.Secondary.violetDiscover.toUIColor()!]
         SPConfettiConfiguration.particlesConfig.velocity = 400
         SPConfettiConfiguration.particlesConfig.velocityRange = 200
         SPConfettiConfiguration.particlesConfig.birthRate = 200
@@ -29,7 +28,7 @@ class ManualBackupViewModel: ViewModel {
             HUD.error(title: "load_wallet_error".localized)
             return
         }
-        
+
         defer {
             mnemonic = ""
         }
@@ -70,7 +69,7 @@ class ManualBackupViewModel: ViewModel {
         case .backupSuccess:
             guard let uid = UserManager.shared.activatedUID else { return }
             MultiAccountStorage.shared.setBackupType(.manual, uid: uid)
-            
+
             Router.popToRoot()
             SPConfetti.startAnimating(.fullWidthToDown,
                                       particles: [.triangle, .arc, .polygon, .heart, .star],

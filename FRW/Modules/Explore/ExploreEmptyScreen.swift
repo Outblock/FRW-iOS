@@ -11,7 +11,7 @@ struct ExploreEmptyScreen: View {
     var body: some View {
         VStack(alignment: .center) {
             Image("empty-box")
-            
+
             Text("empty_bookmark".localized)
                 .font(.LL.body)
                 .fontWeight(.medium)

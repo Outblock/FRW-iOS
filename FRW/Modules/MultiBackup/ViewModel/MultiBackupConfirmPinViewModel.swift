@@ -13,7 +13,7 @@ class MultiBackupConfirmPinViewModel: ObservableObject {
     @Published var text: String = ""
 
     init(pin: String) {
-        self.lastPin = pin
+        lastPin = pin
     }
 
     func onMatch(confirmPin: String) {

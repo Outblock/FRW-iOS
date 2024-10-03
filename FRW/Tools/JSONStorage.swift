@@ -8,7 +8,6 @@
 import Foundation
 import Haneke
 
-
 @propertyWrapper
 struct JSONStorage<T: Codable> {
     var value: T?

@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 
 public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier {
-
     // MARK: - Presentaion
 
     @Binding var isPresented: Bool
@@ -39,16 +38,16 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
     var isOpaque: Bool
 
     /// called when when dismiss animation starts
-    var userWillDismissCallback: (DismissSource) -> ()
+    var userWillDismissCallback: (DismissSource) -> Void
 
     /// called when when dismiss animation ends
-    var userDismissCallback: (DismissSource) -> ()
+    var userDismissCallback: (DismissSource) -> Void
 
     var params: Popup<PopupContent>.PopupParameters
 
     var view: (() -> PopupContent)!
     var itemView: ((Item) -> PopupContent)!
-    
+
     // MARK: - Presentation animation
 
     /// Trigger popup showing/hiding animations and...
@@ -88,19 +87,20 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
          isBoolMode: Bool,
          params: Popup<PopupContent>.PopupParameters,
          view: (() -> PopupContent)?,
-         itemView: ((Item) -> PopupContent)?) {
-        self._isPresented = isPresented
-        self._item = item
+         itemView: ((Item) -> PopupContent)?)
+    {
+        _isPresented = isPresented
+        _item = item
         self.isBoolMode = isBoolMode
 
         self.params = params
-        self.autohideIn = params.autohideIn
-        self.closeOnTapOutside = params.closeOnTapOutside
-        self.backgroundColor = params.backgroundColor
-        self.backgroundView = params.backgroundView
-        self.isOpaque = params.isOpaque
-        self.userDismissCallback = params.dismissCallback
-        self.userWillDismissCallback = params.willDismissCallback
+        autohideIn = params.autohideIn
+        closeOnTapOutside = params.closeOnTapOutside
+        backgroundColor = params.backgroundColor
+        backgroundView = params.backgroundView
+        isOpaque = params.isOpaque
+        userDismissCallback = params.dismissCallback
+        userWillDismissCallback = params.willDismissCallback
 
         if let view = view {
             self.view = view
@@ -109,10 +109,10 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
             self.itemView = itemView
         }
 
-        self.isPresentedRef = ClassReference(self.$isPresented)
-        self.itemRef = ClassReference(self.$item)
+        isPresentedRef = ClassReference($isPresented)
+        itemRef = ClassReference($item)
     }
-    
+
     public func body(content: Content) -> some View {
         if isBoolMode {
             main(content: content)
@@ -152,16 +152,16 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
     @ViewBuilder
     public func main(content: Content) -> some View {
         if isOpaque {
-#if os(iOS)
-            content.transparentNonAnimatingFullScreenCover(isPresented: $showSheet, dismissSource: dismissSource, userDismissCallback: userDismissCallback) {
-                constructPopup()
-            }
-#else
-            ZStack {
-                content
-                constructPopup()
-            }
-#endif
+            #if os(iOS)
+                content.transparentNonAnimatingFullScreenCover(isPresented: $showSheet, dismissSource: dismissSource, userDismissCallback: userDismissCallback) {
+                    constructPopup()
+                }
+            #else
+                ZStack {
+                    content
+                    constructPopup()
+                }
+            #endif
         } else {
             ZStack {
                 content
@@ -199,7 +199,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
             }
         }
     }
-    
+
     var viewForItem: (() -> PopupContent)? {
         if let item = item {
             return { itemView(item) }
@@ -254,7 +254,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
         }
     }
 
-    func onAnimationCompleted() -> () {
+    func onAnimationCompleted() {
         if shouldShowContent { // return if this was called on showing animation, only proceed if called on hiding
             return
         }
@@ -288,10 +288,9 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
         }
     }
 
-    func performWithDelay(_ delay: Double, block: @escaping ()->()) {
+    func performWithDelay(_ delay: Double, block: @escaping () -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             block()
         }
     }
-
 }

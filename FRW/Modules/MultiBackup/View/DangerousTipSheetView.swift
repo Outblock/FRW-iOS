@@ -11,15 +11,15 @@ struct DangerousTipSheetView: View {
     let title: String
     let detail: String
     let buttonTitle: String
-    let onConfirm: ()->Void
-    let onCancel: ()->Void
-    
+    let onConfirm: () -> Void
+    let onCancel: () -> Void
+
     var body: some View {
         VStack {
             SheetHeaderView(title: title) {
                 onCancel()
             }
-            
+
             VStack(spacing: 0) {
                 Text(detail)
                     .font(.inter(size: 14))
@@ -28,9 +28,9 @@ struct DangerousTipSheetView: View {
                 Image("icon_key_revoke")
                     .frame(width: 64, height: 64)
                     .padding(.top, 24)
-                
+
                 Spacer()
-                
+
                 WalletSendButtonView(allowEnable: .constant(true), buttonText: buttonTitle, activeColor: Color.Theme.Accent.red) {
                     onConfirm()
                 }

@@ -30,20 +30,20 @@ struct RestoreWalletView: RouteableView {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             Spacer()
-            
+
             VPrimaryButton(model: ButtonStyle.primary,
                            action: {
-                viewModel.restoreWithCloudAction(type: .icloud)
-            }, title: "restore_with_icloud".localized)
+                               viewModel.restoreWithCloudAction(type: .icloud)
+                           }, title: "restore_with_icloud".localized)
             VPrimaryButton(model: ButtonStyle.primary,
                            action: {
-                viewModel.restoreWithCloudAction(type: .googleDrive)
-            }, title: "restore_with_gd".localized)
-            
+                               viewModel.restoreWithCloudAction(type: .googleDrive)
+                           }, title: "restore_with_gd".localized)
+
             VPrimaryButton(model: ButtonStyle.border,
                            action: {
-                viewModel.restoreWithManualAction()
-            }, title: "restore_with_recovery_phrase".localized)
+                               viewModel.restoreWithManualAction()
+                           }, title: "restore_with_recovery_phrase".localized)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 28)

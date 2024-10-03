@@ -8,7 +8,6 @@
 import Foundation
 
 struct IPResponse: Codable {
-    
     let continent: String?
     let continentCode: String?
     let country: String?

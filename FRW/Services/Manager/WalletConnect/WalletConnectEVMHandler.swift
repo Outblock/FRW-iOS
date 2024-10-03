@@ -5,14 +5,14 @@
 //  Created by cat on 2024/4/16.
 //
 
-import Foundation
-import WalletConnectSign
+import BigInt
 import Flow
+import Foundation
 import WalletConnectRouter
-import Web3Wallet
+import WalletConnectSign
 import Web3Core
 import web3swift
-import BigInt
+import Web3Wallet
 
 enum WalletConnectEVMMethod: String, Codable {
     case personalSign = "personal_sign"
@@ -35,21 +35,20 @@ extension Flow.ChainID {
 }
 
 struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
-    
     var type: WalletConnectHandlerType {
         return .evm
     }
-    
+
     var nameTag: String {
         return "eip155"
     }
-    
+
     let supportNetwork: [Flow.ChainID] = [.mainnet, .testnet]
-    
+
     var suppportEVMChainID: [String] {
-        supportNetwork.compactMap{ $0.evmChainID }.map{ String($0) }
+        supportNetwork.compactMap { $0.evmChainID }.map { String($0) }
     }
-    
+
     func chainId(sessionProposal: Session.Proposal) -> Flow.ChainID? {
         var reference: String?
         if let chains = sessionProposal.requiredNamespaces[nameTag]?.chains {
@@ -57,9 +56,9 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         }
         if let chains = sessionProposal.optionalNamespaces?[nameTag]?.chains {
 //            let ids = chains.filter{ $0.namespace == nameTag }.map { $0.reference }
-            reference = chains.filter{ $0.namespace == nameTag && suppportEVMChainID.contains($0.reference) }.compactMap{ $0.reference }.sorted().last
+            reference = chains.filter { $0.namespace == nameTag && suppportEVMChainID.contains($0.reference) }.compactMap { $0.reference }.sorted().last
         }
-        //TODO: if not the list allowed, HOW
+        // TODO: if not the list allowed, HOW
         switch reference {
         case "646":
             return .previewnet
@@ -71,28 +70,28 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
             return .unknown
         }
     }
-    
-    func approveSessionNamespaces(sessionProposal: Session.Proposal) throws -> [String : SessionNamespace] {
+
+    func approveSessionNamespaces(sessionProposal: Session.Proposal) throws -> [String: SessionNamespace] {
         guard let account = EVMAccountManager.shared.accounts.first?.address.addHexPrefix() else {
             return [:]
         }
         // Following properties are used to support all the required and optional namespaces for the testing purposes
         let supportedMethods = Set(sessionProposal.requiredNamespaces.flatMap { $0.value.methods } + (sessionProposal.optionalNamespaces?.flatMap { $0.value.methods } ?? []))
         let supportedEvents = Set(sessionProposal.requiredNamespaces.flatMap { $0.value.events } + (sessionProposal.optionalNamespaces?.flatMap { $0.value.events } ?? []))
-        
+
         let supportedRequiredChains = sessionProposal.requiredNamespaces[nameTag]?.chains ?? []
         let supportedOptionalChains = sessionProposal.optionalNamespaces?[nameTag]?.chains ?? []
         let supportedChains = supportedRequiredChains + supportedOptionalChains
 
         let supportedAccounts = Array(supportedChains).map { WalletConnectSign.Account(blockchain: $0, address: account)! }
 
-        //TODO: #six
+        // TODO: #six
         /* Use only supported values for production. I.e:
-        let supportedMethods = ["eth_signTransaction", "personal_sign", "eth_signTypedData", "eth_sendTransaction", "eth_sign"]
-        let supportedEvents = ["accountsChanged", "chainChanged"]
-        let supportedChains = [Blockchain("eip155:1")!, Blockchain("eip155:137")!]
-        let supportedAccounts = [Account(blockchain: Blockchain("eip155:1")!, address: ETHSigner.address)!, Account(blockchain: Blockchain("eip155:137")!, address: ETHSigner.address)!]
-        */
+         let supportedMethods = ["eth_signTransaction", "personal_sign", "eth_signTypedData", "eth_sendTransaction", "eth_sign"]
+         let supportedEvents = ["accountsChanged", "chainChanged"]
+         let supportedChains = [Blockchain("eip155:1")!, Blockchain("eip155:137")!]
+         let supportedAccounts = [Account(blockchain: Blockchain("eip155:1")!, address: ETHSigner.address)!, Account(blockchain: Blockchain("eip155:137")!, address: ETHSigner.address)!]
+         */
         let sessionNamespaces: [String: SessionNamespace] = try AutoNamespaces.build(
             sessionProposal: sessionProposal,
             chains: Array(supportedChains),
@@ -102,8 +101,8 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         )
         return sessionNamespaces
     }
-    
-    func handlePersonalSignRequest(request: Request, confirm: @escaping (String) -> (), cancel: @escaping () -> ()) {
+
+    func handlePersonalSignRequest(request: Request, confirm: @escaping (String) -> Void, cancel: @escaping () -> Void) {
         guard let data = message(sessionRequest: request) else {
             cancel()
             return
@@ -115,17 +114,15 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         let vm = BrowserSignMessageViewModel(title: title,
                                              url: url,
                                              logo: logo,
-                                             cadence: data.hexString)
-        { result in
+                                             cadence: data.hexString) { result in
             if result {
                 guard let addrStr = WalletManager.shared.getPrimaryWalletAddress() else {
                     HUD.error(title: "invalid_address".localized)
                     return
                 }
-                
-                
+
                 let address = Flow.Address(hex: addrStr)
-                guard let hashedData = Utilities.hashPersonalMessage(data) else { return  }
+                guard let hashedData = Utilities.hashPersonalMessage(data) else { return }
                 let joinData = Flow.DomainTag.user.normalize + hashedData
                 guard let sig = signWithMessage(data: joinData) else {
                     HUD.error(title: "sign failed")
@@ -141,44 +138,42 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                 cancel()
             }
         }
-        
+
         Router.route(to: RouteMap.Explore.signMessage(vm))
     }
-    
-    func handleSendTransactionRequest(request: WalletConnectSign.Request, confirm: @escaping (String)->(), cancel:@escaping ()->()) {
-        
+
+    func handleSendTransactionRequest(request: WalletConnectSign.Request, confirm: @escaping (String) -> Void, cancel: @escaping () -> Void) {
         let pair = try? Pair.instance.getPairing(for: request.topic)
         let title = pair?.peer?.name ?? "unknown"
         let url = pair?.peer?.url ?? "unknown"
         let logo = pair?.peer?.icons.first
-        
+
         let originCadence = CadenceManager.shared.current.evm?.callContract?.toFunc() ?? ""
-        
+
         do {
             let result = try request.params.get([EVMTransactionReceive].self)
             guard let receiveModel = result.first, let toAddr = receiveModel.toAddress else {
                 cancel()
                 return
             }
-            
+
             let args: [Flow.Cadence.FValue] = [
                 .string(toAddr),
                 .ufix64(Decimal(string: receiveModel.amount) ?? .nan),
                 receiveModel.dataValue?.cadenceValue ?? .array([]),
-                .uint64(receiveModel.gasValue)
-               ]
-            
+                .uint64(receiveModel.gasValue),
+            ]
+
             let vm = BrowserAuthzViewModel(title: title,
                                            url: url,
                                            logo: logo,
                                            cadence: originCadence,
-                                           arguments: args.toArguments())
-            { result in
+                                           arguments: args.toArguments()) { result in
                 Task {
                     if !result {
                         cancel()
                     }
-                    
+
                     let tix = try await FlowNetwork.sendTransaction(amount: receiveModel.amount, data: receiveModel.dataValue, toAddress: toAddr, gas: receiveModel.gasValue)
                     let tixResult = try await tix.onceSealed()
                     if tixResult.isFailed {
@@ -192,13 +187,12 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                     }
                 }
             }
-            
+
             Router.route(to: RouteMap.Explore.authz(vm))
         } catch {
             log.error("[EVM] send transaction failed \(error)", context: error)
             cancel()
         }
-        
     }
 }
 
@@ -208,7 +202,7 @@ extension WalletConnectEVMHandler {
         let decryptedMessage = message.map { Data(hex: $0.first ?? "") }
         return decryptedMessage
     }
-    
+
     private func signWithMessage(data: Data) -> Data? {
         return WalletManager.shared.signSync(signableData: data)
     }

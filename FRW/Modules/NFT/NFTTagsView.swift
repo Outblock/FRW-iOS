@@ -84,8 +84,8 @@ struct NFTTagsView: View {
     }
 }
 
-//struct NFTTagsView_Previews: PreviewProvider {
+// struct NFTTagsView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        NFTTagsView(tags: [NFTMetadatum(name: "School", value: "Impression")], color: Color(hex: 0x6D9987))
 //    }
-//}
+// }

@@ -42,25 +42,24 @@ struct WalletView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .backgroundFill(.LL.Neutrals.background)
     }
-    
+
     /// user is not logged in UI
     var guestView: some View {
         EmptyWalletView()
     }
-    
+
     /// user logged in UI
     var normalView: some View {
         ZStack {
             VStack(spacing: 10) {
-                
                 headerView
                     .padding(.horizontal, 18)
-                
+
                 RefreshableScrollView(showsIndicators: false, onRefresh: { done in
                     if isRefreshing {
                         return
                     }
-                    
+
                     isRefreshing = true
                     vm.reloadWalletData()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3.2) {
@@ -89,14 +88,14 @@ struct WalletView: View {
                                     .padding(.horizontal, 18)
                                     .visibility(vm.pendingRequestCount == 0 ? .gone : .visible)
                             }
-                            
+
                             errorView
                                 .visibility(vm.walletState == .error ? .visible : .gone)
                         }
                         .listRowInsets(.zero)
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.LL.Neutrals.background)
-                        
+
                         Section {
                             coinSectionView
                             ForEach(vm.mCoinItems, id: \.token.symbol) { coin in
@@ -107,7 +106,6 @@ struct WalletView: View {
                                         .contentShape(Rectangle())
                                 }
                                 .buttonStyle(ScaleButtonStyle())
-                                
                             }
                         }
                         .padding(.horizontal, 18)
@@ -138,7 +136,7 @@ struct WalletView: View {
         }
         .navigationBarHidden(true)
     }
-    
+
     var jailbreakTipsView: some View {
         Button {
             Router.route(to: RouteMap.Wallet.jailbreakAlert)
@@ -147,13 +145,13 @@ struct WalletView: View {
                 Image("icon-warning-mark")
                     .renderingMode(.template)
                     .foregroundColor(Color.LL.Warning.warning2)
-                
+
                 Text("jailbreak_alert_msg".localized)
                     .font(.inter(size: 16, weight: .medium))
                     .foregroundColor(Color.LL.Warning.warning2)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .lineLimit(1)
-                
+
                 Image("icon-account-arrow-right")
                     .renderingMode(.template)
                     .foregroundColor(Color.LL.Warning.warning2)
@@ -172,15 +170,15 @@ struct WalletView: View {
             } label: {
                 HStack {
                     KFImage.url(URL(string: um.userInfo?.avatar.convertedAvatarString() ?? ""))
-                        .placeholder({
+                        .placeholder {
                             Image("placeholder")
                                 .resizable()
-                        })
+                        }
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 28, height: 28)
                         .cornerRadius(14)
-                    
+
                     Text(um.userInfo?.nickname ?? "lilico".localized)
                         .foregroundColor(.LL.Neutrals.text)
                         .font(.inter(size: 18, weight: .semibold))
@@ -199,7 +197,7 @@ struct WalletView: View {
                             .fill(LocalUserDefaults.shared.flowNetwork.color.opacity(0.16))
                     )
             }
-            
+
             Spacer()
 
             HStack(spacing: 16) {
@@ -211,12 +209,11 @@ struct WalletView: View {
                         Image("evm_move_icon")
                             .renderingMode(.template)
                             .foregroundColor(.primary)
-                        
                     }
                     .frame(width: 30)
                 }
                 .visibility(EVMAccountManager.shared.openEVM ? .visible : .gone)
-                
+
                 Button {
                     vm.scanAction()
                 } label: {
@@ -225,16 +222,14 @@ struct WalletView: View {
                         Image("icon-wallet-scan")
                             .renderingMode(.template)
                             .foregroundColor(.primary)
-                        
                     }
                     .frame(width: 30)
                 }
             }
-            
         }
     }
 
-    func actionButton(imageName: String, text: String? = nil, action: @escaping () -> ()) -> some View {
+    func actionButton(imageName: String, text: String? = nil, action: @escaping () -> Void) -> some View {
         return Button {
             action()
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -242,7 +237,7 @@ struct WalletView: View {
             HStack(spacing: 6) {
                 Image(imageName)
                     .frame(width: 28, height: 28)
-                
+
                 if let text {
                     Text(text)
                         .font(.LL.body.weight(.semibold))
@@ -258,22 +253,22 @@ struct WalletView: View {
         }
         .buttonStyle(ScaleButtonStyle())
     }
-    
+
     var actionView: some View {
-        VStack{
-            HStack() {
+        VStack {
+            HStack {
                 actionButton(imageName: "wallet-send-stroke") {
                     Router.route(to: RouteMap.Wallet.send())
                 }
                 .disabled(wm.isSelectedChildAccount)
-                
+
                 Spacer()
-                
+
                 actionButton(imageName: "wallet-receive-stroke") {
                     Router.route(to: RouteMap.Wallet.receiveQR)
                 }
-                
-                if currentNetwork.isMainnet || currentNetwork == .testnet  {
+
+                if currentNetwork.isMainnet || currentNetwork == .testnet {
                     if let swapStatus = RemoteConfigManager.shared.config?.features.swap, swapStatus == true {
                         Spacer()
                         actionButton(imageName: "wallet-swap-stroke") {
@@ -282,7 +277,7 @@ struct WalletView: View {
                         .disabled(wm.isSelectedChildAccount)
                     }
                 }
-                
+
                 if currentNetwork.isMainnet {
                     Spacer()
                     actionButton(imageName: "wallet-staking") {
@@ -301,7 +296,7 @@ struct WalletView: View {
                 .font(.inter(size: 18, weight: .bold))
 
             Spacer()
-            
+
             if RemoteConfigManager.shared.config?.features.onRamp ?? false == true && flow.chainID == .mainnet {
                 Button {
                     UIImpactFeedbackGenerator(style: .soft).impactOccurred()
@@ -312,7 +307,7 @@ struct WalletView: View {
                             .resizable()
                             .frame(width: 20, height: 20)
                             .foregroundColor(Color.LL.Neutrals.neutrals3)
-                        
+
                         Text("buy_uppercase".localized)
                             .font(.LL.footnote.weight(.semibold))
                             .foregroundColor(Color.LL.Neutrals.neutrals3)
@@ -332,12 +327,11 @@ struct WalletView: View {
                     .foregroundColor(.LL.Neutrals.neutrals1)
             }
             .disabled(wm.isSelectedChildAccount)
-
         }
         .buttonStyle(.plain)
         .padding(.top, 32)
     }
-    
+
     var pendingRequestView: some View {
         Button {
             Router.route(to: RouteMap.Profile.walletConnect)
@@ -346,9 +340,9 @@ struct WalletView: View {
                 Text("pending_request".localized)
                     .font(.inter(size: 14, weight: .semibold))
                     .foregroundColor(.LL.Other.text2)
-                
+
                 Spacer()
-                
+
                 Text("\(vm.pendingRequestCount)")
                     .font(.inter(size: 14, weight: .semibold))
                     .foregroundColor(.LL.Other.text1)
@@ -356,7 +350,7 @@ struct WalletView: View {
                     .padding(.horizontal, 10)
                     .background(Color.LL.Other.bg1)
                     .cornerRadius(12)
-                
+
                 Image("icon-account-arrow-right")
                     .renderingMode(.template)
                     .foregroundColor(.LL.Other.icon1)
@@ -375,10 +369,9 @@ extension WalletView {
 
         @AppStorage("WalletCardBackrgound")
         private var walletCardBackrgound: String = "fade:0"
-        
+
         var body: some View {
             VStack(spacing: 0) {
-                
                 ZStack {
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .frame(maxWidth: .infinity)
@@ -386,11 +379,11 @@ extension WalletView {
                         .padding(.horizontal, 18)
                         .shadow(color: CardBackground(value: walletCardBackrgound).color.opacity(0.1),
                                 radius: 20, x: 0, y: 8)
-                    
+
                     cardView
                         .padding(.horizontal, 18)
                 }
-                
+
                 Button {
                     Router.route(to: RouteMap.Wallet.transactionList(nil))
                 } label: {
@@ -401,15 +394,15 @@ extension WalletView {
                 .visibility(WalletManager.shared.isSelectedChildAccount ? .gone : .visible)
             }
         }
-        
+
         var transactionView: some View {
             HStack(spacing: 7) {
                 Text("wallet_transactions".localized)
                     .font(.inter(size: 14, weight: .semibold))
                     .foregroundColor(.LL.Other.text2)
-                
+
                 Spacer()
-                
+
                 Text("\(vm.transactionCount)")
                     .font(.inter(size: 14, weight: .semibold))
                     .foregroundColor(.LL.Other.text1)
@@ -418,7 +411,7 @@ extension WalletView {
                     .background(Color.LL.Other.bg1)
                     .cornerRadius(12)
                     .visibility(.gone)
-                
+
                 Image("icon-account-arrow-right")
                     .renderingMode(.template)
                     .foregroundColor(.LL.Other.icon1)
@@ -431,7 +424,7 @@ extension WalletView {
             .padding(.horizontal, 6)
             .padding(.top, -12)
         }
-        
+
         var cardView: some View {
             ZStack {
                 VStack {
@@ -439,23 +432,23 @@ extension WalletView {
                         Text(WalletManager.shared.selectedAccountWalletName)
                             .foregroundColor(Color(hex: "#FDFBF9"))
                             .font(.inter(size: 14, weight: .semibold))
-                        
+
                         Spacer()
-                        
+
 //                        if UserManager.shared.isMeowDomainEnabled,
 //                           let domain = UserManager.shared.userInfo?.meowDomain,
 //                           WalletManager.shared.isSelectedChildAccount == false {
 //                            HStack(spacing: 8) {
-//                                
+//
 //                                Image("logo")
 //                                    .resizable()
 //                                    .frame(width: 16, height: 16)
-//                                
+//
 //                                Text(domain)
 //                                    .foregroundColor(Color(hex: "#FDFBF9"))
 //                                    .font(.inter(size: 14, weight: .semibold))
 //                            }
-//                            
+//
 //                        }
                     }
 
@@ -506,30 +499,29 @@ extension WalletView {
             .frame(height: CardViewHeight)
             .buttonStyle(.plain)
         }
-        
+
         var childAccountBackground: some View {
             ZStack {
                 KFImage.url(URL(string: WalletManager.shared.selectedAccountIcon))
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .blur(radius: 6)
-                
+
                 LinearGradient(colors:
-                                [
-                                    Color(hex: "#333333"),
-                                    Color(hex: "#333333"),
-                                    Color(hex: "#333333").opacity(0.88),
-                                    Color(hex: "#333333").opacity(0.32),
-                                ],
-                               startPoint: .leading,
-                               endPoint: .trailing)
+                    [
+                        Color(hex: "#333333"),
+                        Color(hex: "#333333"),
+                        Color(hex: "#333333").opacity(0.88),
+                        Color(hex: "#333333").opacity(0.32),
+                    ],
+                    startPoint: .leading,
+                    endPoint: .trailing)
             }
-            
         }
     }
 
@@ -542,10 +534,10 @@ extension WalletView {
             VStack(spacing: 0) {
                 HStack(spacing: 18) {
                     KFImage.url(coin.token.iconURL)
-                        .placeholder({
+                        .placeholder {
                             Image("placeholder")
                                 .resizable()
-                        })
+                        }
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: CoinIconHeight, height: CoinIconHeight)
@@ -565,7 +557,7 @@ extension WalletView {
                         }
 
                         HStack {
-                            HStack() {
+                            HStack {
                                 Text(coin.priceValue)
                                     .foregroundColor(.LL.Neutrals.neutrals7)
                                     .font(.inter(size: 14, weight: .regular))
@@ -577,10 +569,9 @@ extension WalletView {
                                     .padding(.horizontal, 6)
                                     .background(coin.changeBG)
                                     .cornerRadius(11, style: .continuous)
-                                    
                             }
-                            .visibility( WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .visible : .gone)
-                            
+                            .visibility(WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .visible : .gone)
+
                             Text("Inaccessible".localized)
                                 .foregroundStyle(Color.Flow.Font.inaccessible)
                                 .font(Font.inter(size: 10, weight: .semibold))
@@ -600,18 +591,18 @@ extension WalletView {
                     .frame(maxWidth: .infinity)
                 }
                 .frame(minHeight: CoinCellHeight)
-                
+
                 HStack(spacing: 0) {
                     Divider()
                         .frame(width: 1, height: 10)
                         .foregroundColor(Color.LL.Neutrals.neutrals4)
-                    
+
                     Spacer()
                 }
                 .padding(.leading, 24)
                 .offset(y: -5)
                 .visibility(coin.token.isFlowCoin && stakingManager.isStaked ? .visible : .gone)
-                
+
                 Button {
                     StakingManager.shared.goStakingAction()
                 } label: {
@@ -619,14 +610,14 @@ extension WalletView {
                         Circle()
                             .frame(width: 10, height: 10)
                             .foregroundColor(Color.LL.Neutrals.neutrals4)
-                        
+
                         Text("staked_flow".localized)
                             .foregroundColor(.LL.Neutrals.text)
                             .font(.inter(size: 14, weight: .semibold))
                             .padding(.leading, 31)
-                        
+
                         Spacer()
-                        
+
                         Text("\(vm.isHidden ? "****" : stakingManager.stakingCount.formatCurrencyString()) FLOW")
                             .foregroundColor(.LL.Neutrals.text)
                             .font(.inter(size: 14, weight: .medium))

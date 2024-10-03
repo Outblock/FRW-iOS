@@ -8,18 +8,16 @@
 import SwiftUI
 
 struct ShowRecoveryPhraseBackup: RouteableView {
-    
     @StateObject var viewModel: CreateRecoveryPhraseBackupViewModel
-    
+
     var title: String {
         return "backup".localized
     }
-    
-    
+
     init(mnemonic: String) {
         _viewModel = StateObject(wrappedValue: CreateRecoveryPhraseBackupViewModel(mnemonic: mnemonic))
     }
-    
+
     var body: some View {
         VStack {
             ScrollView(.vertical, showsIndicators: false) {
@@ -56,7 +54,7 @@ struct ShowRecoveryPhraseBackup: RouteableView {
                         .allowsHitTesting(false)
                     }
                     .padding(.top, 20)
-                    
+
                     VStack(alignment: .leading) {
                         Button {
                             viewModel.onCopy()
@@ -65,7 +63,7 @@ struct ShowRecoveryPhraseBackup: RouteableView {
                                 .resizable()
                                 .renderingMode(.template)
                                 .foregroundStyle(Color.Theme.Accent.green)
-                                .frame(width: 100,height: 40)
+                                .frame(width: 100, height: 40)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -87,8 +85,6 @@ struct ShowRecoveryPhraseBackup: RouteableView {
                     }
                     .padding(.top)
                     .padding(.bottom)
-
-                    
                 }
             }
             Spacer()
@@ -98,14 +94,13 @@ struct ShowRecoveryPhraseBackup: RouteableView {
                                viewModel.onCreate()
                            }, title: "done".localized)
 
-            .padding(.bottom, 20)
+                .padding(.bottom, 20)
         }
         .frame(maxHeight: .infinity)
         .padding(.horizontal, 28)
         .backgroundFill(Color.LL.background)
         .applyRouteable(self)
     }
-    
 }
 
 #Preview {

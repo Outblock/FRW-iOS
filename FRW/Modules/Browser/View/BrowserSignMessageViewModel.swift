@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension BrowserSignMessageViewModel {
-    typealias Callback = (Bool) -> ()
+    typealias Callback = (Bool) -> Void
 }
 
 class BrowserSignMessageViewModel: ObservableObject {
@@ -17,34 +17,34 @@ class BrowserSignMessageViewModel: ObservableObject {
     @Published var logo: String?
     @Published var cadence: String
     @Published var isScriptShowing: Bool = false
-    
+
     var message: String {
         let data = Data(hex: cadence)
         return String(data: data, encoding: .utf8) ?? ""
     }
-    
+
     private var callback: BrowserSignMessageViewModel.Callback?
-    
+
     init(title: String, url: String, logo: String?, cadence: String, callback: @escaping BrowserSignMessageViewModel.Callback) {
         self.title = title
-        self.urlString = url
+        urlString = url
         self.logo = logo
         self.cadence = cadence
         self.callback = callback
     }
-    
+
     func didChooseAction(_ result: Bool) {
         callback?(result)
         callback = nil
         Router.dismiss()
     }
-    
+
     func changeScriptViewShowingAction(_ show: Bool) {
         withAnimation {
             self.isScriptShowing = show
         }
     }
-    
+
     deinit {
         callback?(false)
         WalletConnectManager.shared.reloadPendingRequests()

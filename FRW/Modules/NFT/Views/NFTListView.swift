@@ -5,20 +5,19 @@
 //  Created by cat on 2022/5/30.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 struct RefreshableView<Content: View>: View {
-    
     var content: () -> Content
-    
-    @Environment(\.refresh) private var refresh   // << refreshable injected !!
+
+    @Environment(\.refresh) private var refresh // << refreshable injected !!
     @State private var isRefreshing = false
 
     var body: some View {
         VStack {
             if isRefreshing {
-                MyProgress()    // ProgressView() ?? - no, it's boring :)
+                MyProgress() // ProgressView() ?? - no, it's boring :)
                     .transition(.scale)
             }
             content()
@@ -29,10 +28,10 @@ struct RefreshableView<Content: View>: View {
             Color.clear.preference(key: ViewOffsetKey.self, value: -$0.frame(in: .global).origin.y)
         })
         .onPreferenceChange(ViewOffsetKey.self) {
-            if $0 < -80 && !isRefreshing {   // << any creteria we want !!
+            if $0 < -80, !isRefreshing { // << any creteria we want !!
                 isRefreshing = true
                 Task {
-                    await refresh?()           // << call refreshable !!
+                    await refresh?() // << call refreshable !!
                     await MainActor.run {
                         isRefreshing = false
                     }
@@ -45,16 +44,16 @@ struct RefreshableView<Content: View>: View {
 struct MyProgress: View {
     @State private var isProgress = false
     var body: some View {
-        HStack{
-             ForEach(0...4, id: \.self){index in
-                  Circle()
-                        .frame(width:10,height:10)
-                        .foregroundColor(.red)
-                        .scaleEffect(self.isProgress ? 1:0.01)
-                        .animation(self.isProgress ? Animation.linear(duration:0.6).repeatForever().delay(0.2*Double(index)) :
-                             .default
-                        , value: isProgress)
-             }
+        HStack {
+            ForEach(0 ... 4, id: \.self) { index in
+                Circle()
+                    .frame(width: 10, height: 10)
+                    .foregroundColor(.red)
+                    .scaleEffect(self.isProgress ? 1 : 0.01)
+                    .animation(self.isProgress ? Animation.linear(duration: 0.6).repeatForever().delay(0.2 * Double(index)) :
+                        .default,
+                        value: isProgress)
+            }
         }
         .onAppear { isProgress = true }
         .padding()

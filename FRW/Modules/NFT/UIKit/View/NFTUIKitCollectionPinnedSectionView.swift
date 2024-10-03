@@ -5,16 +5,17 @@
 //  Created by Selina on 11/8/2022.
 //
 
-import UIKit
 import SwiftUI
+import UIKit
 
 class NFTUIKitCollectionPinnedSectionView: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = UIColor.LL.Neutrals.background
     }
-    
-    required init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

@@ -12,19 +12,19 @@ struct Migration {
     private let remoteKeychain: Keychain
     private let localKeychain: Keychain
     private let mnemonicPrefix = "lilico.mnemonic."
-    
+
     init() {
         let remoteService = (Bundle.main.bundleIdentifier ?? "com.flowfoundation.wallet")
         remoteKeychain = Keychain(service: remoteService)
             .label("Lilico app backup")
             .accessibility(.whenUnlocked)
-        
+
         let localService = remoteService + ".local"
         localKeychain = Keychain(service: localService)
             .label("Flow Wallet Backup")
             .accessibility(.whenUnlocked)
     }
-    
+
     func start() {
         fetchiCloudRemoteList()
     }
@@ -47,31 +47,29 @@ extension Migration {
                 let newKey = "lilico.pinCode.\(uid)"
                 try localKeychain.set(encodedData, key: newKey)
                 try remoteKeychain.remove(key)
-            }
-            catch {
+            } catch {
                 log.error("[MIG] fix pin:\(uid)")
             }
         }
     }
-    
+
     private func fetchiCloudRemoteList() {
         let list = remoteKeychain.allItems()
         for item in list {
             guard let key = item["key"] as? String else { continue }
-            
+
             if key == "PinCodeKey", let value = item["value"] as? String {
                 do {
                     try localKeychain.set(value, key: key)
                     try remoteKeychain.remove(key)
                     log.info("[MIG] remove key:\(key)")
-                }
-                catch {
+                } catch {
                     log.error("[MIG] pin")
                 }
-                
+
                 continue
             }
-            
+
             if let value = item["value"] as? Data {
                 guard key.contains(mnemonicPrefix) else {
                     continue
@@ -82,8 +80,7 @@ extension Migration {
                         try localKeychain.comment("Lilico user uid: \(uid)").set(value, key: key)
                         try remoteKeychain.remove(key)
                         log.info("[MIG] remove key:\(key)")
-                    }
-                    catch {
+                    } catch {
                         log.error("[MIG] set to local:\(error)")
                     }
                 }

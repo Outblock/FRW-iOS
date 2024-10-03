@@ -5,8 +5,8 @@
 //  Created by Selina on 13/6/2023.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 extension AccountSwitchViewModel {
     struct Placeholder {
@@ -43,15 +43,15 @@ class AccountSwitchViewModel: ObservableObject {
                 }
             }.store(in: &cancelSets)
     }
-    
+
     func createNewAccountAction() {
         Router.route(to: RouteMap.Register.root(nil))
     }
-    
+
     func loginAccountAction() {
         Router.route(to: RouteMap.RestoreLogin.restoreList)
     }
-    
+
     func switchAccountAction(_ uid: String) {
         Task {
             do {

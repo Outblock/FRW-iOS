@@ -24,10 +24,10 @@ struct NFTCollectionCard: View {
         HStack {
             KFImage
                 .url(item.iconURL)
-                .placeholder({
+                .placeholder {
                     Image("placeholder")
                         .resizable()
-                })
+                }
                 .resizable()
                 .aspectRatio(1, contentMode: .fill)
                 .frame(width: iconSize, height: iconSize)
@@ -70,15 +70,13 @@ struct NFTCollectionCard: View {
         .onTapGesture {
             if isHorizontal {
                 selectedIndex = index
-            } else {
-                
-            }
+            } else {}
         }
         .frame(height: isHorizontal ? 56 : 64)
     }
 }
 
-//struct NFTCollectionCard_Previews: PreviewProvider {
+// struct NFTCollectionCard_Previews: PreviewProvider {
 //    @State static var selectedIndex: Int = 0
 //
 //    static var previews: some View {
@@ -92,4 +90,4 @@ struct NFTCollectionCard: View {
 //                              selectedIndex: $selectedIndex)
 //        }
 //    }
-//}
+// }

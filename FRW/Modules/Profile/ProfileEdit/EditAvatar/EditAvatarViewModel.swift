@@ -73,33 +73,33 @@ extension EditAvatarView {
         @Published var mode: Mode = .preview
         @Published var items: [AvatarItemModel] = []
         @Published var selectedItemId: String?
-        
+
         private var oldAvatarItem: AvatarItemModel?
-        
+
         private var isEnd: Bool = false
         private var isRequesting: Bool = false
-        
+
         init() {
             var cachedItems = [AvatarItemModel]()
-            
+
             if let currentAvatar = UserManager.shared.userInfo?.avatar {
                 cachedItems.append(EditAvatarView.AvatarItemModel(type: .string, avatarString: currentAvatar))
             }
-            
+
             if let cachedNFTs = NFTUIKitCache.cache.getGridNFTs() {
                 for nft in cachedNFTs {
                     let model = NFTModel(nft, in: nil)
                     cachedItems.append(EditAvatarView.AvatarItemModel(type: .nft, avatarString: nil, nft: model))
                 }
             }
-            
+
             items = cachedItems
-            
+
             if let first = items.first, first.type == .string {
                 selectedItemId = first.id
                 oldAvatarItem = first
             }
-            
+
             loadMoreAvatarIfNeededAction()
         }
 
@@ -193,13 +193,13 @@ extension EditAvatarView.EditAvatarViewModel {
     func loadMoreAvatarIfNeededAction() {
         if let lastItem = items.last, let selectId = selectedItemId, lastItem.id == selectId, isRequesting == false, isEnd == false {
             isRequesting = true
-            
+
             Task {
                 var currentCount = items.count
                 if items.first?.type == .string {
                     currentCount -= 1
                 }
-                
+
                 do {
                     try await requestGridAction(offset: currentCount)
                     DispatchQueue.main.async {
@@ -214,7 +214,7 @@ extension EditAvatarView.EditAvatarViewModel {
             }
         }
     }
-    
+
     private func requestGridAction(offset: Int) async throws {
         let limit = 24
         let nfts = try await requestGrid(offset: offset, limit: limit)
@@ -224,40 +224,40 @@ extension EditAvatarView.EditAvatarViewModel {
             self.saveToCache()
         }
     }
-    
+
     private func requestGrid(offset: Int, limit: Int = 24) async throws -> [NFTModel] {
-        let address =  WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? ""
+        let address = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? ""
         let request = NFTGridDetailListRequest(address: address, offset: offset, limit: limit)
         let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount != nil ? .evm : .main
         let response: Network.Response<NFTListResponse> = try await Network.requestWithRawModel(FRWAPI.NFT.gridDetailList(request, from))
-        
+
         guard let nfts = response.data?.nfts else {
             return []
         }
-        
+
         let models = nfts.map { NFTModel($0, in: nil) }
         return models
     }
-    
+
     private func appendGridNFTsNoDuplicated(_ newNFTs: [NFTModel]) {
         for nft in newNFTs {
             let exist = items.first { $0.type == .nft && $0.nft?.id == nft.id }
-            
+
             if exist == nil {
                 items.append(EditAvatarView.AvatarItemModel(type: .nft, avatarString: nil, nft: nft))
             }
         }
     }
-    
+
     private func saveToCache() {
         var nfts = [NFTResponse]()
-        
+
         for item in items {
             if item.type == .nft, let nft = item.nft {
                 nfts.append(nft.response)
             }
         }
-        
+
         NFTUIKitCache.cache.saveGridToCache(nfts)
     }
 }

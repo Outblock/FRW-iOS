@@ -27,34 +27,34 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
             return .bearer
         }
     }
-    
+
     var baseURL: URL {
         switch self {
         case .currencyRate:
             return Config.get(.lilico)
         case .retoken:
             #if LILICOPROD
-            return .init(string: "https://scanner.lilico.app")!
+                return .init(string: "https://scanner.lilico.app")!
             #else
-            return .init(string: "https://dev-scanner.lilico.app")!
+                return .init(string: "https://dev-scanner.lilico.app")!
             #endif
         case .flowAddress:
             return .init(string: "https://production.key-indexer.flow.com/")!
         }
     }
-    
+
     var path: String {
         switch self {
         case .currencyRate:
             return "/v1/crypto/exchange"
         case .retoken:
             return "/retoken"
-        case .flowAddress(let publicKey):
+        case let .flowAddress(publicKey):
             let result = publicKey.stripHexPrefix()
             return "/key/\(result)"
         }
     }
-    
+
     var method: Moya.Method {
         switch self {
         case .currencyRate, .flowAddress:
@@ -63,19 +63,19 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
             return .post
         }
     }
-    
+
     var task: Task {
         switch self {
-        case .currencyRate(let toCurrency):
+        case let .currencyRate(toCurrency):
             return .requestParameters(parameters: ["from": "USD", "to": toCurrency.rawValue], encoding: URLEncoding.queryString)
-        case .retoken(let token, let address):
+        case let .retoken(token, address):
             return .requestJSONEncodable(["token": token, "address": address])
         case .flowAddress:
             return .requestPlain
         }
     }
-    
-    var headers: [String : String]? {
+
+    var headers: [String: String]? {
         switch self {
         case .currencyRate:
             return FRWAPI.commonHeaders

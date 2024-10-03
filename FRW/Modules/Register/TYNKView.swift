@@ -11,7 +11,7 @@ import SwiftUIX
 struct TYNKView: RouteableView {
     @StateObject var viewModel = TYNKViewModel()
     @State var stateList: [Bool] = [false, false, false]
-    
+
     var title: String {
         return ""
     }
@@ -60,9 +60,9 @@ struct TYNKView: RouteableView {
             VPrimaryButton(model: ButtonStyle.primary,
                            state: buttonState,
                            action: {
-                viewModel.chooseBackupMethodAction()
-            }, title: buttonState == .loading ? "almost_there".localized : "next".localized)
-            .padding(.bottom)
+                               viewModel.chooseBackupMethodAction()
+                           }, title: buttonState == .loading ? "almost_there".localized : "next".localized)
+                .padding(.bottom)
         }
         .padding(.horizontal, 28)
         .background(Color.LL.background, ignoresSafeAreaEdges: .all)

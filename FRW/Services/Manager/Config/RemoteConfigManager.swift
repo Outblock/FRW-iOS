@@ -5,15 +5,15 @@
 //  Created by Selina on 5/9/2022.
 //
 
-import UIKit
+import CryptoKit
 import Flow
 import SwiftUI
-import CryptoKit
+import UIKit
 import WalletCore
 
 class RemoteConfigManager {
     static let shared = RemoteConfigManager()
-    
+
     var emptyAddress: String {
         switch LocalUserDefaults.shared.flowNetwork.toFlowType() {
         case .mainnet:
@@ -26,20 +26,20 @@ class RemoteConfigManager {
             return "0x319e67f2ef9d937f"
         }
     }
-    
+
     private var envConfig: ENVConfig?
     var config: Config?
     var contractAddress: ContractAddress?
-    
+
     var isFailed: Bool = false
-    
+
     var freeGasEnabled: Bool {
         if !remoteGreeGas {
             return false
         }
         return localGreeGas
     }
-    
+
     @AppStorage(LocalUserDefaults.Keys.freeGas.rawValue) private var localGreeGas = true
     var remoteGreeGas: Bool {
         if let config = config {
@@ -47,12 +47,12 @@ class RemoteConfigManager {
         }
         return true
     }
-    
+
     var payer: String {
         if !freeGasEnabled {
             return WalletManager.shared.selectedAccountAddress
         }
-        
+
         switch LocalUserDefaults.shared.flowNetwork.toFlowType() {
         case .mainnet:
             return config?.payer.mainnet.address ?? emptyAddress
@@ -64,12 +64,12 @@ class RemoteConfigManager {
             return emptyAddress
         }
     }
-    
+
     var payerKeyId: Int {
         if !freeGasEnabled {
             return 0
         }
-        
+
         switch LocalUserDefaults.shared.flowNetwork.toFlowType() {
         case .mainnet:
             return config?.payer.mainnet.keyID ?? 0
@@ -83,7 +83,7 @@ class RemoteConfigManager {
             return 0
         }
     }
-    
+
     func getContarctAddress(_ network: LocalUserDefaults.FlowNetworkType) -> [String: String]? {
         switch network {
         case .mainnet:
@@ -94,54 +94,54 @@ class RemoteConfigManager {
             return contractAddress?.previewnet
         }
     }
-    
+
     init() {
         do {
             try loadLocalConfig()
-        }catch {
+        } catch {
             log.error("[Firebase] load local file config failed:\(error)")
         }
         updateFromRemote()
     }
-    
+
     func updateFromRemote() {
         fetchNews()
         do {
             let data: String = try FirebaseConfig.ENVConfig.fetch()
             let key = LocalEnvManager.shared.backupAESKey
             if let keyData = key.data(using: .utf8),
-               let ivData = key.sha256().prefix(16).data(using: .utf8) {
-                
+               let ivData = key.sha256().prefix(16).data(using: .utf8)
+            {
                 let decodeData = AES.decryptCBC(key: keyData, data: Data(hex: data), iv: ivData, mode: .pkcs7)!
                 let config = try? JSONDecoder().decode(ENVConfig.self, from: decodeData)
-                self.envConfig = config
+                envConfig = config
                 self.config = nil
-                if  let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
-                    let version = envConfig?.version
+                if let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
+                   let version = envConfig?.version
                 {
                     if version.compareVersion(to: currentVersion) == .orderedDescending {
-                        self.config = self.envConfig?.prod
+                        self.config = envConfig?.prod
                     }
                 }
-                
+
                 if self.config == nil {
-                    self.config = self.envConfig?.staging
+                    self.config = envConfig?.staging
                 }
             }
-            self.contractAddress = try FirebaseConfig.contractAddress.fetch(decoder: JSONDecoder())
-            
+            contractAddress = try FirebaseConfig.contractAddress.fetch(decoder: JSONDecoder())
+
             NotificationCenter.default.post(name: .remoteConfigDidUpdate, object: nil)
         } catch {
             do {
                 log.warning("will load from local")
                 try loadLocalConfig()
             } catch {
-                self.isFailed = true
+                isFailed = true
                 log.error("load failed")
             }
         }
     }
-    
+
     func fetchNews() {
         Task {
             do {
@@ -152,62 +152,57 @@ class RemoteConfigManager {
                 DispatchQueue.main.async {
                     WalletNewsHandler.shared.addRemoteNews(list)
                 }
-                
-            }
-            catch {
+            } catch {
                 log.error("[Firebase] fetch news failed. \(error)")
             }
         }
     }
-    
+
     private func loadLocalConfig() throws {
         do {
             let data: String = try FirebaseConfig.ENVConfig.fetch()
             let key = LocalEnvManager.shared.backupAESKey
             if let keyData = key.data(using: .utf8),
-               let ivData = key.sha256().prefix(16).data(using: .utf8) {
-                
+               let ivData = key.sha256().prefix(16).data(using: .utf8)
+            {
                 let decodeData = AES.decryptCBC(key: keyData, data: Data(hex: data), iv: ivData, mode: .pkcs7)!
                 let config = try? JSONDecoder().decode(ENVConfig.self, from: decodeData)
                 self.config = config?.staging
             }
-        }catch {
+        } catch {
             log.warning("[firebase] load local error.\(error)")
         }
-        
-        self.contractAddress = try FirebaseConfig.contractAddress.fetchLocal()
+
+        contractAddress = try FirebaseConfig.contractAddress.fetchLocal()
     }
 }
 
 extension RemoteConfigManager: FlowSigner {
-    
     var address: Flow.Address {
         .init(hex: payer)
     }
-    
+
     var hashAlgo: Flow.HashAlgorithm {
         .SHA2_256
     }
-    
+
     var signatureAlgo: Flow.SignatureAlgorithm {
         .ECDSA_P256
     }
-    
+
     var keyIndex: Int {
         payerKeyId
     }
-    
+
     func sign(transaction: Flow.Transaction, signableData: Data) async throws -> Data {
         let request = SignPayerRequest(transaction: transaction.voucher, message: .init(envelopeMessage: signableData.hexValue))
-        let signature:SignPayerResponse = try await Network.requestWithRawModel(FirebaseAPI.signAsPayer(request))
+        let signature: SignPayerResponse = try await Network.requestWithRawModel(FirebaseAPI.signAsPayer(request))
         return Data(hex: signature.envelopeSigs.sig)
     }
-    
+
     func sign(voucher: FCLVoucher, signableData: Data) async throws -> Data {
         let request = SignPayerRequest(transaction: voucher, message: .init(envelopeMessage: signableData.hexValue))
-        let signature:SignPayerResponse = try await Network.requestWithRawModel(FirebaseAPI.signAsPayer(request))
+        let signature: SignPayerResponse = try await Network.requestWithRawModel(FirebaseAPI.signAsPayer(request))
         return Data(hex: signature.envelopeSigs.sig)
     }
 }
-
-

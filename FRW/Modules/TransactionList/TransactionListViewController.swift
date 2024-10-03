@@ -5,15 +5,14 @@
 //  Created by Selina on 9/9/2022.
 //
 
-import UIKit
+import JXSegmentedView
 import SnapKit
 import SwiftUI
-import JXSegmentedView
+import UIKit
 
 class TransactionListViewController: UIViewController {
     private(set) var contractId: String?
-    
-    
+
     private lazy var transferHandler: TransferListHandler = {
         let handler = TransferListHandler(contractId: contractId)
         handler.countChangeCallback = { [weak self] in
@@ -21,7 +20,7 @@ class TransactionListViewController: UIViewController {
         }
         return handler
     }()
-    
+
     private lazy var segmentDataSource: JXSegmentedTitleDataSource = {
         let ds = JXSegmentedTitleDataSource()
 //        ds.titles = [ "transaction_list_transfer_x".localized()]
@@ -35,7 +34,7 @@ class TransactionListViewController: UIViewController {
         ds.itemWidth = Router.coordinator.window.bounds.size.width
         return ds
     }()
-    
+
     private lazy var indicator: JXSegmentedIndicatorLineView = {
         let view = JXSegmentedIndicatorLineView()
         view.indicatorCornerRadius = 0
@@ -43,7 +42,7 @@ class TransactionListViewController: UIViewController {
         view.indicatorColor = UIColor(named: "line.black")!
         return view
     }()
-    
+
     private lazy var segmentView: JXSegmentedView = {
         let view = JXSegmentedView()
         view.delegate = self
@@ -53,57 +52,58 @@ class TransactionListViewController: UIViewController {
         view.contentEdgeInsetRight = 0
         return view
     }()
-    
+
     private lazy var listContainer: JXSegmentedListContainerView = {
         let view = JXSegmentedListContainerView(dataSource: self)
         return view
     }()
-    
+
     init(contractId: String? = nil) {
         super.init(nibName: nil, bundle: nil)
         self.contractId = contractId
     }
-    
-    required init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: true)
     }
-    
+
     private func setup() {
         view.backgroundColor = UIColor.LL.Neutrals.background
-        
+
         navigationItem.hidesBackButton = true
         navigationItem.title = "wallet_transactions".localized
-        
+
         let backItem = UIBarButtonItem(image: UIImage(systemName: "arrow.backward"), style: .plain, target: self, action: #selector(onBackButtonAction))
         backItem.tintColor = UIColor(named: "button.color")
         navigationItem.leftBarButtonItem = backItem
-        
+
         view.addSubview(segmentView)
         segmentView.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
             make.height.equalTo(0)
         }
-        
+
         view.addSubview(listContainer)
         listContainer.snp.makeConstraints { make in
             make.left.right.bottom.equalToSuperview()
             make.top.equalTo(segmentView.snp.bottom)
         }
-        
+
         segmentView.listContainer = listContainer
     }
-    
+
     @objc private func onBackButtonAction() {
         Router.pop()
     }
@@ -117,15 +117,13 @@ extension TransactionListViewController {
 }
 
 extension TransactionListViewController: JXSegmentedListContainerViewDataSource {
-    func numberOfLists(in listContainerView: JXSegmentedListContainerView) -> Int {
+    func numberOfLists(in _: JXSegmentedListContainerView) -> Int {
         return 1
     }
-    
-    func listContainerView(_ listContainerView: JXSegmentedListContainerView, initListAt index: Int) -> JXSegmentedListContainerViewListDelegate {
+
+    func listContainerView(_: JXSegmentedListContainerView, initListAt _: Int) -> JXSegmentedListContainerViewListDelegate {
         return transferHandler
     }
 }
 
-extension TransactionListViewController: JXSegmentedViewDelegate {
-    
-}
+extension TransactionListViewController: JXSegmentedViewDelegate {}

@@ -16,25 +16,25 @@ extension EnterRestorePasswordView {
 
 struct EnterRestorePasswordView: RouteableView {
     @StateObject var vm: EnterRestorePasswordViewModel
-    
+
     @State var text: String = ""
     @State var textStatus: LL.TextField.Status = .normal
     @State var state: VTextFieldState = .enabled
-    
+
     var buttonState: VPrimaryButtonState {
         text.count >= 8 ? .enabled : .disabled
     }
-    
+
     var model: VTextFieldModel = {
         var model = TextFieldStyle.primary
         model.misc.textContentType = .password
         return model
     }()
-    
+
     init(driveItem: BackupManager.DriveItem, backupType: BackupManager.BackupType) {
         _vm = StateObject(wrappedValue: EnterRestorePasswordViewModel(driveItem: driveItem, backupType: backupType))
     }
-    
+
     var body: some View {
         VStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 20) {
@@ -47,13 +47,13 @@ struct EnterRestorePasswordView: RouteableView {
                         .bold()
                 }
                 .font(.LL.largeTitle)
-                
+
                 Text("pwd_created_tips".localized)
                     .font(.LL.body)
                     .foregroundColor(.LL.note)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            
+
             VTextField(model: model,
                        type: .secure,
                        state: $state,
@@ -62,16 +62,16 @@ struct EnterRestorePasswordView: RouteableView {
                        text: $text) {}
                 .frame(height: 120)
                 .padding(.top, 80)
-            
+
             Spacer()
-            
+
             VPrimaryButton(model: ButtonStyle.primary,
                            state: buttonState,
                            action: {
-                state = .enabled
-                vm.restoreAction(password: text)
-            }, title: "restore_account".localized)
-            .padding(.bottom, 20)
+                               state = .enabled
+                               vm.restoreAction(password: text)
+                           }, title: "restore_account".localized)
+                .padding(.bottom, 20)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 28)
@@ -85,8 +85,8 @@ struct EnterRestorePasswordView: RouteableView {
     }
 }
 
-//struct EnterPasswordView_Previews: PreviewProvider {
+// struct EnterPasswordView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        EnterRestorePasswordView()
 //    }
-//}
+// }

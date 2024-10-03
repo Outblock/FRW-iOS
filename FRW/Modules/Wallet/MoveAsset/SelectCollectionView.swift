@@ -5,37 +5,36 @@
 //  Created by cat on 2024/5/20.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 struct SelectCollectionView: RouteableView {
-    
     @StateObject private var viewModel: SelectCollectionViewModel
-    
+
     init(viewModel: SelectCollectionViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
-    
+
     var title: String {
         return ""
     }
-    
+
     var isNavigationBarHidden: Bool {
         return true
     }
-    
+
     var body: some View {
         VStack {
             TitleWithClosedView(title: "select_nfts".localized) {
                 viewModel.closeAction()
             }
-            
+
             ScrollView {
-                ForEach(0..<viewModel.list.count, id: \.self) { index in
+                ForEach(0 ..< viewModel.list.count, id: \.self) { index in
                     card(item: viewModel.list[index])
                 }
             }
-            
+
 //            Button {
 //                viewModel.confirmAction()
 //            } label: {
@@ -53,7 +52,7 @@ struct SelectCollectionView: RouteableView {
         .mockPlaceholder(viewModel.isMock)
         .applyRouteable(self)
     }
-    
+
     @ViewBuilder
     func card(item: CollectionMask) -> some View {
         Button {
@@ -61,10 +60,10 @@ struct SelectCollectionView: RouteableView {
         } label: {
             HStack(spacing: 16) {
                 KFImage.url(item.maskLogo)
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 64, height: 64)
@@ -74,19 +73,19 @@ struct SelectCollectionView: RouteableView {
                             .font(.inter(size: 14))
                             .foregroundStyle(Color.Theme.Text.black)
                             .padding(.trailing, 4)
-                        
+
                         viewModel.logo()
                             .resizable()
                             .frame(width: 12, height: 12)
                     }
-                    
+
                     Text("\(item.maskCount) NFTs")
                         .font(.inter(size: 12))
                         .foregroundStyle(Color.Theme.Text.black8)
                 }
-                
+
                 Spacer()
-                
+
                 Image("check_fill_1")
                     .resizable()
                     .frame(width: 16, height: 16)
@@ -99,14 +98,11 @@ struct SelectCollectionView: RouteableView {
             .cornerRadius(12)
         }
         .buttonStyle(ScaleButtonStyle())
-
     }
-    
-    
 }
 
 #Preview {
-    SelectCollectionView(viewModel: SelectCollectionViewModel(selectedItem: nil, list: nil, callback: { coll in
-        
+    SelectCollectionView(viewModel: SelectCollectionViewModel(selectedItem: nil, list: nil, callback: { _ in
+
     }))
 }

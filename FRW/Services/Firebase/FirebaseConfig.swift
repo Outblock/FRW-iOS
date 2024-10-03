@@ -22,8 +22,8 @@ enum FirebaseConfig: String {
     case contractAddress = "contract_address"
     case appSecret = "app_secret"
     case ENVConfig = "i_config"
-    case news = "news"
-    
+    case news
+
     static func start() {
         Task {
             do {
@@ -44,7 +44,7 @@ enum FirebaseConfig: String {
 }
 
 extension FirebaseConfig {
-    func fetch<T: Codable>(decoder:JSONDecoder = FRWAPI.jsonDecoder ) throws -> T {
+    func fetch<T: Codable>(decoder: JSONDecoder = FRWAPI.jsonDecoder) throws -> T {
         let remoteConfig = RemoteConfig.remoteConfig()
         let json = remoteConfig.configValue(forKey: rawValue)
         do {
@@ -55,13 +55,13 @@ extension FirebaseConfig {
             throw FirebaseConfigError.decode
         }
     }
-    
+
     func fetch() throws -> String {
         let remoteConfig = RemoteConfig.remoteConfig()
         let json = remoteConfig.configValue(forKey: rawValue)
         return json.stringValue ?? ""
     }
-    
+
     func fetchLocal<T: Codable>() throws -> T {
         let remoteConfig = RemoteConfig.remoteConfig()
         guard let json = remoteConfig.defaultValue(forKey: rawValue) else {
@@ -83,11 +83,11 @@ extension FirebaseConfig {
             let remoteConfig = RemoteConfig.remoteConfig()
             let setting = RemoteConfigSettings()
             setting.minimumFetchInterval = 3600
-            
+
             #if DEBUG
-            setting.minimumFetchInterval = 0
+                setting.minimumFetchInterval = 0
             #endif
-            
+
             remoteConfig.configSettings = setting
             remoteConfig.setDefaults(fromPlist: "remote_config_defaults")
             remoteConfig.fetchAndActivate(completionHandler: { status, error in

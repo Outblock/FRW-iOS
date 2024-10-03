@@ -9,15 +9,15 @@ import SwiftUI
 
 struct EVMEnableView: RouteableView {
     @StateObject var viewModel = EVMEnableViewModel()
-    
+
     var title: String {
         return ""
     }
-    
+
     var isNavigationBarHidden: Bool {
         return true
     }
-    
+
     var body: some View {
         return VStack {
             HStack {
@@ -36,7 +36,7 @@ struct EVMEnableView: RouteableView {
                 .transition(.opacity)
             }
             .padding(.horizontal, 24)
-            
+
             Image("evm_big_planet")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -54,27 +54,26 @@ struct EVMEnableView: RouteableView {
                     .multilineTextAlignment(.center)
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [Color.Theme.Accent.blue, Color.Theme.Accent.green ],
+                            colors: [Color.Theme.Accent.blue, Color.Theme.Accent.green],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
                     )
             }
-            
+
             Text("enable_evm_tip".localized)
                 .font(.inter(size: 14))
                 .foregroundStyle(Color.Theme.Text.black8)
                 .multilineTextAlignment(.center)
             Spacer()
-            
+
             VPrimaryButton(model: ButtonStyle.evmEnable,
                            state: viewModel.state,
                            action: {
-                viewModel.onClickEnable()
+                               viewModel.onClickEnable()
                            }, title: "enable".localized)
                 .frame(width: 160)
-                
-            
+
             Button {
                 viewModel.onClickLearnMore()
             } label: {

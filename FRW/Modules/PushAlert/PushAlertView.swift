@@ -11,32 +11,32 @@ struct PushAlertView: RouteableView {
     var title: String {
         return ""
     }
-    
+
     func backButtonAction() {
         Router.dismiss()
     }
-    
+
     var body: some View {
         VStack {
             Text("turn_on_noti_title")
                 .font(.inter(size: 24, weight: .bold))
                 .foregroundColor(Color.LL.Neutrals.text)
                 .padding(.vertical, 12)
-            
+
             Text("turn_on_noti_desc")
                 .font(.inter(size: 14))
                 .foregroundColor(Color.LL.Neutrals.text2)
                 .multilineTextAlignment(.center)
-            
+
             Spacer()
-            
+
             Image("img-noti")
-            
+
             Spacer()
-            
+
             turnOnButton
                 .padding(.bottom, 16)
-            
+
             laterButton
                 .padding(.bottom, 20)
         }
@@ -44,7 +44,7 @@ struct PushAlertView: RouteableView {
         .backgroundFill(Color.LL.Neutrals.background)
         .applyRouteable(self)
     }
-    
+
     var turnOnButton: some View {
         Button {
             backButtonAction()
@@ -59,7 +59,7 @@ struct PushAlertView: RouteableView {
                 .cornerRadius(12)
         }
     }
-    
+
     var laterButton: some View {
         Button {
             backButtonAction()

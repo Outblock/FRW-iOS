@@ -8,9 +8,8 @@
 import SwiftUI
 
 struct RestoreListView: RouteableView {
-    
     @State private var showSwitchUserAlert = false
-    
+
     var title: String {
         return ""
     }
@@ -46,7 +45,7 @@ struct RestoreListView: RouteableView {
                 RestoreListView.CardView(icon: "restore.icon.multi", title: "restore_multi_title".localized, des: "restore_multi_desc".localized) {
                     if LocalUserDefaults.shared.flowNetwork != .mainnet {
                         showSwitchUserAlert = true
-                    }else {
+                    } else {
                         Router.route(to: RouteMap.RestoreLogin.restoreMulti)
                     }
                 }
@@ -54,10 +53,9 @@ struct RestoreListView: RouteableView {
                 RestoreListView.CardView(icon: "restore.icon.phrase", title: "restore_phrase_title".localized, des: "restore_phrase_desc".localized) {
                     if LocalUserDefaults.shared.flowNetwork != .mainnet {
                         showSwitchUserAlert = true
-                    }else {
+                    } else {
                         Router.route(to: RouteMap.RestoreLogin.root)
                     }
-                    
                 }
             }
             .padding(.top, 46)

@@ -84,7 +84,7 @@ enum BackupType: Int, Codable {
             return "Undefined"
         }
     }
-    
+
     var smallIcon: String {
         switch self {
         case .google:

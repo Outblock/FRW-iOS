@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 extension AddAddressView {
     enum AddressStateType {
         case idle
@@ -85,19 +84,19 @@ extension AddAddressView {
         private var addressCheckTask: DispatchWorkItem?
 
         init(addressBookVM: AddressBookView.AddressBookViewModel) {
-            self.state = AddAddressState()
+            state = AddAddressState()
             self.addressBookVM = addressBookVM
         }
 
         init(contact: Contact, addressBookVM: AddressBookView.AddressBookViewModel) {
             self.addressBookVM = addressBookVM
-            
-            self.state = AddAddressState()
-            self.state.isEditingMode = true
-            self.state.editingContact = contact
-            self.state.name = contact.contactName ?? ""
-            self.state.address = contact.address ?? ""
-            
+
+            state = AddAddressState()
+            state.isEditingMode = true
+            state.editingContact = contact
+            state.name = contact.contactName ?? ""
+            state.address = contact.address ?? ""
+
             trigger(.checkAddress)
         }
 
@@ -249,7 +248,7 @@ extension AddAddressView.AddAddressViewModel {
             guard let self = self else {
                 return
             }
-            
+
             self.state.addressStateType = .checking
 
             Task {

@@ -41,7 +41,7 @@ struct FirebaseStorageUtils {
                     if removeQuery {
                         comp.query = nil
                     }
-                    
+
                     config.resume(returning: comp.url?.absoluteString)
                 }
             }

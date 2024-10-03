@@ -14,18 +14,18 @@ extension RemoteConfigManager {
         let crescendo: [String: String]?
         let previewnet: [String: String]?
     }
-    
+
     struct ENVConfig: Codable {
         let version: String
         let prod: Config
         let staging: Config
     }
-    
+
     struct Config: Codable {
         let features: Features
         let payer: Payer
     }
-    
+
     // MARK: - Features
 
     struct Features: Codable {
@@ -76,9 +76,9 @@ extension RemoteConfigManager {
     enum NewsType: String, Codable {
         case message
         case image
-        
+
         case undefined
-        
+
         init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
             let rawValue = try? container.decode(String.self)
@@ -91,7 +91,7 @@ extension RemoteConfigManager {
         case medium
         case high
         case urgent
-        
+
         private var level: Int {
             switch self {
             case .low:
@@ -104,13 +104,13 @@ extension RemoteConfigManager {
                 return 1000
             }
         }
-        
+
         init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
             let rawValue = try? container.decode(String.self)
             self = NewsPriority(rawValue: rawValue ?? "") ?? .low
         }
-        
+
         static func < (lhs: RemoteConfigManager.NewsPriority, rhs: RemoteConfigManager.NewsPriority) -> Bool {
             return lhs.level < rhs.level
         }
@@ -120,14 +120,14 @@ extension RemoteConfigManager {
         case once // 只显示一次
         case click // 用户点击，或者关闭后，不再显示
         case expiry // 一直显示直到过期，用户关闭后，下次启动再显示
-        
+
         init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
             let rawValue = try? container.decode(String.self)
             self = NewDisplayType(rawValue: rawValue ?? "") ?? .expiry
         }
     }
-    
+
     enum NewsFlag: String, Codable {
         case normal
         case walletconnect
@@ -146,7 +146,7 @@ extension RemoteConfigManager {
         let url: String?
         let expiryTime: Date
         let displayType: NewDisplayType
-        
+
         var flag: NewsFlag? = .normal
 
         var iconURL: URL? {
@@ -158,7 +158,7 @@ extension RemoteConfigManager {
             }
             return nil
         }
-        
+
         static func < (lhs: RemoteConfigManager.News, rhs: RemoteConfigManager.News) -> Bool {
             lhs.priority < rhs.priority
         }

@@ -5,8 +5,8 @@
 //  Created by Hao Fu on 29/11/21.
 //
 
-import SwiftUI
 import SPIndicator
+import SwiftUI
 
 struct PageIndictor: View {
     var indicatorOffset: CGFloat
@@ -31,8 +31,6 @@ struct PageIndictor: View {
         )
     }
 }
-
-
 
 #Preview {
     PageIndictor(indicatorOffset: 0, currentIndex: 0, count: 3)

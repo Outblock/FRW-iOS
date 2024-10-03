@@ -5,25 +5,23 @@
 //  Created by Selina on 8/8/2022.
 //
 
-import UIKit
 import SwiftUI
+import UIKit
 
 class ScanHandler {
-    
     static func handler() -> SPQRCodeCallback {
         return { data, vc in
             switch data {
-            case .walletConnect(let string):
+            case let .walletConnect(string):
                 vc.stopRunning()
                 vc.presentingViewController?.dismiss(animated: true, completion: {
                     DispatchQueue.main.async {
                         WalletConnectManager.shared.connect(link: string)
                     }
                 })
-            case .flowWallet(let address):
+            case let .flowWallet(address):
                 vc.stopRunning()
                 vc.presentingViewController?.dismiss(animated: true, completion: {
-                    
                     let symbol = LocalUserDefaults.shared.recentToken ?? "flow"
                     guard let token = WalletManager.shared.getToken(bySymbol: symbol) else {
                         return
@@ -31,10 +29,9 @@ class ScanHandler {
                     let contract = Contact(address: address, avatar: nil, contactName: "-", contactType: .none, domain: nil, id: -1, username: nil, user: nil)
                     Router.route(to: RouteMap.Wallet.sendAmount(contract, token, isPush: false))
                 })
-            case .ethWallet(let address):
+            case let .ethWallet(address):
                 vc.stopRunning()
                 vc.presentingViewController?.dismiss(animated: true, completion: {
-                    
                     let symbol = LocalUserDefaults.shared.recentToken ?? "flow"
                     guard let token = WalletManager.shared.getToken(bySymbol: symbol) else {
                         return
@@ -47,21 +44,20 @@ class ScanHandler {
             }
         }
     }
-    
+
     static func clickHandler() -> SPQRCodeCallback {
         return { data, vc in
             switch data {
-            case .walletConnect(let string):
+            case let .walletConnect(string):
                 vc.stopRunning()
                 vc.presentingViewController?.dismiss(animated: true, completion: {
                     DispatchQueue.main.async {
                         WalletConnectManager.shared.connect(link: string)
                     }
                 })
-            case .flowWallet(let address):
+            case let .flowWallet(address):
                 vc.stopRunning()
                 vc.presentingViewController?.dismiss(animated: true, completion: {
-                    
                     let symbol = LocalUserDefaults.shared.recentToken ?? "flow"
                     guard let token = WalletManager.shared.getToken(bySymbol: symbol) else {
                         return
@@ -83,7 +79,7 @@ class ScanHandler {
             }
         }
     }
-    
+
     static func scan() {
         Router.route(to: RouteMap.Wallet.scan(ScanHandler.handler(), click: ScanHandler.clickHandler()))
     }

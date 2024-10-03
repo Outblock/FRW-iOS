@@ -10,7 +10,7 @@ import SwiftUI
 
 struct WalletAccount {
     var storedAccount: [String: [WalletAccount.User]]
-    
+
     private var key: String {
         guard let userId = UserManager.shared.activatedUID else {
             return "empty"
@@ -19,11 +19,11 @@ struct WalletAccount {
     }
 
     init() {
-        self.storedAccount = LocalUserDefaults.shared.walletAccount ?? [:]
+        storedAccount = LocalUserDefaults.shared.walletAccount ?? [:]
     }
-    
+
     private func saveCache() {
-        LocalUserDefaults.shared.walletAccount = self.storedAccount
+        LocalUserDefaults.shared.walletAccount = storedAccount
     }
 }
 
@@ -32,43 +32,43 @@ struct WalletAccount {
 extension WalletAccount {
     mutating func readInfo(at address: String) -> WalletAccount.User {
         let currentNetwork = LocalUserDefaults.shared.flowNetwork
-        if var list = self.storedAccount[key] {
+        if var list = storedAccount[key] {
             var lastUser = list.last { $0.network == currentNetwork && $0.address == address }
             if let user = lastUser {
                 return user
             } else {
                 let filterList = list.filter { $0.network == currentNetwork }
                 let existList = filterList.map { $0.emoji }
-                let nEmoji = self.generalInfo(count: 1, excluded: existList)?.first ?? .koala
+                let nEmoji = generalInfo(count: 1, excluded: existList)?.first ?? .koala
                 let user = WalletAccount.User(emoji: nEmoji, address: address)
                 list.append(user)
-                self.storedAccount[self.key] = list
-                self.saveCache()
+                storedAccount[key] = list
+                saveCache()
                 return user
             }
         } else {
-            let nEmoji = self.generalInfo(count: 1, excluded: [])?.first ?? .koala
+            let nEmoji = generalInfo(count: 1, excluded: [])?.first ?? .koala
             let model = WalletAccount.User(emoji: nEmoji, address: address)
-            self.storedAccount[self.key] = [model]
-            self.saveCache()
+            storedAccount[key] = [model]
+            saveCache()
             return model
         }
     }
-    
+
     mutating func update(at address: String, emoji: WalletAccount.Emoji, name: String? = nil) {
         let currentNetwork = LocalUserDefaults.shared.flowNetwork
-        if var list = self.storedAccount[key] {
+        if var list = storedAccount[key] {
             if var index = list.lastIndex(where: { $0.network == currentNetwork && $0.address == address }) {
                 var user = list[index]
                 user.emoji = emoji
                 user.name = name ?? emoji.name
                 list[index] = user
-                self.storedAccount[self.key] = list
-                self.saveCache()
+                storedAccount[key] = list
+                saveCache()
             }
         }
     }
-    
+
     private func generalInfo(count: Int, excluded: [Emoji]) -> [WalletAccount.Emoji]? {
         let list = Emoji.allCases
         return list.randomDifferentElements(limitCount: count, excluded: excluded)
@@ -85,7 +85,7 @@ extension WalletAccount {
         case butterfly = "🦋"
         case loong = "🐲"
         case penguin = "🐧"
-        
+
         case cherry = "🍒"
         case chestnut = "🌰"
         case peach = "🍑"
@@ -100,7 +100,7 @@ extension WalletAccount {
             case .panda: return "Panda"
             case .butterfly: return "Butterfly"
             case .penguin: return "Penguin"
-                
+
             case .cherry: return "Cherry"
             case .chestnut: return "Chestnut"
             case .peach: return "Peach"
@@ -110,7 +110,7 @@ extension WalletAccount {
             case .loong: return "Loong"
             }
         }
-        
+
         var color: Color {
             switch self {
             case .lion:
@@ -139,67 +139,65 @@ extension WalletAccount {
                 Color(hex: "#E3CAAA")
             }
         }
-        
+
         func icon(size: CGFloat = 24) -> some View {
             return VStack {
                 Text(self.rawValue)
-                    .font(.system(size: size/2 + 2))
+                    .font(.system(size: size / 2 + 2))
             }
             .frame(width: size, height: size)
-            .background(self.color)
-            .cornerRadius(size/2.0)
+            .background(color)
+            .cornerRadius(size / 2.0)
         }
-        
     }
-    
+
     struct User: Codable {
         var emoji: WalletAccount.Emoji
         var name: String
         var address: String
         var network: LocalUserDefaults.FlowNetworkType
-        
+
         init(emoji: WalletAccount.Emoji, address: String) {
             self.emoji = emoji
-            self.name = emoji.name
+            name = emoji.name
             self.address = address
-            self.network = LocalUserDefaults.shared.flowNetwork
+            network = LocalUserDefaults.shared.flowNetwork
         }
-        
+
         init(from decoder: any Decoder) throws {
             let container: KeyedDecodingContainer<WalletAccount.User.CodingKeys> = try decoder.container(keyedBy: WalletAccount.User.CodingKeys.self)
             do {
-                self.emoji = try container.decode(WalletAccount.Emoji.self, forKey: WalletAccount.User.CodingKeys.emoji)
-            }catch {
-                self.emoji = WalletAccount.Emoji.avocado
+                emoji = try container.decode(WalletAccount.Emoji.self, forKey: WalletAccount.User.CodingKeys.emoji)
+            } catch {
+                emoji = WalletAccount.Emoji.avocado
             }
-            
-            self.name = try container.decode(String.self, forKey: WalletAccount.User.CodingKeys.name)
-            self.address = try container.decode(String.self, forKey: WalletAccount.User.CodingKeys.address)
-            self.network = try container.decode(LocalUserDefaults.FlowNetworkType.self, forKey: WalletAccount.User.CodingKeys.network)
+
+            name = try container.decode(String.self, forKey: WalletAccount.User.CodingKeys.name)
+            address = try container.decode(String.self, forKey: WalletAccount.User.CodingKeys.address)
+            network = try container.decode(LocalUserDefaults.FlowNetworkType.self, forKey: WalletAccount.User.CodingKeys.network)
         }
     }
 }
 
 extension Array where Element: Equatable {
     func randomDifferentElements(limitCount: Int, excluded: [Element]) -> [Element]? {
-        guard self.count >= limitCount else {
+        guard count >= limitCount else {
             return nil // 确保数组中至少有指定数量的元素
         }
-        
+
         var selectedElements: [Element] = []
-        
-        var num = self.count * 36;
-        for i in 0..<num {
-            let element = self.randomElement()!
-            if !selectedElements.contains(element) && !excluded.contains(element) {
+
+        var num = count * 36
+        for i in 0 ..< num {
+            let element = randomElement()!
+            if !selectedElements.contains(element), !excluded.contains(element) {
                 selectedElements.append(element)
             }
             if selectedElements.count == limitCount {
                 break
             }
         }
-        
-        
+
         return selectedElements
     }
 }

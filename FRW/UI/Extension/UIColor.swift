@@ -35,7 +35,7 @@ extension UIColor {
         static let deepBg = UIColor(named: "DeepBackground")!
 
         static let neutrals1 = UIColor(named: "Neutrals1")!
-        
+
         static let stakeMain = UIColor(named: "other.stakingMain")!
 
         /// The primary color palette is used across all the iteractive elemets such as CTA’s(Call to The Action), links, inputs,active states,etc
@@ -116,7 +116,7 @@ extension UIColor {
             static let color = UIColor(named: "button.color")!
             static let text = UIColor(named: "button.text")!
         }
-        
+
         enum Other {
             static let text1 = UIColor(named: "other.text1")!
             static let text2 = UIColor(named: "other.text2")!
@@ -142,17 +142,17 @@ extension UIColor {
         }
 
         enum Background {
-            ///BG
+            /// BG
             static let white = UIColor(named: "bg.white")
-            ///BG2
+            /// BG2
             static let grey = UIColor(named: "bg.grey")
-            ///BG3
+            /// BG3
             static let silver = UIColor(named: "bg.silver")
             static let white8 = UIColor(named: "bg.white8")
             static let black3 = UIColor(named: "bg.black3")
             /// White
             static let pureWhite = UIColor(named: "bg.0")
-            ///icon
+            /// icon
             static let icon = UIColor(named: "bg.icon.black")
         }
 

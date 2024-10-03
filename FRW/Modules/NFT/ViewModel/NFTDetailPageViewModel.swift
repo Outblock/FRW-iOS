@@ -7,27 +7,28 @@
 
 import Foundation
 import Kingfisher
-import SwiftUI
 import Lottie
+import SwiftUI
 
 class NFTDetailPageViewModel: ObservableObject {
     @Published var nft: NFTModel
     @Published var svgString: String = ""
     @Published var movable: Bool = false
     @Published var showSendButton: Bool = false
-    
+
     @Published var isPresentMove = false
-    
+
     let animationView = AnimationView(name: "inAR", bundle: .main)
-    
+
     init(nft: NFTModel) {
         self.nft = nft
         if nft.isSVG {
             guard let rawSVGURL = nft.response.postMedia?.image,
-                  let rawSVGURL = URL(string: rawSVGURL.replacingOccurrences(of: "https://lilico.app/api/svg2png?url=", with: "")) else {
+                  let rawSVGURL = URL(string: rawSVGURL.replacingOccurrences(of: "https://lilico.app/api/svg2png?url=", with: ""))
+            else {
                 return
             }
-            
+
             Task {
                 if let svg = await SVGCache.cache.getSVG(rawSVGURL) {
                     DispatchQueue.main.async {
@@ -37,8 +38,7 @@ class NFTDetailPageViewModel: ObservableObject {
                     DispatchQueue.main.async {
                         self.svgString = svg
                     }
-                }
-                else {
+                } else {
                     DispatchQueue.main.async {
                         self.nft.isSVG = false
                         self.nft.response.postMedia?.image = self.nft.response.postMedia?.image?.convertedSVGURL()?.absoluteString
@@ -50,34 +50,32 @@ class NFTDetailPageViewModel: ObservableObject {
         fetchNFTStatus()
         updateSendButton()
     }
-    
-    
-    
+
     func sendNFTAction(fromChildAccount: ChildAccount? = nil) {
-        Router.route(to: RouteMap.AddressBook.pick({ [weak self] contact in
+        Router.route(to: RouteMap.AddressBook.pick { [weak self] contact in
             Router.dismiss(animated: true) {
                 guard let self = self else {
                     return
                 }
                 Router.route(to: RouteMap.NFT.send(self.nft, contact, fromChildAccount))
             }
-        }))
+        })
     }
-    
+
     func image() async -> UIImage {
         guard let image = await ImageHelper.image(from: nft.imageURL.absoluteString) else {
             return UIImage(imageLiteralResourceName: "placeholder")
         }
-        
+
         return image
     }
-    
+
     func showMoveAction() {
         isPresentMove = true
     }
-    
+
     func fetchNFTStatus() {
-        if self.nft.isDomain {
+        if nft.isDomain {
             movable = false
             return
         }
@@ -85,7 +83,7 @@ class NFTDetailPageViewModel: ObservableObject {
             movable = true
             return
         }
-        
+
         Task {
             let address = self.nft.response.contractAddress ?? ""
             let evmAddress = await NFTCollectionConfig.share.get(from: address)?.evmAddress
@@ -94,7 +92,7 @@ class NFTDetailPageViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self.movable = false
                 }
-                
+
                 return
             }
             DispatchQueue.main.async {
@@ -104,21 +102,20 @@ class NFTDetailPageViewModel: ObservableObject {
             }
         }
     }
-    
+
     private func updateSendButton() {
         let remote = RemoteConfigManager.shared.config?.features.nftTransfer ?? false
         if remote == true {
             if nft.isDomain {
                 showSendButton = false
-            }else {
+            } else {
                 showSendButton = true
             }
-        }else {
+        } else {
             showSendButton = false
         }
-        
     }
-    
+
     private func updateCollectionIfNeed() {
         guard let contractAddress = nft.response.contractAddress else {
             return

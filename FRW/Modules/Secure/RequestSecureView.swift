@@ -42,7 +42,7 @@ struct RequestSecureView: RouteableView {
         model.layout.height = 64
         return model
     }()
-    
+
     var title: String {
         return ""
     }

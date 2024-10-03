@@ -10,15 +10,15 @@ import SwiftUI
 
 struct ReceiveQRView: RouteableView {
     @StateObject var viewModel: ReceiveQRViewModel = .init()
-    
+
     var title: String {
         return "receiving_qr".localized
     }
-    
+
     func backButtonAction() {
         Router.dismiss()
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             Color.clear
@@ -27,21 +27,21 @@ struct ReceiveQRView: RouteableView {
                 Text("current_chain".localized)
                     .font(.inter(size: 14))
                     .foregroundStyle(Color.Theme.Text.black8)
-                    
+
                 ReceiveQRView.SwitchText { isOn in
                     viewModel.onChangeChain(isEvm: isOn)
                 }
             }
             .visibility(viewModel.hasEVM ? .visible : .gone)
-            
+
             qrCodeView
                 .padding(.top, 32)
-            
+
             Text(viewModel.name)
                 .font(.inter(size: 18, weight: .w700))
                 .foregroundStyle(Color.Theme.Text.black)
                 .padding(.top, 16)
-            
+
             Button {
                 viewModel.onClickCopy()
             } label: {
@@ -51,7 +51,7 @@ struct ReceiveQRView: RouteableView {
                         .truncationMode(.middle)
                         .foregroundStyle(Color.Theme.Text.black8)
                         .lineLimit(1)
-                        
+
                     Spacer()
                     Image("Copy")
                         .resizable()
@@ -65,7 +65,7 @@ struct ReceiveQRView: RouteableView {
             .padding(.top, 8)
 
             Spacer()
-            
+
             shareButton
                 .frame(height: 48)
                 .padding(.bottom)
@@ -74,7 +74,7 @@ struct ReceiveQRView: RouteableView {
         .backgroundFill(.Theme.Background.silver)
         .applyRouteable(self)
     }
-    
+
     var qrCodeView: some View {
         VStack(spacing: 0) {
             ZStack {
@@ -92,19 +92,19 @@ struct ReceiveQRView: RouteableView {
         .frame(width: min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) * 0.75)
         .aspectRatio(1, contentMode: .fill)
     }
-    
+
     var shareButton: some View {
         Button {
             UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-            
+
             let image = qrCodeView.snapshot()
-            
+
             let itemSource = ShareActivityItemSource(shareText: viewModel.address, shareImage: image)
-            
+
             let activityController = UIActivityViewController(activityItems: [image, viewModel.address, itemSource], applicationActivities: nil)
             activityController.isModalInPresentation = true
             UIApplication.shared.windows.first?.rootViewController?.presentedViewController?.present(activityController, animated: true, completion: nil)
-            
+
         } label: {
             Text("share_qr_code".localized)
                 .font(.inter(size: 14, weight: .semibold))
@@ -121,8 +121,8 @@ struct ReceiveQRView: RouteableView {
 extension ReceiveQRView {
     struct SwitchText: View {
         @State private var isOn = false
-        var callback: ((Bool) -> ())?
-        
+        var callback: ((Bool) -> Void)?
+
         var body: some View {
             ZStack {
                 HStack(spacing: 0) {
@@ -140,7 +140,7 @@ extension ReceiveQRView {
                     .padding(.vertical, 8)
                     .background(!isOn ? .Theme.Background.silver : .clear)
                     .cornerRadius(24)
-                    
+
                     HStack {
                         Image("icon_qr_evm")
                             .resizable()

@@ -5,27 +5,26 @@
 //  Created by cat on 2024/6/5.
 //
 
+import Combine
+import Flow
 import Foundation
 import SwiftUI
-import Flow
-import Combine
 import SwiftUIPager
 
 class CreateProfileWaitingViewModel: ObservableObject {
-    
     @Published var animationPhase: AnimationPhase = .initial
     @Published var page: Page = .first()
     @Published var createFinished = false
     @Published var currentPage: Int = 0
-    
+
     private var timer: Timer?
-    
+
     private var cancellableSet = Set<AnyCancellable>()
 
-    var txId: Flow.ID = Flow.ID(hex: "")
-    var callback:(Bool)->()
-    
-    init(txId: String, callback:@escaping (Bool)->()) {
+    var txId = Flow.ID(hex: "")
+    var callback: (Bool) -> Void
+
+    init(txId: String, callback: @escaping (Bool) -> Void) {
         self.txId = Flow.ID(hex: txId)
         self.callback = callback
 
@@ -38,14 +37,13 @@ class CreateProfileWaitingViewModel: ObservableObject {
                 if !isEmptyBlockChain {
                     self.createFinished = true
                 }
-                
+
             }.store(in: &cancellableSet)
-        DispatchQueue.main.asyncAfter(deadline: .now()+3, execute: DispatchWorkItem(block: {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: DispatchWorkItem(block: {
             self.startTimer()
         }))
-        
     }
-    
+
     @objc private func onHolderStatusChanged(noti: Notification) {
         guard let holder = noti.object as? TransactionManager.TransactionHolder,
               holder.transactionId.hex == txId.hex
@@ -55,45 +53,45 @@ class CreateProfileWaitingViewModel: ObservableObject {
         guard let current = AnimationPhase(rawValue: holder.flowStatus.rawValue) else {
             return
         }
-        
+
         animationPhase = current
     }
-    
+
     func onPageIndexChangeAction(_ index: Int) {
         withAnimation(.default) {
             currentPage = index
         }
     }
-    
+
     func onPageDrag(_ isDraging: Bool) {
         if isDraging {
             stopTimer()
-        }else {
+        } else {
             startTimer()
         }
     }
-    
+
     func onConfirm() {
         HUD.success(title: "create_user_success".localized)
         stopTimer()
         callback(true)
         ConfettiManager.show()
     }
-    
+
     private func startTimer() {
         stopTimer()
         let timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(onTimer), userInfo: nil, repeats: true)
         self.timer = timer
         RunLoop.main.add(timer, forMode: .common)
     }
-    
+
     private func stopTimer() {
         if let current = timer {
             current.invalidate()
             timer = nil
         }
     }
-    
+
     @objc private func onTimer() {
         if page.index == 2 {
             page.update(.moveToFirst)
@@ -101,7 +99,6 @@ class CreateProfileWaitingViewModel: ObservableObject {
             withAnimation {
                 page.update(.next)
             }
-            
         }
         currentPage = page.index
     }

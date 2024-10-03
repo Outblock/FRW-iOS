@@ -10,23 +10,23 @@ import SwiftUI
 import SwiftUIX
 
 struct MoveTokenView: RouteableView, PresentActionDelegate {
-    var changeHeight: (() -> ())?
+    var changeHeight: (() -> Void)?
     var title: String {
         ""
     }
-    
+
     var isNavigationBarHidden: Bool {
         true
     }
-    
+
     @StateObject var viewModel: MoveTokenViewModel
-    
+
     init(tokenModel: TokenModel, isPresent: Binding<Bool>) {
         _viewModel = StateObject(wrappedValue: MoveTokenViewModel(token: tokenModel, isPresent: isPresent))
     }
-    
+
     var body: some View {
-        GeometryReader { geometry in
+        GeometryReader { _ in
             VStack {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
@@ -36,7 +36,7 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                                 .foregroundStyle(Color.LL.Neutrals.text)
                                 .padding(.top, 6)
                             Spacer()
-                            
+
                             Button {
                                 viewModel.closeAction()
                             } label: {
@@ -46,26 +46,21 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                             }
                         }
                         .padding(.top, 8)
-                        
+
                         Color.clear
                             .frame(height: 20)
                         VStack(spacing: 8) {
                             ZStack {
                                 VStack(spacing: 8) {
-                                    
-                                    MoveUserView(contact: viewModel.fromContact, isEVM: viewModel.fromIsEVM) {
-                                        
-                                    }
-                                    MoveUserView(contact: viewModel.toContact, isEVM: viewModel.toIsEVM) {
-                                        
-                                    }
+                                    MoveUserView(contact: viewModel.fromContact, isEVM: viewModel.fromIsEVM) {}
+                                    MoveUserView(contact: viewModel.toContact, isEVM: viewModel.toIsEVM) {}
                                 }
-                                
+
                                 Image("icon_move_exchange")
                                     .resizable()
                                     .frame(width: 32, height: 32)
                             }
-                            
+
                             MoveTokenView.AccountView { _ in
                             }
                         }
@@ -73,7 +68,6 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                     .padding(18)
                 }
                 Spacer()
-                
             }
             .hideKeyboardWhenTappedAround()
             .backgroundFill(Color.Theme.Background.grey)
@@ -84,21 +78,20 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                 VPrimaryButton(model: ButtonStyle.primary,
                                state: viewModel.buttonState,
                                action: {
-                                    log.debug("[Move] click button")
-                                    viewModel.onNext()
+                                   log.debug("[Move] click button")
+                                   viewModel.onNext()
                                    UIApplication.shared.endEditing()
                                }, title: "move".localized)
                     .padding(.horizontal, 18)
-                    .padding(.bottom,  8)
+                    .padding(.bottom, 8)
             }
         }
         .applyRouteable(self)
     }
-    
+
     func customViewDidDismiss() {
         MoveAssetsAction.shared.endBrowser()
     }
-    
 }
 
 // MARK: - MoveUserView
@@ -109,41 +102,39 @@ struct MoveUserView: View {
     var placeholder: String?
     var allowChoose: Bool = false
     var onClick: EmptyClosure? = nil
-    
+
     var address: String {
         contact.address ?? "0x"
     }
-    
+
     var body: some View {
         HStack {
-            
             HStack(spacing: 12) {
                 if let user = contact.user {
                     user.emoji.icon(size: 32)
-                }else {
+                } else {
                     KFImage.url(URL(string: contact.avatar ?? ""))
-                        .placeholder({
+                        .placeholder {
                             Image("placeholder")
                                 .resizable()
-                        })
+                        }
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 32, height: 32)
                         .cornerRadius(16)
                 }
-                
-                
+
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text( contact.user?.name ?? contact.name)
+                        Text(contact.user?.name ?? contact.name)
                             .foregroundColor(Color.LL.Neutrals.text)
                             .font(.inter(size: 14, weight: .semibold))
-                        
+
                         EVMTagView()
                             .visibility(isEVM ? .visible : .gone)
                     }
                     .frame(alignment: .leading)
-                    
+
                     Text(address)
                         .foregroundColor(Color.Theme.Text.black3)
                         .font(.inter(size: 12))
@@ -152,7 +143,7 @@ struct MoveUserView: View {
                 }
                 .frame(alignment: .leading)
             }
-            
+
             Spacer()
             Button {
                 onClick?()
@@ -161,7 +152,6 @@ struct MoveUserView: View {
                     .resizable()
                     .frame(width: 16, height: 16)
                     .padding(8)
-                    
             }
             .visibility(allowChoose ? .visible : .gone)
         }
@@ -177,10 +167,10 @@ struct MoveUserView: View {
 extension MoveTokenView {
     struct AccountView: View {
         @EnvironmentObject private var viewModel: MoveTokenViewModel
-        
+
         @FocusState private var isAmountFocused: Bool
         var textDidChanged: (String) -> Void
-        
+
         var body: some View {
             VStack(spacing: 12) {
                 HStack {
@@ -196,18 +186,17 @@ extension MoveTokenView {
                             viewModel.inputTextDidChangeAction(text: text)
                         }
                         .focused($isAmountFocused)
-                    
+
                     switchMenuButton
-                    
                 }
-                
+
                 HStack {
                     Text(viewModel.currentBalance)
                         .font(.inter(size: 16))
                         .foregroundStyle(Color.Theme.Text.black3)
-                    
+
                     Spacer()
-                    
+
                     Button {
                         viewModel.maxAction()
                     } label: {
@@ -225,21 +214,20 @@ extension MoveTokenView {
             .backgroundFill(Color.Theme.Background.white)
             .cornerRadius(16)
         }
-        
+
         @ViewBuilder
         var switchMenuButton: some View {
-            
             Button(action: {
-                Router.route(to: RouteMap.Wallet.selectMoveToken(viewModel.token, { selectedToken in
+                Router.route(to: RouteMap.Wallet.selectMoveToken(viewModel.token) { selectedToken in
                     viewModel.changeTokenModelAction(token: selectedToken)
-                }))
+                })
             }, label: {
                 HStack(spacing: 4) {
                     KFImage.url(viewModel.token.iconURL)
-                        .placeholder({
+                        .placeholder {
                             Image("placeholder")
                                 .resizable()
-                        })
+                        }
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 32, height: 32)
@@ -255,49 +243,47 @@ extension MoveTokenView {
                 .cornerRadius(16)
             })
             /*
-            Menu {
-                ForEach(WalletManager.shared.activatedCoins) { token in
-                    Button {
-                        viewModel.changeTokenModelAction(token: token)
-                    } label: {
-                        KFImage.url(token.icon)
-                            .placeholder({
-                                Image("placeholder")
-                                    .resizable()
-                            })
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 32, height: 32)
-                            .clipShape(Circle())
-                        Text(token.name)
-                    }
-                }
-            } label: {
-                HStack(spacing: 4) {
-                    KFImage.url(viewModel.token.icon)
-                        .placeholder({
-                            Image("placeholder")
-                                .resizable()
-                        })
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 32, height: 32)
-                        .clipShape(Circle())
-                    Text(viewModel.token.symbol?.uppercased() ?? "?")
-                        .font(.inter(size: 14, weight: .medium))
-                        .foregroundStyle(Color.LL.Neutrals.text2)
-                    Image("icon-arrow-bottom")
-                        .foregroundColor(.LL.Neutrals.neutrals3)
-                }
-                .padding(8)
-                .background(Color.Theme.Line.line)
-                .cornerRadius(16)
-            }
-            */
+             Menu {
+                 ForEach(WalletManager.shared.activatedCoins) { token in
+                     Button {
+                         viewModel.changeTokenModelAction(token: token)
+                     } label: {
+                         KFImage.url(token.icon)
+                             .placeholder({
+                                 Image("placeholder")
+                                     .resizable()
+                             })
+                             .resizable()
+                             .aspectRatio(contentMode: .fill)
+                             .frame(width: 32, height: 32)
+                             .clipShape(Circle())
+                         Text(token.name)
+                     }
+                 }
+             } label: {
+                 HStack(spacing: 4) {
+                     KFImage.url(viewModel.token.icon)
+                         .placeholder({
+                             Image("placeholder")
+                                 .resizable()
+                         })
+                         .resizable()
+                         .aspectRatio(contentMode: .fill)
+                         .frame(width: 32, height: 32)
+                         .clipShape(Circle())
+                     Text(viewModel.token.symbol?.uppercased() ?? "?")
+                         .font(.inter(size: 14, weight: .medium))
+                         .foregroundStyle(Color.LL.Neutrals.text2)
+                     Image("icon-arrow-bottom")
+                         .foregroundColor(.LL.Neutrals.neutrals3)
+                 }
+                 .padding(8)
+                 .background(Color.Theme.Line.line)
+                 .cornerRadius(16)
+             }
+             */
         }
-        
     }
-    
 }
 
 #Preview {

@@ -5,8 +5,8 @@
 //  Created by Hao Fu on 30/7/2022.
 //
 
-import Foundation
 import Flow
+import Foundation
 import WalletConnectSign
 
 struct RequestInfo {

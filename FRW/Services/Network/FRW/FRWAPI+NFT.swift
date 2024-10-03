@@ -9,23 +9,20 @@ import Foundation
 import Moya
 
 extension FRWAPI {
-    
     typealias Address = String
-    
+
     struct Offset {
         let start: Int
         let length: Int
-        
+
         func next() -> FRWAPI.Offset {
             Offset(start: start + length, length: length)
         }
-        
+
         static var `default`: FRWAPI.Offset {
             Offset(start: 0, length: 24)
         }
     }
-    
-    
 }
 
 extension FRWAPI {
@@ -33,12 +30,12 @@ extension FRWAPI {
         case main
         case evm
     }
-    
+
     enum NFT {
         case collections
         case userCollection(String, FRWAPI.Offset, FRWAPI.From)
-        case collectionDetailList(NFTCollectionDetailListRequest,FRWAPI.From)
-        case gridDetailList(NFTGridDetailListRequest,FRWAPI.From)
+        case collectionDetailList(NFTCollectionDetailListRequest, FRWAPI.From)
+        case gridDetailList(NFTGridDetailListRequest, FRWAPI.From)
         case favList(String)
         case addFav(NFTAddFavRequest)
         case updateFav(NFTUpdateFavRequest)
@@ -55,29 +52,29 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
         case .favList, .addFav, .updateFav:
             return Config.get(.lilico)
         default:
-#if LILICOPROD
-        return URL(string: "https://lilico.app/api/")!
-#else
-        return URL(string: "https://test.lilico.app/api/")!
-#endif
+            #if LILICOPROD
+                return URL(string: "https://lilico.app/api/")!
+            #else
+                return URL(string: "https://test.lilico.app/api/")!
+            #endif
         }
     }
 
     var path: String {
         switch self {
-        case .gridDetailList(_, let from):
+        case let .gridDetailList(_, from):
             if from == .evm {
                 return "v3/evm/nft/list"
             }
             return "v2/nft/list"
-        case .userCollection(_,_,let from):
+        case let .userCollection(_, _, from):
             if from == .evm {
                 return "v3/evm/nft/id"
             }
             return "v2/nft/id"
         case .collections:
             return "v2/nft/collections"
-        case .collectionDetailList(_, let from):
+        case let .collectionDetailList(_, from):
             if from == .evm {
                 return "v3/evm/nft/collectionList"
             }
@@ -115,7 +112,7 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
         case let .updateFav(request):
             return .requestJSONEncodable(request)
         case let .userCollection(address, offset, _):
-            return .requestParameters(parameters: ["address": address,"offset": offset.start,"limit": offset.length], encoding: URLEncoding())
+            return .requestParameters(parameters: ["address": address, "offset": offset.start, "limit": offset.length], encoding: URLEncoding())
         }
     }
 
@@ -124,4 +121,3 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
         return headers
     }
 }
-

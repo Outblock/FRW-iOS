@@ -23,11 +23,11 @@ extension BackupManager.BackupType {
 struct ProfileBackupView: RouteableView {
     let types: [BackupManager.BackupType] = [.icloud, .googleDrive]
     @StateObject private var vm = ProfileBackupViewModel()
-    
+
     var title: String {
         return "backup".localized
     }
-    
+
     var body: some View {
         VStack {
             VStack(spacing: 0) {
@@ -35,7 +35,7 @@ struct ProfileBackupView: RouteableView {
                     ItemCell(title: type.descLocalizedString, icon: type.littleIcon, isSelected: vm.selectedBackupType == type) {
                         vm.changeBackupTypeAction(type)
                     }
-                    
+
                     if type != .manual {
                         Divider().background(Color.LL.Neutrals.background)
                     }
@@ -56,8 +56,8 @@ extension ProfileBackupView {
         let title: String
         let icon: String
         let isSelected: Bool
-        let syncAction: () -> ()
-        
+        let syncAction: () -> Void
+
         var body: some View {
             HStack(spacing: 0) {
                 Image(icon)
@@ -65,16 +65,16 @@ extension ProfileBackupView {
 //                    .background(Color.LL.Secondary.navy5)
 //                    .clipShape(Circle())
                     .padding(.trailing, 15)
-                
+
                 Text(title)
                     .font(.inter(size: 16, weight: .medium))
                     .foregroundColor(Color.LL.Neutrals.text)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 Image(systemName: .checkmarkSelected)
                     .foregroundColor(Color.LL.Success.success2)
                     .visibility(isSelected ? .visible : .gone)
-                
+
                 Button {
                     syncAction()
                 } label: {
