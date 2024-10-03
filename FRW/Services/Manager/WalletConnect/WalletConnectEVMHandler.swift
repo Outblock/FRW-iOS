@@ -14,7 +14,7 @@ import Web3Core
 import web3swift
 import Web3Wallet
 
-enum WalletConnectEVMMethod: String, Codable {
+enum WalletConnectEVMMethod: String, Codable, CaseIterable {
     case personalSign = "personal_sign"
     case sendTransaction = "eth_sendTransaction"
 }
@@ -31,6 +31,10 @@ extension Flow.ChainID {
         default:
             return nil
         }
+    }
+    
+    var evmChainIDString: String? {
+        evmChainID.map(String.init)
     }
 }
 
@@ -55,7 +59,6 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
             reference = chains.first(where: { $0.namespace == nameTag })?.reference
         }
         if let chains = sessionProposal.optionalNamespaces?[nameTag]?.chains {
-//            let ids = chains.filter{ $0.namespace == nameTag }.map { $0.reference }
             reference = chains.filter { $0.namespace == nameTag && suppportEVMChainID.contains($0.reference) }.compactMap { $0.reference }.sorted().last
         }
         // TODO: if not the list allowed, HOW
@@ -76,12 +79,12 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
             return [:]
         }
         // Following properties are used to support all the required and optional namespaces for the testing purposes
-        let supportedMethods = Set(sessionProposal.requiredNamespaces.flatMap { $0.value.methods } + (sessionProposal.optionalNamespaces?.flatMap { $0.value.methods } ?? []))
+        let supportedMethods = WalletConnectEVMMethod.allCases.map(\.rawValue)
         let supportedEvents = Set(sessionProposal.requiredNamespaces.flatMap { $0.value.events } + (sessionProposal.optionalNamespaces?.flatMap { $0.value.events } ?? []))
 
         let supportedRequiredChains = sessionProposal.requiredNamespaces[nameTag]?.chains ?? []
         let supportedOptionalChains = sessionProposal.optionalNamespaces?[nameTag]?.chains ?? []
-        let supportedChains = supportedRequiredChains + supportedOptionalChains
+        let supportedChains = supportNetwork.compactMap(\.evmChainIDString).compactMap{ Blockchain(namespace: nameTag, reference: $0) }
 
         let supportedAccounts = Array(supportedChains).map { WalletConnectSign.Account(blockchain: $0, address: account)! }
 
@@ -95,7 +98,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         let sessionNamespaces: [String: SessionNamespace] = try AutoNamespaces.build(
             sessionProposal: sessionProposal,
             chains: Array(supportedChains),
-            methods: Array(supportedMethods),
+            methods: supportedMethods,
             events: Array(supportedEvents),
             accounts: supportedAccounts
         )
