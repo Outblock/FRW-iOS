@@ -246,10 +246,26 @@ extension TrustJSMessageHandler {
         
         let originCadence = CadenceManager.shared.current.evm?.callContract?.toFunc() ?? ""
         
+        guard let data = info.jsonData,
+              let receiveModel = try? JSONDecoder().decode(EVMTransactionReceive.self, from: data),
+              let toAddr = receiveModel.toAddress else {
+            self.cancel(id: id)
+            return
+        }
+        
+        let args: [Flow.Cadence.FValue] = [
+            .string(toAddr),
+            .ufix64(Decimal(string: receiveModel.amount) ?? .nan),
+            receiveModel.dataValue?.cadenceValue ?? .array([]),
+            .uint64(receiveModel.gasValue)
+           ]
+        
         let vm = BrowserAuthzViewModel(title: title,
-                                             url: url?.absoluteString ?? "unknown",
-                                             logo: url?.absoluteString.toFavIcon()?.absoluteString,
-                                             cadence: originCadence)
+                                       url: url?.absoluteString ?? "unknown",
+                                       logo: url?.absoluteString.toFavIcon()?.absoluteString,
+                                       cadence: originCadence,
+                                       arguments: args.toArguments()
+        )
         { [weak self] result in
             
             guard let self = self else {
@@ -257,20 +273,14 @@ extension TrustJSMessageHandler {
                 return
             }
             
-            if result {
+            if !result {
+                self.webVC?.webView.tw.send(network: .ethereum, error: "Canceled", to: id)
+                return
+            }
                
                 Task {
                     do {
                         
-                        guard let data = info.jsonData else {
-                            self.cancel(id: id)
-                            return
-                        }
-                        let receiveModel = try JSONDecoder().decode(EVMTransactionReceive.self, from: data)
-                        guard let toAddr = receiveModel.toAddress else {
-                            self.cancel(id: id)
-                            return
-                        }
                         let tix = try await FlowNetwork.sendTransaction(amount: receiveModel.amount, data: receiveModel.dataValue, toAddress: toAddr, gas: receiveModel.gasValue)
                         let result = try await tix.onceSealed()
                         if result.isFailed {
@@ -289,9 +299,6 @@ extension TrustJSMessageHandler {
                     }
                 }
                 
-            } else {
-                self.webVC?.webView.tw.send(network: .ethereum, error: "Canceled", to: id)
-            }
         }
         
         Router.route(to: RouteMap.Explore.authz(vm))

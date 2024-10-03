@@ -375,7 +375,9 @@ extension JSMessageHandler {
     private func signAuthz(_ authzResponse: FCLAuthzResponse) {
         let title = authzResponse.config?.app?.title ?? webVC?.webView.title ?? "unknown"
         let url = webVC?.webView.url?.host ?? "unknown"
-        let vm = BrowserAuthzViewModel(title: title, url: url, logo: authzResponse.config?.app?.icon, cadence: authzResponse.body.cadence) { [weak self] result in
+        let vm = BrowserAuthzViewModel(title: title, url: url, logo: authzResponse.config?.app?.icon,
+                                       cadence: authzResponse.body.cadence,
+                                       arguments: authzResponse.body.voucher.arguments) { [weak self] result in
             guard let self = self else {
                 return
             }
@@ -417,7 +419,9 @@ extension JSMessageHandler {
     private func signPayload(_ authzResponse: FCLAuthzResponse) {
         let title = authzResponse.config?.app?.title ?? webVC?.webView.title ?? "unknown"
         let url = webVC?.webView.url?.host ?? "unknown"
-        let vm = BrowserAuthzViewModel(title: title, url: url, logo: authzResponse.config?.app?.icon, cadence: authzResponse.body.cadence) { [weak self] result in
+        let vm = BrowserAuthzViewModel(title: title, url: url, logo: authzResponse.config?.app?.icon,
+                                       cadence: authzResponse.body.cadence,
+                                       arguments: authzResponse.body.voucher.arguments) { [weak self] result in
             guard let self = self else {
                 return
             }

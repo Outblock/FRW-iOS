@@ -154,46 +154,51 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         
         let originCadence = CadenceManager.shared.current.evm?.callContract?.toFunc() ?? ""
         
-        let vm = BrowserAuthzViewModel(title: title,
-                                             url: url,
-                                             logo: logo,
-                                             cadence: originCadence)
-        { result in
-            if result {
+        do {
+            let result = try request.params.get([EVMTransactionReceive].self)
+            guard let receiveModel = result.first, let toAddr = receiveModel.toAddress else {
+                cancel()
+                return
+            }
+            
+            let args: [Flow.Cadence.FValue] = [
+                .string(toAddr),
+                .ufix64(Decimal(string: receiveModel.amount) ?? .nan),
+                receiveModel.dataValue?.cadenceValue ?? .array([]),
+                .uint64(receiveModel.gasValue)
+               ]
+            
+            let vm = BrowserAuthzViewModel(title: title,
+                                           url: url,
+                                           logo: logo,
+                                           cadence: originCadence,
+                                           arguments: args.toArguments())
+            { result in
                 Task {
-                    do {
-                        let result = try request.params.get([EVMTransactionReceive].self)
-                        guard let receiveModel = result.first else {
-                            cancel()
-                            return
-                        }
-                        guard let toAddr = receiveModel.toAddress else {
-                            cancel()
-                            return
-                        }
-                        let tix = try await FlowNetwork.sendTransaction(amount: receiveModel.amount, data: receiveModel.dataValue, toAddress: toAddr, gas: receiveModel.gasValue)
-                        let tixResult = try await tix.onceSealed()
-                        if tixResult.isFailed {
-                            HUD.error(title: "transaction failed")
-                            cancel()
-                            return
-                        }
-                        let model = try await FlowNetwork.fetchEVMTransactionResult(txid: tix.hex)
-                        DispatchQueue.main.async {
-                            confirm(model.hashString ?? "")
-                        }
-                    }
-                    catch {
-                        log.error("[EVM] send transaction failed \(error)")
+                    if !result {
                         cancel()
+                    }
+                    
+                    let tix = try await FlowNetwork.sendTransaction(amount: receiveModel.amount, data: receiveModel.dataValue, toAddress: toAddr, gas: receiveModel.gasValue)
+                    let tixResult = try await tix.onceSealed()
+                    if tixResult.isFailed {
+                        HUD.error(title: "transaction failed")
+                        cancel()
+                        return
+                    }
+                    let model = try await FlowNetwork.fetchEVMTransactionResult(txid: tix.hex)
+                    DispatchQueue.main.async {
+                        confirm(model.hashString ?? "")
                     }
                 }
             }
-            else {
-                cancel()
-            }
+            
+            Router.route(to: RouteMap.Explore.authz(vm))
+        } catch {
+            log.error("[EVM] send transaction failed \(error)", context: error)
+            cancel()
         }
-        Router.route(to: RouteMap.Explore.authz(vm))
+        
     }
 }
 

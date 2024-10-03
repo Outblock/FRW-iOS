@@ -10,7 +10,25 @@ import Kingfisher
 import Highlightr
 
 struct BrowserAuthzView: View {
+    
+    enum Selection: String, CaseIterable, Identifiable {
+        case cadence
+        case arguments
+        var id: Self { self }
+    }
+    
     @StateObject var vm: BrowserAuthzViewModel
+    
+    @State var selection: Selection = .cadence
+    
+    func attributeString() -> AttributedString {
+        switch selection {
+        case .cadence:
+            vm.cadenceFormatted ?? AttributedString(vm.cadence.trim())
+        case .arguments:
+            vm.argumentsFormatted ?? AttributedString((vm.arguments?.jsonPrettyPrint()?.trim() ?? ""))
+        }
+    }
     
     init(vm: BrowserAuthzViewModel) {
         _vm = StateObject(wrappedValue: vm)
@@ -79,6 +97,7 @@ struct BrowserAuthzView: View {
         .task {
             vm.checkTemplate()
             vm.formatCode()
+            vm.formatArguments()
         }
         .padding(.all, 18)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -204,10 +223,18 @@ struct BrowserAuthzView: View {
             }
             .frame(height: 72)
             
+            Picker("Cadence", selection: $selection) {
+                ForEach(BrowserAuthzView.Selection.allCases) { topping in
+                        Text(topping.rawValue.capitalized)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding(.bottom, 8)
+            
             ScrollView(.vertical, showsIndicators: false) {
-                
-                Text( vm.cadenceFormatted ?? AttributedString(vm.cadence.trim()))
-                    .font(.inter(size: 8, weight: .light))
+                Text(attributeString())
+                    .font(.inter(size: selection == .cadence ? 8 : 14,
+                                 weight: selection == .cadence ? .light : .regular))
                     .foregroundColor(Color(hex: "#B2B2B2"))
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                     .padding(.all, 18)

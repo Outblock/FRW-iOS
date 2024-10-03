@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Highlightr
+import Flow
 
 extension BrowserAuthzViewModel {
     typealias Callback = (Bool) -> ()
@@ -18,17 +19,20 @@ class BrowserAuthzViewModel: ObservableObject {
     @Published var logo: String?
     @Published var cadence: String
     @Published var cadenceFormatted: AttributedString?
+    @Published var arguments: [Flow.Argument]? = nil
+    @Published var argumentsFormatted: AttributedString?
     @Published var isScriptShowing: Bool = false
     
     @Published var template: FlowTransactionTemplate?
     
     private var callback: BrowserAuthzViewModel.Callback?
     
-    init(title: String, url: String, logo: String?, cadence: String, callback: @escaping BrowserAuthnViewModel.Callback) {
+    init(title: String, url: String, logo: String?, cadence: String, arguments: [Flow.Argument]? = nil, callback: @escaping BrowserAuthnViewModel.Callback) {
         self.title = title
         self.urlString = url
         self.logo = logo
         self.cadence = cadence
+        self.arguments = arguments
         self.callback = callback
     }
     
@@ -36,6 +40,13 @@ class BrowserAuthzViewModel: ObservableObject {
         callback?(result)
         callback = nil
         Router.dismiss()
+    }
+    
+    func formatArguments() {
+        guard let arguments else {
+            return
+        }
+        argumentsFormatted = AttributedString(arguments.map{ $0.value.description }.joined(separator: "\n\n"))
     }
     
     func formatCode() {

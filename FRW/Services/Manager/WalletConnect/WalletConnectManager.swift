@@ -465,7 +465,7 @@ extension WalletConnectManager {
                     
                     currentRequestInfo = request
                     
-                    let authzVM = BrowserAuthzViewModel(title: request.name, url: request.dappURL, logo: request.iconURL, cadence: request.cadence) { result in
+                    let authzVM = BrowserAuthzViewModel(title: request.name, url: request.dappURL, logo: request.iconURL, cadence: request.cadence, arguments: request.agrument) { result in
                         if result {
                             self.approveRequest(request: sessionRequest, requestInfo: request)
                         } else {

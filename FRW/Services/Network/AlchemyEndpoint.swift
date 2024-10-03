@@ -61,4 +61,13 @@ extension Encodable {
         }
         return string
     }
+    
+    func jsonPrettyPrint() -> String? {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        guard let data = try? encoder.encode(self), let string = String(data: data, encoding: .utf8) else {
+            return nil
+        }
+        return string
+    }
 }
