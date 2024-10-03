@@ -9344,7 +9344,7 @@
 			repositoryURL = "https://github.com/Outblock/Flow-Wallet-Core/";
 			requirement = {
 				kind = revision;
-				revision = 332d1ea41571d1ed0cd852a5fe3dd6dc9465bc3e;
+				revision = dd8ad07ef091c0e1520b7c49062806660452d047;
 			};
 		};
 		4ED6DD0E285A22A800105133 /* XCRemoteSwiftPackageReference "IrregularGradient" */ = {
