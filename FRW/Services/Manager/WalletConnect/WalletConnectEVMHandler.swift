@@ -19,6 +19,21 @@ enum WalletConnectEVMMethod: String, Codable {
     case sendTransaction = "eth_sendTransaction"
 }
 
+extension Flow.ChainID {
+    var evmChainID: Int? {
+        switch self {
+        case .mainnet:
+            return 747
+        case .testnet:
+            return 545
+        case .previewnet:
+            return 646
+        default:
+            return nil
+        }
+    }
+}
+
 struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
     
     var type: WalletConnectHandlerType {
@@ -29,13 +44,20 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         return "eip155"
     }
     
+    let supportNetwork: [Flow.ChainID] = [.mainnet, .testnet]
+    
+    var suppportEVMChainID: [String] {
+        supportNetwork.compactMap{ $0.evmChainID }.map{ String($0) }
+    }
+    
     func chainId(sessionProposal: Session.Proposal) -> Flow.ChainID? {
         var reference: String?
         if let chains = sessionProposal.requiredNamespaces[nameTag]?.chains {
             reference = chains.first(where: { $0.namespace == nameTag })?.reference
         }
-        if reference==nil, let chains = sessionProposal.optionalNamespaces?[nameTag]?.chains {
-            reference = chains.first(where: { $0.namespace == nameTag })?.reference
+        if let chains = sessionProposal.optionalNamespaces?[nameTag]?.chains {
+//            let ids = chains.filter{ $0.namespace == nameTag }.map { $0.reference }
+            reference = chains.filter{ $0.namespace == nameTag && suppportEVMChainID.contains($0.reference) }.compactMap{ $0.reference }.sorted().last
         }
         //TODO: if not the list allowed, HOW
         switch reference {
