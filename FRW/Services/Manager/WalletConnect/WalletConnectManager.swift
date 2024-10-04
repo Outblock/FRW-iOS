@@ -734,7 +734,7 @@ extension WalletConnectManager {
 //                rejectRequest(request: request)
             }
         }
-        
+
         reloadPendingRequests()
     }
 
@@ -760,7 +760,7 @@ extension WalletConnectManager {
                 rejectRequest(request: request)
             }
         }
-        
+
         reloadPendingRequests()
     }
 }

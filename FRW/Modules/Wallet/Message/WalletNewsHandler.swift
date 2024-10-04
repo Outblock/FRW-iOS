@@ -10,9 +10,9 @@ import SwiftUI
 
 class WalletNewsHandler: ObservableObject {
     static let shared = WalletNewsHandler()
-    
+
     private let accessQueue = DispatchQueue(label: "SynchronizedArrayAccess", attributes: .concurrent)
-    
+
     // TODO: Change it to Set
     @Published var list: [RemoteConfigManager.News] = []
 
@@ -28,7 +28,7 @@ class WalletNewsHandler: ObservableObject {
 
     /// Call only once when receive Firebase Config
     func addRemoteNews(_ news: [RemoteConfigManager.News]) {
-        accessQueue.sync{ [weak self] in
+        accessQueue.sync { [weak self] in
             guard let self else { return }
             self.list.removeAll()
             self.list.append(contentsOf: news)
@@ -45,7 +45,7 @@ class WalletNewsHandler: ObservableObject {
             if list.contains(where: { $0.id == news.id }) {
                 return
             }
-            
+
             list.append(news)
             orderNews()
         }
@@ -69,7 +69,7 @@ class WalletNewsHandler: ObservableObject {
                     list.remove(at: index)
                 }
             }
-            
+
             for item in news {
                 addRemoteNews(item)
             }
@@ -99,7 +99,7 @@ class WalletNewsHandler: ObservableObject {
         guard let type = item?.displayType, displatyType.contains(type) else {
             return false
         }
-        self.accessQueue.async(flags:.barrier) { [weak self] in
+        accessQueue.async(flags: .barrier) { [weak self] in
             guard let self else { return }
             removeIds.append(itemId)
         }
@@ -108,7 +108,7 @@ class WalletNewsHandler: ObservableObject {
 
     /// Call only once when view appear
     func checkFirstNews() {
-        self.accessQueue.async(flags:.barrier) { [weak self] in
+        accessQueue.async(flags: .barrier) { [weak self] in
             guard let self else { return }
             if let item = list.first {
                 markItemIfNeed(item.id, displatyType: [.once])

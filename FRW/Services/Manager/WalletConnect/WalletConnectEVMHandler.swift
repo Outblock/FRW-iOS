@@ -32,7 +32,7 @@ extension Flow.ChainID {
             return nil
         }
     }
-    
+
     var evmChainIDString: String? {
         evmChainID.map(String.init)
     }
@@ -84,7 +84,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
 
         let supportedRequiredChains = sessionProposal.requiredNamespaces[nameTag]?.chains ?? []
         let supportedOptionalChains = sessionProposal.optionalNamespaces?[nameTag]?.chains ?? []
-        let supportedChains = supportNetwork.compactMap(\.evmChainIDString).compactMap{ Blockchain(namespace: nameTag, reference: $0) }
+        let supportedChains = supportNetwork.compactMap(\.evmChainIDString).compactMap { Blockchain(namespace: nameTag, reference: $0) }
 
         let supportedAccounts = Array(supportedChains).map { WalletConnectSign.Account(blockchain: $0, address: account)! }
 
