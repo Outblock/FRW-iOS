@@ -480,6 +480,7 @@ extension WalletConnectManager {
 
             } catch {
                 print("[WALLET] Respond Error: \(error.localizedDescription)")
+                log.error("WalletConnectManager -> Respond Error:", context: error)
                 rejectRequest(request: sessionRequest)
             }
 
@@ -687,10 +688,11 @@ extension WalletConnectManager {
 
                 HUD.success(title: "approved".localized)
             } catch {
-                debugPrint("WalletConnectManager -> approveRequest failed: \(error)")
+                log.error("WalletConnectManager -> approveRequest failed", context: error)
                 rejectRequest(request: request)
             }
         }
+        reloadPendingRequests()
     }
 
     private func approvePayerRequest(request: Request, model: Signable, message: String) {
@@ -709,10 +711,9 @@ extension WalletConnectManager {
                                            reason: nil,
                                            compositeSignature: nil)
                 try await Sign.instance.respond(topic: request.topic, requestId: request.id, response: .response(AnyCodable(result)))
-
-                HUD.success(title: "approved".localized)
+                HUD.success(title: "payer_approved".localized)
             } catch {
-                debugPrint("WalletConnectManager -> approveRequest failed: \(error)")
+                log.error("WalletConnectManager -> approveRequest failed", context: error)
                 rejectRequest(request: request)
             }
         }
@@ -728,11 +729,13 @@ extension WalletConnectManager {
                 try await Sign.instance.respond(topic: request.topic, requestId: request.id, response: .response(AnyCodable(result)))
                 HUD.success(title: "rejected".localized)
             } catch {
-                debugPrint("WalletConnectManager -> rejectRequest failed: \(error)")
+                log.error("WalletConnectManager -> approveRequest failed", context: error)
                 HUD.error(title: "reject_failed".localized)
 //                rejectRequest(request: request)
             }
         }
+        
+        reloadPendingRequests()
     }
 
     private func approveRequestMessage(request: Request, requestInfo: RequestMessageInfo) {
@@ -757,6 +760,8 @@ extension WalletConnectManager {
                 rejectRequest(request: request)
             }
         }
+        
+        reloadPendingRequests()
     }
 }
 

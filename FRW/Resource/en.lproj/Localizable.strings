@@ -609,6 +609,7 @@
 "reject_failed" = "Reject failed";
 "Copy__username::message" = "Copy username";
 "approved" = "Approved";
+"payer_approved" = "Payer Approved";
 "Refresh::message" = "Refresh";
 "rejected" = "Rejected";
 "Anonymous__mode__on::message" = "Anonymous mode on";

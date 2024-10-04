@@ -10,7 +10,9 @@ import SwiftUI
 
 class WalletNewsHandler: ObservableObject {
     static let shared = WalletNewsHandler()
-
+    
+    private let accessQueue = DispatchQueue(label: "SynchronizedArrayAccess", attributes: .concurrent)
+    
     // TODO: Change it to Set
     @Published var list: [RemoteConfigManager.News] = []
 
@@ -26,49 +28,65 @@ class WalletNewsHandler: ObservableObject {
 
     /// Call only once when receive Firebase Config
     func addRemoteNews(_ news: [RemoteConfigManager.News]) {
-        list.removeAll()
-        list.append(contentsOf: news)
-        removeExpiryNew()
-        removeMarkedNews()
-        orderNews()
-        log.debug("[NEWS] count:\(list.count)")
+        accessQueue.sync{ [weak self] in
+            guard let self else { return }
+            self.list.removeAll()
+            self.list.append(contentsOf: news)
+            self.removeExpiryNew()
+            self.removeMarkedNews()
+            self.orderNews()
+            log.debug("[NEWS] count:\(list.count)")
+        }
     }
 
     func addRemoteNews(_ news: RemoteConfigManager.News) {
-        if list.contains(where: { $0.id == news.id }) {
-            return
-        }
-
-        list.append(news)
-        orderNews()
-    }
-
-    func removeNews(_ news: RemoteConfigManager.News) {
-        if let index = list.firstIndex(where: { $0.id == news.id }) {
-            list.remove(at: index)
+        accessQueue.sync { [weak self] in
+            guard let self else { return }
+            if list.contains(where: { $0.id == news.id }) {
+                return
+            }
+            
+            list.append(news)
             orderNews()
         }
     }
 
-    func refreshWalletConnectNews(_ news: [RemoteConfigManager.News]) {
-        for (index, new) in list.enumerated() {
-            if new.flag == .walletconnect {
+    func removeNews(_ news: RemoteConfigManager.News) {
+        accessQueue.sync { [weak self] in
+            guard let self else { return }
+            if let index = list.firstIndex(where: { $0.id == news.id }), let _ = list[safe: index] {
                 list.remove(at: index)
+                orderNews()
             }
         }
+    }
 
-        for item in news {
-            addRemoteNews(item)
+    func refreshWalletConnectNews(_ news: [RemoteConfigManager.News]) {
+        accessQueue.sync { [weak self] in
+            guard let self else { return }
+            for (index, new) in list.enumerated() {
+                if new.flag == .walletconnect {
+                    list.remove(at: index)
+                }
+            }
+            
+            for item in news {
+                addRemoteNews(item)
+            }
         }
     }
 
     private func removeExpiryNew() {
-        let currentData = Date()
-        list = list.filter { $0.expiryTime > currentData }
+        accessQueue.sync {
+            let currentData = Date()
+            list = list.filter { $0.expiryTime > currentData }
+        }
     }
 
     private func removeMarkedNews() {
-        list = list.filter { !removeIds.contains($0.id) }
+        accessQueue.sync {
+            list = list.filter { !removeIds.contains($0.id) }
+        }
     }
 
     private func orderNews() {
@@ -81,14 +99,20 @@ class WalletNewsHandler: ObservableObject {
         guard let type = item?.displayType, displatyType.contains(type) else {
             return false
         }
-        removeIds.append(itemId)
+        self.accessQueue.async(flags:.barrier) { [weak self] in
+            guard let self else { return }
+            removeIds.append(itemId)
+        }
         return true
     }
 
     /// Call only once when view appear
     func checkFirstNews() {
-        if let item = list.first {
-            markItemIfNeed(item.id, displatyType: [.once])
+        self.accessQueue.async(flags:.barrier) { [weak self] in
+            guard let self else { return }
+            if let item = list.first {
+                markItemIfNeed(item.id, displatyType: [.once])
+            }
         }
     }
 }
