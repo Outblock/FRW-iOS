@@ -221,9 +221,10 @@ extension UserManager {
                             addressList[item.uniq] = model.address ?? "0x"
                         }
                     } catch {
-                        log.error("[Launch] first login check failed:\(item.uniq):\(error)")
+                        log.error("[Launch] first login check failed:\(item.uniq)", context: error)
                     }
                 }
+                
                 let uidList = addressList.map { $0.key }
                 let userAddress = addressList
                 DispatchQueue.main.async {
@@ -233,12 +234,12 @@ extension UserManager {
                 }
 
                 HUD.dismissLoading()
-
             } catch {
                 HUD.dismissLoading()
-                HUD.showAlert(title: "", msg: "restore_account_failed".localized, cancelAction: {}, confirmTitle: "retry".localized) {
-                    self.tryToRestoreOldAccountOnFirstLaunch()
-                }
+                log.info("restore_account_failed".localized)
+//                HUD.showAlert(title: "", msg: "restore_account_failed".localized, cancelAction: {}, confirmTitle: "retry".localized) {
+//                    self.tryToRestoreOldAccountOnFirstLaunch()
+//                }
             }
         }
     }

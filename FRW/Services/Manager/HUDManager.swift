@@ -63,19 +63,21 @@ class HUD {
     }
 
     static func showAlert(title: String, msg: String, cancelTitle: String = "cancel".localized, cancelAction: @escaping () -> Void, confirmTitle: String, confirmAction: @escaping () -> Void) {
-        let alertVC = UIAlertController(title: title, message: msg, preferredStyle: .alert)
+        DispatchQueue.main.sync {
+            let alertVC = UIAlertController(title: title, message: msg, preferredStyle: .alert)
 
-        let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { _ in
-            cancelAction()
+            let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { _ in
+                cancelAction()
+            }
+
+            let okAction = UIAlertAction(title: confirmTitle, style: .default) { _ in
+                confirmAction()
+            }
+
+            alertVC.addAction(cancelAction)
+            alertVC.addAction(okAction)
+
+            Router.topNavigationController()?.present(alertVC, animated: true)
         }
-
-        let okAction = UIAlertAction(title: confirmTitle, style: .default) { _ in
-            confirmAction()
-        }
-
-        alertVC.addAction(cancelAction)
-        alertVC.addAction(okAction)
-
-        Router.topNavigationController()?.present(alertVC, animated: true)
     }
 }
