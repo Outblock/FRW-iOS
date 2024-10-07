@@ -58,6 +58,16 @@ extension TrustJSMessageHandler {
         }
         return data
     }
+    
+    private func extractRaw(json: [String: Any]) -> String? {
+        guard
+            let params = json["object"] as? [String: Any],
+            let raw = params["raw"] as? String
+        else {
+            return nil
+        }
+        return raw
+    }
 
     private func extractObject(json: [String: Any]) -> [String: Any]? {
         guard let obj = json["object"] as? [String: Any] else {
@@ -108,7 +118,12 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
             log.info("[Trust] signMessage")
 
         case .signTypedMessage:
-            log.info("[Trust] signTypedMessage")
+            guard let data = extractMessage(json: json),
+                    let raw = extractRaw(json: json) else {
+                print("data is missing")
+                return
+            }
+            handleSignTypedMessage(id: id, data: data, raw: raw)
         case .signPersonalMessage:
             guard let data = extractMessage(json: json) else {
                 log.info("[Trust] data is missing")
@@ -195,6 +210,47 @@ extension TrustJSMessageHandler {
                                              url: url?.absoluteString ?? "unknown",
                                              logo: url?.absoluteString.toFavIcon()?.absoluteString,
                                              cadence: data.hexString) { [weak self] result in
+            guard let self = self else {
+                return
+            }
+
+            if result {
+                guard let addrStr = WalletManager.shared.getPrimaryWalletAddress() else {
+                    HUD.error(title: "invalid_address".localized)
+                    return
+                }
+
+                let address = Flow.Address(hex: addrStr)
+                guard let hashedData = Utilities.hashPersonalMessage(data) else { return }
+                let joinData = Flow.DomainTag.user.normalize + hashedData
+                guard let sig = signWithMessage(data: joinData) else {
+                    HUD.error(title: "sign failed")
+                    return
+                }
+                let keyIndex = BigUInt(WalletManager.shared.keyIndex)
+                let proof = COAOwnershipProof(keyIninces: [keyIndex], address: address.data, capabilityPath: "evm", signatures: [sig])
+                guard let encoded = RLP.encode(proof.rlpList) else {
+                    return
+                }
+                webVC?.webView.tw.send(network: .ethereum, result: encoded.hexString.addHexPrefix(), to: id)
+            } else {
+                webVC?.webView.tw.send(network: .ethereum, error: "Canceled", to: id)
+            }
+        }
+
+        Router.route(to: RouteMap.Explore.signMessage(vm))
+    }
+    
+    func handleSignTypedMessage(id: Int64, data: Data, raw: String) {
+        var title = webVC?.webView.title ?? "unknown"
+        if title.isEmpty {
+            title = "unknown"
+        }
+        let url = webVC?.webView.url
+        let vm = BrowserSignMessageViewModel(title: title,
+                                             url: url?.absoluteString ?? "unknown",
+                                             logo: url?.absoluteString.toFavIcon()?.absoluteString,
+                                             cadence: raw) { [weak self] result in
             guard let self = self else {
                 return
             }

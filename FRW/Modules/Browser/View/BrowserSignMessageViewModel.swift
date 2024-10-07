@@ -17,8 +17,12 @@ class BrowserSignMessageViewModel: ObservableObject {
     @Published var logo: String?
     @Published var cadence: String
     @Published var isScriptShowing: Bool = false
+    var needConvertMessage: Bool = true
 
     var message: String {
+        if !needConvertMessage {
+            return cadence
+        }
         let data = Data(hex: cadence)
         return String(data: data, encoding: .utf8) ?? ""
     }
