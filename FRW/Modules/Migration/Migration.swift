@@ -7,6 +7,7 @@
 
 import Foundation
 import KeychainAccess
+import FlowWalletCore
 
 struct Migration {
     private let remoteKeychain: Keychain
@@ -27,6 +28,8 @@ struct Migration {
 
     func start() {
         fetchiCloudRemoteList()
+        WallectSecureEnclave.Store.migrationFromLilicoTag()
+        try? WallectSecureEnclave.Store.twoBackupIfNeed()
     }
 }
 

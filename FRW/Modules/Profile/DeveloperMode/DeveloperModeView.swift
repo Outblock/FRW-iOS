@@ -169,7 +169,7 @@ struct DeveloperModeView: RouteableView {
                                     .foregroundStyle(Color.Theme.Text.black8)
                                 Spacer()
 
-                                Text("\(CadenceManager.shared.current.version)")
+                                Text("\(CadenceManager.shared.current.version ?? "")")
                                     .font(.inter(size: 17))
                                     .foregroundStyle(Color.Theme.Text.black8)
                             }
