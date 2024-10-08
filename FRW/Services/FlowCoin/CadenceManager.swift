@@ -9,7 +9,7 @@ import SwiftUI
 
 class CadenceManager {
     static let shared = CadenceManager()
-    private let localVersion = "2.05"
+    private let localVersion = "2.13"
 
     var version: String = ""
     var scripts: CadenceScript!
@@ -341,6 +341,8 @@ extension CadenceModel {
         let callContract: String?
         let transferFlowToEvmAddress: String?
         let transferFlowFromCoaToFlow: String?
+        let checkCoaLink: String?
+        let coaLink: String?
     }
 
     struct Bridge: Codable {

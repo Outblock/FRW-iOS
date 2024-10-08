@@ -17,6 +17,11 @@ import Web3Wallet
 enum WalletConnectEVMMethod: String, Codable, CaseIterable {
     case personalSign = "personal_sign"
     case sendTransaction = "eth_sendTransaction"
+    case requestAccounts = "eth_requestAccounts"
+    case signTypedData = "eth_signTypedData"
+    case signTypedDataV3 = "eth_signTypedData_v3"
+    case signTypedDataV4 = "eth_signTypedData_v4"
+    case switchEthereumChain = "wallet_switchEthereumChain"
 }
 
 extension Flow.ChainID {

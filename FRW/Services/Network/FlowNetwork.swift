@@ -1280,6 +1280,22 @@ extension FlowNetwork {
             .address(Flow.Address(hex: receiver)),
         ])
     }
+    
+    static func checkCoaLink(address: String) async throws -> Bool? {
+        guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            throw LLError.invalidAddress
+        }
+        let originCadence = CadenceManager.shared.current.evm?.checkCoaLink?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: cadenceStr), arguments: [.address(Flow.Address(hex: fromAddress))]).decode(Bool?.self)
+        return resonpse
+    }
+    
+    static func coaLink() async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.evm?.checkCoaLink?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [])
+    }
 }
 
 extension FlowNetwork {

@@ -129,7 +129,7 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
                 log.info("[Trust] data is missing")
                 return
             }
-            handleSignPersonal(network: network, id: id, data: data, addPrefix: true)
+            handleSignPersonalWithCheck(network: network, id: id, data: data, addPrefix: true)
         case .sendTransaction:
             log.info("[Trust] sendTransaction")
 
@@ -200,7 +200,33 @@ extension TrustJSMessageHandler {
         MoveAssetsAction.shared.startBrowserWithMoveAssets(appName: webVC?.webView.title, callback: callback)
     }
 
-    private func handleSignPersonal(network _: ProviderNetwork, id: Int64, data: Data, addPrefix _: Bool) {
+    private func handleSignPersonalWithCheck(network: ProviderNetwork, id: Int64, data: Data, addPrefix: Bool) {
+        handleSignPersonal(network: network, id: id, data: data, addPrefix: addPrefix)
+        Task {
+            guard let addrStr = WalletManager.shared.getPrimaryWalletAddress() else {
+                return
+            }
+            //TODO: judge contain
+            do {
+                HUD.loading()
+                let result = try await FlowNetwork.checkCoaLink(address: addrStr)
+                if result != nil && result == false {
+                    let txid = try await FlowNetwork.coaLink()
+                    let result = try await txid.onceSealed()
+                    if !result.isFailed {
+                        //TODO: save address
+                    }
+                }else {
+                    //TODO: save address
+                }
+                HUD.dismissLoading()
+            }catch {
+                HUD.dismissLoading()
+            }
+        }
+    }
+    
+    private func handleSignPersonal(network: ProviderNetwork, id: Int64, data: Data, addPrefix _: Bool) {
         var title = webVC?.webView.title ?? "unknown"
         if title.isEmpty {
             title = "unknown"
