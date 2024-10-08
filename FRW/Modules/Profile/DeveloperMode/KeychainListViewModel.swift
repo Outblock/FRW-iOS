@@ -8,13 +8,16 @@
 import Foundation
 import KeychainAccess
 import SwiftUI
+import FlowWalletCore
 
 class KeychainListViewModel: ObservableObject {
     @Published var localList: [[String: Any]] = []
     @Published var remoteList: [[String: Any]] = []
+    @Published var seList: [[String: String]] = []
 
     private let remoteKeychain: Keychain
     private let localKeychain: Keychain
+    private let seKeychain: Keychain
     private let mnemonicPrefix = "lilico.mnemonic."
 
     init() {
@@ -25,18 +28,37 @@ class KeychainListViewModel: ObservableObject {
         let localService = remoteService + ".local"
         localKeychain = Keychain(service: localService)
             .label("Flow Wallet Backup")
+        
+        seKeychain = Keychain(service: "com.flowfoundation.wallet.securekey")
+        
         fecth()
     }
 
     private func fecth() {
-        guard isDevModel, let bundleId = Bundle.main.bundleIdentifier, bundleId.hasSuffix(".dev") else {
-            return
-        }
+        
         remoteList = remoteKeychain.allItems()
         if let item = remoteList.last {
             log.info(item)
         }
         localList = localKeychain.allItems()
+        do {
+            guard let data = try seKeychain.getData("user.keystore") else {
+                return
+            }
+            let users = try? JSONDecoder().decode([WallectSecureEnclave.StoreInfo].self, from: data)
+            seList = users?.map({ info in
+                
+                if let sec = try? WallectSecureEnclave(privateKey: info.publicKey), let publicKey = sec.key.publickeyValue {
+                    return [info.uniq: publicKey]
+                }else {
+                    return [info.uniq: "undefined"]
+                }
+                
+            }) ?? []
+        }catch {
+            log.error("[kc] fetch failed. \(error)")
+        }
+        
         print(remoteList)
     }
 

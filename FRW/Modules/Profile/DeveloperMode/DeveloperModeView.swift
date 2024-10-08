@@ -18,6 +18,7 @@ struct DeveloperModeView: RouteableView {
     @StateObject private var vm: DeveloperModeViewModel = .init()
     @StateObject private var walletManager = WalletManager.shared
 
+    @State private var showTool = false
     @AppStorage("isDeveloperMode") private var isDeveloperMode = false
 
     @State private var openLogWindow = LocalUserDefaults.shared.openLogWindow
@@ -51,6 +52,7 @@ struct DeveloperModeView: RouteableView {
                         .font(.LL.footnote)
                         .foregroundColor(.LL.Neutrals.neutrals3)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 8)
                     VStack(spacing: 0) {
                         Section {
                             let isMainnet = lud.flowNetwork == .mainnet
@@ -76,6 +78,7 @@ struct DeveloperModeView: RouteableView {
                         .font(.LL.footnote)
                         .foregroundColor(.LL.Neutrals.neutrals3)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 8)
                     VStack(spacing: 0) {
                         Section {
                             Cell(sysImageTuple: (vm.isCustomAddress ? .checkmarkUnselected : .checkmarkSelected, vm.isCustomAddress ? .LL.Neutrals.neutrals1 : .LL.Primary.salmonPrimary), title: "my_own_address".localized, desc: "")
@@ -228,7 +231,30 @@ struct DeveloperModeView: RouteableView {
                     } header: {
                         headView(title: "Log")
                     }
-                    if isDeveloperMode {
+                    
+                    Section {
+                        VStack {
+                            HStack {
+                                Button {
+                                    Router.route(to: RouteMap.Profile.keychain)
+                                } label: {
+                                    Text("All Keys on Local")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                }
+                                Spacer()
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+                        }
+                        .background(.LL.bgForIcon)
+                        .cornerRadius(16)
+                    } header: {
+                        headView(title: "Tools")
+                    }
+                    .visibility(showTool ? .visible : .gone)
+                    
+                    if isDevModel {
                         Section {
                             VStack {
                                 HStack {
@@ -284,8 +310,10 @@ struct DeveloperModeView: RouteableView {
                                     HUD.success(title: "done.")
                                 }
                             }
+                            .background(.LL.bgForIcon)
+                            .cornerRadius(16)
                         } header: {
-                            headView(title: "只在Dev显示")
+                            headView(title: "Debug")
                         }
                     }
                 }
@@ -295,6 +323,12 @@ struct DeveloperModeView: RouteableView {
         .background(
             Color.LL.Neutrals.background.ignoresSafeArea()
         )
+        .onTapGesture(count: 6, disabled: false, perform: {
+            log.info("click 6 times")
+            if !isDeveloperMode {
+                showTool = true
+            }
+        })
         .applyRouteable(self)
     }
 
