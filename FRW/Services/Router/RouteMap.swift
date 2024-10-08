@@ -553,6 +553,7 @@ extension RouteMap {
         case linkChildAccount(ChildAccountLinkViewModel)
         case dapps
         case switchNetwork(LocalUserDefaults.FlowNetworkType, LocalUserDefaults.FlowNetworkType, SwitchNetworkClosure?)
+        case signTypedMessage(BrowserSignTypedMessageViewModel)
     }
 }
 
@@ -604,6 +605,9 @@ extension RouteMap.Explore: RouterTarget {
             navi.present(content: DAppsListView())
         case let .switchNetwork(from, to, callback):
             let vc = CustomHostingController(rootView: NetworkSwitchPopView(from: from, to: to))
+            Router.topPresentedController().present(vc, animated: true, completion: nil)
+        case .signTypedMessage(let viewModel):
+            let vc = CustomHostingController(rootView: BrowserSignTypedMessageView(viewModel: viewModel), showLarge: true)
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         }
     }

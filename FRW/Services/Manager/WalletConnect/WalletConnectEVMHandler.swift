@@ -202,6 +202,51 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
             cancel()
         }
     }
+    
+    func handleSignTypedDataV4(request: WalletConnectSign.Request, confirm: @escaping (String) -> Void, cancel: @escaping () -> Void) {
+        let pair = try? Pair.instance.getPairing(for: request.topic)
+        let title = pair?.peer?.name ?? "unknown"
+        let url = pair?.peer?.url ?? "unknown"
+        let logo = pair?.peer?.icons.first
+        
+        do {
+            let list = try request.params.get([String].self)
+            guard let result = list.last, let data = message(sessionRequest: request) else {
+                cancel()
+                return
+            }
+            
+            let vm = BrowserSignTypedMessageViewModel(title: title, urlString: url, logo: logo, rawString: result) { result in
+
+                if result {
+                    guard let addrStr = WalletManager.shared.getPrimaryWalletAddress() else {
+                        HUD.error(title: "invalid_address".localized)
+                        return
+                    }
+                    let address = Flow.Address(hex: addrStr)
+                    let joinData = Flow.DomainTag.user.normalize + data
+                    guard let sig = signWithMessage(data: joinData) else {
+                        HUD.error(title: "sign failed")
+                        return
+                    }
+                    let keyIndex = BigUInt(WalletManager.shared.keyIndex)
+                    let proof = COAOwnershipProof(keyIninces: [keyIndex], address: address.data, capabilityPath: "evm", signatures: [sig])
+                    guard let encoded = RLP.encode(proof.rlpList) else {
+                        return
+                    }
+                    confirm(encoded.hexString.addHexPrefix())
+                } else {
+                    cancel()
+                }
+            }
+
+            Router.route(to: RouteMap.Explore.signTypedMessage(vm))
+            
+        }catch {
+            log.error("[EVM] handleSignTypedDataV4 \(error)", context: error)
+            cancel()
+        }
+    }
 }
 
 extension WalletConnectEVMHandler {

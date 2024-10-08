@@ -129,7 +129,7 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
                 log.info("[Trust] data is missing")
                 return
             }
-            handleSignPersonalWithCheck(network: network, id: id, data: data, addPrefix: true)
+            handleSignPersonal(network: network, id: id, data: data, addPrefix: true)
         case .sendTransaction:
             log.info("[Trust] sendTransaction")
 
@@ -199,34 +199,11 @@ extension TrustJSMessageHandler {
 
         MoveAssetsAction.shared.startBrowserWithMoveAssets(appName: webVC?.webView.title, callback: callback)
     }
-
-    private func handleSignPersonalWithCheck(network: ProviderNetwork, id: Int64, data: Data, addPrefix: Bool) {
-        handleSignPersonal(network: network, id: id, data: data, addPrefix: addPrefix)
-        Task {
-            guard let addrStr = WalletManager.shared.getPrimaryWalletAddress() else {
-                return
-            }
-            //TODO: judge contain
-            do {
-                HUD.loading()
-                let result = try await FlowNetwork.checkCoaLink(address: addrStr)
-                if result != nil && result == false {
-                    let txid = try await FlowNetwork.coaLink()
-                    let result = try await txid.onceSealed()
-                    if !result.isFailed {
-                        //TODO: save address
-                    }
-                }else {
-                    //TODO: save address
-                }
-                HUD.dismissLoading()
-            }catch {
-                HUD.dismissLoading()
-            }
-        }
-    }
     
     private func handleSignPersonal(network: ProviderNetwork, id: Int64, data: Data, addPrefix _: Bool) {
+        Task {
+            await TrustJSMessageHandler.checkCoa()
+        }
         var title = webVC?.webView.title ?? "unknown"
         if title.isEmpty {
             title = "unknown"
@@ -268,16 +245,15 @@ extension TrustJSMessageHandler {
     }
     
     func handleSignTypedMessage(id: Int64, data: Data, raw: String) {
+        Task {
+            await TrustJSMessageHandler.checkCoa()
+        }
         var title = webVC?.webView.title ?? "unknown"
         if title.isEmpty {
             title = "unknown"
         }
         let url = webVC?.webView.url
-        let vm = BrowserSignMessageViewModel(title: title,
-                                             url: url?.absoluteString ?? "unknown",
-                                             logo: url?.absoluteString.toFavIcon()?.absoluteString,
-                                             cadence: raw,
-                                             useRawMessage: true) { [weak self] result in
+        let vm = BrowserSignTypedMessageViewModel(title: title, urlString: url?.absoluteString ?? "unknown", logo: url?.absoluteString.toFavIcon()?.absoluteString, rawString: raw) { [weak self] result in
             guard let self = self else {
                 return
             }
@@ -287,9 +263,7 @@ extension TrustJSMessageHandler {
                     HUD.error(title: "invalid_address".localized)
                     return
                 }
-
                 let address = Flow.Address(hex: addrStr)
-//                guard let hashedData = Utilities.hashPersonalMessage(data) else { return }
                 let joinData = Flow.DomainTag.user.normalize + data
                 guard let sig = signWithMessage(data: joinData) else {
                     HUD.error(title: "sign failed")
@@ -306,7 +280,7 @@ extension TrustJSMessageHandler {
             }
         }
 
-        Router.route(to: RouteMap.Explore.signMessage(vm))
+        Router.route(to: RouteMap.Explore.signTypedMessage(vm))
     }
 
     private func handleSendTransaction(network _: ProviderNetwork, id: Int64, info: [String: Any]) {
@@ -412,6 +386,35 @@ extension TrustJSMessageHandler {
     private func cancel(id: Int64) {
         DispatchQueue.main.async {
             self.webVC?.webView.tw.send(network: .ethereum, error: "Canceled", to: id)
+        }
+    }
+}
+
+extension TrustJSMessageHandler {
+    static func checkCoa() async {
+        guard let addrStr = WalletManager.shared.getPrimaryWalletAddress() else {
+            return
+        }
+        var list = LocalUserDefaults.shared.checkCoa
+        if list.contains(addrStr) {
+            return
+        }
+        do {
+            HUD.loading()
+            let result = try await FlowNetwork.checkCoaLink(address: addrStr)
+            if result != nil && result == false {
+                let txid = try await FlowNetwork.coaLink()
+                let result = try await txid.onceSealed()
+                if !result.isFailed {
+                    list.append(addrStr)
+                }
+            }else {
+                list.append(addrStr)
+            }
+            LocalUserDefaults.shared.checkCoa = list
+            HUD.dismissLoading()
+        }catch {
+            HUD.dismissLoading()
         }
     }
 }

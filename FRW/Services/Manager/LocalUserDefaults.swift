@@ -48,6 +48,7 @@ extension LocalUserDefaults {
 
         case whatIsBack
         case backupSheetNotAsk
+        case checkCoa
     }
 
     enum FlowNetworkType: String, CaseIterable, Codable {
@@ -314,6 +315,15 @@ class LocalUserDefaults: ObservableObject {
     @AppStorage(Keys.whatIsBack.rawValue) var clickedWhatIsBack: Bool = false
 
     @AppStorage(Keys.backupSheetNotAsk.rawValue) var backupSheetNotAsk: Bool = false
+    
+    var checkCoa: [String] {
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: Keys.checkCoa.rawValue)
+        }
+        get {
+            return UserDefaults.standard.array(forKey: Keys.checkCoa.rawValue) as? [String] ?? []
+        }
+    }
 }
 
 extension LocalUserDefaults {

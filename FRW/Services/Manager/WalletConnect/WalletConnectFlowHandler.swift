@@ -47,5 +47,11 @@ struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
 
     func handlePersonalSignRequest(request _: Request, confirm _: @escaping (String) -> Void, cancel _: @escaping () -> Void) {}
 
-    func handleSendTransactionRequest(request _: WalletConnectSign.Request, confirm _: @escaping (String) -> Void, cancel _: @escaping () -> Void) {}
+    func handleSendTransactionRequest(request _: WalletConnectSign.Request, confirm _: @escaping (String) -> Void, cancel: @escaping () -> Void) {
+        cancel()
+    }
+    
+    func handleSignTypedDataV4(request: Request, confirm: @escaping (String) -> Void, cancel: @escaping () -> Void) {
+        cancel()
+    }
 }

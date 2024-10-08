@@ -21,6 +21,7 @@ protocol WalletConnectChildHandlerProtocol {
     func approveSessionNamespaces(sessionProposal: Session.Proposal) throws -> [String: SessionNamespace]
     func handlePersonalSignRequest(request: WalletConnectSign.Request, confirm: @escaping (String) -> Void, cancel: @escaping () -> Void)
     func handleSendTransactionRequest(request: WalletConnectSign.Request, confirm: @escaping (String) -> Void, cancel: @escaping () -> Void)
+    func handleSignTypedDataV4(request: WalletConnectSign.Request, confirm: @escaping (String) -> Void, cancel: @escaping () -> Void)
 }
 
 extension WalletConnectChildHandlerProtocol {

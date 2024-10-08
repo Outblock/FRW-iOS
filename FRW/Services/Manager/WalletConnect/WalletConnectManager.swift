@@ -561,6 +561,9 @@ extension WalletConnectManager {
             }
         case WalletConnectEVMMethod.personalSign.rawValue:
             log.info("[EVM] sign person")
+            Task {
+                await TrustJSMessageHandler.checkCoa()
+            }
             handler.handlePersonalSignRequest(request: sessionRequest) { signStr in
                 Task {
                     do {
@@ -575,7 +578,6 @@ extension WalletConnectManager {
                 self.rejectRequest(request: sessionRequest)
             }
         case WalletConnectEVMMethod.sendTransaction.rawValue:
-            // TODO: #six add mothed
             log.info("[EVM] sendTransaction")
             handler.handleSendTransactionRequest(request: sessionRequest) { signStr in
                 Task {
@@ -590,6 +592,12 @@ extension WalletConnectManager {
                 log.error("[EVM] Request cancel: [sendTransaction]")
                 self.rejectRequest(request: sessionRequest)
             }
+        case WalletConnectEVMMethod.signTypedData.rawValue:
+            handleSignTypedData(sessionRequest)
+        case WalletConnectEVMMethod.signTypedDataV3.rawValue:
+            handleSignTypedData(sessionRequest)
+        case WalletConnectEVMMethod.signTypedDataV4.rawValue:
+            handleSignTypedData(sessionRequest)
         default:
             rejectRequest(request: sessionRequest, reason: "unspport method")
         }
@@ -621,6 +629,22 @@ extension WalletConnectManager {
             }
             print("[WALLET] Respond Error: [addDeviceInfo] \(error.localizedDescription)")
             HUD.error(title: "process_failed_text".localized)
+        }
+    }
+    
+    private func handleSignTypedData(_ sessionRequest: WalletConnectSign.Request) {
+        handler.handleSignTypedDataV4(request: sessionRequest) { signStr in
+            Task {
+                do {
+                    try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable(signStr)))
+                } catch {
+                    self.rejectRequest(request: sessionRequest)
+                    log.error("[EVM] Request Error: [signTypedDataV4] \(error)")
+                }
+            }
+        } cancel: {
+            log.error("[EVM] Request cancel: [signTypedDataV4]")
+            self.rejectRequest(request: sessionRequest)
         }
     }
 }
