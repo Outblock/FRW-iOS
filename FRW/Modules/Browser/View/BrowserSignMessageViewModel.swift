@@ -17,10 +17,10 @@ class BrowserSignMessageViewModel: ObservableObject {
     @Published var logo: String?
     @Published var cadence: String
     @Published var isScriptShowing: Bool = false
-    var needConvertMessage: Bool = true
+    var useRawMessage: Bool = false
 
     var message: String {
-        if !needConvertMessage {
+        if useRawMessage {
             return cadence
         }
         let data = Data(hex: cadence)
@@ -29,12 +29,13 @@ class BrowserSignMessageViewModel: ObservableObject {
 
     private var callback: BrowserSignMessageViewModel.Callback?
 
-    init(title: String, url: String, logo: String?, cadence: String, callback: @escaping BrowserSignMessageViewModel.Callback) {
+    init(title: String, url: String, logo: String?, cadence: String, useRawMessage: Bool = false, callback: @escaping BrowserSignMessageViewModel.Callback) {
         self.title = title
         urlString = url
         self.logo = logo
         self.cadence = cadence
         self.callback = callback
+        self.useRawMessage = useRawMessage
     }
 
     func didChooseAction(_ result: Bool) {

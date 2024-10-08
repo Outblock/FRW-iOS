@@ -250,7 +250,8 @@ extension TrustJSMessageHandler {
         let vm = BrowserSignMessageViewModel(title: title,
                                              url: url?.absoluteString ?? "unknown",
                                              logo: url?.absoluteString.toFavIcon()?.absoluteString,
-                                             cadence: raw) { [weak self] result in
+                                             cadence: raw,
+                                             useRawMessage: true) { [weak self] result in
             guard let self = self else {
                 return
             }
@@ -262,8 +263,8 @@ extension TrustJSMessageHandler {
                 }
 
                 let address = Flow.Address(hex: addrStr)
-                guard let hashedData = Utilities.hashPersonalMessage(data) else { return }
-                let joinData = Flow.DomainTag.user.normalize + hashedData
+//                guard let hashedData = Utilities.hashPersonalMessage(data) else { return }
+                let joinData = Flow.DomainTag.user.normalize + data
                 guard let sig = signWithMessage(data: joinData) else {
                     HUD.error(title: "sign failed")
                     return
