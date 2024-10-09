@@ -1292,7 +1292,7 @@ extension FlowNetwork {
     }
     
     static func coaLink() async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.evm?.checkCoaLink?.toFunc() ?? ""
+        let originCadence = CadenceManager.shared.current.evm?.coaLink?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [])
     }
