@@ -231,6 +231,8 @@ extension Color {
 
             static let bg2 = Color("BG.2")
             static let bg3 = Color("BG.3")
+            
+            static let fill1 = Color("bg.fill1")
         }
 
         enum Line {

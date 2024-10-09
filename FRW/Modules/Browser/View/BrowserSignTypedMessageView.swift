@@ -23,13 +23,13 @@ struct BrowserSignTypedMessageView: View {
             VStack {
                 ScrollView(showsIndicators: false) {
                     VStack {
-                        ForEach(0..<viewModel.sections.count, id: \.self) { index in
+                        ForEach(0..<viewModel.list.count, id: \.self) { index in
                             if index > 0 {
                                 Divider()
                                     .foregroundStyle(Color.Theme.Line.line)
                                     .padding(.vertical, 16)
                             }
-                            BrowserSignTypedMessageView.Section(section: viewModel.sections[index])
+                            BrowserSignTypedMessageView.Card(model: viewModel.list[index])
                         }
                     }
                     .padding(16)
@@ -93,41 +93,134 @@ struct BrowserSignTypedMessageView: View {
 
 extension BrowserSignTypedMessageView {
     
-    struct Section: View {
-        var section: BrowserSignTypedMessageViewModel.Section
+    struct Card: View {
+        
+        var model: JSONValue
         
         var body: some View {
             VStack {
-                HStack {
-                    Text(section.showTitle())
-                        .font(.inter(size: 14, weight: .semibold))
-                        .lineLimit(1)
-                        .foregroundStyle(Color.Theme.Text.black8)
-                    Spacer()
-                    Text(section.content ?? "")
-                        .font(.inter(size: 14, weight: .semibold))
-                        .lineLimit(1)
-                        .foregroundStyle(Color.Theme.Text.black)
-                        .frame(minWidth: 0, maxWidth: 120, alignment: .trailing)
-                }
-                ForEach(section.items, id: \.self.tag) { item in
-                    HStack {
-                        Text(item.tag.uppercasedFirstLetter())
-                            .font(.inter(size: 14, weight: .semibold))
-                            .lineLimit(1)
-                            .foregroundStyle(Color.Theme.Text.black3)
-                        Spacer()
-                        Text(item.content)
-                            .font(.inter(size: 14, weight: .semibold))
-                            .truncationMode(.middle)
-                            .lineLimit(1)
-                            .foregroundStyle(Color.Theme.Text.black)
-                            .frame(minWidth: 0, maxWidth: 120, alignment: .trailing)
-                            
+                titleView
+                contentView()
+            }
+        }
+        
+        var titleView: some View {
+            HStack {
+                Text(model.title.uppercasedFirstLetter())
+                    .font(.inter(size: 14, weight: .semibold))
+                    .lineLimit(1)
+                    .foregroundStyle(Color.Theme.Text.black8)
+                Spacer()
+                Text(model.content)
+                    .font(.inter(size: 14, weight: .semibold))
+                    .lineLimit(1)
+                    .foregroundStyle(Color.Theme.Text.black)
+            }
+        }
+        
+        func contentView() -> some View {
+            VStack {
+                if let subValue = model.subValue {
+                    if case .object(let dictionary) = subValue {
+                        let keys = Array(dictionary.keys)
+                        ForEach(0..<keys.count, id: \.self) { index in
+                            let key = keys[index]
+                            let value = dictionary[key]?.toString() ?? ""
+                            HStack(spacing: 12) {
+                                Text(key.uppercasedFirstLetter())
+                                    .font(.inter(size: 14, weight: .semibold))
+                                    .lineLimit(1)
+                                    .foregroundStyle(Color.Theme.Text.black3)
+                                Spacer()
+                                Text(value)
+                                    .font(.inter(size: 14, weight: .semibold))
+                                    .truncationMode(.middle)
+                                    .lineLimit(1)
+                                    .foregroundStyle(Color.Theme.Text.black)
+                            }
+                            .frame(height: 20)
+                        }
                     }
-                    .frame(height: 20)
+                    if case .array(let array) = subValue {
+                        VStack {
+                            ForEach(0..<array.count, id: \.self) { index in
+                                let value = array[index]
+                                innerCard(item: value)
+                            }
+                        }
+                    }
                 }
             }
+        }
+        
+        func innerCard(item: JSONValue) -> some View {
+            VStack {
+                if case .object(let dictionary) = item {
+                    let keys = Array(dictionary.keys)
+                    ForEach(0..<keys.count, id: \.self) { index in
+                        let key = keys[index]
+                        let value = dictionary[key]?.toString() ?? ""
+                        HStack(spacing: 12) {
+                            Text(key.uppercasedFirstLetter())
+                                .font(.inter(size: 14, weight: .semibold))
+                                .lineLimit(1)
+                                .foregroundStyle(Color.Theme.Text.black3)
+                            Spacer()
+                            Text(value)
+                                .font(.inter(size: 14, weight: .semibold))
+                                .truncationMode(.middle)
+                                .lineLimit(1)
+                                .foregroundStyle(Color.Theme.Text.black)
+                                .frame(minWidth: 0, maxWidth: 120, alignment: .trailing)
+                                
+                        }
+                        .frame(height: 20)
+                    }
+                }
+            }
+            .padding(16)
+            .background(.Theme.Background.fill1)
+            .cornerRadius(8)
+        }
+    }
+}
+
+private extension JSONValue {
+    var title: String {
+        switch self {
+        case .object(let dictionary):
+            return dictionary.keys.first ?? ""
+        default:
+            return ""
+        }
+    }
+    
+    var content: String {
+        switch self {
+        case .object(let dictionary):
+            let subtitle = dictionary[title]
+            switch subtitle {
+            case .object(_):
+                return ""
+            case .array(let model):
+                if case .object(let dictionary) = model.first {
+                    return ""
+                }
+                return subtitle?.toString() ?? ""
+            default:
+                return subtitle?.toString() ?? ""
+            }
+        default:
+            return ""
+        }
+    }
+    
+    var subValue: JSONValue? {
+        switch self {
+        case .object(let dictionary):
+            return dictionary.values.first
+        default:
+            return nil
         }
     }
 }

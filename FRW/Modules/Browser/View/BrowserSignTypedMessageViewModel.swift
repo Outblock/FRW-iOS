@@ -18,6 +18,8 @@ class BrowserSignTypedMessageViewModel: ObservableObject {
     
     @Published var sections: [BrowserSignTypedMessageViewModel.Section] = []
     
+    @Published var list: [JSONValue] = []
+    
     private var callback: BrowserSignTypedMessageViewModel.Callback?
     
     init(title: String, urlString: String, logo: String? = nil, rawString: String, callback: BrowserSignTypedMessageViewModel.Callback? = nil) {
@@ -44,6 +46,27 @@ class BrowserSignTypedMessageViewModel: ObservableObject {
             return
         }
         var tmpSection: [Section] = []
+        
+        let result = JSONValue.parse(jsonString: rawString)
+        switch result {
+        case .object(let dictionary):
+            for (key, value) in dictionary {
+                if key.lowercased() == "primaryType".lowercased() {
+                    list.insert(JSONValue.object( ["Message": JSONValue.object([key: value])]), at: 0)
+                }else if key.lowercased() == "message" {
+                    if case .object(let mDic) = value {
+                        for (mKey, mValue) in mDic {
+                            list.append(JSONValue.object([mKey : mValue]))
+                        }
+                    }
+                }
+            }
+        default:
+            break
+        
+        }
+        log.debug(result ?? "")
+        
         for (key, value) in message {
             if let item = value as? [String: String] {
                 var items: [Section.Item] = []
