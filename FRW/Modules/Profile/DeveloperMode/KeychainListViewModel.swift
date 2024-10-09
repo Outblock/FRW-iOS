@@ -14,6 +14,7 @@ class KeychainListViewModel: ObservableObject {
     @Published var localList: [[String: Any]] = []
     @Published var remoteList: [[String: Any]] = []
     @Published var seList: [[String: String]] = []
+    @Published var multiICloudBackUpList: [[String: String]]  = []
 
     private let remoteKeychain: Keychain
     private let localKeychain: Keychain
@@ -35,8 +36,8 @@ class KeychainListViewModel: ObservableObject {
     }
 
     private func fecth() {
-        
         remoteList = remoteKeychain.allItems()
+        loadiCloudBackup()
         if let item = remoteList.last {
             log.info(item)
         }
@@ -58,9 +59,18 @@ class KeychainListViewModel: ObservableObject {
         }catch {
             log.error("[kc] fetch failed. \(error)")
         }
-        
-        print(remoteList)
     }
+    
+    func loadiCloudBackup() {
+        Task {
+            if let list = try? await MultiBackupManager.shared.getCloudDriveItems(from: .icloud) {
+                DispatchQueue.main.async {
+                    self.multiICloudBackUpList = list.map{ [$0.userId : $0.publicKey] }
+                }
+            }
+        }
+    }
+    
 
     func getKey(item: [String: Any]) -> String {
         guard let key = item["key"] as? String else {
