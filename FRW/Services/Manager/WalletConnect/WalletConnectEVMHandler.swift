@@ -66,7 +66,6 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         if let chains = sessionProposal.optionalNamespaces?[nameTag]?.chains {
             reference = chains.filter { $0.namespace == nameTag && suppportEVMChainID.contains($0.reference) }.compactMap { $0.reference }.sorted().last
         }
-        // TODO: if not the list allowed, HOW
         switch reference {
         case "646":
             return .previewnet
@@ -87,19 +86,10 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         let supportedMethods = WalletConnectEVMMethod.allCases.map(\.rawValue)
         let supportedEvents = Set(sessionProposal.requiredNamespaces.flatMap { $0.value.events } + (sessionProposal.optionalNamespaces?.flatMap { $0.value.events } ?? []))
 
-        let supportedRequiredChains = sessionProposal.requiredNamespaces[nameTag]?.chains ?? []
-        let supportedOptionalChains = sessionProposal.optionalNamespaces?[nameTag]?.chains ?? []
         let supportedChains = supportNetwork.compactMap(\.evmChainIDString).compactMap { Blockchain(namespace: nameTag, reference: $0) }
 
         let supportedAccounts = Array(supportedChains).map { WalletConnectSign.Account(blockchain: $0, address: account)! }
 
-        // TODO: #six
-        /* Use only supported values for production. I.e:
-         let supportedMethods = ["eth_signTransaction", "personal_sign", "eth_signTypedData", "eth_sendTransaction", "eth_sign"]
-         let supportedEvents = ["accountsChanged", "chainChanged"]
-         let supportedChains = [Blockchain("eip155:1")!, Blockchain("eip155:137")!]
-         let supportedAccounts = [Account(blockchain: Blockchain("eip155:1")!, address: ETHSigner.address)!, Account(blockchain: Blockchain("eip155:137")!, address: ETHSigner.address)!]
-         */
         let sessionNamespaces: [String: SessionNamespace] = try AutoNamespaces.build(
             sessionProposal: sessionProposal,
             chains: Array(supportedChains),
@@ -211,30 +201,46 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         
         do {
             let list = try request.params.get([String].self)
-            guard let result = list.last, let data = message(sessionRequest: request) else {
+            let evmAddress = EVMAccountManager.shared.accounts.first?.showAddress.lowercased()
+            
+            if list.count != 2 {
                 cancel()
                 return
             }
             
-            let vm = BrowserSignTypedMessageViewModel(title: title, urlString: url, logo: logo, rawString: result) { result in
+            var dataStr: String = ""
+            if list[0].lowercased() == evmAddress {
+                dataStr = list[1]
+            }else {
+                dataStr = list[0]
+            }
+            
+            let vm = BrowserSignTypedMessageViewModel(title: title, urlString: url, logo: logo, rawString: dataStr) { result in
 
                 if result {
-                    guard let addrStr = WalletManager.shared.getPrimaryWalletAddress() else {
-                        HUD.error(title: "invalid_address".localized)
-                        return
+                    do {
+                        guard let addrStr = WalletManager.shared.getPrimaryWalletAddress() else {
+                            HUD.error(title: "invalid_address".localized)
+                            return
+                        }
+                        let address = Flow.Address(hex: addrStr)
+                        let eip712Payload = try EIP712Parser.parse(dataStr)
+                        let data = try eip712Payload.signHash()
+                        let joinData = Flow.DomainTag.user.normalize + data
+                        guard let sig = signWithMessage(data: joinData) else {
+                            HUD.error(title: "sign failed")
+                            return
+                        }
+                        let keyIndex = BigUInt(WalletManager.shared.keyIndex)
+                        let proof = COAOwnershipProof(keyIninces: [keyIndex], address: address.data, capabilityPath: "evm", signatures: [sig])
+                        guard let encoded = RLP.encode(proof.rlpList) else {
+                            return
+                        }
+                         confirm(encoded.hexString.addHexPrefix())
+                    }catch {
+                        cancel()
                     }
-                    let address = Flow.Address(hex: addrStr)
-                    let joinData = Flow.DomainTag.user.normalize + data
-                    guard let sig = signWithMessage(data: joinData) else {
-                        HUD.error(title: "sign failed")
-                        return
-                    }
-                    let keyIndex = BigUInt(WalletManager.shared.keyIndex)
-                    let proof = COAOwnershipProof(keyIninces: [keyIndex], address: address.data, capabilityPath: "evm", signatures: [sig])
-                    guard let encoded = RLP.encode(proof.rlpList) else {
-                        return
-                    }
-                    confirm(encoded.hexString.addHexPrefix())
+                    
                 } else {
                     cancel()
                 }

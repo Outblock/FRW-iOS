@@ -561,9 +561,7 @@ extension WalletConnectManager {
             }
         case WalletConnectEVMMethod.personalSign.rawValue:
             log.info("[EVM] sign person")
-            Task {
-                await TrustJSMessageHandler.checkCoa()
-            }
+            
             handler.handlePersonalSignRequest(request: sessionRequest) { signStr in
                 Task {
                     do {
@@ -656,19 +654,6 @@ extension WalletConnectManager {
         guard let account = WalletManager.shared.getPrimaryWalletAddress() else {
             return
         }
-
-//        var sessionNamespaces = [String: SessionNamespace]()
-//        proposal.requiredNamespaces.forEach {
-//            let caip2Namespace = $0.key
-//            let proposalNamespace = $0.value
-//            if let chains = proposalNamespace.chains {
-//                let accounts = Set(chains.compactMap { WalletConnectSign.Account($0.absoluteString + ":\(account)") })
-//                let sessionNamespace = SessionNamespace(accounts: accounts, methods: proposalNamespace.methods, events: proposalNamespace.events)
-//                sessionNamespaces[caip2Namespace] = sessionNamespace
-//            }
-//        }
-//
-//        let namespaces = sessionNamespaces
 
         Task {
             do {
