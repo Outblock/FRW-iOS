@@ -13,7 +13,7 @@ func serviceDefinition(address: String, keyId: Int, type: FCLServiceType) -> Ser
                           type: type,
                           method: .walletConnect,
                           endpoint: nil,
-                          uid: "https://link.lilico.app/wc",
+                          uid: "https://frw-link.lilico.app/wc",
                           id: nil,
                           identity: Identity(address: address, keyId: keyId),
                           provider: nil, params: nil, data: nil)
@@ -27,8 +27,8 @@ func serviceDefinition(address: String, keyId: Int, type: FCLServiceType) -> Ser
                                     description: "Flow Wallet is built from the ground up for Flow Blockchain!",
                                     color: "#41CC5D",
                                     supportEmail: "wallet@flow.com",
-                                    website: "https://link.lilico.app/wc",
-                                    icon: "https://lilico.app/fcw-logo.png")
+                                    website: "https://frw-link.lilico.app/wc",
+                                    icon: "https://lilico.app/frw-logo.png")
     }
     service.endpoint = FCLWalletConnectMethod(type: type)?.rawValue
     return service
@@ -64,7 +64,7 @@ func accountProofServiceDefinition(address: String, keyId: Int, nonce: String, s
                           type: FCLServiceType.accountProof,
                           method: .walletConnect,
                           endpoint: nil,
-                          uid: "https://link.lilico.app/wc",
+                          uid: "https://frw-link.lilico.app/wc",
                           id: nil,
                           identity: nil,
                           provider: nil,

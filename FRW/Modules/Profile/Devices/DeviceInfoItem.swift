@@ -28,5 +28,5 @@ struct DeviceInfoItem: View {
 }
 
 #Preview {
-    DeviceInfoItem(title: "application_tag".localized, detail: "Flow Core")
+    DeviceInfoItem(title: "application_tag".localized, detail: "Flow Wallet")
 }

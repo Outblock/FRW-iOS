@@ -98,8 +98,8 @@ class FCLScripts {
                   "description": "Flow Wallet is built from the ground up for Flow Blockchain!",
                   "color": "#41CC5D",
                   "supportEmail": "wallet@flow.com",
-                  "website": "https://link.lilico.app/wc",
-                  "icon": "https://lilico.app/fcw-logo.png"
+                  "website": "https://frw-link.lilico.app/wc",
+                  "icon": "https://lilico.app/frw-logo.png"
                 }
               },
               $PRE_AUTHZ_REPLACEMENT

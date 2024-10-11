@@ -48,21 +48,11 @@ class WalletConnectManager: ObservableObject {
 
     private var syncAccountFlag: Bool = false
 
-    // TODO: rebranding @Hao @six redirect
-//    let metadata = AppMetadata(
-//        name: "Flow Core",
-//        description: "Digital wallet created for everyone.",
-//        url: "https://fcw-link.lilico.app",
-//        icons: ["https://fcw-link.lilico.app/logo.png"],
-//        redirect: AppMetadata.Redirect(
-//            native: "frw://",
-//            universal: "https://fcw-link.lilico.app"
-//        )?
-//    )
+
 
     init() {
-        let redirect = try! AppMetadata.Redirect(native: "frw://", universal: "https://fcw-link.lilico.app")
-        let metadata = AppMetadata(name: "Flow Core", description: "Digital wallet created for everyone.", url: "https://fcw-link.lilico.app", icons: ["https://fcw-link.lilico.app/logo.png"], redirect: redirect)
+        let redirect = try! AppMetadata.Redirect(native: "frw://", universal: "https://frw-link.lilico.app")
+        let metadata = AppMetadata(name: "Flow Wallet", description: "Digital wallet created for everyone.", url: "https://frw-link.lilico.app", icons: ["https://frw-link.lilico.app/logo.png"], redirect: redirect)
         Networking.configure(groupIdentifier: AppGroupName, projectId: LocalEnvManager.shared.walletConnectProjectID, socketFactory: SocketFactory())
         Pair.configure(metadata: metadata)
         Sign.configure(crypto: DefaultCryptoProvider())
