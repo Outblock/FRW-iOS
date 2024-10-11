@@ -49,28 +49,21 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
 
                         Color.clear
                             .frame(height: 20)
+
                         VStack(spacing: 8) {
-                            ZStack {
-                                VStack(spacing: 8) {
-                                    MoveUserView(contact: viewModel.fromContact, isEVM: viewModel.fromIsEVM) {}
-                                    MoveUserView(contact: viewModel.toContact, isEVM: viewModel.toIsEVM) {}
-                                }
+                            ContactRelationView(fromContact: viewModel.fromContact, toContact: viewModel.toContact)
 
-                                Image("icon_move_exchange")
-                                    .resizable()
-                                    .frame(width: 32, height: 32)
-                            }
-
-                            MoveTokenView.AccountView { _ in
+                            MoveTokenView.AccountView(isFree: viewModel.fromContact.walletType == viewModel.toContact.walletType) { _ in
                             }
                         }
+                        .padding(.bottom, 20)
                     }
                     .padding(18)
                 }
                 Spacer()
             }
             .hideKeyboardWhenTappedAround()
-            .backgroundFill(Color.Theme.Background.grey)
+            .backgroundFill(Color.Theme.BG.bg1)
             .cornerRadius([.topLeading, .topTrailing], 16)
             .environmentObject(viewModel)
             .edgesIgnoringSafeArea(.bottom)
@@ -169,6 +162,7 @@ extension MoveTokenView {
         @EnvironmentObject private var viewModel: MoveTokenViewModel
 
         @FocusState private var isAmountFocused: Bool
+        var isFree = false
         var textDidChanged: (String) -> Void
 
         var body: some View {
@@ -209,9 +203,13 @@ extension MoveTokenView {
                             .cornerRadius(16)
                     }
                 }
+
+                Divider()
+                    .foregroundStyle(Color.Theme.Line.stroke)
+                MoveFeeView(isFree: isFree)
             }
             .padding(16)
-            .backgroundFill(Color.Theme.Background.white)
+            .backgroundFill(Color.Theme.BG.bg3)
             .cornerRadius(16)
         }
 
@@ -242,46 +240,6 @@ extension MoveTokenView {
                 .background(Color.Theme.Line.line)
                 .cornerRadius(16)
             })
-            /*
-             Menu {
-                 ForEach(WalletManager.shared.activatedCoins) { token in
-                     Button {
-                         viewModel.changeTokenModelAction(token: token)
-                     } label: {
-                         KFImage.url(token.icon)
-                             .placeholder({
-                                 Image("placeholder")
-                                     .resizable()
-                             })
-                             .resizable()
-                             .aspectRatio(contentMode: .fill)
-                             .frame(width: 32, height: 32)
-                             .clipShape(Circle())
-                         Text(token.name)
-                     }
-                 }
-             } label: {
-                 HStack(spacing: 4) {
-                     KFImage.url(viewModel.token.icon)
-                         .placeholder({
-                             Image("placeholder")
-                                 .resizable()
-                         })
-                         .resizable()
-                         .aspectRatio(contentMode: .fill)
-                         .frame(width: 32, height: 32)
-                         .clipShape(Circle())
-                     Text(viewModel.token.symbol?.uppercased() ?? "?")
-                         .font(.inter(size: 14, weight: .medium))
-                         .foregroundStyle(Color.LL.Neutrals.text2)
-                     Image("icon-arrow-bottom")
-                         .foregroundColor(.LL.Neutrals.neutrals3)
-                 }
-                 .padding(8)
-                 .background(Color.Theme.Line.line)
-                 .cornerRadius(16)
-             }
-             */
         }
     }
 }

@@ -233,10 +233,19 @@ extension Color {
             static let bg3 = Color("BG.3")
             
             static let fill1 = Color("bg.fill1")
+            
+            
         }
+        
+        enum BG {
+            static let bg1 = Color("bg1")
+            static let bg3 = Color("bg3")
+        }
+        
 
         enum Line {
             static let line = Color("line.black")
+            static let stroke = Color("line.stoke")
         }
 
         enum Text {
@@ -244,6 +253,7 @@ extension Color {
             static let black1 = Color("text.black.1")
             static let black3 = Color("text.black.3")
             static let black8 = Color("text.black.8")
+            static let black6 = Color("text.black.6")
             static let white9 = Color("text.white.9")
         }
     }

@@ -60,29 +60,22 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
 
     @ViewBuilder
     func accountView() -> some View {
-        VStack {
+        VStack(spacing: 16) {
             HStack {
                 titleView(title: "account".localized)
                 Spacer()
             }
-            HStack(spacing: 4) {
-                accountInfo(isFirst: true)
-                    .frame(maxWidth: .infinity)
-                Image("evm_move_arrow_right")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 24, height: 24)
-                accountInfo(isFirst: false)
-                    .frame(maxWidth: .infinity)
-                    .onTapGesture {
-                        let model = MoveAccountsViewModel(selected: viewModel.toContact.address ?? "") { contact in
-                            if let contact = contact {
-                                viewModel.updateToContact(contact)
-                            }
-                        }
-                        Router.route(to: RouteMap.Wallet.chooseChild(model))
+            
+            ContactRelationView(fromContact: viewModel.fromContact, toContact: viewModel.toContact,clickable: .to, clickTo:  { contact in
+                let model = MoveAccountsViewModel(selected: viewModel.toContact.address ?? "") { contact in
+                    if let contact = contact {
+                        viewModel.updateToContact(contact)
                     }
-            }
+                }
+                Router.route(to: RouteMap.Wallet.chooseChild(model))
+            })
+            
+            MoveFeeView(isFree: viewModel.fromContact.walletType == viewModel.toContact.walletType)
         }
     }
 

@@ -187,7 +187,10 @@ class ChildAccountManager: ObservableObject {
         let network = LocalUserDefaults.shared.flowNetwork
 
         log.debug("start refresh")
-        isLoading = true
+        DispatchQueue.main.async {
+            self.isLoading = true
+        }
+        
         Task {
             do {
                 let list = try await FlowNetwork.queryChildAccountMeta(address)
