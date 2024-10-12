@@ -65,7 +65,7 @@ class WalletNewsHandler: ObservableObject {
         accessQueue.sync { [weak self] in
             guard let self else { return }
             for (index, new) in list.enumerated() {
-                if new.flag == .walletconnect {
+                if new.flag == .walletconnect, let _ = list[safe: index] {
                     list.remove(at: index)
                 }
             }
