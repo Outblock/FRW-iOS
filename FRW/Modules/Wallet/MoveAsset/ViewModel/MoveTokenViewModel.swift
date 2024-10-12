@@ -137,6 +137,10 @@ extension MoveTokenViewModel {
     var balanceAsCurrentCurrencyString: String {
         return inputDollarNum.formatCurrencyString(considerCustomCurrency: true)
     }
+    
+    var showFee: Bool {
+        !(fromContact.walletType == .link || toContact.walletType == .link)
+    }
 }
 
 extension MoveTokenViewModel {

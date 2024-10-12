@@ -76,6 +76,7 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
             })
             
             MoveFeeView(isFree: viewModel.fromContact.walletType == viewModel.toContact.walletType)
+                .visibility(viewModel.showFee ? .visible : .gone)
         }
     }
 

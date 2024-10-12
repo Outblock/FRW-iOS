@@ -206,7 +206,9 @@ extension MoveTokenView {
 
                 Divider()
                     .foregroundStyle(Color.Theme.Line.stroke)
+                    .visibility(viewModel.showFee ? .visible : .gone)
                 MoveFeeView(isFree: isFree)
+                    .visibility(viewModel.showFee ? .visible : .gone)
             }
             .padding(16)
             .backgroundFill(Color.Theme.BG.bg3)

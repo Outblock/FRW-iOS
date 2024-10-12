@@ -21,6 +21,7 @@ class MoveNFTsViewModel: ObservableObject {
     ]
     @Published var isMock = true
     @Published var showHint = false
+    @Published var showFee = false
 
     @Published var buttonState: VPrimaryButtonState = .disabled
 
@@ -57,10 +58,16 @@ class MoveNFTsViewModel: ObservableObject {
         } else if let account = ChildAccountManager.shared.childAccounts.first {
             toContact = Contact(address: account.showAddress, avatar: account.icon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName, walletType: .link)
         }
+        
+        updateFee()
     }
 
+    private func updateFee() {
+        showFee =  !(fromContact.walletType == .link || toContact.walletType == .link)
+    }
     func updateToContact(_ contact: Contact) {
         toContact = contact
+        updateFee()
     }
 
     func moveAction() {
