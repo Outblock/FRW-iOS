@@ -32,7 +32,7 @@ struct WalletSendButtonView: View {
                         lineWidth: 4
                     )
                 Circle()
-                    .trim(from: tap ? 0.001 : 1, to: 1)
+                    .trim(from: press ? 0.001 : 1, to: 1)
                     .stroke(
                         Color.LL.outline,
                         style: StrokeStyle(
@@ -71,12 +71,26 @@ struct WalletSendButtonView: View {
         .frame(maxWidth: .infinity)
         .background(allowEnable ? activeColor : Color.LL.Neutrals.neutrals6)
         .cornerRadius(12)
-        .scaleEffect(tap ? 0.95 : 1)
-        .gesture(
-            LongPressGesture().updating($tap) { currentState, gestureState, _ in
-                gestureState = currentState
-            }
-            .onEnded { _ in
+        .scaleEffect(press ? 0.95 : 1)
+//        .gesture(
+//            LongPressGesture(minimumDuration: 0.1)
+//                .updating($tap) { currentState, gestureState, _ in
+//                    gestureState = currentState
+//                }
+//                .onEnded { _ in
+//                    self.press.toggle()
+//                    self.isLoading = true
+//
+//                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+//
+//                    action()
+//                }
+//        )
+        .onLongPressGesture(minimumDuration: 0.1, perform: {
+            print("Long pressed!")
+        }, onPressingChanged: { inProgress in
+            self.press = inProgress
+            if !inProgress {
                 self.press.toggle()
                 self.isLoading = true
 
@@ -84,8 +98,9 @@ struct WalletSendButtonView: View {
 
                 action()
             }
-        )
-        .animation(.spring(response: 0.5, dampingFraction: 0.5, blendDuration: 0), value: tap)
+            log.debug("Long pressed \(inProgress)")
+        })
+        .animation(.spring(response: 0.5, dampingFraction: 0.5, blendDuration: 0), value: press)
         .disabled(!allowEnable)
         //            .buttonStyle(ScaleButtonStyle())
     }
