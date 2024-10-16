@@ -5,8 +5,8 @@
 //  Created by Selina on 25/7/2022.
 //
 
-import UIKit
 import SwiftUI
+import UIKit
 
 protocol RouterTarget {
     func onPresent(navi: UINavigationController)
@@ -22,7 +22,7 @@ extension Router {
             }
         }
     }
-    
+
     static func pop(animated: Bool = true) {
         safeMainThreadCall {
             if let navi = topNavigationController() {
@@ -36,7 +36,7 @@ extension Router {
             }
         }
     }
-    
+
     static func popToRoot(animated: Bool = true) {
         safeMainThreadCall {
             if let navi = topNavigationController() {
@@ -44,8 +44,8 @@ extension Router {
             }
         }
     }
-    
-    static func dismiss(animated: Bool = true, completion: (() -> ())? = nil) {
+
+    static func dismiss(animated: Bool = true, completion: (() -> Void)? = nil) {
         safeMainThreadCall {
             topPresentedController().presentingViewController?.dismiss(animated: animated, completion: completion)
         }
@@ -54,26 +54,26 @@ extension Router {
 
 // MARK: - Private
 
-class Router {
+enum Router {
     static var coordinator = (UIApplication.shared.delegate as! AppDelegate).coordinator
-    
+
     static func topPresentedController() -> UIViewController {
         var vc = coordinator.window.rootViewController
         while vc?.presentedViewController != nil {
             vc = vc?.presentedViewController
         }
-        
+
         return vc!
     }
-    
+
     static func topNavigationController() -> UINavigationController? {
         if let navi = topPresentedController() as? UINavigationController {
             return navi
         }
-        
+
         return coordinator.rootNavi
     }
-    
+
     private static func safeMainThreadCall(_ call: @escaping () -> Void) {
         if Thread.isMainThread {
             call()

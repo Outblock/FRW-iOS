@@ -5,58 +5,43 @@
 //  Created by cat on 2022/6/22.
 //
 
-import Foundation
 import Flow
+import Foundation
 
 final class NFTCollectionStateManager {
-    
     static let share = NFTCollectionStateManager()
-    
-    private init() {
-        
-    }
+
+    private init() {}
 
     private var tokenStateList: [NftCollectionState] = []
 
     func fetch() async {
         let list = NFTCollectionConfig.share.config
         guard let address = WalletManager.shared.walletInfo?.currentNetworkWalletModel?.getAddress,
-                !address.isEmpty else {
+              !address.isEmpty
+        else {
             return
         }
-        
+
         do {
-            var tempList = list
-            var finalList: [Bool] = []
-            repeat {
-                let pendingRequestList = Array(tempList.prefix(60))
-                tempList = Array(tempList.dropFirst(60))
-                let isEnableList = try await FlowNetwork.checkCollectionEnable(address: Flow.Address(hex: address), list: pendingRequestList);
-                finalList.append(contentsOf: isEnableList)
-            } while (tempList.count > 0)
-            
-            guard finalList.count == list.count else {
-                debugPrint("NFTCollectionStateManager: finalList.count != list.count")
-                return
-            }
-            
+            let result: [String: Bool] = try await FlowNetwork.checkCollectionEnable(address: Flow.Address(hex: address))
+
             for (index, collection) in list.enumerated() {
-                let isEnable = finalList[index]
-                if let oldIndex = tokenStateList.firstIndex(where: { $0.address == collection.address}) {
+                let key = "A." + collection.address.stripHexPrefix() + "." + collection.contractName
+                let isEnable = result[key] ?? false
+                if let oldIndex = tokenStateList.firstIndex(where: { $0.address.lowercased() == collection.address.lowercased() && $0.name == collection.contractName }) {
                     tokenStateList.remove(at: oldIndex)
                 }
-                tokenStateList.append(NftCollectionState(name: collection.name, address: collection.address, isAdded: isEnable))
+                tokenStateList.append(NftCollectionState(name: collection.contractName, address: collection.address, isAdded: isEnable))
             }
-            
-        }catch {
+        } catch {
             debugPrint("NFTCollectionStateManager: \(error)")
         }
     }
-    func isTokenAdded(_ address: String) -> Bool {
-        tokenStateList.first { $0.address == address }?.isAdded ?? false
-    }
-    
 
+    func isTokenAdded(_ address: String) -> Bool {
+        tokenStateList.first { $0.address.lowercased() == address.lowercased() }?.isAdded ?? false
+    }
 }
 
 struct NftCollectionState {

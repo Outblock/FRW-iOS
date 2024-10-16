@@ -5,28 +5,28 @@
 //  Created by cat on 2024/3/12.
 //
 
+import CoreGraphics
 import Foundation
 import QRCode
-import CoreGraphics
 import UIKit
 
 public extension QRCode.EyeShape {
-    @objc(QRCodeEyeShapeFillCircle) class FillCircle : NSObject, QRCodeEyeShapeGenerator {
+    @objc(QRCodeEyeShapeFillCircle) class FillCircle: NSObject, QRCodeEyeShapeGenerator {
         @objc public static let Name: String = "fillCircle"
         @objc public static var Title: String { "FillCircle" }
 
-        @objc static public func Create(_ settings: [String: Any]?) -> QRCodeEyeShapeGenerator {
+        @objc public static func Create(_: [String: Any]?) -> QRCodeEyeShapeGenerator {
             return QRCode.EyeShape.FillCircle()
         }
 
         // Has no configurable settings
-        @objc public func settings() -> [String : Any] { return [:] }
-        @objc public func supportsSettingValue(forKey key: String) -> Bool { false }
-        @objc public func setSettingValue(_ value: Any?, forKey key: String) -> Bool { false }
+        @objc public func settings() -> [String: Any] { return [:] }
+        @objc public func supportsSettingValue(forKey _: String) -> Bool { false }
+        @objc public func setSettingValue(_: Any?, forKey _: String) -> Bool { false }
 
         /// Make a copy of the object
         @objc public func copyShape() -> QRCodeEyeShapeGenerator {
-            return Self.Create(self.settings())
+            return Self.Create(settings())
         }
 
         public func eyePath() -> CGPath {
@@ -57,7 +57,6 @@ public extension QRCode.EyeShape {
     }
 }
 
-
 // MARK: - Pupil shape
 
 public extension QRCode.PupilShape {
@@ -67,16 +66,16 @@ public extension QRCode.PupilShape {
         /// The generator title
         @objc public static var Title: String { "FillCircle" }
 
-        @objc public static func Create(_ settings: [String : Any]?) -> QRCodePupilShapeGenerator {
+        @objc public static func Create(_: [String: Any]?) -> QRCodePupilShapeGenerator {
             FillCircle()
         }
 
         /// Make a copy of the object
         @objc public func copyShape() -> QRCodePupilShapeGenerator { FillCircle() }
 
-        @objc public func settings() -> [String : Any] { [:] }
-        @objc public func supportsSettingValue(forKey key: String) -> Bool { false }
-        @objc public func setSettingValue(_ value: Any?, forKey key: String) -> Bool { false }
+        @objc public func settings() -> [String: Any] { [:] }
+        @objc public func supportsSettingValue(forKey _: String) -> Bool { false }
+        @objc public func setSettingValue(_: Any?, forKey _: String) -> Bool { false }
 
         /// The pupil centered in the 90x90 square
         @objc public func pupilPath() -> CGPath {

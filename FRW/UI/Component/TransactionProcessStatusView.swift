@@ -10,7 +10,7 @@ import SwiftUI
 struct TransactionProcessStatusView: View {
     private let totalNum: Int = 7
     let status: TransactionManager.InternalStatus
-    
+
     var body: some View {
         VStack(spacing: 7) {
             switch status {
@@ -21,11 +21,11 @@ struct TransactionProcessStatusView: View {
             case .failed:
                 failedView
             }
-            
+
             textView
         }
     }
-    
+
     var textView: some View {
         Text(text)
             .font(.inter(size: 12, weight: .semibold))
@@ -35,10 +35,10 @@ struct TransactionProcessStatusView: View {
             .background(textBg)
             .cornerRadius(12)
     }
-    
+
     var pendingView: some View {
         HStack(spacing: 12) {
-            ForEach(0..<totalNum, id: \.self) { index in
+            ForEach(0 ..< totalNum, id: \.self) { index in
                 switch index {
                 case 0:
                     dot.foregroundColor(.LL.Primary.salmon5)
@@ -54,10 +54,10 @@ struct TransactionProcessStatusView: View {
             }
         }
     }
-    
+
     var successView: some View {
         HStack(spacing: 12) {
-            ForEach(0..<totalNum, id: \.self) { index in
+            ForEach(0 ..< totalNum, id: \.self) { index in
                 switch index {
                 case 0:
                     dot.foregroundColor(.LL.Success.success5)
@@ -71,10 +71,10 @@ struct TransactionProcessStatusView: View {
             }
         }
     }
-    
+
     var failedView: some View {
         HStack(spacing: 12) {
-            ForEach(0..<totalNum, id: \.self) { index in
+            ForEach(0 ..< totalNum, id: \.self) { index in
                 switch index {
                 case 0:
                     dot.foregroundColor(.LL.Warning.warning5)
@@ -90,24 +90,24 @@ struct TransactionProcessStatusView: View {
             }
         }
     }
-    
+
     var xmark: some View {
         Image("icon-red-xmark")
             .renderingMode(.template)
             .foregroundColor(statusMainColor)
     }
-    
+
     var dot: some View {
         Circle()
             .frame(width: 6, height: 6)
     }
-    
+
     var arrow: some View {
         Image("icon-right-arrow-1")
             .renderingMode(.template)
             .foregroundColor(statusMainColor)
     }
-    
+
     var statusMainColor: Color {
         switch status {
         case .pending:
@@ -118,7 +118,7 @@ struct TransactionProcessStatusView: View {
             return Color.LL.Warning.warning2
         }
     }
-    
+
     var text: String {
         switch status {
         case .pending:
@@ -129,7 +129,7 @@ struct TransactionProcessStatusView: View {
             return "process_failed_text".localized
         }
     }
-    
+
     var textBg: Color {
         switch status {
         case .pending:

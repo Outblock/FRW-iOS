@@ -19,8 +19,7 @@ class RestoreMultiAccountViewModel: ObservableObject {
             return
         }
         let selectedUser = items[index]
-        
-        
+
         // If it is the current user, do nothing and return directly.
         if let userId = UserManager.shared.activatedUID, let selectedUser = selectedUser.first, userId == selectedUser.userId {
             Router.popToRoot()
@@ -42,7 +41,7 @@ class RestoreMultiAccountViewModel: ObservableObject {
             }
             return
         }
-         
+
         guard selectedUser.count > 1 else {
             return
         }
@@ -51,14 +50,12 @@ class RestoreMultiAccountViewModel: ObservableObject {
                 HUD.loading()
                 try await MultiBackupManager.shared.addKeyToAccount(with: selectedUser)
                 HUD.dismissLoading()
-            }
-            catch {
+            } catch {
                 log.error("add new device failed", context: error)
                 HUD.dismissLoading()
-                //TODO: des
+                // TODO: des
                 HUD.error(title: "restore failed")
             }
         }
     }
-    
 }

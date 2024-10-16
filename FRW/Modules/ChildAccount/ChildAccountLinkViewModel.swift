@@ -5,19 +5,19 @@
 //  Created by Selina on 15/6/2023.
 //
 
-import SwiftUI
 import Combine
 import Flow
+import SwiftUI
 
 extension ChildAccountLinkViewModel {
-    typealias Callback = (Bool) -> ()
-    
+    typealias Callback = (Bool) -> Void
+
     enum State {
         case idle
         case processing
         case success
         case fail
-        
+
         var confirmBtnTitle: String {
             switch self {
             case .success:
@@ -33,21 +33,21 @@ extension ChildAccountLinkViewModel {
 
 class ChildAccountLinkViewModel: ObservableObject {
     @Published var state: ChildAccountLinkViewModel.State = .idle
-    
+
     @Published var fromTitle: String
     @Published var url: String
     @Published var logo: String
     private var callback: ChildAccountLinkViewModel.Callback?
-    
+
     private var txId: Flow.ID?
     private var cancelSets = Set<AnyCancellable>()
-    
+
     init(fromTitle: String, url: String, logo: String, callback: ChildAccountLinkViewModel.Callback? = nil) {
         self.fromTitle = fromTitle
         self.url = url
         self.logo = logo
         self.callback = callback
-        
+
         NotificationCenter.default.publisher(for: .transactionStatusDidChanged)
             .receive(on: DispatchQueue.main)
             .map { $0 }
@@ -55,7 +55,7 @@ class ChildAccountLinkViewModel: ObservableObject {
                 self?.onTransactionStatusChanged(noti)
             }.store(in: &cancelSets)
     }
-    
+
     var title: String {
         switch state {
         case .idle:
@@ -68,32 +68,32 @@ class ChildAccountLinkViewModel: ObservableObject {
             return "link_failure".localized
         }
     }
-    
+
     func linkAction() {
         callback?(true)
         callback = nil
     }
-    
+
     func onTxID(_ txId: Flow.ID) {
         self.txId = txId
         changeState(.processing)
     }
-    
+
     func onConfirmBtnAction() {
         Router.dismiss()
     }
-    
+
     private func changeState(_ newState: ChildAccountLinkViewModel.State) {
         withAnimation(.easeInOut(duration: 0.2)) {
             self.state = newState
         }
     }
-    
+
     @objc private func onTransactionStatusChanged(_ noti: Notification) {
         guard let obj = noti.object as? TransactionManager.TransactionHolder, obj.transactionId.hex == self.txId?.hex else {
             return
         }
-        
+
         switch obj.internalStatus {
         case .success:
             changeState(.success)
@@ -104,7 +104,7 @@ class ChildAccountLinkViewModel: ObservableObject {
             break
         }
     }
-    
+
     deinit {
         callback?(false)
     }

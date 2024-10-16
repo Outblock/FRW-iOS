@@ -12,11 +12,11 @@ import SwiftUI
 class RecentListCache: ObservableObject {
     static let cache = RecentListCache()
     private let recentListKey = "recent_list_cache"
-    
+
     @Published var list: [Contact] = []
-    
+
     private var cancelSet = Set<AnyCancellable>()
-    
+
     init() {
         UserManager.shared.$activatedUID
             .dropFirst()
@@ -27,10 +27,10 @@ class RecentListCache: ObservableObject {
                     self.clear()
                 }
             }.store(in: &cancelSet)
-        
+
         loadFromCache()
     }
-    
+
     private func loadFromCache() {
         Shared.dataCache.fetch(key: recentListKey).onSuccess { data in
             do {
@@ -39,11 +39,11 @@ class RecentListCache: ObservableObject {
             } catch {
                 self.list = []
             }
-        }.onFailure { error in
+        }.onFailure { _ in
             self.list = []
         }
     }
-    
+
     private func saveToCache() {
         do {
             let data = try JSONEncoder().encode(list)
@@ -52,12 +52,12 @@ class RecentListCache: ObservableObject {
             log.error("save to cache failed", context: error)
         }
     }
-    
+
     private func clear() {
         list.removeAll()
         saveToCache()
     }
-    
+
     func append(contact: Contact) {
         var existIndex = -1
         var existContact: Contact?
@@ -68,14 +68,14 @@ class RecentListCache: ObservableObject {
                 break
             }
         }
-        
+
         if let existContact = existContact {
             list.remove(at: existIndex)
             list.insert(existContact, at: 0)
         } else {
             list.insert(contact, at: 0)
         }
-        
+
         saveToCache()
     }
 }

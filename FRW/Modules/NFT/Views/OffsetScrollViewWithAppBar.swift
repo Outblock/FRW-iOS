@@ -12,16 +12,16 @@ struct OffsetScrollViewWithAppBar<Content: View, Nav: View>: View {
 
     let content: Content
     let navBar: Nav
-    
+
     /// Note: it will call multiple times, so you need guard it yourself.
-    let loadMoreCallback: (() -> ())?
+    let loadMoreCallback: (() -> Void)?
     let isNoData: Bool
     let loadMoreEnabled: Bool
 
     @State private var offset: CGFloat = 0
     @State private var opacity: CGFloat = 0
 
-    init(title: String = "", loadMoreEnabled: Bool = false, loadMoreCallback: (() -> ())? = nil, isNoData: Bool = false, @ViewBuilder content: @escaping () -> Content, @ViewBuilder appBar: @escaping () -> Nav) {
+    init(title: String = "", loadMoreEnabled: Bool = false, loadMoreCallback: (() -> Void)? = nil, isNoData: Bool = false, @ViewBuilder content: @escaping () -> Content, @ViewBuilder appBar: @escaping () -> Nav) {
         self.content = content()
         navBar = appBar()
         self.title = title

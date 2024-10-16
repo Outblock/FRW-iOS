@@ -5,8 +5,8 @@
 //  Created by Hao Fu on 26/6/2022.
 //
 
-import Foundation
 import Flow
+import Foundation
 
 enum ScriptAddress: String, CaseIterable {
     case fungibleToken = "0xFungibleToken"
@@ -26,7 +26,8 @@ enum ScriptAddress: String, CaseIterable {
     case flowIDTableStaking = "0xFlowIDTableStaking"
     case hybridCustody = "0xHybridCustody"
     case evm = "0xEVM"
-    
+    case flowEVMBridge = "0xFlowEVMBridge"
+
     static func addressMap(on network: LocalUserDefaults.FlowNetworkType = LocalUserDefaults.shared.flowNetwork) -> [String: String] {
         let dict = ScriptAddress.allCases.reduce(into: [String: String]()) { partialResult, script in
             if let address = script.address(on: network) {
@@ -35,12 +36,12 @@ enum ScriptAddress: String, CaseIterable {
         }
         return dict
     }
-    
-    func address(on network: LocalUserDefaults.FlowNetworkType = LocalUserDefaults.shared.flowNetwork ) -> Flow.Address? {
-        guard let addressMap = RemoteConfigManager.shared.getContarctAddress(network), let address = addressMap[self.rawValue], !address.isEmpty else {
+
+    func address(on network: LocalUserDefaults.FlowNetworkType = LocalUserDefaults.shared.flowNetwork) -> Flow.Address? {
+        guard let addressMap = RemoteConfigManager.shared.getContarctAddress(network), let address = addressMap[rawValue], !address.isEmpty else {
             return nil
         }
-        
+
         return Flow.Address(hex: address)
     }
 }

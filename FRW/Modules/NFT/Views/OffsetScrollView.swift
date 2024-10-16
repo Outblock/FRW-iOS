@@ -7,42 +7,41 @@
 
 import SwiftUI
 
-private struct PaginatedScrollViewKey {
-    
+private enum PaginatedScrollViewKey {
     enum Direction {
         case top, bottom
     }
-    
+
     struct PreData: Equatable {
         static var fraction = CGFloat(0.001)
-        
+
         let top: CGFloat
         let bottom: CGFloat
-        
+
         private var abTop: CGFloat { abs(min(0, top)) }
         private var abBottom: CGFloat { abs(max(0, bottom)) }
-        
+
         var position: Direction {
             return abTop > abBottom ? .bottom : .top
         }
-    
+
         var isAtTop: Bool {
             return top > PreData.fraction
         }
-        
+
         var isAtBottom: Bool {
             let percentage = (bottom / contentHeight)
             return percentage < PreData.fraction
         }
-        
+
         private var contentHeight: CGFloat {
             abs(top - bottom)
         }
     }
-    
+
     struct PreKey: PreferenceKey {
         static var defaultValue: PreData? = nil
-        static func reduce(value: inout PreData?, nextValue: () -> PreData?) {}
+        static func reduce(value _: inout PreData?, nextValue _: () -> PreData?) {}
     }
 }
 
@@ -50,20 +49,20 @@ private let RefreshOffset: CGFloat = 70
 
 struct OffsetScrollView<Content: View>: View {
     @Binding var offset: CGFloat
-    
+
     let refreshEnabled: Bool
     let loadMoreEnabled: Bool
 
     /// Note: it will call multiple times, so you need guard it yourself.
-    let refreshCallback: (() -> ())?
-    
+    let refreshCallback: (() -> Void)?
+
     /// Note: it will call multiple times, so you need guard it yourself.
-    let loadMoreCallback: (() -> ())?
+    let loadMoreCallback: (() -> Void)?
     let isNoData: Bool
-    
+
     let content: Content
 
-    init(offset: Binding<CGFloat>, refreshEnabled: Bool = false, loadMoreEnabled: Bool = false, refreshCallback: (() -> ())? = nil, loadMoreCallback: (() -> ())? = nil, isNoData: Bool = false, @ViewBuilder content: () -> Content) {
+    init(offset: Binding<CGFloat>, refreshEnabled: Bool = false, loadMoreEnabled: Bool = false, refreshCallback: (() -> Void)? = nil, loadMoreCallback: (() -> Void)? = nil, isNoData: Bool = false, @ViewBuilder content: () -> Content) {
         self.content = content()
         self.refreshEnabled = refreshEnabled
         self.refreshCallback = refreshCallback
@@ -83,7 +82,7 @@ struct OffsetScrollView<Content: View>: View {
                                         value: geo.frame(in: .named("ScrollView")).minY)
                     }
                     .frame(width: 0, height: 0)
-                    
+
                     VStack(spacing: 0) {
                         content
                         if loadMoreEnabled {
@@ -104,11 +103,11 @@ struct OffsetScrollView<Content: View>: View {
                 }
                 .onPreferenceChange(PaginatedScrollViewKey.PreKey.self) { data in
                     guard let data = data else { return }
-                    if data.bottom == 0 && loadMoreEnabled && !isNoData {
+                    if data.bottom == 0, loadMoreEnabled, !isNoData {
                         loadMoreCallback?()
                     }
                 }
-                
+
 //                if refreshEnabled {
 //                    refreshView
 //                        .opacity(refreshOpacity)
@@ -116,16 +115,16 @@ struct OffsetScrollView<Content: View>: View {
             }
         }
     }
-    
+
     var refreshOpacity: CGFloat {
         if offset < 0 {
             return 0
         }
-        
+
         let percent = abs(offset / RefreshOffset)
         return max(0, min(1, percent))
     }
-    
+
     var refreshView: some View {
         VStack {
             ProgressView()
@@ -135,7 +134,7 @@ struct OffsetScrollView<Content: View>: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.top, UIView.topSafeAreaHeight + 44)
     }
-    
+
     var loadMoreView: some View {
         VStack {
             Text(isNoData ? "no_more_data".localized : "loading_more".localized)

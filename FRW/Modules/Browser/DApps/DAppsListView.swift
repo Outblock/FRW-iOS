@@ -5,33 +5,33 @@
 //  Created by Selina on 29/6/2023.
 //
 
-import SwiftUI
 import Combine
 import Kingfisher
+import SwiftUI
 
 struct DAppsListView: RouteableView {
     @StateObject private var vm = DAppsListViewModel()
-    
+
     var title: String {
         return "dApps"
     }
-    
+
     func backButtonAction() {
         Router.dismiss()
     }
-    
+
     var body: some View {
         VStack {
             headerView
                 .visibility(vm.categoryList.isEmpty ? .gone : .visible)
-            
+
             contentList
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .backgroundFill(.LL.Neutrals.background)
         .applyRouteable(self)
     }
-    
+
     var headerView: some View {
         WrappingHStack(models: vm.categoryList) { category in
             Button {
@@ -48,7 +48,7 @@ struct DAppsListView: RouteableView {
         }
         .padding(.horizontal, 18)
     }
-    
+
     var contentList: some View {
         ScrollView(.vertical) {
             LazyVStack {
@@ -56,10 +56,11 @@ struct DAppsListView: RouteableView {
                     Button {
                         let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
                         feedbackGenerator.impactOccurred()
-                        
+
                         Router.dismiss {
                             if LocalUserDefaults.shared.flowNetwork == .testnet,
-                               let url = dApp.testnetURL {
+                               let url = dApp.testnetURL
+                            {
                                 Router.route(to: RouteMap.Explore.browser(url))
                             } else {
                                 Router.route(to: RouteMap.Explore.browser(dApp.url))
@@ -69,10 +70,10 @@ struct DAppsListView: RouteableView {
                         HStack(alignment: .top) {
                             KFImage
                                 .url(dApp.logo)
-                                .placeholder({
+                                .placeholder {
                                     Image("placeholder")
                                         .resizable()
-                                })
+                                }
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: 44, height: 44, alignment: .center)
@@ -86,9 +87,9 @@ struct DAppsListView: RouteableView {
                                         .bold()
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .foregroundColor(.LL.text)
-                                    
+
                                     Spacer()
-                                    
+
                                     Text(dApp.category.uppercased())
                                         .font(.LL.caption)
                                         .padding(.horizontal, 8)
@@ -97,7 +98,7 @@ struct DAppsListView: RouteableView {
                                         .foregroundColor(Color.LL.Neutrals.neutrals9)
                                         .cornerRadius(20)
                                 }
-                                
+
                                 Text(dApp.description + "\n")
                                     .font(.LL.footnote)
                                     .lineLimit(2)

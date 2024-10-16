@@ -8,7 +8,6 @@
 import Combine
 import Kingfisher
 import SwiftUI
-import SwiftUIX
 
 private let SideOffset: CGFloat = 65
 
@@ -22,38 +21,68 @@ extension SideMenuViewModel {
 class SideMenuViewModel: ObservableObject {
     @Published var nftCount: Int = 0
     @Published var accountPlaceholders: [AccountPlaceholder] = []
-    
+    @Published var isSwitchOpen = false
+    @Published var userInfoBackgroudColor = Color.LL.Neutrals.neutrals6
+    @Published var walletBalance: [String: String] = [:]
+
+    var colorsMap: [String: Color] = [:]
+
     private var cancelSets = Set<AnyCancellable>()
-    
+    var currentAddress: String {
+        WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? ""
+    }
+
     init() {
-        nftCount = LocalUserDefaults.shared.nftCount
-        
-        NotificationCenter.default.publisher(for: .nftCountChanged).sink { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.nftCount = LocalUserDefaults.shared.nftCount
-            }
-        }.store(in: &cancelSets)
-        
         UserManager.shared.$loginUIDList
             .receive(on: DispatchQueue.main)
             .map { $0 }
             .sink { [weak self] uidList in
                 guard let self = self else { return }
-                
+
                 self.accountPlaceholders = Array(uidList.dropFirst().prefix(2)).map { uid in
                     let avatar = MultiAccountStorage.shared.getUserInfo(uid)?.avatar.convertedAvatarString() ?? ""
                     return AccountPlaceholder(uid: uid, avatar: avatar)
                 }
             }.store(in: &cancelSets)
+
+        WalletManager.shared.balanceProvider.$balances
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { [weak self] balances in
+                self?.walletBalance = balances
+            }.store(in: &cancelSets)
+        NotificationCenter.default.addObserver(self, selector: #selector(onToggle), name: .toggleSideMenu, object: nil)
     }
-    
+
+    @objc func onToggle() {
+        isSwitchOpen = false
+    }
+
     func scanAction() {
         NotificationCenter.default.post(name: .toggleSideMenu)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             ScanHandler.scan()
         }
     }
-    
+
+    func pickColor(from url: String) {
+        guard !url.isEmpty else {
+            userInfoBackgroudColor = Color.LL.Neutrals.neutrals6
+            return
+        }
+        if let color = colorsMap[url] {
+            userInfoBackgroudColor = color
+            return
+        }
+        Task {
+            let color = await ImageHelper.mostFrequentColor(from: url)
+            DispatchQueue.main.async {
+                self.colorsMap[url] = color
+                self.userInfoBackgroudColor = color
+            }
+        }
+    }
+
     func switchAccountAction(_ uid: String) {
         Task {
             do {
@@ -67,14 +96,25 @@ class SideMenuViewModel: ObservableObject {
             }
         }
     }
-    
+
     func switchAccountMoreAction() {
         Router.route(to: RouteMap.Profile.switchProfile)
     }
-    
-    func onClickEnableEVM()  {
+
+    func onClickEnableEVM() {
         NotificationCenter.default.post(name: .toggleSideMenu)
         Router.route(to: RouteMap.Wallet.enableEVM)
+    }
+
+    func balanceValue(at address: String) -> String {
+        guard let value = WalletManager.shared.balanceProvider.balanceValue(at: address) else {
+            return ""
+        }
+        return "\(value) FLOW"
+    }
+
+    func switchProfile() {
+        LocalUserDefaults.shared.recentToken = nil
     }
 }
 
@@ -86,34 +126,42 @@ struct SideMenuView: View {
     @StateObject private var evmManager = EVMAccountManager.shared
     @AppStorage("isDeveloperMode") private var isDeveloperMode = false
     @State private var showSwitchUserAlert = false
-    
+
+    private let cPadding = 12.0
+
     var body: some View {
-        HStack(spacing: 0) {
-            ScrollView {
+        GeometryReader { proxy in
+            HStack(spacing: 0) {
                 VStack {
                     cardView
-                    
-                    enableEVMView
-                        .padding(.top, 24)
-                        .visibility(evmManager.showEVM ? .visible : .gone)
-                    
-                    scanView
-                        .padding(.top, 24)
-                    addressListView
+                        .padding(.top, proxy.safeAreaInsets.top)
+
+                    ScrollView {
+                        VStack {
+                            enableEVMView
+                                .padding(.top, 24)
+                                .visibility(evmManager.showEVM ? .visible : .gone)
+
+                            addressListView
+                        }
+                    }
+
+                    bottomMenu
+                        .padding(.bottom, 16 + proxy.safeAreaInsets.bottom)
                 }
                 .padding(.horizontal, 12)
-                .padding(.top, 25)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(.Theme.Background.white)
+                .ignoresSafeArea()
+
+                // placeholder, do not use this
+                VStack {}
+                    .frame(width: SideOffset)
+                    .frame(maxHeight: .infinity)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(.Theme.Background.pureWhite)
-            
-            // placeholder, do not use this
-            VStack {}
-                .frame(width: SideOffset)
-                .frame(maxHeight: .infinity)
         }
     }
-    
+
     var cardView: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
@@ -122,37 +170,47 @@ struct SideMenuView: View {
                         Image("placeholder")
                             .resizable()
                     }
+                    .onSuccess { _ in
+                        vm.pickColor(from: um.userInfo?.avatar.convertedAvatarString() ?? "")
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 72, height: 72)
-                    .cornerRadius(36)
-                    .offset(y: -20)
-                
+                    .frame(width: 48, height: 48)
+                    .cornerRadius(24)
+
                 Spacer()
-                
-                multiAccountView
-                    .offset(y: -30)
+
+                Button {
+                    vm.switchAccountMoreAction()
+                } label: {
+                    Image("icon-more")
+                        .renderingMode(.template)
+                        .foregroundColor(Color.LL.Neutrals.text)
+                }
             }
-            
+
             Text(um.userInfo?.nickname ?? "lilico".localized)
                 .foregroundColor(.LL.Neutrals.text)
-                .font(.inter(size: 24, weight: .semibold))
-                .padding(.top, 10)
-                .padding(.bottom, 5)
-            
-            Text("Since 2022 · \(vm.nftCount) NFTs")
-                .foregroundColor(.LL.Neutrals.text3)
-                .font(.inter(size: 14))
-                .padding(.bottom, 20)
+                .font(.inter(size: 20, weight: .bold))
+                .frame(height: 32)
+                .padding(.top, 4)
+                .padding(.bottom, 24)
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, 18)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background {
-            Color.LL.Neutrals.neutrals6
-                .cornerRadius(12)
+            LinearGradient(
+                stops: [
+                    Gradient.Stop(color: vm.userInfoBackgroudColor.opacity(00), location: 0.00),
+                    Gradient.Stop(color: vm.userInfoBackgroudColor.opacity(0.64), location: 1.00),
+                ],
+                startPoint: UnitPoint(x: 0.5, y: 0),
+                endPoint: UnitPoint(x: 0.5, y: 1)
+            )
+            .cornerRadius(12)
         }
     }
-    
+
     var enableEVMView: some View {
         return VStack {
             ZStack(alignment: .topLeading) {
@@ -160,7 +218,7 @@ struct SideMenuView: View {
                     .resizable()
                     .frame(width: 36, height: 36)
                     .zIndex(1)
-                    .offset(x: 8,y: -8)
+                    .offset(x: 8, y: -8)
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 0) {
                         Text("enable_path".localized)
@@ -170,7 +228,7 @@ struct SideMenuView: View {
                             .font(.inter(size: 16, weight: .semibold))
                             .foregroundStyle(
                                 LinearGradient(
-                                    colors: [Color.Theme.Accent.blue, Color.Theme.Accent.green ],
+                                    colors: [Color.Theme.Accent.blue, Color.Theme.Accent.green],
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
@@ -195,273 +253,188 @@ struct SideMenuView: View {
                 .cornerRadius(16)
                 .shadow(color: Color.Theme.Background.white.opacity(0.08), radius: 16, y: 4)
                 .offset(y: 8)
-                
             }
         }
         .onTapGesture {
             vm.onClickEnableEVM()
         }
     }
-    
-    var multiAccountView: some View {
-        HStack(spacing: 15) {
-            ForEach(vm.accountPlaceholders, id: \.uid) { placeholder in
-                Button {
-                    if LocalUserDefaults.shared.flowNetwork != .mainnet {
-                        showSwitchUserAlert = true
-                    } else {
-                        vm.switchAccountAction(placeholder.uid)
-                    }
-                    
-                    
-                } label: {
-                    KFImage.url(URL(string: placeholder.avatar))
-                        .placeholder {
-                            Image("placeholder")
-                                .resizable()
-                        }
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 28, height: 28)
-                        .cornerRadius(14)
-                }
-                .alert("wrong_network_title".localized, isPresented: $showSwitchUserAlert) {
-                    Button("switch_to_mainnet".localized) {
-                        WalletManager.shared.changeNetwork(.mainnet)
-                        vm.switchAccountAction(placeholder.uid)
-                    }
-                    Button("action_cancel".localized, role: .cancel) {}
-                } message: {
-                    Text("wrong_network_des".localized)
-                }
-            }
-            
-            Button {
-                vm.switchAccountMoreAction()
-            } label: {
-                Image("icon-more")
-                    .renderingMode(.template)
-                    .foregroundColor(Color.LL.Neutrals.text)
-            }
-        }
-    }
-    
-    var scanView: some View {
-        Button {
-            vm.scanAction()
-        } label: {
-            HStack {
-                Image("scan-stroke")
-                    .renderingMode(.template)
-                    .foregroundColor(Color.LL.Neutrals.text)
-                
-                Text("scan".localized)
-                    .foregroundColor(Color.LL.Neutrals.text)
-                    .font(.inter(size: 14, weight: .semibold))
-                
-                Spacer()
-                
-                Image("icon-right-arrow-1")
-                    .renderingMode(.template)
-                    .foregroundColor(Color.LL.Neutrals.text)
-            }
-            .padding(.horizontal, 20)
-            .frame(height: 48)
-            .background(.Theme.Background.white)
-            .cornerRadius(12)
-        }
-    }
-    
+
     var addressListView: some View {
         VStack(spacing: 0) {
-            if let mainnetAddress = wm.getFlowNetworkTypeAddress(network: .mainnet) {
-                Button {
-                    WalletManager.shared.changeNetwork(.mainnet)
-                    NotificationCenter.default.post(name: .toggleSideMenu)
-                } label: {
-                    addressCell(type: .mainnet, address: mainnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .mainnet && !wm.isSelectedChildAccount)
-                }
-                
-                if LocalUserDefaults.shared.flowNetwork == .mainnet {
-                    LazyVStack(spacing: 0) {
-                        ForEach(cm.childAccounts, id: \.addr) { childAccount in
-                            childAccountCell(childAccount, isSelected: childAccount.isSelected)
+            Section {
+                VStack(spacing: 0) {
+                    AccountSideCell(address: WalletManager.shared.getPrimaryWalletAddress() ?? "",
+                                    currentAddress: vm.currentAddress,
+                                    detail: vm.balanceValue(at: WalletManager.shared.getPrimaryWalletAddress() ?? "")) { _, action in
+                        if action == .card {
+                            vm.switchProfile()
+                            WalletManager.shared.changeNetwork(LocalUserDefaults.shared.flowNetwork)
                         }
                     }
                 }
-            }
-            
-            if let testnetAddress = wm.getFlowNetworkTypeAddress(network: .testnet), isDeveloperMode {
-                Button {
-                    WalletManager.shared.changeNetwork(.testnet)
-                    NotificationCenter.default.post(name: .toggleSideMenu)
-                } label: {
-                    addressCell(type: .testnet, address: testnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .testnet && !wm.isSelectedChildAccount)
-                }
-                
-                if LocalUserDefaults.shared.flowNetwork == .testnet {
-                    LazyVStack(spacing: 0) {
-                        ForEach(cm.childAccounts, id: \.addr) { childAccount in
-                            childAccountCell(childAccount, isSelected: childAccount.isSelected)
-                        }
-                    }
+                .cornerRadius(12)
+                .animation(.easeInOut, value: WalletManager.shared.getPrimaryWalletAddress())
+            } header: {
+                HStack {
+                    Text("main_account".localized)
+                        .font(.inter(size: 12))
+                        .foregroundStyle(Color.Theme.Text.black3)
+                        .padding(.vertical, 8)
+                    Spacer()
                 }
             }
-            
-            if let previewnetAddress = wm.getFlowNetworkTypeAddress(network: .previewnet), isDeveloperMode {
-                Button {
-                    WalletManager.shared.changeNetwork(.previewnet)
-                    NotificationCenter.default.post(name: .toggleSideMenu)
-                } label: {
-                    addressCell(type: .previewnet, address: previewnetAddress, isSelected: LocalUserDefaults.shared.flowNetwork == .previewnet && !wm.isSelectedChildAccount && !wm.isSelectedEVMAccount)
-                }
-                
-                if LocalUserDefaults.shared.flowNetwork == .previewnet {
-                    LazyVStack(spacing: 0) {
-                        ForEach(evmManager.accounts, id: \.address) { account in
-                            ChildAccountSideCell(item: account, isSelected: account.isSelected) { address in
+
+            Color.clear
+                .frame(height: 16)
+
+            Section {
+                VStack(spacing: 0) {
+                    ForEach(evmManager.accounts, id: \.address) { account in
+                        let address = account.showAddress
+                        AccountSideCell(address: address,
+                                        currentAddress: vm.currentAddress,
+                                        detail: vm.balanceValue(at: address)) { _, action in
+                            if action == .card {
+                                vm.switchProfile()
+                                ChildAccountManager.shared.select(nil)
                                 EVMAccountManager.shared.select(account)
-                                NotificationCenter.default.post(name: .toggleSideMenu)
                             }
                         }
                     }
-                    LazyVStack(spacing: 0) {
-                        ForEach(cm.childAccounts, id: \.addr) { childAccount in
-                            childAccountCell(childAccount, isSelected: childAccount.isSelected)
+
+                    ForEach(cm.childAccounts, id: \.addr) { childAccount in
+                        if let address = childAccount.addr {
+                            AccountSideCell(address: address,
+                                            currentAddress: vm.currentAddress,
+                                            name: childAccount.aName,
+                                            logo: childAccount.icon) { _, action in
+                                if action == .card {
+                                    vm.switchProfile()
+                                    EVMAccountManager.shared.select(nil)
+                                    ChildAccountManager.shared.select(childAccount)
+                                }
+                            }
                         }
                     }
                 }
-            }
-        }
-        .background(.Theme.Background.white)
-        .cornerRadius(12)
-    }
-    
-    func childAccountCell(_ childAccount: ChildAccount, isSelected: Bool) -> some View {
-//        ChildAccountSideCell(item: childAccount) { add in
-//            ChildAccountManager.shared.select(childAccount)
-//            NotificationCenter.default.post(name: .toggleSideMenu)
-//        }
-        Button {
-            ChildAccountManager.shared.select(childAccount)
-            NotificationCenter.default.post(name: .toggleSideMenu)
-        } label: {
-            HStack(spacing: 15) {
-                KFImage.url(URL(string: childAccount.icon))
-                    .placeholder {
-                        Image("placeholder")
-                            .resizable()
-                    }
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 24, height: 24)
-                    .cornerRadius(12)
-                
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Text("@\(childAccount.aName)")
-                            .foregroundColor(Color.LL.Neutrals.text)
-                            .font(.inter(size: 14, weight: .semibold))
-                        
-                        Text("EVM")
-                            .font(.inter(size: 9))
-                            .foregroundStyle(Color.Theme.Text.white9)
-                            .frame(width: 36, height: 16)
-                            .background(Color.Theme.Accent.blue)
-                            .cornerRadius(8)
-                            .visibility(evmManager.hasAccount ? .visible : .gone)
-                    }
-                    .frame(alignment: .leading)
-                    
-                    Text(childAccount.addr ?? "")
-                        .foregroundColor(Color.LL.Neutrals.text3)
-                        .font(.inter(size: 12))
-                        .lineBreakMode(.byTruncatingMiddle)
-                }
-                .frame(alignment: .leading)
-                
-                Spacer()
-                
-                Circle()
-                    .frame(width: 8, height: 8)
-                    .foregroundColor(Color(hex: "#00FF38"))
-                    .visibility(isSelected ? .visible : .gone)
-            }
-            .frame(height: 66)
-            .padding(.leading, 36)
-            .padding(.trailing, 18)
-            .background {
-                selectedBg
-                    .visibility(isSelected ? .visible : .gone)
-            }
-            .contentShape(Rectangle())
-        }
-    }
-    
-    func addressCell(type: LocalUserDefaults.FlowNetworkType, address: String, isSelected: Bool) -> some View {
-        HStack(spacing: 15) {
-            Image("flow")
-                .resizable()
-                .frame(width: 24, height: 24)
-            
-            VStack(alignment: .leading, spacing: 6) {
+            } header: {
                 HStack {
-                    Text("My Wallet")
-                        .foregroundColor(Color.LL.Neutrals.text2)
-                        .font(.inter(size: 14, weight: .semibold))
-                    
-                    Text(type.rawValue)
-                        .textCase(.uppercase)
-                        .lineLimit(1)
-                        .foregroundColor(type.color)
-                        .font(.inter(size: 10, weight: .semibold))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .background(
-                            Capsule(style: .circular)
-                                .fill(type.color.opacity(0.16))
-                        )
-                        .visibility(type == .mainnet ? .gone : .visible)
+                    Text("Linked_Account::message".localized)
+                        .font(.inter(size: 12))
+                        .foregroundStyle(Color.Theme.Text.black3)
+                        .padding(.vertical, 8)
+                    Spacer()
                 }
-                .frame(alignment: .leading)
-                
-                Text(address)
-                    .foregroundColor(Color.LL.Neutrals.text3)
-                    .font(.inter(size: 12))
+                .visibility(evmManager.accounts.count > 0 || cm.childAccounts.count > 0 ? .visible : .gone)
             }
-            .frame(alignment: .leading)
-            
-            Spacer()
-            
-            Circle()
-                .frame(width: 8, height: 8)
-                .foregroundColor(Color(hex: "#00FF38"))
-                .visibility(isSelected ? .visible : .gone)
         }
-        .frame(height: 78)
-        .padding(.horizontal, 18)
-        .background {
-            selectedBg
-                .visibility(isSelected ? .visible : .gone)
-        }
-        .clipped()
     }
-    
-    var selectedBg: some View {
-        LinearGradient(colors: [Color(hex: "#00FF38").opacity(0.08), Color(hex: "#00FF38").opacity(0)], startPoint: .leading, endPoint: .trailing)
+
+    var bottomMenu: some View {
+        VStack {
+            Divider()
+                .background(.Theme.Line.line)
+                .frame(height: 1)
+                .padding(.bottom, 24)
+            if isDeveloperMode {
+                HStack {
+                    Image("icon_side_link")
+                        .resizable()
+                        .renderingMode(.template)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(Color.Theme.Text.black8)
+                    Text("Network::message".localized)
+                        .lineLimit(1)
+                        .font(.inter(size: 14, weight: .semibold))
+                        .foregroundStyle(Color.Theme.Text.black8)
+
+                    Spacer()
+
+                    Menu {
+                        VStack {
+                            Button {
+                                NotificationCenter.default.post(name: .toggleSideMenu)
+                                WalletManager.shared.changeNetwork(.mainnet)
+
+                            } label: {
+                                NetworkMenuItem(network: .mainnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
+                            }
+
+                            Button {
+                                NotificationCenter.default.post(name: .toggleSideMenu)
+                                WalletManager.shared.changeNetwork(.testnet)
+
+                            } label: {
+                                NetworkMenuItem(network: .testnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
+                            }
+                        }
+
+                    } label: {
+                        Text(LocalUserDefaults.shared.flowNetwork.rawValue.uppercasedFirstLetter())
+                            .font(.inter(size: 12))
+                            .foregroundStyle(LocalUserDefaults.shared.flowNetwork.color)
+                            .frame(height: 24)
+                            .padding(.horizontal, 8)
+                            .background(LocalUserDefaults.shared.flowNetwork.color.opacity(0.08))
+                            .cornerRadius(8)
+                    }
+                }
+                .frame(height: 40)
+            }
+
+            Button {
+                Router.route(to: RouteMap.RestoreLogin.restoreList)
+            } label: {
+                HStack {
+                    Image("icon_side_import")
+                        .resizable()
+                        .renderingMode(.template)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(Color.Theme.Text.black8)
+                    Text("import_wallet".localized)
+                        .font(.inter(size: 14, weight: .semibold))
+                        .foregroundStyle(Color.Theme.Text.black8)
+
+                    Spacer()
+                }
+                .frame(height: 40)
+            }
+        }
     }
 }
 
 class SideContainerViewModel: ObservableObject {
     @Published var isOpen: Bool = false
-    
+    @Published var isLinkedAccount: Bool = false
+    @Published var hideBrowser: Bool = false
+
+    private var cancellableSet = Set<AnyCancellable>()
+
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(onToggle), name: .toggleSideMenu, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onRemoteConfigDidChange), name: .remoteConfigDidUpdate, object: nil)
+
+        isLinkedAccount = ChildAccountManager.shared.selectedChildAccount != nil
+        ChildAccountManager.shared.$selectedChildAccount
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink(receiveValue: { [weak self] newChildAccount in
+                self?.isLinkedAccount = newChildAccount != nil
+            }).store(in: &cancellableSet)
     }
-    
+
     @objc func onToggle() {
         withAnimation {
             isOpen.toggle()
+        }
+    }
+
+    @objc func onRemoteConfigDidChange() {
+        DispatchQueue.main.async {
+            self.hideBrowser = RemoteConfigManager.shared.config?.features.hideBrowser ?? true
         }
     }
 }
@@ -470,7 +443,7 @@ struct SideContainerView: View {
     @StateObject private var vm = SideContainerViewModel()
     @State private var dragOffset: CGSize = .zero
     @State private var isDragging: Bool = false
-    
+
     var drag: some Gesture {
         DragGesture()
             .onChanged { value in
@@ -482,24 +455,24 @@ struct SideContainerView: View {
                 if !vm.isOpen && dragOffset.width > 20 {
                     vm.isOpen = true
                 }
-                
+
                 if vm.isOpen && dragOffset.width < -20 {
                     vm.isOpen = false
                 }
-                
+
                 isDragging = false
                 dragOffset = .zero
             }
     }
-    
+
     var body: some View {
         ZStack {
             SideMenuView()
                 .offset(x: vm.isOpen ? 0 : -(screenWidth - SideOffset))
-            
+
             Group {
                 makeTabView()
-                
+
                 Color.black
                     .opacity(0.7)
                     .ignoresSafeArea()
@@ -511,16 +484,16 @@ struct SideContainerView: View {
             .offset(x: vm.isOpen ? screenWidth - SideOffset : 0)
         }
     }
-    
+
     @ViewBuilder private func makeTabView() -> some View {
         let wallet = TabBarPageModel<AppTabType>(tag: WalletView.tabTag(), iconName: WalletView.iconName(), color: WalletView.color()) {
-            AnyView(WalletView())
+            AnyView(WalletHomeView())
         }
 
         let nft = TabBarPageModel<AppTabType>(tag: NFTTabScreen.tabTag(), iconName: NFTTabScreen.iconName(), color: NFTTabScreen.color()) {
             AnyView(NFTTabScreen())
         }
-        
+
         let explore = TabBarPageModel<AppTabType>(tag: ExploreTabScreen.tabTag(), iconName: ExploreTabScreen.iconName(), color: ExploreTabScreen.color()) {
             AnyView(ExploreTabScreen())
         }
@@ -529,6 +502,14 @@ struct SideContainerView: View {
             AnyView(ProfileView())
         }
 
-        TabBarView(current: .wallet, pages: [wallet, nft, explore, profile], maxWidth: UIScreen.main.bounds.width)
+        if vm.isLinkedAccount {
+            TabBarView(current: .wallet, pages: [wallet, nft, profile], maxWidth: UIScreen.main.bounds.width)
+        } else {
+            if vm.hideBrowser {
+                TabBarView(current: .wallet, pages: [wallet, nft, profile], maxWidth: UIScreen.main.bounds.width)
+            } else {
+                TabBarView(current: .wallet, pages: [wallet, nft, explore, profile], maxWidth: UIScreen.main.bounds.width)
+            }
+        }
     }
 }

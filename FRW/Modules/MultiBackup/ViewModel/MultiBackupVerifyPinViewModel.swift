@@ -10,7 +10,7 @@ import SwiftUI
 import UIKit
 
 extension MultiBackupVerifyPinViewModel {
-    typealias VerifyCallback = (Bool, String) -> ()
+    typealias VerifyCallback = (Bool, String) -> Void
     enum From {
         case backup
         case restore
@@ -20,18 +20,18 @@ extension MultiBackupVerifyPinViewModel {
 class MultiBackupVerifyPinViewModel: ObservableObject {
     @Published var inputPin: String = ""
     @Published var pinCodeErrorTimes: Int = 0
-    
+
     var from: MultiBackupVerifyPinViewModel.From
-    var callback: MultiBackupVerifyPinViewModel.VerifyCallback? = nil
-    
+    var callback: MultiBackupVerifyPinViewModel.VerifyCallback?
+
     private lazy var generator: UINotificationFeedbackGenerator = {
         let obj = UINotificationFeedbackGenerator()
         return obj
     }()
-    
+
     private var isBionicVerifing: Bool = false
     private var canVerifyBionicAutomatically = true
-    
+
     init(from: MultiBackupVerifyPinViewModel.From,
          callback: MultiBackupVerifyPinViewModel.VerifyCallback?)
     {
@@ -41,9 +41,9 @@ class MultiBackupVerifyPinViewModel: ObservableObject {
 
     var desc: String {
         if from == .backup {
-            return "So we will secure your backup with pin code."
+            return "pin_hint_for_backup".localized
         } else {
-            return "Please enter the pin when you create this backup."
+            return "pin_hint_for_create".localized
         }
     }
 }
@@ -56,33 +56,33 @@ extension MultiBackupVerifyPinViewModel {
             verifyRestorePin()
         }
     }
-    
+
     private func verifyBackupPin() {
         let result = SecurityManager.shared.authPinCode(inputPin)
         if !result {
             pinVerifyFailed()
             return
         }
-        
+
         verifySuccess()
     }
-    
+
     private func verifyRestorePin() {
         if let customCallback = callback {
             customCallback(true, inputPin)
             Router.pop()
         }
     }
-    
+
     private func pinVerifyFailed() {
         generator.notificationOccurred(.error)
-        
+
         inputPin = ""
         withAnimation(.default) {
             pinCodeErrorTimes += 1
         }
     }
-    
+
     private func verifySuccess() {
         if let customCallback = callback {
             customCallback(true, inputPin)

@@ -13,7 +13,7 @@ extension UsernameView {
         var status: LL.TextField.Status = .normal
         var isRegisting: Bool = false
     }
-    
+
     enum Action {
         case next
         case onEditingChanged(String)
@@ -24,7 +24,7 @@ extension UsernameView {
     var title: String {
         return ""
     }
-    
+
     func backButtonAction() {
         UIApplication.shared.endEditing()
         Router.pop()
@@ -33,21 +33,21 @@ extension UsernameView {
 
 struct UsernameView: RouteableView {
     @StateObject var viewModel: UsernameViewModel
-    
+
     init(mnemonic: String?) {
         _viewModel = StateObject(wrappedValue: UsernameViewModel(mnemonic: mnemonic))
     }
-    
+
     @State var text: String = ""
-    
+
     var buttonState: VPrimaryButtonState {
         if viewModel.state.isRegisting {
             return .loading
         }
-        
+
         return highlight == .success ? .enabled : .disabled
     }
-    
+
     var highlight: VTextFieldHighlight {
         switch viewModel.state.status {
         case .success:
@@ -60,7 +60,7 @@ struct UsernameView: RouteableView {
             return .loading
         }
     }
-    
+
     var footerText: String {
         switch viewModel.state.status {
         case .success:
@@ -73,7 +73,7 @@ struct UsernameView: RouteableView {
             return "checking".localized
         }
     }
-    
+
     var body: some View {
         VStack {
             Spacer()
@@ -93,7 +93,7 @@ struct UsernameView: RouteableView {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             Spacer()
-            
+
             VTextField(model: TextFieldStyle.primary,
                        type: .userName,
                        highlight: highlight,
@@ -101,22 +101,22 @@ struct UsernameView: RouteableView {
                        footerTitle: footerText,
                        text: $text,
                        onChange: {
-                viewModel.trigger(.onEditingChanged(text))
-            },
+                           viewModel.trigger(.onEditingChanged(text))
+                       },
                        onReturn: .returnAndCustom {
-                viewModel.trigger(.next)
-            }, onClear: .clearAndCustom {
-                viewModel.trigger(.onEditingChanged(text))
-            })
-            .disabled(viewModel.state.isRegisting)
-            .padding(.bottom, 10)
-            
+                           viewModel.trigger(.next)
+                       }, onClear: .clearAndCustom {
+                           viewModel.trigger(.onEditingChanged(text))
+                       })
+                       .disabled(viewModel.state.isRegisting)
+                       .padding(.bottom, 10)
+
             VPrimaryButton(model: ButtonStyle.primary,
                            state: buttonState,
                            action: {
-                viewModel.trigger(.next)
-            }, title: "next".localized)
-            .padding(.bottom)
+                               viewModel.trigger(.next)
+                           }, title: "next".localized)
+                .padding(.bottom)
         }
         .dismissKeyboardOnDrag()
         .padding(.horizontal, 28)

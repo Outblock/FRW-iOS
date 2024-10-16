@@ -5,9 +5,8 @@
 //  Created by cat on 2022/6/22.
 //
 
-import Foundation
 import Flow
-
+import Foundation
 
 final class NFTCollectionConfig {
     static let share = NFTCollectionConfig()
@@ -23,17 +22,17 @@ final class NFTCollectionConfig {
         if config.isEmpty {
             await fetchData()
         }
-        return config.first { $0.address == address }
+        return config.first { $0.address.lowercased() == address.lowercased() }
     }
 }
 
 extension NFTCollectionConfig {
     private func fetchData() async {
         do {
-            let list: [NFTCollectionInfo] = try await Network.request(FRWAPI.NFT.collections)
+            var list: [NFTCollectionInfo] = try await Network.request(FRWAPI.NFT.collections)
             config = list
         } catch {
-            debugPrint("NFTCollectionConfig -> fetchData failed: \(error)")
+            log.error("NFTCollectionConfig -> fetchData failed: \(error)")
         }
     }
 }

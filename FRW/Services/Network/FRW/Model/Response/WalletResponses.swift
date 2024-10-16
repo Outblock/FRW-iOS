@@ -30,12 +30,14 @@ extension CryptoSummaryResponse {
         let absolute: Double?
         let percentage: Double
     }
-    
+
     struct AddPrice: Codable {
         let contractAddress: String
         let contractName: String
         var rateToFLOW: Double = 0
         var rateToUSD: Double = 0
+        var symbol: String?
+        var evmAddress: String?
     }
 }
 
@@ -49,7 +51,7 @@ struct CryptoSummaryResponse: Codable {
     func getChangePercentage() -> Double {
         return result.price.change.percentage
     }
-    
+
     static func createFixedRateResponse(fixedRate: Decimal) -> CryptoSummaryResponse {
 //        let allowance = CryptoSummaryResponse.Allowance(cost: 0, remaining: 0)
         let change = Change(absolute: 0, percentage: 0)
@@ -64,19 +66,18 @@ struct CryptoSummaryResponse: Codable {
 struct CryptoHistoryResponse: Codable {
 //    let allowance: CryptoSummaryResponse.Allowance
     let result: [String: [[Double]]]
-    
-    
+
     func parseMarketQuoteData(rangeType: TokenDetailView.ChartRangeType) -> [TokenDetailView.Quote] {
         guard let array = result["\(rangeType.frequency.rawValue)"] else {
             return []
         }
-        
+
         var quotes = [TokenDetailView.Quote]()
         for l in array {
             let quote = TokenDetailView.Quote(closeTime: l[0], openPrice: l[1], highPrice: l[2], lowPrice: l[3], closePrice: l[4], volume: l[5], quoteVolume: l[6])
             quotes.append(quote)
         }
-        
+
         return quotes
     }
 }

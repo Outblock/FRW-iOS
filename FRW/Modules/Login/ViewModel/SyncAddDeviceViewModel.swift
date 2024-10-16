@@ -11,20 +11,20 @@ import WalletConnectSign
 import WalletConnectUtils
 
 extension SyncAddDeviceViewModel {
-    typealias Callback = (Bool) -> ()
+    typealias Callback = (Bool) -> Void
 }
 
 class SyncAddDeviceViewModel: ObservableObject {
     var model: SyncInfo.DeviceInfo
     private var callback: BrowserAuthzViewModel.Callback?
-    
+
     @Published var result: String = ""
-    
+
     init(with model: SyncInfo.DeviceInfo, callback: @escaping SyncAddDeviceViewModel.Callback) {
         self.model = model
         self.callback = callback
     }
-    
+
     func addDevice() {
         Task {
             let address = WalletManager.shared.address
@@ -33,15 +33,15 @@ class SyncAddDeviceViewModel: ObservableObject {
                                              hashAlgo: Flow.HashAlgorithm(cadence: model.accountKey.hashAlgo),
                                              weight: 1000)
             do {
-                let flowAccount = try await findFlowAccount()
+                let flowAccount = try await findFlowAccount(at: WalletManager.shared.keyIndex)
                 let sequenceNumber = flowAccount?.sequenceNumber ?? 0
-                let flowId = try await FlowNetwork.addKeyWithMulti(address: address, keyIndex: WalletManager.shared.keyIndex, sequenceNum: sequenceNumber, accountKey: accountKey, signers: [WalletManager.shared, RemoteConfigManager.shared])
+                let flowId = try await FlowNetwork.addKeyWithMulti(address: address, keyIndex: WalletManager.shared.keyIndex, sequenceNum: sequenceNumber, accountKey: accountKey, signers: WalletManager.shared.defaultSigners)
                 guard let data = try? JSONEncoder().encode(model) else {
                     return
                 }
                 let holder = TransactionManager.TransactionHolder(id: flowId, type: .addToken, data: data)
                 TransactionManager.shared.newTransaction(holder: holder)
-                
+
                 HUD.loading()
                 let result = try await flowId.onceSealed()
                 if result.isComplete {
@@ -56,11 +56,11 @@ class SyncAddDeviceViewModel: ObservableObject {
             }
         }
     }
-    
+
     func dismiss() {
         Router.dismiss()
     }
-    
+
     func sendSuccessStatus() {
         Task {
             do {
@@ -83,27 +83,22 @@ class SyncAddDeviceViewModel: ObservableObject {
             }
         }
     }
-    
+
     func sendFaildStatus() {
         callback?(false)
     }
-    
-    func findFlowAccount() async throws -> Flow.AccountKey? {
+
+    func findFlowAccount(at index: Int) async throws -> Flow.AccountKey? {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
         }
-        guard let publicKey = WalletManager.shared.getCurrentPublicKey() else {
-            throw WalletError.emptyPublicKey
-        }
-        
+
         let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
-        let sortedAccount = account.keys.sorted { $0.weight > $1.weight }
-        let flowAccountKey = sortedAccount.filter {
-            $0.publicKey.description == publicKey
-        }.first
+        let sortedAccount = account.keys.filter { $0.index == index }
+        let flowAccountKey = sortedAccount.first
         return flowAccountKey
     }
-    
+
     deinit {
         NotificationCenter().removeObserver(self)
     }

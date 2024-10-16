@@ -6,6 +6,4 @@
 //
 
 import Foundation
-class CadenceTemplate {
-    
-}
+class CadenceTemplate {}

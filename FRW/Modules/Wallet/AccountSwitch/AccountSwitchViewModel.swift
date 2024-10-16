@@ -5,8 +5,8 @@
 //  Created by Selina on 13/6/2023.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 extension AccountSwitchViewModel {
     struct Placeholder {
@@ -20,30 +20,38 @@ extension AccountSwitchViewModel {
 class AccountSwitchViewModel: ObservableObject {
     @Published var placeholders: [Placeholder] = []
     private var cancelSets = Set<AnyCancellable>()
-    
+    var selectedUid: String?
     init() {
         UserManager.shared.$loginUIDList
             .receive(on: DispatchQueue.main)
             .map { $0 }
             .sink { [weak self] list in
                 guard let self = self else { return }
+                var index = 1
                 self.placeholders = list.map { uid in
                     let userInfo = MultiAccountStorage.shared.getUserInfo(uid)
-                    let address = MultiAccountStorage.shared.getWalletInfo(uid)?.currentNetworkWalletModel?.getAddress ?? "0x"
-
-                    return Placeholder(uid: uid, avatar: userInfo?.avatar ?? "", username: userInfo?.username ?? "", address: address)
+                    var address = MultiAccountStorage.shared.getWalletInfo(uid)?.getNetworkWalletModel(network: .mainnet)?.getAddress ?? "0x"
+                    if address == "0x" {
+                        address = LocalUserDefaults.shared.userAddressOfDeletedApp[uid] ?? "0x"
+                    }
+                    var username = userInfo?.nickname
+                    if username == nil {
+                        username = "Profile \(index)"
+                        index += 1
+                    }
+                    return Placeholder(uid: uid, avatar: userInfo?.avatar ?? "", username: username ?? "", address: address)
                 }
             }.store(in: &cancelSets)
     }
-    
+
     func createNewAccountAction() {
         Router.route(to: RouteMap.Register.root(nil))
     }
-    
+
     func loginAccountAction() {
         Router.route(to: RouteMap.RestoreLogin.restoreList)
     }
-    
+
     func switchAccountAction(_ uid: String) {
         Task {
             do {

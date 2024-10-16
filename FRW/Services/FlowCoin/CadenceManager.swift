@@ -9,58 +9,116 @@ import SwiftUI
 
 class CadenceManager {
     static let shared = CadenceManager()
-    private let localVersion = "0.3"
-    
+    private let localVersion = "2.13"
+
     var version: String = ""
     var scripts: CadenceScript!
-    
+
     var current: CadenceModel {
         switch LocalUserDefaults.shared.flowNetwork {
         case .testnet:
             return scripts.testnet
         case .mainnet:
             return scripts.mainnet
-        case .crescendo:
-            return scripts.crescendo ?? scripts.testnet
         case .previewnet:
-            return scripts.previewnet ?? scripts.testnet
+            return scripts.testnet
         }
     }
-    
+
     private init() {
-        self.version = localVersion
-        do {
-            guard let filePath = Bundle.main.path(forResource: "cloudfunctions", ofType: "json") else {
-                log.error("CadenceManager -> loadFromLocalFile error: no local file")
-                return
-            }
-            
-            let data = try Data(contentsOf: URL(fileURLWithPath: filePath))
-            let providers = try JSONDecoder().decode(CadenceResponse.self, from: data)
-            self.scripts = providers.scripts
-            self.version = providers.version ?? localVersion
-        }
-        catch {
-            log.error("CadenceManager -> decode failer: \(error)")
-        }
+        loadLocalCache()
         fetchScript()
+
+        log.info("[Cadence] current version is \(String(describing: version))")
     }
-    
+
+    private func loadLocalCache() {
+        if let response = loadCache() {
+            scripts = response.scripts
+            version = response.version ?? localVersion
+            log.info("[Cadence] local cache version is \(String(describing: response.version))")
+        } else {
+            do {
+                guard let filePath = Bundle.main.path(forResource: "cloudfunctions", ofType: "json") else {
+                    log.error("CadenceManager -> loadFromLocalFile error: no local file")
+                    return
+                }
+
+                let data = try Data(contentsOf: URL(fileURLWithPath: filePath))
+                let providers = try JSONDecoder().decode(CadenceResponse.self, from: data)
+                scripts = providers.scripts
+                version = providers.version ?? localVersion
+                log.info("[Cadence] romote version is \(String(describing: providers.version))")
+            } catch {
+                log.error("CadenceManager -> decode failed", context: error)
+            }
+        }
+    }
+
     private func fetchScript() {
         Task {
             do {
                 let response: CadenceRemoteResponse = try await Network.requestWithRawModel(FRWAPI.Cadence.list)
                 DispatchQueue.main.async {
+                    // first call before
+                    self.saveCache(response: response.data)
                     self.scripts = response.data.scripts
                     if let version = response.data.version {
                         self.version = version
                     }
                 }
-            }
-            catch {
-                log.error("CadenceManager -> fetch failed: \(error)")
+            } catch {
+                log.error("CadenceManager -> fetch failed", context: error)
             }
         }
+    }
+
+    private func saveCache(response: CadenceResponse) {
+        guard response.version != version, let file = filePath() else {
+            log.info("[Cadence] same version")
+            return
+        }
+        do {
+            let data = try JSONEncoder().encode(response)
+            try data.write(to: file)
+        } catch {
+            log.error("[Cadence] save data failed.\(error)")
+        }
+    }
+
+    private func loadCache() -> CadenceResponse? {
+        return nil
+
+        guard let file = filePath() else {
+            return nil
+        }
+
+        if !FileManager.default.fileExists(atPath: file.relativePath) {
+            return nil
+        }
+
+        do {
+            let data = try Data(contentsOf: file)
+            let response = try JSONDecoder().decode(CadenceResponse.self, from: data)
+            return response
+        } catch {
+            log.error("[Cadence] load cache \(error)")
+            return nil
+        }
+    }
+
+    private func filePath() -> URL? {
+        do {
+            let root = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("cadence")
+            if !FileManager.default.fileExists(atPath: root.relativePath) {
+                try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+            }
+            let file = root.appendingPathComponent("script")
+            return file
+        } catch {
+            log.warning("[Cadence] create failed. \(error)")
+        }
+        return nil
     }
 }
 
@@ -76,8 +134,6 @@ struct CadenceResponse: Codable {
 
 struct CadenceScript: Codable {
     let testnet: CadenceModel
-    let previewnet: CadenceModel?
-    let crescendo: CadenceModel?
     let mainnet: CadenceModel
 }
 
@@ -89,15 +145,16 @@ struct CadenceModel: Codable {
     let contract: CadenceModel.Contract?
     let domain: CadenceModel.Domain?
     let ft: CadenceModel.FlowToken?
-    
+
     let hybridCustody: CadenceModel.HybridCustody?
     let staking: CadenceModel.Staking?
     let storage: CadenceModel.Storage?
     let switchboard: CadenceModel.Switchboard?
     let nft: CadenceModel.NFT?
     let swap: CadenceModel.Swap?
-    
+
     let evm: CadenceModel.EVM?
+    let bridge: CadenceModel.Bridge?
 }
 
 extension CadenceModel {
@@ -112,13 +169,14 @@ extension CadenceModel {
         let getTokenBalanceWithModel: String?
         let isTokenStorageEnabled: String?
         let revokeKey: String?
+        let getAccountMinFlow: String?
     }
-    
+
     struct Account: Codable {
         let getBookmark: String?
         let getBookmarks: String?
     }
-    
+
     struct Collection: Codable {
         let enableNFTStorage: String?
         let getCatalogTypeData: String?
@@ -129,7 +187,7 @@ extension CadenceModel {
         let getNFTMetadataViews: String?
         let sendNbaNFT: String?
         let sendNFT: String?
-        
+
         let enableNFTStorageTest: String?
         let getNFTCollectionTest: String?
         let getNFTDisplaysTest: String?
@@ -137,12 +195,12 @@ extension CadenceModel {
         let getNFTTest: String?
         let sendNFTTest: String?
     }
-    
+
     struct Contract: Codable {
         let getContractNames: String?
         let getContractByName: String?
     }
-    
+
     struct Domain: Codable {
         let claimFTFromInbox: String?
         let claimNFTFromInbox: String?
@@ -152,33 +210,46 @@ extension CadenceModel {
         let sendInboxNFT: String?
         let transferInboxTokens: String?
     }
-    
+
     struct FlowToken: Codable {
         let addToken: String?
         let enableTokenStorage: String?
         let transferTokens: String?
-        
+
         let isTokenListEnabled: String?
         let getTokenListBalance: String?
+        let isLinkedAccountTokenListEnabled: String?
     }
-    
+
     struct HybridCustody: Codable {
         let editChildAccount: String?
         let getAccessibleCoinInfo: String?
         let getAccessibleCollectionAndIds: String?
         let getAccessibleCollectionAndIdsDisplay: String?
         let getAccessibleCollectionsAndIds: String?
-        
+
         let getAccessibleFungibleToken: String?
         let getChildAccount: String?
         let getChildAccountMeta: String?
         let getChildAccountNFT: String?
         let unlinkChildAccount: String?
+
+        let transferChildNFT: String?
+        let transferNFTToChild: String?
+        let sendChildNFT: String?
+        let getChildAccountAllowTypes: String?
+        let checkChildLinkedCollections: String?
+        let batchTransferChildNFT: String?
+        let batchTransferNFTToChild: String?
+        /// child to child
+        let batchSendChildNFTToChild: String?
+        /// send NFT from child to child
+        let sendChildNFTToChild: String?
     }
-    
+
     struct Staking: Codable {
         let checkSetup: String?
-        
+
         let createDelegator: String?
         let createStake: String?
         let getApr: String?
@@ -187,22 +258,24 @@ extension CadenceModel {
         let getEpochMetadata: String?
         let getNodeInfo: String?
         let getNodesInfo: String?
-        
+
         let getDelegatesInfoArray: String?
         let getApyWeekly: String?
-        
+
         let getStakeInfo: String?
         let getStakingInfo: String?
         let restakeReward: String?
         let restakeUnstaked: String?
-        
+
         let setup: String?
         let unstake: String?
         let withdrawLocked: String?
         let withdrawReward: String?
         let withdrawUnstaked: String?
+
+        let checkStakingEnabled: String?
     }
-    
+
     struct Storage: Codable {
         let enableTokenStorage: String?
         let getBasicPublicItems: String?
@@ -215,20 +288,20 @@ extension CadenceModel {
         let getStoredItems: String?
         let getStoredResource: String?
         let getStoredStruct: String?
-        
+
         let getBasicPublicItemsTest: String?
         let getPrivateItemsTest: String?
     }
-    
+
     struct Switchboard: Codable {
         let getSwitchboard: String?
     }
-    
+
     struct NFT: Codable {
         let checkNFTListEnabledNew: String?
         let checkNFTListEnabled: String?
     }
-    
+
     struct Swap: Codable {
         let DeployPairTemplate: String?
         let CreatePairTemplate: String?
@@ -238,14 +311,14 @@ extension CadenceModel {
         let SwapTokensForExactTokens: String?
         let MintAllTokens: String?
         let QueryTokenNames: String?
-        
+
         let QueryPairArrayAddr: String?
         let QueryPairArrayInfo: String?
         let QueryPairInfoByAddrs: String?
         let QueryPairInfoByTokenKey: String?
         let QueryUserAllLiquidities: String?
         let QueryTimestamp: String?
-        
+
         let QueryVaultBalanceBatched: String?
         let QueryTokenPathPrefix: String?
         let CenterTokens: [String]?
@@ -255,7 +328,7 @@ extension CadenceModel {
 extension CadenceModel {
     struct EVM: Codable {
         let call: String?
-        let createCoa: String?
+        let createCoaEmpty: String?
         let deployContract: String?
         let estimateGas: String?
         let fundEvmAddr: String?
@@ -265,6 +338,27 @@ extension CadenceModel {
         let getCode: String?
         let withdrawCoa: String?
         let fundCoa: String?
+        let callContract: String?
+        let transferFlowToEvmAddress: String?
+        let transferFlowFromCoaToFlow: String?
+        let checkCoaLink: String?
+        let coaLink: String?
+    }
+
+    struct Bridge: Codable {
+        let batchOnboardByIdentifier: String?
+        let bridgeTokensFromEvmV2: String?
+        let bridgeTokensToEvmV2: String?
+
+        let batchBridgeNFTToEvmV2: String?
+        let batchBridgeNFTFromEvmV2: String?
+        /// send Not Flow Token to Evm
+        let bridgeTokensToEvmAddressV2: String?
+        /// evm to other flow
+        let bridgeTokensFromEvmToFlowV2: String?
+        /// nft flow to any evm
+        let bridgeNFTToEvmAddressV2: String?
+        let bridgeNFTFromEvmToFlowV2: String?
     }
 }
 
@@ -273,12 +367,21 @@ public extension String {
         guard let data = Data(base64Encoded: self) else { return nil }
         return String(data: data, encoding: .utf8)
     }
-    
+
     func toFunc() -> String {
-        guard let result = fromBase64() else {
+        guard let decodeStr = fromBase64() else {
             log.error("[Cadence] base decode failed")
             return ""
         }
+
+        let result = decodeStr.replacingOccurrences(of: "<platform_info>", with: platformInfo())
         return result
+    }
+
+    private func platformInfo() -> String {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+        let buildVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
+        let model = isDevModel ? "(Dev)" : ""
+        return "iOS-\(version)-\(buildVersion)\(model)"
     }
 }

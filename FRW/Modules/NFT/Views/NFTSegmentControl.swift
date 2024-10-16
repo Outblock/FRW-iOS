@@ -57,7 +57,7 @@ struct NFTSegmentItem: View {
     }
 }
 
-//struct NFTSegmentControl_Previews: PreviewProvider {
+// struct NFTSegmentControl_Previews: PreviewProvider {
 //    @State static var current: String = "List"
 //    static var previews: some View {
 //        NFTSegmentControl(currentTab: $current, titles: ["List", "Grid"])
@@ -69,4 +69,4 @@ struct NFTSegmentItem: View {
 //            .preferredColorScheme(.dark)
 //            .background(Color.black)
 //    }
-//}
+// }

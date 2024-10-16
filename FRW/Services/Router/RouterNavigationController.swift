@@ -11,7 +11,7 @@ class RouterNavigationController: UINavigationController {
     override var childForStatusBarStyle: UIViewController? {
         return topViewController
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return childForStatusBarStyle?.preferredStatusBarStyle ?? .default
     }

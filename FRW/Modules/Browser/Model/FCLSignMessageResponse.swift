@@ -13,7 +13,7 @@ struct FCLSignMessageResponse: Codable, FCLResponseProtocol {
     let fclVersion: String
     let service: FCLSimpleService
     let type: String
-    
+
     func uniqueId() -> String {
         return "\(service.type.rawValue)-\(type)-\(body?.message ?? "")"
     }

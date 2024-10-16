@@ -5,9 +5,9 @@
 //  Created by Selina on 15/8/2022.
 //
 
-import UIKit
-import SwiftUI
 import SnapKit
+import SwiftUI
+import UIKit
 
 class NFTUIKitGridStyleHandler: NSObject {
     var vm: NFTTabViewModel?
@@ -16,19 +16,19 @@ class NFTUIKitGridStyleHandler: NSObject {
         dm.reloadCallback = { [weak self] in
             self?.reloadViews()
         }
-        
+
         return dm
     }()
-    
+
     private var isInitRequested: Bool = false
     private var isRequesting: Bool = false
-    
+
     lazy var containerView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.LL.Neutrals.background
         return view
     }()
-    
+
     lazy var collectionView: UICollectionView = {
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.contentInsetAdjustmentBehavior = .never
@@ -38,61 +38,62 @@ class NFTUIKitGridStyleHandler: NSObject {
         view.showsHorizontalScrollIndicator = false
         view.showsVerticalScrollIndicator = false
         view.register(NFTUIKitItemCell.self, forCellWithReuseIdentifier: "NFTUIKitItemCell")
-        
+        view.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "UICollectionViewCell")
+
         view.setRefreshingAction { [weak self] in
             guard let self = self else {
                 return
             }
-            
+
             if self.collectionView.isLoading() {
                 self.collectionView.stopRefreshing()
                 return
             }
-            
+
             self.refreshAction()
         }
-        
+
         view.setLoadingAction { [weak self] in
             guard let self = self else {
                 return
             }
-            
+
             if self.collectionView.isRefreshing() {
                 self.collectionView.stopLoading()
                 return
             }
-            
+
             if self.dataModel.nfts.isEmpty {
                 self.collectionView.stopLoading()
                 return
             }
-            
+
             self.loadMoreAction()
         }
-        
+
         return view
     }()
-    
+
     private lazy var layout: UICollectionViewFlowLayout = {
         let viewLayout = UICollectionViewFlowLayout()
         viewLayout.scrollDirection = .vertical
         viewLayout.sectionHeadersPinToVisibleBounds = true
         return viewLayout
     }()
-    
+
     private lazy var emptyView: NFTUIKitListStyleHandler.EmptyView = {
         let view = NFTUIKitListStyleHandler.EmptyView()
         return view
     }()
-    
+
     func setup() {
         containerView.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
             make.top.left.right.bottom.equalToSuperview()
         }
-        
+
         collectionView.reloadData()
-        
+
         let offset = Router.coordinator.window.safeAreaInsets.top + 44.0
         containerView.addSubview(emptyView)
         emptyView.snp.makeConstraints { make in
@@ -101,14 +102,14 @@ class NFTUIKitGridStyleHandler: NSObject {
         }
         emptyView.isHidden = true
     }
-    
+
     private func reloadViews() {
         if dataModel.nfts.isEmpty {
             showEmptyView()
         } else {
             hideEmptyView()
         }
-        
+
         collectionView.reloadData()
         collectionView.setNoMoreData(dataModel.isEnd)
     }
@@ -120,23 +121,23 @@ extension NFTUIKitGridStyleHandler {
             collectionView.beginRefreshing()
         }
     }
-    
-    private func refreshAction() {
+
+    func refreshAction() {
         if isRequesting {
             collectionView.stopRefreshing()
             return
         }
-        
+
         guard WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() != nil else {
             showEmptyView()
             return
         }
-        
+
         isRequesting = true
-        
+
         hideEmptyView()
         hideErrorView()
-        
+
         Task {
             do {
                 try await dataModel.requestGridAction(offset: 0)
@@ -151,7 +152,7 @@ extension NFTUIKitGridStyleHandler {
                     self.isRequesting = false
                     self.isInitRequested = true
                     self.collectionView.stopRefreshing()
-                    
+
                     if self.dataModel.nfts.isEmpty {
                         self.showErrorView()
                     } else {
@@ -161,7 +162,7 @@ extension NFTUIKitGridStyleHandler {
             }
         }
     }
-    
+
     private func loadMoreAction() {
         Task {
             do {
@@ -171,13 +172,13 @@ extension NFTUIKitGridStyleHandler {
                     if self.collectionView.isLoading() {
                         self.collectionView.stopLoading()
                     }
-                    
+
                     self.reloadViews()
                 }
             } catch {
                 DispatchQueue.main.async {
                     self.collectionView.stopLoading()
-                    
+
                     if self.dataModel.nfts.isEmpty {
                         self.showErrorView()
                     } else {
@@ -190,79 +191,74 @@ extension NFTUIKitGridStyleHandler {
 }
 
 extension NFTUIKitGridStyleHandler {
-    private func showLoadingView() {
-        
-    }
-    
-    private func hideLoadingView() {
-        
-    }
-    
+    private func showLoadingView() {}
+
+    private func hideLoadingView() {}
+
     private func showEmptyView() {
-        self.emptyView.isHidden = false
+        emptyView.isHidden = false
     }
-    
+
     private func hideEmptyView() {
-        self.emptyView.isHidden = true
+        emptyView.isHidden = true
     }
-    
-    private func showErrorView() {
-        
-    }
-    
-    private func hideErrorView() {
-        
-    }
+
+    private func showErrorView() {}
+
+    private func hideErrorView() {}
 }
 
 extension NFTUIKitGridStyleHandler: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         return dataModel.nfts.count
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let nft = dataModel.nfts[indexPath.item]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NFTUIKitItemCell", for: indexPath) as! NFTUIKitItemCell
-        cell.config(nft)
+        if let nft = dataModel.nfts[safe: indexPath.item] {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NFTUIKitItemCell", for: indexPath) as! NFTUIKitItemCell
+            cell.config(nft)
+            return cell
+        }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UICollectionViewCell", for: indexPath)
         return cell
     }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+
+    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
         return NFTUIKitItemCell.calculateSize()
     }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+
+    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForHeaderInSection _: Int) -> CGSize {
         return .zero
     }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+
+    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForFooterInSection _: Int) -> CGSize {
         return .zero
     }
-    
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+
+    func collectionView(_: UICollectionView, viewForSupplementaryElementOfKind _: String, at _: IndexPath) -> UICollectionReusableView {
         return UICollectionReusableView()
     }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+
+    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumLineSpacingForSectionAt _: Int) -> CGFloat {
         return 18
     }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+
+    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumInteritemSpacingForSectionAt _: Int) -> CGFloat {
         return 18
     }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+
+    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, insetForSectionAt _: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 18, left: 18, bottom: 18, right: 18)
     }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let vm = vm else {
             return
         }
-        
+
         if indexPath.item < dataModel.nfts.count {
             let nft = dataModel.nfts[indexPath.item]
-            Router.route(to: RouteMap.NFT.detail(vm, nft, false))
+            Router.route(to: RouteMap.NFT.detail(vm, nft, nil))
             return
         }
     }

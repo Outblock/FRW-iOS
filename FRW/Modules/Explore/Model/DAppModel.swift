@@ -20,20 +20,18 @@ struct DAppModel: Codable, Identifiable {
     var id: URL {
         url
     }
-    
+
     var networkURL: URL? {
         switch currentNetwork {
         case .mainnet:
             return url
         case .testnet:
             return testnetURL
-        case .crescendo:
-            return crescendoURL
         case .previewnet:
             return previewnetURL
         }
     }
-    
+
     var host: String? {
         var host = url.host
         if LocalUserDefaults.shared.flowNetwork == .testnet {

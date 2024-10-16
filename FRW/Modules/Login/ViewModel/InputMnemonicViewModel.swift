@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import WalletCore
 import SwiftUI
+import WalletCore
 
 class InputMnemonicViewModel: ViewModel {
     @Published var state: InputMnemonicView.ViewState = .init()
@@ -24,6 +24,7 @@ class InputMnemonicViewModel: ViewModel {
                     break
                 }
             }
+            hasError = (words.count > 12)
 
             DispatchQueue.main.async {
                 self.state.hasError = hasError
@@ -35,8 +36,9 @@ class InputMnemonicViewModel: ViewModel {
                 } else {
                     self.state.suggestions = Mnemonic.search(prefix: String(words.last ?? ""))
                 }
-
-                self.state.nextEnable = valid
+                if words.count == 12 {
+                    self.state.nextEnable = valid
+                }
             }
         case .next:
             restoreLogin()
@@ -51,20 +53,20 @@ class InputMnemonicViewModel: ViewModel {
 
     private func restoreLogin() {
         UIApplication.shared.endEditing()
-        
+
         HUD.loading()
-        
+
         let mnemonic = getRawMnemonic()
         Task {
             do {
                 try await UserManager.shared.restoreLogin(withMnemonic: mnemonic)
-                
+
                 DispatchQueue.main.async {
                     if let uid = UserManager.shared.activatedUID, MultiAccountStorage.shared.getBackupType(uid) == .none {
                         MultiAccountStorage.shared.setBackupType(.manual, uid: uid)
                     }
                 }
-                
+
                 HUD.dismissLoading()
                 HUD.success(title: "login_success".localized)
                 Router.popToRoot()
@@ -79,13 +81,13 @@ class InputMnemonicViewModel: ViewModel {
             }
         }
     }
-    
+
     private func showCreateWalletAlertView() {
         withAnimation(.alertViewSpring) {
             self.state.isAlertViewPresented = true
         }
     }
-    
+
     private func createAccountWithCurrentMnemonic() {
         let mnemonic = getRawMnemonic()
         Router.route(to: RouteMap.Register.root(mnemonic))

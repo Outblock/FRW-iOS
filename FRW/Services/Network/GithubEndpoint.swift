@@ -10,6 +10,9 @@ import Moya
 
 enum GithubEndpoint {
     case collections
+    case ftTokenList
+    case EVMNFTList
+    case EVMTokenList
 }
 
 extension GithubEndpoint: TargetType {
@@ -21,6 +24,43 @@ extension GithubEndpoint: TargetType {
         switch self {
         case .collections:
             return "/Outblock/Assets/main/nft/nft.json"
+        case .ftTokenList:
+            if isDevModel {
+                switch LocalUserDefaults.shared.flowNetwork {
+                case .mainnet:
+                    return "/Outblock/token-list-jsons/outblock/jsons/mainnet/flow/dev.json"
+                case .testnet:
+                    return "/Outblock/token-list-jsons/outblock/jsons/testnet/flow/dev.json"
+                case .previewnet:
+                    return "/Outblock/token-list-jsons/outblock/jsons/previewnet/flow/default.json"
+                }
+            } else {
+                switch LocalUserDefaults.shared.flowNetwork {
+                case .mainnet:
+                    return "/Outblock/token-list-jsons/outblock/jsons/mainnet/flow/default.json"
+                case .testnet:
+                    return "/Outblock/token-list-jsons/outblock/jsons/testnet/flow/default.json"
+                case .previewnet:
+                    return "/Outblock/token-list-jsons/outblock/jsons/previewnet/flow/default.json"
+                }
+            }
+
+        case .EVMNFTList:
+            switch LocalUserDefaults.shared.flowNetwork {
+            case .testnet:
+                return "/Outblock/token-list-jsons/outblock/jsons/testnet/flow/nfts.json"
+            case .mainnet:
+                return "/Outblock/token-list-jsons/outblock/jsons/mainnet/flow/nfts.json"
+            case .previewnet:
+                return "/Outblock/token-list-jsons/outblock/jsons/previewnet/flow/nfts.json"
+            }
+        case .EVMTokenList:
+            switch LocalUserDefaults.shared.flowNetwork {
+            case .mainnet:
+                return "/Outblock/token-list-jsons/outblock/jsons/mainnet/evm/default.json"
+            default:
+                return "/Outblock/token-list-jsons/outblock/jsons/testnet/evm/default.json"
+            }
         }
     }
 
@@ -30,7 +70,7 @@ extension GithubEndpoint: TargetType {
 
     var task: Task {
         switch self {
-        case .collections:
+        case .collections, .ftTokenList, .EVMNFTList, .EVMTokenList:
             return .requestPlain
         }
     }

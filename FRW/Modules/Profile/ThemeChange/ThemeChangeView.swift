@@ -10,17 +10,17 @@ import SwiftUI
 
 struct ThemeChangeView: RouteableView {
     @StateObject private var vm = ThemeChangeViewModel()
-    
+
     @AppStorage("WalletCardBackrgound")
     private var walletCardBackrgound: String = "fade:0"
-    
+
     @State
     private var cardColor: Color
-    
+
     var title: String {
         return "theme".localized
     }
-    
+
     init() {
         let value = UserDefaults.standard.string(forKey: "WalletCardBackrgound") ?? "fade:0"
         let card = CardBackground(value: value)
@@ -31,69 +31,49 @@ struct ThemeChangeView: RouteableView {
         ZStack {
             ScrollView {
                 Section {
+                    Button {
+                        Router.route(to: RouteMap.Profile.wallpaper)
+                    } label: {
+                        HStack {
+                            Text("Wallpaper".localized)
+                                .font(.inter(size: 14, weight: .semibold))
+                                .foregroundColor(.LL.Neutrals.text)
+
+                            Spacer()
+
+                            CardBackground(value: walletCardBackrgound)
+                                .renderView()
+                                .frame(width: 32, height: 32)
+                                .cornerRadius(8)
+                        }
+                        .padding(.horizontal, 24)
+                        .frame(height: 64)
+                        .background(.LL.bgForIcon)
+                        .cornerRadius(16)
+                    }
+                }
+                .padding(.horizontal, 18)
+                .padding(.bottom, 12)
+
+                Section {
                     VStack {
                         themeItemView.padding(.vertical, 24)
                         BaseDivider()
                         autoItemView
-                            .hoverEffect(.lift)
+                            .hoverEffect(SwiftUI.HoverEffect.lift)
                     }
-        //            .roundedBg(cornerRadius: 16, fillColor: .LL.bgForIcon)
+                    //            .roundedBg(cornerRadius: 16, fillColor: .LL.bgForIcon)
                     .background(.LL.bgForIcon)
                     .cornerRadius(16)
                     .frame(maxHeight: .infinity, alignment: .top)
                 } header: {
-                    Text("Theme")
+                    Text("theme".localized)
                         .font(.LL.body)
                         .foregroundColor(.LL.Neutrals.text2)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .padding(.horizontal, 18)
                 .padding(.bottom, 12)
-                
-                Section {
-                    VStack {
-                        ForEach(CardBackground.allCases, id: \.identify) { card in
-                            
-//                            Button {
-//                                walletCardBackrgound = card.rawValue
-//                            } label: {
-                                
-                                if card.identify == CardBackground.color(color: .clear).identify {
-                                    Cell(isSelected: CardBackground(value: walletCardBackrgound).identify == card.identify, title: card.identify.capitalized){
-                                        ColorPicker(selection: $cardColor, supportsOpacity: false) {}
-                                            .onChange(of: cardColor, perform: { color in
-                                                walletCardBackrgound = CardBackground.color(color: color.toUIColor() ?? UIColor(hex: "#FC814A")).rawValue
-                                            })
-                                    }
-                                    .onTapGestureOnBackground {
-                                        walletCardBackrgound = card.rawValue
-                                    }
-                                } else {
-                                    Cell(isSelected: CardBackground(value: walletCardBackrgound).identify == card.identify, title: card.identify.capitalized){}
-                                        .onTapGestureOnBackground {
-                                            walletCardBackrgound = card.rawValue
-                                        }
-                                    
-                                }
-                                
-//                            }
-                            BaseDivider()
-                            
-                        }
-                    }
-        //            .roundedBg(cornerRadius: 16, fillColor: .LL.bgForIcon)
-                    .background(.LL.bgForIcon)
-                    .cornerRadius(16)
-                    .frame(maxHeight: .infinity, alignment: .top)
-                } header: {
-                    Text("Card Background")
-                        .font(.LL.body)
-                        .foregroundColor(.LL.Neutrals.text2)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .padding(.horizontal, 18)
-                .padding(.bottom, 12)
-                
             }
         }
         .backgroundFill(.LL.Neutrals.background)
@@ -172,29 +152,29 @@ extension ThemeChangeView {
     }
 }
 
-
 extension ThemeChangeView {
     struct Cell<Content>: View where Content: View {
         let isSelected: Bool
         let title: String
         let content: Content
-    
+
         init(isSelected: Bool, title: String,
-             @ViewBuilder content: @escaping () -> Content) {
+             @ViewBuilder content: @escaping () -> Content)
+        {
             self.isSelected = isSelected
             self.title = title
             self.content = content()
         }
-        
+
         var body: some View {
             HStack {
-                Image(systemName: isSelected ? .checkmarkSelected : .checkmarkUnselected )
+                Image(systemName: isSelected ? .checkmarkSelected : .checkmarkUnselected)
                     .foregroundColor(isSelected ? .Flow.accessory : .LL.Neutrals.neutrals1)
                 Text(title)
                     .font(.inter())
                     .foregroundColor(.LL.text)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 content
             }
             .frame(height: 64)

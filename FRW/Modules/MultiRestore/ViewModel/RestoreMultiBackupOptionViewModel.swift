@@ -10,7 +10,7 @@ import Foundation
 class RestoreMultiBackupOptionViewModel: ObservableObject {
     @Published var list: [BackupMultiViewModel.MultiItem] = []
     @Published var nextable: Bool = false
-    
+
     init() {
         for type in MultiBackupType.allCases {
             if type != .passkey {
@@ -18,7 +18,7 @@ class RestoreMultiBackupOptionViewModel: ObservableObject {
             }
         }
     }
-    
+
     func onClick(item: BackupMultiViewModel.MultiItem) {
         list = list.map { model in
             var model = model
@@ -29,12 +29,12 @@ class RestoreMultiBackupOptionViewModel: ObservableObject {
         }
         nextable = waitingList().count >= 2
     }
-    
+
     func waitingList() -> [MultiBackupType] {
         let waiting = list.filter { $0.isBackup }
         return waiting.map { $0.type }
     }
-    
+
     func onNext() {
         let list = waitingList()
         Router.route(to: RouteMap.RestoreLogin.multiConnect(list))

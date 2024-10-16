@@ -5,9 +5,8 @@
 //  Created by Selina on 24/5/2022.
 //
 
-
-import SwiftUI
 import Combine
+import SwiftUI
 
 // MARK: - Define
 
@@ -66,29 +65,29 @@ extension AddressBookView {
     class AddressBookViewModel: ViewModel {
         @Published var state: ListState
         @Published var searchText: String = ""
-        
+
         var injectSelectAction: ((Contact) -> Void)?
-        
+
         private var rawContacts: [Contact]?
         private var cancelSets = Set<AnyCancellable>()
         private let cacheKey = "AddressBookViewContacts"
 
         init() {
             state = ListState(sections: [AddressBookView.SectionViewModel]())
-            
+
             loadFromCache()
             trigger(.load)
-            
+
             registerNotifications()
         }
-        
+
         private func registerNotifications() {
             NotificationCenter.default.publisher(for: .addressBookDidAdd).sink { [weak self] _ in
                 DispatchQueue.main.async {
                     self?.trigger(.load)
                 }
             }.store(in: &cancelSets)
-            
+
             NotificationCenter.default.publisher(for: .addressBookDidEdit).sink { [weak self] _ in
                 DispatchQueue.main.async {
                     self?.trigger(.load)
@@ -187,7 +186,7 @@ extension AddressBookView {
                 }
             }
         }
-        
+
         private func selectContact(_ contact: Contact) {
             if let action = injectSelectAction {
                 action(contact)
@@ -203,7 +202,7 @@ extension AddressBookView {
                     DispatchQueue.main.async {
                         self.rawContacts = response.contacts
                         self.saveToCache(contacts: response.contacts)
-                        
+
                         self.regroup(response.contacts)
                         self.state.stateType = .idle
                     }
@@ -213,7 +212,7 @@ extension AddressBookView {
                             HUD.error(title: "request_failed".localized)
                             return
                         }
-                        
+
                         self.state.stateType = .error
                     }
                 }
@@ -255,7 +254,7 @@ extension AddressBookView.AddressBookViewModel {
             PageCache.cache.set(value: [Contact](), forKey: cacheKey)
         }
     }
-    
+
     private func loadFromCache() {
         Task {
             if let cacheContacts = try? await PageCache.cache.get(forKey: cacheKey, type: [Contact].self), !cacheContacts.isEmpty {
@@ -267,14 +266,14 @@ extension AddressBookView.AddressBookViewModel {
             }
         }
     }
-    
+
     private func saveCurrentGroupedListToCache() {
         var contacts = [Contact]()
-        
+
         for section in state.sections {
             contacts.append(contentsOf: section.state.list)
         }
-        
+
         saveToCache(contacts: contacts)
     }
 }
@@ -325,7 +324,7 @@ extension AddressBookView.AddressBookViewModel {
     /// search from send view
     func searchLocal(text: String) -> [WalletSendView.SearchSection] {
         var results = [WalletSendView.SearchSection]()
-        
+
         for section in state.sections {
             var contacts = [Contact]()
 
@@ -351,25 +350,25 @@ extension AddressBookView.AddressBookViewModel {
                 results.append(newSection)
             }
         }
-        
+
         return results
     }
-    
+
     func isFriend(contact: Contact) -> Bool {
         for tempContact in rawContacts ?? [] {
             if tempContact.uniqueId == contact.uniqueId {
                 return true
             }
         }
-        
+
         return false
     }
-    
+
     func appendNewContact(contact: Contact) {
         rawContacts?.append(contact)
-        
+
         saveToCache(contacts: rawContacts)
-        
+
         regroup(rawContacts)
         state.stateType = .idle
     }

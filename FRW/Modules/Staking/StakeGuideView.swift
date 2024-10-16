@@ -12,7 +12,7 @@ class StakeGuideViewModel: ObservableObject {
     init() {
         LocalUserDefaults.shared.stakingGuideDisplayed = true
     }
-    
+
     func goNext() {
         Router.route(to: RouteMap.Wallet.stakingSelectProvider)
     }
@@ -20,30 +20,30 @@ class StakeGuideViewModel: ObservableObject {
 
 struct StakeGuideView: RouteableView {
     @StateObject private var vm = StakeGuideViewModel()
-    
+
     var title: String {
         return "stake_flow".localized
     }
-    
+
     var navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
         return .large
     }
-    
+
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
                 topTitleView
                 descView
                     .padding(.top, 50)
-                
+
                 Spacer()
-                
+
                 VPrimaryButton(model: ButtonStyle.stakePrimary,
                                state: .enabled,
                                action: {
-                    vm.goNext()
-                }, title: "stake_guide_btn_text".localized)
-                .padding(.bottom)
+                                   vm.goNext()
+                               }, title: "stake_guide_btn_text".localized)
+                    .padding(.bottom)
             }
             .padding(.top, 32)
             .padding(.bottom, 20)
@@ -57,12 +57,12 @@ struct StakeGuideView: RouteableView {
         .backgroundFill(.LL.deepBg)
         .applyRouteable(self)
     }
-    
+
     var topTitleView: some View {
         VStack {
             HStack {
                 Image("icon-stake-ad-crown")
-                
+
                 Text("stake_ad_title_2".localized)
                     .font(.inter(size: 20, weight: .bold))
                     .foregroundColor(Color.clear)
@@ -75,18 +75,18 @@ struct StakeGuideView: RouteableView {
                                     .foregroundColor(Color.black)
                             }
                     }
-                
+
                 Text("stake_guide_text_1".localized)
                     .font(.inter(size: 20, weight: .bold))
                     .foregroundColor(Color.LL.Neutrals.text)
             }
-            
+
             Text("stake_guide_text_2".localized)
                 .font(.inter(size: 20, weight: .bold))
                 .foregroundColor(Color.LL.Neutrals.text)
         }
     }
-    
+
     var descView: some View {
         VStack(spacing: 25) {
             createDescSubview(icon: "icon-stake-guide-desc1", attributedString: descString1)
@@ -96,7 +96,7 @@ struct StakeGuideView: RouteableView {
         }
         .padding(.horizontal, 10)
     }
-    
+
     func createDescSubview(icon: String, attributedString: NSAttributedString) -> some View {
         HStack {
             Image(icon)
@@ -104,7 +104,7 @@ struct StakeGuideView: RouteableView {
             Spacer()
         }
     }
-    
+
     var descString1: NSAttributedString {
         let s1 = NSMutableAttributedString(string: "stake_guide_desc_1_1".localized, attributes: descNormalAttr)
         let s2 = NSAttributedString(string: "stake_guide_desc_1_2".localized, attributes: descHighlightAttr)
@@ -113,7 +113,7 @@ struct StakeGuideView: RouteableView {
         s1.append(s3)
         return s1
     }
-    
+
     var descString2: NSAttributedString {
         let s1 = NSMutableAttributedString(string: "stake_guide_desc_2_1".localized, attributes: descNormalAttr)
         let s2 = NSMutableAttributedString(string: "stake_guide_desc_2_2".localized, attributes: descHighlightAttr)
@@ -132,7 +132,7 @@ struct StakeGuideView: RouteableView {
         s1.append(s8)
         return s1
     }
-    
+
     var descString3: NSAttributedString {
         let s1 = NSMutableAttributedString(string: "stake_guide_desc_3_1".localized, attributes: descNormalAttr)
         let s2 = NSAttributedString(string: "stake_guide_desc_3_2".localized, attributes: descHighlightAttr)
@@ -141,7 +141,7 @@ struct StakeGuideView: RouteableView {
         s1.append(s3)
         return s1
     }
-    
+
     var descString4: NSAttributedString {
         let s1 = NSMutableAttributedString(string: "stake_guide_desc_4_1".localized, attributes: descNormalAttr)
         let s2 = NSAttributedString(string: "stake_guide_desc_4_2".localized, attributes: descNormalAttr)
@@ -152,12 +152,12 @@ struct StakeGuideView: RouteableView {
         s1.append(s4)
         return s1
     }
-    
+
     var descNormalAttr: [NSAttributedString.Key: Any] {
         let attrs: [NSAttributedString.Key: Any] = [.font: UIFont.interSemiBold(size: 14), .foregroundColor: UIColor.LL.Neutrals.text3]
         return attrs
     }
-    
+
     var descHighlightAttr: [NSAttributedString.Key: Any] {
         let attrs: [NSAttributedString.Key: Any] = [.font: UIFont.interSemiBold(size: 14), .foregroundColor: UIColor.LL.stakeMain]
         return attrs

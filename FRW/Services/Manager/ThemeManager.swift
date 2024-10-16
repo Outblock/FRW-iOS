@@ -31,12 +31,12 @@ class ThemeManager: ObservableObject {
 
         reloadStyle()
     }
-    
+
     func getUIKitStyle() -> UIUserInterfaceStyle {
         if let style = style {
             return style.toUIKitEnum
         }
-        
+
         return .dark
     }
 }
@@ -63,7 +63,7 @@ extension ColorScheme {
             return "Dark"
         }
     }
-    
+
     var toUIKitEnum: UIUserInterfaceStyle {
         switch self {
         case .light:

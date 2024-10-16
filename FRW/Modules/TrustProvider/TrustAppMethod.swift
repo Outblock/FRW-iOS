@@ -5,9 +5,8 @@
 //  Created by cat on 2024/3/4.
 //
 
-import Foundation
 import BigInt
-
+import Foundation
 
 enum TrustAppMethod: String, Decodable, CaseIterable {
     case signRawTransaction
@@ -29,7 +28,7 @@ protocol RLPEncodable {
 }
 
 extension RLPEncodable {
-    var rlpList : [Any] {
+    var rlpList: [Any] {
         let mirror = Mirror(reflecting: self)
         return mirror.children.compactMap { $0.value }
     }

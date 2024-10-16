@@ -8,12 +8,18 @@
 import SwiftUI
 
 struct MultiBackupPhraseView: RouteableView {
-    @State var isBlur: Bool = true
+    enum From {
+        case create
+        case backup
+    }
+
+    @State var isBlur: Bool = false
+    var from: MultiBackupPhraseView.From = .backup
     var mnemonic: String
     private var dataSource: [WordListView.WordItem]
     init(mnemonic: String) {
         self.mnemonic = mnemonic
-        self.dataSource = mnemonic.split(separator: " ").enumerated().map { item in
+        dataSource = mnemonic.split(separator: " ").enumerated().map { item in
             WordListView.WordItem(id: item.offset + 1, word: String(item.element))
         }
     }
@@ -74,9 +80,10 @@ struct MultiBackupPhraseView: RouteableView {
                             .onTapGesture {
                                 isBlur = true
                             }
+                            .visibility(from == .backup ? .gone : .visible)
                     }
                     .onTapGesture {
-                        isBlur.toggle()
+//                        isBlur.toggle()
                     }
                     .blur(radius: isBlur ? 10 : 0)
                     .padding(.vertical, 20)
@@ -133,7 +140,6 @@ struct MultiBackupPhraseView: RouteableView {
                     .padding(.bottom)
 
                     Spacer()
-                    
                 }
             }
             Spacer()
@@ -143,9 +149,10 @@ struct MultiBackupPhraseView: RouteableView {
                                Router.pop(animated: false)
                            },
                            title: "next".localized)
-            .padding(.bottom)
+                .padding(.bottom)
+                .visibility(from == .backup ? .gone : .visible)
         }
-        
+
         .padding(.horizontal, 28)
         .backgroundFill(Color.LL.background)
         .applyRouteable(self)

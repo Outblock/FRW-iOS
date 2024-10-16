@@ -7,7 +7,6 @@
 
 import Foundation
 import Haneke
-import SwiftUIX
 
 @propertyWrapper
 struct JSONStorage<T: Codable> {

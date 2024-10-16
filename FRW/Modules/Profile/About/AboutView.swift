@@ -9,13 +9,13 @@ import SwiftUI
 
 struct AboutView: RouteableView {
     let version = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
-    
+
     let buildVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-    
+
     var title: String {
         "About"
     }
-    
+
     var body: some View {
         VStack(alignment: .center, spacing: 8) {
             Image("logo")
@@ -23,14 +23,14 @@ struct AboutView: RouteableView {
                 .frame(width: 100, height: 100)
                 .padding(.top, 20)
                 .padding(.bottom, 8)
-            
+
             Text("app_name_full".localized)
                 .font(.inter(size: 24, weight: .semibold))
-            
+
             HStack {
                 Text("version")
                     .textCase(.lowercase)
-                
+
                 Text("\(buildVersion ?? "") (\(version ?? ""))")
                     .textCase(.lowercase)
             }
@@ -38,19 +38,16 @@ struct AboutView: RouteableView {
             .foregroundColor(.LL.note.opacity(0.5))
             .padding(.bottom, 50)
 
-            
             Section {
                 VStack(spacing: 0) {
                     SocialButton(imageName: "discord",
-                                 text: "Discord")
-                    {
+                                 text: "Discord") {
                         UIApplication.shared.open(URL(string: "https://discord.com/invite/J6fFnh2xx6")!)
                     }
-                    
+
                     SocialButton(imageName: "twitter",
                                  text: "X",
-                                 showDivider: false)
-                    {
+                                 showDivider: false) {
                         UIApplication.shared.open(URL(string: "https://twitter.com/flow_blockchain")!)
                     }
 //
@@ -69,7 +66,7 @@ struct AboutView: RouteableView {
                     .foregroundColor(.LL.note)
                     .padding(.bottom, 8)
             }
-            
+
 //            Section {
 //                VStack(spacing: 0) {
 //
@@ -89,9 +86,9 @@ struct AboutView: RouteableView {
 //                    .foregroundColor(.LL.note)
 //                    .padding(.top, 20)
 //            }
-            
+
             Spacer()
-            
+
             Image("Flow")
                 .resizable()
                 .frame(width: 50, height: 50)
@@ -105,13 +102,13 @@ struct AboutView: RouteableView {
         .backgroundFill(.LL.background)
         .applyRouteable(self)
     }
-    
+
     struct SocialButton: View {
         let imageName: String
         let text: String
         var showDivider: Bool = true
         let action: () -> Void
-        
+
         var body: some View {
             VStack(spacing: 0) {
                 Button {
@@ -121,20 +118,20 @@ struct AboutView: RouteableView {
                         Image(imageName)
                             .resizable()
                             .frame(width: 35, height: 35)
-                        
+
                         Text(text)
                             .font(.LL.body)
                             .foregroundColor(.LL.text)
-                            
+
                         Spacer()
-                        
+
                         Image(systemName: "arrow.up.right")
                             .font(.LL.body)
                             .foregroundColor(.LL.note)
                     }
                     .padding(18)
                 }
-                
+
                 if showDivider {
                     Divider()
                         .background(.LL.bgForIcon)

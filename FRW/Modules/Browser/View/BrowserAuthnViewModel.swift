@@ -5,11 +5,11 @@
 //  Created by Selina on 6/9/2022.
 //
 
-import SwiftUI
 import Flow
+import SwiftUI
 
 extension BrowserAuthnViewModel {
-    typealias Callback = (Bool) -> ()
+    typealias Callback = (Bool) -> Void
 }
 
 class BrowserAuthnViewModel: ObservableObject {
@@ -19,27 +19,28 @@ class BrowserAuthnViewModel: ObservableObject {
     @Published var logo: String?
     @Published var network: Flow.ChainID?
     private var callback: BrowserAuthnViewModel.Callback?
-    
+
     init(title: String,
          url: String,
          logo: String?,
          walletAddress: String?,
          network: Flow.ChainID? = nil,
-         callback: @escaping BrowserAuthnViewModel.Callback) {
+         callback: @escaping BrowserAuthnViewModel.Callback)
+    {
         self.title = title
-        self.urlString = url
+        urlString = url
         self.logo = logo
         self.network = network
         self.walletAddress = walletAddress
         self.callback = callback
     }
-    
+
     func didChooseAction(_ result: Bool) {
         callback?(result)
         callback = nil
         Router.dismiss()
     }
-    
+
     deinit {
         callback?(false)
         WalletConnectManager.shared.reloadPendingRequests()

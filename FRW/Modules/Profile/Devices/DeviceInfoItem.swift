@@ -10,7 +10,7 @@ import SwiftUI
 struct DeviceInfoItem: View {
     var title: String
     var detail: String
-    
+
     var body: some View {
         HStack {
             // Body1
@@ -28,5 +28,5 @@ struct DeviceInfoItem: View {
 }
 
 #Preview {
-    DeviceInfoItem(title: "application_tag".localized, detail: "Flow Core")
+    DeviceInfoItem(title: "application_tag".localized, detail: "Flow Wallet")
 }

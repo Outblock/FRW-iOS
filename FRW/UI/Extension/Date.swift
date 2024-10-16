@@ -29,7 +29,7 @@ extension Date {
     var ymdString: String {
         return yyyyMMddFormatter.string(from: self)
     }
-    
+
     var mmmddString: String {
         return MMMddFormatter.string(from: self)
     }

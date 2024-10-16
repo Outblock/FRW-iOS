@@ -9,24 +9,16 @@ import Foundation
 
 class MultiBackupPasskeyTarget: MultiBackupTarget {
     var uploadedItem: MultiBackupManager.StoreItem?
-    
+
     var registeredDeviceInfo: SyncInfo.DeviceInfo?
-    
-    func loginCloud() async throws {
-            
-    }
-    
-    func upload(password: String) async throws {
-            
-    }
-    
+
+    func loginCloud() async throws {}
+
+    func upload(password _: String) async throws {}
+
     func getCurrentDriveItems() async throws -> [MultiBackupManager.StoreItem] {
         return []
     }
-    
-    func removeItem(password: String) async throws {
-            
-    }
-    
-    
+
+    func removeItem(password _: String) async throws {}
 }

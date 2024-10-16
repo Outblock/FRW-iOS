@@ -47,7 +47,6 @@ class RecoveryPhraseViewModel: ViewModel {
         case .copy:
             UIPasteboard.general.string = WalletManager.shared.getCurrentMnemonic() ?? ""
             HUD.success(title: "copied".localized)
-            break
         }
     }
 }

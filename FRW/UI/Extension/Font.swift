@@ -42,7 +42,6 @@ extension Font {
         static let caption = Font.custom("e-Ukraine-Regular", relativeTo: .caption)
         static let caption2 = Font.custom("e-Ukraine-Regular", relativeTo: .caption2)
     }
-    
 }
 
 /*
@@ -61,29 +60,40 @@ extension Font {
     static func inter(size: CGFloat = 16, weight: Weight = .regular) -> Font {
         return Font.custom("Inter", size: size).weight(weight)
     }
-    
-    static func montserrat(size: CGFloat = 16, weight: Weight = .regular) -> Font {
+
+    static func Ukraine(size: CGFloat = 16, weight: Weight = .regular) -> Font {
         switch weight {
-            case .regular:
-                return Font.custom("e-Ukraine-Regular", size: size)
-            case .medium:
-                return Font.custom("e-Ukraine-Medium", size: size)
-            case .semibold:
-                return Font.custom("e-Ukraine-Bold", size: size)
-            case .light:
-                return Font.custom("e-Ukraine-Light", size: size)
-            case .bold:
-                return Font.custom("e-Ukraine-Bold", size: size)
-            default:
-                return Font.custom("e-Ukraine-Regular", size: size)
+        case .regular:
+            return Font.custom("e-Ukraine-Regular", size: size)
+        case .medium:
+            return Font.custom("e-Ukraine-Medium", size: size)
+        case .semibold:
+            return Font.custom("e-Ukraine-Bold", size: size)
+        case .light:
+            return Font.custom("e-Ukraine-Light", size: size)
+        case .bold:
+            return Font.custom("e-Ukraine-Bold", size: size)
+        default:
+            return Font.custom("e-Ukraine-Regular", size: size)
+        }
+    }
+
+    static func Montserrat(size: CGFloat, weight: Weight = .regular) -> Font {
+        switch weight {
+        case .regular:
+            return Font.custom("Montserrat-Regular", size: size)
+        case .semibold:
+            return Font.custom("Montserrat-SemiBold", size: size)
+        case .light:
+            return Font.custom("Montserrat-Italic", size: size)
+        default:
+            return Font.custom("e-Ukraine-Regular", size: size)
         }
     }
 
     static func W700(size: CGFloat = 16) -> Font {
         return Font.inter(size: size, weight: .bold)
     }
-    
-    
 }
 
 extension Font.Weight {

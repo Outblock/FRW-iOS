@@ -5,8 +5,8 @@
 //  Created by Hao Fu on 30/7/2022.
 //
 
-import Foundation
 import Flow
+import Foundation
 
 struct AuthnResponse: Codable {
     let fType: String?
@@ -49,7 +49,7 @@ struct AuthnResponse: Codable {
         reason = try? container.decode(String.self, forKey: .reason)
         compositeSignature = try? container.decode(AuthnData.self, forKey: .compositeSignature)
     }
-    
+
     init(fType: String?, fVsn: String?, status: Status, updates: Service? = nil, local: Service? = nil, data: AuthnData? = nil, reason: String?, compositeSignature: AuthnData?, authorizationUpdates: Service? = nil) {
         self.fType = fType
         self.fVsn = fVsn
@@ -89,7 +89,7 @@ public struct FCLResponse: Codable {
     var services: [Service]? = []
     //        let cid: String
     //        let expiresAt: Date
-    
+
     enum CodingKeys: String, CodingKey {
         case fType = "f_type"
         case fVsn = "f_vsn"
@@ -116,10 +116,10 @@ public enum FCLWalletConnectMethod: String, Codable {
     case authz = "flow_authz"
     case userSignature = "flow_user_sign"
     case accountProof = "flow_account_proof"
-    
+
     case accountInfo = "frw_account_info"
     case addDeviceInfo = "frw_add_device_key"
-    
+
     public init?(type: FCLServiceType) {
         switch type {
         case .preAuthz:
@@ -161,7 +161,8 @@ struct Provider: Codable {
     public let color: String?
     public let supportEmail: String?
     public let website: String?
-    
+    public let icon: String?
+
     enum CodingKeys: String, CodingKey {
         case fType = "f_type"
         case fVsn = "f_vsn"
@@ -171,6 +172,7 @@ struct Provider: Codable {
         case color
         case supportEmail
         case website
+        case icon
     }
 }
 
@@ -195,7 +197,6 @@ struct ParamValue: Codable {
         }
     }
 }
-
 
 struct Service: Codable {
     var fType: String? = "Service"
@@ -223,8 +224,8 @@ struct Service: Codable {
         case params
         case data
     }
-    
-    init(fType: String?, fVsn: String?, type: FCLServiceType?, method: FCLServiceMethod?, endpoint: String?, uid: String?, id: String?, identity: Identity?, provider: Provider?, params: [String : String]?, data: AccountProof?) {
+
+    init(fType: String?, fVsn: String?, type: FCLServiceType?, method: FCLServiceMethod?, endpoint: String?, uid: String?, id: String?, identity: Identity?, provider: Provider?, params: [String: String]?, data: AccountProof?) {
         self.fType = fType
         self.fVsn = fVsn
         self.type = type
@@ -237,8 +238,7 @@ struct Service: Codable {
         self.params = params
         self.data = data
     }
-    
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let rawValue = try? container.decode([String: ParamValue].self, forKey: .params)
@@ -260,7 +260,6 @@ struct Service: Codable {
     }
 }
 
-
 struct AccountProof: Codable {
     let fType, fVsn, address, nonce: String
     let signatures: [AccountProofSignature]
@@ -273,6 +272,7 @@ struct AccountProof: Codable {
 }
 
 // MARK: - Signature
+
 struct AccountProofSignature: Codable {
     let fType, fVsn, addr: String
     let keyID: Int

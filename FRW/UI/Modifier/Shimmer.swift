@@ -40,7 +40,7 @@ public struct Shimmer: ViewModifier {
     public static let defaultGradient = Gradient(colors: [
         .black.opacity(0.3), // translucent
         .black, // opaque
-        .black.opacity(0.3) // translucent
+        .black.opacity(0.3), // translucent
     ])
 
     /*
@@ -148,32 +148,32 @@ public extension View {
 }
 
 #if DEBUG
-struct Shimmer_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            Text("SwiftUI Shimmer")
-            if #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) {
-                Text("SwiftUI Shimmer").preferredColorScheme(.light)
-                Text("SwiftUI Shimmer").preferredColorScheme(.dark)
-                VStack(alignment: .leading) {
-                    Text("Loading...").font(.title)
-                    Text(String(repeating: "Shimmer", count: 12))
-                        .redacted(reason: .placeholder)
-                }.frame(maxWidth: 200)
+    struct Shimmer_Previews: PreviewProvider {
+        static var previews: some View {
+            Group {
+                Text("SwiftUI Shimmer")
+                if #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) {
+                    Text("SwiftUI Shimmer").preferredColorScheme(.light)
+                    Text("SwiftUI Shimmer").preferredColorScheme(.dark)
+                    VStack(alignment: .leading) {
+                        Text("Loading...").font(.title)
+                        Text(String(repeating: "Shimmer", count: 12))
+                            .redacted(reason: .placeholder)
+                    }.frame(maxWidth: 200)
+                }
             }
-        }
-        .padding()
-        .shimmering()
-        .previewLayout(.sizeThatFits)
+            .padding()
+            .shimmering()
+            .previewLayout(.sizeThatFits)
 
-        VStack(alignment: .leading) {
-            Text("مرحبًا")
-            Text("← Right-to-left layout direction").font(.body)
-            Text("שלום")
+            VStack(alignment: .leading) {
+                Text("مرحبًا")
+                Text("← Right-to-left layout direction").font(.body)
+                Text("שלום")
+            }
+            .font(.largeTitle)
+            .shimmering()
+            .environment(\.layoutDirection, .rightToLeft)
         }
-        .font(.largeTitle)
-        .shimmering()
-        .environment(\.layoutDirection, .rightToLeft)
     }
-}
 #endif

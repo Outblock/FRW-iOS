@@ -12,23 +12,23 @@ extension SwapEstimateResponse {
         let route: [String]
         let routeAmountIn: Double
         let routeAmountOut: Double
-        
+
         init(from decoder: Decoder) throws {
             let container: KeyedDecodingContainer<SwapEstimateResponse.Route.CodingKeys> = try decoder.container(keyedBy: SwapEstimateResponse.Route.CodingKeys.self)
-            self.route = try container.decode([String].self, forKey: SwapEstimateResponse.Route.CodingKeys.route)
-            
+            route = try container.decode([String].self, forKey: SwapEstimateResponse.Route.CodingKeys.route)
+
             do {
                 let routeAmountInString = try container.decode(String.self, forKey: SwapEstimateResponse.Route.CodingKeys.routeAmountIn)
-                self.routeAmountIn = Double(routeAmountInString) ?? 0
+                routeAmountIn = Double(routeAmountInString) ?? 0
             } catch {
-                self.routeAmountIn = try container.decode(Double.self, forKey: SwapEstimateResponse.Route.CodingKeys.routeAmountIn)
+                routeAmountIn = try container.decode(Double.self, forKey: SwapEstimateResponse.Route.CodingKeys.routeAmountIn)
             }
-            
+
             do {
                 let routeAmountOutString = try container.decode(String.self, forKey: SwapEstimateResponse.Route.CodingKeys.routeAmountOut)
-                self.routeAmountOut = Double(routeAmountOutString) ?? 0
+                routeAmountOut = Double(routeAmountOutString) ?? 0
             } catch {
-                self.routeAmountOut = try container.decode(Double.self, forKey: SwapEstimateResponse.Route.CodingKeys.routeAmountOut)
+                routeAmountOut = try container.decode(Double.self, forKey: SwapEstimateResponse.Route.CodingKeys.routeAmountOut)
             }
         }
     }
@@ -41,59 +41,59 @@ struct SwapEstimateResponse: Codable {
     let tokenInKey: String
     let tokenOutAmount: Double
     let tokenOutKey: String
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         do {
             let priceImpactString = try container.decode(String.self, forKey: .priceImpact)
-            self.priceImpact = Double(priceImpactString) ?? 0
+            priceImpact = Double(priceImpactString) ?? 0
         } catch {
-            self.priceImpact = try container.decode(Double.self, forKey: .priceImpact)
+            priceImpact = try container.decode(Double.self, forKey: .priceImpact)
         }
-        
-        self.routes = try container.decode([SwapEstimateResponse.Route?].self, forKey: .routes)
-        
+
+        routes = try container.decode([SwapEstimateResponse.Route?].self, forKey: .routes)
+
         do {
             let tokenInAmountString = try container.decode(String.self, forKey: .tokenInAmount)
-            self.tokenInAmount = Double(tokenInAmountString) ?? 0
+            tokenInAmount = Double(tokenInAmountString) ?? 0
         } catch {
-            self.tokenInAmount = try container.decode(Double.self, forKey: .tokenInAmount)
+            tokenInAmount = try container.decode(Double.self, forKey: .tokenInAmount)
         }
-        
+
         do {
             let tokenOutAmountString = try container.decode(String.self, forKey: .tokenOutAmount)
-            self.tokenOutAmount = Double(tokenOutAmountString) ?? 0
+            tokenOutAmount = Double(tokenOutAmountString) ?? 0
         } catch {
-            self.tokenOutAmount = try container.decode(Double.self, forKey: .tokenOutAmount)
+            tokenOutAmount = try container.decode(Double.self, forKey: .tokenOutAmount)
         }
-        
-        self.tokenInKey = try container.decode(String.self, forKey: .tokenInKey)
-        self.tokenOutKey = try container.decode(String.self, forKey: .tokenOutKey)
+
+        tokenInKey = try container.decode(String.self, forKey: .tokenInKey)
+        tokenOutKey = try container.decode(String.self, forKey: .tokenOutKey)
     }
-    
+
     var tokenKeyFlatSplitPath: [String] {
         let array = routes.compactMap { route in
             route?.route
         }
-        
+
         return array.flatMap { $0 }
     }
-    
+
     var amountInSplit: [Decimal] {
         let array = routes.compactMap { route in
             route?.routeAmountIn
         }
-        
-        return array.compactMap{ Decimal($0) }
+
+        return array.compactMap { Decimal($0) }
     }
-    
+
     var amountOutSplit: [Decimal] {
         let array = routes.compactMap { route in
             route?.routeAmountOut
         }
-        
-        return array.compactMap{ Decimal($0) }
+
+        return array.compactMap { Decimal($0) }
     }
 }
 

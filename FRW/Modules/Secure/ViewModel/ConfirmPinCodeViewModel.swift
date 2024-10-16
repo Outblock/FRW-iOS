@@ -24,14 +24,14 @@ class ConfirmPinCodeViewModel: ViewModel {
                 }
                 return
             }
-            
+
             if !SecurityManager.shared.enablePinCode(confirmPIN) {
                 HUD.error(title: "enable_pin_code_failed".localized)
                 return
             }
-            
+
             HUD.success(title: "pin_code_enabled".localized)
-            
+
             DispatchQueue.main.async {
                 if let navi = Router.topNavigationController(), let existVC = navi.viewControllers.first { $0.navigationItem.title == "security".localized } {
                     Router.route(to: RouteMap.Profile.security(true))

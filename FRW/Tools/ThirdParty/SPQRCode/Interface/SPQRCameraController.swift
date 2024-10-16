@@ -19,96 +19,95 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import UIKit
-import SparrowKit
 import AVKit
 import NativeUIKit
-import SwiftUI
 import SnapKit
+import SparrowKit
+import SwiftUI
+import UIKit
 
-public typealias SPQRCodeCallback = ((SPQRCodeData, SPQRCameraController)-> Void)
+public typealias SPQRCodeCallback = ((SPQRCodeData, SPQRCameraController) -> Void)
 
 open class SPQRCameraController: SPController {
-    
-    open var detectQRCodeData: ((SPQRCodeData, SPQRCameraController)->SPQRCodeData?) = { data, _ in return data }
-    open var handledQRCodeData: SPQRCodeCallback? = nil
-    open var clickQRCodeData: SPQRCodeCallback? = nil
+    open var detectQRCodeData: ((SPQRCodeData, SPQRCameraController) -> SPQRCodeData?) = { data, _ in data }
+    open var handledQRCodeData: SPQRCodeCallback?
+    open var clickQRCodeData: SPQRCodeCallback?
 
     internal var updateTimer: Timer?
     internal lazy var captureSession: AVCaptureSession = makeCaptureSession()
     internal var qrCodeData: SPQRCodeData? {
         didSet {
-            self.updateInterface()
-            self.didTapHandledButton()
+            updateInterface()
+            didTapHandledButton()
         }
     }
-    
+
     // MARK: - Views
-    
+
     internal let frameLayer = SPQRFrameLayer()
     internal let detailView = SPQRDetailButton()
     internal lazy var previewLayer = makeVideoPreviewLayer()
     internal let maskView = SPQRMaskView()
-    
-    public override init() {
+
+    override public init() {
         super.init()
         modalPresentationStyle = .fullScreen
     }
-    
-    public required init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    open override var prefersStatusBarHidden: Bool {
+
+    override open var prefersStatusBarHidden: Bool {
         return true
     }
-    
+
     // MARK: - Lifecycle
-    
-    open override func viewDidLoad() {
+
+    override open func viewDidLoad() {
         super.viewDidLoad()
-        
+
         view.backgroundColor = .black
         view.layoutMargins = .init(horizontal: 20, vertical: .zero)
         view.layer.addSublayer(previewLayer)
         view.layer.addSublayer(frameLayer)
         captureSession.startRunning()
-        
-        
-        maskView.statusBarHeight = self.statusBarHeight
+
+        maskView.statusBarHeight = statusBarHeight
         view.addSubviews(maskView)
-        
+
         detailView.addTarget(self, action: #selector(didTapDetailButtonClick), for: .touchUpInside)
         view.addSubview(detailView)
-        
+
         addBackButton()
         updateInterface()
     }
-    
+
     func stopRunning() {
         if captureSession.isRunning {
             captureSession.stopRunning()
         }
     }
-    
+
     // MARK: - Actions
-    
+
     @objc func didTapHandledButton() {
         guard let data = qrCodeData else { return }
         handledQRCodeData?(data, self)
     }
-    
+
     @objc func didTapCancelButton() {
         dismissAnimated()
     }
-    
+
     @objc private func didTapDetailButtonClick() {
         guard let data = qrCodeData else { return }
         clickQRCodeData?(data, self)
     }
-    
+
     // MARK: - Layout
-    
+
     private func addBackButton() {
         let image = UIImage(systemName: "arrow.backward")
         let backButton = UIButton(type: .custom)
@@ -117,13 +116,13 @@ open class SPQRCameraController: SPController {
         backButton.tintColor = .white
         backButton.sizeToFit()
         view.addSubview(backButton)
-        
+
         backButton.snp.makeConstraints { make in
             make.width.height.equalTo(44)
             make.left.equalTo(0)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
         }
-        
+
         let titleLabel = UILabel()
         titleLabel.text = "scan_qr_title".localized
         titleLabel.textColor = UIColor(red: 0.949, green: 0.949, blue: 0.949, alpha: 1)
@@ -136,10 +135,10 @@ open class SPQRCameraController: SPController {
             make.centerY.equalTo(backButton.snp.centerY)
         }
     }
-    
-    open override func viewDidLayoutSubviews() {
+
+    override open func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
+
         previewLayer.frame = .init(
             x: .zero, y: .zero,
             width: view.layer.bounds.width,
@@ -149,12 +148,16 @@ open class SPQRCameraController: SPController {
     }
 
     // MARK: - Internal
-    
+
     internal func updateInterface() {
         let duration: TimeInterval = 0.22
         if qrCodeData != nil {
             detailView.isHidden = false
-            if case .flowWallet(_) = qrCodeData {
+            if case .flowWallet = qrCodeData {
+                detailView.applyDefaultAppearance(with: .init(content: .white, background: UIColor(hex: "#00EF8B")))
+                frameLayer.strokeColor = UIColor(hex: "#00EF8B").cgColor
+            }
+            if case .ethWallet = qrCodeData {
                 detailView.applyDefaultAppearance(with: .init(content: .white, background: UIColor(hex: "#00EF8B")))
                 frameLayer.strokeColor = UIColor(hex: "#00EF8B").cgColor
             }
@@ -171,18 +174,18 @@ open class SPQRCameraController: SPController {
             })
         }
     }
-    
+
     internal static let supportedCodeTypes = [
         AVMetadataObject.ObjectType.aztec,
-        AVMetadataObject.ObjectType.qr
+        AVMetadataObject.ObjectType.qr,
     ]
-    
+
     internal func makeVideoPreviewLayer() -> AVCaptureVideoPreviewLayer {
         let videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         videoPreviewLayer.videoGravity = .resizeAspectFill
         return videoPreviewLayer
     }
-    
+
     internal func makeCaptureSession() -> AVCaptureSession {
         let captureSession = AVCaptureSession()
         guard let device = AVCaptureDevice.default(for: AVMediaType.video) else { fatalError() }

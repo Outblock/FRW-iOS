@@ -5,26 +5,27 @@
 //  Created by Selina on 23/9/2022.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 struct SwapView: RouteableView {
     @StateObject var vm: SwapViewModel
-    
+
     enum Field: Hashable {
         case fromToken
         case toToken
     }
+
     @FocusState private var focusedField: Field?
-    
+
     var title: String {
         return "swap_title".localized
     }
-    
+
     init(defaultFromToken: TokenModel? = WalletManager.shared.getToken(bySymbol: "flow")) {
         _vm = StateObject(wrappedValue: SwapViewModel(defaultFromToken: defaultFromToken))
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
@@ -32,19 +33,19 @@ struct SwapView: RouteableView {
                     fromView
                     toView
                 }
-                
+
                 switchButton
                     .padding(.top, 40)
             }
-            
+
             errorTipsView
                 .padding(.top, 12)
-            
+
             rateView
                 .padding(.top, 20)
-            
+
             Spacer()
-            
+
             swapBtn
         }
         .padding(.horizontal, 18)
@@ -60,21 +61,21 @@ struct SwapView: RouteableView {
             focusedField = nil
         }
     }
-    
+
     var errorTipsView: some View {
         HStack {
             Image(systemName: .error)
                 .foregroundColor(Color(hex: "#C44536"))
-            
+
             Text(vm.errorType.desc)
                 .foregroundColor(.LL.Neutrals.note)
                 .font(.inter(size: 12, weight: .regular))
-            
+
             Spacer()
         }
         .visibility(vm.errorType == .none ? .gone : .visible)
     }
-    
+
     var switchButton: some View {
         Button {
             vm.switchTokenAction()
@@ -83,16 +84,16 @@ struct SwapView: RouteableView {
         }
         .disabled(vm.fromToken == nil || vm.toToken == nil)
     }
-    
+
     var swapBtn: some View {
         VPrimaryButton(model: ButtonStyle.primary, state: vm.buttonState, action: {
             focusedField = nil
             vm.swapAction()
         }, title: vm.buttonState == .loading ? "working_on_it".localized : "swap_title".localized)
-        .padding(.horizontal, 18)
-        .padding(.bottom, 18)
+            .padding(.horizontal, 18)
+            .padding(.bottom, 18)
     }
-    
+
     var rateView: some View {
         Text(vm.rateText)
             .font(.inter(size: 14, weight: .medium))
@@ -106,7 +107,7 @@ extension SwapView {
         VStack(spacing: 0) {
             fromInputContainerView
                 .padding(.bottom, 17)
-            
+
             fromDescContainerView
         }
         .padding(.leading, 21)
@@ -115,7 +116,7 @@ extension SwapView {
         .background(Color.LL.Neutrals.neutrals6)
         .cornerRadius(16)
     }
-    
+
     var fromInputContainerView: some View {
         HStack {
             // input view
@@ -135,33 +136,33 @@ extension SwapView {
                 }
                 .disabled(vm.fromToken == nil)
                 .focused($focusedField, equals: .fromToken)
-            
+
             Spacer()
-            
+
             fromSelectButton
         }
     }
-    
+
     var fromSelectButton: some View {
         Button {
             vm.selectTokenAction(isFrom: true)
         } label: {
             HStack(spacing: 0) {
-                KFImage.url(vm.fromToken?.icon)
-                    .placeholder({
+                KFImage.url(vm.fromToken?.iconURL)
+                    .placeholder {
                         Image("placeholder-swap-token")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 32, height: 32)
                     .clipShape(Circle())
-                
+
                 Text(vm.fromToken?.symbol?.uppercased() ?? "swap_select".localized)
                     .font(.inter(size: 14, weight: .medium))
                     .foregroundColor(Color.LL.Neutrals.text2)
                     .padding(.leading, 4)
-                
+
                 Image("icon-arrow-bottom")
                     .renderingMode(.template)
                     .foregroundColor(.LL.Neutrals.text)
@@ -173,15 +174,15 @@ extension SwapView {
             .cornerRadius(16)
         }
     }
-    
+
     var fromDescContainerView: some View {
         HStack {
             Text("\(CurrencyCache.cache.currencySymbol) \(vm.fromPriceAmountString)")
                 .font(.inter(size: 16))
                 .foregroundColor(Color.LL.Neutrals.text2)
-            
+
             Spacer()
-            
+
             Button {
                 vm.maxAction()
             } label: {
@@ -218,9 +219,9 @@ extension SwapView {
                 }
                 .disabled(vm.toToken == nil)
                 .focused($focusedField, equals: .toToken)
-            
+
             Spacer()
-            
+
             toSelectButton
         }
         .padding(.leading, 21)
@@ -229,27 +230,27 @@ extension SwapView {
         .background(Color.LL.Neutrals.neutrals6)
         .cornerRadius(16)
     }
-    
+
     var toSelectButton: some View {
         Button {
             vm.selectTokenAction(isFrom: false)
         } label: {
             HStack(spacing: 0) {
-                KFImage.url(vm.toToken?.icon)
-                    .placeholder({
+                KFImage.url(vm.toToken?.iconURL)
+                    .placeholder {
                         Image("placeholder-swap-token")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 32, height: 32)
                     .clipShape(Circle())
-                
+
                 Text(vm.toToken?.symbol?.uppercased() ?? "swap_select".localized)
                     .font(.inter(size: 14, weight: .medium))
                     .foregroundColor(Color.LL.Neutrals.text2)
                     .padding(.leading, 4)
-                
+
                 Image("icon-arrow-bottom")
                     .renderingMode(.template)
                     .foregroundColor(.LL.Neutrals.text)

@@ -9,13 +9,14 @@
 import SwiftUI
 
 struct CapusuleGroupView: View {
-    
     let likeColor: Color
-    
-    // MARK:- variables
+
+    // MARK: - variables
+
     @Binding var isAnimating: Bool
-    
-    // MARK:- views
+
+    // MARK: - views
+
     var body: some View {
         ZStack {
             ShrinkingCapsule(likeColor: likeColor, rotationAngle: .zero, offset: CGSize(width: 0, height: -15), isAnimating: $isAnimating)

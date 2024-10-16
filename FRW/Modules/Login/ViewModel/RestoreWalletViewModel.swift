@@ -7,10 +7,7 @@
 
 import Foundation
 
-
-class RestoreWalletViewModel {
-    
-}
+class RestoreWalletViewModel {}
 
 // MARK: - Action
 
@@ -18,20 +15,20 @@ extension RestoreWalletViewModel {
     func restoreWithManualAction() {
         Router.route(to: RouteMap.RestoreLogin.restoreManual)
     }
-    
+
     func restoreWithCloudAction(type: BackupManager.BackupType) {
         HUD.loading()
-        
+
         Task {
             do {
                 let items = try await BackupManager.shared.getCloudDriveItems(from: type)
                 HUD.dismissLoading()
-                
+
                 if items.isEmpty {
                     HUD.error(title: "no_x_backup".localized(type.descLocalizedString))
                     return
                 }
-                
+
                 Router.route(to: RouteMap.RestoreLogin.chooseAccount(items, type))
             } catch BackupError.fileIsNotExistOnCloud {
                 HUD.dismissLoading()

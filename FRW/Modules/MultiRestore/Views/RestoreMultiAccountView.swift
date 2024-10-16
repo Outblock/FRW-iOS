@@ -10,15 +10,15 @@ import SwiftUI
 
 struct RestoreMultiAccountView: RouteableView {
     @StateObject var viewModel: RestoreMultiAccountViewModel
-    
+
     var title: String {
         ""
     }
-    
+
     init(_ items: [[MultiBackupManager.StoreItem]]) {
         _viewModel = StateObject(wrappedValue: RestoreMultiAccountViewModel(items: items))
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
@@ -34,12 +34,12 @@ struct RestoreMultiAccountView: RouteableView {
                         .foregroundStyle(Color.Theme.Accent.green)
                 }
             }
-            
+
             Text("find_matching_wallet".localized(viewModel.items.count))
                 .font(.inter(size: 16, weight: .semibold))
                 .foregroundStyle(Color.Theme.Accent.grey)
                 .padding(.top, 14)
-            
+
             Color.clear
                 .frame(height: 50)
             ScrollView {
@@ -78,13 +78,12 @@ extension RestoreMultiAccountView {
                     Text("@\(user.userName)")
                         .font(.inter(size: 12, weight: .bold))
                         .foregroundColor(Color.Theme.Text.black8)
-                    
+
                     Text("\(user.address)")
                         .font(.inter(size: 12))
                         .foregroundColor(Color.Theme.Text.black3)
                 }
-                
-                
+
                 Spacer()
             }
             .padding(.horizontal, 16)

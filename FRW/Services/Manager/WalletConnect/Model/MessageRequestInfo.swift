@@ -18,4 +18,3 @@ struct RequestMessageInfo {
     let pendingRequests: [String]
     let message: String
 }
-

@@ -18,12 +18,12 @@ private let PreviewContainerSize: CGFloat = 54
 private let PreviewImageSize: CGFloat = 40
 
 struct EditAvatarView: RouteableView {
-    @StateObject private var vm: EditAvatarViewModel = EditAvatarViewModel()
-    
+    @StateObject private var vm = EditAvatarViewModel()
+
     var title: String {
         return ""
     }
-    
+
     var forceColorScheme: UIUserInterfaceStyle? {
         return .dark
     }
@@ -78,10 +78,10 @@ extension EditAvatarView {
         GeometryReader { geometry in
             ZStack {
                 KFImage.url(URL(string: vm.currentSelectModel()?.getCover() ?? ""))
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: geometry.size.width, height: geometry.size.width)
@@ -158,10 +158,10 @@ extension EditAvatarView {
                     .visibility(isSelected ? .visible : .invisible)
 
                 KFImage.url(URL(string: model.getCover()))
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: PreviewImageSize, height: PreviewImageSize)

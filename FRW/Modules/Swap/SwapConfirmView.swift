@@ -5,19 +5,19 @@
 //  Created by Selina on 27/9/2022.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 struct SwapConfirmView: View {
     @EnvironmentObject var vm: SwapViewModel
-    
+
     var body: some View {
         VStack {
             SheetHeaderView(title: "confirmation".localized)
-            
+
             VStack(spacing: 0) {
                 Spacer()
-                
+
                 ZStack {
                     fromToView
                     SwapConfirmView.SwapConfirmProgressView()
@@ -26,14 +26,14 @@ struct SwapConfirmView: View {
                 .background(Color.LL.Other.bg3)
                 .cornerRadius(16)
                 .padding(.horizontal, 18)
-                
+
                 swapDetailView
                     .padding(.top, -20)
                     .padding(.horizontal, 28)
                     .zIndex(-1)
-                
+
                 Spacer()
-                
+
                 sendButton
                     .padding(.bottom, 10)
                     .padding(.horizontal, 28)
@@ -47,9 +47,9 @@ struct SwapConfirmView: View {
             if let fromToken = vm.fromToken {
                 tokenView(token: fromToken, num: vm.inputFromText)
             }
-            
+
             Spacer()
-            
+
             if let toToken = vm.toToken {
                 tokenView(token: toToken, num: vm.inputToText)
             }
@@ -60,10 +60,10 @@ struct SwapConfirmView: View {
     func tokenView(token: TokenModel, num: String) -> some View {
         VStack(spacing: 5) {
             KFImage.url(token.icon)
-                .placeholder({
+                .placeholder {
                     Image("placeholder")
                         .resizable()
-                })
+                }
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 40, height: 40)
@@ -81,7 +81,7 @@ struct SwapConfirmView: View {
         }
         .frame(maxWidth: .infinity)
     }
-    
+
     var swapDetailView: some View {
         VStack(spacing: 10) {
             HStack {
@@ -89,45 +89,45 @@ struct SwapConfirmView: View {
                     .font(.inter(size: 14, weight: .medium))
                     .foregroundColor(Color.LL.Neutrals.text2)
                     .lineLimit(1)
-                
+
                 Spacer()
-                
+
                 Text(vm.rateText)
                     .font(.inter(size: 14, weight: .medium))
                     .foregroundColor(Color.LL.Success.success1)
                     .lineLimit(1)
             }
-            
+
             HStack {
                 Text("swap_provider".localized)
                     .font(.inter(size: 14, weight: .medium))
                     .foregroundColor(Color.LL.Neutrals.text2)
                     .lineLimit(1)
-                
+
                 Spacer()
-                
+
                 Image("icon-increment")
-                
+
                 Text("Increment.fi")
                     .font(.inter(size: 14, weight: .medium))
                     .foregroundColor(Color.LL.Neutrals.text)
                     .lineLimit(1)
             }
-            
+
             HStack {
                 Text("swap_price_impact".localized)
                     .font(.inter(size: 14, weight: .medium))
                     .foregroundColor(Color.LL.Neutrals.text2)
                     .lineLimit(1)
-                
+
                 Spacer()
-                
+
                 Text(((vm.estimateResponse?.priceImpact ?? 0.0) * -100).formatCurrencyString(digits: 4) + "%")
                     .font(.inter(size: 14, weight: .medium))
                     .foregroundColor(Color.LL.Success.success1)
                     .lineLimit(1)
             }
-            
+
 //            HStack {
 //                Text("swap_estimated_fees".localized)
 //                    .font(.inter(size: 14, weight: .medium))
@@ -148,7 +148,7 @@ struct SwapConfirmView: View {
         .background(Color.LL.Neutrals.neutrals6)
         .cornerRadius(16)
     }
-    
+
     var sendButton: some View {
         VPrimaryButton(model: ButtonStyle.primary, state: vm.confirmButtonState, action: {
             vm.confirmSwapAction()
@@ -164,7 +164,7 @@ extension SwapConfirmView {
 
         var body: some View {
             HStack(spacing: 12) {
-                ForEach(0..<totalNum, id: \.self) { index in
+                ForEach(0 ..< totalNum, id: \.self) { index in
                     if step == index {
                         Image("icon-right-arrow-1")
                             .renderingMode(.template)

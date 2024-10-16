@@ -17,20 +17,27 @@ struct DeveloperModeView: RouteableView {
     @StateObject private var lud = LocalUserDefaults.shared
     @StateObject private var vm: DeveloperModeViewModel = .init()
     @StateObject private var walletManager = WalletManager.shared
-    
+
+    @State private var showTool = false
     @AppStorage("isDeveloperMode") private var isDeveloperMode = false
-    @AppStorage("EVMEnable") private var isEVMEnable = false
-    
+
+    @State private var openLogWindow = LocalUserDefaults.shared.openLogWindow
+
     var title: String {
         return "developer_mode".localized
     }
-    
+
     var body: some View {
         ScrollView {
             VStack {
                 HStack {
                     Toggle("developer_mode".localized, isOn: $isDeveloperMode)
                         .toggleStyle(SwitchToggleStyle(tint: .LL.Primary.salmonPrimary))
+                        .onChange(of: isDeveloperMode) { value in
+                            if !value {
+                                walletManager.changeNetwork(.mainnet)
+                            }
+                        }
                 }
                 .frame(height: 64)
                 .padding(.horizontal, 16)
@@ -38,92 +45,69 @@ struct DeveloperModeView: RouteableView {
             .background(.LL.bgForIcon)
             .cornerRadius(16)
             .padding(.horizontal, 18)
-            
+
             if isDeveloperMode {
                 VStack {
                     Text("switch_network".localized)
                         .font(.LL.footnote)
                         .foregroundColor(.LL.Neutrals.neutrals3)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 8)
                     VStack(spacing: 0) {
                         Section {
                             let isMainnet = lud.flowNetwork == .mainnet
                             let isTestnet = lud.flowNetwork == .testnet
-                            let isCrescendo = lud.flowNetwork == .crescendo
                             let isPreviewnet = lud.flowNetwork == .previewnet
-                            
-                            Cell(sysImageTuple: (isMainnet ? .checkmarkSelected : .checkmarkUnselected, isMainnet ? .LL.Primary.salmonPrimary : .LL.Neutrals.neutrals1), title: "Mainnet", desc: isMainnet ? "Selected" : "")
+
+                            Cell(sysImageTuple: (isMainnet ? .checkmarkSelected : .checkmarkUnselected, isMainnet ? .LL.Primary.salmonPrimary : .LL.Neutrals.neutrals1), title: "Mainnet", desc: isMainnet ? "Selected::message".localized : "")
                                 .onTapGestureOnBackground {
                                     walletManager.changeNetwork(.mainnet)
                                 }
-                            
+
                             Divider()
                             Cell(sysImageTuple: (isTestnet ? .checkmarkSelected : .checkmarkUnselected, isTestnet ? LocalUserDefaults.FlowNetworkType.testnet.color : .LL.Neutrals.neutrals1), title: "Testnet", desc: isTestnet ? "Selected" : "")
                                 .onTapGestureOnBackground {
                                     walletManager.changeNetwork(.testnet)
                                 }
-                            
-//                            Divider()
-//                            Cell(sysImageTuple: (isCrescendo ? .checkmarkSelected : .checkmarkUnselected, isCrescendo ? LocalUserDefaults.FlowNetworkType.crescendo.color : .LL.Neutrals.neutrals1), title: "Crescendo", desc: isCrescendo ? "Selected" : "", btnTitle: walletManager.isCrescendoEnabled ? nil : "Enable", btnAction: {
-//                                if !walletManager.isCrescendoEnabled {
-//                                    vm.enableCrescendoAction()
-//                                }
-//                            }, titleAlpha: walletManager.isCrescendoEnabled ? 1 : 0.5)
-//                                .onTapGestureOnBackground {
-//                                    if walletManager.isCrescendoEnabled {
-//                                        walletManager.changeNetwork(.crescendo)
-//                                    }
-//                                }
-                            
-                            Divider()
-                            Cell(sysImageTuple: (isPreviewnet ? .checkmarkSelected : .checkmarkUnselected, isPreviewnet ? LocalUserDefaults.FlowNetworkType.previewnet.color : .LL.Neutrals.neutrals1), title: "Previewnet", desc: isPreviewnet ? "Selected" : "", btnTitle: walletManager.isPreviewEnabled ? nil : "Enable", btnAction: {
-                                if !walletManager.isPreviewEnabled {
-                                    vm.enablePreviewnetAction()
-                                }
-                            }, titleAlpha: walletManager.isPreviewEnabled ? 1 : 0.5)
-                                .onTapGestureOnBackground {
-                                    if walletManager.isPreviewEnabled {
-                                        walletManager.changeNetwork(.previewnet)
-                                    }
-                                }
                         }
                         .background(.LL.bgForIcon)
                     }
                     .cornerRadius(16)
-                    
+
                     Text("watch_address".localized)
                         .font(.LL.footnote)
                         .foregroundColor(.LL.Neutrals.neutrals3)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 8)
                     VStack(spacing: 0) {
                         Section {
                             Cell(sysImageTuple: (vm.isCustomAddress ? .checkmarkUnselected : .checkmarkSelected, vm.isCustomAddress ? .LL.Neutrals.neutrals1 : .LL.Primary.salmonPrimary), title: "my_own_address".localized, desc: "")
                                 .onTapGestureOnBackground {
                                     vm.changeCustomAddressAction("")
                                 }
-                            
+
                             Divider()
-                            
+
                             Cell(sysImageTuple: (vm.isDemoAddress ? .checkmarkSelected : .checkmarkUnselected, vm.isDemoAddress ? .LL.Primary.salmonPrimary : .LL.Neutrals.neutrals1), title: vm.demoAddress, desc: "")
                                 .onTapGestureOnBackground {
                                     vm.changeCustomAddressAction(vm.demoAddress)
                                 }
-                            
+
                             Divider()
-                            
+
                             Cell(sysImageTuple: (vm.isSVGDemoAddress ? .checkmarkSelected : .checkmarkUnselected, vm.isSVGDemoAddress ? .LL.Primary.salmonPrimary : .LL.Neutrals.neutrals1), title: vm.svgDemoAddress, desc: "")
                                 .onTapGestureOnBackground {
                                     vm.changeCustomAddressAction(vm.svgDemoAddress)
                                 }
-                            
+
                             Divider()
-                            
+
                             HStack {
                                 Image(systemName: vm.isCustomAddress ? .checkmarkSelected : .checkmarkUnselected)
                                     .foregroundColor(vm.isCustomAddress ? .LL.Primary.salmonPrimary : .LL.Neutrals.neutrals1)
                                 Text("custom_address".localized)
                                     .font(.inter())
-                                
+
                                 TextField("", text: $vm.customAddressText)
                                     .autocorrectionDisabled()
                                     .frame(maxWidth: .infinity)
@@ -136,7 +120,7 @@ struct DeveloperModeView: RouteableView {
                                         if trimedAddress == vm.customWatchAddress {
                                             return
                                         }
-                                        
+
                                         DispatchQueue.main.async {
                                             vm.changeCustomAddressAction(vm.customAddressText.trim())
                                         }
@@ -148,19 +132,49 @@ struct DeveloperModeView: RouteableView {
                         .background(.LL.bgForIcon)
                     }
                     .cornerRadius(16)
-                    
+
                     Text("other".localized)
                         .font(.LL.footnote)
                         .foregroundColor(.LL.Neutrals.neutrals3)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 8)
                     VStack(spacing: 0) {
                         Section {
                             HStack {
-                                Toggle("evm_on_flow".localized, isOn: $isEVMEnable)
-                                    .toggleStyle(SwitchToggleStyle(tint: .LL.Primary.salmonPrimary))
-                                    .onChange(of: isEVMEnable) { _ in
-                                        EVMAccountManager.shared.updateWhenDevChange()
-                                    }
+                                Button {
+                                    UserManager.shared.tryToRestoreOldAccountOnFirstLaunch()
+                                } label: {
+                                    Text("Reload Local Profile")
+                                        .font(.inter(size: 17, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                }
+                                Spacer()
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+
+                            HStack {
+                                Text("Script Version")
+                                    .font(.inter(size: 17, weight: .medium))
+                                    .foregroundStyle(Color.Theme.Text.black8)
+                                Spacer()
+
+                                Text("\(CadenceManager.shared.version)")
+                                    .font(.inter(size: 17))
+                                    .foregroundStyle(Color.Theme.Text.black8)
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+
+                            HStack {
+                                Text("Cadence Version")
+                                    .font(.inter(size: 17, weight: .medium))
+                                    .foregroundStyle(Color.Theme.Text.black8)
+                                Spacer()
+
+                                Text("\(CadenceManager.shared.current.version ?? "")")
+                                    .font(.inter(size: 17))
+                                    .foregroundStyle(Color.Theme.Text.black8)
                             }
                             .frame(height: 64)
                             .padding(.horizontal, 16)
@@ -168,6 +182,140 @@ struct DeveloperModeView: RouteableView {
                         .background(.LL.bgForIcon)
                     }
                     .cornerRadius(16)
+
+                    Section {
+                        VStack {
+                            HStack {
+                                Toggle(openLogWindow ? "Hide Log View" : "Open Log View",
+                                       isOn: $openLogWindow)
+                                    .toggleStyle(SwitchToggleStyle(tint: .LL.Primary.salmonPrimary))
+                                    .onChange(of: isDeveloperMode) { value in
+                                        if !value {
+                                            walletManager.changeNetwork(.mainnet)
+                                        }
+                                    }
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+                            .onChange(of: openLogWindow, perform: { value in
+                                LocalUserDefaults.shared.openLogWindow = value
+                                if value {
+                                    DebugViewer.shared.show(theme: .dark)
+                                } else {
+                                    DebugViewer.shared.close()
+                                }
+                            })
+
+                            Divider()
+
+                            HStack {
+                                Text("Share Log File")
+                                    .font(.inter(size: 17, weight: .medium))
+                                    .foregroundStyle(Color.Theme.Text.black8)
+                                Spacer()
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+                            .onTapGesture {
+                                if let path = log.path {
+                                    let activityController = UIActivityViewController(activityItems: [path], applicationActivities: nil)
+                                    activityController.isModalInPresentation = true
+                                    UIApplication.shared.windows.first?.rootViewController?.present(activityController, animated: true, completion: nil)
+                                } else {
+                                    HUD.error(title: "Don't find log file.")
+                                }
+                            }
+                        }
+                        .background(.LL.bgForIcon)
+                        .cornerRadius(16)
+                    } header: {
+                        headView(title: "Log")
+                    }
+                    
+                    Section {
+                        VStack {
+                            HStack {
+                                Button {
+                                    Router.route(to: RouteMap.Profile.keychain)
+                                } label: {
+                                    Text("All Keys on Local")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                }
+                                Spacer()
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+                        }
+                        .background(.LL.bgForIcon)
+                        .cornerRadius(16)
+                    } header: {
+                        headView(title: "Tools")
+                    }
+                    .visibility(showTool ? .visible : .gone)
+                    
+                    if isDevModel {
+                        Section {
+                            VStack {
+                                HStack {
+                                    Button {
+                                        Router.route(to: RouteMap.Profile.keychain)
+                                    } label: {
+                                        Text("KeyChain")
+                                            .font(.inter(size: 14, weight: .medium))
+                                            .foregroundStyle(Color.Theme.Text.black8)
+                                    }
+                                    Spacer()
+                                }
+                                .frame(height: 64)
+                                .padding(.horizontal, 16)
+
+                                HStack {
+                                    Text("Reset the move asset configuration in the built-in browser")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                    Spacer()
+                                }
+                                .frame(height: 64)
+                                .padding(.horizontal, 16)
+                                .onTapGesture {
+                                    LocalUserDefaults.shared.showMoveAssetOnBrowser = true
+                                    HUD.success(title: "done.")
+                                }
+
+                                HStack {
+                                    Text("Remove Wallet Home News(click)")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                    Spacer()
+                                }
+                                .frame(height: 64)
+                                .padding(.horizontal, 16)
+                                .onTapGesture {
+                                    LocalUserDefaults.shared.removedNewsIds = []
+                                    RemoteConfigManager.shared.fetchNews()
+                                    HUD.success(title: "done.")
+                                }
+
+                                HStack {
+                                    Text("Remove What is Backup Deail (click)")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                    Spacer()
+                                }
+                                .frame(height: 64)
+                                .padding(.horizontal, 16)
+                                .onTapGesture {
+                                    LocalUserDefaults.shared.clickedWhatIsBack = false
+                                    HUD.success(title: "done.")
+                                }
+                            }
+                            .background(.LL.bgForIcon)
+                            .cornerRadius(16)
+                        } header: {
+                            headView(title: "Debug")
+                        }
+                    }
                 }
                 .padding(.horizontal, 18)
             }
@@ -175,7 +323,21 @@ struct DeveloperModeView: RouteableView {
         .background(
             Color.LL.Neutrals.background.ignoresSafeArea()
         )
+        .onTapGesture(count: 6, disabled: false, perform: {
+            log.info("click 6 times")
+            if !isDeveloperMode {
+                showTool = true
+            }
+        })
         .applyRouteable(self)
+    }
+
+    private func headView(title: String) -> some View {
+        return Text(title)
+            .font(.LL.footnote)
+            .foregroundColor(.LL.Neutrals.neutrals3)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 12)
     }
 }
 
@@ -185,15 +347,15 @@ extension DeveloperModeView {
         let title: String
         let desc: String
         var btnTitle: String? = nil
-        var btnAction: (() -> ())? = nil
+        var btnAction: (() -> Void)? = nil
         var titleAlpha: Double = 1.0
-        
+
         var body: some View {
             HStack {
                 Image(systemName: sysImageTuple.0).foregroundColor(sysImageTuple.1)
                 Text(title).font(.inter()).frame(maxWidth: .infinity, alignment: .leading).opacity(titleAlpha)
                 Text(desc).font(.inter()).foregroundColor(.LL.Neutrals.note)
-                
+
                 Button {
                     if let btnAction = btnAction {
                         btnAction()

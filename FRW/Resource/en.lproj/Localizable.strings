@@ -94,9 +94,9 @@
 "Edit__Address::message" = "Edit Address";
 "top_selection" = "Top Selection";
 "Are__you__sure__you__want__to__remove__this__contact::message" = "Are you sure you want to remove this contact?";
-"nft_empty" = "We find nothing here.";
+"nft_empty" = "You don’t have any NFTs yet.";
 "You__will__no__longer__find__this__contact__in__your__address__book::message" = "You will no longer find this contact in your address book.";
-"nft_empty_discovery" = "Looking forward to your new discovery.";
+"nft_empty_discovery" = "Looking forward to your next discovery.";
 "Empty__List::message" = "Empty List";
 "get_new_nft" = "Get new NFTs";
 "No__results__found::message" = "No results found!";
@@ -310,9 +310,9 @@
 "Search__Address__or__Flow__domain::message" = "Search, Address(0x) or Flow domain";
 "welcome_desc" = "We will do our best to protect your assets!";
 "Search__the__ID::message" = "Search the ID: ";
-"addresses" = "Addresses";
+"addresses" = "Address Book";
 "Sorry__we__could__not__find__any__accounts::message" = "Sorry, we could not find any accounts. Please try again.";
-"wallets" = "Wallets";
+"wallets" = "Account List";
 "Market::message" = "Market";
 "device" = "Device";
 "Website::message" = "Website";
@@ -334,7 +334,7 @@
 "Enable__NFT__Collection::message" = "Enable NFT Collection";
 "btn_sync" = "Sync";
 "Change__Address::message" = "Change Address";
-"edit_account" = "Edit Account";
+"edit_account" = "Edit Profile";
 "We__did__not__find__anything__here::message" = "We did not find anything here.";
 "edit_avatar" = "Edit Avatar";
 "Looking__forward__to__your__new__discovery::message" = "Looking forward to your new discovery.";
@@ -348,7 +348,7 @@
 "Showing__NFT__under::message" = "Showing NFT under ";
 "visible" = "Visible";
 "Launch__My__Wallet::message" = "Launch My Wallet";
-"unvisible" = "Unvisible";
+"unvisible" = "invisible";
 "Start__exploring__with__Lilico__now::message" = "Start exploring with Flow Wallet now!";
 "done" = "Done";
 "all__set::message" = "all set";
@@ -400,7 +400,7 @@
 "Your__passwords__do__not__match::message" = "Your passwords do not match. Please check again.";
 "edit" = "Edit";
 "Create::message" = "Create ";
-"theme" = "Theme";
+"theme" = "Appearance";
 "Password::message" = "Password";
 "light" = "Light";
 "Create__a__password::message" = "Create a password";
@@ -522,7 +522,7 @@
 "Earn_More_Flow::message" = "Launch Flow Port";
 "create_wallet" = "Create Wallet";
 "Stake_tokens_and_earn_rewards::message" = "Stake tokens and earn rewards";
-"wallet_transactions" = "Transactions";
+"wallet_transactions" = "Transaction History";
 "USD::message" = "USD";
 "transaction_list_transaction_x" = "Transaction (%d)";
 "Deposit::message" = "Deposit";
@@ -544,13 +544,13 @@
 "Forgot_password::message" = "Forgot password?";
 "view_more_transactions" = "View more transactions";
 "Welcome_to_lilico::message" = "Welcome to Flow Wallet";
-"token_detail_activities" = "Activities";
+"token_detail_activities" = "Transaction history";
 "Flow::message" = "Flow";
 "free_gas_fee" = "Free Gas Fee";
 "Import_your_wallet::message" = "Import your wallet";
 "gas_fee_desc" = "Allow Flow Wallet to pay the gas fee for all my transactions";
 "Create_a_new_wallet::message" = "Create a new wallet";
-"delete_wallet" = "Delete Wallet";
+"delete_wallet" = "Delete Profile";
 "Feature_Coming_Soon::message" = "Feature Coming Soon";
 "delete_wallet_confirm_title" = "Are you sure that you want to delete the wallet?";
 "Are_you_sure_you_want_to_delete_your_backup::message" = "Are you sure you want to delete your backup?";
@@ -589,7 +589,7 @@
 "backup_to_x_failed" = "Backup to %@ failed";
 "No__Activity::message" = "No Activity";
 "backup_to_x_succeeded" = "Backup to %@ succeeded";
-"Learn__more::message" = "Learn more";
+"Learn__more::message" = "Learn More";
 "cancel" = "Cancel";
 "Validated__address::message" = "Validated address";
 "saved" = "Saved";
@@ -609,6 +609,7 @@
 "reject_failed" = "Reject failed";
 "Copy__username::message" = "Copy username";
 "approved" = "Approved";
+"payer_approved" = "Payer Approved";
 "Refresh::message" = "Refresh";
 "rejected" = "Rejected";
 "Anonymous__mode__on::message" = "Anonymous mode on";
@@ -633,7 +634,7 @@
 "pending_transaction" = "Pending Transaction";
 "transaction_failed" = "Transaction process failed";
 "Welcome__Back__Unlock::message" = "Welcome Back";
-"transaction_success" = "Transaction process succeeded";
+"transaction_success" = "Transaction Succeeded";
 "AddressBook::message" = "Address Book";
 "process_pending_text" = "Pending";
 "Search__PlaceHolder::message" = "Search address(0x), or flow Domain";
@@ -678,7 +679,7 @@
 "claim_free_domain_substring2" = "FREE";
 "claim_free_domain_substring3" = " Flow Wallet domain!";
 "domain_title2" = "Flow Wallet Domain";
-"inbox" = "Inbox";
+"inbox" = "Token Inbox";
 "inbox_token_x" = "Token (%d)";
 "inbox_nft_x" = "NFT (%d)";
 "inbox_reject" = "Reject";
@@ -793,9 +794,9 @@
 "onboarding_title_site" = "Explore\nyour favourite site";
 "backup_tips_desc" = "Backup Recovery Phrase is important in protect your prize property.";
 "not_now" = "Not Now";
-"accounts" = "Accounts";
-"create_new_account" = "Create a New Account";
-"add_existing_account" = "Import an Existing Account";
+"accounts" = "Profiles";
+"create_new_account" = "Create a New Profile";
+"add_existing_account" = "Import an Existing Profile";
 "import_wallet" = "Import Wallet";
 "welcome" = "Welcome";
 "welcome_sub_desc" = "Provide More About The Security";
@@ -809,7 +810,7 @@
 "hold_to_link" = "Hold to Link";
 "work_in_progress" = "Work in Progress";
 "try_it_again" = "Try it again";
-"linked_account" = "Linked Account";
+"linked_account" = "Linked Accounts";
 "description" = "Description";
 "unlink_account" = "Unlink Account";
 "unlink_confirmation" = "Unlink Confirmation";
@@ -844,12 +845,12 @@
 "account_key_number" = "Sequence Number";
 "account_key_current_tips" = "Can't revoke current device key";
 "account_key_fail_tips" = "Revoke device key fail";
-"account_key_revoke_title" = "Are you sure \n you want to revoke this key?";
-"account_key_revoke_content" = "Once you revoke this key,\nthere is no way to re-activate this key.";
+"account_key_revoke_title" = "Are you sure?";
+"account_key_revoke_content" = "Once you revoke this key,\nthere is no way to re-activate it.";
 "hold_to_revoke" = "Hold to Revoke";
 "devices" = "Devices";
-"Scan_to_Sync_Extension_Wallet"="Scan to Sync Extension Wallet";
-"Scan_sync_detal"="Scan QR code shown by the Flow Wallet Browser\nextension to sync your wallet.";
+"Scan_to_Sync_Extension_Wallet"="Sync your wallet between your devices";
+"Scan_sync_detal"="Scan the QR code shown by the Flow Wallet browser \n extension to sync your wallet between your devices";
 "add_other_device" = "Add Other Device";
 "current_device" = "Current Device";
 "other_device" = "Other Devices";
@@ -875,12 +876,11 @@
 "start_now" = "Start Now";
 "multi_backup" = "Multi-Backup";
 "multi_backup_guide_title" = "Please Select 2 or More Backup Options";
-"multi_backup_guide_note" = "Note: All Your Backup will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
 "create_device_backup_title" = "Create Device Backup";
-"create_device_backup_note" = "Note: Your Google Drive Backup will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
+"create_device_backup_note" = "Utilise Your Device as a Backup Wallet to Safeguard and Restore Your Digital Assets with Ease";
 "create_multi_backup_title" = "Create Multi-Backup";
-"create_multi_backup_note" = "Note: Your Google Drive Backup will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
-"backup_note_x" = "Note: Your %@ will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
+"create_multi_backup_note" = "Create a Cloud Backup with Trusted Providers like Google Drive, Passkey, iCloud, and Secure Your Recovery Phrase";
+"backup_note_x" = "Note: Your backup key is end-to-end encrypted and is never sent to Flow Wallet servers.";
 "backup.status.create" = "Create Backup";
 "backup.status.upload" = "Upload Backup";
 "backup.status.regist" = "Registration Keylist";
@@ -896,13 +896,13 @@
 "backup_detail" = "Backup Detail";
 "backup_info" = "Backup Info";
 "key_location" = "Key Location";
-"restore_from_backup" = "Restore wallet from your backup history.";
+"restore_from_backup" = "Restore your wallet using a backup.";
 "restore_device_title" = "From Device Backup";
-"restore_device_desc" = "Mobile or Extension Devices";
+"restore_device_desc" = "Restore from another mobile or extension wallet";
 "restore_multi_title" = "From Multi Backup";
 "restore_multi_desc" = "Google Drive/ Passkey/ iCloud/ Recovery Phrase";
-"restore_phrase_title" = "From Recovery Phrase (Old)";
-"restore_phrase_desc" = "The difference between Multi-Backup version";
+"restore_phrase_title" = "From Recovery Phrase (legacy)";
+"restore_phrase_desc" = "Restore using a legacy recovery phrase (not multi-backup)";
 "from_multi_backup" = "From Multi-Backup";
 "from_multi_backup_desc" = "Please Select 2 or More Backup Options";
 "connect_to_x" = "Connect to %@";
@@ -916,18 +916,18 @@
 "delete_backup" = "Delete Backup";
 "app_name_full" = "Flow Wallet";
 "feedback" = "feedback";
-"multi_backup_create_pin" = "So we will secure your backup with your pin.";
+"multi_backup_create_pin" = "Your PIN code will be used to securely encrypt your account backup";
 "verify" = "Verify";
 "restore_phrase_you_created_desc" = "This is a 15 word phrase you were given when you created your previous wallet.";
 "restore_enter_rp_placeholder" = "Enter your Recovery Phrase (15 words)";
 "bug_report" = "Bug Report";
-"wrong_network_title" = "Wrong Network";
+"wrong_network_title" = "Switch Network";
 "switch_to_mainnet" = "Switch to Mainnet";
-"wrong_network_des" = "You can only perform this operation on the mainnet.";
+"wrong_network_des" = "You can only perform this operation on Mainnet";
 "enable_path" = "Enable the path to ";
 "enable_evm_tip" = "Manage Multi VM assets seamlessly.";
 "receiving_qr" = "Receiving QR Code";
-"current_chain" = "Current Chain";
+"current_chain" = "Current Network";
 "move" = "Move";
 "full_access" = "Full Access";
 "multi_sign" = "Multi-sign";
@@ -938,4 +938,93 @@
 "enable_previewnet_failed" = "Enable previewnet failed";
 "evm_on_flow" = "EVM on Flow";
 "other" = "other";
+"evm_check_balance" = "Balance is lower than 0.02,\n please fund your account to continue.";
+"view_more" = "View More";
+"move_assets" = "Move Assets";
+"move_assets_note" = "What type of assets would you like to move?";
+"move_nft" = "Move NFTs";
+"move_token" = "Move Tokens";
+"select_nfts" = "Select NFTs";
+"move_nft_x" = "Move %@ NFTs";
+"collection" = "Collection";
+"move_nft_limit_x" = "You can move %@ NFTs";
+"wallet_list" = "Account List";
+"account_detail" = "Account Details";
+"main_account" = "Main Account";
+"main_accounts" = "Main Accounts";
+"evm_accounts" = "EVM Accounts";
+"search_name_url" = "Search name or URL";
+"empty_bookmark" = "Empty Bookmarks";
+"move_single_token" = "Move Token";
+"share_qr_code" = "Share QR Code";
+"move_single_nft" = "Move NFT";
+"do_not_ask" = "Do not ask me again.";
+"move_asset_browser_title_x" = "Move your assets between your cadence address on Flow, so %@ can view your assets";
+"tokens" = "Tokens";
+"Address Copied" = "Address Copied";
 
+"Backup_Not_Found" = "Backup Not Found";
+"No_Backup_Account_Found" = "No Backup Account Found";
+"Backup_Decryption_Failed" = "Backup Decryption Failed";
+
+"Backup_Not_Found_Desc" = "No backup file is associated with your account. Please verify and try again.";
+"No_Backup_Account_Found_Desc" = "No multi-sign account is linked to your backup option. Please verify and try again.";
+"Backup_Decryption_Failed_Desc" = "The entered PIN code did not decrypt the backup. Please check your PIN and try again.";
+
+"go_back" = "Go Back";
+"try_to_connect" = "Try to Connect";
+"try_again" = "Try again";
+
+"pin_hint_for_backup" = "Your PIN code will be used to securely encrypt your account backup";
+"pin_hint_for_create" = "Please enter the pin when you create this backup.";
+"Wallpaper" = "Wallpaper";
+"Dynamic" = "Dynamic";
+"Static" = "Static";
+"my_accounts" = "My Accounts";
+"Inaccessible" = "Inaccessible";
+"View Recovery Phrase" = "View Recovery Phrase";
+"take_mins" = "It might take 1-2 mins";
+"what_is" = "What is a";
+"multi_backup_detail" = "A multi-backup stores multiple partial-weight keys across your accounts on trusted providers like Google Drive and iCloud, or a Recovery Phrase.
+
+Two partial-weight keys must be used together to recover access to your account. Each key individually cannot be used.
+
+This means, that to recover access to your account, Flow Wallet requires access to two of your backups.
+
+Your backups are encrypted using your wallet PIN code. You must remember or write down your PIN code and store it in a safe place.
+";
+
+"what_is_multi" = "What is Multi-Backup?";
+"what_is_multi_short" = "Multi-backup is where Flow Wallet creates multiple partial-weight keys (500 weight) and stores them across your desired platforms, iCloud, Google Drive or Seed Phrase";
+"multi_check_phrase_1" = "I understand if I lose my recovery phrase, I may not be able to recover my account.";
+"multi_check_phrase_2" = "I understand this is a partial-weight recovery phrase that on its own does not grant me full control of my account.";
+"multi_check_phrase_3" = "I understand this partial-weight recovery phrase must be used together with my other multi-backups to recover access to my account.";
+
+"about_phrase_title_top" = "About your";
+"about_phrase_title_bottom" = "Recovery Phrase";
+"about_phrase_title_content" = "You have selected to use a 15-word partial-weight recovery phrase.
+
+Your partial-weight recovery will correspond to a partial-weight recovery key on your Flow account.
+
+Your partial-weight recovery phrase on its own does not secure full access to your account. It must be used together with your other multi-backups to recover access to your account.
+";
+
+"private_key_secured_hint" = "Flow Wallet uses your device's Secure Enclave to protect your account and assets. This private key cannot be retrieved.
+
+Secure Enclave protects your Private Key using the hardware-level security of your device, eliminating the need for a seed phrase.
+
+Please create backups for your wallet to ensure you retain access to your Flow account and assets in the event you lose your device.";
+
+"things_need_know_des" = "You have selected to use a 12-word recovery phrase backup.\n\nThis recovery phrase backup will have full control of your account.";
+"things_need_know_check_1" = "If I lose my recovery phrase, I may not be able to recover my account.";
+"things_need_know_check_2" = "If I expose my recovery phrase anywhere, my account and assets can be stolen.";
+"things_need_know_check_3" = "It is my full responsibility to secure my recovery phrase.";
+
+"secured_by_se" = "Secured by Secure Enclave";
+"create_phrase_backup_title" = "Create Recovery Phrase Backup";
+"create_phrase_backup_note" = "Create a 12 word recovery phrase";
+"Recommended" = "Recommended";
+
+"move_fee_hint_cost" = "It appears when moving between VM accounts";
+"move_fee_hint_free" = "No fee between your Flow accounts 🤟";
+"move_fee_cost" = "~ 0.001";

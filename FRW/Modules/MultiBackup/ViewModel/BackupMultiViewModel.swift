@@ -11,7 +11,7 @@ class BackupMultiViewModel: ObservableObject {
     @Published var list: [BackupMultiViewModel.MultiItem] = []
     @Published var nextable: Bool = false
     let selectedList: [MultiBackupType]
-    
+
     init(backups: [MultiBackupType]) {
         list = []
         selectedList = backups
@@ -21,7 +21,7 @@ class BackupMultiViewModel: ObservableObject {
             }
         }
     }
-    
+
     func onClick(item: BackupMultiViewModel.MultiItem) {
         let existItem = selectedList.first { $0 == item.type }
         guard existItem == nil else { return }
@@ -34,13 +34,13 @@ class BackupMultiViewModel: ObservableObject {
         }
         nextable = (selectedList.count + waitingList().count) >= 2
     }
-    
+
     func waitingList() -> [MultiBackupType] {
         var waiting = list.filter { $0.isBackup }
         waiting = waiting.filter { !selectedList.contains($0.type) }
         return waiting.map { $0.type }
     }
-    
+
     func onNext() {
         MultiBackupManager.shared.backupList = []
         let list = waitingList()
@@ -61,6 +61,13 @@ class BackupMultiViewModel: ObservableObject {
             Router.route(to: RouteMap.Backup.uploadMulti(list))
         }
     }
+
+    func onLearnMore() {
+        let callback = {
+//            Router.dismiss()
+        }
+        Router.route(to: RouteMap.Backup.introduction(.whatMultiBackup, callback, false))
+    }
 }
 
 // MARK: - MultiItem
@@ -70,7 +77,7 @@ enum MultiBackupType: Int, CaseIterable {
     case passkey = 1
     case icloud = 2
     case phrase = 3
-    
+
     var title: String {
         switch self {
         case .google:
@@ -83,7 +90,7 @@ enum MultiBackupType: Int, CaseIterable {
             return "Recovery Phrase"
         }
     }
-    
+
     func iconName() -> String {
         switch self {
         case .google:
@@ -96,11 +103,11 @@ enum MultiBackupType: Int, CaseIterable {
             return "icon.recovery"
         }
     }
-    
+
     var noteDes: String {
-        "backup_note_x".localized(title)
+        "backup_note_x".localized
     }
-    
+
     var normalIcon: String {
         switch self {
         case .google:
@@ -113,7 +120,7 @@ enum MultiBackupType: Int, CaseIterable {
             return "icon.recovery.normal"
         }
     }
-    
+
     var highlightIcon: String {
         switch self {
         case .google:
@@ -126,7 +133,7 @@ enum MultiBackupType: Int, CaseIterable {
             return "icon.recovery.highlight"
         }
     }
-    
+
     var needPin: Bool {
         switch self {
         case .google, .icloud:
@@ -141,11 +148,11 @@ extension BackupMultiViewModel {
     struct MultiItem: Hashable {
         let type: MultiBackupType
         var isBackup: Bool
-        
+
         var name: String {
             type.title
         }
-        
+
         var icon: String {
             return type.iconName()
         }
@@ -165,7 +172,7 @@ extension MultiBackupType {
             return .manual
         }
     }
-    
+
     func showName() -> String {
         let type = toBackupType()
         return "backup".localized + " - " + type.title

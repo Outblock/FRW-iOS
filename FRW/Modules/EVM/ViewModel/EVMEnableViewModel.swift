@@ -12,9 +12,21 @@ class EVMEnableViewModel: ObservableObject {
     func onSkip() {
         Router.pop()
     }
-    
+
     func onClickEnable() {
-        
+        let minBalance = 0.000
+        let result = WalletManager.shared.activatedCoins.filter { tokenModel in
+            if tokenModel.isFlowCoin, let symbol = tokenModel.symbol {
+                log.debug("[EVM] enable check balance: \(WalletManager.shared.getBalance(bySymbol: symbol))")
+                return WalletManager.shared.getBalance(bySymbol: symbol) >= minBalance
+            }
+            return false
+        }
+        guard result.count == 1 else {
+            HUD.error(title: "", message: "evm_check_balance".localized)
+            return
+        }
+
         Task {
             do {
                 state = .loading
@@ -24,15 +36,14 @@ class EVMEnableViewModel: ObservableObject {
                 state = .enabled
                 Router.pop()
                 ConfettiManager.show()
-            }
-            catch {
+            } catch {
                 state = .enabled
                 HUD.error(title: "Enable EVM failed.")
                 log.error("Enable EVM failer: \(error)")
             }
         }
     }
-    
+
     func onClickLearnMore() {
         let evmUrl = "https://flow.com/upgrade/crescendo/evm"
         guard let url = URL(string: evmUrl) else { return }

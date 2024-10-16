@@ -33,6 +33,7 @@ enum WalletError: Error {
     case storeAndActiveMnemonicFailed
     case mnemonicMissing
     case emptyPublicKey
+    case insufficientBalance
 }
 
 enum BackupError: Error {
@@ -43,6 +44,7 @@ enum BackupError: Error {
     case decryptMnemonicFailed
     case topVCNotFound
     case fileIsNotExistOnCloud
+    case CloudFileData
 }
 
 enum GoogleBackupError: Error {
@@ -65,6 +67,7 @@ enum iCloudBackupError: Error {
 enum NFTError: Error {
     case noCollectionInfo
     case invalidTokenId
+    case sendInvalidAddress
 }
 
 enum StakingError: Error {
@@ -73,7 +76,7 @@ enum StakingError: Error {
     case stakingSetupFailed
     case stakingCreateDelegatorIdFailed
     case unknown
-    
+
     var desc: String {
         switch self {
         case .stakingDisabled:
@@ -89,4 +92,5 @@ enum StakingError: Error {
 enum EVMError: Error {
     case createAccount
     case findAddress
+    case transactionResult
 }

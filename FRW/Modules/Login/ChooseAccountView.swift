@@ -21,11 +21,11 @@ extension ChooseAccountView {
 
 struct ChooseAccountView: RouteableView {
     @StateObject var vm: ChooseAccountViewModel
-    
+
     init(driveItems: [BackupManager.DriveItem], backupType: BackupManager.BackupType) {
         _vm = StateObject(wrappedValue: ChooseAccountViewModel(driveItems: driveItems, backupType: backupType))
     }
-    
+
     var body: some View {
         VStack(spacing: 10) {
             headerView
@@ -38,7 +38,7 @@ struct ChooseAccountView: RouteableView {
         .backgroundFill(Color.LL.background)
         .applyRouteable(self)
     }
-    
+
     var headerView: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
@@ -57,7 +57,7 @@ struct ChooseAccountView: RouteableView {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    
+
     var listView: some View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 12) {
@@ -73,7 +73,7 @@ struct ChooseAccountView: RouteableView {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .buttonStyle(.plain)
     }
-    
+
     func createAccountView(item: BackupManager.DriveItem) -> some View {
         ZStack {
             Text(item.username ?? "")
@@ -81,7 +81,7 @@ struct ChooseAccountView: RouteableView {
                 .foregroundColor(.LL.Neutrals.text)
                 .lineLimit(1)
                 .padding(.horizontal, 35)
-            
+
             HStack {
                 Spacer()
                 Image("icon-account-arrow-right")
@@ -97,8 +97,8 @@ struct ChooseAccountView: RouteableView {
     }
 }
 
-//struct ChooseAccountView_Previews: PreviewProvider {
+// struct ChooseAccountView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        ChooseAccountView(driveItems: [])
 //    }
-//}
+// }

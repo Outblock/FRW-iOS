@@ -5,8 +5,8 @@
 //  Created by cat on 2024/3/12.
 //
 
-import SwiftUI
 import Flow
+import SwiftUI
 
 class DevicesInfoViewModel: ObservableObject {
     @Published var showRemoveTipView = false
@@ -14,30 +14,29 @@ class DevicesInfoViewModel: ObservableObject {
     var model: DeviceInfoModel
     var accountKey: Flow.AccountKey?
     var userKey: KeyDeviceModel?
-    
+
     init(model: DeviceInfoModel) {
         self.model = model
         if let deviceId = self.model.id {
-            self.accountKey = DeviceManager.shared.findFlowAccount(deviceId: deviceId)
-            self.userKey = DeviceManager.shared.findUserKey(deviceId: deviceId)
+            accountKey = DeviceManager.shared.findFlowAccount(deviceId: deviceId)
+            userKey = DeviceManager.shared.findUserKey(deviceId: deviceId)
             let localKey = WalletManager.shared.getCurrentPublicKey()
             if DeviceManager.shared.isCurrent(deviceId: deviceId) {
-                self.showRevokeButton = false
-            } else if self.accountKey != nil {
-                if localKey == self.accountKey?.publicKey.description {
-                    self.showRevokeButton = false
-                }else {
-                    self.showRevokeButton = true
+                showRevokeButton = false
+            } else if accountKey != nil {
+                if localKey == accountKey?.publicKey.description {
+                    showRevokeButton = false
+                } else {
+                    showRevokeButton = true
                 }
-            }else {
-                self.showRevokeButton = false
+            } else {
+                showRevokeButton = false
             }
-        }else {
+        } else {
             showRevokeButton = false
         }
-        
     }
-    
+
     func onRevoke() {
         if showRemoveTipView {
             showRemoveTipView = false
@@ -46,13 +45,13 @@ class DevicesInfoViewModel: ObservableObject {
             showRemoveTipView = true
         }
     }
-    
+
     func onCancel() {
         showRemoveTipView = false
     }
-    
+
     func revokeAction() {
-        guard let deviceId = self.model.id else {
+        guard let deviceId = model.id else {
             withAnimation(.easeOut(duration: 0.2)) {
                 showRemoveTipView = false
                 showRevokeButton = false
@@ -68,7 +67,7 @@ class DevicesInfoViewModel: ObservableObject {
             }
             return
         }
-        
+
         guard let accountKey = DeviceManager.shared.findFlowAccount(deviceId: deviceId) else {
             withAnimation(.easeOut(duration: 0.2)) {
                 showRemoveTipView = false
@@ -84,7 +83,7 @@ class DevicesInfoViewModel: ObservableObject {
             }
             return
         }
-        
+
         Task {
             HUD.loading()
             let res = try await AccountKeyManager.revokeKey(at: accountKey.index)
@@ -105,19 +104,19 @@ extension DevicesInfoViewModel {
         let deviceType = DeviceType(value: userKey?.device.deviceType ?? 1)
         return deviceType.smallIcon
     }
-    
+
     var showKeyTitle: String {
         if isCurrent {
             return "current_device".localized
         }
         return model.deviceName ?? ""
     }
-    
+
     var showKeyTitleColor: Color {
         return isCurrent ? Color.Theme.Accent.blue : Color.Theme.Text.black3
     }
-    
+
     var isCurrent: Bool {
-        return DeviceManager.shared.isCurrent(deviceId: model.id ?? "") 
+        return DeviceManager.shared.isCurrent(deviceId: model.id ?? "")
     }
 }

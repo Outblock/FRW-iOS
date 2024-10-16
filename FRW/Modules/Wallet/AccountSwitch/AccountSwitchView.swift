@@ -5,34 +5,39 @@
 //  Created by Selina on 13/6/2023.
 //
 
-import SwiftUI
 import Combine
 import Kingfisher
+import SwiftUI
 
-struct AccountSwitchView: View {
+struct AccountSwitchView: PresentActionView {
+    var changeHeight: (() -> Void)?
+
     @StateObject private var vm = AccountSwitchViewModel()
     @State private var showAlert = false
     @State private var showSwitchUserAlert = false
-    
+
+    @State private var offset: CGFloat = 0
+    @State private var contentHeight: CGFloat = 0
+
     var body: some View {
         VStack(spacing: 0) {
             titleView
                 .padding(.vertical, 36)
-            
+
             contentView
-            
+
             bottomView
                 .padding(.top, 7)
         }
         .backgroundFill(Color.LL.Neutrals.background)
     }
-    
+
     var titleView: some View {
         Text("accounts".localized)
             .font(.inter(size: 24, weight: .bold))
             .foregroundColor(Color.LL.Neutrals.text)
     }
-    
+
     var bottomView: some View {
         VStack(spacing: 0) {
             Divider()
@@ -40,7 +45,7 @@ struct AccountSwitchView: View {
                 .frame(maxWidth: .infinity)
                 .foregroundColor(Color.LL.Neutrals.background)
                 .padding(.bottom, 30)
-            
+
             Button {
                 if LocalUserDefaults.shared.flowNetwork != .mainnet {
                     showAlert = true
@@ -49,18 +54,18 @@ struct AccountSwitchView: View {
                         vm.createNewAccountAction()
                     }
                 }
-                
+
             } label: {
                 HStack(spacing: 15) {
                     Image("icon-plus")
                         .renderingMode(.template)
                         .foregroundColor(Color.LL.Neutrals.text)
                         .frame(width: 14, height: 14)
-                    
+
                     Text("create_new_account".localized)
                         .font(.inter(size: 14, weight: .semibold))
                         .foregroundColor(Color.LL.Neutrals.text)
-                    
+
                     Spacer()
                 }
                 .frame(height: 40)
@@ -76,7 +81,7 @@ struct AccountSwitchView: View {
             } message: {
                 Text("wrong_network_des".localized)
             }
-            
+
             Button {
                 Router.dismiss {
                     vm.loginAccountAction()
@@ -87,11 +92,11 @@ struct AccountSwitchView: View {
                         .renderingMode(.template)
                         .foregroundColor(Color.LL.Neutrals.text)
                         .frame(width: 14, height: 14)
-                    
+
                     Text("add_existing_account".localized)
                         .font(.inter(size: 14, weight: .semibold))
                         .foregroundColor(Color.LL.Neutrals.text)
-                    
+
                     Spacer()
                 }
                 .frame(height: 40)
@@ -100,69 +105,161 @@ struct AccountSwitchView: View {
         .padding(.horizontal, 28)
         .padding(.bottom, 20)
     }
-    
+
     var contentView: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            LazyVStack(spacing: 20) {
-                ForEach(vm.placeholders, id: \.uid) { placeholder in
-                    Button {
-                        if LocalUserDefaults.shared.flowNetwork != .mainnet {
-                            showSwitchUserAlert = true
-                        } else {
-                            Router.dismiss {
-                                vm.switchAccountAction(placeholder.uid)
+        GeometryReader { geometry in
+            ScrollViewOffset { offset in
+                self.offset = offset
+            } content: {
+                LazyVStack(spacing: 20) {
+                    ForEach(vm.placeholders, id: \.uid) { placeholder in
+                        Button {
+                            vm.selectedUid = placeholder.uid
+                            if LocalUserDefaults.shared.flowNetwork != .mainnet {
+                                showSwitchUserAlert = true
+                            } else {
+                                Router.dismiss {
+                                    vm.switchAccountAction(placeholder.uid)
+                                }
                             }
+
+                        } label: {
+                            createAccountCell(placeholder)
                         }
-                        
-                    } label: {
-                        createAccountCell(placeholder)
-                    }
-                    .alert("wrong_network_title".localized, isPresented: $showSwitchUserAlert) {
-                        Button("switch_to_mainnet".localized) {
-                            WalletManager.shared.changeNetwork(.mainnet)
-                            Router.dismiss {
-                                vm.switchAccountAction(placeholder.uid)
+                        .alert("wrong_network_title".localized, isPresented: $showSwitchUserAlert) {
+                            Button("switch_to_mainnet".localized) {
+                                WalletManager.shared.changeNetwork(.mainnet)
+                                if let uid = vm.selectedUid {
+                                    Router.dismiss {
+                                        vm.switchAccountAction(uid)
+                                    }
+                                }
                             }
+                            Button("action_cancel".localized, role: .cancel) {}
+                        } message: {
+                            Text("wrong_network_des".localized)
                         }
-                        Button("action_cancel".localized, role: .cancel) {}
-                    } message: {
-                        Text("wrong_network_des".localized)
                     }
                 }
+                .padding(.horizontal, 10)
+                .background {
+                    GeometryReader { proxy in
+                        Color.clear
+                            .preference(key: SizePreferenceKey.self, value: proxy.size)
+                    }
+                    .onPreferenceChange(SizePreferenceKey.self, perform: { value in
+                        self.contentHeight = value.height
+                    })
+                }
+            }
+            .padding(.horizontal, 18)
+            .overlay(alignment: .bottom) {
+                moreView
+                    .opacity(offset < 10 ? max(0, 1 - (-offset / 50.0)) : 1)
+                    .visibility(self.contentHeight > geometry.size.height ? .visible : .gone)
             }
         }
-        .padding(.horizontal, 28)
     }
-    
+
     func createAccountCell(_ placeholder: AccountSwitchViewModel.Placeholder) -> some View {
         HStack(spacing: 16) {
             KFImage.url(URL(string: placeholder.avatar.convertedAvatarString()))
-                .placeholder({
+                .placeholder {
                     Image("placeholder")
                         .resizable()
-                })
+                }
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 32, height: 32)
                 .cornerRadius(16)
-            
+
             VStack(alignment: .leading, spacing: 5) {
-                Text("@\(placeholder.username)")
+                Text("\(placeholder.username)")
                     .font(.inter(size: 14, weight: .semibold))
                     .foregroundColor(Color.LL.Neutrals.text)
-                
+
                 Text("\(placeholder.address)")
                     .font(.inter(size: 12, weight: .regular))
                     .foregroundColor(Color.LL.Neutrals.text2)
             }
-            
+
             Spacer()
             Image("icon-backup-success")
                 .visibility(placeholder.uid == UserManager.shared.activatedUID ? .visible : .invisible)
-                
-                
         }
         .frame(height: 42)
         .contentShape(Rectangle())
     }
+
+    var moreView: some View {
+        Button {
+            self.changeHeight?()
+        } label: {
+            HStack {
+                Text("view_more".localized)
+                    .font(.inter(size: 14))
+                    .foregroundStyle(Color.Theme.Accent.grey)
+                Image("icon_arrow_double_down")
+                    .resizable()
+                    .frame(width: 16, height: 16)
+            }
+            .padding(.horizontal, 16)
+            .frame(height: 32)
+            .background(.Theme.Background.grey)
+            .cornerRadius(16)
+        }
+    }
+}
+
+extension AccountSwitchView {
+    var detents: [UISheetPresentationController.Detent] {
+        return [.medium(), .large()]
+    }
+}
+
+struct ScrollViewOffset<Content: View>: View {
+    let onOffsetChange: (CGFloat) -> Void
+    let content: () -> Content
+
+    init(
+        onOffsetChange: @escaping (CGFloat) -> Void,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.onOffsetChange = onOffsetChange
+        self.content = content
+    }
+
+    var body: some View {
+        ScrollView {
+            offsetReader
+            content()
+                .padding(.top, -8)
+        }
+        .coordinateSpace(name: "frameLayer")
+        .onPreferenceChange(OffsetPreferenceKey.self, perform: onOffsetChange)
+    }
+
+    var offsetReader: some View {
+        GeometryReader { proxy in
+            Color.clear
+                .preference(
+                    key: OffsetPreferenceKey.self,
+                    value: proxy.frame(in: .named("frameLayer")).minY
+                )
+        }
+        .frame(height: 0)
+    }
+}
+
+private struct SizePreferenceKey: PreferenceKey {
+    static var defaultValue: CGSize = .zero
+
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
+        value = nextValue()
+    }
+}
+
+private struct OffsetPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = .zero
+    static func reduce(value _: inout CGFloat, nextValue _: () -> CGFloat) {}
 }

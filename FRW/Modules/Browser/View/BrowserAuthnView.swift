@@ -5,30 +5,30 @@
 //  Created by Selina on 6/9/2022.
 //
 
-import SwiftUI
-import Kingfisher
 import Flow
+import Kingfisher
+import SwiftUI
 
 struct BrowserAuthnView: View {
     @StateObject var vm: BrowserAuthnViewModel
-    
+
     init(vm: BrowserAuthnViewModel) {
         _vm = StateObject(wrappedValue: vm)
     }
-    
+
     var body: some View {
         VStack(spacing: 12) {
             titleView
-            
+
             sourceView
-                
+
             detailView
 //                .frame(maxHeight: .infinity)
-            
+
             HStack {
                 walletView
 //                if let _ = vm.network {
-                    networkView
+                networkView
 //                }
             }
             .padding(.bottom, 8)
@@ -39,32 +39,32 @@ struct BrowserAuthnView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .backgroundFill(Color(hex: "#282828", alpha: 1))
     }
-    
+
     var titleView: some View {
         HStack(spacing: 18) {
             KFImage.url(URL(string: vm.logo ?? ""))
-                .placeholder({
+                .placeholder {
                     Image("placeholder")
                         .resizable()
-                })
+                }
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 64, height: 64)
                 .clipShape(Circle())
-            
+
             VStack(alignment: .leading, spacing: 5) {
                 Text("browser_connecting_to".localized)
                     .font(.inter(size: 14))
                     .foregroundColor(Color(hex: "#808080"))
-                
+
                 Text(vm.title)
                     .font(.inter(size: 16, weight: .bold))
                     .foregroundColor(.white)
                     .lineLimit(1)
             }
-            
+
             Spacer()
-            
+
             Button {
                 vm.didChooseAction(false)
             } label: {
@@ -76,12 +76,12 @@ struct BrowserAuthnView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .frame(height: 64)
     }
-    
+
     var sourceView: some View {
         HStack(spacing: 12) {
             Image(systemName: "link")
                 .foregroundColor(.white.opacity(0.2))
-            
+
             Text(vm.urlString)
                 .font(.inter(size: 14, weight: .medium))
                 .foregroundColor(.white)
@@ -93,18 +93,17 @@ struct BrowserAuthnView: View {
         .background(Color(hex: "#313131"))
         .cornerRadius(12)
     }
-    
+
     var detailView: some View {
         VStack(alignment: .leading, spacing: 12) {
 //            Text("browser_app_like_to".localized)
 //                .font(.inter(size: 14, weight: .medium))
 //                .foregroundColor(Color(hex: "#666666"))
 //                .padding(.bottom, 18)
-            
+
             createAuthDetailView(text: "browser_authn_tips1".localized)
-            
+
             createAuthDetailView(text: "browser_authn_tips2".localized)
-            
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .padding(.horizontal, 18)
@@ -112,36 +111,30 @@ struct BrowserAuthnView: View {
         .background(Color(hex: "#313131"))
         .cornerRadius(12)
     }
-    
+
     var networkView: some View {
-        
         VStack(alignment: .leading, spacing: 8) {
-            
             HStack {
-                
                 Image(systemName: "network")
                     .foregroundColor(.white.opacity(0.3))
-                
+
                 Text("network".capitalized)
                     .foregroundColor(.white.opacity(0.3))
-                
+
                 Spacer()
-                
+
                 Image(systemName: "chevron.right")
                     .foregroundColor(.white.opacity(0.5))
             }
-            
+
             HStack(spacing: 12) {
-                
                 Text(vm.network?.name.capitalized ?? "unknown".localized)
                     .font(.inter(size: 14, weight: .medium))
                     .foregroundColor(vm.network?.color ?? .white)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .lineLimit(1)
-                
+
                 Spacer()
-                
-                
             }
         }
         //        .frame(height: 46)
@@ -150,35 +143,27 @@ struct BrowserAuthnView: View {
         .background(Color(hex: "#313131"))
         .cornerRadius(12)
     }
-    
+
     var walletView: some View {
         VStack(alignment: .leading, spacing: 8) {
-            
             HStack {
-                Image("logo")
-                    .resizable()
-                    .frame(width: 20, height: 20)
+                user.emoji.icon(size: 20)
+
+                Text(user.name.capitalized)
                     .foregroundColor(.white.opacity(0.3))
-                
-                Text("wallet".capitalized)
-                    .foregroundColor(.white.opacity(0.3))
-                
+
                 Spacer()
-                
             }
-            
+
             HStack(spacing: 12) {
-                
                 Text(vm.walletAddress ?? "")
                     .truncationMode(.middle)
                     .font(.inter(size: 14, weight: .medium))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .lineLimit(1)
-                
+
                 Spacer()
-                
-                
             }
         }
         //        .frame(height: 46)
@@ -187,7 +172,11 @@ struct BrowserAuthnView: View {
         .background(Color(hex: "#313131"))
         .cornerRadius(12)
     }
-    
+
+    var user: WalletAccount.User {
+        WalletManager.shared.walletAccount.readInfo(at: vm.walletAddress ?? "")
+    }
+
     var actionView: some View {
         HStack(spacing: 11) {
             Button {
@@ -200,9 +189,8 @@ struct BrowserAuthnView: View {
                     .frame(height: 54)
                     .background(Color(hex: "#313131"))
                     .cornerRadius(12)
-                    
             }
-            
+
             Button {
                 vm.didChooseAction(true)
             } label: {
@@ -216,11 +204,11 @@ struct BrowserAuthnView: View {
             }
         }
     }
-    
+
     func createAuthDetailView(text: String) -> some View {
         HStack(spacing: 12) {
             Image("icon-right-mark")
-            
+
             Text(text)
                 .font(.inter(size: 14, weight: .medium))
                 .foregroundColor(.white)
@@ -231,26 +219,24 @@ struct BrowserAuthnView: View {
 }
 
 struct BrowserAuthnView_Previews: PreviewProvider {
-    
     static let vm = BrowserAuthnViewModel(
         title: "This is title",
         url: "https://core.flow.com",
-        logo: "https://lilico.app/fcw-logo.png",
+        logo: "https://lilico.app/frw-logo.png",
         walletAddress: "sadasdssadasdasda",
-        network: .testnet) {_ in
+        network: .testnet
+    ) { _ in
     }
-    
+
     static var previews: some View {
-        
         VStack(fill: .proportionally) {
             Color.LL.background
-                .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight/2)
+                .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight / 2)
             BrowserAuthnView(vm: vm)
-                .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight/2)
+                .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight / 2)
         }
     }
 }
-
 
 extension Flow.ChainID {
     var color: Color {

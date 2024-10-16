@@ -28,12 +28,10 @@ class ServiceConfig {
 
 extension ServiceConfig {
     func setupInstabug() {
-        
         guard let token = dict["instabug-key"] else {
             fatalError("fatalError ===> Can't find instabug key at ServiceConfig.plist")
         }
 
         InstabugConfig.start(token: token)
-        
     }
 }

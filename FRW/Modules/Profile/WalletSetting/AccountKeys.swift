@@ -5,28 +5,24 @@
 //  Created by cat on 2023/10/18.
 //
 
-import SwiftUI
 import Flow
+import SwiftUI
 
 struct AccountKeysView: RouteableView {
-    
     @StateObject private var vm = AccountKeyViewModel()
-    
-    
-    
+
     var title: String {
         "wallet_account_key".localized.capitalized
     }
-    
+
     var body: some View {
         ScrollView {
-            ForEach(0..<vm.allKeys.count, id: \.self) { index in
+            ForEach(0 ..< vm.allKeys.count, id: \.self) { index in
                 let model = vm.allKeys[index]
-                AccountKeysView.Cell(model: model){ model in
+                AccountKeysView.Cell(model: model) { model in
                     self.onRevokeKey(at: model)
                 }
             }
-            
         }
         .backgroundFill(.Theme.Background.white)
         .mockPlaceholder(vm.status == PageStatus.loading)
@@ -36,7 +32,7 @@ struct AccountKeysView: RouteableView {
         }
         .applyRouteable(self)
     }
-    
+
     func onRevokeKey(at model: AccountKeyModel) {
         guard !model.isCurrent() else {
             HUD.info(title: "account_key_current_tips".localized)
@@ -52,12 +48,11 @@ struct AccountKeysView: RouteableView {
 
 extension AccountKeysView {
     struct Cell: View {
-        
         var model: AccountKeyModel
-        var onRevoke: ((AccountKeyModel) -> ())?
+        var onRevoke: ((AccountKeyModel) -> Void)?
         @State var isExpanding = false
         @State var isShowRevoke = false
-        
+
         var body: some View {
             VStack(spacing: -8) {
                 HStack(spacing: 8) {
@@ -67,25 +62,25 @@ extension AccountKeysView {
                         Image(model.titleIcon())
                             .resizable()
                             .frame(width: 24, height: 24)
-                        
+
                         Text(model.deviceName())
                             .font(.inter(size: 12))
                             .foregroundStyle(model.deviceNameColor())
                             .hidden(model.deviceName().isEmpty)
-                        
+
                         Spacer()
 //                        AccountKeysView.ProgressView(model: model)
-                        
+
                         Text(model.statusText())
                             .padding(.horizontal, 8)
                             .padding(.vertical, 2)
                             .frame(height: 20)
-                            .font(.inter(size: 9,weight: .bold))
+                            .font(.inter(size: 9, weight: .bold))
                             .foregroundStyle(model.statusColor())
                             .background(model.statusColor().fixedOpacity())
                             .cornerRadius(4)
                             .visibility(model.statusText().isEmpty ? .gone : .visible)
-                        
+
                         Image(isExpanding ? "arrow.up" : "arrow.down")
                             .frame(width: 16, height: 16)
                             .padding(.leading, 16)
@@ -100,23 +95,19 @@ extension AccountKeysView {
                         withAnimation {
                             isExpanding.toggle()
                         }
-                        
                     }
-                    
                 }
-                
+
                 HStack {
                     VStack {
                         CopyInfoView(model: model)
                         WeightView(model: model, contentType: .weight)
-                        TextInfoView(model: model,contentType: .hash)
-                        TextInfoView(model: model,contentType: .number)
-                        TextInfoView(model: model,contentType: .curve)
-                        TextInfoView(model: model,contentType: .keyIndex)
-                        
-                        
+                        TextInfoView(model: model, contentType: .hash)
+                        TextInfoView(model: model, contentType: .number)
+                        TextInfoView(model: model, contentType: .curve)
+                        TextInfoView(model: model, contentType: .keyIndex)
                     }
-                    .padding(.top,24)
+                    .padding(.top, 24)
                     .padding(.bottom, 16)
                     .padding(.horizontal, 16)
                     .background(Color.Theme.Background.grey.opacity(0.75))
@@ -124,13 +115,12 @@ extension AccountKeysView {
                 }
                 .padding(.horizontal, 24)
                 .visibility(isExpanding ? .visible : .gone)
-                
             }
             .onViewSwipe(title: "revoke".localized) {
                 onRevokeAction()
             }
         }
-        
+
         func onRevokeAction() {
             onRevoke?(model)
         }
@@ -140,15 +130,15 @@ extension AccountKeysView {
 extension AccountKeysView {
     struct ProgressView: View {
         var model: AccountKeyModel
-        
+
         var body: some View {
-            ZStack(alignment:.leading) {
+            ZStack(alignment: .leading) {
                 model.weightBG()
                     .frame(width: model.weightPadding())
                     .cornerRadius(2)
                 Text(model.weightDes())
                     .font(.inter(size: 9, weight: .bold))
-                    .frame(width: 72,height: 16)
+                    .frame(width: 72, height: 16)
                     .foregroundStyle(Color.Theme.Text.black3)
             }
             .frame(width: 72, height: 16)
@@ -156,10 +146,10 @@ extension AccountKeysView {
             .cornerRadius(2)
         }
     }
-    
+
     struct CopyInfoView: View {
         var model: AccountKeyModel
-        
+
         var body: some View {
             HStack(alignment: .top, spacing: 8) {
                 model.icon(at: .publicKey)
@@ -177,7 +167,7 @@ extension AccountKeysView {
                             Image("icon_copy")
                         }
                     }
-                    
+
                     Text(model.accountKey.publicKey.description)
                         .font(.inter(size: 10))
                         .foregroundStyle(Color.Theme.Text.black3)
@@ -185,7 +175,7 @@ extension AccountKeysView {
             }
         }
     }
-    
+
     struct TextInfoView: View {
         var model: AccountKeyModel
         var contentType: AccountKeyModel.ContentType
@@ -198,13 +188,12 @@ extension AccountKeysView {
                     .foregroundStyle(Color.Theme.Text.black8)
                 Spacer()
                 Text(model.content(at: contentType))
-                    .font(.inter(size: 10,weight: .bold))
+                    .font(.inter(size: 10, weight: .bold))
                     .foregroundStyle(Color.Theme.Text.black3)
             }
-            
         }
     }
-    
+
     struct WeightView: View {
         var model: AccountKeyModel
         var contentType: AccountKeyModel.ContentType
@@ -218,25 +207,23 @@ extension AccountKeysView {
                 Spacer()
                 AccountKeysView.ProgressView(model: model)
             }
-            
         }
     }
 }
 
-
 struct ViewSwipe: ViewModifier {
     let title: String
     let action: () -> Void
-    
+
     @State var offset: CGSize = .zero
     @State var initialOffset: CGSize = .zero
     @State var contentWidth: CGFloat = 0.0
-    
+
     func body(content: Content) -> some View {
         content
             .background(
                 GeometryReader { geometry in
-                    
+
                     HStack {
                         ZStack {
                             Rectangle()
@@ -245,14 +232,14 @@ struct ViewSwipe: ViewModifier {
                             Text(title)
                                 .font(.inter(size: 16, weight: .semibold))
                                 .foregroundStyle(Color.Theme.Text.white9)
-                                .frame(width: 89,height: 52)
+                                .frame(width: 89, height: 52)
                                 .layoutPriority(-1)
                         }
                         Color.clear
                             .frame(width: 18)
                     }
                     .frame(width: -offset.width)
-                    .clipShape(Rectangle() )
+                    .clipShape(Rectangle())
                     .offset(x: geometry.size.width)
                     .onAppear {
                         contentWidth = geometry.size.width
@@ -266,12 +253,12 @@ struct ViewSwipe: ViewModifier {
                 }
             )
             .offset(x: offset.width, y: 0)
-            .gesture (
+            .gesture(
                 DragGesture()
                     .onChanged { gesture in
                         if gesture.translation.width + initialOffset.width <= 0 {
                             self.offset.width = gesture.translation.width + initialOffset.width
-                        }else {
+                        } else {
                             offset = .zero
                             initialOffset = .zero
                         }
@@ -280,8 +267,7 @@ struct ViewSwipe: ViewModifier {
                         if offset.width <= -deletionDistance {
                             offset.width = -tappableDeletionWidth
                             initialOffset.width = -tappableDeletionWidth
-                        }
-                        else if offset.width <= -halfDeletionDistance {
+                        } else if offset.width <= -halfDeletionDistance {
                             offset.width = -tappableDeletionWidth
                             initialOffset.width = -tappableDeletionWidth
                         } else {
@@ -289,36 +275,31 @@ struct ViewSwipe: ViewModifier {
                             initialOffset = .zero
                         }
                     }
-                    
             )
             .animation(.interactiveSpring(), value: offset)
     }
-    
+
     private func onAction() {
-        
         offset = .zero
         initialOffset = .zero
         hapticFeedback()
         action()
     }
-    
+
     private func hapticFeedback() {
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
     }
-    
-    //MARK: Constants
-    
+
+    // MARK: Constants
+
     let deletionDistance = CGFloat(200)
     let halfDeletionDistance = CGFloat(50)
-    let tappableDeletionWidth = CGFloat(89+18)
+    let tappableDeletionWidth = CGFloat(89 + 18)
 }
 
 extension View {
-    
     func onViewSwipe(title: String, perform action: @escaping () -> Void) -> some View {
-        
-        self.modifier(ViewSwipe(title: title,action: action))
+        modifier(ViewSwipe(title: title, action: action))
     }
 }
-

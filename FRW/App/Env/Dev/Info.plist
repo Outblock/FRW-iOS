@@ -46,7 +46,9 @@
 			<key>CFBundleURLName</key>
 			<string></string>
 			<key>CFBundleURLSchemes</key>
-			<array/>
+			<array>
+				<string>fw</string>
+			</array>
 		</dict>
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -85,11 +87,17 @@
 		<string>e-Ukraine-Medium.ttf</string>
 		<string>e-Ukraine-Light.ttf</string>
 	</array>
+	<key>CrowdinDistributionHash</key>
+	<string>f4bff0f0e2ed98c2ba53a29qzvm</string>
+	<key>CrowdinSourceLanguage</key>
+	<string>en</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 	</dict>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>processing</string>

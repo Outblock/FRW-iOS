@@ -6,17 +6,16 @@
 //
 
 import Foundation
-import WalletCore
 import SwiftUI
+import WalletCore
 
 class RestoreMultiInputMnemonicViewModel: ObservableObject {
-    
     @Published var nextEnable: Bool = false
     @Published var hasError: Bool = false
     @Published var suggestions: [String] = []
     @Published var text: String = ""
     @Published var isAlertViewPresented: Bool = false
-    
+
     func onEditingChanged(text: String) {
         let original = text.condenseWhitespace()
         let words = original.split(separator: " ")
@@ -45,11 +44,10 @@ class RestoreMultiInputMnemonicViewModel: ObservableObject {
     func getRawMnemonic() -> String {
         return text.condenseWhitespace()
     }
-    
+
     private func showCreateWalletAlertView() {
         withAnimation(.alertViewSpring) {
             self.isAlertViewPresented = true
         }
     }
-
 }

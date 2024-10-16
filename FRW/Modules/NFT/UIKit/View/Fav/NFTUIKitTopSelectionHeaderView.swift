@@ -5,8 +5,8 @@
 //  Created by Selina on 19/8/2022.
 //
 
-import UIKit
 import SwiftUI
+import UIKit
 
 class NFTUIKitTopSelectionHeaderView: UIView {
     private lazy var iconImageView: UIImageView = {
@@ -15,7 +15,7 @@ class NFTUIKitTopSelectionHeaderView: UIView {
         view.tintColor = .white
         return view
     }()
-    
+
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .montserratBold(size: 22)
@@ -23,25 +23,26 @@ class NFTUIKitTopSelectionHeaderView: UIView {
         label.text = "top_selection".localized
         return label
     }()
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
-    
-    required init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("")
     }
-    
+
     private func setup() {
         backgroundColor = .clear
-        
+
         addSubview(iconImageView)
         iconImageView.snp.makeConstraints { make in
             make.left.equalTo(18)
             make.centerY.equalToSuperview()
         }
-        
+
         addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
             make.left.equalTo(iconImageView.snp.right).offset(10)

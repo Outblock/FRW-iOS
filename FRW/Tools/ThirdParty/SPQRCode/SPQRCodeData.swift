@@ -19,44 +19,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
 import Foundation
 import UIKit
 
 public enum SPQRCodeData {
-
     case url(URL)
     case text(String)
     case ethWallet(String)
     case flowWallet(String)
     case walletConnect(String)
-    
+
     var prefix: String {
         switch self {
-        case .url(_):
+        case .url:
             return Texts.qr_code_data_url_prefix
-        case .text(_):
+        case .text:
             return Texts.qr_code_data_text_prefix
-        case .ethWallet(_):
+        case .ethWallet:
             return Texts.qr_code_data_eth_wallet_prefix
-        case .flowWallet(_):
+        case .flowWallet:
             return Texts.qr_code_data_flow_wallet_prefix
-        case .walletConnect(_):
+        case .walletConnect:
             return Texts.qr_code_data_wallet_connect_prefix
         }
     }
-    
+
     var iconImage: UIImage? {
         switch self {
-        case .url(_):
+        case .url:
             return Images.detail_safari()
-        case .text(_):
+        case .text:
             return Images.detail_eth_wallet()
-        case .ethWallet(_):
+        case .ethWallet:
             return Images.detail_eth_wallet()
-        case .flowWallet(_):
+        case .flowWallet:
             return Images.detail_flow_wallet()
-        case .walletConnect(_):
+        case .walletConnect:
             return Images.detail_flow_wallet()
         }
     }

@@ -17,7 +17,7 @@ extension FRWWebEndpoint: TargetType {
     var authorizationType: AuthorizationType? {
         return .bearer
     }
-    
+
     var baseURL: URL {
         return URL(string: "https://lilico.app/api/")!
     }
@@ -44,7 +44,7 @@ extension FRWWebEndpoint: TargetType {
         switch self {
         case let .txTemplate(request):
             return .requestJSONEncodable(request)
-        case .swapEstimate(let request):
+        case let .swapEstimate(request):
             return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding.queryString)
         }
     }

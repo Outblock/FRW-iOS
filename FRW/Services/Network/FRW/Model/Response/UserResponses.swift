@@ -20,6 +20,7 @@ struct LoginResponse: Codable {
 struct RegisterResponse: Codable {
     let customToken: String
     let id: String
+    let txId: String?
 }
 
 struct UserInfoResponse: Codable {
@@ -46,11 +47,11 @@ struct UserWalletResponse: Codable {
 //
 //        return nil
 //    }
-    
+
     var currentNetworkWalletModel: WalletResponse? {
         return wallets?.first(where: { $0.chainId == LocalUserDefaults.shared.flowNetwork.rawValue && $0.blockchain != nil })
     }
-    
+
     func getNetworkWalletModel(network: LocalUserDefaults.FlowNetworkType) -> WalletResponse? {
         return wallets?.first(where: { $0.chainId == network.rawValue && $0.blockchain != nil })
     }

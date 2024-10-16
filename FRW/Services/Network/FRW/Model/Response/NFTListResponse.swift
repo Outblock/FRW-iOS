@@ -8,12 +8,27 @@
 import Foundation
 
 // MARK: - NFTListResponse
+
 struct NFTListResponse: Codable {
     let nfts: [NFTResponse]?
     let nftCount: Int
+    let collection: NFTCollectionInfo?
+}
+
+extension NFTListResponse {
+    func toCollectionItem() -> CollectionItem {
+        let item = CollectionItem()
+        item.name = collection?.name ?? ""
+        item.count = nftCount
+        item.nfts = nfts?.compactMap { NFTModel($0, in: collection) } ?? []
+        item.collection = collection ?? NFTCollectionInfo(id: "", name: item.name, contractName: item.name, address: "", logo: "", banner: "", officialWebsite: "", description: "", path: ContractPath(storagePath: "", publicPath: "", privatePath: nil, publicCollectionName: "", publicType: "", privateType: ""), evmAddress: nil, flowIdentifier: nil)
+        item.isEnd = nftCount < 24
+        return item
+    }
 }
 
 // MARK: - NFTFavListResponse
+
 struct NFTFavListResponse: Codable {
     let nfts: [NFTResponse]?
     let chain, network: String
@@ -29,7 +44,10 @@ struct NFTResponse: Codable, Hashable {
     let thumbnail: String?
     let externalURL: String?
     let contractAddress: String?
-    
+
+    let evmAddress: String?
+    let address: String?
+
     let collectionID: String?
     let collectionName: String?
     let collectionDescription: String?
@@ -37,20 +55,26 @@ struct NFTResponse: Codable, Hashable {
     let collectionExternalURL: String?
     let collectionContractName: String?
     let collectionBannerImage: String?
-    
+
     let traits: [NFTTrait]?
-    var postMedia: NFTPostMedia
-    
+    var postMedia: NFTPostMedia?
+
+    var flowIdentifier: String? = nil
+
     var uniqueId: String {
         return (contractAddress ?? "") + "." + (collectionName ?? "") + "-" + "\(id)"
     }
 
     func cover() -> String? {
-        return postMedia.image ?? postMedia.video
+        return postMedia?.image ?? postMedia?.video ?? ""
     }
 
     func video() -> String? {
-        return postMedia.video
+        return postMedia?.video ?? ""
+    }
+
+    static func mock() -> NFTResponse {
+        NFTResponse(id: "", name: "", description: "", thumbnail: "", externalURL: "", contractAddress: "", evmAddress: "", address: "", collectionID: "", collectionName: "", collectionDescription: "", collectionSquareImage: "", collectionExternalURL: "", collectionContractName: "", collectionBannerImage: "", traits: [], postMedia: NFTPostMedia(title: "", description: "", video: "", isSvg: false))
     }
 }
 

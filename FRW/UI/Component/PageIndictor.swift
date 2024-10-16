@@ -5,6 +5,7 @@
 //  Created by Hao Fu on 29/11/21.
 //
 
+import SPIndicator
 import SwiftUI
 
 struct PageIndictor: View {
@@ -29,4 +30,8 @@ struct PageIndictor: View {
             alignment: .leading
         )
     }
+}
+
+#Preview {
+    PageIndictor(indicatorOffset: 0, currentIndex: 0, count: 3)
 }

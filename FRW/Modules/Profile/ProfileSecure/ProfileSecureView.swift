@@ -9,11 +9,11 @@ import SwiftUI
 
 struct ProfileSecureView: RouteableView {
     @StateObject private var vm = ProfileSecureViewModel()
-    
+
     var title: String {
         return "security".localized
     }
-    
+
     var body: some View {
         VStack(spacing: 16) {
             VStack(spacing: 0) {
@@ -26,16 +26,16 @@ struct ProfileSecureView: RouteableView {
                             vm.refreshPinCodeStatusAction()
                         }
                 }
-                
+
                 Divider().foregroundColor(.LL.Neutrals.background)
-                
+
                 ProfileSecureView.ItemCell(title: SecurityManager.shared.supportedBionic == .touchid ? "touch_id".localized : "face_id".localized, style: .toggle, isOn: vm.isBionicEnabled) { value in
                     vm.changeBionicAction(value)
                 }
                 .disabled(SecurityManager.shared.supportedBionic == .none)
-                
+
                 Divider().foregroundColor(.LL.Neutrals.background)
-                
+
                 ProfileSecureView.ItemCell(title: "lock_on_exit".localized, style: .toggle, isOn: vm.isLockOnExit) { value in
                     vm.changeLockOnExitAction(value)
                 }
@@ -55,24 +55,22 @@ extension ProfileSecureView {
         let title: String
         let style: ProfileSecureView.ItemCell.Style
         @State var isOn: Bool = false
-        let toggleAction: ((Bool) -> ())?
-        
+        let toggleAction: ((Bool) -> Void)?
+
         var body: some View {
             HStack(spacing: 0) {
                 Text(title)
                     .font(.inter(size: 16, weight: .medium))
                     .foregroundColor(Color.LL.Neutrals.text)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Toggle(isOn: $isOn) {
-                    
-                }
-                .tint(.LL.Primary.salmonPrimary)
-                .onChange(of: isOn) { value in
-                    toggleAction?(value)
-                }
-                .visibility(style == .toggle ? .visible : .gone)
-                
+
+                Toggle(isOn: $isOn) {}
+                    .tint(.LL.Primary.salmonPrimary)
+                    .onChange(of: isOn) { value in
+                        toggleAction?(value)
+                    }
+                    .visibility(style == .toggle ? .visible : .gone)
+
                 Image("icon-black-right-arrow")
                     .renderingMode(.template)
                     .foregroundColor(Color.LL.Button.color)
@@ -80,6 +78,35 @@ extension ProfileSecureView {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 52)
+        }
+    }
+
+    struct WalletInfoCell: View {
+        var user: WalletAccount.User
+        var onEdit: () -> Void
+
+        var body: some View {
+            HStack {
+                user.emoji.icon(size: 40)
+                Text(user.name)
+                    .font(.inter())
+                    .foregroundStyle(Color.Theme.Text.black)
+
+                Spacer()
+                Button {
+                    onEdit()
+                } label: {
+                    HStack {
+                        Image("icon-edit-child-account")
+                            .resizable()
+                            .renderingMode(.template)
+                            .frame(width: 24, height: 24)
+                            .foregroundStyle(Color.Theme.Text.black3)
+                    }
+                    .padding(.vertical, 4)
+                    .padding(.leading, 4)
+                }
+            }
         }
     }
 }

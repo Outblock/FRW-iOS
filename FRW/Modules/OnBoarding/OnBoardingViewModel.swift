@@ -5,8 +5,8 @@
 //  Created by Selina on 1/6/2023.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 import SwiftUIPager
 
 extension OnBoardingViewModel {
@@ -15,7 +15,7 @@ extension OnBoardingViewModel {
         case token
 //        case domain
         case site
-        
+
         /// Basically only used in the text color of skip button
         var needLightContent: Bool {
             switch self {
@@ -25,7 +25,7 @@ extension OnBoardingViewModel {
                 return false
             }
         }
-        
+
         var bgColors: [Color] {
             switch self {
             case .nft:
@@ -38,13 +38,13 @@ extension OnBoardingViewModel {
                 return [Color(hex: "#fde782"), Color(hex: "#20c477")]
             }
         }
-        
+
         var imageName: String {
-            return "onboarding-img-\(self.rawValue)"
+            return "onboarding-img-\(rawValue)"
         }
-        
+
         var title: String {
-            return "onboarding_title_\(self.rawValue)".localized
+            return "onboarding_title_\(rawValue)".localized
         }
     }
 }
@@ -52,7 +52,7 @@ extension OnBoardingViewModel {
 class OnBoardingViewModel: ObservableObject {
     @Published var currentPageIndex: Int = 0
     @Published var page: Page = .first()
-    
+
     static func installPage() -> [OnBoardingViewModel.PageType] {
         let pages = [
             OnBoardingViewModel.PageType.nft,
@@ -61,23 +61,23 @@ class OnBoardingViewModel: ObservableObject {
         ]
         return pages
     }
-    
+
     var totalPages: Int {
         return PageType.count
     }
-    
+
     var currentPageType: PageType {
         return PageType.allCases[currentPageIndex]
     }
-    
+
     var isLastPage: Bool {
         return currentPageIndex == totalPages - 1
     }
-    
+
     func onSkipBtnAction() {
         onStartBtnAction()
     }
-    
+
     func onNextBtnAction() {
         if currentPageIndex < totalPages - 1 {
             withAnimation(.easeInOut(duration: 0.2)) {
@@ -86,11 +86,11 @@ class OnBoardingViewModel: ObservableObject {
             }
         }
     }
-    
+
     func onStartBtnAction() {
         Router.coordinator.showRootView()
     }
-    
+
     func onPageIndexChangeAction(_ newIndex: Int) {
         withAnimation(.easeInOut(duration: 0.2)) {
             currentPageIndex = newIndex
