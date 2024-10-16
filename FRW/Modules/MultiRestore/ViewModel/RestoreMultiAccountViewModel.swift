@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FlowWalletCore
 
 class RestoreMultiAccountViewModel: ObservableObject {
     var items: [[MultiBackupManager.StoreItem]]
@@ -27,19 +28,27 @@ class RestoreMultiAccountViewModel: ObservableObject {
         }
         // If it is in the login list, switch user
         if let userId = selectedUser.first?.userId, UserManager.shared.loginUIDList.contains(userId) {
-            Task {
-                do {
-                    HUD.loading()
-                    try await UserManager.shared.switchAccount(withUID: userId)
-                    MultiAccountStorage.shared.setBackupType(.multi, uid: userId)
-                    HUD.dismissLoading()
-                } catch {
-                    log.error("switch account failed", context: error)
-                    HUD.dismissLoading()
-                    HUD.error(title: error.localizedDescription)
+            var isValidKey = true
+            if let model = try? WallectSecureEnclave.Store.fetchModel(by: userId) {
+                if model.isValid == false {
+                    isValidKey = false
                 }
             }
-            return
+            if isValidKey {
+                Task {
+                    do {
+                        HUD.loading()
+                        try await UserManager.shared.switchAccount(withUID: userId)
+                        MultiAccountStorage.shared.setBackupType(.multi, uid: userId)
+                        HUD.dismissLoading()
+                    } catch {
+                        log.error("switch account failed", context: error)
+                        HUD.dismissLoading()
+                        HUD.error(title: error.localizedDescription)
+                    }
+                }
+                return
+            }
         }
 
         guard selectedUser.count > 1 else {

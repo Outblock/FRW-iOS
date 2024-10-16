@@ -12,6 +12,7 @@ import Foundation
 import KeychainAccess
 import Kingfisher
 import WalletCore
+import UIKit
 
 // MARK: - Define
 
@@ -1055,6 +1056,51 @@ extension WalletManager: FlowSigner {
                 log.error("[Account] import Phrase fetch fail.\(error.localizedDescription)")
             }
         }
+    }
+    
+    
+    @discardableResult
+    func waringIfKeyIsInvalid(markHide: Bool = false) -> Bool {
+        guard let userId = UserManager.shared.activatedUID else {
+            return true
+        }
+        if UserManager.shared.userType == .secure {
+            do {
+                let model = try WallectSecureEnclave.Store.fetchModel(by: userId)
+                if let model = model, model.isValid == false {
+                    let alertVC = UIAlertController(title: "Something Is Wrong", message: "We noticed the profile key is not available in your device secure enclave.", preferredStyle: .alert)
+
+                    let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                    }
+
+                    let restoreAction = UIAlertAction(title: "Restore profile", style: .default) { _ in
+                        Router.route(to: RouteMap.RestoreLogin.restoreList)
+                    }
+                    
+                    alertVC.addAction(cancelAction)
+                    alertVC.addAction(restoreAction)
+                    
+                    if markHide {
+                        let hideAction = UIAlertAction(title: "Hide profile", style: .default) { _ in
+                            do {
+                                try WallectSecureEnclave.Store.hideKey(by: userId, and: model.publicKey)
+                                UserManager.shared.deleteLoginUID(userId)
+                            }catch {
+                                log.error("[SecureEnclave] hide key for \(userId) failed. \(error.localizedDescription)")
+                            }
+                        }
+                        alertVC.addAction(hideAction)
+                    }
+                    
+
+                    Router.topNavigationController()?.present(alertVC, animated: true)
+                    return true
+                }
+            }catch {
+                return true
+            }
+        }
+        return false
     }
 }
 

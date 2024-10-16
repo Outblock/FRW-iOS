@@ -209,7 +209,8 @@ extension UserManager {
         HUD.loading()
         Task {
             do {
-                let list = try WallectSecureEnclave.Store.fetch()
+                var list = try WallectSecureEnclave.Store.fetch()
+                list = list.filter({ $0.isShow ?? true })
                 var addressList: [String: String] = [:]
                 for item in list {
                     do {
@@ -374,8 +375,12 @@ extension UserManager {
             }
         }
 
-        if try (WallectSecureEnclave.Store.fetch(by: uid)) != nil {
-            try await restoreLogin(userId: uid)
+        if let model = try WallectSecureEnclave.Store.fetchModel(by: uid) {
+            if model.isValid ?? true {
+                try await restoreLogin(userId: uid)
+            }else {
+                WalletManager.shared.waringIfKeyIsInvalid(markHide: true)
+            }
             return
         }
 
@@ -422,7 +427,7 @@ extension UserManager {
         loginUIDList = oldList
     }
 
-    private func deleteLoginUID(_ uid: String) {
+    func deleteLoginUID(_ uid: String) {
         var oldList = loginUIDList
         oldList.removeAll { $0 == uid }
         loginUIDList = oldList

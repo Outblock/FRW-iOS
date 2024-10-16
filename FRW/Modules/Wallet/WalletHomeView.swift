@@ -64,6 +64,7 @@ struct WalletHomeView: View {
             .onAppear(perform: {
                 safeArea = proxy.safeAreaInsets
                 size = proxy.size
+                WalletManager.shared.waringIfKeyIsInvalid()
             })
             .navigationBarHidden(true)
             .ignoresSafeArea(.container, edges: .top)

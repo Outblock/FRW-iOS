@@ -23,6 +23,9 @@ struct KeychainListView: RouteableView {
                 ForEach(0 ..< viewModel.seList.count, id: \.self) { index in
                     let item = viewModel.seList[index]
                     seItemView(key: item.keys.first ?? "", value: item.values.first ?? "")
+                        .onTapGesture {
+                            viewModel.radomUpdatePrivateKey(index: index)
+                        }
                 }
             } header: {
                 HStack {
@@ -121,7 +124,7 @@ struct KeychainListView: RouteableView {
                     .lineLimit(2)
                 Text("publickKey: \(value)")
                     .font(.inter(size: 16))
-                    .foregroundStyle(Color.Theme.Text.black8)
+                    .foregroundStyle( isCurrentKey(key: key) ? Color.Theme.Text.black8 : Color.Theme.evm)
                     .lineLimit(2)
             }
             Spacer()
@@ -136,6 +139,10 @@ struct KeychainListView: RouteableView {
         .padding(.horizontal, 16)
         .frame(height: 80)
         .background(Color.Theme.Background.silver)
+    }
+    
+    func isCurrentKey(key: String) -> Bool {
+        UserManager.shared.activatedUID == key
     }
 }
 
