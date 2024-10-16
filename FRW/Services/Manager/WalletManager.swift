@@ -81,6 +81,9 @@ class WalletManager: ObservableObject {
     }
 
     private var retryCheckCount = 1
+    
+    
+    private var isShow: Bool = true
 
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(reset), name: .willResetWallet, object: nil)
@@ -905,7 +908,7 @@ extension WalletManager: FlowSigner {
         }
 
         if userSecretSign() {
-            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey {
                 let sec = try WallectSecureEnclave(privateKey: data)
                 let signature = try sec.sign(data: signableData)
                 return signature
@@ -942,7 +945,7 @@ extension WalletManager: FlowSigner {
             try await findFlowAccount()
         }
         if userSecretSign() {
-            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey {
                 let sec = try WallectSecureEnclave(privateKey: data)
                 let signature = try sec.sign(data: signableData)
                 return signature
@@ -973,7 +976,7 @@ extension WalletManager: FlowSigner {
         
         if userSecretSign() {
             do {
-                if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+                if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey {
                     let sec = try WallectSecureEnclave(privateKey: data)
                     let signature = try sec.sign(data: signableData)
                     return signature
@@ -1017,7 +1020,7 @@ extension WalletManager: FlowSigner {
     }
 
     func findFlowAccount(with userId: String, at address: String) async throws {
-        guard let data = try WallectSecureEnclave.Store.fetch(by: userId) else {
+        guard let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey else {
             return
         }
 
@@ -1060,20 +1063,27 @@ extension WalletManager: FlowSigner {
     
     
     @discardableResult
-    func waringIfKeyIsInvalid(markHide: Bool = false) -> Bool {
-        guard let userId = UserManager.shared.activatedUID else {
-            return true
+    func waringIfKeyIsInvalid(userId: String, markHide: Bool = false) -> Bool {
+        if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: userId), !mnemonic.isEmpty {
+            return false
         }
-        if UserManager.shared.userType == .secure {
-            do {
-                let model = try WallectSecureEnclave.Store.fetchModel(by: userId)
-                if let model = model, model.isValid == false {
-                    let alertVC = UIAlertController(title: "Something Is Wrong", message: "We noticed the profile key is not available in your device secure enclave.", preferredStyle: .alert)
+        do {
+            let model = try WallectSecureEnclave.Store.fetchModel(by: userId)
+            let list = try WallectSecureEnclave.Store.fetchAllModel(by: userId)
+            if model == nil && list.count > 0 {
+                DispatchQueue.main.async {
+                    if self.isShow {
+                        return
+                    }
+                    self.isShow = true
+                    let alertVC = UIAlertController(title: "Something__is__wrong::message".localized, message: "profile_key_invalid".localized, preferredStyle: .alert)
 
-                    let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                    let cancelAction = UIAlertAction(title: "action_cancel".localized, style: .cancel) { _ in
+                        self.isShow = false
                     }
 
-                    let restoreAction = UIAlertAction(title: "Restore profile", style: .default) { _ in
+                    let restoreAction = UIAlertAction(title: "Restore Profile".localized, style: .default) { _ in
+                        self.isShow = false
                         Router.route(to: RouteMap.RestoreLogin.restoreList)
                     }
                     
@@ -1081,9 +1091,10 @@ extension WalletManager: FlowSigner {
                     alertVC.addAction(restoreAction)
                     
                     if markHide {
-                        let hideAction = UIAlertAction(title: "Hide profile", style: .default) { _ in
+                        let hideAction = UIAlertAction(title: "Hide Profile".localized, style: .default) { _ in
+                            self.isShow = false
                             do {
-                                try WallectSecureEnclave.Store.hideKey(by: userId, and: model.publicKey)
+                                try WallectSecureEnclave.Store.hideInvalidKey(by: userId)
                                 UserManager.shared.deleteLoginUID(userId)
                             }catch {
                                 log.error("[SecureEnclave] hide key for \(userId) failed. \(error.localizedDescription)")
@@ -1091,15 +1102,15 @@ extension WalletManager: FlowSigner {
                         }
                         alertVC.addAction(hideAction)
                     }
-                    
-
                     Router.topNavigationController()?.present(alertVC, animated: true)
-                    return true
                 }
-            }catch {
+                
                 return true
             }
+        }catch {
+            return true
         }
+        
         return false
     }
 }

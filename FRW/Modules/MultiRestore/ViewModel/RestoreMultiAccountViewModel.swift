@@ -20,26 +20,40 @@ class RestoreMultiAccountViewModel: ObservableObject {
             return
         }
         let selectedUser = items[index]
-
-        // If it is the current user, do nothing and return directly.
-        if let userId = UserManager.shared.activatedUID, let selectedUser = selectedUser.first, userId == selectedUser.userId {
-            Router.popToRoot()
+        
+        guard let selectedUserId = selectedUser.first?.userId else {
+            log.error("[restore] invaid user id")
             return
         }
-        // If it is in the login list, switch user
-        if let userId = selectedUser.first?.userId, UserManager.shared.loginUIDList.contains(userId) {
-            var isValidKey = true
-            if let model = try? WallectSecureEnclave.Store.fetchModel(by: userId) {
-                if model.isValid == false {
-                    isValidKey = false
-                }
+        
+        // If it is the current user, do nothing and return directly.
+        if let userId = UserManager.shared.activatedUID, userId == selectedUserId {
+            if (try? WallectSecureEnclave.Store.fetchModel(by: selectedUserId)) != nil {
+                Router.popToRoot()
+                return
             }
+            if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: selectedUserId), !mnemonic.isEmpty  {
+                Router.popToRoot()
+                return
+            }
+        }
+        
+        // If it is in the login list, switch user
+        if UserManager.shared.loginUIDList.contains(selectedUserId) {
+            var isValidKey = false
+            if (try? WallectSecureEnclave.Store.fetchModel(by: selectedUserId)) != nil {
+                isValidKey = true
+            }
+            if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: selectedUserId), !mnemonic.isEmpty {
+                isValidKey = true
+            }
+            
             if isValidKey {
                 Task {
                     do {
                         HUD.loading()
-                        try await UserManager.shared.switchAccount(withUID: userId)
-                        MultiAccountStorage.shared.setBackupType(.multi, uid: userId)
+                        try await UserManager.shared.switchAccount(withUID: selectedUserId)
+                        MultiAccountStorage.shared.setBackupType(.multi, uid: selectedUserId)
                         HUD.dismissLoading()
                     } catch {
                         log.error("switch account failed", context: error)

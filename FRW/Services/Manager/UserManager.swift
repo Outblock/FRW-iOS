@@ -107,6 +107,9 @@ class UserManager: ObservableObject {
         Task {
             do {
                 userType = try await checkUserType()
+                if let uid = activatedUID {
+                    WalletManager.shared.waringIfKeyIsInvalid(userId: uid)
+                }
             } catch {
                 log.error("[User] check user type:\(error)")
             }
@@ -311,7 +314,7 @@ extension UserManager {
             throw LLError.restoreLoginFailed
         }
 
-        guard let publicData = try WallectSecureEnclave.Store.fetch(by: userId), !publicData.isEmpty else {
+        guard let publicData = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey, !publicData.isEmpty else {
             throw LLError.restoreLoginFailed
         }
 
@@ -379,7 +382,7 @@ extension UserManager {
             if model.isValid ?? true {
                 try await restoreLogin(userId: uid)
             }else {
-                WalletManager.shared.waringIfKeyIsInvalid(markHide: true)
+                WalletManager.shared.waringIfKeyIsInvalid(userId: uid, markHide: true)
             }
             return
         }
