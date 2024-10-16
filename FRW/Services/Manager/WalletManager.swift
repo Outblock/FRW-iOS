@@ -893,6 +893,12 @@ extension WalletManager: FlowSigner {
     }
 
     public func sign(transaction _: Flow.Transaction, signableData: Data) async throws -> Data {
+        let result = await SecurityManager.shared.SecurityVerify()
+        if result == false {
+            HUD.error(title: "verify_failed".localized)
+            throw WalletError.securityVerifyFailed
+        }
+        
         if flowAccountKey == nil {
             try await findFlowAccount()
         }
@@ -926,6 +932,11 @@ extension WalletManager: FlowSigner {
     }
 
     public func sign(signableData: Data) async throws -> Data {
+        let result = await SecurityManager.shared.SecurityVerify()
+        if result == false {
+            HUD.error(title: "verify_failed".localized)
+            throw WalletError.securityVerifyFailed
+        }
         if flowAccountKey == nil {
             try await findFlowAccount()
         }
@@ -958,6 +969,7 @@ extension WalletManager: FlowSigner {
     }
 
     public func signSync(signableData: Data) -> Data? {
+        
         if userSecretSign() {
             do {
                 if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {

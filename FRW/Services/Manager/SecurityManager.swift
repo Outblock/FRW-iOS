@@ -97,6 +97,18 @@ extension SecurityManager {
             })
         }
     }
+    
+    func SecurityVerify() async -> Bool {
+        guard securityType != .none else {
+            return true
+        }
+        return await withCheckedContinuation { continuation in
+            Router.route(to: RouteMap.PinCode.verify(true, true) { result in
+                Router.dismiss()
+                continuation.resume(returning: result)
+            })
+        }
+    }
 }
 
 // MARK: - Pin Code

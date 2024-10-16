@@ -71,18 +71,13 @@ class NFTTransferViewModel: ObservableObject {
             // TODO: show bottom sheet
             return
         }
-
-        if SecurityManager.shared.securityType == .none {
-            sendLogic()
-            return
-        }
-
-        Task {
-            let result = await SecurityManager.shared.inAppVerify()
-            if result {
-                sendLogic()
-            }
-        }
+        sendLogic()
+//        Task {
+//            let result = await SecurityManager.shared.SecurityVerify()
+//            if result {
+//                sendLogic()
+//            }
+//        }
     }
 
     func sendLogic() {

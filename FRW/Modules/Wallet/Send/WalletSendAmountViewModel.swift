@@ -266,22 +266,20 @@ extension WalletSendAmountViewModel {
     }
 
     func sendWithVerifyAction() {
-        if SecurityManager.shared.securityType == .none {
-            doSend()
-            return
+        DispatchQueue.main.async {
+            self.doSend()
         }
-
-        Task {
-            let result = await SecurityManager.shared.inAppVerify()
-            if !result {
-                HUD.error(title: "verify_failed".localized)
-                return
-            }
-
-            DispatchQueue.main.async {
-                self.doSend()
-            }
-        }
+//        Task {
+//            let result = await SecurityManager.shared.SecurityVerify()
+//            if !result {
+//                HUD.error(title: "verify_failed".localized)
+//                return
+//            }
+//
+//            DispatchQueue.main.async {
+//                self.doSend()
+//            }
+//        }
     }
 
     private func doSend() {

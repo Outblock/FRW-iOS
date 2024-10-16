@@ -43,15 +43,10 @@ struct WalletSettingView: RouteableView {
                     VStack(spacing: 16) {
                         VStack(spacing: 0) {
                             Button {
-                                if SecurityManager.shared.securityType == .none {
-                                    Router.route(to: RouteMap.Profile.privateKey(true))
-                                    return
-                                }
-
                                 Task {
-                                    let result = await SecurityManager.shared.inAppVerify()
+                                    let result = await SecurityManager.shared.SecurityVerify()
                                     if result {
-                                        Router.route(to: RouteMap.Profile.privateKey(false))
+                                        Router.route(to: RouteMap.Profile.privateKey(true))
                                     }
                                 }
                             } label: {
@@ -61,15 +56,10 @@ struct WalletSettingView: RouteableView {
                             Divider().foregroundColor(.LL.Neutrals.background)
 
                             Button {
-                                if SecurityManager.shared.securityType == .none {
-                                    Router.route(to: RouteMap.Profile.manualBackup(true))
-                                    return
-                                }
-
                                 Task {
-                                    let result = await SecurityManager.shared.inAppVerify()
+                                    let result = await SecurityManager.shared.SecurityVerify()
                                     if result {
-                                        Router.route(to: RouteMap.Profile.manualBackup(false))
+                                        Router.route(to: RouteMap.Profile.manualBackup(true))
                                     }
                                 }
                             } label: {
