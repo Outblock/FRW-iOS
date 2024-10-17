@@ -1077,7 +1077,7 @@ extension WalletManager: FlowSigner {
                         return
                     }
                     self.isShow = true
-                    let alertVC = UIAlertController(title: "Something__is__wrong::message".localized, message: "profile_key_invalid".localized, preferredStyle: .alert)
+                    let alertVC = BetterAlertController(title: "Something__is__wrong::message".localized, message: "profile_key_invalid".localized, preferredStyle: .alert)
 
                     let cancelAction = UIAlertAction(title: "action_cancel".localized, style: .cancel) { _ in
                         self.isShow = false
@@ -1087,7 +1087,7 @@ extension WalletManager: FlowSigner {
                         self.isShow = false
                         Router.route(to: RouteMap.RestoreLogin.restoreList)
                     }
-                    
+                    alertVC.modalPresentationStyle = .overFullScreen
                     alertVC.addAction(cancelAction)
                     alertVC.addAction(restoreAction)
                     
