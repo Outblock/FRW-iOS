@@ -83,7 +83,7 @@ class WalletManager: ObservableObject {
     private var retryCheckCount = 1
     
     
-    private var isShow: Bool = true
+    private var isShow: Bool = false
 
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(reset), name: .willResetWallet, object: nil)

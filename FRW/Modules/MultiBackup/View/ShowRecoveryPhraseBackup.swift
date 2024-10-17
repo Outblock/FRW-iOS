@@ -24,7 +24,7 @@ struct ShowRecoveryPhraseBackup: RouteableView {
                 VStack(spacing: 0) {
                     VStack(alignment: .center, spacing: 8) {
                         HStack {
-                            Text("recovery".localized + "phrase".localized)
+                            Text("Recovery__Phrase::message".localized)
                                 .font(.inter(size: 20, weight: .bold))
                                 .foregroundColor(Color.Theme.Text.black)
                         }

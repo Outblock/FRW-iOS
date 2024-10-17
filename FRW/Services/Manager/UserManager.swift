@@ -377,13 +377,15 @@ extension UserManager {
                 return
             }
         }
-
-        if let model = try WallectSecureEnclave.Store.fetchModel(by: uid) {
-            if model.isValid ?? true {
-                try await restoreLogin(userId: uid)
-            }else {
-                WalletManager.shared.waringIfKeyIsInvalid(userId: uid, markHide: true)
-            }
+        let allModel = try WallectSecureEnclave.Store.fetchAllModel(by: uid)
+        let model = try WallectSecureEnclave.Store.fetchModel(by: uid)
+        
+        if model != nil {
+            try await restoreLogin(userId: uid)
+            return
+        }
+        if model == nil && allModel.count > 0 {
+            WalletManager.shared.waringIfKeyIsInvalid(userId: uid, markHide: true)
             return
         }
 
