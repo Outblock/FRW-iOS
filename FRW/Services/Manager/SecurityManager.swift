@@ -39,6 +39,8 @@ class SecurityManager {
     static let shared = SecurityManager()
     private let PinCodeKey = "PinCodeKey"
     var isLocked: Bool = false
+    
+    private var ignoreOnce: Bool = false
 
     var securityType: SecurityType {
         return LocalUserDefaults.shared.securityType
@@ -98,7 +100,16 @@ extension SecurityManager {
         }
     }
     
+    func openIgnoreOnce() {
+        ignoreOnce = true
+    }
+    
     func SecurityVerify() async -> Bool {
+        guard !ignoreOnce else {
+            ignoreOnce = false
+            log.info("[security] ignore once")
+            return true
+        }
         guard securityType != .none else {
             return true
         }
