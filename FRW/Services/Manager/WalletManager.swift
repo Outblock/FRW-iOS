@@ -1064,7 +1064,7 @@ extension WalletManager: FlowSigner {
     
     
     @discardableResult
-    func waringIfKeyIsInvalid(userId: String, markHide: Bool = false) -> Bool {
+    func warningIfKeyIsInvalid(userId: String, markHide: Bool = false) -> Bool {
         if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: userId), !mnemonic.isEmpty, mnemonic.split(separator: " ").count != 15 {
             return false
         }

@@ -108,7 +108,7 @@ class UserManager: ObservableObject {
             do {
                 userType = try await checkUserType()
                 if let uid = activatedUID {
-                    WalletManager.shared.waringIfKeyIsInvalid(userId: uid)
+                    WalletManager.shared.warningIfKeyIsInvalid(userId: uid)
                 }
             } catch {
                 log.error("[User] check user type:\(error)")
@@ -385,7 +385,7 @@ extension UserManager {
             return
         }
         if model == nil && allModel.count > 0 {
-            WalletManager.shared.waringIfKeyIsInvalid(userId: uid, markHide: true)
+            WalletManager.shared.warningIfKeyIsInvalid(userId: uid, markHide: true)
             return
         }
 
