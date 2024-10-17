@@ -14,6 +14,7 @@ import Kingfisher
 import WalletCore
 import UIKit
 
+
 // MARK: - Define
 
 extension WalletManager {
@@ -1064,7 +1065,7 @@ extension WalletManager: FlowSigner {
     
     @discardableResult
     func waringIfKeyIsInvalid(userId: String, markHide: Bool = false) -> Bool {
-        if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: userId), !mnemonic.isEmpty {
+        if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: userId), !mnemonic.isEmpty, mnemonic.split(separator: " ").count != 15 {
             return false
         }
         do {
