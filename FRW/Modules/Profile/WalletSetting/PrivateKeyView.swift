@@ -83,7 +83,7 @@ struct PrivateKeyView: RouteableView {
                     HStack {
                         Divider()
                         VStack(alignment: .leading) {
-                            Text("Hash Algotithm")
+                            Text("Hash__Algorithm::message".localized)
                                 .font(.LL.footnote)
                                 .foregroundColor(.LL.Neutrals.neutrals4)
                             Text(WalletManager.shared.hashAlgo.algorithm)
@@ -97,7 +97,7 @@ struct PrivateKeyView: RouteableView {
                     HStack {
                         Divider()
                         VStack(alignment: .leading) {
-                            Text("Sign Algotithm")
+                            Text("Sign__Algorithm::message".localized)
                                 .font(.LL.footnote)
                                 .foregroundColor(.LL.Neutrals.neutrals4)
                             Text(WalletManager.shared.signatureAlgo.id)
