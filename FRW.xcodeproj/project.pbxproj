@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -28,6 +28,8 @@
 		152EEC7328E4F61600C37A67 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 152EEC7228E4F61200C37A67 /* config.plist */; };
 		152EEC7528E4F68100C37A67 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152EEC7428E4F68100C37A67 /* Env.swift */; };
 		152EEC7628E4F68100C37A67 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152EEC7428E4F68100C37A67 /* Env.swift */; };
+		153839362CC2A5F9000E703C /* FlowWalletCore in Frameworks */ = {isa = PBXBuildFile; productRef = 153839352CC2A5F9000E703C /* FlowWalletCore */; };
+		153839382CC2A603000E703C /* FlowWalletCore in Frameworks */ = {isa = PBXBuildFile; productRef = 153839372CC2A603000E703C /* FlowWalletCore */; };
 		1544C62828C812E700B6BA52 /* GoogleOAuth2.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1544C62728C812E500B6BA52 /* GoogleOAuth2.plist */; };
 		1545705029461AB7004A278E /* MJRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = 1545704F29461AB7004A278E /* MJRefresh */; };
 		1545705229461ABD004A278E /* FMDB in Frameworks */ = {isa = PBXBuildFile; productRef = 1545705129461ABD004A278E /* FMDB */; };
@@ -1011,7 +1013,6 @@
 		4E42DC5F2B22AEB700EF0A75 /* BackupListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E42DC5E2B22AEB700EF0A75 /* BackupListView.swift */; };
 		4E42DC602B22AEB700EF0A75 /* BackupListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E42DC5E2B22AEB700EF0A75 /* BackupListView.swift */; };
 		4E4409232CBFB59A0041AC06 /* FlowWalletCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4E4409222CBFB59A0041AC06 /* FlowWalletCore */; };
-		4E4409252CBFB5A70041AC06 /* FlowWalletCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4E4409242CBFB5A70041AC06 /* FlowWalletCore */; };
 		4E4409272CC132480041AC06 /* BetterAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4409262CC132480041AC06 /* BetterAlertController.swift */; };
 		4E4409282CC132480041AC06 /* BetterAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4409262CC132480041AC06 /* BetterAlertController.swift */; };
 		4E4EC7B42C09AA3C00325BF5 /* BalanceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4EC7B32C09AA3C00325BF5 /* BalanceProvider.swift */; };
@@ -2847,7 +2848,7 @@
 				15DC1D53278165DB000B187A /* Haneke in Frameworks */,
 				4E5D4FAE2AEF9A7400DC419B /* DeviceGuru in Frameworks */,
 				156AC7AD27802FAC00ED5E3E /* GoogleAPIClientForRESTCore in Frameworks */,
-				4E4409252CBFB5A70041AC06 /* FlowWalletCore in Frameworks */,
+				153839382CC2A603000E703C /* FlowWalletCore in Frameworks */,
 				4ED6DD10285A22A800105133 /* IrregularGradient in Frameworks */,
 				154B891D276A1EEB00780E93 /* FirebaseCrashlytics in Frameworks */,
 				6A46754828F2D46500F705A8 /* FMDB in Frameworks */,
@@ -2916,6 +2917,7 @@
 				15C58C492868A4EE00BD4FC6 /* KeychainAccess in Frameworks */,
 				15C58C4A2868A4EE00BD4FC6 /* Haneke in Frameworks */,
 				4E947C922BBEB2E300E87A85 /* web3swift in Frameworks */,
+				153839362CC2A5F9000E703C /* FlowWalletCore in Frameworks */,
 				15CC8A6128C4E0FD001D2696 /* RiveRuntime in Frameworks */,
 				15C58C4B2868A4EE00BD4FC6 /* GoogleAPIClientForRESTCore in Frameworks */,
 				155E372E28D3AD4700834C30 /* Highlightr in Frameworks */,
@@ -6066,7 +6068,7 @@
 				4E2E8CBC2C61B9A800095D5B /* LogView */,
 				4E660F1D2C80B43E00E5239E /* CollectionViewPagingLayout */,
 				4E131A992CA17389002B258D /* PocketSVG */,
-				4E4409242CBFB5A70041AC06 /* FlowWalletCore */,
+				153839372CC2A603000E703C /* FlowWalletCore */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 154B8928276A1EEB00780E93 /* FRW-dev.app */;
@@ -6149,6 +6151,7 @@
 				4E660F1B2C80B42F00E5239E /* CollectionViewPagingLayout */,
 				4E131A9B2CA1739A002B258D /* PocketSVG */,
 				4E4409222CBFB59A0041AC06 /* FlowWalletCore */,
+				153839352CC2A5F9000E703C /* FlowWalletCore */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 15C58C6D2868A4EE00BD4FC6 /* FRW.app */;
@@ -6322,7 +6325,7 @@
 				4E2E8CBB2C61B9A800095D5B /* XCRemoteSwiftPackageReference "LogView" */,
 				4E660F1A2C80B42F00E5239E /* XCRemoteSwiftPackageReference "CollectionViewPagingLayout" */,
 				4E131A982CA17389002B258D /* XCRemoteSwiftPackageReference "PocketSVG" */,
-				4E4409212CBFB59A0041AC06 /* XCLocalSwiftPackageReference "../Flow-Wallet-Core" */,
+				153839342CC2A5F9000E703C /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */,
 			);
 			productRefGroup = 15EC9DEF274FD1FC00F70CD9 /* Products */;
 			projectDirPath = "";
@@ -8895,13 +8898,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		4E4409212CBFB59A0041AC06 /* XCLocalSwiftPackageReference "../Flow-Wallet-Core" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "../Flow-Wallet-Core";
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		1500783028682B8900A00109 /* XCRemoteSwiftPackageReference "SPIndicator" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -8933,6 +8929,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 3.0.0;
+			};
+		};
+		153839342CC2A5F9000E703C /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Outblock/Flow-Wallet-Kit";
+			requirement = {
+				kind = revision;
+				revision = d1f877f15bf1574bf64d75631f0187197a665b53;
 			};
 		};
 		1549CF01299A10C2002B37A5 /* XCRemoteSwiftPackageReference "GzipSwift" */ = {
@@ -9473,6 +9477,16 @@
 			package = 152BB09228AE8FD100B2A2AA /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
 		};
+		153839352CC2A5F9000E703C /* FlowWalletCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 153839342CC2A5F9000E703C /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */;
+			productName = FlowWalletCore;
+		};
+		153839372CC2A603000E703C /* FlowWalletCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 153839342CC2A5F9000E703C /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */;
+			productName = FlowWalletCore;
+		};
 		1545704F29461AB7004A278E /* MJRefresh */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 6AEA373E28A49DBD004545D4 /* XCRemoteSwiftPackageReference "MJRefresh" */;
@@ -9840,11 +9854,6 @@
 		};
 		4E4409222CBFB59A0041AC06 /* FlowWalletCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = FlowWalletCore;
-		};
-		4E4409242CBFB5A70041AC06 /* FlowWalletCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4E4409212CBFB59A0041AC06 /* XCLocalSwiftPackageReference "../Flow-Wallet-Core" */;
 			productName = FlowWalletCore;
 		};
 		4E539C862BC626770080BAF8 /* Web3Wallet */ = {
