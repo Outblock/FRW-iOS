@@ -115,8 +115,9 @@ extension SecurityManager {
         }
         return await withCheckedContinuation { continuation in
             Router.route(to: RouteMap.PinCode.verify(true, true) { result in
-                Router.dismiss()
-                continuation.resume(returning: result)
+                Router.dismiss {
+                    continuation.resume(returning: result)
+                }
             })
         }
     }
