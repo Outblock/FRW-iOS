@@ -86,18 +86,15 @@ struct WalletSendButtonView: View {
 //                    action()
 //                }
 //        )
-        .onLongPressGesture(minimumDuration: 0.1, perform: {
+        .onLongPressGesture(minimumDuration: 0.9, perform: {
             print("Long pressed!")
+            self.press.toggle()
+            self.isLoading = true
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            action()
         }, onPressingChanged: { inProgress in
+            // TODO: Fix animation time, currently animation and duration time are not matched
             self.press = inProgress
-            if !inProgress {
-                self.press.toggle()
-                self.isLoading = true
-
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-
-                action()
-            }
             log.debug("Long pressed \(inProgress)")
         })
         .animation(.spring(response: 0.5, dampingFraction: 0.5, blendDuration: 0), value: press)
