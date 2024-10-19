@@ -59,7 +59,8 @@ class MultiBackupiCloudTarget: MultiBackupTarget {
 
         let exist = try await api!.isExist(name: MultiBackupManager.backupFileName)
         if !exist {
-            throw BackupError.fileIsNotExistOnCloud
+            log.error("[iCloud] Multiple backup file not found.")
+            return []
         }
 
         guard let data = try await api?.getFileData(), !data.isEmpty,
