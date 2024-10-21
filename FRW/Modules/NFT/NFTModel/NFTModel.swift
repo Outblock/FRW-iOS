@@ -93,6 +93,14 @@ struct ContractPath: Codable, Hashable, Mockable {
     static func mock() -> ContractPath {
         return ContractPath(storagePath: randomString(), publicPath: randomString(), privatePath: "", publicCollectionName: randomString(), publicType: randomString(), privateType: randomString())
     }
+    
+    func storagePathId() -> String {
+        let list = storagePath.components(separatedBy: "/")
+        if list.count > 0 {
+            return list.last ?? storagePath
+        }
+        return storagePath
+    }
 }
 
 struct NFTModel: Codable, Hashable, Identifiable {
