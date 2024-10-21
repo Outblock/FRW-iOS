@@ -152,4 +152,8 @@ extension MoveSingleNFTViewModel {
         let isSelectedEVM = EVMAccountManager.shared.selectedAccount != nil
         return isSelectedEVM ? Image("icon_qr_evm") : Image("Flow")
     }
+    
+    var showFee: Bool {
+        !(fromContact.walletType == .link || toContact.walletType == .link)
+    }
 }
