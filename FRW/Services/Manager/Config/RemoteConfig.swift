@@ -156,9 +156,12 @@ extension RemoteConfigManager {
     enum ConditionType: String, Codable {
         case unknow
         case canUpgrade
-        case cadence // can be ignored this time
-        case hasBackup // can be ignored this time
-        case hasBiometric // can be ignored this time
+        case isIOS
+          case isAndroid
+          case isWeb
+          case cadence // can be ignored this time
+          case noBackup // can be ignored this time
+          case noBiometric // can be ignored this time
         
         init(from decoder: any Decoder) throws {
             let container = try decoder.singleValueContainer()
@@ -178,6 +181,8 @@ extension RemoteConfigManager {
                 }else {
                     return false
                 }
+            case .isIOS:
+                return true
             default:
                 return false
             }
