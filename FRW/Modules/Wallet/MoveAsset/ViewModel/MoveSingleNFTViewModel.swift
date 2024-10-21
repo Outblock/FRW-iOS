@@ -156,4 +156,8 @@ extension MoveSingleNFTViewModel {
     var showFee: Bool {
         !(fromContact.walletType == .link || toContact.walletType == .link)
     }
+    
+    var isFeeFree: Bool {
+        fromContact.walletType == toContact.walletType
+    }
 }

@@ -112,7 +112,7 @@ struct MoveSingleNFTView: View {
                                 VStack(spacing: 12) {
                                     Divider()
                                         .foregroundStyle(Color.Theme.Line.stroke)
-                                    MoveFeeView(isFree: viewModel.showFee)
+                                    MoveFeeView(isFree: viewModel.isFeeFree)
                                 }
                                 .visibility(viewModel.showFee ? .visible : .gone)
                             }

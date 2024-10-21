@@ -80,29 +80,29 @@ class WalletNewsHandler: ObservableObject {
 
     private func removeExpiryNew() {
         accessQueue.sync {
-            log.debug("[NEWS] removeExpiryNew")
+            
             let currentData = Date()
             list = list.filter { $0.expiryTime > currentData }
+            log.debug("[NEWS] removeExpiryNew count:\(list.count)")
         }
     }
 
     private func removeMarkedNews() {
         accessQueue.sync {
-            log.debug("[NEWS] removeMarkedNews")
             list = list.filter { !removeIds.contains($0.id) }
+            log.debug("[NEWS] removeMarkedNews count:\(list.count)")
         }
     }
 
     private func handleConfition() {
         accessQueue.sync {
-            log.debug("[NEWS] handleConfition")
-
             list = list.filter { model in
                 guard let conditionList = model.conditions, !conditionList.isEmpty else {
                     return true
                 }
                 return !conditionList.map { $0.type.boolValue() }.contains(false)
             }
+            log.debug("[NEWS] handleConfition count:\(list.count)")
         }
     }
 
