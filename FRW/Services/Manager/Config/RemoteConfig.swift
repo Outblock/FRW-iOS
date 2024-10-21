@@ -157,11 +157,11 @@ extension RemoteConfigManager {
         case unknow
         case canUpgrade
         case isIOS
-          case isAndroid
-          case isWeb
-          case cadence // can be ignored this time
-          case noBackup // can be ignored this time
-          case noBiometric // can be ignored this time
+              case isAndroid
+              case isWeb
+              case cadence // can be ignored this time
+              case noBackup // can be ignored this time
+              case noBiometric // can be ignored this time
         
         init(from decoder: any Decoder) throws {
             let container = try decoder.singleValueContainer()
