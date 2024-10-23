@@ -12,6 +12,8 @@ import Foundation
 import KeychainAccess
 import Kingfisher
 import WalletCore
+import UIKit
+
 
 // MARK: - Define
 
@@ -80,6 +82,9 @@ class WalletManager: ObservableObject {
     }
 
     private var retryCheckCount = 1
+    
+    
+    private var isShow: Bool = false
 
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(reset), name: .willResetWallet, object: nil)
@@ -893,12 +898,18 @@ extension WalletManager: FlowSigner {
     }
 
     public func sign(transaction _: Flow.Transaction, signableData: Data) async throws -> Data {
+        let result = await SecurityManager.shared.SecurityVerify()
+        if result == false {
+            HUD.error(title: "verify_failed".localized)
+            throw WalletError.securityVerifyFailed
+        }
+        
         if flowAccountKey == nil {
             try await findFlowAccount()
         }
 
         if userSecretSign() {
-            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey {
                 let sec = try WallectSecureEnclave(privateKey: data)
                 let signature = try sec.sign(data: signableData)
                 return signature
@@ -926,11 +937,16 @@ extension WalletManager: FlowSigner {
     }
 
     public func sign(signableData: Data) async throws -> Data {
+        let result = await SecurityManager.shared.SecurityVerify()
+        if result == false {
+            HUD.error(title: "verify_failed".localized)
+            throw WalletError.securityVerifyFailed
+        }
         if flowAccountKey == nil {
             try await findFlowAccount()
         }
         if userSecretSign() {
-            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey {
                 let sec = try WallectSecureEnclave(privateKey: data)
                 let signature = try sec.sign(data: signableData)
                 return signature
@@ -958,9 +974,10 @@ extension WalletManager: FlowSigner {
     }
 
     public func signSync(signableData: Data) -> Data? {
+        
         if userSecretSign() {
             do {
-                if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
+                if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey {
                     let sec = try WallectSecureEnclave(privateKey: data)
                     let signature = try sec.sign(data: signableData)
                     return signature
@@ -1004,7 +1021,7 @@ extension WalletManager: FlowSigner {
     }
 
     func findFlowAccount(with userId: String, at address: String) async throws {
-        guard let data = try WallectSecureEnclave.Store.fetch(by: userId) else {
+        guard let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey else {
             return
         }
 
@@ -1043,6 +1060,59 @@ extension WalletManager: FlowSigner {
                 log.error("[Account] import Phrase fetch fail.\(error.localizedDescription)")
             }
         }
+    }
+    
+    
+    @discardableResult
+    func warningIfKeyIsInvalid(userId: String, markHide: Bool = false) -> Bool {
+        if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: userId), !mnemonic.isEmpty, mnemonic.split(separator: " ").count != 15 {
+            return false
+        }
+        do {
+            let model = try WallectSecureEnclave.Store.fetchModel(by: userId)
+            let list = try WallectSecureEnclave.Store.fetchAllModel(by: userId)
+            if model == nil && list.count > 0 {
+                DispatchQueue.main.async {
+                    if self.isShow {
+                        return
+                    }
+                    self.isShow = true
+                    let alertVC = BetterAlertController(title: "Something__is__wrong::message".localized, message: "profile_key_invalid".localized, preferredStyle: .alert)
+
+                    let cancelAction = UIAlertAction(title: "action_cancel".localized, style: .cancel) { _ in
+                        self.isShow = false
+                    }
+
+                    let restoreAction = UIAlertAction(title: "Restore Profile".localized, style: .default) { _ in
+                        self.isShow = false
+                        Router.route(to: RouteMap.RestoreLogin.restoreList)
+                    }
+                    alertVC.modalPresentationStyle = .overFullScreen
+                    alertVC.addAction(cancelAction)
+                    alertVC.addAction(restoreAction)
+                    
+                    if markHide {
+                        let hideAction = UIAlertAction(title: "Hide Profile".localized, style: .default) { _ in
+                            self.isShow = false
+                            do {
+                                try WallectSecureEnclave.Store.hideInvalidKey(by: userId)
+                                UserManager.shared.deleteLoginUID(userId)
+                            }catch {
+                                log.error("[SecureEnclave] hide key for \(userId) failed. \(error.localizedDescription)")
+                            }
+                        }
+                        alertVC.addAction(hideAction)
+                    }
+                    Router.topNavigationController()?.present(alertVC, animated: true)
+                }
+                
+                return true
+            }
+        }catch {
+            return true
+        }
+        
+        return false
     }
 }
 

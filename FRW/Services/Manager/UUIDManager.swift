@@ -18,7 +18,11 @@ struct UUIDManager {
             .accessibility(.whenUnlocked)
         let applicationUUID = (UIDevice.current.identifierForVendor?.uuidString)!
         do {
-            let uuid = try mainKeychain.getString("uuid")
+            let key = "uuid"
+            let uuid = try mainKeychain.getString(key)
+            if uuid == nil {
+                try mainKeychain.set(applicationUUID, key: key)
+            }
             return uuid ?? applicationUUID
         } catch {
             return applicationUUID

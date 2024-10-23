@@ -48,6 +48,7 @@ class WalletConnectManager: ObservableObject {
 
     private var syncAccountFlag: Bool = false
 
+    private var cacheReqeust:[String] = []
 
 
     init() {
@@ -310,52 +311,17 @@ extension WalletConnectManager {
 
         Router.route(to: RouteMap.Explore.authn(authnVM))
 
-        /*
-         let appMetadata = sessionProposal.proposer
-         let requiredNamespaces = sessionProposal.requiredNamespaces
-         let info = SessionInfo(
-             name: appMetadata.name,
-             descriptionText: appMetadata.description,
-             dappURL: appMetadata.url,
-             iconURL: appMetadata.icons.first ?? "",
-             chains: requiredNamespaces["flow"]?.chains ?? [],
-             methods: requiredNamespaces["flow"]?.methods ?? [],
-             pendingRequests: [],
-             data: ""
-         )
-         self?.currentSessionInfo = info
-
-         guard let chains = requiredNamespaces["flow"]?.chains,
-               let reference = chains.first(where: { $0.namespace == "flow" })?.reference
-         else {
-             self?.rejectSession(proposal: sessionProposal)
-             return
-         }
-
-         let network = Flow.ChainID(name: reference.lowercased())
-
-         let authnVM = BrowserAuthnViewModel(title: info.name,
-                                             url: info.dappURL,
-                                             logo: info.iconURL,
-                                             walletAddress: WalletManager.shared.getPrimaryWalletAddress(),
-                                             network: network)
-         { result in
-             if result {
-                 // TODO: Handle network mismatch
-                 self?.approveSession(proposal: sessionProposal)
-             } else {
-                 self?.rejectSession(proposal: sessionProposal)
-             }
-         }
-
-         Router.route(to: RouteMap.Explore.authn(authnVM))
-         */
     }
 
     func handleRequest(_ sessionRequest: WalletConnectSign.Request) {
         let address = WalletManager.shared.address.hex.addHexPrefix()
         let keyId = WalletManager.shared.keyIndex
-
+        
+        if cacheReqeust.contains(sessionRequest.id.string) {
+            return
+        }
+        cacheReqeust.append(sessionRequest.id.string)
+        
         switch sessionRequest.method {
         case FCLWalletConnectMethod.authn.rawValue:
 
@@ -371,7 +337,8 @@ extension WalletConnectManager {
                         serviceDefinition(address: address, keyId: keyId, type: .authz),
                         serviceDefinition(address: address, keyId: keyId, type: .userSignature),
                     ]
-
+                    
+                    SecurityManager.shared.openIgnoreOnce()
                     if let model = try? JSONDecoder().decode(BaseConfigRequest.self, from: data),
                        let nonce = model.accountProofNonce ?? model.nonce,
                        let appIdentifier = model.appIdentifier,

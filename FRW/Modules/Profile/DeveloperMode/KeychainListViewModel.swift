@@ -71,6 +71,21 @@ class KeychainListViewModel: ObservableObject {
         }
     }
     
+    func radomUpdatePrivateKey(index: Int) {
+        if isDevModel {
+            let model = seList[index]
+            if let key = model.keys.first, let model = try? WallectSecureEnclave.Store.fetchModel(by: key) {
+                do {
+                    let toValue =  model.publicKey + ("999".data(using: .utf8) ?? Data())
+                    try WallectSecureEnclave.Store.dangerUpdate(key: model.uniq, fromValue: model.publicKey, toValue: toValue)
+                    HUD.success(title: "修改成功")
+                }catch{}
+                
+            }
+            
+        }
+    }
+    
 
     func getKey(item: [String: Any]) -> String {
         guard let key = item["key"] as? String else {

@@ -64,7 +64,8 @@ class WalletNewsHandler: ObservableObject {
     func refreshWalletConnectNews(_ news: [RemoteConfigManager.News]) {
         accessQueue.sync { [weak self] in
             guard let self else { return }
-            for (index, new) in list.enumerated() {
+            let tmpList = list
+            for (index, new) in tmpList.enumerated() {
                 if new.flag == .walletconnect, let _ = list[safe: index] {
                     list.remove(at: index)
                 }

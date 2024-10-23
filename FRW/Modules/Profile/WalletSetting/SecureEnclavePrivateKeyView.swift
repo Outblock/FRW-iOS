@@ -102,7 +102,7 @@ struct SecureEnclavePrivateKeyView: RouteableView {
                     HStack(spacing: 16) {
                         Divider()
                         VStack(alignment: .leading) {
-                            Text("Hash Algotithm")
+                            Text("Hash__Algorithm::message".localized)
                                 .font(.inter(size: 12))
                                 .foregroundColor(Color.Theme.Text.black3)
 
@@ -117,7 +117,7 @@ struct SecureEnclavePrivateKeyView: RouteableView {
                     HStack(spacing: 16) {
                         Divider()
                         VStack(alignment: .leading) {
-                            Text("Sign Algotithm")
+                            Text("Sign__Algorithm::message".localized)
                                 .font(.inter(size: 12))
                                 .foregroundColor(Color.Theme.Text.black3)
 

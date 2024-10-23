@@ -37,9 +37,11 @@ class BrowserAuthzViewModel: ObservableObject {
     }
 
     func didChooseAction(_ result: Bool) {
-        callback?(result)
-        callback = nil
-        Router.dismiss()
+        Router.dismiss { [weak self] in
+            guard let self else { return }
+            self.callback?(result)
+            self.callback = nil
+        }
     }
 
     func formatArguments() {

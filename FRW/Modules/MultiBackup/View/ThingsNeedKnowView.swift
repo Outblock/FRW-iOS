@@ -16,9 +16,6 @@ struct ThingsNeedKnowView: RouteableView {
 
     @State var allCheck = false
 
-    var buttonState: VPrimaryButtonState {
-        return allCheck ? .enabled : .disabled
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -53,7 +50,7 @@ struct ThingsNeedKnowView: RouteableView {
             .padding(.top, 24)
             Spacer()
             VPrimaryButton(model: ButtonStyle.primary,
-                           state: buttonState,
+                           state: allCheck ? .enabled : .disabled,
                            action: {
                                onConfirm()
                            }, title: "create_backup".localized)

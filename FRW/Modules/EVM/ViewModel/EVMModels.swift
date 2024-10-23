@@ -17,7 +17,7 @@ struct EVMTransactionExecuted: Codable {
         guard let hash = hash else {
             return nil
         }
-        return Data(hash).hexValue
+        return Data(hash).hexValue.addHexPrefix()
     }
 }
 

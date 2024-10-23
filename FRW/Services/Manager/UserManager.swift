@@ -107,6 +107,9 @@ class UserManager: ObservableObject {
         Task {
             do {
                 userType = try await checkUserType()
+                if let uid = activatedUID {
+                    WalletManager.shared.warningIfKeyIsInvalid(userId: uid)
+                }
             } catch {
                 log.error("[User] check user type:\(error)")
             }
@@ -209,7 +212,8 @@ extension UserManager {
         HUD.loading()
         Task {
             do {
-                let list = try WallectSecureEnclave.Store.fetch()
+                var list = try WallectSecureEnclave.Store.fetch()
+                list = list.filter({ $0.isShow ?? true })
                 var addressList: [String: String] = [:]
                 for item in list {
                     do {
@@ -310,7 +314,7 @@ extension UserManager {
             throw LLError.restoreLoginFailed
         }
 
-        guard let publicData = try WallectSecureEnclave.Store.fetch(by: userId), !publicData.isEmpty else {
+        guard let publicData = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey, !publicData.isEmpty else {
             throw LLError.restoreLoginFailed
         }
 
@@ -373,9 +377,15 @@ extension UserManager {
                 return
             }
         }
-
-        if try (WallectSecureEnclave.Store.fetch(by: uid)) != nil {
+        let allModel = try WallectSecureEnclave.Store.fetchAllModel(by: uid)
+        let model = try WallectSecureEnclave.Store.fetchModel(by: uid)
+        
+        if model != nil {
             try await restoreLogin(userId: uid)
+            return
+        }
+        if model == nil && allModel.count > 0 {
+            WalletManager.shared.warningIfKeyIsInvalid(userId: uid, markHide: true)
             return
         }
 
@@ -422,7 +432,7 @@ extension UserManager {
         loginUIDList = oldList
     }
 
-    private func deleteLoginUID(_ uid: String) {
+    func deleteLoginUID(_ uid: String) {
         var oldList = loginUIDList
         oldList.removeAll { $0 == uid }
         loginUIDList = oldList

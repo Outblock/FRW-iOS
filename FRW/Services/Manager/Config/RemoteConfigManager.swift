@@ -50,7 +50,7 @@ class RemoteConfigManager {
 
     var payer: String {
         if !freeGasEnabled {
-            return WalletManager.shared.selectedAccountAddress
+            return WalletManager.shared.getPrimaryWalletAddress() ?? emptyAddress
         }
 
         switch LocalUserDefaults.shared.flowNetwork.toFlowType() {

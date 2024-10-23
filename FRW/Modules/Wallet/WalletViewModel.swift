@@ -10,6 +10,7 @@ import Flow
 import Foundation
 import SwiftUI
 import SwiftUIPager
+import FlowWalletCore
 
 extension WalletViewModel {
     enum WalletState {
@@ -336,6 +337,7 @@ class WalletViewModel: ObservableObject {
         log.info("[Home] update move asset status")
         showMoveAsset = EVMAccountManager.shared.accounts.count > 0 || ChildAccountManager.shared.childAccounts.count > 0
     }
+    
 }
 
 // MARK: - Action

@@ -50,7 +50,7 @@ struct RecoveryPhraseView: RouteableView {
                         Text("recovery".localized)
                             .bold()
                             .foregroundColor(Color.LL.text)
-
+                        
                         Text("phrase".localized)
                             .bold()
                             .foregroundColor(Color.LL.orange)
