@@ -86,7 +86,7 @@ struct WalletSendButtonView: View {
 //                    action()
 //                }
 //        )
-        .onLongPressGesture(minimumDuration: 0.9, perform: {
+        .onLongPressGesture(minimumDuration: 0.8, perform: {
             print("Long pressed!")
             self.press.toggle()
             self.isLoading = true
