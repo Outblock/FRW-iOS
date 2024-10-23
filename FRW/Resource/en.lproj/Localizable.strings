@@ -1033,4 +1033,4 @@ Please create backups for your wallet to ensure you retain access to your Flow a
 "Hide Profile" = "Hide Profile";
 
 "Please wait" = "Please wait";
-"until_web_loaded" = "Until the website is loaded";
+"until_web_loaded" = "Until the website is fully loaded";
