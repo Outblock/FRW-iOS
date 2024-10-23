@@ -181,7 +181,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                     }
                     let model = try await FlowNetwork.fetchEVMTransactionResult(txid: tix.hex)
                     DispatchQueue.main.async {
-                        confirm(model.hashString ?? "")
+                        confirm(model.hashString?.addHexPrefix() ?? "")
                     }
                 }
             }

@@ -63,10 +63,7 @@ class MoveSingleNFTViewModel: ObservableObject {
     }
 
     func moveAction() {
-        guard let nftId = UInt64(nft.response.id),
-              let address = nft.response.contractAddress,
-              let name = nft.response.collectionContractName
-        else {
+        guard let nftId = UInt64(nft.response.id) else {
             HUD.error(title: "invalid data")
             return
         }
