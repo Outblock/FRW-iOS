@@ -169,7 +169,11 @@ extension TrustJSMessageHandler {
             
             if let _ = webVC?.webView.isLoading {
                 // If website is loading then we don't handle authn request
-                HUD.info(title: "Please wait", message: "Until the website is fully loaded")
+                HUD
+                    .info(
+                        title: "Please wait".localized,
+                        message: "until_web_loaded".localized
+                    )
                 return
             }
             
