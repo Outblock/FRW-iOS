@@ -231,6 +231,12 @@ extension JSMessageHandler {
                 log.error("decode message failed")
                 return
             }
+            
+            if let _ = webVC?.webView.isLoading {
+                // If website is loading then we don't handle authn request
+                HUD.info(title: "Please wait", message: "Until the website is loaded")
+                return
+            }
 
             let authnResponse = try JSONDecoder().decode(FCLAuthnResponse.self, from: data)
 
@@ -254,7 +260,7 @@ extension JSMessageHandler {
                 guard let self = self else {
                     return
                 }
-
+                
                 if result {
                     self.didConfirmAuthn(response: authnResponse)
                 } else {

@@ -166,6 +166,13 @@ extension TrustJSMessageHandler {
             guard let self = self else {
                 return
             }
+            
+            if let _ = webVC?.webView.isLoading {
+                // If website is loading then we don't handle authn request
+                HUD.info(title: "Please wait", message: "Until the website is fully loaded")
+                return
+            }
+            
             let address = webVC?.trustProvider?.config.ethereum.address ?? ""
 
             let title = webVC?.webView.title ?? "unknown"
