@@ -154,7 +154,11 @@ extension WalletNewsHandler {
         let shouldRemove = markItemIfNeed(itemId, displatyType: [.click, .once])
 
         if let urlStr = item.url, !urlStr.isEmpty, let url = URL(string: urlStr) {
-            Router.route(to: RouteMap.Explore.browser(url))
+            if urlStr.contains("apple.com") {
+                UIApplication.shared.open(url)
+            } else {
+                Router.route(to: RouteMap.Explore.browser(url))
+            }
         }
 
         if item.flag == .walletconnect, let request = WalletConnectManager.shared.pendingRequests.first(where: { $0.topic == item.id }) {
