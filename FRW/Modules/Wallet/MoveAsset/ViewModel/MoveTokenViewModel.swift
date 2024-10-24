@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Flow
 
 class MoveTokenViewModel: ObservableObject {
     @Published var inputDollarNum: Double = 0
@@ -147,8 +148,46 @@ extension MoveTokenViewModel {
     func onNext() {
         // TODO: #six 新的cadence
         if fromContact.walletType == .link || toContact.walletType == .link {
-            HUD.info(title: "Features are coming.")
-            return
+            Task {
+                do {
+                    var tid: Flow.ID?
+                    let amount = self.inputTokenNum.decimalValue
+                    let vaultIdentifier = (fromIsEVM ? (token.flowIdentifier ?? "") : token.contractId + ".Vault")
+                    switch (fromContact.walletType, toContact.walletType) {
+                    case (.link, .evm):
+                        tid = try await FlowNetwork
+                            .bridgeChildTokenToCoa(
+                                vaultIdentifier: vaultIdentifier,
+                                child: fromContact.address ?? "",
+                                amount: amount
+                            )
+                    case (.evm, .link):
+                        tid = try await FlowNetwork
+                            .bridgeChildTokenFromCoa(
+                                vaultIdentifier: vaultIdentifier,
+                                child: toContact.address ?? "",
+                                amount: amount
+                            )
+                    default:
+                        break
+                    }
+                    
+                    if let txid = tid {
+                        let holder = TransactionManager.TransactionHolder(id: txid, type: .moveAsset)
+                        TransactionManager.shared.newTransaction(holder: holder)
+                    }
+                    DispatchQueue.main.async {
+                        self.closeAction()
+                        self.buttonState = .enabled
+                    }
+                }
+                catch {
+                    log.error(" Move Token: \(fromContact.walletType?.rawValue ?? "") to  \(toContact.walletType?.rawValue ?? "") failed. \(error)")
+                    log.error(error)
+                    buttonState = .enabled
+                }
+            }
+            
         }
         if token.isFlowCoin {
             if WalletManager.shared.isSelectedEVMAccount {

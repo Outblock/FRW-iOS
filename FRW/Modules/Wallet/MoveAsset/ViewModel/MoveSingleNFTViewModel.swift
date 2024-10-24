@@ -119,6 +119,20 @@ class MoveSingleNFTViewModel: ObservableObject {
                 tid = try await FlowNetwork.moveNFTToParent(nftId: nftId, childAddress: fromContact.address ?? "", identifier: identifier, collection: collection)
             case (.link, .link):
                 tid = try await FlowNetwork.sendChildNFTToChild(nftId: nftId, childAddress: fromContact.address ?? "", toAddress: toContact.address ?? "", identifier: identifier, collection: collection)
+            case (.link, .evm):
+                tid = try await FlowNetwork
+                    .bridgeChildNFTToEvm(
+                        nft: identifier,
+                        id: nftId,
+                        child: fromContact
+                            .address ?? "")
+            case (.evm, .link):
+                tid = try await FlowNetwork
+                    .bridgeChildNFTFromEvm(
+                        nft: identifier,
+                        id: nftId,
+                        child: toContact
+                            .address ?? "")
             default:
                 log.info("===")
             }

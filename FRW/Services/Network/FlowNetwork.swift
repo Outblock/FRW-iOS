@@ -1298,6 +1298,81 @@ extension FlowNetwork {
     }
 }
 
+//MARK: Bridge between Child and EVM
+extension FlowNetwork {
+    static func bridgeChildNFTToEvm(nft identifier: String, id: UInt64, child: String) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildNFTToEvm?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        let nftId = BigUInt(id)
+        return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
+            .string(identifier),
+            .uint256(nftId),
+            .address(Flow.Address(hex: child)),
+        ])
+    }
+    
+    static func bridgeChildNFTFromEvm(nft identifier: String, id: UInt64, child: String) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildNFTFromEvm?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        
+        let nftId = BigUInt(id)
+        
+        return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
+            .string(identifier),
+            .address(Flow.Address(hex: child)),
+            .uint256(nftId),
+        ])
+    }
+    
+    static func batchBridgeChildNFTToCoa(nft identifier: String, ids: [UInt64], child: String) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.hybridCustody?.batchBridgeChildNFTToEvm?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        
+        let idMaped = ids.map { Flow.Cadence.FValue.uint64($0) }
+        
+        return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
+            .string(identifier),
+            .address(Flow.Address(hex: child)),
+            .array(idMaped),
+        ])
+    }
+    
+    static func batchBridgeChildNFTFromCoa(nft identifier: String, ids: [UInt64], child: String) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.hybridCustody?.batchBridgeChildNFTFromEvm?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        
+        let idMaped = ids.map { Flow.Cadence.FValue.uint64($0) }
+        
+        return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
+            .string(identifier),
+            .address(Flow.Address(hex: child)),
+            .array(idMaped),
+        ])
+    }
+    
+    static func bridgeChildTokenToCoa(vaultIdentifier: String, child:String, amount: Decimal) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildFTToEvm?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        var amountValue = Flow.Cadence.FValue.ufix64(amount)
+        return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
+            .string(vaultIdentifier),
+            .address(Flow.Address(hex: child)),
+            amountValue,
+        ])
+    }
+    
+    static func bridgeChildTokenFromCoa(vaultIdentifier: String, child:String, amount: Decimal) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildFTFromEvm?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        var amountValue = Flow.Cadence.FValue.ufix64(amount)
+        return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
+            .string(vaultIdentifier),
+            .address(Flow.Address(hex: child)),
+            amountValue,
+        ])
+    }
+}
+
 extension FlowNetwork {
     private static func sendTransaction(cadenceStr: String, argumentList: [Flow.Cadence.FValue]) async throws -> Flow.ID {
         let fromKeyIndex = WalletManager.shared.keyIndex
