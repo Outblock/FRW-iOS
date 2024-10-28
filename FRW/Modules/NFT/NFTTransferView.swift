@@ -204,6 +204,27 @@ class NFTTransferViewModel: ObservableObject {
                     let identifier = nft.publicIdentifier
                     let childAddr = fromChildAccount?.addr ?? currentAddress
                     tid = try await FlowNetwork.sendChildNFTToChild(nftId: nftId, childAddress: childAddr, toAddress: toAddress, identifier: identifier, collection: collection)
+                case (.linked, .coa):
+                    guard let nftIdentifier = nft.response.flowIdentifier,let nftId = UInt64(nft.response.id) else {
+                        return
+                    }
+                    let childAddr = fromChildAccount?.addr ?? currentAddress
+                    tid = try await FlowNetwork
+                        .bridgeChildNFTToEvm(
+                            nft: nftIdentifier,
+                            id: nftId,
+                            child: childAddr)
+                case (.coa, .linked):
+                    guard let nftIdentifier = nft.response.flowIdentifier,
+                          let nftId = UInt64(nft.response.id) else {
+                        return
+                    }
+                    let childAddr = fromChildAccount?.addr ?? currentAddress
+                    tid = try await FlowNetwork
+                        .bridgeChildNFTFromEvm(
+                            nft: nftIdentifier,
+                            id: nftId,
+                            child: childAddr)
                 default:
                     failedBlock()
                     return

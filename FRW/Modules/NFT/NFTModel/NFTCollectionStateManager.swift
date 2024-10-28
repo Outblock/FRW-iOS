@@ -26,7 +26,7 @@ final class NFTCollectionStateManager {
         do {
             let result: [String: Bool] = try await FlowNetwork.checkCollectionEnable(address: Flow.Address(hex: address))
 
-            for (index, collection) in list.enumerated() {
+            for (_, collection) in list.enumerated() {
                 let key = "A." + collection.address.stripHexPrefix() + "." + collection.contractName
                 let isEnable = result[key] ?? false
                 if let oldIndex = tokenStateList.firstIndex(where: { $0.address.lowercased() == collection.address.lowercased() && $0.name == collection.contractName }) {

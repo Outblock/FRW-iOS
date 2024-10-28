@@ -29,7 +29,9 @@ final class NFTCollectionConfig {
 extension NFTCollectionConfig {
     private func fetchData() async {
         do {
-            var list: [NFTCollectionInfo] = try await Network.request(FRWAPI.NFT.collections)
+            let list: [NFTCollectionInfo] = try await Network.request(
+                FRWAPI.NFT.collections
+            )
             config = list
         } catch {
             log.error("NFTCollectionConfig -> fetchData failed: \(error)")

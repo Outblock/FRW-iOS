@@ -354,8 +354,6 @@ extension WalletSendAmountViewModel {
 
                 case (.coa, .eoa):
                     if token.isFlowCoin {
-                        let evmAmount = Utilities.parseToBigUInt(amount.description, units: .ether)
-                        
                         txId = try await FlowNetwork
                             .sendTransaction(
                                 amount: amount.description,

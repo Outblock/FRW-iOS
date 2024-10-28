@@ -105,8 +105,13 @@ class MoveSingleNFTViewModel: ObservableObject {
     }
 
     private func moveForLinkedAccount(nftId: UInt64) async {
-        guard let collection = nft.collection
-        else {
+        var collection = nft.collection
+        if collection == nil {
+            collection = NFTCatalogCache.cache
+                .find(by: nft.collectionName)?.collection
+        }
+        guard let collection = collection else {
+            log.error("[NFT] nft \(nft.collectionName) not found")
             return
         }
         let identifier = nft.publicIdentifier
@@ -120,16 +125,22 @@ class MoveSingleNFTViewModel: ObservableObject {
             case (.link, .link):
                 tid = try await FlowNetwork.sendChildNFTToChild(nftId: nftId, childAddress: fromContact.address ?? "", toAddress: toContact.address ?? "", identifier: identifier, collection: collection)
             case (.link, .evm):
+                guard let nftIdentifier = nft.response.flowIdentifier else {
+                    return
+                }
                 tid = try await FlowNetwork
                     .bridgeChildNFTToEvm(
-                        nft: identifier,
+                        nft: nftIdentifier,
                         id: nftId,
                         child: fromContact
                             .address ?? "")
             case (.evm, .link):
+                guard let nftIdentifier = nft.response.flowIdentifier else {   
+                    return
+                }
                 tid = try await FlowNetwork
                     .bridgeChildNFTFromEvm(
-                        nft: identifier,
+                        nft: nftIdentifier,
                         id: nftId,
                         child: toContact
                             .address ?? "")
