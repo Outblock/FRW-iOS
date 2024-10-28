@@ -1353,7 +1353,7 @@ extension FlowNetwork {
     static func bridgeChildTokenToCoa(vaultIdentifier: String, child:String, amount: Decimal) async throws -> Flow.ID {
         let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildFTToEvm?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
-        var amountValue = Flow.Cadence.FValue.ufix64(amount)
+        let amountValue = Flow.Cadence.FValue.ufix64(amount)
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
             .string(vaultIdentifier),
             .address(Flow.Address(hex: child)),
@@ -1364,7 +1364,7 @@ extension FlowNetwork {
     static func bridgeChildTokenFromCoa(vaultIdentifier: String, child:String, amount: Decimal) async throws -> Flow.ID {
         let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildFTFromEvm?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
-        var amountValue = Flow.Cadence.FValue.ufix64(amount)
+        let amountValue = Flow.Cadence.FValue.ufix64(amount)
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
             .string(vaultIdentifier),
             .address(Flow.Address(hex: child)),
