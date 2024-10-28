@@ -146,7 +146,7 @@ extension MoveTokenViewModel {
 
 extension MoveTokenViewModel {
     func onNext() {
-        // TODO: #six 新的cadence
+        
         if fromContact.walletType == .link || toContact.walletType == .link {
             Task {
                 do {

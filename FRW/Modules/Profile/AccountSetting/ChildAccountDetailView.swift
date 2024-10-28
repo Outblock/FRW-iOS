@@ -639,7 +639,7 @@ extension NFTCollection: ChildAccountAccessible {
     }
     
     var title: String {
-        collection.name
+        collection.name ?? ""
     }
     
     var subtitle: String {

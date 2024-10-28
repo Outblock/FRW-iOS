@@ -1306,7 +1306,7 @@ extension FlowNetwork {
         let nftId = BigUInt(id)
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
             .string(identifier),
-            .uint256(nftId),
+            .uint64(id),
             .address(Flow.Address(hex: child)),
         ])
     }
