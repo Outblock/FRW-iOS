@@ -33,9 +33,9 @@ struct EVMNFTCollectionResponse: Codable {
 
 struct NFTCollectionInfo: Codable, Hashable, Mockable {
     let id: String
-    let name: String
-    let contractName: String
-    let address: String
+    let name: String?
+    let contractName: String?
+    let address: String?
 
     let logo: String?
     let banner: String?
@@ -127,7 +127,7 @@ struct NFTModel: Codable, Hashable, Identifiable {
     }
 
     var isNBA: Bool {
-        collection?.contractName.trim() == "TopShot"
+        collection?.contractName?.trim() == "TopShot"
     }
 
     init(_ response: NFTResponse, in collection: NFTCollectionInfo?, from _: FlowModel.CollectionInfo? = nil) {

@@ -22,7 +22,7 @@ final class NFTCollectionConfig {
         if config.isEmpty {
             await fetchData()
         }
-        return config.first { $0.address.lowercased() == address.lowercased() }
+        return config.first { $0.address?.lowercased() == address.lowercased() }
     }
 }
 

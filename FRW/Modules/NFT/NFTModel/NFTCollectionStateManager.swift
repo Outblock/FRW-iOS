@@ -27,12 +27,14 @@ final class NFTCollectionStateManager {
             let result: [String: Bool] = try await FlowNetwork.checkCollectionEnable(address: Flow.Address(hex: address))
 
             for (_, collection) in list.enumerated() {
-                let key = "A." + collection.address.stripHexPrefix() + "." + collection.contractName
-                let isEnable = result[key] ?? false
-                if let oldIndex = tokenStateList.firstIndex(where: { $0.address.lowercased() == collection.address.lowercased() && $0.name == collection.contractName }) {
-                    tokenStateList.remove(at: oldIndex)
+                if let contractName = collection.contractName, let address = collection.address {
+                    let key = "A." + address.stripHexPrefix() + "." + contractName
+                    let isEnable = result[key] ?? false
+                    if let oldIndex = tokenStateList.firstIndex(where: { $0.address.lowercased() == address.lowercased() && $0.name == collection.contractName }) {
+                        tokenStateList.remove(at: oldIndex)
+                    }
+                    tokenStateList.append(NftCollectionState(name: contractName, address: address, isAdded: isEnable))
                 }
-                tokenStateList.append(NftCollectionState(name: collection.contractName, address: collection.address, isAdded: isEnable))
             }
         } catch {
             debugPrint("NFTCollectionStateManager: \(error)")
