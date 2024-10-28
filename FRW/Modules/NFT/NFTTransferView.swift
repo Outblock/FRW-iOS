@@ -219,7 +219,7 @@ class NFTTransferViewModel: ObservableObject {
                           let nftId = UInt64(nft.response.id) else {
                         return
                     }
-                    let childAddr = fromChildAccount?.addr ?? currentAddress
+                    let childAddr = fromChildAccount?.addr ?? toAddress
                     tid = try await FlowNetwork
                         .bridgeChildNFTFromEvm(
                             nft: nftIdentifier,
