@@ -326,14 +326,16 @@ extension TrustJSMessageHandler {
 
             Task {
                 do {
-                    let tix = try await FlowNetwork.sendTransaction(amount: receiveModel.amount, data: receiveModel.dataValue, toAddress: toAddr, gas: receiveModel.gasValue)
-                    let result = try await tix.onceSealed()
+                    let txid = try await FlowNetwork.sendTransaction(amount: receiveModel.amount, data: receiveModel.dataValue, toAddress: toAddr, gas: receiveModel.gasValue)
+                    let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
+                    TransactionManager.shared.newTransaction(holder: holder)
+                    let result = try await txid.onceSealed()
                     if result.isFailed {
                         HUD.error(title: "transaction failed")
                         self.cancel(id: id)
                         return
                     }
-                    let model = try await FlowNetwork.fetchEVMTransactionResult(txid: tix.hex)
+                    let model = try await FlowNetwork.fetchEVMTransactionResult(txid: txid.hex)
                     DispatchQueue.main.async {
                         self.webVC?.webView.tw
                             .send(

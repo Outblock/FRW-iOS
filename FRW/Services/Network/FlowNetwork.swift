@@ -1252,7 +1252,7 @@ extension FlowNetwork {
         ])
     }
 
-    static func bridgeNFTToAnyEVM(identifier: String, id: String, contractEVMAddress: String) async throws -> Flow.ID {
+    static func bridgeNFTToAnyEVM(identifier: String, id: String, toAddress: String) async throws -> Flow.ID {
         let originCadence = CadenceManager.shared.current.bridge?.bridgeNFTToEvmAddressV2?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         guard let nftId = UInt64(id) else {
@@ -1262,7 +1262,7 @@ extension FlowNetwork {
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
             .string(identifier),
             .uint64(nftId),
-            .string(contractEVMAddress),
+            .string(toAddress),
         ])
     }
 
