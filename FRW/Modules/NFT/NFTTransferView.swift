@@ -141,11 +141,16 @@ class NFTTransferViewModel: ObservableObject {
                     let nftId = nft.response.id
                     guard let nftAddress = self.nft.collection?.address,
                           let identifier = nft.collection?.flowIdentifier ?? nft.response.flowIdentifier,
-                          let evmContractAddress = await NFTCollectionConfig.share.get(from: nftAddress)?.evmAddress?.stripHexPrefix()
+                          let toAddress = targetContact.address?.stripHexPrefix()
                     else {
                         throw NFTError.sendInvalidAddress
                     }
-                    tid = try await FlowNetwork.bridgeNFTToAnyEVM(identifier: identifier, id: nftId, contractEVMAddress: evmContractAddress)
+                    tid = try await FlowNetwork
+                        .bridgeNFTToAnyEVM(
+                            identifier: identifier,
+                            id: nftId,
+                            toAddress: toAddress
+                        )
 
                 case (.coa, .flow):
                     let nftId = nft.response.id
