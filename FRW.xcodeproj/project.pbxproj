@@ -883,6 +883,16 @@
 		15DE22F1277F133B00B5EE03 /* SkeletonUI in Frameworks */ = {isa = PBXBuildFile; productRef = 15DE22F0277F133B00B5EE03 /* SkeletonUI */; };
 		15DE22FD27801ADE00B5EE03 /* GoogleOAuth2.plist in Resources */ = {isa = PBXBuildFile; fileRef = 15DE22FC27801ADE00B5EE03 /* GoogleOAuth2.plist */; };
 		15DE23012780208300B5EE03 /* RestoreWalletViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DE22FF2780208300B5EE03 /* RestoreWalletViewModel.swift */; };
+		15DFD32C2CD4576A004B0DB8 /* FluidGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DFD3292CD4576A004B0DB8 /* FluidGradientView.swift */; };
+		15DFD32D2CD4576A004B0DB8 /* FluidGradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DFD3282CD4576A004B0DB8 /* FluidGradient.swift */; };
+		15DFD32E2CD4576A004B0DB8 /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DFD3272CD4576A004B0DB8 /* CGPoint+Extensions.swift */; };
+		15DFD32F2CD4576A004B0DB8 /* BlobLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DFD3262CD4576A004B0DB8 /* BlobLayer.swift */; };
+		15DFD3302CD4576A004B0DB8 /* ResizableLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DFD32A2CD4576A004B0DB8 /* ResizableLayer.swift */; };
+		15DFD3312CD4576A004B0DB8 /* FluidGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DFD3292CD4576A004B0DB8 /* FluidGradientView.swift */; };
+		15DFD3322CD4576A004B0DB8 /* FluidGradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DFD3282CD4576A004B0DB8 /* FluidGradient.swift */; };
+		15DFD3332CD4576A004B0DB8 /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DFD3272CD4576A004B0DB8 /* CGPoint+Extensions.swift */; };
+		15DFD3342CD4576A004B0DB8 /* BlobLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DFD3262CD4576A004B0DB8 /* BlobLayer.swift */; };
+		15DFD3352CD4576A004B0DB8 /* ResizableLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DFD32A2CD4576A004B0DB8 /* ResizableLayer.swift */; };
 		15ECAE3928C4FCE600B79453 /* WalletConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CC8A6B28C4F817001D2696 /* WalletConnectView.swift */; };
 		15ECAE3A28C4FCE700B79453 /* WalletConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CC8A6B28C4F817001D2696 /* WalletConnectView.swift */; };
 		15ECAE3B28C4FCEB00B79453 /* WalletConnectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CC8A6C28C4F836001D2696 /* WalletConnectViewModel.swift */; };
@@ -2289,6 +2299,11 @@
 		15DE22EA277F0B0C00B5EE03 /* Shimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shimmer.swift; sourceTree = "<group>"; };
 		15DE22FC27801ADE00B5EE03 /* GoogleOAuth2.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GoogleOAuth2.plist; sourceTree = "<group>"; };
 		15DE22FF2780208300B5EE03 /* RestoreWalletViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreWalletViewModel.swift; sourceTree = "<group>"; };
+		15DFD3262CD4576A004B0DB8 /* BlobLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlobLayer.swift; sourceTree = "<group>"; };
+		15DFD3272CD4576A004B0DB8 /* CGPoint+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extensions.swift"; sourceTree = "<group>"; };
+		15DFD3282CD4576A004B0DB8 /* FluidGradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluidGradient.swift; sourceTree = "<group>"; };
+		15DFD3292CD4576A004B0DB8 /* FluidGradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluidGradientView.swift; sourceTree = "<group>"; };
+		15DFD32A2CD4576A004B0DB8 /* ResizableLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizableLayer.swift; sourceTree = "<group>"; };
 		15EC9DF1274FD1FD00F70CD9 /* FRW_App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FRW_App.swift; sourceTree = "<group>"; };
 		15EC9DF5274FD1FD00F70CD9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		15EC9DF8274FD1FD00F70CD9 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -4607,6 +4622,18 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
+		15DFD32B2CD4576A004B0DB8 /* FluidGradient */ = {
+			isa = PBXGroup;
+			children = (
+				15DFD3262CD4576A004B0DB8 /* BlobLayer.swift */,
+				15DFD3272CD4576A004B0DB8 /* CGPoint+Extensions.swift */,
+				15DFD3282CD4576A004B0DB8 /* FluidGradient.swift */,
+				15DFD3292CD4576A004B0DB8 /* FluidGradientView.swift */,
+				15DFD32A2CD4576A004B0DB8 /* ResizableLayer.swift */,
+			);
+			path = FluidGradient;
+			sourceTree = "<group>";
+		};
 		15EC9DE5274FD1FC00F70CD9 = {
 			isa = PBXGroup;
 			children = (
@@ -5754,6 +5781,7 @@
 		6ABAE52D2836297C00C97AE2 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				15DFD32B2CD4576A004B0DB8 /* FluidGradient */,
 				4E3138052C658FB2003A73E5 /* DebugViewer */,
 				4E5646532C0606A300890E61 /* PopupView */,
 				4ED9C5BE2C0487D1004276D1 /* FloatingButton */,
@@ -6671,6 +6699,11 @@
 				15DC20CD27819C56000B187A /* VNavigationLink.swift in Sources */,
 				15ADAE2B28F51EBB0014B722 /* SymmetricEncryption.swift in Sources */,
 				4E31380B2C658FB2003A73E5 /* CappedCollection.swift in Sources */,
+				15DFD3312CD4576A004B0DB8 /* FluidGradientView.swift in Sources */,
+				15DFD3322CD4576A004B0DB8 /* FluidGradient.swift in Sources */,
+				15DFD3332CD4576A004B0DB8 /* CGPoint+Extensions.swift in Sources */,
+				15DFD3342CD4576A004B0DB8 /* BlobLayer.swift in Sources */,
+				15DFD3352CD4576A004B0DB8 /* ResizableLayer.swift in Sources */,
 				4E09A1F22CC79A5C0099606E /* EventTrackName.swift in Sources */,
 				15DC20DD27819C56000B187A /* VPrimaryButton.swift in Sources */,
 				15DC21AD27819C56000B187A /* VBaseTextFieldModel.swift in Sources */,
@@ -7456,6 +7489,11 @@
 				15C58AB92868A4EE00BD4FC6 /* VNavigationLink.swift in Sources */,
 				15ADAE2A28F51EBB0014B722 /* SymmetricEncryption.swift in Sources */,
 				4E31380A2C658FB2003A73E5 /* CappedCollection.swift in Sources */,
+				15DFD32C2CD4576A004B0DB8 /* FluidGradientView.swift in Sources */,
+				15DFD32D2CD4576A004B0DB8 /* FluidGradient.swift in Sources */,
+				15DFD32E2CD4576A004B0DB8 /* CGPoint+Extensions.swift in Sources */,
+				15DFD32F2CD4576A004B0DB8 /* BlobLayer.swift in Sources */,
+				15DFD3302CD4576A004B0DB8 /* ResizableLayer.swift in Sources */,
 				4E09A1F32CC79A5C0099606E /* EventTrackName.swift in Sources */,
 				15C58ABA2868A4EE00BD4FC6 /* VPrimaryButton.swift in Sources */,
 				15C58ABB2868A4EE00BD4FC6 /* VBaseTextFieldModel.swift in Sources */,
