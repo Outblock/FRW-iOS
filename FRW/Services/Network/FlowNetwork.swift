@@ -1296,6 +1296,15 @@ extension FlowNetwork {
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [])
     }
+    /// evm contract address, eg. 0x7f27352D5F83Db87a5A3E00f4B07Cc2138D8ee52
+    static func getAssociatedFlowIdentifier(address: String) async throws -> String? {
+        let originCadence = CadenceManager.shared.current.bridge?.getAssociatedFlowIdentifier?.toFunc() ?? ""
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: cadenceStr), arguments: [.string(address)]).decode(
+            String?.self
+        )
+        return resonpse
+    }
 }
 
 //MARK: Bridge between Child and EVM
@@ -1303,7 +1312,6 @@ extension FlowNetwork {
     static func bridgeChildNFTToEvm(nft identifier: String, id: UInt64, child: String) async throws -> Flow.ID {
         let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildNFTToEvm?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
-        let nftId = BigUInt(id)
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
             .string(identifier),
             .uint64(id),

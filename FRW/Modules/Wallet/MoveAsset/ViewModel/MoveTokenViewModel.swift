@@ -12,7 +12,7 @@ class MoveTokenViewModel: ObservableObject {
     @Published var inputDollarNum: Double = 0
 
     @Published var showBalance: String = ""
-    var actualBalance: String = ""
+    var actualBalance: Double = 0
     
     @Published var inputTokenNum: Double = 0
     @Published var amountBalance: Double = 0
@@ -25,6 +25,7 @@ class MoveTokenViewModel: ObservableObject {
     @Published var toContact = Contact(address: "", avatar: "", contactName: "", contactType: nil, domain: nil, id: -1, username: nil)
 
     private var minBalance: Double? = nil
+    private var maxButtonClickedOnce = false
     
     var token: TokenModel
     @Binding var isPresent: Bool
@@ -76,7 +77,7 @@ class MoveTokenViewModel: ObservableObject {
     private func updateBalance(_ text: String) {
         guard !text.isEmpty else {
             showBalance = ""
-            actualBalance = ""
+            actualBalance = 0
             return
         }
         
@@ -93,16 +94,21 @@ class MoveTokenViewModel: ObservableObject {
     }
 
     private func refreshTokenData() {
-        amountBalance = WalletManager.shared.getBalance(bySymbol: token.symbol ?? "")
+        amountBalance =  WalletManager.shared.getBalance(bySymbol: token.symbol ?? "")
         coinRate = CoinRateCache.cache.getSummary(for: token.symbol ?? "")?.getLastRate() ?? 0
     }
 
-    func inputTextDidChangeAction(text _: String) {
+    func inputTextDidChangeAction(text: String) {
+        if !maxButtonClickedOnce {
+            actualBalance = showBalance.doubleValue
+        }
+        maxButtonClickedOnce = false
         refreshSummary()
         updateState()
     }
 
     func refreshSummary() {
+        log.info("[refreshSummary]")
         if showBalance.isEmpty {
             inputTokenNum = 0.0
             inputDollarNum = 0.0
@@ -117,9 +123,7 @@ class MoveTokenViewModel: ObservableObject {
             return
         }
         
-        actualBalance = showBalance.doubleValue
-            .formatCurrencyString(digits: token.decimal)
-        inputTokenNum = actualBalance.doubleValue
+        inputTokenNum = token.balance?.description.doubleValue ?? actualBalance
         inputDollarNum = inputTokenNum * coinRate * CurrencyCache.cache.currentCurrencyRate
         
         if inputTokenNum > amountBalance {
@@ -127,7 +131,7 @@ class MoveTokenViewModel: ObservableObject {
             return
         }
         
-        if !allowZero() {
+        if !allowZero() && inputTokenNum == 0 {
             errorType = .insufficientBalance
             return
         }
@@ -135,11 +139,12 @@ class MoveTokenViewModel: ObservableObject {
     }
 
     func maxAction() {
+        maxButtonClickedOnce = true
         Task {
             let num = await updateAmountIfNeed(inputAmount: amountBalance)
             DispatchQueue.main.async {
                 self.showBalance = num.formatCurrencyString()
-                self.actualBalance = num.formatCurrencyString(digits: self.token.decimal)
+                self.actualBalance = num
                 self.refreshSummary()
                 self.updateState()
             }
@@ -181,7 +186,6 @@ class MoveTokenViewModel: ObservableObject {
         DispatchQueue.main.async {
             self.buttonState = self.isReadyForSend ? .enabled : .disabled
         }
-        
     }
 
     var isReadyForSend: Bool {

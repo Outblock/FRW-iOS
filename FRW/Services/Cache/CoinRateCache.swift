@@ -100,9 +100,7 @@ extension CoinRateCache {
         guard let supportedCoins = WalletManager.shared.supportedCoins else {
             return
         }
-        var evmCoins = WalletManager.shared.evmSupportedCoins
-
-        
+        let evmCoins = WalletManager.shared.evmSupportedCoins
 
         log.debug("CoinRateCache -> start refreshing")
         isRefreshing = true

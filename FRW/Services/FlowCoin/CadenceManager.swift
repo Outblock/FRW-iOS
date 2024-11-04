@@ -368,6 +368,9 @@ extension CadenceModel {
         /// nft flow to any evm
         let bridgeNFTToEvmAddressV2: String?
         let bridgeNFTFromEvmToFlowV2: String?
+        
+        let getAssociatedEvmAddress: String?
+        let getAssociatedFlowIdentifier: String?
     }
 }
 

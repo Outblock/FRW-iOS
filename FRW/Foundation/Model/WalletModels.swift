@@ -7,6 +7,7 @@
 
 import Flow
 import Foundation
+import BigInt
 
 // MARK: - Coin
 
@@ -86,6 +87,7 @@ struct TokenModel: Codable, Identifiable, Mockable {
     let website: URL?
     let evmAddress: String?
     var flowIdentifier: String?
+    var balance: BigUInt?
 
     var listedToken: ListedToken? {
         ListedToken(rawValue: symbol ?? "")

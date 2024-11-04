@@ -138,6 +138,11 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
 
         case .watchAsset:
             print("[Trust] watchAsset")
+            guard let data = extractMessage(json: json) else {
+                log.info("[Trust] data is missing")
+                return
+            }
+            handleWatchAsset(network: network, id: id, data: Data())
         case .addEthereumChain:
             log.info("[Trust] addEthereumChain")
         case .switchEthereumChain:
@@ -395,6 +400,11 @@ extension TrustJSMessageHandler {
         DispatchQueue.main.async {
             self.webVC?.webView.tw.send(network: .ethereum, error: "Canceled", to: id)
         }
+    }
+    
+    private func handleWatchAsset(network: ProviderNetwork, id: Int64, data: Data) {
+        let manager = WalletManager.shared.customTokenManager
+        
     }
 }
 

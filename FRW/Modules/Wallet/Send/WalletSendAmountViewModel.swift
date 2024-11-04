@@ -160,8 +160,7 @@ extension WalletSendAmountViewModel {
             errorType = .formatError
             return
         }
-        actualBalance = inputText.doubleValue
-            .formatCurrencyString(digits: token.decimal)
+        
         if exchangeType == .token {
             inputTokenNum = actualBalance.doubleValue
             inputDollarNum = inputTokenNum * coinRate * CurrencyCache.cache.currentCurrencyRate
@@ -210,6 +209,7 @@ extension WalletSendAmountViewModel {
 
 extension WalletSendAmountViewModel {
     func inputTextDidChangeAction(text _: String) {
+        actualBalance = inputText.doubleValue.formatCurrencyString(digits: token.decimal)
         refreshInput()
     }
 

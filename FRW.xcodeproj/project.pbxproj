@@ -1118,6 +1118,16 @@
 		4E90592F2B1792F10029FC66 /* SyncAddDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */; };
 		4E9059302B1792F10029FC66 /* SyncAddDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */; };
 		4E947C922BBEB2E300E87A85 /* web3swift in Frameworks */ = {isa = PBXBuildFile; productRef = 4E947C912BBEB2E300E87A85 /* web3swift */; };
+		4E95322F2CD2082F00AAECD1 /* AddCustomTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E95322E2CD2082F00AAECD1 /* AddCustomTokenView.swift */; };
+		4E9532302CD2082F00AAECD1 /* AddCustomTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E95322E2CD2082F00AAECD1 /* AddCustomTokenView.swift */; };
+		4E9532322CD2089C00AAECD1 /* AddCustomTokenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9532312CD2089C00AAECD1 /* AddCustomTokenViewModel.swift */; };
+		4E9532332CD2089C00AAECD1 /* AddCustomTokenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9532312CD2089C00AAECD1 /* AddCustomTokenViewModel.swift */; };
+		4E9532352CD2196400AAECD1 /* SectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9532342CD2196400AAECD1 /* SectionItem.swift */; };
+		4E9532362CD2196400AAECD1 /* SectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9532342CD2196400AAECD1 /* SectionItem.swift */; };
+		4E9532382CD3E4B300AAECD1 /* CustomTokenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9532372CD3E4B300AAECD1 /* CustomTokenManager.swift */; };
+		4E9532392CD3E4B300AAECD1 /* CustomTokenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9532372CD3E4B300AAECD1 /* CustomTokenManager.swift */; };
+		4E95323E2CD5501C00AAECD1 /* CustomTokenDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E95323D2CD5501C00AAECD1 /* CustomTokenDetailView.swift */; };
+		4E95323F2CD5501C00AAECD1 /* CustomTokenDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E95323D2CD5501C00AAECD1 /* CustomTokenDetailView.swift */; };
 		4E9621D52B984EF3006859AD /* CadenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D42B984EF3006859AD /* CadenceManager.swift */; };
 		4E9621D62B984EF3006859AD /* CadenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D42B984EF3006859AD /* CadenceManager.swift */; };
 		4E9621D82B9850CF006859AD /* FRWAPI+Cadence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */; };
@@ -2407,6 +2417,11 @@
 		4E8DD9F7282E2FBB0016A931 /* NFTEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTEmptyView.swift; sourceTree = "<group>"; };
 		4E8DD9FB282E52110016A931 /* JSONStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONStorage.swift; sourceTree = "<group>"; };
 		4E90592E2B1792F10029FC66 /* SyncAddDeviceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncAddDeviceView.swift; sourceTree = "<group>"; };
+		4E95322E2CD2082F00AAECD1 /* AddCustomTokenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCustomTokenView.swift; sourceTree = "<group>"; };
+		4E9532312CD2089C00AAECD1 /* AddCustomTokenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCustomTokenViewModel.swift; sourceTree = "<group>"; };
+		4E9532342CD2196400AAECD1 /* SectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionItem.swift; sourceTree = "<group>"; };
+		4E9532372CD3E4B300AAECD1 /* CustomTokenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTokenManager.swift; sourceTree = "<group>"; };
+		4E95323D2CD5501C00AAECD1 /* CustomTokenDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTokenDetailView.swift; sourceTree = "<group>"; };
 		4E9621D42B984EF3006859AD /* CadenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CadenceManager.swift; sourceTree = "<group>"; };
 		4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FRWAPI+Cadence.swift"; sourceTree = "<group>"; };
 		4E9621DA2B985BAB006859AD /* cloudfunctions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cloudfunctions.json; sourceTree = "<group>"; };
@@ -3047,6 +3062,7 @@
 		1507C7EA2755FCB100890C5D /* Wallet */ = {
 			isa = PBXGroup;
 			children = (
+				4E95322C2CD2080900AAECD1 /* CustomToken */,
 				4ED041F52C7C25C10016848A /* Message */,
 				4EAFBD432C0FF7020031EA20 /* CreateAccount */,
 				4E5646602C06073900890E61 /* WalletAccount */,
@@ -4523,6 +4539,7 @@
 		15DDFB932751137E008263A2 /* Component */ = {
 			isa = PBXGroup;
 			children = (
+				4E9532342CD2196400AAECD1 /* SectionItem.swift */,
 				15F2443928CB370D00C1090E /* Like */,
 				6A0137652897E7A0009BEF20 /* HalfSheetModal.swift */,
 				6A4BFE2E2893CA4000142113 /* AlertView */,
@@ -4898,6 +4915,17 @@
 				4E411DBB2CB68488005AD540 /* JSONValue.swift */,
 			);
 			path = Tools;
+			sourceTree = "<group>";
+		};
+		4E95322C2CD2080900AAECD1 /* CustomToken */ = {
+			isa = PBXGroup;
+			children = (
+				4E95322E2CD2082F00AAECD1 /* AddCustomTokenView.swift */,
+				4E9532312CD2089C00AAECD1 /* AddCustomTokenViewModel.swift */,
+				4E95323D2CD5501C00AAECD1 /* CustomTokenDetailView.swift */,
+				4E9532372CD3E4B300AAECD1 /* CustomTokenManager.swift */,
+			);
+			path = CustomToken;
 			sourceTree = "<group>";
 		};
 		4E9D8F062BF5DBF900E11CC7 /* Web3 */ = {
@@ -6890,6 +6918,7 @@
 				6A8D223E2881499D005A7081 /* RecentListCache.swift in Sources */,
 				6A45899028C20CA400B1024B /* BrowserViewController+JS.swift in Sources */,
 				15DC20D127819C56000B187A /* VNavigationLinkType.swift in Sources */,
+				4E9532302CD2082F00AAECD1 /* AddCustomTokenView.swift in Sources */,
 				6A37AD9C28BE15700047E5F7 /* SendAmountTransactionProcessView.swift in Sources */,
 				4E9E21B3282644B200E1BACD /* WalletViewModel.swift in Sources */,
 				4E1A8B732B71AADE00485EDE /* MultiBackupVerifyPinView.swift in Sources */,
@@ -6951,6 +6980,7 @@
 				15DC207B27819C56000B187A /* VBaseView.swift in Sources */,
 				15D9283327843DAD00382226 /* ManualBackupViewModel.swift in Sources */,
 				6A2772A628D329E8007E06E9 /* AppPrivateView.swift in Sources */,
+				4E9532362CD2196400AAECD1 /* SectionItem.swift in Sources */,
 				15DC208927819C56000B187A /* VLazyScrollView.swift in Sources */,
 				15DC214727819C56000B187A /* VTabNavigationViewPage.swift in Sources */,
 				6A8FA4AA285B192900EE5BE3 /* SnapIDModifier.swift in Sources */,
@@ -7014,6 +7044,7 @@
 				15DC212B27819C56000B187A /* VProgressBarModel.swift in Sources */,
 				6A164F6E2845F1CB0026B31E /* View+IndexBarBackground.swift in Sources */,
 				15DC213D27819C56000B187A /* VMenuPickerRow.swift in Sources */,
+				4E95323E2CD5501C00AAECD1 /* CustomTokenDetailView.swift in Sources */,
 				15DE22EC277F0B0C00B5EE03 /* Shimmer.swift in Sources */,
 				157046792793243400D1747B /* NFTTabViewModel.swift in Sources */,
 				6AB3732D28D084EC00E8BF05 /* UIColor.swift in Sources */,
@@ -7237,6 +7268,7 @@
 				4EFBB2C42BDF4A8C00359FAA /* EVMTokenResponse.swift in Sources */,
 				154B8914276A1EEB00780E93 /* ViewModel.swift in Sources */,
 				15BA24BA28C7A93400755CBF /* WalletSettingView.swift in Sources */,
+				4E9532332CD2089C00AAECD1 /* AddCustomTokenViewModel.swift in Sources */,
 				158832DF28942D0400142B35 /* FCLModel.swift in Sources */,
 				6A164F722845F1CB0026B31E /* IndexedList.swift in Sources */,
 				4ECE28C52ADF6D170035787D /* AccountKeys.swift in Sources */,
@@ -7293,6 +7325,7 @@
 				4EB2EF672C952973002E59B4 /* IntroductionView.swift in Sources */,
 				1588330B28943D1D00142B35 /* SPQRDetailButton.swift in Sources */,
 				15DE22E9277EDC4700B5EE03 /* WalletView.swift in Sources */,
+				4E9532382CD3E4B300AAECD1 /* CustomTokenManager.swift in Sources */,
 				4E9D8F092BF5DC2100E11CC7 /* Web3Provider.swift in Sources */,
 				15DC215F27819C56000B187A /* VSideBarModel.swift in Sources */,
 				6ABAE53028362D1100C97AE2 /* Others.swift in Sources */,
@@ -7675,6 +7708,7 @@
 				6A45898F28C20CA400B1024B /* BrowserViewController+JS.swift in Sources */,
 				15C58B2A2868A4EE00BD4FC6 /* VNavigationLinkType.swift in Sources */,
 				6A37AD9B28BE15700047E5F7 /* SendAmountTransactionProcessView.swift in Sources */,
+				4E95322F2CD2082F00AAECD1 /* AddCustomTokenView.swift in Sources */,
 				15C58B2B2868A4EE00BD4FC6 /* WalletViewModel.swift in Sources */,
 				15C58B2C2868A4EE00BD4FC6 /* VLazyScrollViewHorizontal.swift in Sources */,
 				4E1A8B722B71AADE00485EDE /* MultiBackupVerifyPinView.swift in Sources */,
@@ -7736,6 +7770,7 @@
 				6A2772A528D329E8007E06E9 /* AppPrivateView.swift in Sources */,
 				15C58B482868A4EE00BD4FC6 /* VLazyScrollView.swift in Sources */,
 				15C58B492868A4EE00BD4FC6 /* VTabNavigationViewPage.swift in Sources */,
+				4E9532352CD2196400AAECD1 /* SectionItem.swift in Sources */,
 				15C58B4A2868A4EE00BD4FC6 /* SnapIDModifier.swift in Sources */,
 				15C58B4B2868A4EE00BD4FC6 /* VBaseList.swift in Sources */,
 				15C58B4C2868A4EE00BD4FC6 /* DerivedButtonType.swift in Sources */,
@@ -7799,6 +7834,7 @@
 				15C58B622868A4EE00BD4FC6 /* VMenuPickerRow.swift in Sources */,
 				15C58B632868A4EE00BD4FC6 /* Shimmer.swift in Sources */,
 				15C58B642868A4EE00BD4FC6 /* NFTTabViewModel.swift in Sources */,
+				4E95323F2CD5501C00AAECD1 /* CustomTokenDetailView.swift in Sources */,
 				6AB3732C28D084EC00E8BF05 /* UIColor.swift in Sources */,
 				15C58B652868A4EE00BD4FC6 /* EnterRestorePasswordViewModel.swift in Sources */,
 				15F2444428CB370D00C1090E /* FloatingLike.swift in Sources */,
@@ -8022,6 +8058,7 @@
 				4EFBB2C32BDF4A8C00359FAA /* EVMTokenResponse.swift in Sources */,
 				15BA24B928C7A93400755CBF /* WalletSettingView.swift in Sources */,
 				158832DE28942D0400142B35 /* FCLModel.swift in Sources */,
+				4E9532322CD2089C00AAECD1 /* AddCustomTokenViewModel.swift in Sources */,
 				15C58BDD2868A4EE00BD4FC6 /* IndexedList.swift in Sources */,
 				4ECE28C42ADF6D170035787D /* AccountKeys.swift in Sources */,
 				6A3AD5C9291D4F9B00C30D57 /* StakingListView.swift in Sources */,
@@ -8078,6 +8115,7 @@
 				4EB2EF662C952973002E59B4 /* IntroductionView.swift in Sources */,
 				15C58BFD2868A4EE00BD4FC6 /* WalletView.swift in Sources */,
 				15C58BFE2868A4EE00BD4FC6 /* VSideBarModel.swift in Sources */,
+				4E9532392CD3E4B300AAECD1 /* CustomTokenManager.swift in Sources */,
 				4E9D8F082BF5DC2100E11CC7 /* Web3Provider.swift in Sources */,
 				15C58BFF2868A4EE00BD4FC6 /* Others.swift in Sources */,
 				15C58C002868A4EE00BD4FC6 /* VDialogButtons.swift in Sources */,
@@ -8383,7 +8421,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2.9;
+				MARKETING_VERSION = 2.2.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -8426,7 +8464,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2.9;
+				MARKETING_VERSION = 2.2.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
@@ -9355,7 +9393,7 @@
 			repositoryURL = "https://github.com/outblock/flow-swift";
 			requirement = {
 				kind = exactVersion;
-				version = 0.3.7;
+				version = 0.3.8;
 			};
 		};
 		15F517F928C6574C00504FDC /* XCRemoteSwiftPackageReference "atlantis" */ = {

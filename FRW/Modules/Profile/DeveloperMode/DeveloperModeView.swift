@@ -309,6 +309,20 @@ struct DeveloperModeView: RouteableView {
                                     LocalUserDefaults.shared.clickedWhatIsBack = false
                                     HUD.success(title: "done.")
                                 }
+                                
+                                
+                                HStack {
+                                    Text("Remove Custom token (click)")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                    Spacer()
+                                }
+                                .frame(height: 64)
+                                .padding(.horizontal, 16)
+                                .onTapGesture {
+                                    LocalUserDefaults.shared.customToken = []
+                                    HUD.success(title: "done.")
+                                }
                             }
                             .background(.LL.bgForIcon)
                             .cornerRadius(16)
