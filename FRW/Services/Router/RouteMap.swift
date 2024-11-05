@@ -203,6 +203,8 @@ extension RouteMap {
         case moveToken(TokenModel)
         case selectMoveToken(TokenModel?, (TokenModel) -> Void)
         case chooseChild(MoveAccountsViewModel)
+        case addCustomToken
+        case showCustomToken(CustomToken)
     }
 }
 
@@ -290,6 +292,10 @@ extension RouteMap.Wallet: RouterTarget {
         case let .chooseChild(model):
             let vc = PresentHostingController(rootView: MoveAccountsView(viewModel: model))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
+        case .addCustomToken:
+            navi.push(content: AddCustomTokenView())
+        case .showCustomToken(let token):
+            navi.push(content: CustomTokenDetailView(token: token))
         }
     }
 }

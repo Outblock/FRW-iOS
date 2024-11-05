@@ -414,7 +414,7 @@
 "Terms__of__Service::message" = "Terms of Service";
 "import_btn_desc" = "Already have \nan account?";
 "Lilico__uses__this__password__to__protect__your__recovery__phrase::message" = "Flow Wallet uses this password to protect your recovery phrase.";
-"import_btn_text" = "IMPORT";
+"import_btn_text" = "Import";
 "I__agree__to__Lilico::message" = "I agree to Flow Wallet's";
 "wallet" = "Wallet";
 "Try__again::message" = "Try again";
@@ -1032,3 +1032,14 @@ Please create backups for your wallet to ensure you retain access to your Flow a
 "Restore Profile" = "Restore profile";
 "Hide Profile" = "Hide Profile";
 
+"Please wait" = "Please wait";
+"until_web_loaded" = "Until the website is fully loaded";
+
+"Token Contract Address" = "Token Contract Address";
+"add_custom_token_place" = "Enter your flow token contract address";
+"Paste Address" = "Paste Address";
+"Token Name" = "Token Name";
+"Token Symbol" = "Token Symbol";
+"Token Decimal" = "Token Decimal";
+"Flow Identifier" = "Flow Identifier";
+"Add Custom Token" = "Add Custom Token";

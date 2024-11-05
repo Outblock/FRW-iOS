@@ -412,6 +412,18 @@ extension WalletViewModel {
         Router.route(to: RouteMap.Wallet.stakingList)
     }
 
+    func onAddToken() {
+        guard ChildAccountManager.shared.selectedChildAccount == nil else {
+            return
+        }
+        if EVMAccountManager.shared.selectedAccount != nil {
+            Router.route(to: RouteMap.Wallet.addCustomToken)
+        } else {
+            Router.route(to: RouteMap.Wallet.addToken)
+        }
+        
+    }
+    
     func sideToggleAction() {
         NotificationCenter.default.post(name: .toggleSideMenu, object: nil)
     }
@@ -428,13 +440,14 @@ extension WalletViewModel {
 
 extension WalletViewModel {
     func refreshButtonState() {
-        let isNotPrimary = ChildAccountManager.shared.selectedChildAccount != nil || EVMAccountManager.shared.selectedAccount != nil
-        if isNotPrimary {
-            showAddTokenButton = false
-        } else {
+        let canAddToken = ChildAccountManager.shared.selectedChildAccount == nil // && EVMAccountManager.shared.selectedAccount == nil
+        if canAddToken {
             showAddTokenButton = true
+        } else {
+            showAddTokenButton = false
         }
 
+        let isNotPrimary = ChildAccountManager.shared.selectedChildAccount != nil || EVMAccountManager.shared.selectedAccount != nil
         // Swap
         if (RemoteConfigManager.shared.config?.features.swap ?? false) == true {
             // don't show when current is Linked account

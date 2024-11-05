@@ -13,6 +13,9 @@ import KeychainAccess
 import Kingfisher
 import WalletCore
 import UIKit
+import web3swift
+import Web3Core
+import BigInt
 
 
 // MARK: - Define
@@ -21,6 +24,8 @@ extension WalletManager {
     static let flowPath = "m/44'/539'/0'/0/0"
     static let mnemonicStrength: Int32 = 160
     static let defaultGas: UInt64 = 30_000_000
+    static let moveFee = 0.001
+    static let minDefaultBlance = 0.001
     private static let defaultBundleID = "com.flowfoundation.wallet"
     private static let mnemonicStoreKeyPrefix = "lilico.mnemonic"
     private static let walletFetchInterval: TimeInterval = 5
@@ -69,6 +74,8 @@ class WalletManager: ObservableObject {
 
     var walletAccount: WalletAccount = .init()
     @Published var balanceProvider = BalanceProvider()
+    
+    var customTokenManager: CustomTokenManager = CustomTokenManager()
 
     var currentAccount: WalletAccount.User {
         WalletManager.shared.walletAccount.readInfo(at: getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? "")
@@ -261,6 +268,31 @@ extension WalletManager {
         }
 
         NotificationCenter.default.post(name: .networkChange)
+    }
+}
+
+// MARK: - account type
+
+extension WalletManager {
+    func isCoa(_ address: String?) -> Bool {
+        guard let address = address, !address.isEmpty else {
+            return false
+        }
+        return EVMAccountManager.shared.accounts
+            .filter {
+                $0.showAddress.lowercased().contains(address.lowercased())
+            }.count > 0
+    }
+    
+    func isMain() -> Bool {
+        
+        guard let currentAddress = getWatchAddressOrChildAccountAddressOrPrimaryAddress(), !currentAddress.isEmpty else {
+            return false
+        }
+        guard let primaryAddress = getPrimaryWalletAddress() else {
+            return false
+        }
+        return currentAddress.lowercased() == primaryAddress.lowercased()
     }
 }
 
@@ -701,7 +733,7 @@ extension WalletManager {
         balanceProvider.refreshBalance()
         if isSelectedEVMAccount {
             try await fetchEVMBalance()
-//            try await fetchEVMTokenAndBalance()
+            try await fetchCustomBalance()
             return
         }
 
@@ -736,7 +768,7 @@ extension WalletManager {
         guard var tokenModel = tokenModel, let symbol = tokenModel.symbol else { return }
 
         let list = try await EVMAccountManager.shared.fetchTokens()
-
+        
         DispatchQueue.main.sync {
             log.info("[EVM] load balance success \(balance)")
             tokenModel.flowIdentifier = tokenModel.contractId
@@ -758,27 +790,33 @@ extension WalletManager {
             }
         }
     }
-
-//    private func fetchEVMTokenAndBalance() async throws {
-//        log.info("[EVM] fetch evm other token and balance")
-//        let list = try await EVMAccountManager.shared.fetchTokens()
-//        DispatchQueue.main.sync {
-//            log.info("[EVM] load evm token and balance")
-//            list.forEach { item in
-//                if item.flowBalance > 0 {
-//                    let result = self.evmSupportedCoins?.first(where: { model in
-//                        model.getAddress()?.lowercased() == item.address.lowercased()
-//                    })
-//                    if let result = result {
-//                        self.activatedCoins.append(result)
-//                    }else {
-//                        self.activatedCoins.append(item.toTokenModel())
-//                    }
-//                    self.coinBalances[item.symbol] = item.flowBalance
-//                }
-//            }
-//        }
-//    }
+    
+    private func fetchCustomBalance() async throws {
+        guard let evmAddress = EVMAccountManager.shared.selectedAccount?.showAddress else {
+            return
+        }
+        await customTokenManager.fetchAllEVMBalance()
+        let list = customTokenManager.list
+        DispatchQueue.main.sync {
+            list.forEach { token in
+                addCustomToken(token: token)
+            }
+        }
+    }
+    
+    func addCustomToken(token: CustomToken) {
+        
+        DispatchQueue.main.async {
+            self.activatedCoins.append(token.toToken())
+            let balance = token.balance ?? BigUInt(0)
+            let result = Utilities.formatToPrecision(
+                balance,
+                units: .custom(token.decimals),
+                formattingDecimals: token.decimals
+            ).doubleValue
+            self.coinBalances[token.symbol] = result
+        }
+    }
 
     func fetchAccessible() async throws {
         try await accessibleManager.fetchFT()

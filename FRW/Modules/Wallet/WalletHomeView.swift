@@ -463,7 +463,7 @@ struct WalletHomeView: View {
                 .visibility(vm.showBuyButton ? .visible : .gone)
 
                 Button {
-                    Router.route(to: RouteMap.Wallet.addToken)
+                    vm.onAddToken()
                 } label: {
                     Image("icon-wallet-coin-add")
                         .renderingMode(.template)

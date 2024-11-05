@@ -138,6 +138,11 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
 
         case .watchAsset:
             print("[Trust] watchAsset")
+            guard let data = extractMessage(json: json) else {
+                log.info("[Trust] data is missing")
+                return
+            }
+            handleWatchAsset(network: network, id: id, data: Data())
         case .addEthereumChain:
             log.info("[Trust] addEthereumChain")
         case .switchEthereumChain:
@@ -166,6 +171,7 @@ extension TrustJSMessageHandler {
             guard let self = self else {
                 return
             }
+            
             let address = webVC?.trustProvider?.config.ethereum.address ?? ""
 
             let title = webVC?.webView.title ?? "unknown"
@@ -325,16 +331,23 @@ extension TrustJSMessageHandler {
 
             Task {
                 do {
-                    let tix = try await FlowNetwork.sendTransaction(amount: receiveModel.amount, data: receiveModel.dataValue, toAddress: toAddr, gas: receiveModel.gasValue)
-                    let result = try await tix.onceSealed()
+                    let txid = try await FlowNetwork.sendTransaction(amount: receiveModel.amount, data: receiveModel.dataValue, toAddress: toAddr, gas: receiveModel.gasValue)
+                    let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
+                    TransactionManager.shared.newTransaction(holder: holder)
+                    let result = try await txid.onceSealed()
                     if result.isFailed {
                         HUD.error(title: "transaction failed")
                         self.cancel(id: id)
                         return
                     }
-                    let model = try await FlowNetwork.fetchEVMTransactionResult(txid: tix.hex)
+                    let model = try await FlowNetwork.fetchEVMTransactionResult(txid: txid.hex)
                     DispatchQueue.main.async {
-                        self.webVC?.webView.tw.send(network: .ethereum, result: model.hashString ?? "", to: id)
+                        self.webVC?.webView.tw
+                            .send(
+                                network: .ethereum,
+                                result: model.hashString?.addHexPrefix() ?? "",
+                                to: id
+                            )
                     }
                 } catch {
                     log.error("\(error)")
@@ -387,6 +400,11 @@ extension TrustJSMessageHandler {
         DispatchQueue.main.async {
             self.webVC?.webView.tw.send(network: .ethereum, error: "Canceled", to: id)
         }
+    }
+    
+    private func handleWatchAsset(network: ProviderNetwork, id: Int64, data: Data) {
+        let manager = WalletManager.shared.customTokenManager
+        
     }
 }
 

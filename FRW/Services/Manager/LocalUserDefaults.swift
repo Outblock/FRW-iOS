@@ -49,6 +49,8 @@ extension LocalUserDefaults {
         case whatIsBack
         case backupSheetNotAsk
         case checkCoa
+        
+        case customToken
     }
 
     enum FlowNetworkType: String, CaseIterable, Codable {
@@ -322,6 +324,28 @@ class LocalUserDefaults: ObservableObject {
         }
         get {
             return UserDefaults.standard.array(forKey: Keys.checkCoa.rawValue) as? [String] ?? []
+        }
+    }
+    
+    
+    var customToken: [CustomToken] {
+        set {
+            if let data = try? JSONEncoder().encode(newValue) {
+                UserDefaults.standard
+                    .set(data, forKey: Keys.customToken.rawValue)
+            } else {
+                UserDefaults.standard
+                    .removeObject(forKey: Keys.customToken.rawValue)
+            }
+        }
+        get {
+            if let data = UserDefaults.standard.data(forKey: Keys.customToken.rawValue),
+               let list = try? JSONDecoder().decode([CustomToken].self, from: data)
+            {
+                return list
+            } else {
+                return []
+            }
         }
     }
 }
