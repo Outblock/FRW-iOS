@@ -115,6 +115,7 @@ class TokenDetailViewModel: ObservableObject {
 
     @Published var showSwapButton: Bool = true
     @Published var showBuyButton: Bool = true
+    @Published var showDeleteToken: Bool = false
 
     @Published var showSheet: Bool = false
     var buttonAction: TokenDetailViewModel.Action = .none
@@ -244,6 +245,14 @@ extension TokenDetailViewModel {
         withAnimation(.easeOut(duration: 0.2)) {
             showSheet = true
         }
+    }
+    
+    func deleteCustomToken() {
+        guard let customToken = token.findCustomToken() else {
+            return
+        }
+        WalletManager.shared.customTokenManager.delete(token: customToken)
+        HUD.success(title: "successful".localized)
     }
 }
 
@@ -375,5 +384,8 @@ extension TokenDetailViewModel {
         } else {
             showBuyButton = false
         }
+        // delete custom token
+        showDeleteToken = token.findCustomToken() != nil
+        
     }
 }

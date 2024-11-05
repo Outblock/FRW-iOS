@@ -56,6 +56,15 @@ struct TokenDetailView: RouteableView {
                 MoveTokenView(tokenModel: vm.token, isPresent: $vm.showSheet)
             }
         }
+        .navigationBarItems(trailing: HStack(spacing: 6) {
+            Menu(systemImage: "ellipsis") {
+                Button("Delete EFT", systemImage: "trash") {
+                    vm.deleteCustomToken()
+                }
+            }
+            .foregroundStyle(Color.Theme.Background.icon)
+            .visibility(vm.showDeleteToken ? .visible : .gone)
+        })
     }
 
     var summaryView: some View {

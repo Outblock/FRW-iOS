@@ -782,17 +782,15 @@ extension WalletManager {
                     })
                     if let result = result {
                         self.activatedCoins.append(result)
-                    } else {
-                        self.activatedCoins.append(item.toTokenModel())
+                        self.coinBalances[item.symbol] = item.flowBalance
                     }
-                    self.coinBalances[item.symbol] = item.flowBalance
                 }
             }
         }
     }
     
     private func fetchCustomBalance() async throws {
-        guard let evmAddress = EVMAccountManager.shared.selectedAccount?.showAddress else {
+        guard (EVMAccountManager.shared.selectedAccount?.showAddress) != nil else {
             return
         }
         await customTokenManager.fetchAllEVMBalance()
@@ -815,6 +813,15 @@ extension WalletManager {
                 formattingDecimals: token.decimals
             ).doubleValue
             self.coinBalances[token.symbol] = result
+        }
+    }
+    
+    func deleteCustomToken(token: CustomToken) {
+        DispatchQueue.main.async {
+            self.activatedCoins.removeAll { model in
+                model.getAddress() == token.address && model.name == token.name
+            }
+            self.coinBalances[token.symbol] = nil
         }
     }
 

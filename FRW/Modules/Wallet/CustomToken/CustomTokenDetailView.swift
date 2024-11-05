@@ -15,7 +15,7 @@ struct CustomTokenDetailView: RouteableView {
     }
     
     var body: some View {
-        VStack {
+        VStack(spacing: 12) {
             CustomTokenDetailView
                 .Item(
                     title: "Token Contract Address".localized,
@@ -104,8 +104,7 @@ extension CustomTokenDetailView {
             decimals: 3,
             name: "Flow Test",
             symbol: "FLOW",
-            userId: "",
-            belongAddress: ""
+            belong: .evm
         )
     )
 }
