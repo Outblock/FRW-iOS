@@ -29,26 +29,28 @@ class JSMessageHandler: NSObject {
 
 extension JSMessageHandler: WKScriptMessageHandler {
     func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
+        let url = message.frameInfo.request.url ?? webVC?.webView.url
+        
         log.debug("did receive message")
-
+        
         if message.name == TrustWeb3Provider.scriptHandlerName {
             return
         }
-
+        
         switch JSListenerType(rawValue: message.name) {
         case .message:
             guard let msgString = message.body as? String else {
                 log.error("JSListenerType.message body invalid")
                 return
             }
-
-            handleMessage(msgString)
+            
+            handleMessage(msgString, url: url)
         case .flowTransaction:
             guard let msgString = message.body as? String else {
                 log.error("JSListenerType.flowTransaction body invalid")
                 return
             }
-
+            
             handleTransaction(msgString)
         default:
             log.error("can't handle message", context: message.body)
@@ -93,7 +95,7 @@ extension JSMessageHandler {
 }
 
 extension JSMessageHandler {
-    private func handleMessage(_ message: String) {
+    private func handleMessage(_ message: String, url: URL?) {
         if message.isEmpty || processingMessage == message {
             return
         }
@@ -115,7 +117,7 @@ extension JSMessageHandler {
                     handleService(message)
                 } else if jsonDict["type"] as? String == JSMessageType.response.rawValue {
                     log.debug("will handle view ready response")
-                    handleViewReadyResponse(message)
+                    handleViewReadyResponse(message, url: url)
                 } else {
                     log.warning("unknown message", context: message)
                 }
@@ -179,7 +181,7 @@ extension JSMessageHandler {
 // MARK: - Response
 
 extension JSMessageHandler {
-    private func handleViewReadyResponse(_ message: String) {
+    private func handleViewReadyResponse(_ message: String, url: URL?) {
         do {
             guard let data = message.data(using: .utf8) else {
                 log.error("decode message failed")
@@ -210,13 +212,13 @@ extension JSMessageHandler {
             switch fcl.serviceType {
             case .authn:
                 log.debug("will handle authn")
-                handleAuthn(message)
+                handleAuthn(message, url: url)
             case .authz:
                 log.debug("will handle authz")
-                handleAuthz(message)
+                handleAuthz(message, url: url)
             case .userSignature:
                 log.debug("will handle user signature")
-                handleUserSignature(message)
+                handleUserSignature(message, url: url)
             default:
                 log.error("unsupport service type", context: fcl.serviceType)
             }
@@ -225,7 +227,7 @@ extension JSMessageHandler {
         }
     }
 
-    private func handleAuthn(_ message: String) {
+    private func handleAuthn(_ message: String, url: URL?) {
         do {
             guard let data = message.data(using: .utf8) else {
                 log.error("decode message failed")
@@ -247,7 +249,7 @@ extension JSMessageHandler {
             let network = authnResponse.config?.client?.network ?? ""
             let chainID = Flow.ChainID(name: network)
             let vm = BrowserAuthnViewModel(title: title,
-                                           url: webVC?.webView.url?.host ?? "unknown",
+                                           url: url?.host ?? "unknown",
                                            logo: authnResponse.config?.app?.icon,
                                            walletAddress: WalletManager.shared.getPrimaryWalletAddress(),
                                            network: chainID) { [weak self] result in
@@ -282,7 +284,7 @@ extension JSMessageHandler {
         }
     }
 
-    private func handleAuthz(_ message: String) {
+    private func handleAuthz(_ message: String, url: URL?) {
         do {
             guard let data = message.data(using: .utf8) else {
                 log.error("decode message failed")
@@ -301,13 +303,13 @@ extension JSMessageHandler {
 
             if readyToSignEnvelope, authzResponse.isSignEnvelope {
                 log.debug("will sign envelope")
-                signEnvelope(authzResponse)
+                signEnvelope(authzResponse, url: url)
                 return
             }
 
             if authzResponse.isLinkAccount {
                 log.debug("will link account")
-                linkAccount(authzResponse)
+                linkAccount(authzResponse, url: url)
                 return
             }
 
@@ -317,13 +319,13 @@ extension JSMessageHandler {
 
             if authzResponse.isSignAuthz {
                 log.debug("will sign authz")
-                signAuthz(authzResponse)
+                signAuthz(authzResponse, url: url)
                 return
             }
 
             if authzResponse.isSignPayload {
                 log.debug("will sign payload")
-                signPayload(authzResponse)
+                signPayload(authzResponse, url: url)
                 return
             }
 
@@ -333,7 +335,7 @@ extension JSMessageHandler {
         }
     }
 
-    private func handleUserSignature(_ message: String) {
+    private func handleUserSignature(_ message: String, url: URL?) {
         do {
             guard let data = message.data(using: .utf8) else {
                 log.error("decode message failed")
@@ -351,7 +353,7 @@ extension JSMessageHandler {
             log.debug("handle user signature, uid: \(response.uniqueId())")
 
             let title = response.config?.app?.title ?? webVC?.webView.title ?? "unknown"
-            let url = webVC?.webView.url?.host ?? "unknown"
+            let url = url?.host ?? "unknown"
             let vm = BrowserSignMessageViewModel(title: title, url: url, logo: response.config?.app?.icon, cadence: response.body?.message ?? "") { [weak self] result in
                 guard let self = self else {
                     return
@@ -372,10 +374,10 @@ extension JSMessageHandler {
 }
 
 extension JSMessageHandler {
-    private func signAuthz(_ authzResponse: FCLAuthzResponse) {
+    private func signAuthz(_ authzResponse: FCLAuthzResponse, url: URL?) {
         let title = authzResponse.config?.app?.title ?? webVC?.webView.title ?? "unknown"
-        let url = webVC?.webView.url?.host ?? "unknown"
-        let vm = BrowserAuthzViewModel(title: title, url: url, logo: authzResponse.config?.app?.icon,
+        let urlHost = url?.host ?? "unknown"
+        let vm = BrowserAuthzViewModel(title: title, url: urlHost, logo: authzResponse.config?.app?.icon,
                                        cadence: authzResponse.body.cadence,
                                        arguments: authzResponse.body.voucher.arguments) { [weak self] result in
             guard let self = self else {
@@ -384,7 +386,7 @@ extension JSMessageHandler {
 
             DispatchQueue.main.async {
                 if result {
-                    self.processingAuthzTransaction = AuthzTransaction(url: self.webVC?.webView.url?.absoluteString, title: self.webVC?.webView.title, voucher: authzResponse.body.voucher)
+                    self.processingAuthzTransaction = AuthzTransaction(url: url?.absoluteString, title: self.webVC?.webView.title, voucher: authzResponse.body.voucher)
                     self.didConfirmSignPayload(authzResponse)
                 }
             }
@@ -394,9 +396,9 @@ extension JSMessageHandler {
         Router.route(to: RouteMap.Explore.authz(vm))
     }
 
-    private func linkAccount(_ authzResponse: FCLAuthzResponse) {
+    private func linkAccount(_ authzResponse: FCLAuthzResponse, url: URL?) {
         let title = authzResponse.config?.app?.title ?? webVC?.webView.title ?? "unknown"
-        let url = webVC?.webView.url?.host ?? "unknown"
+        let url = url?.host ?? "unknown"
         let logo = authzResponse.config?.app?.icon ?? ""
 
         let vm = ChildAccountLinkViewModel(fromTitle: title, url: url, logo: logo) { [weak self] result in
@@ -416,9 +418,9 @@ extension JSMessageHandler {
         Router.route(to: RouteMap.Explore.linkChildAccount(vm))
     }
 
-    private func signPayload(_ authzResponse: FCLAuthzResponse) {
+    private func signPayload(_ authzResponse: FCLAuthzResponse, url: URL?) {
         let title = authzResponse.config?.app?.title ?? webVC?.webView.title ?? "unknown"
-        let url = webVC?.webView.url?.host ?? "unknown"
+        let url = url?.host ?? "unknown"
         let vm = BrowserAuthzViewModel(title: title, url: url, logo: authzResponse.config?.app?.icon,
                                        cadence: authzResponse.body.cadence,
                                        arguments: authzResponse.body.voucher.arguments) { [weak self] result in
@@ -449,8 +451,7 @@ extension JSMessageHandler {
         }
     }
 
-    private func signEnvelope(_ authzResponse: FCLAuthzResponse) {
-        let url = webVC?.webView.url?.absoluteString
+    private func signEnvelope(_ authzResponse: FCLAuthzResponse, url: URL?) {
         let title = webVC?.webView.title
 
         Task {
@@ -461,7 +462,7 @@ extension JSMessageHandler {
             DispatchQueue.main.async {
                 self.webVC?.postAuthzEnvelopeSignResponse(sign: sign)
 
-                let authzTransaction = AuthzTransaction(url: url, title: title, voucher: authzResponse.body.voucher)
+                let authzTransaction = AuthzTransaction(url: url?.absoluteString, title: title, voucher: authzResponse.body.voucher)
                 self.processingAuthzTransaction = authzTransaction
 
                 self.readyToSignEnvelope = false

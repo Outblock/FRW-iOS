@@ -92,6 +92,8 @@ extension TrustJSMessageHandler {
 extension TrustJSMessageHandler: WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         let json = message.json
+        let url = message.frameInfo.request.url ?? webVC?.webView.url
+
         guard let method = extractMethod(json: json),
               let id = json["id"] as? Int64,
               let network = extractNetwork(json: json)
@@ -103,7 +105,6 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
         switch method {
         case .requestAccounts:
             log.info("[Trust] requestAccounts")
-            let url = message.frameInfo.request.url ?? webVC?.webView.url
             handleRequestAccounts(url: url, network: network, id: id)
         case .signRawTransaction:
             log.info("[Trust] signRawTransaction")
@@ -114,7 +115,7 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
                 log.info("[Trust] data is missing")
                 return
             }
-            handleSendTransaction(network: network, id: id, info: obj)
+            handleSendTransaction(url: url, network: network, id: id, info: obj)
         case .signMessage:
             log.info("[Trust] signMessage")
 
@@ -124,13 +125,13 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
                 print("data is missing")
                 return
             }
-            handleSignTypedMessage(id: id, data: data, raw: raw)
+            handleSignTypedMessage(url: url, id: id, data: data, raw: raw)
         case .signPersonalMessage:
             guard let data = extractMessage(json: json) else {
                 log.info("[Trust] data is missing")
                 return
             }
-            handleSignPersonal(network: network, id: id, data: data, addPrefix: true)
+            handleSignPersonal(url: url, network: network, id: id, data: data, addPrefix: true)
         case .sendTransaction:
             log.info("[Trust] sendTransaction")
 
@@ -206,7 +207,7 @@ extension TrustJSMessageHandler {
         MoveAssetsAction.shared.startBrowserWithMoveAssets(appName: webVC?.webView.title, callback: callback)
     }
     
-    private func handleSignPersonal(network: ProviderNetwork, id: Int64, data: Data, addPrefix _: Bool) {
+    private func handleSignPersonal(url: URL?, network: ProviderNetwork, id: Int64, data: Data, addPrefix _: Bool) {
         Task {
             await TrustJSMessageHandler.checkCoa()
         }
@@ -214,7 +215,7 @@ extension TrustJSMessageHandler {
         if title.isEmpty {
             title = "unknown"
         }
-        let url = webVC?.webView.url
+
         let vm = BrowserSignMessageViewModel(title: title,
                                              url: url?.absoluteString ?? "unknown",
                                              logo: url?.absoluteString.toFavIcon()?.absoluteString,
@@ -250,7 +251,7 @@ extension TrustJSMessageHandler {
         Router.route(to: RouteMap.Explore.signMessage(vm))
     }
     
-    func handleSignTypedMessage(id: Int64, data: Data, raw: String) {
+    func handleSignTypedMessage(url: URL?, id: Int64, data: Data, raw: String) {
         Task {
             await TrustJSMessageHandler.checkCoa()
         }
@@ -258,7 +259,7 @@ extension TrustJSMessageHandler {
         if title.isEmpty {
             title = "unknown"
         }
-        let url = webVC?.webView.url
+
         let vm = BrowserSignTypedMessageViewModel(title: title, urlString: url?.absoluteString ?? "unknown", logo: url?.absoluteString.toFavIcon()?.absoluteString, rawString: raw) { [weak self] result in
             guard let self = self else {
                 return
@@ -289,12 +290,11 @@ extension TrustJSMessageHandler {
         Router.route(to: RouteMap.Explore.signTypedMessage(vm))
     }
 
-    private func handleSendTransaction(network _: ProviderNetwork, id: Int64, info: [String: Any]) {
+    private func handleSendTransaction(url: URL?, network _: ProviderNetwork, id: Int64, info: [String: Any]) {
         var title = webVC?.webView.title ?? "unknown"
         if title.isEmpty {
             title = "unknown"
         }
-        let url = webVC?.webView.url
 
         let originCadence = CadenceManager.shared.current.evm?.callContract?.toFunc() ?? ""
 
