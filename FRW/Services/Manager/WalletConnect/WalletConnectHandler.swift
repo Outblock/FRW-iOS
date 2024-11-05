@@ -84,6 +84,11 @@ struct WalletConnectHandler {
         let handle = current(request: request)
         handle.handleSignTypedDataV4(request: request, confirm: confirm, cancel: cancel)
     }
+    
+    func handleWatchAsset(request: WalletConnectSign.Request,confirm: @escaping (String) -> Void, cancel: @escaping () -> Void) {
+        let handle = current(request: request)
+        handle.handleWatchAsset(request: request, confirm: confirm, cancel: cancel)
+    }
 }
 
 extension WalletConnectHandler {

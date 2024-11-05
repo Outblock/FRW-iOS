@@ -216,6 +216,7 @@ struct CustomToken: Codable {
     var belong: CustomToken.Belong = .flow
     // not store,
     var balance: BigUInt?
+    var icon: String? = nil
     
     init(
         address: String,
@@ -224,7 +225,8 @@ struct CustomToken: Codable {
         symbol: String,
         flowIdentifier: String? = nil,
         belong: CustomToken.Belong = .evm,
-        balance: BigUInt? = nil
+        balance: BigUInt? = nil,
+        icon: String? = nil
     ) {
         self.address = address
         self.decimals = decimals
@@ -256,6 +258,16 @@ struct CustomToken: Codable {
             website: nil,
             evmAddress: nil
         )
+    }
+    
+    var balanceValue: String {
+        let balance = balance ?? BigUInt(0)
+        let result = Utilities.formatToPrecision(
+            balance,
+            units: .custom(decimals),
+            formattingDecimals: decimals
+        )
+        return result
     }
 }
 

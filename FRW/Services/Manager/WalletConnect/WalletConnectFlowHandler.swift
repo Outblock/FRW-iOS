@@ -54,4 +54,12 @@ struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
     func handleSignTypedDataV4(request: Request, confirm: @escaping (String) -> Void, cancel: @escaping () -> Void) {
         cancel()
     }
+    
+    func handleWatchAsset(
+        request: Request,
+        confirm: @escaping (String) -> Void,
+        cancel: @escaping () -> Void
+    ) {
+        cancel()
+    }
 }

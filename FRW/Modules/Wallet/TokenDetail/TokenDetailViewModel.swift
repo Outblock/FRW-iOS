@@ -252,7 +252,7 @@ extension TokenDetailViewModel {
             return
         }
         WalletManager.shared.customTokenManager.delete(token: customToken)
-        HUD.success(title: "successful".localized)
+        HUD.success(title: "")
     }
 }
 

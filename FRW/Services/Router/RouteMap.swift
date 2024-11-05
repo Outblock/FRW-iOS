@@ -15,6 +15,7 @@ enum RouteMap {}
 
 typealias EmptyClosure = () -> Void
 typealias SwitchNetworkClosure = (LocalUserDefaults.FlowNetworkType) -> Void
+typealias BoolClosure = (Bool) -> Void
 
 // MARK: - Restore Login
 
@@ -205,6 +206,7 @@ extension RouteMap {
         case chooseChild(MoveAccountsViewModel)
         case addCustomToken
         case showCustomToken(CustomToken)
+        case addTokenSheet(CustomToken,BoolClosure)
     }
 }
 
@@ -296,6 +298,14 @@ extension RouteMap.Wallet: RouterTarget {
             navi.push(content: AddCustomTokenView())
         case .showCustomToken(let token):
             navi.push(content: CustomTokenDetailView(token: token))
+        case .addTokenSheet(let token, let callback):
+            let vc = PresentHostingController(
+                rootView: AddTokenSheetView(
+                    customToken: token,
+                    callback: callback
+                )
+            )
+            navi.present(vc, completion: nil)
         }
     }
 }

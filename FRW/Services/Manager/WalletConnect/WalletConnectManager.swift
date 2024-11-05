@@ -553,6 +553,8 @@ extension WalletConnectManager {
             handleSignTypedData(sessionRequest)
         case WalletConnectEVMMethod.signTypedDataV4.rawValue:
             handleSignTypedData(sessionRequest)
+        case WalletConnectEVMMethod.watchAsset.rawValue:
+            handleWatchAsset(sessionRequest)
         default:
             rejectRequest(request: sessionRequest, reason: "unspport method")
         }
@@ -602,13 +604,36 @@ extension WalletConnectManager {
             self.rejectRequest(request: sessionRequest)
         }
     }
+    
+    private func handleWatchAsset(_ sessionRequest: WalletConnectSign.Request) {
+        handler.handleWatchAsset(request: sessionRequest) { result in
+            Task {
+                do {
+                    try await Sign.instance
+                        .respond(
+                            topic: sessionRequest.topic,
+                            requestId: sessionRequest.id,
+                            response: .response(AnyCodable(result))
+                        )
+                } catch {
+                    self.rejectRequest(request: sessionRequest)
+                    log.error("[EVM] Add Custom Token Error: \(error)")
+                }
+            }
+            
+        } cancel: {
+            log.error("[EVM] invalid token")
+            self.rejectRequest(request: sessionRequest)
+        }
+
+    }
 }
 
 // MARK: - Action
 
 extension WalletConnectManager {
     private func approveSession(proposal: Session.Proposal) {
-        guard let account = WalletManager.shared.getPrimaryWalletAddress() else {
+        guard WalletManager.shared.getPrimaryWalletAddress() != nil else {
             return
         }
 
