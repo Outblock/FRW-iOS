@@ -90,7 +90,7 @@ extension TrustJSMessageHandler {
 }
 
 extension TrustJSMessageHandler: WKScriptMessageHandler {
-    func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         let json = message.json
         guard let method = extractMethod(json: json),
               let id = json["id"] as? Int64,
@@ -103,7 +103,8 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
         switch method {
         case .requestAccounts:
             log.info("[Trust] requestAccounts")
-            handleRequestAccounts(network: network, id: id)
+            let url = message.frameInfo.request.url ?? webVC?.webView.url
+            handleRequestAccounts(url: url, network: network, id: id)
         case .signRawTransaction:
             log.info("[Trust] signRawTransaction")
         case .signTransaction:
@@ -166,7 +167,7 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
 }
 
 extension TrustJSMessageHandler {
-    private func handleRequestAccounts(network: ProviderNetwork, id: Int64) {
+    private func handleRequestAccounts(url: URL?, network: ProviderNetwork, id: Int64) {
         let callback = { [weak self] in
             guard let self = self else {
                 return
@@ -176,7 +177,6 @@ extension TrustJSMessageHandler {
 
             let title = webVC?.webView.title ?? "unknown"
             let chainID = LocalUserDefaults.shared.flowNetwork.toFlowType()
-            let url = webVC?.webView.url
             let vm = BrowserAuthnViewModel(title: title,
                                            url: url?.host ?? "unknown",
                                            logo: url?.absoluteString.toFavIcon()?.absoluteString,
