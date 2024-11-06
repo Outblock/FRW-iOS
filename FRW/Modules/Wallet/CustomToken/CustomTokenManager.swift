@@ -66,10 +66,17 @@ class CustomTokenManager: ObservableObject {
     func isExist(token: CustomToken) -> Bool {
         queue.sync {
             let result = allTokens.filter { model in
-                token.belongAddress == model.belongAddress && token.network == model.network && token.belong == model.belong && token.userId == model.userId
+                token.belongAddress == model.belongAddress && token.network == model.network && token.belong == model.belong && token.userId == model.userId && model.address == token.address
             }
             return result.count > 0
         }
+    }
+    
+    func allowDelete(token: CustomToken) -> Bool {
+        guard !isInWhite(token: token) else {
+            return false
+        }
+        return isExist(token: token)
     }
     
     func add(token: CustomToken) async {
@@ -87,9 +94,22 @@ class CustomTokenManager: ObservableObject {
         WalletManager.shared.addCustomToken(token: tmpToken)
     }
     
+    func delete(token: CustomToken) {
+        queue.sync {
+            allTokens.removeAll { model in
+                token.belongAddress == model.belongAddress && token.network == model.network && token.belong == model.belong && token.userId == model.userId && model.address == token.address
+            }
+            LocalUserDefaults.shared.customToken = allTokens
+        }
+        refresh()
+        WalletManager.shared.deleteCustomToken(token: token)
+    }
+    
     private func update(token: CustomToken) {
         queue.sync {
-            let index = allTokens.firstIndex { $0.address == token.address }
+            let index = allTokens.firstIndex { model in
+                token.belongAddress == model.belongAddress && token.network == model.network && token.belong == model.belong && token.userId == model.userId && model.address == token.address
+            }
             guard let index  else {
                 return
             }
@@ -102,9 +122,6 @@ class CustomTokenManager: ObservableObject {
 extension CustomTokenManager {
     func findToken(evmAddress: String) async throws -> CustomToken? {
         let evmAddress = evmAddress.addHexPrefix()
-        guard let uid = UserManager.shared.activatedUID, let belongAddress = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
-            throw AddCustomTokenError.invalidProfile
-        }
         
         guard let web3 = try await FlowProvider.Web3.default() else{
             throw AddCustomTokenError.providerFailed
@@ -133,8 +150,6 @@ extension CustomTokenManager {
             name: name,
             symbol: symbol,
             flowIdentifier: flowIdentifier,
-            userId: uid,
-            belongAddress: belongAddress,
             belong: .evm
         )
         return token
@@ -201,6 +216,31 @@ struct CustomToken: Codable {
     var belong: CustomToken.Belong = .flow
     // not store,
     var balance: BigUInt?
+    var icon: String? = nil
+    
+    init(
+        address: String,
+        decimals: Int,
+        name: String,
+        symbol: String,
+        flowIdentifier: String? = nil,
+        belong: CustomToken.Belong = .evm,
+        balance: BigUInt? = nil,
+        icon: String? = nil
+    ) {
+        self.address = address
+        self.decimals = decimals
+        self.name = name
+        self.symbol = symbol
+        self.belong = belong
+        self.balance = balance
+        self.flowIdentifier = flowIdentifier
+        
+        self.userId = UserManager.shared.activatedUID ?? ""
+        self.belongAddress = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? ""
+        self.network = LocalUserDefaults.shared.flowNetwork
+        
+    }
     
     func toToken() -> TokenModel {
         TokenModel(
@@ -218,6 +258,26 @@ struct CustomToken: Codable {
             website: nil,
             evmAddress: nil
         )
+    }
+    
+    var balanceValue: String {
+        let balance = balance ?? BigUInt(0)
+        let result = Utilities.formatToPrecision(
+            balance,
+            units: .custom(decimals),
+            formattingDecimals: decimals
+        )
+        return result
+    }
+}
+
+extension TokenModel {
+    func findCustomToken() -> CustomToken? {
+        let result = WalletManager.shared.customTokenManager.list
+            .filter {
+                $0.address == getAddress() && $0.name == name
+            }.first
+        return result
     }
 }
 

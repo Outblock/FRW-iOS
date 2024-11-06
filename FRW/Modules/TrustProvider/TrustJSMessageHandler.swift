@@ -140,11 +140,12 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
 
         case .watchAsset:
             print("[Trust] watchAsset")
-            guard let data = extractMessage(json: json) else {
-                log.info("[Trust] data is missing")
+            guard let obj = extractObject(json: json)
+            else {
+                log.info("[Trust] data is missing\(method)")
                 return
             }
-            handleWatchAsset(network: network, id: id, data: Data())
+            handleWatchAsset(network: network, id: id, json: obj)
         case .addEthereumChain:
             log.info("[Trust] addEthereumChain")
         case .switchEthereumChain:
@@ -402,9 +403,31 @@ extension TrustJSMessageHandler {
         }
     }
     
-    private func handleWatchAsset(network: ProviderNetwork, id: Int64, data: Data) {
+    private func handleWatchAsset(network: ProviderNetwork, id: Int64, json: [String: Any]) {
         let manager = WalletManager.shared.customTokenManager
-        
+        guard let contract = json["contract"] as? String else {
+            cancel(id: id)
+            return
+        }
+        Task {
+            HUD.loading()
+            guard let token = try await manager.findToken(evmAddress: contract) else {
+                HUD.dismissLoading()
+                DispatchQueue.main.async {
+                    self.webVC?.webView.tw
+                        .send(network: .ethereum, result: "false", to: id)
+                }
+                return
+            }
+            HUD.dismissLoading()
+            let callback: BoolClosure = { result in
+                DispatchQueue.main.async {
+                    self.webVC?.webView.tw
+                        .send(network: .ethereum, result: result ? "true" : "false", to: id)
+                }
+            }
+            Router.route(to: RouteMap.Wallet.addTokenSheet(token, callback))
+        }
     }
 }
 

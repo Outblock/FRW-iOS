@@ -160,7 +160,7 @@ struct BackupListView: RouteableView {
     var phraseView: some View {
         VStack {
             HStack {
-                Text("Seed Phease Backup".localized)
+                Text("Seed Phrase Backup".localized)
                     .font(.inter(size: 16, weight: .semibold))
                     .foregroundStyle(Color.Theme.Text.black8)
                 Spacer()

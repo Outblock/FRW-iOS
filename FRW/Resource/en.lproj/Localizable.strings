@@ -1043,3 +1043,6 @@ Please create backups for your wallet to ensure you retain access to your Flow a
 "Token Decimal" = "Token Decimal";
 "Flow Identifier" = "Flow Identifier";
 "Add Custom Token" = "Add Custom Token";
+"Seed Phrase Backup" = "Seed Phrase Backup";
+"Add Suggested Token" = "Add Suggested Token";
+"like_import_token" = "Would you like to import this token？";

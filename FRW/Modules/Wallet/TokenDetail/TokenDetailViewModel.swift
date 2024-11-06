@@ -115,6 +115,7 @@ class TokenDetailViewModel: ObservableObject {
 
     @Published var showSwapButton: Bool = true
     @Published var showBuyButton: Bool = true
+    @Published var showDeleteToken: Bool = false
 
     @Published var showSheet: Bool = false
     var buttonAction: TokenDetailViewModel.Action = .none
@@ -245,6 +246,14 @@ extension TokenDetailViewModel {
             showSheet = true
         }
     }
+    
+    func deleteCustomToken() {
+        guard let customToken = token.findCustomToken() else {
+            return
+        }
+        WalletManager.shared.customTokenManager.delete(token: customToken)
+        HUD.success(title: "")
+    }
 }
 
 // MARK: - Fetch & Refresh
@@ -355,7 +364,7 @@ extension TokenDetailViewModel {
         // Swap
         if (RemoteConfigManager.shared.config?.features.swap ?? false) == true {
             // don't show when current is Linked account
-            if ChildAccountManager.shared.selectedChildAccount != nil {
+            if ChildAccountManager.shared.selectedChildAccount != nil || ChildAccountManager.shared.selectedChildAccount != nil {
                 showSwapButton = false
             } else {
                 showSwapButton = true
@@ -375,5 +384,8 @@ extension TokenDetailViewModel {
         } else {
             showBuyButton = false
         }
+        // delete custom token
+        showDeleteToken = token.findCustomToken() != nil
+        
     }
 }

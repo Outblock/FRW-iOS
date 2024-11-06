@@ -22,6 +22,7 @@ enum WalletConnectEVMMethod: String, Codable, CaseIterable {
     case signTypedDataV3 = "eth_signTypedData_v3"
     case signTypedDataV4 = "eth_signTypedData_v4"
     case switchEthereumChain = "wallet_switchEthereumChain"
+    case watchAsset = "wallet_watchAsset"
 }
 
 extension Flow.ChainID {
@@ -255,6 +256,36 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
             cancel()
         }
     }
+    
+    func handleWatchAsset(
+        request: Request,
+        confirm: @escaping (String) -> Void,
+        cancel: @escaping () -> Void
+    ) {
+        guard let model = try? request.params.get(WalletConnectEVMHandler.WatchAsset.self), let address = model.options?.address else {
+            cancel()
+            return
+        }
+        Task {
+            
+            HUD.loading()
+            let manager = WalletManager.shared.customTokenManager
+            guard let token = try await manager.findToken(evmAddress: address) else {
+                HUD.dismissLoading()
+                DispatchQueue.main.async {
+                    confirm("false")
+                }
+                return
+            }
+            HUD.dismissLoading()
+            let callback: BoolClosure = { result in
+                DispatchQueue.main.async {
+                    confirm(result ? "true" : "false")
+                }
+            }
+            Router.route(to: RouteMap.Wallet.addTokenSheet(token, callback))
+        }
+    }
 }
 
 extension WalletConnectEVMHandler {
@@ -267,4 +298,20 @@ extension WalletConnectEVMHandler {
     private func signWithMessage(data: Data) -> Data? {
         return WalletManager.shared.signSync(signableData: data)
     }
+}
+
+extension WalletConnectEVMHandler {
+    private struct WatchAsset: Codable {
+        struct Info: Codable {
+            let address: String?
+        }
+        let options: WatchAsset.Info?
+        let type: String?
+        
+        var isERC20: Bool {
+            type?.lowercased() == "ERC20".lowercased()
+        }
+    }
+    
+
 }
