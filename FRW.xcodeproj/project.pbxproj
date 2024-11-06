@@ -1180,6 +1180,8 @@
 		4EA0D0A72A7A5AED004C6A19 /* FRWAPI+ChildAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA0D0A52A7A5AED004C6A19 /* FRWAPI+ChildAccount.swift */; };
 		4EA0D0AC2A7A61B5004C6A19 /* AppPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA0D0AB2A7A61B5004C6A19 /* AppPlaceholder.swift */; };
 		4EA0D0AD2A7A61B5004C6A19 /* AppPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA0D0AB2A7A61B5004C6A19 /* AppPlaceholder.swift */; };
+		4EA5F1462CDAF811003CA790 /* EVMEnableSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA5F1452CDAF811003CA790 /* EVMEnableSheetView.swift */; };
+		4EA5F1472CDAF811003CA790 /* EVMEnableSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA5F1452CDAF811003CA790 /* EVMEnableSheetView.swift */; };
 		4EA820C7286354E200DF36A8 /* remote_config_defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4EA820C5286354E200DF36A8 /* remote_config_defaults.plist */; };
 		4EAD14162B61DD940076B318 /* MultiBackupPasskeyTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAD14152B61DD940076B318 /* MultiBackupPasskeyTarget.swift */; };
 		4EAD14172B61DD940076B318 /* MultiBackupPasskeyTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAD14152B61DD940076B318 /* MultiBackupPasskeyTarget.swift */; };
@@ -2462,6 +2464,7 @@
 		4EA0D0A22A7A357E004C6A19 /* LLSegmenControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLSegmenControl.swift; sourceTree = "<group>"; };
 		4EA0D0A52A7A5AED004C6A19 /* FRWAPI+ChildAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FRWAPI+ChildAccount.swift"; sourceTree = "<group>"; };
 		4EA0D0AB2A7A61B5004C6A19 /* AppPlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPlaceholder.swift; sourceTree = "<group>"; };
+		4EA5F1452CDAF811003CA790 /* EVMEnableSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EVMEnableSheetView.swift; sourceTree = "<group>"; };
 		4EA820C5286354E200DF36A8 /* remote_config_defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = remote_config_defaults.plist; sourceTree = "<group>"; };
 		4EAD14152B61DD940076B318 /* MultiBackupPasskeyTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupPasskeyTarget.swift; sourceTree = "<group>"; };
 		4EAF31B82845E501002AF489 /* NFTSegmentControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTSegmentControl.swift; sourceTree = "<group>"; };
@@ -4862,6 +4865,7 @@
 			children = (
 				4E63A5682B8B9D1000BBD15F /* EVMEnableView.swift */,
 				4EBDF2BE2BFB8DF700E56968 /* EVMTagView.swift */,
+				4EA5F1452CDAF811003CA790 /* EVMEnableSheetView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -7422,6 +7426,7 @@
 				6AD3581A28AF700C00BC510A /* NFTUIKitTopSelectionHeaderView.swift in Sources */,
 				1575A74028B29BA200ADC513 /* SVGWebUIView.swift in Sources */,
 				4ED21F38284E2E6E00320AD0 /* ShareSheet.swift in Sources */,
+				4EA5F1472CDAF811003CA790 /* EVMEnableSheetView.swift in Sources */,
 				6A32213A2927B49B000B8E1F /* StakingDetailView.swift in Sources */,
 				6AF4A6C828D4725300B12FAB /* FlownsResponses.swift in Sources */,
 				6A45898D28C1E05100B1024B /* BrowserResponses.swift in Sources */,
@@ -8218,6 +8223,7 @@
 				6AD3581928AF700C00BC510A /* NFTUIKitTopSelectionHeaderView.swift in Sources */,
 				1575A73F28B29BA200ADC513 /* SVGWebUIView.swift in Sources */,
 				15C58C1E2868A4EE00BD4FC6 /* ShareSheet.swift in Sources */,
+				4EA5F1462CDAF811003CA790 /* EVMEnableSheetView.swift in Sources */,
 				6A3221392927B49B000B8E1F /* StakingDetailView.swift in Sources */,
 				6AF4A6C728D4725300B12FAB /* FlownsResponses.swift in Sources */,
 				6A45898C28C1E05100B1024B /* BrowserResponses.swift in Sources */,

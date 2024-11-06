@@ -237,6 +237,17 @@ extension BrowserViewController {
     }
 
     @objc private func onMoveAssets() {
+
+        guard EVMAccountManager.shared.hasAccount else {
+            let callback: BoolClosure = { [weak self]result in
+                if result {
+                    self?.onMoveAssets()
+                }
+            }
+            Router.route(to: RouteMap.Wallet.enableEVMSheet(callback))
+            return
+        }
+        
         if MoveAssetsAction.shared.allowMoveAssets {
             let vc = PresentHostingController(rootView: MoveAssetsView())
             navigationController?.present(vc, completion: nil)

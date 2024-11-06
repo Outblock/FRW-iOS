@@ -292,7 +292,17 @@ extension WalletConnectManager {
         let info = handler.sessionInfo(sessionProposal: sessionProposal)
         var address = WalletManager.shared.getPrimaryWalletAddress()
         if handler.currentType(sessionProposal: sessionProposal) == .evm {
-            // TODO: if evm not enable
+            guard EVMAccountManager.shared.hasAccount else {
+                let callback: BoolClosure = { [weak self] result in
+                    if result {
+                        self?.handleSessionProposal(sessionProposal)
+                    }else {
+                        self?.rejectSession(proposal: sessionProposal)
+                    }
+                }
+                Router.route(to: RouteMap.Wallet.enableEVMSheet(callback))
+                return
+            }
             address = EVMAccountManager.shared.accounts.first?.showAddress ?? ""
         }
         currentSessionInfo = info

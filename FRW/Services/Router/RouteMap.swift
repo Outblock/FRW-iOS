@@ -207,6 +207,7 @@ extension RouteMap {
         case addCustomToken
         case showCustomToken(CustomToken)
         case addTokenSheet(CustomToken,BoolClosure)
+        case enableEVMSheet(BoolClosure)
     }
 }
 
@@ -304,6 +305,11 @@ extension RouteMap.Wallet: RouterTarget {
                     customToken: token,
                     callback: callback
                 )
+            )
+            navi.present(vc, completion: nil)
+        case .enableEVMSheet(let callback):
+            let vc = PresentHostingController(
+                rootView: EVMEnableSheetView(callback: callback)
             )
             navi.present(vc, completion: nil)
         }

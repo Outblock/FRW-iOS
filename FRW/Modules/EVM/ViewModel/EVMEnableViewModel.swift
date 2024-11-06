@@ -29,7 +29,10 @@ class EVMEnableViewModel: ObservableObject {
 
         Task {
             do {
-                state = .loading
+                DispatchQueue.main.async {
+                    self.state = .loading
+                }
+                
                 try await EVMAccountManager.shared.enableEVM()
                 await EVMAccountManager.shared.refreshSync()
                 EVMAccountManager.shared.select(EVMAccountManager.shared.accounts.first)
@@ -37,7 +40,9 @@ class EVMEnableViewModel: ObservableObject {
                 Router.pop()
                 ConfettiManager.show()
             } catch {
-                state = .enabled
+                DispatchQueue.main.sync {
+                    self.state = .enabled
+                }
                 HUD.error(title: "Enable EVM failed.")
                 log.error("Enable EVM failer: \(error)")
             }

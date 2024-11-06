@@ -925,7 +925,7 @@
 "switch_to_mainnet" = "Switch to Mainnet";
 "wrong_network_des" = "You can only perform this operation on Mainnet";
 "enable_path" = "Enable the path to ";
-"enable_evm_tip" = "Manage Multi VM assets seamlessly.";
+"enable_evm_tip" = "Manage your multi-VM assets seamlessly.";
 "receiving_qr" = "Receiving QR Code";
 "current_chain" = "Current Network";
 "move" = "Move";

@@ -404,6 +404,10 @@ extension TrustJSMessageHandler {
     }
     
     private func handleWatchAsset(network: ProviderNetwork, id: Int64, json: [String: Any]) {
+        guard EVMAccountManager.shared.selectedAccount != nil else {
+            
+            return
+        }
         let manager = WalletManager.shared.customTokenManager
         guard let contract = json["contract"] as? String else {
             cancel(id: id)

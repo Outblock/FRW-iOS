@@ -37,6 +37,11 @@ struct WalletConnectHandler {
         }
         return flowHandler
     }
+    
+    func isEVM(with sessionProposal: Session.Proposal) -> Bool {
+        let namespaces = namespaceTag(sessionProposal: sessionProposal)
+        return namespaces.contains(EVMHandler.nameTag)
+    }
 
     func isAllowedSession(sessionProposal: Session.Proposal) -> Bool {
         let namespaces = namespaceTag(sessionProposal: sessionProposal)
