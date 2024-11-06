@@ -364,7 +364,7 @@ extension TokenDetailViewModel {
         // Swap
         if (RemoteConfigManager.shared.config?.features.swap ?? false) == true {
             // don't show when current is Linked account
-            if ChildAccountManager.shared.selectedChildAccount != nil {
+            if ChildAccountManager.shared.selectedChildAccount != nil || ChildAccountManager.shared.selectedChildAccount != nil {
                 showSwapButton = false
             } else {
                 showSwapButton = true
