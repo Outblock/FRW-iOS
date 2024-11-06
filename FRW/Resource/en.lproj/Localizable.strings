@@ -1046,3 +1046,4 @@ Please create backups for your wallet to ensure you retain access to your Flow a
 "Seed Phrase Backup" = "Seed Phrase Backup";
 "Add Suggested Token" = "Add Suggested Token";
 "like_import_token" = "Would you like to import this token？";
+"invalid_erc20" = "Invalid ERC20 address";
