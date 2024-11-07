@@ -90,6 +90,11 @@ struct EVMEnableSheetView: RouteableView & PresentActionDelegate {
     }
     
     private func onClose() {
+        callback(false)
+        backAction()
+    }
+    
+    private func backAction() {
         Router.dismiss()
     }
     
@@ -112,7 +117,8 @@ struct EVMEnableSheetView: RouteableView & PresentActionDelegate {
                 try await EVMAccountManager.shared.enableEVM()
                 await EVMAccountManager.shared.refreshSync()
                 EVMAccountManager.shared.select(EVMAccountManager.shared.accounts.first)
-                onClose()
+                callback(true)
+                backAction()
             } catch {
                 HUD.error(title: "Enable EVM failed.")
                 log.error("Enable EVM failer: \(error)")

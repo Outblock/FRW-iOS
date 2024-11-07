@@ -284,10 +284,6 @@ extension WalletConnectManager {
             return
         }
 
-        if pairings.contains(where: { $0.peer == sessionProposal.proposer }) {
-            approveSession(proposal: sessionProposal)
-            return
-        }
 
         let info = handler.sessionInfo(sessionProposal: sessionProposal)
         var address = WalletManager.shared.getPrimaryWalletAddress()
@@ -305,6 +301,12 @@ extension WalletConnectManager {
             }
             address = EVMAccountManager.shared.accounts.first?.showAddress ?? ""
         }
+        
+        if pairings.contains(where: { $0.peer == sessionProposal.proposer && $0.active }) {
+            approveSession(proposal: sessionProposal)
+            return
+        }
+        
         currentSessionInfo = info
         let authnVM = BrowserAuthnViewModel(title: info.name,
                                             url: info.dappURL,
