@@ -156,6 +156,7 @@ extension RemoteConfigManager {
     enum ConditionType: String, Codable {
         case unknow
         case canUpgrade
+        case insufficientStorage
         case isIOS
               case isAndroid
               case isWeb
@@ -178,11 +179,14 @@ extension RemoteConfigManager {
                 if let remoteVersion = RemoteConfigManager.shared.remoteVersion,
                    let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
                     return remoteVersion.compareVersion(to: currentVersion) == .orderedDescending
-                }else {
+                } else {
                     return false
                 }
             case .isIOS:
                 return true
+            case .insufficientStorage:
+                // TODO: [AB] Not very elegant adding a dependency here, but implementing in a different way would probably require major refactoring
+                return WalletManager.shared.isStorageInsufficient
             default:
                 return false
             }
@@ -190,8 +194,7 @@ extension RemoteConfigManager {
     }
 
     struct News: Codable, Comparable, Identifiable, Hashable {
-        
-        
+                
         let id: String
         let priority: NewsPriority
         let type: NewsType

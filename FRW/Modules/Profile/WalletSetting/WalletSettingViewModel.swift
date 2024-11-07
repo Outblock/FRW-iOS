@@ -12,10 +12,6 @@ class WalletSettingViewModel: ObservableObject {
     @Published var storageUsagePercent: Double = 0
     @Published var storageUsageDesc: String = ""
 
-    var usagePercentString: String {
-        return String(format: "%.2f%%", storageUsagePercent * 100)
-    }
-
     init() {
         fetchStorageInfo()
     }

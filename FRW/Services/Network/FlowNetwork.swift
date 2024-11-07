@@ -928,6 +928,13 @@ extension FlowNetwork {
         let response = try await flow.accessAPI.executeScriptAtLatestBlock(cadence: cadence, arguments: [.address(address)]).decode(Flow.StorageInfo.self)
         return response
     }
+    
+    static func checkAccountInfo() async throws -> Flow.AccountInfo {
+        let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
+        let cadence = CadenceManager.shared.current.basic?.getAccountInfo?.toFunc() ?? ""
+        let response = try await flow.accessAPI.executeScriptAtLatestBlock(cadence: cadence, arguments: [.address(address)]).decode(Flow.AccountInfo.self)
+        return response
+    }
 }
 
 // MARK: - Base

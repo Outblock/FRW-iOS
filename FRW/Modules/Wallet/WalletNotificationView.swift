@@ -98,7 +98,30 @@ struct WalletNotificationView_Previews: PreviewProvider {
             onClose: { _ in },
             onAction: { _ in }
         )
+        .previewDisplayName("Missing USDC")
         .previewLayout(.sizeThatFits)
         .padding()
     }
+}
+
+#Preview("Insufficient Storage") {
+    let insufficientStorage = RemoteConfigManager.News(
+        id: "22722ad7-fd47-4167-a7e6-c4c69973bc5d",
+        priority: .urgent,
+        type: .message,
+        title: "Insufficient storage",
+        body: "Add FLOW to earn more storage.",
+        icon: "https://i.imgur.com/aGrNKe9.png",
+        image: nil,
+        url: "fw://buyFlow",
+        expiryTime: Calendar.current.date(byAdding: .day, value: 1, to: Date())!,
+        displayType: .expiry,
+        conditions: nil)
+    
+    WalletNotificationView(
+        item: insufficientStorage,
+        onClose: {_ in },
+        onAction: {_ in }
+    )
+    .padding()
 }

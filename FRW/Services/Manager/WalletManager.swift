@@ -54,7 +54,8 @@ class WalletManager: ObservableObject {
     @Published var coinBalances: [String: Double] = [:]
     @Published var childAccount: ChildAccount? = nil
     @Published var evmAccount: EVMAccountManager.Account? = nil
-
+    @Published var accountInfo: Flow.AccountInfo?
+    
     var accessibleManager: ChildAccountManager.AccessibleManager = .init()
 
     private var childAccountInited: Bool = false
@@ -656,6 +657,8 @@ extension WalletManager {
 
         flowAccountKey = nil
         try await findFlowAccount()
+        
+        try? await self.fetchAccountInfo()
     }
 
     private func fetchSupportedCoins() async throws {
@@ -723,6 +726,23 @@ extension WalletManager {
         } catch {
             log.error("[EVM] fetch token list failed.\(error.localizedDescription)")
         }
+    }
+
+    func fetchAccountInfo() async throws {
+        do {
+            let accountInfo = try await FlowNetwork.checkAccountInfo()
+            await MainActor.run {
+                self.accountInfo = accountInfo
+            }
+        } catch let error {
+            log.error("[EVM] fetch account info failed.\(error.localizedDescription)")
+            throw error
+        }
+    }
+
+    var isStorageInsufficient:  Bool {
+        guard let accountInfo else { return false }
+        return accountInfo.availableBalance < 0.001
     }
 
     func fetchBalance() async throws {

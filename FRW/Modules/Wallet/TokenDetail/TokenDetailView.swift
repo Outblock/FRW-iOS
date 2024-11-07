@@ -44,6 +44,7 @@ struct TokenDetailView: RouteableView {
                     .visibility(stakingManager.isStaked && vm.token.isFlowCoin && !WalletManager.shared.isSelectedChildAccount ? .visible : .gone)
                 activitiesView.visibility(vm.recentTransfers.isEmpty || WalletManager.shared.isSelectedChildAccount ? .gone : .visible)
                 chartContainerView.visibility(vm.hasRateAndChartData ? .visible : .gone)
+                storageView
             }
             .padding(.horizontal, 18)
 //            .padding(.top, 12)
@@ -338,6 +339,22 @@ struct TokenDetailView: RouteableView {
             .frame(maxWidth: .infinity)
         }
         .padding(.vertical, 7)
+    }
+    
+    var storageView: some View {
+        HStack(spacing: 0) {
+            StorageUsageView(
+                title: "storage_usage".localized,
+                usage: $vm.storageUsageDesc,
+                usagePercentValue: $vm.storageUsagePercent
+            )
+            .titleFont(.inter(size: 16, weight: .semibold))
+            .padding(16)
+        }
+        .background {
+            Color.LL.Neutrals.background.cornerRadius(16)
+        }
+        .padding(.bottom, 12)
     }
 }
 

@@ -103,6 +103,9 @@ extension TokenDetailViewModel {
 }
 
 class TokenDetailViewModel: ObservableObject {
+    @Published var storageUsagePercent: Double = 0
+    @Published var storageUsageDesc: String = ""
+
     @Published var token: TokenModel
     @Published var market: QuoteMarket = LocalUserDefaults.shared.market
     @Published var selectedRangeType: TokenDetailView.ChartRangeType = .d1
@@ -261,7 +264,21 @@ extension TokenDetailViewModel {
 extension TokenDetailViewModel {
     private func fetchAllData() {
         Task {
-            try? await WalletManager.shared.fetchBalance()
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask { try? await WalletManager.shared.fetchBalance() }
+
+                group.addTask {
+                    let info = try? await FlowNetwork.checkStorageInfo()
+                    if let info {
+                        DispatchQueue.main.async {
+                            self.storageUsagePercent = info.usedPercent
+                            self.storageUsageDesc = info.usedString
+                        }
+                    }
+                }
+
+                await group.waitForAll()
+            }
         }
 
         if hasRateAndChartData {

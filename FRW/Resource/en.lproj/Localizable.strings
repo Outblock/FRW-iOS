@@ -785,6 +785,7 @@
 "widget_desc" = "Show your favorite nft.";
 "scan" = "Scan";
 "storage" = "Storage";
+"storage_usage" = "Storage Usage";
 "sdk_test" = "SDKTesT";
 "skip" = "Skip";
 "start" = "Start";
