@@ -32,6 +32,7 @@ class AddCustomTokenViewModel: ObservableObject {
                 try await fetchInfo(by: customAddress)
                 HUD.dismissLoading()
             } catch {
+                HUD.error(title: "invalid_erc20".localized)
                 log.error("[Add Custom Token] \(error.localizedDescription)")
                 HUD.dismissLoading()
             }

@@ -36,7 +36,7 @@ class CustomTokenManager: ObservableObject {
         let belong = EVMAccountManager.shared.selectedAccount != nil ? CustomToken.Belong.evm : .flow
         
         let result = list.filter { token in
-            token.belongAddress == address && token.network == currentNetwork && token.belong == belong && token.userId == userId
+            token.network == currentNetwork && token.belong == belong 
         }
         return result
     }
@@ -66,7 +66,7 @@ class CustomTokenManager: ObservableObject {
     func isExist(token: CustomToken) -> Bool {
         queue.sync {
             let result = allTokens.filter { model in
-                token.belongAddress == model.belongAddress && token.network == model.network && token.belong == model.belong && token.userId == model.userId && model.address == token.address
+                token.network == model.network && model.address == token.address && token.belong == model.belong
             }
             return result.count > 0
         }
@@ -97,7 +97,7 @@ class CustomTokenManager: ObservableObject {
     func delete(token: CustomToken) {
         queue.sync {
             allTokens.removeAll { model in
-                token.belongAddress == model.belongAddress && token.network == model.network && token.belong == model.belong && token.userId == model.userId && model.address == token.address
+                token.network == model.network && token.belong == model.belong  && model.address == token.address
             }
             LocalUserDefaults.shared.customToken = allTokens
         }
@@ -108,7 +108,7 @@ class CustomTokenManager: ObservableObject {
     private func update(token: CustomToken) {
         queue.sync {
             let index = allTokens.firstIndex { model in
-                token.belongAddress == model.belongAddress && token.network == model.network && token.belong == model.belong && token.userId == model.userId && model.address == token.address
+                token.belong == model.belong && model.address == token.address && token.network == model.network
             }
             guard let index  else {
                 return
