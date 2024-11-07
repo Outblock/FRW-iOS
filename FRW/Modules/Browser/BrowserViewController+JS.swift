@@ -114,6 +114,10 @@ extension BrowserViewController {
         if let provider = trustProvider {
             ucc.addUserScript(provider.providerScript)
             ucc.addUserScript(provider.injectScript)
+        }else {
+            let emptyProvider = TrustWeb3Provider.emptyConfig()
+            ucc.addUserScript(emptyProvider.providerScript)
+            ucc.addUserScript(emptyProvider.injectScript)
         }
 
         ucc.addUserScript(extensionInjectUserScript)

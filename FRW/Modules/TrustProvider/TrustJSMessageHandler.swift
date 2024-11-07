@@ -23,7 +23,6 @@ class TrustJSMessageHandler: NSObject {
     var supportChainID: [Int: Flow.ChainID] = [
         LocalUserDefaults.FlowNetworkType.mainnet.networkID: .mainnet,
         LocalUserDefaults.FlowNetworkType.testnet.networkID: .testnet,
-        LocalUserDefaults.FlowNetworkType.previewnet.networkID: .previewnet,
     ]
 }
 
@@ -170,6 +169,24 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
 
 extension TrustJSMessageHandler {
     private func handleRequestAccounts(url: URL?, network: ProviderNetwork, id: Int64) {
+        
+        guard EVMAccountManager.shared.hasAccount else {
+            let callback: BoolClosure = { [weak self] result in
+                if result {
+                    self?.handleRequestAccounts(
+                        url: url,
+                        network: network,
+                        id: id
+                    )
+                }else {
+                    self?.webVC?.webView.tw
+                        .send(network: network, error: "false", to: id)
+                }
+            }
+            Router.route(to: RouteMap.Wallet.enableEVMSheet(callback))
+            return
+        }
+        
         let callback = { [weak self] in
             guard let self = self else {
                 return

@@ -18,4 +18,11 @@ extension TrustWeb3Provider {
         let config = TrustWeb3Provider.Config.EthereumConfig(address: address, chainId: chainId, rpcUrl: url)
         return TrustWeb3Provider(config: .init(ethereum: config))
     }
+    
+    static func emptyConfig() -> TrustWeb3Provider {
+        let url = LocalUserDefaults.shared.flowNetwork.evmUrl?.absoluteString ?? ""
+        let chainId = LocalUserDefaults.shared.flowNetwork.networkID
+        let config = TrustWeb3Provider.Config.EthereumConfig(address: "", chainId: chainId, rpcUrl: url)
+        return TrustWeb3Provider(config: .init(ethereum: config))
+    }
 }
