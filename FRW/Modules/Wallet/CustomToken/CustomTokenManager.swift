@@ -126,14 +126,14 @@ extension CustomTokenManager {
         guard let web3 = try await FlowProvider.Web3.default() else{
             throw AddCustomTokenError.providerFailed
         }
-        let contratc = web3.contract(Web3Utils.erc20ABI, at: .init(evmAddress))
-        async let decimalsRequest = contratc?.createReadOperation("decimals")?.callContractMethod()
+        let contract = web3.contract(Web3Utils.erc20ABI, at: .init(evmAddress))
+        async let decimalsRequest = contract?.createReadOperation("decimals")?.callContractMethod()
         
         let decimals = try await decimalsRequest?["0"] as? BigUInt
         let decimalInt = Int(decimals?.description ?? "6") ?? 0
         
-        async let symbolRequest = contratc?.createReadOperation("symbol")?.callContractMethod()
-        async let nameRequest = contratc?.createReadOperation("name")?.callContractMethod()
+        async let symbolRequest = contract?.createReadOperation("symbol")?.callContractMethod()
+        async let nameRequest = contract?.createReadOperation("name")?.callContractMethod()
         let result: [String] = try await [symbolRequest, nameRequest].compactMap{ $0?["0"] as? String }
         guard result.count == 2 else {
             return nil
