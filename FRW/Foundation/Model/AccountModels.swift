@@ -10,7 +10,7 @@ import Flow
 
 extension Flow {
     struct AccountInfo: Decodable {
-        //public let address: Flow.Address
+        public let address: Flow.Address
         public let balance: Decimal
         public let availableBalance: Decimal
         public let storageUsed: UInt64
