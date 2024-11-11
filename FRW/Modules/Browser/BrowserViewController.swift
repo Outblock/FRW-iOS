@@ -273,6 +273,26 @@ extension BrowserViewController {
     private func onClearCookie() {
         BrowserViewController.deleteCookie()
     }
+    
+    private func handleNavigationAction(navigationAction: WKNavigationAction) {
+        guard let url = navigationAction.request.url else {
+            return
+        }
+        
+        if !url.absoluteString.hasPrefixes(AppExternalLinks.allLinks) {
+            if navigationAction.targetFrame == nil {
+                UIApplication.shared.open(url)
+            }
+            return
+        }
+        
+        let uri = AppExternalLinks.exactWCLink(link: url.absoluteString)
+        WalletConnectManager.shared.onClientConnected = {
+            WalletConnectManager.shared.connect(link: uri)
+        }
+        WalletConnectManager.shared.connect(link: uri)
+        
+    }
 }
 
 // MARK: - Search Recommend
@@ -318,45 +338,18 @@ extension BrowserViewController: WKNavigationDelegate {
     func webView(_: WKWebView, didFail _: WKNavigation!, withError _: Error) {
         reloadActionBarView()
     }
-
-    func webView(_: WKWebView, decidePolicyFor _: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        decisionHandler(.allow)
+    
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
+        handleNavigationAction(navigationAction: navigationAction)
         reloadActionBarView()
+        return .allow
     }
 }
 
 extension BrowserViewController: WKUIDelegate {
+    
     func webView(_: WKWebView, createWebViewWith _: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures _: WKWindowFeatures) -> WKWebView? {
-        if navigationAction.targetFrame == nil, let url = navigationAction.request.url {
-            if url.absoluteString.hasPrefix("https://fcw-link.lilico.app") {
-                var uri = url.absoluteString.deletingPrefix("https://fcw-link.lilico.app/wc?uri=")
-                uri = uri.deletingPrefix("fcw://")
-                WalletConnectManager.shared.onClientConnected = {
-                    WalletConnectManager.shared.connect(link: uri)
-                }
-                WalletConnectManager.shared.connect(link: uri)
-            } else if url.absoluteString.hasPrefix("https://frw-link.lilico.app") {
-                var uri = url.absoluteString.deletingPrefix("https://frw-link.lilico.app/wc?uri=")
-                uri = uri.deletingPrefix("frw://")
-                WalletConnectManager.shared.onClientConnected = {
-                    WalletConnectManager.shared.connect(link: uri)
-                }
-                WalletConnectManager.shared.connect(link: uri)
-            } else if url.absoluteString.hasPrefix("https://link.lilico.app") {
-                var uri = url.absoluteString.deletingPrefix("https://link.lilico.app/wc?uri=")
-                uri = uri.deletingPrefix("lilico://")
-                WalletConnectManager.shared.onClientConnected = {
-                    WalletConnectManager.shared.connect(link: uri)
-                }
-                WalletConnectManager.shared.connect(link: uri)
-            } else if url.description.lowercased().range(of: "http://") != nil ||
-                url.description.lowercased().range(of: "https://") != nil ||
-                url.description.lowercased().range(of: "mailto:") != nil
-            {
-                UIApplication.shared.openURL(url)
-            }
-        }
-
+        handleNavigationAction(navigationAction: navigationAction)
         return nil
     }
 }
