@@ -103,28 +103,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
     func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         if let url = userActivity.webpageURL {
-            if url.absoluteString.hasPrefix("https://fcw-link.lilico.app") {
-                var uri = url.absoluteString.deletingPrefix("https://fcw-link.lilico.app/wc?uri=")
-                uri = uri.deletingPrefix("fcw://")
-                WalletConnectManager.shared.onClientConnected = {
-                    WalletConnectManager.shared.connect(link: uri)
-                }
-                WalletConnectManager.shared.connect(link: uri)
-            } else if url.absoluteString.hasPrefix("https://frw-link.lilico.app") {
-                var uri = url.absoluteString.deletingPrefix("https://frw-link.lilico.app/wc?uri=")
-                uri = uri.deletingPrefix("frw://")
-                WalletConnectManager.shared.onClientConnected = {
-                    WalletConnectManager.shared.connect(link: uri)
-                }
-                WalletConnectManager.shared.connect(link: uri)
-            } else {
-                var uri = url.absoluteString.deletingPrefix("https://link.lilico.app/wc?uri=")
-                uri = uri.deletingPrefix("lilico://")
-                WalletConnectManager.shared.onClientConnected = {
-                    WalletConnectManager.shared.connect(link: uri)
-                }
+            let uri = AppExternalLinks.exactWCLink(link: url.absoluteString)
+            WalletConnectManager.shared.onClientConnected = {
                 WalletConnectManager.shared.connect(link: uri)
             }
+            WalletConnectManager.shared.connect(link: uri)
         }
         return true
     }

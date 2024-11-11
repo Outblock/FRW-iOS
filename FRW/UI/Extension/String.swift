@@ -237,9 +237,18 @@ extension String {
 }
 
 extension String {
+    
+    func hasPrefixes(_ prefixes: [String]) -> Bool {
+        prefixes.contains(where: hasPrefix)
+    }
+    
     func deletingPrefix(_ prefix: String) -> String {
         guard hasPrefix(prefix) else { return self }
         return String(dropFirst(prefix.count))
+    }
+    
+    func deletingPrefixes(_ prefixes: [String]) -> String {
+        prefixes.reduce(self) { $0.deletingPrefix($1) }
     }
 }
 
