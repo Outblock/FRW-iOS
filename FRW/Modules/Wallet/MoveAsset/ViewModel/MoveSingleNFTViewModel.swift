@@ -9,16 +9,10 @@ import Flow
 import Foundation
 import SwiftUI
 
+// MARK: - MoveSingleNFTViewModel
+
 class MoveSingleNFTViewModel: ObservableObject {
-    var nft: NFTModel
-    var fromChildAccount: ChildAccount?
-    var callback: () -> Void
-
-    @Published var fromContact = Contact(address: "", avatar: "", contactName: "", contactType: nil, domain: nil, id: -1, username: nil)
-    @Published var toContact = Contact(address: "", avatar: "", contactName: "", contactType: nil, domain: nil, id: -1, username: nil)
-    @Published var buttonState: VPrimaryButtonState = .enabled
-
-    var accountCount: Int = 0
+    // MARK: Lifecycle
 
     init(nft: NFTModel, fromChildAccount: ChildAccount? = nil, callback: @escaping () -> Void) {
         self.nft = nft
@@ -27,35 +21,39 @@ class MoveSingleNFTViewModel: ObservableObject {
         loadUserInfo()
 
         let accountViewModel = MoveAccountsViewModel(selected: "") { _ in }
-        accountCount = accountViewModel.list.count
+        self.accountCount = accountViewModel.list.count
     }
 
-    private func loadUserInfo() {
-        guard let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress() else {
-            return
-        }
-        if let account = fromChildAccount {
-            fromContact = Contact(address: account.showAddress, avatar: account.icon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName, walletType: .link)
-        } else if let account = ChildAccountManager.shared.selectedChildAccount {
-            fromContact = Contact(address: account.showAddress, avatar: account.icon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName, walletType: .link)
-        } else if let account = EVMAccountManager.shared.selectedAccount {
-            let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
-            fromContact = Contact(address: account.showAddress, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName, user: user, walletType: .evm)
-        } else {
-            let user = WalletManager.shared.walletAccount.readInfo(at: primaryAddr)
-            fromContact = Contact(address: primaryAddr, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: user.name, user: user, walletType: .flow)
-        }
+    // MARK: Internal
 
-        if ChildAccountManager.shared.selectedChildAccount != nil || EVMAccountManager.shared.selectedAccount != nil || fromChildAccount != nil {
-            let user = WalletManager.shared.walletAccount.readInfo(at: primaryAddr)
-            toContact = Contact(address: primaryAddr, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: user.name, user: user, walletType: .flow)
-        } else if let account = EVMAccountManager.shared.accounts.first {
-            let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
-            toContact = Contact(address: account.showAddress, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName, user: user, walletType: .evm)
-        } else if let account = ChildAccountManager.shared.childAccounts.first {
-            toContact = Contact(address: account.showAddress, avatar: account.icon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName, walletType: .link)
-        }
-    }
+    var nft: NFTModel
+    var fromChildAccount: ChildAccount?
+    var callback: () -> Void
+
+    @Published
+    var fromContact = Contact(
+        address: "",
+        avatar: "",
+        contactName: "",
+        contactType: nil,
+        domain: nil,
+        id: -1,
+        username: nil
+    )
+    @Published
+    var toContact = Contact(
+        address: "",
+        avatar: "",
+        contactName: "",
+        contactType: nil,
+        domain: nil,
+        id: -1,
+        username: nil
+    )
+    @Published
+    var buttonState: VPrimaryButtonState = .enabled
+
+    var accountCount: Int = 0
 
     func closeAction() {
         Router.dismiss()
@@ -90,11 +88,117 @@ class MoveSingleNFTViewModel: ObservableObject {
         }
     }
 
+    func updateToContact(_ contact: Contact) {
+        toContact = contact
+    }
+
+    // MARK: Private
+
+    private func loadUserInfo() {
+        guard let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress()
+        else {
+            return
+        }
+        if let account = fromChildAccount {
+            fromContact = Contact(
+                address: account.showAddress,
+                avatar: account.icon,
+                contactName: nil,
+                contactType: .user,
+                domain: nil,
+                id: UUID().hashValue,
+                username: account.showName,
+                walletType: .link
+            )
+        } else if let account = ChildAccountManager.shared.selectedChildAccount {
+            fromContact = Contact(
+                address: account.showAddress,
+                avatar: account.icon,
+                contactName: nil,
+                contactType: .user,
+                domain: nil,
+                id: UUID().hashValue,
+                username: account.showName,
+                walletType: .link
+            )
+        } else if let account = EVMAccountManager.shared.selectedAccount {
+            let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
+            fromContact = Contact(
+                address: account.showAddress,
+                avatar: nil,
+                contactName: nil,
+                contactType: .user,
+                domain: nil,
+                id: UUID().hashValue,
+                username: account.showName,
+                user: user,
+                walletType: .evm
+            )
+        } else {
+            let user = WalletManager.shared.walletAccount.readInfo(at: primaryAddr)
+            fromContact = Contact(
+                address: primaryAddr,
+                avatar: nil,
+                contactName: nil,
+                contactType: .user,
+                domain: nil,
+                id: UUID().hashValue,
+                username: user.name,
+                user: user,
+                walletType: .flow
+            )
+        }
+
+        if ChildAccountManager.shared.selectedChildAccount != nil || EVMAccountManager.shared
+            .selectedAccount != nil || fromChildAccount != nil {
+            let user = WalletManager.shared.walletAccount.readInfo(at: primaryAddr)
+            toContact = Contact(
+                address: primaryAddr,
+                avatar: nil,
+                contactName: nil,
+                contactType: .user,
+                domain: nil,
+                id: UUID().hashValue,
+                username: user.name,
+                user: user,
+                walletType: .flow
+            )
+        } else if let account = EVMAccountManager.shared.accounts.first {
+            let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
+            toContact = Contact(
+                address: account.showAddress,
+                avatar: nil,
+                contactName: nil,
+                contactType: .user,
+                domain: nil,
+                id: UUID().hashValue,
+                username: account.showName,
+                user: user,
+                walletType: .evm
+            )
+        } else if let account = ChildAccountManager.shared.childAccounts.first {
+            toContact = Contact(
+                address: account.showAddress,
+                avatar: account.icon,
+                contactName: nil,
+                contactType: .user,
+                domain: nil,
+                id: UUID().hashValue,
+                username: account.showName,
+                walletType: .link
+            )
+        }
+    }
+
     private func moveForEVM(identifier: String, nftId: UInt64) async {
         do {
             let ids: [UInt64] = [nftId]
             let fromEvm = EVMAccountManager.shared.selectedAccount != nil
-            let tid = try await FlowNetwork.bridgeNFTToEVM(identifier: identifier, ids: ids, fromEvm: fromEvm)
+            let tid = try await FlowNetwork.bridgeNFTToEVM(
+                identifier: identifier,
+                ids: ids,
+                fromEvm: fromEvm
+            )
             let holder = TransactionManager.TransactionHolder(id: tid, type: .moveAsset)
             TransactionManager.shared.newTransaction(holder: holder)
             closeAction()
@@ -105,7 +209,6 @@ class MoveSingleNFTViewModel: ObservableObject {
     }
 
     private func moveForLinkedAccount(nftId: UInt64) async {
-
         var collection = nft.collection
         if collection == nil {
             collection = NFTCatalogCache.cache
@@ -121,11 +224,27 @@ class MoveSingleNFTViewModel: ObservableObject {
             var tid = Flow.ID(hex: "")
             switch (fromContact.walletType, toContact.walletType) {
             case (.flow, .link):
-                tid = try await FlowNetwork.moveNFTToChild(nftId: nftId, childAddress: toContact.address ?? "", identifier: identifier, collection: collection)
+                tid = try await FlowNetwork.moveNFTToChild(
+                    nftId: nftId,
+                    childAddress: toContact.address ?? "",
+                    identifier: identifier,
+                    collection: collection
+                )
             case (.link, .flow):
-                tid = try await FlowNetwork.moveNFTToParent(nftId: nftId, childAddress: fromContact.address ?? "", identifier: identifier, collection: collection)
+                tid = try await FlowNetwork.moveNFTToParent(
+                    nftId: nftId,
+                    childAddress: fromContact.address ?? "",
+                    identifier: identifier,
+                    collection: collection
+                )
             case (.link, .link):
-                tid = try await FlowNetwork.sendChildNFTToChild(nftId: nftId, childAddress: fromContact.address ?? "", toAddress: toContact.address ?? "", identifier: identifier, collection: collection)
+                tid = try await FlowNetwork.sendChildNFTToChild(
+                    nftId: nftId,
+                    childAddress: fromContact.address ?? "",
+                    toAddress: toContact.address ?? "",
+                    identifier: identifier,
+                    collection: collection
+                )
             case (.link, .evm):
                 guard let nftIdentifier = nft.response.flowIdentifier else {
                     return
@@ -135,9 +254,10 @@ class MoveSingleNFTViewModel: ObservableObject {
                         nft: nftIdentifier,
                         id: nftId,
                         child: fromContact
-                            .address ?? "")
+                            .address ?? ""
+                    )
             case (.evm, .link):
-                guard let nftIdentifier = nft.response.flowIdentifier else {   
+                guard let nftIdentifier = nft.response.flowIdentifier else {
                     return
                 }
                 tid = try await FlowNetwork
@@ -145,7 +265,8 @@ class MoveSingleNFTViewModel: ObservableObject {
                         nft: nftIdentifier,
                         id: nftId,
                         child: toContact
-                            .address ?? "")
+                            .address ?? ""
+                    )
             default:
                 log.info("===")
             }
@@ -156,10 +277,6 @@ class MoveSingleNFTViewModel: ObservableObject {
             log.error("[Move NFT] Move NFT failed on Linked Account. ")
             log.error(error)
         }
-    }
-
-    func updateToContact(_ contact: Contact) {
-        toContact = contact
     }
 }
 
@@ -176,11 +293,11 @@ extension MoveSingleNFTViewModel {
         let isSelectedEVM = EVMAccountManager.shared.selectedAccount != nil
         return isSelectedEVM ? Image("icon_qr_evm") : Image("Flow")
     }
-    
+
     var showFee: Bool {
         !(fromContact.walletType == .link || toContact.walletType == .link)
     }
-    
+
     var isFeeFree: Bool {
         fromContact.walletType == toContact.walletType
     }

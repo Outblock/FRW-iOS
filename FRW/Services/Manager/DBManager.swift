@@ -9,16 +9,16 @@ import Combine
 import FMDB
 import Foundation
 
+// MARK: - DBTable
+
 private enum DBTable: String {
     case webBookmark = "web_bookmark"
 }
 
+// MARK: - DBManager
+
 class DBManager {
-    static let shared = DBManager()
-
-    private var db: FMDatabase?
-
-    private var cancelSets = Set<AnyCancellable>()
+    // MARK: Lifecycle
 
     init() {
         prepare()
@@ -33,15 +33,31 @@ class DBManager {
                 self.prepare()
             }.store(in: &cancelSets)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(willReset),
+            name: .willResetWallet,
+            object: nil
+        )
     }
+
+    // MARK: Internal
+
+    static let shared = DBManager()
+
+    // MARK: Private
+
+    private var db: FMDatabase?
+
+    private var cancelSets = Set<AnyCancellable>()
 
     private func closeDB() {
         db?.close()
         db = nil
     }
 
-    @objc private func willReset() {
+    @objc
+    private func willReset() {
         closeDB()
     }
 }
@@ -51,7 +67,8 @@ class DBManager {
 extension DBManager {
     var dbURL: URL {
         let uid = UserManager.shared.activatedUID ?? "0"
-        return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("app_database/\(uid)/database.db")
+        return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
+            .first!.appendingPathComponent("app_database/\(uid)/database.db")
     }
 
     private func prepare() {
@@ -106,7 +123,10 @@ extension DBManager {
                 """
 
                 try db.executeUpdate(sql, values: nil)
-                try db.executeUpdate("CREATE INDEX web_bookmark_index ON \(DBTable.webBookmark.rawValue) (id,url)", values: nil)
+                try db.executeUpdate(
+                    "CREATE INDEX web_bookmark_index ON \(DBTable.webBookmark.rawValue) (id,url)",
+                    values: nil
+                )
             }
         } catch {
             debugPrint("DBManager: table create failed: \(error)")
@@ -118,12 +138,16 @@ extension DBManager {
 
 extension DBManager {
     func save(webBookmark bookmark: WebBookmark) {
-        insert(into: .webBookmark, columns: ["url", "title", "is_fav", "create_time", "update_time"], values: bookmark.dbValues)
+        insert(
+            into: .webBookmark,
+            columns: ["url", "title", "is_fav", "create_time", "update_time"],
+            values: bookmark.dbValues
+        )
         NotificationCenter.default.post(name: .webBookmarkDidChanged)
     }
 
     func webBookmarkCount() -> Int {
-        return count(in: .webBookmark)
+        count(in: .webBookmark)
     }
 
     func webBookmarkIsExist(url: String) -> Bool {
@@ -172,7 +196,14 @@ extension DBManager {
 
 extension DBManager {
     /// 查询
-    private func query(_ column: String = "*", from: DBTable, where: String? = nil, limit: Int? = nil, orderBy: String? = nil, values: [Any]? = nil) -> FMResultSet? {
+    private func query(
+        _ column: String = "*",
+        from: DBTable,
+        where: String? = nil,
+        limit: Int? = nil,
+        orderBy: String? = nil,
+        values: [Any]? = nil
+    ) -> FMResultSet? {
         guard let db = db else {
             debugPrint("execute query but db is nil")
             return nil
@@ -231,7 +262,12 @@ extension DBManager {
 
     /// 更新
     @discardableResult
-    private func update(in table: DBTable, set: String, where: String? = nil, values: [Any]) -> Bool {
+    private func update(
+        in table: DBTable,
+        set: String,
+        where: String? = nil,
+        values: [Any]
+    ) -> Bool {
         guard let db = db else {
             debugPrint("execute update but db is nil")
             return false

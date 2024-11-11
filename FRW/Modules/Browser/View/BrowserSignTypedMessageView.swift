@@ -5,19 +5,24 @@
 //  Created by cat on 2024/10/8.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
+
+// MARK: - BrowserSignTypedMessageView
 
 struct BrowserSignTypedMessageView: View {
-    
-    @StateObject var viewModel: BrowserSignTypedMessageViewModel
-    
+    // MARK: Lifecycle
+
     init(viewModel: BrowserSignTypedMessageViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
-    
+
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: BrowserSignTypedMessageViewModel
+
     var body: some View {
-        
         VStack {
             titleView
             VStack {
@@ -37,14 +42,14 @@ struct BrowserSignTypedMessageView: View {
                     .cornerRadius(16)
                 }
             }
-            
+
             Spacer()
             actionView
         }
         .padding(18)
         .background(Color.Theme.Background.bg2)
     }
-    
+
     var titleView: some View {
         HStack(alignment: .top, spacing: 18) {
             HStack {
@@ -82,7 +87,7 @@ struct BrowserSignTypedMessageView: View {
             }
         }
     }
-    
+
     var actionView: some View {
         WalletSendButtonView(allowEnable: .constant(true), buttonText: "hold_to_sign".localized) {
             viewModel.didChooseAction(true)
@@ -90,20 +95,19 @@ struct BrowserSignTypedMessageView: View {
     }
 }
 
+// MARK: BrowserSignTypedMessageView.Card
 
 extension BrowserSignTypedMessageView {
-    
     struct Card: View {
-        
         var model: JSONValue
-        
+
         var body: some View {
             VStack {
                 titleView
                 contentView()
             }
         }
-        
+
         var titleView: some View {
             HStack {
                 Text(model.title.uppercasedFirstLetter())
@@ -117,11 +121,11 @@ extension BrowserSignTypedMessageView {
                     .foregroundStyle(Color.Theme.Text.black)
             }
         }
-        
+
         func contentView() -> some View {
             VStack {
                 if let subValue = model.subValue {
-                    if case .object(let dictionary) = subValue {
+                    if case let .object(dictionary) = subValue {
                         let keys = Array(dictionary.keys)
                         ForEach(0..<keys.count, id: \.self) { index in
                             let key = keys[index]
@@ -141,7 +145,7 @@ extension BrowserSignTypedMessageView {
                             .frame(height: 20)
                         }
                     }
-                    if case .array(let array) = subValue {
+                    if case let .array(array) = subValue {
                         VStack {
                             ForEach(0..<array.count, id: \.self) { index in
                                 let value = array[index]
@@ -152,10 +156,10 @@ extension BrowserSignTypedMessageView {
                 }
             }
         }
-        
+
         func innerCard(item: JSONValue) -> some View {
             VStack {
-                if case .object(let dictionary) = item {
+                if case let .object(dictionary) = item {
                     let keys = Array(dictionary.keys)
                     ForEach(0..<keys.count, id: \.self) { index in
                         let key = keys[index]
@@ -172,7 +176,6 @@ extension BrowserSignTypedMessageView {
                                 .lineLimit(1)
                                 .foregroundStyle(Color.Theme.Text.black)
                                 .frame(minWidth: 0, maxWidth: 120, alignment: .trailing)
-                                
                         }
                         .frame(height: 20)
                     }
@@ -185,25 +188,25 @@ extension BrowserSignTypedMessageView {
     }
 }
 
-private extension JSONValue {
-    var title: String {
+extension JSONValue {
+    fileprivate var title: String {
         switch self {
-        case .object(let dictionary):
+        case let .object(dictionary):
             return dictionary.keys.first ?? ""
         default:
             return ""
         }
     }
-    
-    var content: String {
+
+    fileprivate var content: String {
         switch self {
-        case .object(let dictionary):
+        case let .object(dictionary):
             let subtitle = dictionary[title]
             switch subtitle {
-            case .object(_):
+            case .object:
                 return ""
-            case .array(let model):
-                if case .object(let dictionary) = model.first {
+            case let .array(model):
+                if case let .object(dictionary) = model.first {
                     return ""
                 }
                 return subtitle?.toString() ?? ""
@@ -214,10 +217,10 @@ private extension JSONValue {
             return ""
         }
     }
-    
-    var subValue: JSONValue? {
+
+    fileprivate var subValue: JSONValue? {
         switch self {
-        case .object(let dictionary):
+        case let .object(dictionary):
             return dictionary.values.first
         default:
             return nil
@@ -225,7 +228,10 @@ private extension JSONValue {
     }
 }
 
-
 #Preview {
-    BrowserSignTypedMessageView(viewModel: BrowserSignTypedMessageViewModel(title: "ABC", urlString: "http://", rawString: "{\"domain\":{\"name\":\"Ether Mail\",\"version\":\"1\",\"chainId\":747,\"verifyingContract\":\"0xcccccccccccccccccccccccccccccccccccccccc\"},\"message\":{\"from\":{\"name\":\"Cow\",\"wallet\":\"0xcd2a3d9f938e13cd947ec05abc7fe734df8dd826\"},\"to\":{\"name\":\"Bob\",\"wallet\":\"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"},\"contents\":\"Hello, Bob!\"},\"primaryType\":\"Mail\",\"types\":{\"EIP712Domain\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"version\",\"type\":\"string\"},{\"name\":\"chainId\",\"type\":\"uint256\"},{\"name\":\"verifyingContract\",\"type\":\"address\"}],\"Person\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"wallet\",\"type\":\"address\"}],\"Mail\":[{\"name\":\"from\",\"type\":\"Person\"},{\"name\":\"to\",\"type\":\"Person\"},{\"name\":\"contents\",\"type\":\"string\"}]}}"))
+    BrowserSignTypedMessageView(viewModel: BrowserSignTypedMessageViewModel(
+        title: "ABC",
+        urlString: "http://",
+        rawString: "{\"domain\":{\"name\":\"Ether Mail\",\"version\":\"1\",\"chainId\":747,\"verifyingContract\":\"0xcccccccccccccccccccccccccccccccccccccccc\"},\"message\":{\"from\":{\"name\":\"Cow\",\"wallet\":\"0xcd2a3d9f938e13cd947ec05abc7fe734df8dd826\"},\"to\":{\"name\":\"Bob\",\"wallet\":\"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"},\"contents\":\"Hello, Bob!\"},\"primaryType\":\"Mail\",\"types\":{\"EIP712Domain\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"version\",\"type\":\"string\"},{\"name\":\"chainId\",\"type\":\"uint256\"},{\"name\":\"verifyingContract\",\"type\":\"address\"}],\"Person\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"wallet\",\"type\":\"address\"}],\"Mail\":[{\"name\":\"from\",\"type\":\"Person\"},{\"name\":\"to\",\"type\":\"Person\"},{\"name\":\"contents\",\"type\":\"string\"}]}}"
+    ))
 }

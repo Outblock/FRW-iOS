@@ -8,16 +8,9 @@
 import Flow
 import Foundation
 
-struct FCLVoucher: Codable {
-    let cadence: Flow.Script
-    let payer: Flow.Address
-    let refBlock: Flow.ID
-    let arguments: [Flow.Argument]
-    let proposalKey: ProposalKey
-    let computeLimit: UInt64
-    let authorizers: [Flow.Address]
-    let payloadSigs: [Signature]
+// MARK: - FCLVoucher
 
+struct FCLVoucher: Codable {
     struct ProposalKey: Codable {
         let address: Flow.Address
         let keyId: Int
@@ -29,40 +22,64 @@ struct FCLVoucher: Codable {
         let keyId: Int
         let sig: String
     }
+
+    let cadence: Flow.Script
+    let payer: Flow.Address
+    let refBlock: Flow.ID
+    let arguments: [Flow.Argument]
+    let proposalKey: ProposalKey
+    let computeLimit: UInt64
+    let authorizers: [Flow.Address]
+    let payloadSigs: [Signature]
 }
+
+// MARK: - SignPayerResponse
 
 struct SignPayerResponse: Codable {
     let envelopeSigs: FCLVoucher.Signature
 }
+
+// MARK: - SignPayerRequest
 
 struct SignPayerRequest: Codable {
     let transaction: FCLVoucher
     let message: PayerMessage
 }
 
-struct PayerMessage: Codable {
-    let envelopeMessage: String
+// MARK: - PayerMessage
 
+struct PayerMessage: Codable {
     enum CodingKeys: String, CodingKey {
         case envelopeMessage = "envelope_message"
     }
+
+    let envelopeMessage: String
 }
 
 extension Flow.Transaction {
     var voucher: FCLVoucher {
-        FCLVoucher(cadence: script,
-                   payer: payer,
-                   refBlock: referenceBlockId,
-                   arguments: arguments,
-                   proposalKey: FCLVoucher.ProposalKey(address: proposalKey.address,
-                                                       keyId: proposalKey.keyIndex,
-                                                       sequenceNum: UInt64(proposalKey.sequenceNumber)),
-                   computeLimit: UInt64(gasLimit),
-                   authorizers: authorizers,
-                   payloadSigs: payloadSignatures.compactMap {
-                       FCLVoucher.Signature(address: $0.address,
-                                            keyId: $0.keyIndex,
-                                            sig: $0.signature.hexValue)
-                   })
+        FCLVoucher(
+            cadence: script,
+            payer: payer,
+            refBlock: referenceBlockId,
+            arguments: arguments,
+            proposalKey: FCLVoucher.ProposalKey(
+                address: proposalKey.address,
+                keyId: proposalKey.keyIndex,
+                sequenceNum: UInt64(
+                    proposalKey
+                        .sequenceNumber
+                )
+            ),
+            computeLimit: UInt64(gasLimit),
+            authorizers: authorizers,
+            payloadSigs: payloadSignatures.compactMap {
+                FCLVoucher.Signature(
+                    address: $0.address,
+                    keyId: $0.keyIndex,
+                    sig: $0.signature.hexValue
+                )
+            }
+        )
     }
 }

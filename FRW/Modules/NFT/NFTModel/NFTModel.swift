@@ -13,6 +13,8 @@ let placeholder: String = AppPlaceholder.image
 // TODO: which filter?
 let filterMetadata = ["uri", "img", "description"]
 
+// MARK: - NFTCollection
+
 struct NFTCollection: Codable {
     let collection: NFTCollectionInfo
     var count: Int
@@ -25,11 +27,15 @@ struct NFTCollection: Codable {
     }
 }
 
+// MARK: - EVMNFTCollectionResponse
+
 struct EVMNFTCollectionResponse: Codable {
     let tokens: [NFTCollectionInfo]?
     let chainId: Int?
     let network: String?
 }
+
+// MARK: - NFTCollectionInfo
 
 struct NFTCollectionInfo: Codable, Hashable, Mockable {
     let id: String
@@ -68,7 +74,19 @@ struct NFTCollectionInfo: Codable, Hashable, Mockable {
     }
 
     static func mock() -> NFTCollectionInfo {
-        return NFTCollectionInfo(id: randomString(), name: randomString(), contractName: randomString(), address: randomString(), logo: randomString(), banner: randomString(), officialWebsite: randomString(), description: randomString(), path: ContractPath.mock(), evmAddress: nil, flowIdentifier: nil)
+        NFTCollectionInfo(
+            id: randomString(),
+            name: randomString(),
+            contractName: randomString(),
+            address: randomString(),
+            logo: randomString(),
+            banner: randomString(),
+            officialWebsite: randomString(),
+            description: randomString(),
+            path: ContractPath.mock(),
+            evmAddress: nil,
+            flowIdentifier: nil
+        )
     }
 }
 
@@ -82,6 +100,8 @@ extension NFTCollectionInfo {
     }
 }
 
+// MARK: - ContractPath
+
 struct ContractPath: Codable, Hashable, Mockable {
     let storagePath: String
     let publicPath: String
@@ -91,22 +111,73 @@ struct ContractPath: Codable, Hashable, Mockable {
     let privateType: String?
 
     static func mock() -> ContractPath {
-        return ContractPath(storagePath: randomString(), publicPath: randomString(), privatePath: "", publicCollectionName: randomString(), publicType: randomString(), privateType: randomString())
+        ContractPath(
+            storagePath: randomString(),
+            publicPath: randomString(),
+            privatePath: "",
+            publicCollectionName: randomString(),
+            publicType: randomString(),
+            privateType: randomString()
+        )
     }
-    
+
     func storagePathId() -> String {
         let list = storagePath.components(separatedBy: "/")
-        if list.count > 0 {
+        if !list.isEmpty {
             return list.last ?? storagePath
         }
         return storagePath
     }
 }
 
+// MARK: - NFTModel
+
 struct NFTModel: Codable, Hashable, Identifiable {
-    var id: String {
-        return response.uniqueId
+    // MARK: Lifecycle
+
+    init(
+        _ response: NFTResponse,
+        in collection: NFTCollectionInfo?,
+        from _: FlowModel.CollectionInfo? = nil
+    ) {
+        if let imgUrl = response.postMedia?.image, let url = URL(string: imgUrl) {
+            if response.postMedia?.isSvg == true {
+                self.image = URL(string: imgUrl) ?? URL(string: placeholder)!
+                self.isSVG = true
+            } else if let svgStr = imgUrl.parseBase64ToSVG() {
+                self.imageSVGStr = svgStr.decodeBase64WithFixed()
+                self.isSVG = true
+                self.image = URL(string: placeholder)!
+            } else {
+                if imgUrl.hasPrefix("https://lilico.infura-ipfs.io/ipfs/") {
+                    let newImgURL = imgUrl
+                        .replace(
+                            by: [
+                                "https://lilico.infura-ipfs.io/ipfs/": "https://lilico.app/api/ipfs/",
+                            ]
+                        )
+                    self.image = URL(string: newImgURL)!
+                } else {
+                    self.image = url
+                }
+
+                self.isSVG = false
+            }
+        } else {
+            self.image = URL(string: placeholder)!
+        }
+
+        if let videoUrl = response.postMedia?.video {
+            self.video = URL(string: videoUrl)
+        }
+
+        self.subtitle = response.postMedia?.description ?? ""
+        self.title = response.postMedia?.title ?? response.collectionName ?? ""
+        self.collection = collection
+        self.response = response
     }
+
+    // MARK: Internal
 
     let image: URL
     var video: URL?
@@ -118,6 +189,10 @@ struct NFTModel: Codable, Hashable, Identifiable {
 
     var imageSVGStr: String? = nil
 
+    var id: String {
+        response.uniqueId
+    }
+
     var imageURL: URL {
         if isSVG {
             return image.absoluteString.convertedSVGURL() ?? URL(string: placeholder)!
@@ -128,39 +203,6 @@ struct NFTModel: Codable, Hashable, Identifiable {
 
     var isNBA: Bool {
         collection?.contractName?.trim() == "TopShot"
-    }
-
-    init(_ response: NFTResponse, in collection: NFTCollectionInfo?, from _: FlowModel.CollectionInfo? = nil) {
-        if let imgUrl = response.postMedia?.image, let url = URL(string: imgUrl) {
-            if response.postMedia?.isSvg == true {
-                image = URL(string: imgUrl) ?? URL(string: placeholder)!
-                isSVG = true
-            } else if let svgStr = imgUrl.parseBase64ToSVG() {
-                imageSVGStr = svgStr.decodeBase64WithFixed()
-                isSVG = true
-                image = URL(string: placeholder)!
-            } else {
-                if imgUrl.hasPrefix("https://lilico.infura-ipfs.io/ipfs/") {
-                    let newImgURL = imgUrl.replace(by: ["https://lilico.infura-ipfs.io/ipfs/": "https://lilico.app/api/ipfs/"])
-                    image = URL(string: newImgURL)!
-                } else {
-                    image = url
-                }
-
-                isSVG = false
-            }
-        } else {
-            image = URL(string: placeholder)!
-        }
-
-        if let videoUrl = response.postMedia?.video {
-            video = URL(string: videoUrl)
-        }
-
-        subtitle = response.postMedia?.description ?? ""
-        title = response.postMedia?.title ?? response.collectionName ?? ""
-        self.collection = collection
-        self.response = response
     }
 
     var declare: String {
@@ -199,7 +241,8 @@ struct NFTModel: Codable, Hashable, Identifiable {
         }
 
         return traits.filter { trait in
-            !filterMetadata.contains(trait.name?.lowercased() ?? "") && !(trait.value ?? "").isEmpty && !(trait.value ?? "").hasPrefix("https://")
+            !filterMetadata.contains(trait.name?.lowercased() ?? "") && !(trait.value ?? "")
+                .isEmpty && !(trait.value ?? "").hasPrefix("https://")
         }
     }
 
@@ -215,22 +258,18 @@ struct NFTModel: Codable, Hashable, Identifiable {
     }
 
     var publicIdentifier: String {
-        guard let path = collection?.path?.privatePath, let identifier = path.split(separator: "/").last else {
+        guard let path = collection?.path?.privatePath,
+              let identifier = path.split(separator: "/").last else {
             return ""
         }
         return String(identifier)
     }
 }
 
+// MARK: - CollectionItem
+
 class CollectionItem: Identifiable, ObservableObject {
-    static func mock() -> CollectionItem {
-        let item = CollectionItem()
-        item.isEnd = true
-        item.nfts = [0, 1, 2, 3].map { _ in
-            NFTModel(NFTResponse(id: "", name: "", description: "", thumbnail: "", externalURL: "", contractAddress: "", evmAddress: "", address: "", collectionID: "", collectionName: "", collectionDescription: "", collectionSquareImage: "", collectionExternalURL: "", collectionContractName: "", collectionBannerImage: "", traits: [], postMedia: NFTPostMedia(title: "", description: "", video: "", isSvg: false)), in: nil)
-        }
-        return item
-    }
+    // MARK: Internal
 
     var address: String = ""
     var id = UUID()
@@ -238,7 +277,8 @@ class CollectionItem: Identifiable, ObservableObject {
     var collectionId: String = ""
     var count: Int = 0
     var collection: NFTCollectionInfo?
-    @Published var nfts: [NFTModel] = []
+    @Published
+    var nfts: [NFTModel] = []
     var loadCallback: ((Bool) -> Void)?
     var loadCallback2: ((Bool) -> Void)?
 
@@ -246,7 +286,7 @@ class CollectionItem: Identifiable, ObservableObject {
     var isRequesting: Bool = false
 
     var showName: String {
-        return collection?.name ?? ""
+        collection?.name ?? ""
     }
 
     var iconURL: URL {
@@ -259,6 +299,36 @@ class CollectionItem: Identifiable, ObservableObject {
         }
 
         return URL(string: placeholder)!
+    }
+
+    static func mock() -> CollectionItem {
+        let item = CollectionItem()
+        item.isEnd = true
+        item.nfts = [0, 1, 2, 3].map { _ in
+            NFTModel(
+                NFTResponse(
+                    id: "",
+                    name: "",
+                    description: "",
+                    thumbnail: "",
+                    externalURL: "",
+                    contractAddress: "",
+                    evmAddress: "",
+                    address: "",
+                    collectionID: "",
+                    collectionName: "",
+                    collectionDescription: "",
+                    collectionSquareImage: "",
+                    collectionExternalURL: "",
+                    collectionContractName: "",
+                    collectionBannerImage: "",
+                    traits: [],
+                    postMedia: NFTPostMedia(title: "", description: "", video: "", isSvg: false)
+                ),
+                in: nil
+            )
+        }
+        return item
     }
 
     func loadFromCache() {
@@ -278,7 +348,10 @@ class CollectionItem: Identifiable, ObservableObject {
         let limit = 24
         Task {
             do {
-                let response = try await requestCollectionListDetail(offset: nfts.count, limit: limit)
+                let response = try await requestCollectionListDetail(
+                    offset: nfts.count,
+                    limit: limit
+                )
                 DispatchQueue.main.async {
                     self.isRequesting = false
 
@@ -312,6 +385,8 @@ class CollectionItem: Identifiable, ObservableObject {
         }
     }
 
+    // MARK: Private
+
     private func appendNFTsNoDuplicated(_ newNFTs: [NFTModel]) {
         for nft in newNFTs {
             let exist = nfts.first { $0.id == nft.id }
@@ -322,11 +397,23 @@ class CollectionItem: Identifiable, ObservableObject {
         }
     }
 
-    private func requestCollectionListDetail(offset: Int, limit: Int = 24, fromAddress: String? = nil) async throws -> NFTListResponse {
+    private func requestCollectionListDetail(
+        offset: Int,
+        limit: Int = 24,
+        fromAddress: String? = nil
+    ) async throws -> NFTListResponse {
         let addr = fromAddress ?? WalletManager.shared.selectedAccountAddress
-        let request = NFTCollectionDetailListRequest(address: addr, collectionIdentifier: collection?.id ?? "", offset: offset, limit: limit)
+        let request = NFTCollectionDetailListRequest(
+            address: addr,
+            collectionIdentifier: collection?.id ?? "",
+            offset: offset,
+            limit: limit
+        )
         let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount == nil ? .main : .evm
-        let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(request, from))
+        let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(
+            request,
+            from
+        ))
         return response
     }
 

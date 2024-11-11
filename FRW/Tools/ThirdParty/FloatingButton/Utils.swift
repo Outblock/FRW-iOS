@@ -15,12 +15,15 @@ extension View {
 
 extension Collection where Element == CGPoint {
     subscript(safe index: Index) -> CGPoint {
-        return indices.contains(index) ? self[index] : .zero
+        indices.contains(index) ? self[index] : .zero
     }
 }
 
+// MARK: - SizeGetter
+
 struct SizeGetter: ViewModifier {
-    @Binding var size: CGSize
+    @Binding
+    var size: CGSize
 
     func body(content: Content) -> some View {
         content
@@ -37,6 +40,8 @@ struct SizeGetter: ViewModifier {
     }
 }
 
+// MARK: - SubmenuButtonPreferenceKey
+
 struct SubmenuButtonPreferenceKey: PreferenceKey {
     typealias Value = [CGSize]
 
@@ -47,13 +52,17 @@ struct SubmenuButtonPreferenceKey: PreferenceKey {
     }
 }
 
+// MARK: - SubmenuButtonPreferenceViewSetter
+
 struct SubmenuButtonPreferenceViewSetter: View {
     var body: some View {
         GeometryReader { geometry in
             Rectangle()
                 .fill(Color.clear)
-                .preference(key: SubmenuButtonPreferenceKey.self,
-                            value: [geometry.frame(in: .global).size])
+                .preference(
+                    key: SubmenuButtonPreferenceKey.self,
+                    value: [geometry.frame(in: .global).size]
+                )
         }
     }
 }

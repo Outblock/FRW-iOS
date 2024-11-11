@@ -5,13 +5,15 @@
 //  Created by cat on 10/30/24.
 //
 
-import SwiftUI
 import Introspect
+import SwiftUI
+
+// MARK: - TitleView
 
 struct TitleView: View {
     let title: String
     let isStar: Bool
-    
+
     var body: some View {
         HStack(spacing: 0) {
             Text(title)
@@ -27,29 +29,33 @@ struct TitleView: View {
     }
 }
 
+// MARK: - SingleInputView
+
 struct SingleInputView: View {
-    
     enum FocusField: Hashable {
         case field
     }
-    
-    @Binding var content: String
+
+    @Binding
+    var content: String
     var placeholder: String? = "add_custom_token_place".localized
-    @FocusState private var focusedField: FocusField?
+    @FocusState
+    private var focusedField: FocusField?
     var onSubmit: EmptyClosure? = nil
-    var onChange: ((String)->())? = nil
-    
+    var onChange: ((String) -> Void)? = nil
+
     var body: some View {
         ZStack(alignment: .center) {
-            
             TextField("", text: $content)
                 .keyboardType(.alphabet)
                 .submitLabel(.search)
                 .disableAutocorrection(true)
-                .modifier(PlaceholderStyle(showPlaceHolder: content.isEmpty,
-                                           placeholder: placeholder ?? "",
-                                           font: .inter(size: 14, weight: .medium),
-                                           color: Color.LL.Neutrals.note))
+                .modifier(PlaceholderStyle(
+                    showPlaceHolder: content.isEmpty,
+                    placeholder: placeholder ?? "",
+                    font: .inter(size: 14, weight: .medium),
+                    color: Color.LL.Neutrals.note
+                ))
                 .font(.inter(size: 14))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .onSubmit {
@@ -74,11 +80,10 @@ struct SingleInputView: View {
     }
 }
 
-
 #Preview {
     TitleView(title: "Hello", isStar: false)
-    
-    SingleInputView(content: .constant("abc"), onChange:  { str in
-    
+
+    SingleInputView(content: .constant("abc"), onChange: { str in
+
     })
 }

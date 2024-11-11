@@ -11,11 +11,11 @@ import WalletConnectSign
 
 struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
     var type: WalletConnectHandlerType {
-        return .flow
+        .flow
     }
 
     var nameTag: String {
-        return "flow"
+        "flow"
     }
 
     func chainId(sessionProposal: Session.Proposal) -> Flow.ChainID? {
@@ -27,7 +27,10 @@ struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
         return Flow.ChainID(name: reference.lowercased())
     }
 
-    func approveSessionNamespaces(sessionProposal: Session.Proposal) throws -> [String: SessionNamespace] {
+    func approveSessionNamespaces(
+        sessionProposal: Session
+            .Proposal
+    ) throws -> [String: SessionNamespace] {
         guard let account = WalletManager.shared.getPrimaryWalletAddress() else {
             return [:]
         }
@@ -37,24 +40,43 @@ struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
             let caip2Namespace = $0.key
             let proposalNamespace = $0.value
             if let chains = proposalNamespace.chains {
-                let accounts = Array(chains.compactMap { WalletConnectSign.Account($0.absoluteString + ":\(account)") })
-                let sessionNamespace = SessionNamespace(accounts: accounts, methods: proposalNamespace.methods, events: proposalNamespace.events)
+                let accounts = Array(
+                    chains
+                        .compactMap { WalletConnectSign.Account($0.absoluteString + ":\(account)") }
+                )
+                let sessionNamespace = SessionNamespace(
+                    accounts: accounts,
+                    methods: proposalNamespace.methods,
+                    events: proposalNamespace.events
+                )
                 sessionNamespaces[caip2Namespace] = sessionNamespace
             }
         }
         return sessionNamespaces
     }
 
-    func handlePersonalSignRequest(request _: Request, confirm _: @escaping (String) -> Void, cancel _: @escaping () -> Void) {}
+    func handlePersonalSignRequest(
+        request _: Request,
+        confirm _: @escaping (String) -> Void,
+        cancel _: @escaping () -> Void
+    ) {}
 
-    func handleSendTransactionRequest(request _: WalletConnectSign.Request, confirm _: @escaping (String) -> Void, cancel: @escaping () -> Void) {
+    func handleSendTransactionRequest(
+        request _: WalletConnectSign.Request,
+        confirm _: @escaping (String) -> Void,
+        cancel: @escaping () -> Void
+    ) {
         cancel()
     }
-    
-    func handleSignTypedDataV4(request: Request, confirm: @escaping (String) -> Void, cancel: @escaping () -> Void) {
+
+    func handleSignTypedDataV4(
+        request: Request,
+        confirm: @escaping (String) -> Void,
+        cancel: @escaping () -> Void
+    ) {
         cancel()
     }
-    
+
     func handleWatchAsset(
         request: Request,
         confirm: @escaping (String) -> Void,

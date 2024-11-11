@@ -12,13 +12,10 @@ import GTMSessionFetcherCore
 import SwiftUI
 import UIKit
 
-class BackupGDTarget: BackupTarget {
-    private var clientID = ""
-    private lazy var config: GIDConfiguration = {
-        GIDConfiguration(clientID: clientID)
-    }()
+// MARK: - BackupGDTarget
 
-    private var api: GoogleDriveAPI?
+class BackupGDTarget: BackupTarget {
+    // MARK: Lifecycle
 
     init() {
         guard let filePath = Bundle.main.path(forResource: "GoogleOAuth2", ofType: "plist") else {
@@ -31,8 +28,10 @@ class BackupGDTarget: BackupTarget {
         tryToRestoreLogin()
     }
 
+    // MARK: Internal
+
     var isPrepared: Bool {
-        return api != nil
+        api != nil
     }
 
     func relogin() async throws {
@@ -41,6 +40,15 @@ class BackupGDTarget: BackupTarget {
         user = try await addScopesIfNeeded(user: user)
         createGoogleDriveService(user: user)
     }
+
+    // MARK: Private
+
+    private var clientID = ""
+    private lazy var config: GIDConfiguration = {
+        GIDConfiguration(clientID: clientID)
+    }()
+
+    private var api: GoogleDriveAPI?
 
     private func tryToRestoreLogin() {
         if !GIDSignIn.sharedInstance.hasPreviousSignIn() {
@@ -108,7 +116,7 @@ extension BackupGDTarget {
     }
 
     private func googleRestoreLogin() async throws -> GIDGoogleUser {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.main.async {
                 GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
                     guard let signInUser = user else {
@@ -123,17 +131,19 @@ extension BackupGDTarget {
     }
 
     private func googleUserLogin() async throws -> GIDGoogleUser {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.main.async {
                 let topVC = Router.topPresentedController()
-                GIDSignIn.sharedInstance.signIn(with: self.config, presenting: topVC) { user, error in
-                    guard let signInUser = user else {
-                        continuation.resume(throwing: error ?? GoogleBackupError.missingLoginUser)
-                        return
-                    }
+                GIDSignIn.sharedInstance
+                    .signIn(with: self.config, presenting: topVC) { user, error in
+                        guard let signInUser = user else {
+                            continuation
+                                .resume(throwing: error ?? GoogleBackupError.missingLoginUser)
+                            return
+                        }
 
-                    continuation.resume(returning: signInUser)
-                }
+                        continuation.resume(returning: signInUser)
+                    }
             }
         }
     }
@@ -160,19 +170,22 @@ extension BackupGDTarget {
 
         return try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.main.async {
-                GIDSignIn.sharedInstance.addScopes([driveScope], presenting: topVC) { grantedUser, error in
-                    guard let grantedUser = grantedUser else {
-                        continuation.resume(throwing: error ?? GoogleBackupError.missingLoginUser)
-                        return
-                    }
+                GIDSignIn.sharedInstance
+                    .addScopes([driveScope], presenting: topVC) { grantedUser, error in
+                        guard let grantedUser = grantedUser else {
+                            continuation
+                                .resume(throwing: error ?? GoogleBackupError.missingLoginUser)
+                            return
+                        }
 
-                    guard let scopes = grantedUser.grantedScopes, scopes.contains(driveScope) else {
-                        continuation.resume(throwing: GoogleBackupError.noDriveScope)
-                        return
-                    }
+                        guard let scopes = grantedUser.grantedScopes,
+                              scopes.contains(driveScope) else {
+                            continuation.resume(throwing: GoogleBackupError.noDriveScope)
+                            return
+                        }
 
-                    continuation.resume(returning: grantedUser)
-                }
+                        continuation.resume(returning: grantedUser)
+                    }
             }
         }
     }

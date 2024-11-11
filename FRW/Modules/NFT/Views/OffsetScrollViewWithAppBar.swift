@@ -7,7 +7,29 @@
 
 import SwiftUI
 
+// MARK: - OffsetScrollViewWithAppBar
+
 struct OffsetScrollViewWithAppBar<Content: View, Nav: View>: View {
+    // MARK: Lifecycle
+
+    init(
+        title: String = "",
+        loadMoreEnabled: Bool = false,
+        loadMoreCallback: (() -> Void)? = nil,
+        isNoData: Bool = false,
+        @ViewBuilder content: @escaping () -> Content,
+        @ViewBuilder appBar: @escaping () -> Nav
+    ) {
+        self.content = content()
+        self.navBar = appBar()
+        self.title = title
+        self.loadMoreCallback = loadMoreCallback
+        self.isNoData = isNoData
+        self.loadMoreEnabled = loadMoreEnabled
+    }
+
+    // MARK: Internal
+
     var title: String
 
     let content: Content
@@ -18,20 +40,13 @@ struct OffsetScrollViewWithAppBar<Content: View, Nav: View>: View {
     let isNoData: Bool
     let loadMoreEnabled: Bool
 
-    @State private var offset: CGFloat = 0
-    @State private var opacity: CGFloat = 0
-
-    init(title: String = "", loadMoreEnabled: Bool = false, loadMoreCallback: (() -> Void)? = nil, isNoData: Bool = false, @ViewBuilder content: @escaping () -> Content, @ViewBuilder appBar: @escaping () -> Nav) {
-        self.content = content()
-        navBar = appBar()
-        self.title = title
-        self.loadMoreCallback = loadMoreCallback
-        self.isNoData = isNoData
-        self.loadMoreEnabled = loadMoreEnabled
-    }
-
     var body: some View {
-        OffsetScrollView(offset: $offset, loadMoreEnabled: loadMoreEnabled, loadMoreCallback: loadMoreCallback, isNoData: isNoData) {
+        OffsetScrollView(
+            offset: $offset,
+            loadMoreEnabled: loadMoreEnabled,
+            loadMoreCallback: loadMoreCallback,
+            isNoData: isNoData
+        ) {
             content
         }
         .onChange(of: offset, perform: { value in
@@ -48,7 +63,7 @@ struct OffsetScrollViewWithAppBar<Content: View, Nav: View>: View {
                     .opacity(opacity)
                 navBar
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                if title.count > 0 {
+                if !title.isEmpty {
                     Text(title)
                         .font(.title2)
                         .foregroundColor(.LL.Neutrals.text)
@@ -60,7 +75,16 @@ struct OffsetScrollViewWithAppBar<Content: View, Nav: View>: View {
             .frame(maxHeight: .infinity, alignment: .top)
         )
     }
+
+    // MARK: Private
+
+    @State
+    private var offset: CGFloat = 0
+    @State
+    private var opacity: CGFloat = 0
 }
+
+// MARK: - OffsetScrollWithAppBar_Previews
 
 struct OffsetScrollWithAppBar_Previews: PreviewProvider {
     static var previews: some View {

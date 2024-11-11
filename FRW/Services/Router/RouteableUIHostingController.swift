@@ -10,6 +10,8 @@ import UIKit
 
 typealias RouteableView = View & RouterContentDelegate
 
+// MARK: - RouterContentDelegate
+
 protocol RouterContentDelegate {
     /// UINavigationBar use this to smooth push animation
     var title: String { get }
@@ -31,15 +33,15 @@ protocol RouterContentDelegate {
 
 extension RouterContentDelegate {
     var isNavigationBarHidden: Bool {
-        return false
+        false
     }
 
     var navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
-        return .inline
+        .inline
     }
 
     var forceColorScheme: UIUserInterfaceStyle? {
-        return nil
+        nil
     }
 
     func backButtonAction() {
@@ -49,10 +51,23 @@ extension RouterContentDelegate {
     func configNavigationItem(_: UINavigationItem) {}
 }
 
-class RouteableUIHostingController<Content: RouteableView>: UIHostingController<Content>, UIPopoverPresentationControllerDelegate {
+// MARK: - RouteableUIHostingController
+
+class RouteableUIHostingController<Content: RouteableView>: UIHostingController<Content>,
+    UIPopoverPresentationControllerDelegate {
+    // MARK: Lifecycle
+
     override init(rootView: Content) {
         super.init(rootView: rootView)
     }
+
+    @available(*, unavailable)
+    @MainActor
+    dynamic required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,12 +79,19 @@ class RouteableUIHostingController<Content: RouteableView>: UIHostingController<
             overrideUserInterfaceStyle = style
         }
 
-        let backItem = UIBarButtonItem(image: UIImage(systemName: "arrow.backward"), style: .plain, target: self, action: #selector(onBackButtonAction))
+        let backItem = UIBarButtonItem(
+            image: UIImage(systemName: "arrow.backward"),
+            style: .plain,
+            target: self,
+            action: #selector(onBackButtonAction)
+        )
         backItem.tintColor = UIColor(named: "button.color")
         navigationItem.leftBarButtonItem = backItem
 
-        navigationController?.navigationBar.prefersLargeTitles = rootView.navigationBarTitleDisplayMode == .large
-        navigationItem.largeTitleDisplayMode = rootView.navigationBarTitleDisplayMode == .large ? .always : .never
+        navigationController?.navigationBar.prefersLargeTitles = rootView
+            .navigationBarTitleDisplayMode == .large
+        navigationItem.largeTitleDisplayMode = rootView
+            .navigationBarTitleDisplayMode == .large ? .always : .never
 
         rootView.configNavigationItem(navigationItem)
 
@@ -94,16 +116,15 @@ class RouteableUIHostingController<Content: RouteableView>: UIHostingController<
         }
     }
 
-    @objc private func onBackButtonAction() {
-        rootView.backButtonAction()
-    }
-
-    @available(*, unavailable)
-    @MainActor dynamic required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    @objc func presentationControllerDidDismiss(_: UIPresentationController) {
+    @objc
+    func presentationControllerDidDismiss(_: UIPresentationController) {
         log.debug("[Route] ----")
+    }
+
+    // MARK: Private
+
+    @objc
+    private func onBackButtonAction() {
+        rootView.backButtonAction()
     }
 }

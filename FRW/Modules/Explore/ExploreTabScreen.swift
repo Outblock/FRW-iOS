@@ -12,9 +12,11 @@ import SwiftUIX
 
 private let BookmarkCellWidth: CGFloat = 56
 
+// MARK: - ExploreTabScreen + AppTabBarPageProtocol
+
 extension ExploreTabScreen: AppTabBarPageProtocol {
     static func tabTag() -> AppTabType {
-        return .explore
+        .explore
     }
 
     static func iconName() -> String {
@@ -22,16 +24,23 @@ extension ExploreTabScreen: AppTabBarPageProtocol {
     }
 
     static func color() -> SwiftUI.Color {
-        return .LL.Secondary.violetDiscover
+        .LL.Secondary.violetDiscover
     }
 }
 
+// MARK: - ExploreTabScreen
+
 struct ExploreTabScreen: View {
-    @StateObject private var vm = ExploreTabViewModel()
+    @StateObject
+    private var vm = ExploreTabViewModel()
 
-    @State var text: String = ""
+    @State
+    var text: String = ""
 
-    var bookmarkColumns: [GridItem] = Array(repeating: .init(.fixed(BookmarkCellWidth), spacing: 14), count: 5)
+    var bookmarkColumns: [GridItem] = Array(
+        repeating: .init(.fixed(BookmarkCellWidth), spacing: 14),
+        count: 5
+    )
 
     var header: some View {
         Button {
@@ -72,8 +81,12 @@ struct ExploreTabScreen: View {
     var body: some View {
         VStack(spacing: 12) {
             header
-                .shadow(color: Color.LL.Secondary.violet4.opacity(0.2),
-                        radius: 12, x: 0, y: 8)
+                .shadow(
+                    color: Color.LL.Secondary.violet4.opacity(0.2),
+                    radius: 12,
+                    x: 0,
+                    y: 8
+                )
 
             if vm.state.list.isEmpty && vm.webBookmarkList.isEmpty {
                 Spacer()
@@ -163,7 +176,14 @@ struct ExploreTabScreen: View {
                             .foregroundColor(Color.LL.Neutrals.text)
                             .padding(.horizontal, 18)
                             .padding(.vertical, 8)
-                            .roundedBg(cornerRadius: 18, fillColor: Color.LL.Other.bg2, strokeColor: vm.state.selectedCategory == category ? Color(hex: "#7678ED") : Color(hex: "#F5F5F5"), strokeLineWidth: 2)
+                            .roundedBg(
+                                cornerRadius: 18,
+                                fillColor: Color.LL.Other.bg2,
+                                strokeColor: vm.state
+                                    .selectedCategory == category ? Color(hex: "#7678ED") :
+                                    Color(hex: "#F5F5F5"),
+                                strokeLineWidth: 2
+                            )
                             .contentShape(Rectangle())
                     }
                 }
@@ -191,8 +211,7 @@ struct ExploreTabScreen: View {
                 //                            Router.route(to: RouteMap.Explore.browser(url))
 
                 if LocalUserDefaults.shared.flowNetwork == .testnet,
-                   let url = dApp.testnetURL
-                {
+                   let url = dApp.testnetURL {
                     Router.route(to: RouteMap.Explore.browser(url))
                 } else {
                     Router.route(to: RouteMap.Explore.browser(dApp.url))
@@ -313,6 +332,8 @@ extension ExploreTabScreen {
         }
     }
 }
+
+// MARK: - ExploreTabScreen_Previews
 
 struct ExploreTabScreen_Previews: PreviewProvider {
     static var previews: some View {

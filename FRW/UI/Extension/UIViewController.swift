@@ -9,7 +9,11 @@ import SnapKit
 import UIKit
 
 extension UIViewController {
-    func show(childViewController childVC: UIViewController, inView: UIView? = nil, useAutoLayout: Bool = true) {
+    func show(
+        childViewController childVC: UIViewController,
+        inView: UIView? = nil,
+        useAutoLayout: Bool = true
+    ) {
         if let container = inView ?? view {
             addChild(childVC)
             container.addSubview(childVC.view)

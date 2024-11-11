@@ -22,6 +22,8 @@ extension SecurityManager {
         case faceid
         case touchid
 
+        // MARK: Internal
+
         var desc: String {
             switch self {
             case .none:
@@ -35,25 +37,37 @@ extension SecurityManager {
     }
 }
 
-class SecurityManager {
-    static let shared = SecurityManager()
-    private let PinCodeKey = "PinCodeKey"
-    var isLocked: Bool = false
-    
-    private var ignoreOnce: Bool = false
+// MARK: - SecurityManager
 
-    var securityType: SecurityType {
-        return LocalUserDefaults.shared.securityType
-    }
+class SecurityManager {
+    // MARK: Lifecycle
 
     init() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(onEnterBackground),
-                                               name: UIApplication.didEnterBackgroundNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
     }
 
-    @objc private func onEnterBackground() {
+    // MARK: Internal
+
+    static let shared = SecurityManager()
+
+    var isLocked: Bool = false
+
+    var securityType: SecurityType {
+        LocalUserDefaults.shared.securityType
+    }
+
+    // MARK: Private
+
+    private let PinCodeKey = "PinCodeKey"
+    private var ignoreOnce: Bool = false
+
+    @objc
+    private func onEnterBackground() {
         lockAppIfNeeded()
     }
 }
@@ -62,7 +76,7 @@ class SecurityManager {
 
 extension SecurityManager {
     var isLockOnExitEnabled: Bool {
-        return LocalUserDefaults.shared.lockOnExit
+        LocalUserDefaults.shared.lockOnExit
     }
 
     func changeLockOnExistStatus(_ lock: Bool) {
@@ -99,11 +113,11 @@ extension SecurityManager {
             })
         }
     }
-    
+
     func openIgnoreOnce() {
         ignoreOnce = true
     }
-    
+
     func SecurityVerify() async -> Bool {
         guard !ignoreOnce else {
             ignoreOnce = false
@@ -127,7 +141,7 @@ extension SecurityManager {
 
 extension SecurityManager {
     var isPinCodeEnabled: Bool {
-        return securityType == .pin || securityType == .both
+        securityType == .pin || securityType == .both
     }
 
     var currentPinCode: String {
@@ -171,7 +185,7 @@ extension SecurityManager {
     }
 
     func authPinCode(_ code: String) -> Bool {
-        return currentPinCode == code
+        currentPinCode == code
     }
 }
 
@@ -179,7 +193,7 @@ extension SecurityManager {
 
 extension SecurityManager {
     var isBionicEnabled: Bool {
-        return securityType == .bionic || securityType == .both
+        securityType == .bionic || securityType == .both
     }
 
     var supportedBionic: SecurityManager.BionicType {

@@ -8,11 +8,15 @@
 import Foundation
 import MapKit
 
+// MARK: - RegisterRequest
+
 struct RegisterRequest: Codable {
     let username: String?
     let accountKey: AccountKey
     let deviceInfo: DeviceInfoRequest
 }
+
+// MARK: - AccountKey
 
 struct AccountKey: Codable {
     let hashAlgo: Int
@@ -20,6 +24,8 @@ struct AccountKey: Codable {
     let signAlgo: Int
     var weight: Int = 1000
 }
+
+// MARK: - LoginRequest
 
 struct LoginRequest: Codable {
 //    let publicKey: String
@@ -29,12 +35,16 @@ struct LoginRequest: Codable {
     var address: String? = nil
 }
 
+// MARK: - RestoreImportRequest
+
 struct RestoreImportRequest: Codable {
     let username: String?
     let accountKey: AccountKey
     let deviceInfo: DeviceInfoRequest
     let address: String
 }
+
+// MARK: - DeviceInfoRequest
 
 struct DeviceInfoRequest: Codable {
     let deviceId: String
@@ -61,11 +71,11 @@ struct DeviceInfoRequest: Codable {
 
 extension DeviceInfoRequest {
     func showApp() -> String {
-        return userAgent ?? ""
+        userAgent ?? ""
     }
 
     func showIP() -> String {
-        return ip ?? ""
+        ip ?? ""
     }
 
     func showLocation() -> String {
@@ -86,6 +96,8 @@ extension DeviceInfoRequest {
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 }
+
+// MARK: - NetworkRequest
 
 struct NetworkRequest: Codable {
     let accountKey: AccountKey

@@ -11,11 +11,18 @@ import UserNotifications
 import WalletConnectNotify
 import Web3Wallet
 
+// MARK: - NotificationService
+
 class NotificationService: UNNotificationServiceExtension {
+    // MARK: Internal
+
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
 
-    override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+    override func didReceive(
+        _ request: UNNotificationRequest,
+        withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
+    ) {
         self.contentHandler = contentHandler
         bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
 
@@ -33,7 +40,10 @@ class NotificationService: UNNotificationServiceExtension {
             Task {
                 do {
                     if let localImageURL = try await downloadAndSaveImage(imageURLString) {
-                        let attach = try UNNotificationAttachment(identifier: "", url: localImageURL)
+                        let attach = try UNNotificationAttachment(
+                            identifier: "",
+                            url: localImageURL
+                        )
                         bestAttemptContent.attachments = [attach]
                     }
 
@@ -54,6 +64,8 @@ class NotificationService: UNNotificationServiceExtension {
         }
     }
 
+    // MARK: Private
+
     private func downloadAndSaveImage(_ urlString: String) async throws -> URL? {
         guard let url = URL(string: urlString) else {
             return nil
@@ -62,30 +74,42 @@ class NotificationService: UNNotificationServiceExtension {
         let result = try await URLSession.shared.data(from: url)
         let format = url.pathExtension
 
-        let savePath = cacheFolder().appendingPathComponent(urlString.md5).appendingPathExtension(format)
+        let savePath = cacheFolder().appendingPathComponent(urlString.md5)
+            .appendingPathExtension(format)
         try result.0.write(to: savePath)
         return savePath
     }
 
     private func cacheFolder() -> URL {
-        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
     }
 }
 
 // MARK: - Handle WalletConnect
 
 extension NotificationService {
-    private func handleWalletConnect(_: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+    private func handleWalletConnect(
+        _: UNNotificationRequest,
+        withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
+    ) {
         if let content = bestAttemptContent,
            let topic = content.userInfo["topic"] as? String,
            let ciphertext = content.userInfo["message"] as? String,
-           let tag = content.userInfo["tag"] as? UInt
-        {
+           let tag = content.userInfo["tag"] as? UInt {
             if Web3WalletDecryptionService.canHandle(tag: tag) {
-                let mutableContent = handleWeb3WalletNotification(content: content, topic: topic, tag: tag, ciphertext: ciphertext)
+                let mutableContent = handleWeb3WalletNotification(
+                    content: content,
+                    topic: topic,
+                    tag: tag,
+                    ciphertext: ciphertext
+                )
                 contentHandler(mutableContent)
             } else if NotifyDecryptionService.canHandle(tag: tag) {
-                let mutableContent = handleNotifyNotification(content: content, topic: topic, ciphertext: ciphertext)
+                let mutableContent = handleNotifyNotification(
+                    content: content,
+                    topic: topic,
+                    ciphertext: ciphertext
+                )
                 contentHandler(mutableContent)
             } else {
                 let mutableContent = content.mutableCopy() as! UNMutableNotificationContent
@@ -98,11 +122,21 @@ extension NotificationService {
         }
     }
 
-    private func handleWeb3WalletNotification(content: UNNotificationContent, topic: String, tag: UInt, ciphertext: String) -> UNMutableNotificationContent {
+    private func handleWeb3WalletNotification(
+        content: UNNotificationContent,
+        topic: String,
+        tag: UInt,
+        ciphertext: String
+    ) -> UNMutableNotificationContent {
         do {
-            let web3WalletDecryptionService = try Web3WalletDecryptionService(groupIdentifier: "group.com.walletconnect.sdk")
+            let web3WalletDecryptionService =
+                try Web3WalletDecryptionService(groupIdentifier: "group.com.walletconnect.sdk")
 
-            let decryptedPayload = try web3WalletDecryptionService.decryptMessage(topic: topic, ciphertext: ciphertext, tag: tag)
+            let decryptedPayload = try web3WalletDecryptionService.decryptMessage(
+                topic: topic,
+                ciphertext: ciphertext,
+                tag: tag
+            )
 
             let mutableContent = content.mutableCopy() as! UNMutableNotificationContent
 
@@ -114,15 +148,21 @@ extension NotificationService {
             switch decryptedPayload.requestMethod {
             case .sessionProposal:
                 mutableContent.title = "New session proposal!"
-                mutableContent.body = "A new session proposal arrived from \(metadata.name), please check your wallet"
+                mutableContent
+                    .body =
+                    "A new session proposal arrived from \(metadata.name), please check your wallet"
             case .sessionRequest:
                 if let payload = decryptedPayload as? RequestPayload {
                     mutableContent.title = "New session request!"
-                    mutableContent.body = "A new session request \(payload.request.method) arrived from \(metadata.name), please check your wallet"
+                    mutableContent
+                        .body =
+                        "A new session request \(payload.request.method) arrived from \(metadata.name), please check your wallet"
                 }
             case .authRequest:
                 mutableContent.title = "New authentication request!"
-                mutableContent.body = "A new authentication request arrived from \(metadata.name), please check your wallet"
+                mutableContent
+                    .body =
+                    "A new authentication request arrived from \(metadata.name), please check your wallet"
             }
 
             return mutableContent
@@ -135,14 +175,26 @@ extension NotificationService {
         }
     }
 
-    private func handleNotifyNotification(content: UNNotificationContent, topic: String, ciphertext: String) -> UNMutableNotificationContent {
+    private func handleNotifyNotification(
+        content: UNNotificationContent,
+        topic: String,
+        ciphertext: String
+    ) -> UNMutableNotificationContent {
         do {
             let service = NotifyDecryptionService(groupIdentifier: "group.com.walletconnect.sdk")
-            let (pushMessage, subscription, account) = try service.decryptMessage(topic: topic, ciphertext: ciphertext)
+            let (pushMessage, subscription, account) = try service.decryptMessage(
+                topic: topic,
+                ciphertext: ciphertext
+            )
 
             log("message decrypted", account: account, topic: topic, message: pushMessage)
 
-            let updatedContent = handle(content: content, pushMessage: pushMessage, subscription: subscription, topic: topic)
+            let updatedContent = handle(
+                content: content,
+                pushMessage: pushMessage,
+                subscription: subscription,
+                topic: topic
+            )
 
             let mutableContent = updatedContent.mutableCopy() as! UNMutableNotificationContent
             mutableContent.title = pushMessage.title
@@ -163,18 +215,31 @@ extension NotificationService {
         }
     }
 
-    func handle(content: UNNotificationContent, pushMessage: NotifyMessage, subscription: NotifySubscription, topic: String) -> UNNotificationContent {
+    func handle(
+        content: UNNotificationContent,
+        pushMessage: NotifyMessage,
+        subscription: NotifySubscription,
+        topic: String
+    ) -> UNNotificationContent {
         var senderAvatar: INImage?
 
         if let icon = subscription.messageIcons(ofType: pushMessage.type).md {
             do {
                 let iconUrl = try icon.asURL()
                 let senderThumbnailImageData = try Data(contentsOf: iconUrl)
-                let senderThumbnailImageFileUrl = try downloadAttachment(data: senderThumbnailImageData, fileName: iconUrl.lastPathComponent)
+                let senderThumbnailImageFileUrl = try downloadAttachment(
+                    data: senderThumbnailImageData,
+                    fileName: iconUrl.lastPathComponent
+                )
                 let senderThumbnailImageFileData = try Data(contentsOf: senderThumbnailImageFileUrl)
                 senderAvatar = INImage(imageData: senderThumbnailImageFileData)
             } catch {
-                log("Fetch icon error: \(error)", account: subscription.account, topic: topic, message: pushMessage)
+                log(
+                    "Fetch icon error: \(error)",
+                    account: subscription.account,
+                    topic: topic,
+                    message: pushMessage
+                )
             }
         }
 
@@ -227,9 +292,16 @@ extension NotificationService {
     func downloadAttachment(data: Data, fileName: String) throws -> URL {
         let fileManager = FileManager.default
         let tmpSubFolderName = ProcessInfo.processInfo.globallyUniqueString
-        let tmpSubFolderURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(tmpSubFolderName, isDirectory: true)
+        let tmpSubFolderURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(
+            tmpSubFolderName,
+            isDirectory: true
+        )
 
-        try fileManager.createDirectory(at: tmpSubFolderURL, withIntermediateDirectories: true, attributes: nil)
+        try fileManager.createDirectory(
+            at: tmpSubFolderURL,
+            withIntermediateDirectories: true,
+            attributes: nil
+        )
 
         let fileURL = tmpSubFolderURL.appendingPathComponent(fileName)
         try data.write(to: fileURL)
@@ -237,7 +309,12 @@ extension NotificationService {
         return fileURL
     }
 
-    func log(_: String, account _: Account? = nil, topic _: String? = nil, message _: NotifyMessage? = nil) {
+    func log(
+        _: String,
+        account _: Account? = nil,
+        topic _: String? = nil,
+        message _: NotifyMessage? = nil
+    ) {
         let keychain = GroupKeychainStorage(serviceIdentifier: "group.com.walletconnect.sdk")
 
         guard let clientId: String = try? keychain.read(key: "clientId") else {
@@ -273,6 +350,6 @@ extension NotificationService {
 
 extension String {
     var md5: String {
-        return Insecure.MD5.hash(data: data(using: .utf8)!).map { String(format: "%02hhx", $0) }.joined()
+        Insecure.MD5.hash(data: data(using: .utf8)!).map { String(format: "%02hhx", $0) }.joined()
     }
 }

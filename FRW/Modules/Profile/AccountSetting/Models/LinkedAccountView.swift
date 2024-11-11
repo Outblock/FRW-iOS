@@ -9,8 +9,10 @@ import Combine
 import Kingfisher
 import SwiftUI
 
+// MARK: - LinkedAccountView
+
 struct LinkedAccountView: RouteableView {
-    @StateObject private var cm = ChildAccountManager.shared
+    // MARK: Internal
 
     var title: String {
         "linked_account".localized.capitalized
@@ -18,7 +20,7 @@ struct LinkedAccountView: RouteableView {
 
     var body: some View {
         ZStack {
-            if cm.sortedChildAccounts.count == 0 && !cm.isLoading {
+            if cm.sortedChildAccounts.isEmpty && !cm.isLoading {
                 emptyView
             } else {
                 ScrollView(.vertical) {
@@ -80,12 +82,19 @@ struct LinkedAccountView: RouteableView {
             } label: {
                 Image("icon-pin")
                     .renderingMode(.template)
-                    .foregroundColor(childAccount.isPinned ? Color.LL.Primary.salmonPrimary : Color(hex: "#00B881"))
+                    .foregroundColor(
+                        childAccount.isPinned ? Color.LL.Primary
+                            .salmonPrimary : Color(hex: "#00B881")
+                    )
                     .frame(width: 32, height: 32)
                     .background {
                         if childAccount.isPinned {
-                            LinearGradient(colors: [Color.clear, Color(hex: "#00B881").opacity(0.15)], startPoint: .bottomLeading, endPoint: .topTrailing)
-                                .cornerRadius([.topTrailing, .bottomLeading], 16)
+                            LinearGradient(
+                                colors: [Color.clear, Color(hex: "#00B881").opacity(0.15)],
+                                startPoint: .bottomLeading,
+                                endPoint: .topTrailing
+                            )
+                            .cornerRadius([.topTrailing, .bottomLeading], 16)
                         } else {
                             Color.clear
                         }
@@ -100,6 +109,11 @@ struct LinkedAccountView: RouteableView {
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.02), x: 0, y: 12, blur: 16)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var cm = ChildAccountManager.shared
 }
 
 extension LinkedAccountView {

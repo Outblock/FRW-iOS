@@ -16,16 +16,24 @@ struct QRCodeView: View {
 
     var body: some View {
         ZStack {
-            QRCodeDocumentUIView(document: doc(text: content,
-                                               eyeColor: eyeColor ?? (currentNetwork.isMainnet ?
-                                                   UIColor.LL.Primary.salmonPrimary : UIColor(hex: "#333333"))))
-                .padding(12)
+            QRCodeDocumentUIView(document: doc(
+                text: content,
+                eyeColor: eyeColor ?? (
+                    currentNetwork.isMainnet ?
+                        UIColor.LL.Primary
+                        .salmonPrimary : UIColor(hex: "#333333")
+                )
+            ))
+            .padding(12)
         }
         .background(Color.white)
         .cornerRadius(32)
         .overlay(
             RoundedRectangle(cornerRadius: 32)
-                .stroke(currentNetwork.isMainnet ? Color.LL.Neutrals.background : currentNetwork.color, lineWidth: 1)
+                .stroke(
+                    currentNetwork.isMainnet ? Color.LL.Neutrals.background : currentNetwork.color,
+                    lineWidth: 1
+                )
                 .colorScheme(.light)
         )
         .aspectRatio(1, contentMode: .fit)
@@ -35,7 +43,10 @@ struct QRCodeView: View {
         let d = QRCode.Document(generator: QRCodeGenerator_External())
         d.utf8String = text
         if let logo = logo?.cgImage {
-            let path = CGPath(ellipseIn: CGRect(x: 0.38, y: 0.38, width: 0.20, height: 0.20), transform: nil)
+            let path = CGPath(
+                ellipseIn: CGRect(x: 0.38, y: 0.38, width: 0.20, height: 0.20),
+                transform: nil
+            )
             d.logoTemplate = QRCode.LogoTemplate(image: logo, path: path, inset: 6)
         }
 
