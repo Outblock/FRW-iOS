@@ -5,23 +5,23 @@
 //  Created by Selina on 25/8/2022.
 //
 
-import SwiftUI
-import Kingfisher
-import Flow
-import web3swift
-import Web3Core
 import BigInt
+import Flow
+import Kingfisher
+import SwiftUI
+import Web3Core
+import web3swift
 
 class NFTTransferViewModel: ObservableObject {
     @Published var nft: NFTModel
     @Published var targetContact: Contact
     @Published var isValidNFT = true
     @Published var isEmptyTransation = true
-    
+
     private var isRequesting: Bool = false
-    
-    var fromChildAccount: ChildAccount? = nil
-    
+
+    var fromChildAccount: ChildAccount?
+
     init(nft: NFTModel, targetContact: Contact, fromChildAccount: ChildAccount? = nil) {
         self.nft = nft
         self.targetContact = targetContact
@@ -29,65 +29,57 @@ class NFTTransferViewModel: ObservableObject {
         checkNFTReachable()
         NotificationCenter.default.addObserver(self, selector: #selector(onHolderChanged(noti:)), name: .transactionStatusDidChanged, object: nil)
     }
-    
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-    
+
     var fromTargetContent: Contact {
-        
         if let account = fromChildAccount {
             let contact = Contact(address: account.showAddress, avatar: account.icon, contactName: account.aName, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName)
             return contact
-        }else if let account = EVMAccountManager.shared.selectedAccount {
+        } else if let account = EVMAccountManager.shared.selectedAccount {
             let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
-            let contact = Contact(address: account.showAddress, avatar: nil, contactName: user.name, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName,user: user)
+            let contact = Contact(address: account.showAddress, avatar: nil, contactName: user.name, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName, user: user)
             return contact
-        }
-        else if let account = ChildAccountManager.shared.selectedChildAccount {
-            
+        } else if let account = ChildAccountManager.shared.selectedChildAccount {
             let contact = Contact(address: account.showAddress, avatar: account.icon, contactName: account.aName, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName)
             return contact
-        }else {
+        } else {
             return UserManager.shared.userInfo!.toContactWithCurrentUserAddress()
         }
     }
-    
+
     func checkNFTReachable() {
         guard let toAddress = targetContact.address else {
             return
         }
         if fromTargetContent.address == toAddress {
-            self.isValidNFT = true
+            isValidNFT = true
             return
         }
-        if EVMAccountManager.shared.selectedAccount != nil ,let identifier = nft.response.flowIdentifier {
-            self.isValidNFT = true
+        if EVMAccountManager.shared.selectedAccount != nil, let identifier = nft.response.flowIdentifier {
+            isValidNFT = true
             return
         }
         let result = NFTCollectionStateManager.share.isTokenAdded(toAddress)
-        self.isValidNFT = result
+        isValidNFT = result
     }
-    
+
     func sendAction() {
         if TransactionManager.shared.isNFTTransfering(id: nft.id) {
             // TODO: show bottom sheet
             return
         }
-        
-        if SecurityManager.shared.securityType == .none {
-            sendLogic()
-            return
-        }
-        
-        Task {
-            let result = await SecurityManager.shared.inAppVerify()
-            if result {
-                sendLogic()
-            }
-        }
+        sendLogic()
+//        Task {
+//            let result = await SecurityManager.shared.SecurityVerify()
+//            if result {
+//                sendLogic()
+//            }
+//        }
     }
-    
+
     func sendLogic() {
         enum AccountType {
             case flow
@@ -95,33 +87,32 @@ class NFTTransferViewModel: ObservableObject {
             case eoa
             case linked
         }
-        
+
         if isRequesting {
             return
         }
-        
-        guard let toAddress = targetContact.address, let primaryAddress = WalletManager.shared.getPrimaryWalletAddress(),let currentAddress = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
+
+        guard let toAddress = targetContact.address, let primaryAddress = WalletManager.shared.getPrimaryWalletAddress(), let currentAddress = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
             return
         }
-        
+
         let failedBlock = {
             DispatchQueue.main.async {
                 self.isRequesting = false
                 HUD.error(title: "send_nft_failed".localized)
             }
         }
-        
-        self.isRequesting = true
-        
-        
+
+        isRequesting = true
+
         Task {
             do {
                 var fromAccountType = WalletManager.shared.isSelectedEVMAccount ? AccountType.coa
-                : (ChildAccountManager.shared.selectedChildAccount == nil ? AccountType.flow : AccountType.linked)
+                    : (ChildAccountManager.shared.selectedChildAccount == nil ? AccountType.flow : AccountType.linked)
                 if fromChildAccount != nil {
                     fromAccountType = .linked
                 }
-                
+
                 var toAccountType = toAddress.isEVMAddress ? AccountType.coa : AccountType.flow
                 if toAccountType == .flow {
                     let isChild = ChildAccountManager.shared.childAccounts.contains { $0.addr == toAddress }
@@ -129,12 +120,11 @@ class NFTTransferViewModel: ObservableObject {
                         toAccountType = .linked
                     }
                 }
-                
-                if toAccountType == .coa && toAddress != EVMAccountManager.shared.accounts.first?.showAddress {
+
+                if toAccountType == .coa, toAddress != EVMAccountManager.shared.accounts.first?.showAddress {
                     toAccountType = .eoa
                 }
-                
-                
+
                 var tid: Flow.ID?
                 switch (fromAccountType, toAccountType) {
                 case (.flow, .flow):
@@ -151,31 +141,35 @@ class NFTTransferViewModel: ObservableObject {
                     let nftId = nft.response.id
                     guard let nftAddress = self.nft.collection?.address,
                           let identifier = nft.collection?.flowIdentifier ?? nft.response.flowIdentifier,
-                          let evmContractAddress = await NFTCollectionConfig.share.get(from: nftAddress)?.evmAddress?.stripHexPrefix()
+                          let toAddress = targetContact.address?.stripHexPrefix()
                     else {
                         throw NFTError.sendInvalidAddress
                     }
-                    tid = try await FlowNetwork.bridgeNFTToAnyEVM(identifier: identifier, id: nftId, contractEVMAddress: evmContractAddress)
-                    
+                    tid = try await FlowNetwork
+                        .bridgeNFTToAnyEVM(
+                            identifier: identifier,
+                            id: nftId,
+                            toAddress: toAddress
+                        )
+
                 case (.coa, .flow):
                     let nftId = nft.response.id
                     guard let identifier = nft.collection?.flowIdentifier ?? nft.response.flowIdentifier else {
                         throw NFTError.noCollectionInfo
                     }
                     if primaryAddress.lowercased() == toAddress.lowercased() {
-                        guard let IdInt = UInt64(nftId)  else {
+                        guard let IdInt = UInt64(nftId) else {
                             throw NFTError.sendInvalidAddress
                         }
-                        
+
                         tid = try await FlowNetwork.bridgeNFTToEVM(identifier: identifier, ids: [IdInt], fromEvm: true)
-                    }else {
+                    } else {
                         tid = try await FlowNetwork.bridgeNFTFromEVMToAnyFlow(identifier: identifier, id: nftId, receiver: toAddress)
                     }
-                    
-                    
+
                 case (.coa, .eoa):
                     // sendTransaction
-                    
+
                     let erc721 = try await FlowProvider.Web3.erc721NFTContract()
                     let nftId = nft.response.id
                     guard let coaAddress = EVMAccountManager.shared.accounts.first?.showAddress,
@@ -183,7 +177,7 @@ class NFTTransferViewModel: ObservableObject {
                     else {
                         throw NFTError.sendInvalidAddress
                     }
-                    guard let data = erc721?.contract.method("safeTransferFrom", parameters: [coaAddress,toAddress, nftId], extraData: nil) else {
+                    guard let data = erc721?.contract.method("safeTransferFrom", parameters: [coaAddress, toAddress, nftId], extraData: nil) else {
                         throw NFTError.sendInvalidAddress
                     }
                     log.debug("[NFT] nftID: \(nftId)")
@@ -205,8 +199,8 @@ class NFTTransferViewModel: ObservableObject {
                     let childAddr = fromChildAccount?.addr ?? currentAddress
                     if toAddress.lowercased() == primaryAddress.lowercased() {
                         tid = try await FlowNetwork.moveNFTToParent(nftId: nftId, childAddress: childAddr, identifier: identifier, collection: collection)
-                    }else {
-                        tid = try await FlowNetwork.sendChildNFT(nftId: nftId, childAddress: childAddr,toAddress: toAddress, identifier: identifier, collection: collection)
+                    } else {
+                        tid = try await FlowNetwork.sendChildNFT(nftId: nftId, childAddress: childAddr, toAddress: toAddress, identifier: identifier, collection: collection)
                     }
                 case (.linked, .linked):
                     guard let nftId = UInt64(nft.response.id),
@@ -214,26 +208,45 @@ class NFTTransferViewModel: ObservableObject {
                     else { throw NFTError.sendInvalidAddress }
                     let identifier = nft.publicIdentifier
                     let childAddr = fromChildAccount?.addr ?? currentAddress
-                    tid = try await FlowNetwork.sendChildNFTToChild(nftId: nftId, childAddress: childAddr,toAddress: toAddress, identifier: identifier, collection: collection)
+                    tid = try await FlowNetwork.sendChildNFTToChild(nftId: nftId, childAddress: childAddr, toAddress: toAddress, identifier: identifier, collection: collection)
+                case (.linked, .coa):
+                    guard let nftIdentifier = nft.response.flowIdentifier,let nftId = UInt64(nft.response.id) else {
+                        return
+                    }
+                    let childAddr = fromChildAccount?.addr ?? currentAddress
+                    tid = try await FlowNetwork
+                        .bridgeChildNFTToEvm(
+                            nft: nftIdentifier,
+                            id: nftId,
+                            child: childAddr)
+                case (.coa, .linked):
+                    guard let nftIdentifier = nft.response.flowIdentifier,
+                          let nftId = UInt64(nft.response.id) else {
+                        return
+                    }
+                    let childAddr = fromChildAccount?.addr ?? toAddress
+                    tid = try await FlowNetwork
+                        .bridgeChildNFTFromEvm(
+                            nft: nftIdentifier,
+                            id: nftId,
+                            child: childAddr)
                 default:
                     failedBlock()
                     return
                 }
-                
-                
+
                 let model = NFTTransferModel(nft: nft, target: self.targetContact, from: primaryAddress)
                 guard let data = try? JSONEncoder().encode(model), let tid = tid else {
                     failedBlock()
                     return
                 }
-                
+
                 DispatchQueue.main.async {
                     let holder = TransactionManager.TransactionHolder(id: tid, type: .transferNFT, data: data)
                     TransactionManager.shared.newTransaction(holder: holder)
                     HUD.dismissLoading()
                     Router.dismiss()
                     Router.pop()
-                    
                 }
             } catch {
                 debugPrint("NFTTransferViewModel -> sendAction error: \(error)")
@@ -242,45 +255,45 @@ class NFTTransferViewModel: ObservableObject {
             }
         }
     }
-    
+
     func checkTransaction() {
         isEmptyTransation = TransactionManager.shared.holders.count == 0
     }
- 
-    @objc private func onHolderChanged(noti: Notification) {
+
+    @objc private func onHolderChanged(noti _: Notification) {
         checkTransaction()
     }
 }
 
 struct NFTTransferView: View {
     @StateObject var vm: NFTTransferViewModel
-    
+
     init(nft: NFTModel, target: Contact, fromChildAccount: ChildAccount? = nil) {
         _vm = StateObject(wrappedValue: NFTTransferViewModel(nft: nft, targetContact: target, fromChildAccount: fromChildAccount))
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             SheetHeaderView(title: "send_nft".localized)
-            
+
             VStack(spacing: 0) {
                 Spacer()
-                
+
                 ZStack {
                     fromToView
                     NFTTransferView.SendConfirmProgressView()
                         .padding(.bottom, 37)
                 }
-                
+
                 detailView
                     .padding(.top, 37)
-                CalloutView(corners: [.bottomLeading, .bottomTrailing] ,content: "nft_send_collection_empty".localized)
+                CalloutView(corners: [.bottomLeading, .bottomTrailing], content: "nft_send_collection_empty".localized)
                     .padding(.horizontal, 12)
                     .visibility(vm.isValidNFT ? .gone : .visible)
                     .transition(.move(edge: .top))
-                
+
                 Spacer()
-                
+
                 sendButton
             }
             .padding(.horizontal, 28)
@@ -302,12 +315,12 @@ struct NFTTransferView: View {
             ZStack {
                 if contact.user?.emoji != nil {
                     contact.user?.emoji.icon(size: 44)
-                }else if let avatar = contact.avatar?.convertedAvatarString(), avatar.isEmpty == false {
+                } else if let avatar = contact.avatar?.convertedAvatarString(), avatar.isEmpty == false {
                     KFImage.url(URL(string: avatar))
-                        .placeholder({
+                        .placeholder {
                             Image("placeholder")
                                 .resizable()
-                        })
+                        }
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 44, height: 44)
@@ -318,12 +331,10 @@ struct NFTTransferView: View {
                         .frame(width: 44, height: 44)
                 } else if let user = contact.user {
                     user.emoji.icon(size: 44)
-                }
-                else {
+                } else {
                     Text(String((contact.contactName?.first ?? "A").uppercased()))
                         .foregroundColor(.Theme.Accent.grey)
                         .font(.inter(size: 24, weight: .semibold))
-                        
                 }
             }
             .frame(width: 44, height: 44)
@@ -344,40 +355,40 @@ struct NFTTransferView: View {
         }
         .frame(maxWidth: .infinity)
     }
-    
+
     var detailView: some View {
         HStack(alignment: .center, spacing: 13) {
             KFImage.url(vm.nft.imageURL)
-                .placeholder({
+                .placeholder {
                     Image("placeholder")
                         .resizable()
-                })
+                }
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 72, height: 72)
                 .cornerRadius(8)
-            
+
             VStack(alignment: .leading, spacing: 8) {
                 Text(vm.nft.title)
                     .foregroundColor(.LL.Neutrals.text)
                     .font(.inter(size: 14, weight: .bold))
                     .lineLimit(1)
-                
+
                 HStack(spacing: 6) {
                     KFImage.url(vm.nft.collection?.logoURL)
-                        .placeholder({
+                        .placeholder {
                             Image("placeholder")
                                 .resizable()
-                        })
+                        }
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 20, height: 20)
                         .cornerRadius(10)
-                    
+
                     Text(vm.nft.collection?.name ?? "")
                         .foregroundColor(.LL.Neutrals.neutrals7)
                         .font(.inter(size: 14, weight: .regular))
-                    
+
                     Image("flow")
                         .resizable()
                         .aspectRatio(contentMode: .fill)
@@ -391,16 +402,15 @@ struct NFTTransferView: View {
         .background(Color.LL.bgForIcon)
         .cornerRadius(16)
     }
-    
+
     var sendButton: some View {
         WalletSendButtonView(allowEnable: $vm.isEmptyTransation) {
             if vm.isEmptyTransation {
                 vm.sendAction()
             }
-            
         }
     }
-    
+
     struct SendConfirmProgressView: View {
         private let totalNum: Int = 7
         @State private var step: Int = 0
@@ -408,7 +418,7 @@ struct NFTTransferView: View {
 
         var body: some View {
             HStack(spacing: 12) {
-                ForEach(0..<totalNum, id: \.self) { index in
+                ForEach(0 ..< totalNum, id: \.self) { index in
                     if step == index {
                         Image("icon-right-arrow-1")
                             .renderingMode(.template)

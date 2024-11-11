@@ -5,8 +5,8 @@
 //  Created by Selina on 26/5/2022.
 //
 
-import SwiftUI
 import Lottie
+import SwiftUI
 
 struct TabBarPageModel<T: Hashable> {
     let tag: T
@@ -22,6 +22,6 @@ struct TabBarPageModel<T: Hashable> {
         self.color = color
         self.view = view
         self.contextMenu = contextMenu
-        self.lottieView = AnimationView(name: iconName, bundle: .main)
+        lottieView = AnimationView(name: iconName, bundle: .main)
     }
 }

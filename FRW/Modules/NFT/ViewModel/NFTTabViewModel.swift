@@ -15,7 +15,7 @@ extension NFTTabScreen {
     enum ViewStyle {
         case normal
         case grid
-        
+
         var desc: String {
             switch self {
             case .normal:
@@ -27,7 +27,7 @@ extension NFTTabScreen {
             }
         }
     }
-    
+
     struct ViewState {
         var colorsMap: [String: [Color]] = [:]
     }
@@ -53,13 +53,11 @@ class NFTTabViewModel: ViewModel {
      */
 //    private var owner: String = "0x95601dba5c2506eb"
 
-    init() {
-        
-    }
+    init() {}
 
     func trigger(_ input: NFTTabScreen.Action) {
         switch input {
-        case let .info(model,childAccount):
+        case let .info(model, childAccount):
             Router.route(to: RouteMap.NFT.detail(self, model, childAccount))
         case .search:
             break

@@ -14,18 +14,26 @@ extension RemoteConfigManager {
         let crescendo: [String: String]?
         let previewnet: [String: String]?
     }
-    
+
     struct ENVConfig: Codable {
         let version: String
+        let versionProd: String
         let prod: Config
         let staging: Config
+        
+        enum CodingKeys: String, CodingKey {
+            case version
+            case prod
+            case staging
+            case versionProd = "version_prod"
+        }
     }
-    
+
     struct Config: Codable {
         let features: Features
         let payer: Payer
     }
-    
+
     // MARK: - Features
 
     struct Features: Codable {
@@ -76,9 +84,9 @@ extension RemoteConfigManager {
     enum NewsType: String, Codable {
         case message
         case image
-        
+
         case undefined
-        
+
         init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
             let rawValue = try? container.decode(String.self)
@@ -91,7 +99,7 @@ extension RemoteConfigManager {
         case medium
         case high
         case urgent
-        
+
         private var level: Int {
             switch self {
             case .low:
@@ -104,13 +112,13 @@ extension RemoteConfigManager {
                 return 1000
             }
         }
-        
+
         init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
             let rawValue = try? container.decode(String.self)
             self = NewsPriority(rawValue: rawValue ?? "") ?? .low
         }
-        
+
         static func < (lhs: RemoteConfigManager.NewsPriority, rhs: RemoteConfigManager.NewsPriority) -> Bool {
             return lhs.level < rhs.level
         }
@@ -120,7 +128,7 @@ extension RemoteConfigManager {
         case once // 只显示一次
         case click // 用户点击，或者关闭后，不再显示
         case expiry // 一直显示直到过期，用户关闭后，下次启动再显示
-        
+
         init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
             let rawValue = try? container.decode(String.self)
@@ -128,7 +136,62 @@ extension RemoteConfigManager {
         }
     }
 
-    struct News: Codable, Comparable, Identifiable {
+    enum NewsFlag: String, Codable {
+        case normal
+        case walletconnect
+        case upgrade
+        
+        init(from decoder: any Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            let rawValue = try? container.decode(String.self)
+            self = NewsFlag(rawValue: rawValue ?? "") ?? .normal
+        }
+    }
+    
+    struct Condition: Codable,Hashable {
+       let type: ConditionType
+//       let data: JsonObject? // can be ignored this time
+    }
+
+    enum ConditionType: String, Codable {
+        case unknow
+        case canUpgrade
+        case isIOS
+              case isAndroid
+              case isWeb
+              case cadence // can be ignored this time
+              case noBackup // can be ignored this time
+              case noBiometric // can be ignored this time
+        
+        init(from decoder: any Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            let rawValue = try? container.decode(String.self)
+            self = ConditionType(rawValue: rawValue ?? "") ?? .unknow
+        }
+        
+        func boolValue() -> Bool {
+            
+            switch self {
+            case .unknow:
+                return false
+            case .canUpgrade:
+                if let remoteVersion = RemoteConfigManager.shared.remoteVersion,
+                   let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                    return remoteVersion.compareVersion(to: currentVersion) == .orderedDescending
+                }else {
+                    return false
+                }
+            case .isIOS:
+                return true
+            default:
+                return false
+            }
+        }
+    }
+
+    struct News: Codable, Comparable, Identifiable, Hashable {
+        
+        
         let id: String
         let priority: NewsPriority
         let type: NewsType
@@ -141,6 +204,9 @@ extension RemoteConfigManager {
         let expiryTime: Date
         let displayType: NewDisplayType
 
+        var flag: NewsFlag? = .normal
+        let conditions: [Condition]?
+
         var iconURL: URL? {
             if let logoString = icon {
                 if logoString.hasSuffix("svg") {
@@ -150,9 +216,13 @@ extension RemoteConfigManager {
             }
             return nil
         }
-        
+
         static func < (lhs: RemoteConfigManager.News, rhs: RemoteConfigManager.News) -> Bool {
             lhs.priority < rhs.priority
+        }
+        
+        static func == (lhs: RemoteConfigManager.News, rhs: RemoteConfigManager.News) -> Bool {
+            lhs.id == rhs.id
         }
     }
 }

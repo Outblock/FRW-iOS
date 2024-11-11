@@ -12,7 +12,18 @@ import SwiftUI
 typealias VoidBlock = () -> Void
 typealias BoolBlock = (Bool) -> Void
 
+// MARK: - UsernameViewModel
+
 class UsernameViewModel: ViewModel {
+    // MARK: Lifecycle
+
+    init(mnemonic: String?) {
+        self.state = .init()
+        self.mnemonic = mnemonic
+    }
+
+    // MARK: Internal
+
     @Published
     private(set) var state: UsernameView.ViewState
 
@@ -20,11 +31,6 @@ class UsernameViewModel: ViewModel {
     var task: DispatchWorkItem?
     var currentText: String = ""
     var mnemonic: String?
-
-    init(mnemonic: String?) {
-        self.state = .init()
-        self.mnemonic = mnemonic
-    }
 
     func trigger(_ input: UsernameView.Action) {
         switch input {
@@ -44,42 +50,6 @@ class UsernameViewModel: ViewModel {
                 }
             }
         }
-    }
-    
-    private func registerAction() {
-        state.isRegisting = true
-        
-        Task {
-            do {
-                let txid = try await UserManager.shared.register(currentText)
-                let viewModel = CreateProfileWaitingViewModel(txId: txid ?? "") { finished in
-
-                    DispatchQueue.main.async {
-                        self.changeBackupTypeIfNeeded()
-                        self.state.isRegisting = false
-                        Router.popToRoot()
-                    }
-                }
-                Router.route(to: RouteMap.RestoreLogin.createProfile(viewModel))
-                
-                
-            } catch {
-                DispatchQueue.main.async {
-                    self.state.isRegisting = false
-                    HUD.error(title: "create_user_failed".localized)
-                }
-            }
-        }
-    }
-    
-    /// if mnemonic is not nil, means this is a custom mnemonic login, should change the backup type to manual
-    private func changeBackupTypeIfNeeded() {
-        guard mnemonic != nil else {
-            return
-        }
-        
-        guard let uid = UserManager.shared.activatedUID else { return }
-        MultiAccountStorage.shared.setBackupType(.manual, uid: uid)
     }
 
     func localCheckUserName(_ username: String) -> Bool {
@@ -104,10 +74,12 @@ class UsernameViewModel: ViewModel {
     func checkUsername(_ username: String) {
         Task {
             do {
-                let model: CheckUserResponse = try await Network.request(FRWAPI.User.checkUsername(username.lowercased()))
+                let model: CheckUserResponse = try await Network
+                    .request(FRWAPI.User.checkUsername(username.lowercased()))
                 await MainActor.run {
                     if model.username == currentText.lowercased() {
-                        self.state.status = model.unique ? .success() : .error("has_been_taken".localized)
+                        self.state.status = model
+                            .unique ? .success() : .error("has_been_taken".localized)
                     }
                 }
             } catch {
@@ -117,5 +89,42 @@ class UsernameViewModel: ViewModel {
                 print(error)
             }
         }
+    }
+
+    // MARK: Private
+
+    private func registerAction() {
+        state.isRegisting = true
+
+        Task {
+            do {
+                let txid = try await UserManager.shared.register(currentText)
+                let viewModel = CreateProfileWaitingViewModel(txId: txid ?? "") { finished in
+
+                    DispatchQueue.main.async {
+                        self.changeBackupTypeIfNeeded()
+                        self.state.isRegisting = false
+                        Router.popToRoot()
+                    }
+                }
+                Router.route(to: RouteMap.RestoreLogin.createProfile(viewModel))
+
+            } catch {
+                DispatchQueue.main.async {
+                    self.state.isRegisting = false
+                    HUD.error(title: "create_user_failed".localized)
+                }
+            }
+        }
+    }
+
+    /// if mnemonic is not nil, means this is a custom mnemonic login, should change the backup type to manual
+    private func changeBackupTypeIfNeeded() {
+        guard mnemonic != nil else {
+            return
+        }
+
+        guard let uid = UserManager.shared.activatedUID else { return }
+        MultiAccountStorage.shared.setBackupType(.manual, uid: uid)
     }
 }

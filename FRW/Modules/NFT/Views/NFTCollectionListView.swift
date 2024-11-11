@@ -8,181 +8,229 @@
 import Kingfisher
 import SwiftUI
 
+// MARK: - NFTCollectionListViewViewModel
+
 class NFTCollectionListViewViewModel: ObservableObject {
-    @Published var collection: CollectionItem
-    @Published var nfts: [NFTModel] = []
-    
-    var address: String?
-    var collectionPath: String?
-    @Published var isLoading = false
-    
-    private var proxy: ScrollViewProxy?
-    
+    // MARK: Lifecycle
+
     convenience init(address: String, path: String) {
-        
         let item = CollectionItem.mock()
         self.init(collection: item)
         self.address = address
         self.collectionPath = path
-        isLoading = true
-    }
-    
-    func load(address: String, path: String) {
-        self.address = address
-        self.collectionPath = path
         self.isLoading = true
-        fetch()
     }
-    
+
     init(collection: CollectionItem) {
         self.collection = collection
         self.nfts = collection.nfts
-        
+
         collection.loadCallback2 = { [weak self] result in
             guard let self = self else {
                 return
             }
-            
+
             if result {
                 if let proxy = self.proxy {
                     proxy.scrollTo(999, anchor: .bottom)
                 }
-                
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     self.nfts = self.collection.nfts
                 }
             }
         }
-        
+
         if collection.nfts.isEmpty {
-            collection.load()
+            collection.load(address: address)
         }
     }
-    
-    func load(collection: CollectionItem)  {
+
+    // MARK: Internal
+
+    @Published
+    var collection: CollectionItem
+    @Published
+    var nfts: [NFTModel] = []
+
+    var address: String?
+    var collectionPath: String?
+    @Published
+    var isLoading = false
+
+    func load(address: String, path: String) {
+        self.address = address
+        collectionPath = path
+        isLoading = true
+        fetch()
+    }
+
+    func load(collection: CollectionItem) {
         self.collection = collection
-        self.nfts = collection.nfts
-        
+        nfts = collection.nfts
+
         collection.loadCallback2 = { [weak self] result in
             guard let self = self else {
                 return
             }
-            
+
             if result {
                 if let proxy = self.proxy {
                     proxy.scrollTo(999, anchor: .bottom)
                 }
-                
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     self.nfts = self.collection.nfts
                 }
             }
         }
-        
+
         if collection.nfts.isEmpty {
             collection.load()
         }
     }
-    
+
     func fetch() {
         Task {
             guard let path = collectionPath else {
                 return
             }
-            
+
             do {
-                let address = WalletManager.shared.selectedAccountAddress
-                let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount != nil ? .evm : .main
-                let request = NFTCollectionDetailListRequest(address: address, collectionIdentifier: path, offset: 0, limit: 24)
-                let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(request, from))
-                
+                let address = address ?? WalletManager.shared.selectedAccountAddress
+                let from: FRWAPI.From = EVMAccountManager.shared
+                    .selectedAccount != nil ? .evm : .main
+                let request = NFTCollectionDetailListRequest(
+                    address: address,
+                    collectionIdentifier: path,
+                    offset: 0,
+                    limit: 24
+                )
+                let response: NFTListResponse = try await Network
+                    .request(FRWAPI.NFT.collectionDetailList(
+                        request,
+                        from
+                    ))
+
                 DispatchQueue.main.async {
                     self.collection = response.toCollectionItem()
                     self.nfts = self.collection.nfts
                     self.isLoading = false
                 }
-                
+
             } catch {
                 print(error)
             }
         }
     }
-    
-    
+
     func loadMoreAction(proxy: ScrollViewProxy) {
         self.proxy = proxy
         collection.load()
     }
+
+    // MARK: Private
+
+    private var proxy: ScrollViewProxy?
 }
 
+// MARK: - NFTCollectionListView
+
 struct NFTCollectionListView: RouteableView {
-    @StateObject var viewModel: NFTTabViewModel
-    @StateObject var vm: NFTCollectionListViewViewModel
-    
-    @State var opacity: Double = 0
-    @Namespace var imageEffect
-    
-    var childAccount: ChildAccount?
-    
-    var title: String {
-        return ""
-    }
-    
-    var isNavigationBarHidden: Bool {
-        return true
-    }
-    
+    // MARK: Lifecycle
+
     init(viewModel: NFTTabViewModel, collection: CollectionItem) {
         _viewModel = StateObject(wrappedValue: viewModel)
         _vm = StateObject(wrappedValue: NFTCollectionListViewViewModel(collection: collection))
     }
-    
+
     init(address: String, path: String, from linkedAccount: ChildAccount?) {
         _viewModel = StateObject(wrappedValue: NFTTabViewModel())
-        _vm = StateObject(wrappedValue: NFTCollectionListViewViewModel(address: address, path: path))
-        childAccount = linkedAccount
+        _vm = StateObject(wrappedValue: NFTCollectionListViewViewModel(
+            address: address,
+            path: path
+        ))
+        self.childAccount = linkedAccount
     }
-    
+
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: NFTTabViewModel
+    @StateObject
+    var vm: NFTCollectionListViewViewModel
+
+    @State
+    var opacity: Double = 0
+    @Namespace
+    var imageEffect
+
+    var childAccount: ChildAccount?
+
+    var title: String {
+        ""
+    }
+
+    var isNavigationBarHidden: Bool {
+        true
+    }
 
     var body: some View {
         ZStack {
             ScrollViewReader { proxy in
-                OffsetScrollViewWithAppBar(title: vm.collection.showName, loadMoreEnabled: true, loadMoreCallback: {
-                    if vm.collection.isRequesting || vm.collection.isEnd {
-                        return
-                    }
-                    
-                    vm.loadMoreAction(proxy: proxy)
-                }, isNoData: vm.collection.isEnd) {
+                OffsetScrollViewWithAppBar(
+                    title: vm.collection.showName,
+                    loadMoreEnabled: true,
+                    loadMoreCallback: {
+                        if vm.collection.isRequesting || vm.collection.isEnd {
+                            return
+                        }
+
+                        vm.loadMoreAction(proxy: proxy)
+                    },
+                    isNoData: vm.collection.isEnd
+                ) {
                     Spacer()
                         .frame(height: 64)
-                    
+
                     if let collection = vm.collection.collection {
-                        CalloutView(type: .warning, corners: [.topLeading, .topTrailing, .bottomTrailing, .bottomLeading], content: calloutTitle() )
-                            .padding(.bottom,20)
-                            .padding(.horizontal, 18)
-                            .visibility( WalletManager.shared.accessibleManager.isAccessible(collection) ? .gone : .visible)
+                        CalloutView(
+                            type: .warning,
+                            corners: [.topLeading, .topTrailing, .bottomTrailing, .bottomLeading],
+                            content: calloutTitle()
+                        )
+                        .padding(.bottom, 20)
+                        .padding(.horizontal, 18)
+                        .visibility(
+                            WalletManager.shared.accessibleManager
+                                .isAccessible(collection) ? .gone : .visible
+                        )
                     }
-                    
-                    
+
                     InfoView(collection: vm.collection)
                         .padding(.bottom, 24)
                         .mockPlaceholder(vm.isLoading)
-                    NFTListView(list: vm.nfts, imageEffect: imageEffect, fromChildAccount: childAccount)
-                        .id(999)
-                        .mockPlaceholder(vm.isLoading)
+                    NFTListView(
+                        list: vm.nfts,
+                        imageEffect: imageEffect,
+                        fromChildAccount: childAccount
+                    )
+                    .id(999)
+                    .mockPlaceholder(vm.isLoading)
                 } appBar: {
                     BackAppBar {
                         viewModel.trigger(.back)
                     }
                 }
             }
-            
         }
         .background(
-            NFTBlurImageView(colors: viewModel.state.colorsMap[vm.collection.iconURL.absoluteString] ?? [])
-                .ignoresSafeArea()
-                .offset(y: -4)
+            NFTBlurImageView(
+                colors: viewModel.state
+                    .colorsMap[vm.collection.iconURL.absoluteString] ?? []
+            )
+            .ignoresSafeArea()
+            .offset(y: -4)
         )
         .applyRouteable(self)
         .environmentObject(viewModel)
@@ -190,7 +238,9 @@ struct NFTCollectionListView: RouteableView {
             vm.fetch()
         }
     }
-    
+
+    // MARK: Private
+
     private func calloutTitle() -> String {
         let token = vm.collection.name
         let account = WalletManager.shared.selectedAccountWalletName
@@ -199,9 +249,12 @@ struct NFTCollectionListView: RouteableView {
     }
 }
 
+// MARK: NFTCollectionListView.InfoView
+
 extension NFTCollectionListView {
     struct InfoView: View {
-        @EnvironmentObject private var viewModel: NFTTabViewModel
+        @EnvironmentObject
+        private var viewModel: NFTTabViewModel
 
         var collection: CollectionItem
 
@@ -209,10 +262,10 @@ extension NFTCollectionListView {
             HStack(spacing: 0) {
                 KFImage
                     .url(collection.iconURL)
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .onSuccess { _ in
                         viewModel.trigger(.fetchColors(collection.iconURL.absoluteString))
                     }
@@ -277,6 +330,8 @@ extension NFTCollectionListView {
         }
     }
 }
+
+// MARK: - NFTCollectionListView_Previews
 
 struct NFTCollectionListView_Previews: PreviewProvider {
     static var item = NFTTabViewModel.testCollection()

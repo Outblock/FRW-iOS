@@ -5,10 +5,10 @@
 //  Created by cat on 2024/4/29.
 //
 
-import Foundation
-import web3swift
-import Web3Core
 import BigInt
+import Foundation
+import Web3Core
+import web3swift
 
 struct EVMTokenResponse: Codable {
     let chainId: Int
@@ -19,7 +19,6 @@ struct EVMTokenResponse: Codable {
     let logoURI: String
     let balance: String?
     let flowIdentifier: String?
-    
 
     func toTokenModel() -> TokenModel {
         
@@ -30,16 +29,20 @@ struct EVMTokenResponse: Codable {
                                decimal: decimals,
                                icon: .init(string: logoURI),
                                symbol: symbol,
-                               website: nil, evmAddress: nil, flowIdentifier: flowIdentifier)
+                               website: nil, evmAddress: nil, flowIdentifier: flowIdentifier, balance: BigUInt(balance ?? "-1"))
         return model
     }
-    
+
     var flowBalance: Double {
         guard let bal = balance, let value = BigUInt(bal) else {
             return 0
         }
-        
-        let result = Utilities.formatToPrecision(value, units: .custom(decimals)).doubleValue
+
+        let result = Utilities.formatToPrecision(
+            value,
+            units: .custom(decimals),
+            formattingDecimals: decimals
+        ).doubleValue
         return result
     }
 }
@@ -55,17 +58,16 @@ struct EVMCollection: Codable {
     let flowIdentifier: String?
     let nftIds: [String]
     let nfts: [EVMNFT]
-    
+
     func toNFTCollection() -> NFTCollection {
         let contractName = flowIdentifier?.split(separator: ".")[2] ?? ""
         let contractAddress = flowIdentifier?.split(separator: ".")[1] ?? ""
         let info = NFTCollectionInfo(id: flowIdentifier ?? "", name: name, contractName: String(contractName), address: String(contractAddress), logo: logoURI, banner: nil, officialWebsite: nil, description: nil, path: ContractPath(storagePath: "", publicPath: "", privatePath: nil, publicCollectionName: nil, publicType: nil, privateType: nil), evmAddress: address, flowIdentifier: flowIdentifier)
-        let list = nfts.map {  NFTModel($0.toNFT(collectionAddress: String(contractAddress), contractName: String(contractName)), in: info) }
+        let list = nfts.map { NFTModel($0.toNFT(collectionAddress: String(contractAddress), contractName: String(contractName)), in: info) }
         let model = NFTCollection(collection: info,
                                   count: nfts.count,
                                   ids: nftIds,
-                                  evmNFTs: list
-        )
+                                  evmNFTs: list)
         return model
     }
 }
@@ -74,12 +76,12 @@ struct EVMNFT: Codable {
     let id: String
     let name: String
     let thumbnail: String
-    
+
     func toNFT() -> NFTResponse {
-        NFTResponse(id: id, name: name, description: nil, thumbnail: thumbnail, externalURL: nil, contractAddress: nil, evmAddress: nil, address: nil,collectionID: nil, collectionName: nil, collectionDescription: nil, collectionSquareImage: nil, collectionExternalURL: nil, collectionContractName: nil, collectionBannerImage: nil, traits: nil, postMedia: NFTPostMedia(title: nil, image: thumbnail,description: nil, video: nil, isSvg: nil))
+        NFTResponse(id: id, name: name, description: nil, thumbnail: thumbnail, externalURL: nil, contractAddress: nil, evmAddress: nil, address: nil, collectionID: nil, collectionName: nil, collectionDescription: nil, collectionSquareImage: nil, collectionExternalURL: nil, collectionContractName: nil, collectionBannerImage: nil, traits: nil, postMedia: NFTPostMedia(title: nil, image: thumbnail, description: nil, video: nil, isSvg: nil))
     }
-    
+
     func toNFT(collectionAddress: String, contractName: String) -> NFTResponse {
-        NFTResponse(id: id, name: name, description: nil, thumbnail: thumbnail, externalURL: nil, contractAddress: collectionAddress,evmAddress: nil, address: nil, collectionID: nil, collectionName: nil, collectionDescription: nil, collectionSquareImage: nil, collectionExternalURL: nil, collectionContractName: contractName, collectionBannerImage: nil, traits: nil, postMedia: NFTPostMedia(title: nil, image: thumbnail,description: nil, video: nil, isSvg: nil))
+        NFTResponse(id: id, name: name, description: nil, thumbnail: thumbnail, externalURL: nil, contractAddress: collectionAddress, evmAddress: nil, address: nil, collectionID: nil, collectionName: nil, collectionDescription: nil, collectionSquareImage: nil, collectionExternalURL: nil, collectionContractName: contractName, collectionBannerImage: nil, traits: nil, postMedia: NFTPostMedia(title: nil, image: thumbnail, description: nil, video: nil, isSvg: nil))
     }
 }

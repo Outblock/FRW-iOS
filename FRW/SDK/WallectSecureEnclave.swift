@@ -5,15 +5,18 @@
 //  Created by cat on 2023/11/6.
 //
 
-import Foundation
 import CryptoKit
+import Foundation
+
+// MARK: - SignError
 
 enum SignError: Error, LocalizedError {
-    
     case unknown
     case privateKeyEmpty
     case emptySignature
-    
+
+    // MARK: Internal
+
     var errorDescription: String? {
         switch self {
         default:
@@ -22,19 +25,23 @@ enum SignError: Error, LocalizedError {
     }
 }
 
+// MARK: - WallectSecureEnclave
+
 struct WallectSecureEnclave {
-    
-    let key: WallectSecureEnclave.PrivateKey
-    
+    // MARK: Lifecycle
+
     init(privateKey data: Data) {
-        key =  PrivateKey(data: data)
+        self.key = PrivateKey(data: data)
     }
-    
+
     init() {
-        key = PrivateKey()
+        self.key = PrivateKey()
     }
-    
-    
+
+    // MARK: Internal
+
+    let key: WallectSecureEnclave.PrivateKey
+
     func sign(data: Data) throws -> Data {
         guard let privateKey = key.privateKey else {
             throw SignError.privateKeyEmpty
@@ -47,7 +54,7 @@ struct WallectSecureEnclave {
             throw error
         }
     }
-    
+
     func sign(text: String) throws -> String? {
         guard let privateKey = key.privateKey else {
             throw SignError.privateKeyEmpty
@@ -55,10 +62,9 @@ struct WallectSecureEnclave {
         guard let textData = text.data(using: .utf8) else {
             return nil
         }
-//TODO: 
-        let data = /*Flow.DomainTag.user.normalize + */textData
+        // TODO:
+        let data = /* Flow.DomainTag.user.normalize + */ textData
         do {
-            
             return try privateKey.signature(for: data).rawRepresentation.hexValue
         } catch {
             debugPrint(error)
@@ -66,7 +72,3 @@ struct WallectSecureEnclave {
         }
     }
 }
-
-
-
-

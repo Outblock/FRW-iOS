@@ -75,7 +75,7 @@ class NotificationService: UNNotificationServiceExtension {
 // MARK: - Handle WalletConnect
 
 extension NotificationService {
-    private func handleWalletConnect(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+    private func handleWalletConnect(_: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
         if let content = bestAttemptContent,
            let topic = content.userInfo["topic"] as? String,
            let ciphertext = content.userInfo["message"] as? String,
@@ -91,8 +91,7 @@ extension NotificationService {
                 let mutableContent = content.mutableCopy() as! UNMutableNotificationContent
                 mutableContent.title = "Error: unknown message tag"
             }
-        }
-        else {
+        } else {
             if let content = bestAttemptContent {
                 contentHandler(content)
             }
@@ -238,7 +237,7 @@ extension NotificationService {
         return fileURL
     }
 
-    func log(_ event: String, account: Account? = nil, topic: String? = nil, message: NotifyMessage? = nil) {
+    func log(_: String, account _: Account? = nil, topic _: String? = nil, message _: NotifyMessage? = nil) {
         let keychain = GroupKeychainStorage(serviceIdentifier: "group.com.walletconnect.sdk")
 
         guard let clientId: String = try? keychain.read(key: "clientId") else {

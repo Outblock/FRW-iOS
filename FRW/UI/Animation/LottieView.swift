@@ -13,7 +13,7 @@ struct LottieView: UIViewRepresentable {
     var name = "success"
     var loopMode: LottieLoopMode = .loop
 
-    func makeUIView(context: UIViewRepresentableContext<LottieView>) -> UIView {
+    func makeUIView(context _: UIViewRepresentableContext<LottieView>) -> UIView {
         let view = UIView(frame: .zero)
 
         let animationView = AnimationView()
@@ -21,8 +21,8 @@ struct LottieView: UIViewRepresentable {
         animationView.animation = animation
         animationView.contentMode = .scaleAspectFit
         animationView.frame = view.bounds
-        animationView.center.x = view.frame.width/2
-        animationView.center.y = view.frame.height/2
+        animationView.center.x = view.frame.width / 2
+        animationView.center.y = view.frame.height / 2
         animationView.loopMode = loopMode
         animationView.play()
 
@@ -36,6 +36,5 @@ struct LottieView: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: UIViewType, context: Context) {
-    }
+    func updateUIView(_: UIViewType, context _: Context) {}
 }

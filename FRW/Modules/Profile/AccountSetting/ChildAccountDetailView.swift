@@ -5,27 +5,37 @@
 //  Created by Selina on 21/6/2023.
 //
 
-import SwiftUI
 import Combine
 import Kingfisher
-import UIKit
+import SwiftUI
 import SwiftUIX
+import UIKit
+
+// MARK: - ChildAccountDetailViewModel
 
 class ChildAccountDetailViewModel: ObservableObject {
-    @Published var childAccount: ChildAccount
-    @Published var isPresent: Bool = false
-    @Published var accessibleItems: [ChildAccountAccessible] = []
-    
-    @Published var isLoading: Bool = true
-    
-    @Published var showEmptyCollection : Bool = true
-    
-    private var isUnlinking: Bool = false
-    
-    private var tabIndex: Int = 0
-    private var collections: [ChildAccountAccessible]?
-    private var coins:[ChildAccountAccessible]?
-    
+    // MARK: Lifecycle
+
+    init(childAccount: ChildAccount) {
+        self.childAccount = childAccount
+        fetchCollections()
+    }
+
+    // MARK: Internal
+
+    @Published
+    var childAccount: ChildAccount
+    @Published
+    var isPresent: Bool = false
+    @Published
+    var accessibleItems: [ChildAccountAccessible] = []
+
+    @Published
+    var isLoading: Bool = true
+
+    @Published
+    var showEmptyCollection: Bool = true
+
     var accessibleEmptyTitle: String {
         let title = "None Accessible "
         if tabIndex == 0 {
@@ -33,38 +43,109 @@ class ChildAccountDetailViewModel: ObservableObject {
         }
         return title + "coins_cap".localized
     }
-    
-    init(childAccount: ChildAccount) {
-        self.childAccount = childAccount
-        fetchCollections()
-    }
-    
+
     func copyAction() {
         UIPasteboard.general.string = childAccount.addr
         HUD.success(title: "copied".localized)
     }
-    
+
     func unlinkConfirmAction() {
         if !checkChildAcountExist() {
             Router.pop()
             return
         }
-        
+
         if checkUnlinkingTransactionIsProcessing() {
             return
         }
-        
-        if self.isPresent {
-            self.isPresent = false
+
+        if isPresent {
+            isPresent = false
         }
-        
-        self.isPresent = true
+
+        isPresent = true
     }
-    
+
+    func switchTab(index: Int) {
+        tabIndex = index
+        if index == 0 {
+            if var list = collections {
+                if !showEmptyCollection {
+                    list = list.filter { !$0.isEmpty }
+                }
+                accessibleItems = list
+            } else {
+                fetchCollections()
+            }
+        } else if index == 1 {
+            if let list = coins {
+                accessibleItems = list
+            } else {
+                fetchCoins()
+            }
+        }
+    }
+
+    func doUnlinkAction() {
+        if isUnlinking {
+            return
+        }
+
+        isUnlinking = true
+
+        Task {
+            do {
+                let txId = try await FlowNetwork.unlinkChildAccount(childAccount.addr ?? "")
+                let data = try JSONEncoder().encode(self.childAccount)
+                let holder = TransactionManager.TransactionHolder(
+                    id: txId,
+                    type: .unlinkAccount,
+                    data: data
+                )
+
+                DispatchQueue.main.async {
+                    TransactionManager.shared.newTransaction(holder: holder)
+                    self.isUnlinking = false
+                    self.isPresent = false
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        Router.pop()
+                    }
+                }
+            } catch {
+                log.error("unlink failed", context: error)
+                DispatchQueue.main.async {
+                    self.isUnlinking = false
+                    self.isPresent = false
+                }
+
+                HUD.error(title: "request_failed".localized)
+            }
+        }
+    }
+
+    @objc
+    func editChildAccountAction() {
+        Router.route(to: RouteMap.Profile.editChildAccount(childAccount))
+    }
+
+    func switchEmptyCollection() {
+        showEmptyCollection.toggle()
+        switchTab(index: tabIndex)
+    }
+
+    // MARK: Private
+
+    private var isUnlinking: Bool = false
+
+    private var tabIndex: Int = 0
+    private var collections: [ChildAccountAccessible]?
+    private var coins: [ChildAccountAccessible]?
+
     private func checkChildAcountExist() -> Bool {
-        return ChildAccountManager.shared.childAccounts.contains(where: { $0.addr == childAccount.addr })
+        ChildAccountManager.shared.childAccounts.contains(where: { $0.addr == childAccount.addr })
     }
-    
+
     private func checkUnlinkingTransactionIsProcessing() -> Bool {
         for holder in TransactionManager.shared.holders {
             if holder.type == .unlinkAccount, holder.internalStatus == .pending,
@@ -73,78 +154,72 @@ class ChildAccountDetailViewModel: ObservableObject {
                 return true
             }
         }
-        
+
         return false
     }
-    
-    func switchTab(index: Int) {
-        self.tabIndex = index
-        if index == 0 {
-            if var list = collections {
-                if !showEmptyCollection {
-                    list = list.filter { $0.count > 0 }
-                }
-                self.accessibleItems = list
-            }else {
-                fetchCollections()
-            }
-        }else if index == 1 {
-            if let list = coins {
-                self.accessibleItems = list
-            }else {
-                fetchCoins()
-            }
-        }
-    }
-    
+
     private func fetchCollections() {
-        self.accessibleItems = [FlowModel.NFTCollection].mock(1)
-        self.isLoading = true
-        
+        accessibleItems = [FlowModel.NFTCollection].mock(1)
+        isLoading = true
+
         Task {
-            guard let parent = WalletManager.shared.getPrimaryWalletAddress(), let child = self.childAccount.addr else {
+            guard let parent = WalletManager.shared.getPrimaryWalletAddress(),
+                  let child = self.childAccount.addr else {
                 DispatchQueue.main.async {
                     self.collections = []
                     self.accessibleItems = []
                 }
                 return
             }
-            
+
             do {
-                let result = try await FlowNetwork.fetchAccessibleCollection(parent: parent, child: child)
+                let result = try await FlowNetwork.fetchAccessibleCollection(
+                    parent: parent,
+                    child: child
+                )
                 let offset = FRWAPI.Offset(start: 0, length: 100)
-                let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(child, offset, .main))
+                let response: Network.Response<[NFTCollection]> = try await Network
+                    .requestWithRawModel(FRWAPI.NFT.userCollection(
+                        child,
+                        offset,
+                        .main
+                    ))
                 let collectionList = response.data
-                
-                let resultList = result.compactMap { item in
-                    if let contractName = item.split(separator:".")[safe: 2] {
+
+                let resultList: [NFTCollection] = result.compactMap { item in
+                    if let contractName = item.split(separator: ".")[safe: 2] {
                         if let model = NFTCatalogCache.cache.find(by: String(contractName)) {
-                            return FlowModel.NFTCollection(
-                                id: model.collection.id,
-                                path: model.collection.path?.storagePath,
-                                display: FlowModel.NFTCollection.CollectionDislay(
-                                    name: model.collection.name,
-                                    mediaType: FlowModel.Media(file: FlowModel.Media.File(url: "")),
-                                    squareImage: model.collection.logoURL.absoluteString
-                                ),
-                                idList: [])
+                            return NFTCollection(collection: model.collection, count: 0)
+
+//                            return FlowModel.NFTCollection(
+//                                id: model.collection.id,
+//                                path: model.collection.path?.storagePath,
+//                                display: FlowModel.NFTCollection.CollectionDislay(
+//                                    name: model.collection.name,
+//                                    mediaType: FlowModel.Media(file: FlowModel.Media.File(url: "")),
+//                                    squareImage: model.collection.logoURL.absoluteString
+//                                ),
+//                                idList: []
+//                            )
                         }
                     }
                     return nil
                 }
-                
+
                 let tmpList = resultList.map { model in
                     var model = model
                     let collectionItem = collectionList?.first(where: { item in
-                        item.collection.id == model.id
+                        item.maskContractName == model.maskContractName && item.maskAddress == model
+                            .maskAddress
                     })
                     if let item = collectionItem {
-                        model.idList = item.ids?.compactMap({ UInt64($0)}) ?? []
+                        model.ids = item.ids
+                        model.count = item.ids?.count ?? 0
                     }
                     return model
                 }
                 let res = tmpList.sorted { $0.count > $1.count }
-                
+
                 DispatchQueue.main.async {
                     self.collections = res
                     self.accessibleItems = self.collections ?? []
@@ -156,21 +231,21 @@ class ChildAccountDetailViewModel: ObservableObject {
             }
         }
     }
-    
-    
+
     private func fetchCoins() {
-        self.accessibleItems = [FlowModel.TokenInfo].mock(1)
-        self.isLoading = true
-        
+        accessibleItems = [FlowModel.TokenInfo].mock(1)
+        isLoading = true
+
         Task {
-            guard let parent = WalletManager.shared.getPrimaryWalletAddress(), let child = childAccount.addr else {
+            guard let parent = WalletManager.shared.getPrimaryWalletAddress(),
+                  let child = childAccount.addr else {
                 DispatchQueue.main.async {
                     self.coins = []
                     self.accessibleItems = []
                 }
                 return
             }
-            
+
             let result = try await FlowNetwork.fetchAccessibleFT(parent: parent, child: child)
             DispatchQueue.main.async {
                 self.coins = result
@@ -179,69 +254,26 @@ class ChildAccountDetailViewModel: ObservableObject {
             }
         }
     }
-    
-    func doUnlinkAction() {
-        if isUnlinking {
-            return
-        }
-        
-        isUnlinking = true
-        
-        Task {
-            do {
-                let txId = try await FlowNetwork.unlinkChildAccount(childAccount.addr ?? "")
-                let data = try JSONEncoder().encode(self.childAccount)
-                let holder = TransactionManager.TransactionHolder(id: txId, type: .unlinkAccount, data: data)
-                
-                DispatchQueue.main.async {
-                    TransactionManager.shared.newTransaction(holder: holder)
-                    self.isUnlinking = false
-                    self.isPresent = false
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        Router.pop()
-                    }
-                }
-            } catch {
-                log.error("unlink failed", context: error)
-                DispatchQueue.main.async {
-                    self.isUnlinking = false
-                    self.isPresent = false
-                }
-                
-                HUD.error(title: "request_failed".localized)
-            }
-        }
-    }
-    
-    @objc func editChildAccountAction() {
-        Router.route(to: RouteMap.Profile.editChildAccount(childAccount))
-    }
-    
-    func switchEmptyCollection() {
-        self.showEmptyCollection.toggle()
-        switchTab(index: self.tabIndex)
-        
-    }
 }
 
+// MARK: - ChildAccountDetailView
+
 struct ChildAccountDetailView: RouteableView {
-    @StateObject var vm: ChildAccountDetailViewModel
-    
+    // MARK: Lifecycle
+
     init(vm: ChildAccountDetailViewModel) {
         _vm = StateObject(wrappedValue: vm)
     }
-    
+
+    // MARK: Internal
+
+    @StateObject
+    var vm: ChildAccountDetailViewModel
+
     var title: String {
         "linked_account".localized
     }
-    
-    func configNavigationItem(_ navigationItem: UINavigationItem) {
-        let editButton = UIBarButtonItem(image: UIImage(named: "icon-edit-child-account"), style: .plain, target: vm, action: Selector("editChildAccountAction"))
-        editButton.tintColor = UIColor(named: "button.color")
-        navigationItem.rightBarButtonItem = editButton
-    }
-    
+
     var body: some View {
         VStack(spacing: 20) {
             contentView
@@ -256,7 +288,7 @@ struct ChildAccountDetailView: RouteableView {
                 .environmentObject(vm)
         }
     }
-    
+
     var unlinkBtn: some View {
         Button {
             vm.unlinkConfirmAction()
@@ -270,30 +302,30 @@ struct ChildAccountDetailView: RouteableView {
                 .font(.inter(size: 16, weight: .semibold))
         }
     }
-    
+
     var contentView: some View {
         ScrollView(.vertical) {
             VStack(spacing: 0) {
                 KFImage.url(URL(string: vm.childAccount.icon))
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 100, height: 100)
                     .cornerRadius(50)
                     .padding(.vertical, 20)
-                
+
                 Text(vm.childAccount.aName)
                     .foregroundColor(Color.LL.Neutrals.text)
                     .font(.inter(size: 18, weight: .semibold))
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 20)
-                
+
                 addressContentView
                     .padding(.bottom, bottomPadding)
-                
+
                 descContentView
                     .padding(.bottom, bottomPadding)
                 accessibleView
@@ -303,24 +335,20 @@ struct ChildAccountDetailView: RouteableView {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipped()
     }
-    
-    private var bottomPadding: CGFloat {
-        return 24
-    }
-    
+
     var addressContentView: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("address".localized)
                 .foregroundColor(Color.LL.Neutrals.text4)
                 .font(.inter(size: 16, weight: .semibold))
-            
+
             HStack {
                 Text(vm.childAccount.addr ?? "")
                     .foregroundColor(Color.LL.Neutrals.text)
                     .font(.inter(size: 16, weight: .medium))
-                
+
                 Spacer()
-                
+
                 Button {
                     vm.copyAction()
                 } label: {
@@ -335,13 +363,13 @@ struct ChildAccountDetailView: RouteableView {
             .cornerRadius(16)
         }
     }
-    
+
     var descContentView: some View {
         VStack(alignment: .leading, spacing: 15) {
             Text("description".localized)
                 .foregroundColor(Color.LL.Neutrals.text4)
                 .font(.inter(size: 16, weight: .semibold))
-            
+
             Text(vm.childAccount.description ?? "")
                 .foregroundColor(Color.LL.Neutrals.text2)
                 .font(.inter(size: 14, weight: .medium))
@@ -349,29 +377,29 @@ struct ChildAccountDetailView: RouteableView {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    
+
     var accessibleView: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("accessible_cap".localized)
                     .foregroundColor(Color.LL.Neutrals.text4)
                     .font(.inter(size: 16, weight: .semibold))
-                
+
                 Spacer()
-                
+
                 HStack(spacing: 6) {
                     Spacer()
 //                    Image(vm.showEmptyCollection ? "icon-empty-mark" : "icon-right-mark")
 //                        .resizable()
 //                        .frame(width: 11, height: 11)
                     Text("view_empty".localized)
-                        .font(.inter(size: 14,weight: .w600))
+                        .font(.inter(size: 14, weight: .w600))
                         .foregroundStyle(
                             Color.LL.Neutrals.text4
                         )
                     Toggle(isOn: $vm.showEmptyCollection) {}
                         .tint(.LL.Primary.salmonPrimary)
-                        .onChange(of: vm.showEmptyCollection) { value in
+                        .onChange(of: vm.showEmptyCollection) { _ in
                             vm.switchEmptyCollection()
                         }
                         .labelsHidden()
@@ -381,29 +409,34 @@ struct ChildAccountDetailView: RouteableView {
                 }
             }
             .padding(.bottom, 8)
-            
+
             LLSegmenControl(titles: ["collections".localized, "coins_cap".localized]) { idx in
                 vm.switchTab(index: idx)
             }
-            if(vm.accessibleItems.count == 0 && !vm.isLoading) {
+            if vm.accessibleItems.isEmpty, !vm.isLoading {
                 emptyAccessibleView
             }
             ForEach(vm.accessibleItems.indices, id: \.self) { idx in
                 AccessibleItemView(item: vm.accessibleItems[idx]) { item in
-                    if let collectionInfo = item as? FlowModel.NFTCollection, let addr = vm.childAccount.addr, collectionInfo.idList.count > 0 {
-                        Router.route(to: RouteMap.NFT.collectionDetail( addr, collectionInfo.id, vm.childAccount))
+                    if let collectionInfo = item as? NFTCollection, let addr = vm.childAccount.addr,
+                       let pathId = collectionInfo.collection.path?.storagePathId(),
+                       !collectionInfo.isEmpty {
+                        Router.route(to: RouteMap.NFT.collectionDetail(
+                            addr,
+                            pathId,
+                            vm.childAccount
+                        ))
                     }
                 }
             }
             .mockPlaceholder(vm.isLoading)
         }
-        
     }
-    
+
     var emptyAccessibleView: some View {
         HStack {
             Text(vm.accessibleEmptyTitle)
-                .font(Font.inter(size: 14,weight: .semibold))
+                .font(Font.inter(size: 14, weight: .semibold))
                 .foregroundStyle(Color.LL.Neutrals.text4)
         }
         .frame(maxWidth: .infinity)
@@ -412,30 +445,46 @@ struct ChildAccountDetailView: RouteableView {
         .background(.LL.Neutrals.neutrals6)
         .cornerRadius(16, style: .continuous)
     }
-    
+
+    func configNavigationItem(_ navigationItem: UINavigationItem) {
+        let editButton = UIBarButtonItem(
+            image: UIImage(named: "icon-edit-child-account"),
+            style: .plain,
+            target: vm,
+            action: #selector(ChildAccountDetailViewModel.editChildAccountAction)
+        )
+        editButton.tintColor = UIColor(named: "button.color")
+        navigationItem.rightBarButtonItem = editButton
+    }
+
+    // MARK: Private
+
+    private var bottomPadding: CGFloat {
+        24
+    }
 }
 
 extension ChildAccountDetailView {
     struct Indicator: View {
         var styleColor: Color {
-            return Color(hex: "#CCCCCC")
+            Color(hex: "#CCCCCC")
         }
-        
+
         var barColors: [Color] {
-            return [.clear, styleColor]
+            [.clear, styleColor]
         }
-        
+
         var body: some View {
             HStack(spacing: 0) {
                 dotView
                 lineView(start: .leading, end: .trailing)
                 shortLine
                     .padding(.horizontal, 4)
-                
+
                 Image("unlink-indicator")
                     .renderingMode(.template)
                     .foregroundColor(styleColor)
-                
+
                 shortLine
                     .padding(.horizontal, 4)
                 lineView(start: .trailing, end: .leading)
@@ -443,48 +492,51 @@ extension ChildAccountDetailView {
             }
             .frame(width: 114, height: 8)
         }
-        
+
         var shortLine: some View {
             Rectangle()
                 .frame(width: 4, height: 2)
                 .foregroundColor(styleColor)
         }
-        
-        func lineView(start: UnitPoint, end: UnitPoint) -> some View {
-            LinearGradient(colors: barColors, startPoint: start, endPoint: end)
-                .frame(height: 2)
-                .frame(maxWidth: .infinity)
-        }
-        
+
         var dotView: some View {
             Circle()
                 .frame(width: 8, height: 8)
                 .foregroundColor(styleColor)
         }
+
+        func lineView(start: UnitPoint, end: UnitPoint) -> some View {
+            LinearGradient(colors: barColors, startPoint: start, endPoint: end)
+                .frame(height: 2)
+                .frame(maxWidth: .infinity)
+        }
     }
-    
+
     struct ChildAccountTargetView: View {
-        @State var iconURL: String
-        @State var name: String
-        @State var address: String
-        
+        @State
+        var iconURL: String
+        @State
+        var name: String
+        @State
+        var address: String
+
         var body: some View {
             VStack(spacing: 8) {
                 KFImage.url(URL(string: iconURL))
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 40, height: 40)
                     .cornerRadius(20)
-                
+
                 Text(name)
                     .font(.inter(size: 10, weight: .semibold))
                     .foregroundColor(Color.LL.Neutrals.text)
                     .lineLimit(1)
-                
+
                 Text(address)
                     .font(.inter(size: 10, weight: .medium))
                     .foregroundColor(.LL.Neutrals.note)
@@ -493,17 +545,17 @@ extension ChildAccountDetailView {
             .frame(width: 120)
         }
     }
-    
+
     struct UnlinkConfirmView: View {
-        @EnvironmentObject private var vm: ChildAccountDetailViewModel
-        
+        // MARK: Internal
+
         var body: some View {
             VStack {
                 SheetHeaderView(title: "unlink_confirmation".localized)
-                
+
                 VStack(spacing: 0) {
                     Spacer()
-                    
+
                     ZStack {
                         fromToView
                         ChildAccountDetailView.Indicator()
@@ -513,14 +565,14 @@ extension ChildAccountDetailView {
                     .cornerRadius(16)
                     .shadow(color: Color.black.opacity(0.04), x: 0, y: 4, blur: 16)
                     .padding(.horizontal, 18)
-                    
+
                     descView
                         .padding(.top, -20)
                         .padding(.horizontal, 28)
                         .zIndex(-1)
-                    
+
                     Spacer()
-                    
+
                     confirmButton
                         .padding(.bottom, 10)
                         .padding(.horizontal, 28)
@@ -531,22 +583,30 @@ extension ChildAccountDetailView {
 
         var fromToView: some View {
             HStack {
-                ChildAccountTargetView(iconURL: vm.childAccount.icon, name: vm.childAccount.aName, address: vm.childAccount.addr ?? "")
-                
+                ChildAccountTargetView(
+                    iconURL: vm.childAccount.icon,
+                    name: vm.childAccount.aName,
+                    address: vm.childAccount.addr ?? ""
+                )
+
                 Spacer()
-                
-                ChildAccountTargetView(iconURL: UserManager.shared.userInfo?.avatar.convertedAvatarString() ?? "", name: UserManager.shared.userInfo?.meowDomain ?? "", address: WalletManager.shared.getPrimaryWalletAddress() ?? "0x")
+
+                ChildAccountTargetView(
+                    iconURL: UserManager.shared.userInfo?.avatar.convertedAvatarString() ?? "",
+                    name: UserManager.shared.userInfo?.meowDomain ?? "",
+                    address: WalletManager.shared.getPrimaryWalletAddress() ?? "0x"
+                )
             }
             .padding(.vertical, 20)
             .padding(.horizontal, 24)
         }
-        
+
         var descView: some View {
             VStack(alignment: .leading, spacing: 10) {
                 Text("unlink_account".localized.uppercased())
                     .font(.inter(size: 14, weight: .semibold))
                     .foregroundColor(Color.LL.Neutrals.text4)
-                
+
                 Text("unlink_account_desc_x".localized(vm.childAccount.aName))
                     .font(.inter(size: 14, weight: .medium))
                     .foregroundColor(Color.LL.Neutrals.text2)
@@ -558,46 +618,51 @@ extension ChildAccountDetailView {
             .background(Color.LL.Neutrals.neutrals6)
             .cornerRadius(16)
         }
-        
+
         var confirmButton: some View {
-            WalletSendButtonView(allowEnable: .constant(true), buttonText: "hold_to_unlink".localized) {
+            WalletSendButtonView(
+                allowEnable: .constant(true),
+                buttonText: "hold_to_unlink".localized
+            ) {
                 vm.doUnlinkAction()
             }
         }
+
+        // MARK: Private
+
+        @EnvironmentObject
+        private var vm: ChildAccountDetailViewModel
     }
 }
 
+extension ChildAccountManager {}
 
-extension ChildAccountManager {
-    
-}
+// MARK: - ChildAccountDetailView.AccessibleItemView
 
-
-private extension ChildAccountDetailView {
-    struct AccessibleItemView: View {
-        
+extension ChildAccountDetailView {
+    fileprivate struct AccessibleItemView: View {
         var item: ChildAccountAccessible
-        var onClick: ((_ item: ChildAccountAccessible)->())?
-        
+        var onClick: ((_ item: ChildAccountAccessible) -> Void)?
+
         var body: some View {
             HStack(spacing: 16) {
                 KFImage.url(URL(string: item.img))
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 24, height: 24)
                     .cornerRadius(12, style: .continuous)
-                
+
                 Text(item.title)
                     .foregroundColor(Color.LL.Neutrals.text)
                     .font(.inter(size: 14, weight: .semibold))
                     .lineLimit(2)
-                
+
                 Spacer()
-                
+
                 Text(item.subtitle)
                     .foregroundColor(Color.LL.Neutrals.text3)
                     .font(.inter(size: 12))
@@ -618,88 +683,138 @@ private extension ChildAccountDetailView {
             }
         }
     }
-    
-    
 }
+
+// MARK: - ChildAccountAccessible
 
 protocol ChildAccountAccessible {
     var img: String { get }
     var title: String { get }
     var subtitle: String { get }
     var isShowNext: Bool { get }
-    var id: String { get set }
+    var id: String { get }
     var count: Int { get }
 }
 
 extension ChildAccountAccessible {
     var count: Int {
-        return 0
+        0
     }
 }
 
-extension FlowModel.NFTCollection : ChildAccountAccessible {
+// MARK: - NFTCollection + ChildAccountAccessible
+
+extension NFTCollection: ChildAccountAccessible {
     var img: String {
-        return self.display?.squareImage ?? AppPlaceholder.image
+        collection.logoURL.absoluteString
     }
-    
+
     var title: String {
-        if let name = self.display?.name {
+        collection.name ?? ""
+    }
+
+    var subtitle: String {
+        guard let count = ids?.count else {
+            return ""
+        }
+        return "\(count) Collectible"
+    }
+
+    var isShowNext: Bool {
+        (ids?.count ?? 0) > 0
+    }
+
+    var id: String {
+        collection.id
+    }
+}
+
+// MARK: - FlowModel.NFTCollection + ChildAccountAccessible
+
+extension FlowModel.NFTCollection: ChildAccountAccessible {
+    var img: String {
+        display?.squareImage ?? AppPlaceholder.image
+    }
+
+    var title: String {
+        if let name = display?.name {
             return name
         }
-        if let name2 = self.id.split(separator:".")[safe: 2] {
+        if let name2 = id.split(separator: ".")[safe: 2] {
             return String(name2)
         }
-        
+
         return "Unrecognised Collection"
     }
-    
+
     var subtitle: String {
-        return "\(idList.count) Collectible"
+        "\(idList.count) Collectible"
     }
-    
+
     var isShowNext: Bool {
-        return idList.count > 0
+        !idList.isEmpty
     }
-    
+
     var fromPath: String {
         guard let path = path else { return "" }
         return String(path.split(separator: "/").last ?? "")
     }
-    
+
     var count: Int {
-        return idList.count
+        idList.count
     }
-    
+
     func toCollectionModel() -> CollectionItem {
         let item = CollectionItem()
         item.name = title
         item.count = idList.count
-        item.collection = NFTCollectionInfo(id: self.id, name: title, contractName: title, address: "", logo: self.img, banner: "", officialWebsite: "", description: "", path: ContractPath(storagePath: "", publicPath: "", privatePath: nil, publicCollectionName: "", publicType: "", privateType: ""), evmAddress: nil, flowIdentifier: nil)
+        item.collection = NFTCollectionInfo(
+            id: id,
+            name: title,
+            contractName: title,
+            address: "",
+            logo: img,
+            banner: "",
+            officialWebsite: "",
+            description: "",
+            path: ContractPath(
+                storagePath: "",
+                publicPath: "",
+                privatePath: nil,
+                publicCollectionName: "",
+                publicType: "",
+                privateType: ""
+            ),
+            evmAddress: nil,
+            flowIdentifier: nil
+        )
         item.isEnd = true
         return item
     }
 }
 
-extension FlowModel.TokenInfo : ChildAccountAccessible {
+// MARK: - FlowModel.TokenInfo + ChildAccountAccessible
+
+extension FlowModel.TokenInfo: ChildAccountAccessible {
     var img: String {
         if let model = theToken, let url = model.icon?.absoluteString {
             return url
         }
         return AppPlaceholder.image
     }
-    
+
     var title: String {
         guard let model = theToken else {
-            let title = self.id.split(separator:".")[safe: 2] ?? "Unrecognised Coin"
+            let title = id.split(separator: ".")[safe: 2] ?? "Unrecognised Coin"
             return String(title)
         }
-        
-        if model.name.count > 0 {
+
+        if !model.name.isEmpty {
             return model.name
         }
         return model.contractName
     }
-    
+
     var subtitle: String {
         if let model = theToken {
             let sub = model.symbol?.uppercased() ?? "?"
@@ -707,14 +822,15 @@ extension FlowModel.TokenInfo : ChildAccountAccessible {
         }
         return "\(balance) ?"
     }
-    
+
     var isShowNext: Bool {
-        return false
+        false
     }
-    
+
     private var theToken: TokenModel? {
-        let contractName = self.id.split(separator:".")[safe: 2] ?? "empty"
-        let address = self.id.split(separator:".")[safe: 1] ?? "empty_error"
-        return WalletManager.shared.supportedCoins?.filter{ $0.contractName == contractName && ($0.getAddress() ?? "") == address }.first
+        let contractName = id.split(separator: ".")[safe: 2] ?? "empty"
+        let address = id.split(separator: ".")[safe: 1] ?? "empty_error"
+        return WalletManager.shared.supportedCoins?
+            .filter { $0.contractName == contractName && ($0.getAddress() ?? "") == address }.first
     }
 }

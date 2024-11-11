@@ -7,8 +7,10 @@
 
 import SwiftUI
 
+// MARK: - RestoreWalletView
+
 struct RestoreWalletView: RouteableView {
-    private var viewModel = RestoreWalletViewModel()
+    // MARK: Internal
 
     var body: some View {
         VStack(spacing: 10) {
@@ -31,7 +33,7 @@ struct RestoreWalletView: RouteableView {
 
             Color.clear
                 .frame(width: 1, height: 32)
-            
+
             ScrollView(showsIndicators: false) {
                 RestoreWalletView.Item(backupType: .google)
                     .onTapGesture {
@@ -64,38 +66,41 @@ struct RestoreWalletView: RouteableView {
         .backgroundFill(Color.Theme.Background.grey)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    private var viewModel = RestoreWalletViewModel()
 }
 
 extension RestoreWalletView {
     var title: String {
-        return ""
+        ""
     }
 }
 
+// MARK: RestoreWalletView.Item
+
 extension RestoreWalletView {
-    
     struct Item: View {
-        
         let backupType: RestoreWalletViewModel.ImportType
-        
+
         var body: some View {
             HStack(spacing: 16) {
                 Image(backupType.icon40)
                     .resizable()
                     .frame(width: 40, height: 40)
-                
+
                 VStack(alignment: .leading) {
                     Text(backupType.title)
                         .font(.inter(size: 16, weight: .semibold))
                         .lineLimit(1)
                         .foregroundStyle(Color.Theme.Text.black)
-                    
+
                     Text(backupType.importDesc)
                         .font(.inter(size: 12))
                         .foregroundStyle(Color.Theme.Text.black3)
                 }
                 Spacer()
-                
             }
             .padding(24)
             .frame(maxWidth: .infinity)
@@ -104,6 +109,8 @@ extension RestoreWalletView {
         }
     }
 }
+
+// MARK: - RestoreWalletViewModel.ImportType
 
 extension RestoreWalletViewModel {
     enum ImportType {
@@ -114,7 +121,8 @@ extension RestoreWalletViewModel {
         case privateKey
         case seedPhrase
 
-        
+        // MARK: Internal
+
         var title: String {
             switch self {
             case .google:
@@ -131,7 +139,7 @@ extension RestoreWalletViewModel {
                 return "Seed Phrase"
             }
         }
-        
+
         var icon40: String {
             switch self {
             case .google:
@@ -148,7 +156,7 @@ extension RestoreWalletViewModel {
                 return "icon_import_phrase_40"
             }
         }
-        
+
         var importDesc: String {
             switch self {
             case .google:
@@ -167,6 +175,8 @@ extension RestoreWalletViewModel {
         }
     }
 }
+
+// MARK: - RestoreWalletView_Previews
 
 struct RestoreWalletView_Previews: PreviewProvider {
     static var previews: some View {

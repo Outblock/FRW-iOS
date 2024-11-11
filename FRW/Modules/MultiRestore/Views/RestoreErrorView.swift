@@ -7,44 +7,52 @@
 
 import SwiftUI
 
+// MARK: - RestoreErrorView
+
 struct RestoreErrorView: RouteableView {
-    
+    // MARK: Internal
+
     var error: RestoreErrorView.RestoreError = .notfound
-    
+
     var title: String {
-        return "import_wallet".localized
+        "import_wallet".localized
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             Image("import_error_cover")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .padding(.horizontal, 107)
-            
+
             Text(error.title)
                 .font(.inter(size: 20, weight: .bold))
                 .foregroundStyle(Color.Theme.Text.black)
                 .padding(.top, 40)
-            
+
             Text(error.descresption)
                 .font(.inter(size: 12))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.Theme.Accent.grey)
                 .padding(.top, 24)
-            
-            VPrimaryButton(model: ButtonStyle.blackMini,
-                           state: .enabled ,
-                           action: {
-                onClickButton()
-            }, title: error.buttonTitle)
-                .frame(height: 40)
-                .padding(.top,72)
-                .padding(.horizontal, 62)
+
+            VPrimaryButton(
+                model: ButtonStyle.blackMini,
+                state: .enabled,
+                action: {
+                    onClickButton()
+                },
+                title: error.buttonTitle
+            )
+            .frame(height: 40)
+            .padding(.top, 72)
+            .padding(.horizontal, 62)
         }
         .applyRouteable(self)
     }
-    
+
+    // MARK: Private
+
     private func onClickButton() {
         switch error {
         case .notfound:
@@ -57,12 +65,16 @@ struct RestoreErrorView: RouteableView {
     }
 }
 
+// MARK: RestoreErrorView.RestoreError
+
 extension RestoreErrorView {
     enum RestoreError: Error {
         case notfound
         case noAccountFound
         case decryption
-        
+
+        // MARK: Internal
+
         var title: String {
             switch self {
             case .notfound:
@@ -73,7 +85,7 @@ extension RestoreErrorView {
                 "Backup_Decryption_Failed".localized
             }
         }
-        
+
         var descresption: String {
             switch self {
             case .notfound:
@@ -84,7 +96,7 @@ extension RestoreErrorView {
                 "Backup_Decryption_Failed_Desc".localized
             }
         }
-        
+
         var buttonTitle: String {
             switch self {
             case .notfound:

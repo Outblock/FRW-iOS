@@ -5,18 +5,20 @@
 //  Created by Selina on 19/9/2022.
 //
 
+import Kingfisher
 import SwiftUI
 import SwiftUIPager
-import Kingfisher
+
+// MARK: - InboxView
 
 struct InboxView: RouteableView {
-    @StateObject var vm = InboxViewModel()
-    
-    
+    @StateObject
+    var vm = InboxViewModel()
+
     var title: String {
-        return "inbox".localized
+        "inbox".localized
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             switchBar
@@ -25,7 +27,7 @@ struct InboxView: RouteableView {
         .backgroundFill(Color.LL.background)
         .applyRouteable(self)
     }
-    
+
     var switchBar: some View {
         GeometryReader { geo in
             VStack(alignment: .leading, spacing: 0) {
@@ -34,7 +36,10 @@ struct InboxView: RouteableView {
                         vm.changeTabTypeAction(type: .token)
                     } label: {
                         Text("inbox_token_x".localized(vm.tokenList.count))
-                            .foregroundColor(vm.tabType == .token ? Color.LL.Primary.salmonPrimary : Color.LL.Neutrals.text)
+                            .foregroundColor(
+                                vm.tabType == .token ? Color.LL.Primary
+                                    .salmonPrimary : Color.LL.Neutrals.text
+                            )
                             .font(.inter(size: 16, weight: .medium))
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
@@ -43,12 +48,15 @@ struct InboxView: RouteableView {
                         vm.changeTabTypeAction(type: .nft)
                     } label: {
                         Text("inbox_nft_x".localized(vm.nftList.count))
-                            .foregroundColor(vm.tabType == .nft ? Color.LL.Primary.salmonPrimary : Color.LL.Neutrals.text)
+                            .foregroundColor(
+                                vm.tabType == .nft ? Color.LL.Primary
+                                    .salmonPrimary : Color.LL.Neutrals.text
+                            )
                             .font(.inter(size: 16, weight: .medium))
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                 }
-                
+
                 // indicator
                 let widthPerTab = geo.size.width / 2.0
                 Color.LL.Primary.salmonPrimary
@@ -58,7 +66,7 @@ struct InboxView: RouteableView {
         }
         .frame(height: 50)
     }
-    
+
     var contentView: some View {
         ZStack {
             Pager(page: vm.page, data: InboxViewModel.TabType.allCases, id: \.self) { type in
@@ -74,7 +82,7 @@ struct InboxView: RouteableView {
             }
         }
     }
-    
+
     var emptyView: some View {
         VStack {
             Image("icon-inbox-empty")
@@ -99,45 +107,48 @@ extension InboxView {
                 }
                 .padding(.all, 18)
             }
-            
+
             emptyView.visibility(!vm.isRequesting && vm.tokenList.isEmpty ? .visible : .gone)
         }
         .frame(maxHeight: .infinity)
         .environmentObject(vm)
     }
-    
+
     struct InboxTokenItemView: View {
+        // MARK: Internal
+
         let item: InboxToken
-        @EnvironmentObject private var vm: InboxViewModel
-        
+
         var body: some View {
             VStack(spacing: 16) {
                 HStack(spacing: 8) {
                     KFImage.url(item.iconURL)
-                        .placeholder({
+                        .placeholder {
                             Image("placeholder")
                                 .resizable()
-                        })
+                        }
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 24, height: 24)
                         .clipShape(Circle())
-                    
+
                     Text(item.amountText)
                         .font(.inter(size: 16, weight: .medium))
                         .foregroundColor(Color.LL.Neutrals.text)
-                    
+
                     Spacer()
-                    
-                    Text("\(CurrencyCache.cache.currencySymbol)\(item.marketPrice.formatCurrencyString(considerCustomCurrency: true))")
-                        .font(.inter(size: 16, weight: .medium))
-                        .foregroundColor(Color.LL.Neutrals.text)
+
+                    Text(
+                        "\(CurrencyCache.cache.currencySymbol)\(item.marketPrice.formatCurrencyString(considerCustomCurrency: true))"
+                    )
+                    .font(.inter(size: 16, weight: .medium))
+                    .foregroundColor(Color.LL.Neutrals.text)
                 }
-                
+
                 // btn
                 HStack {
                     Spacer()
-                    
+
                     Button {
                         vm.claimTokenAction(item)
                     } label: {
@@ -156,6 +167,11 @@ extension InboxView {
             .background(Color.LL.Other.bg2)
             .cornerRadius(12)
         }
+
+        // MARK: Private
+
+        @EnvironmentObject
+        private var vm: InboxViewModel
     }
 }
 
@@ -172,74 +188,73 @@ extension InboxView {
                 }
                 .padding(.all, 18)
             }
-            
+
             emptyView.visibility(!vm.isRequesting && vm.nftList.isEmpty ? .visible : .gone)
         }
         .frame(maxHeight: .infinity)
         .environmentObject(vm)
     }
-    
+
     struct InboxNFTItemView: View {
+        // MARK: Internal
+
         let item: InboxNFT
-        @EnvironmentObject private var vm: InboxViewModel
-        
+
         var body: some View {
             HStack(spacing: 16) {
-                
                 // large cover
                 KFImage.url(nil)
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 110, height: 110)
                     .cornerRadius(8)
-                
+
                 VStack(alignment: .leading, spacing: 0) {
-                    
                     // title line
                     Button {
                         vm.openNFTCollectionAction(item)
                     } label: {
                         HStack(spacing: 8) {
                             KFImage.url(item.localCollection?.logoURL)
-                                .placeholder({
+                                .placeholder {
                                     Image("placeholder")
                                         .resizable()
-                                })
+                                }
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: 24, height: 24)
                                 .clipShape(Circle())
-                            
+
                             Text(item.localCollection?.name ?? "Unknown")
                                 .font(.inter(size: 16, weight: .semibold))
                                 .foregroundColor(Color.LL.Neutrals.text)
-                            
+
                             Image("arrow_right_grey")
                                 .renderingMode(.template)
                                 .foregroundColor(Color.LL.Other.text1)
-                            
+
                             Spacer()
                         }
                     }
-                    
+
                     Divider()
                         .foregroundColor(.LL.Neutrals.neutrals6)
                         .padding(.vertical, 16)
-                    
+
                     Text("ID: \(item.tokenId)")
                         .font(.inter(size: 12))
                         .foregroundColor(Color.LL.Other.text1)
-                    
+
                     Spacer()
-                    
+
                     // btn
                     HStack {
                         Spacer()
-                        
+
                         Button {
                             vm.claimNFTAction(item)
                         } label: {
@@ -260,5 +275,10 @@ extension InboxView {
             .background(Color.LL.Other.bg2)
             .cornerRadius(12)
         }
+
+        // MARK: Private
+
+        @EnvironmentObject
+        private var vm: InboxViewModel
     }
 }

@@ -5,9 +5,10 @@
 //  Created by cat on 2024/3/4.
 //
 
-import Foundation
 import BigInt
+import Foundation
 
+// MARK: - TrustAppMethod
 
 enum TrustAppMethod: String, Decodable, CaseIterable {
     case signRawTransaction
@@ -24,16 +25,20 @@ enum TrustAppMethod: String, Decodable, CaseIterable {
     case switchChain
 }
 
+// MARK: - RLPEncodable
+
 protocol RLPEncodable {
     var rlpList: [Any] { get }
 }
 
 extension RLPEncodable {
-    var rlpList : [Any] {
+    var rlpList: [Any] {
         let mirror = Mirror(reflecting: self)
         return mirror.children.compactMap { $0.value }
     }
 }
+
+// MARK: - COAOwnershipProof
 
 struct COAOwnershipProof: RLPEncodable {
     let keyIninces: [BigUInt]

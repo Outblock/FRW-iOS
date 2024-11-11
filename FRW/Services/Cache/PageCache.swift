@@ -5,16 +5,15 @@
 //  Created by Selina on 3/8/2022.
 //
 
-import SwiftUI
 import Combine
 import Haneke
+import SwiftUI
+
+// MARK: - PageCache
 
 class PageCache {
-    static let cache = PageCache()
-    
-    private var cacheObj = Cache<Data>(name: "PageCache")
-    private var cancelSet = Set<AnyCancellable>()
-    
+    // MARK: Lifecycle
+
     init() {
         UserManager.shared.$activatedUID
             .receive(on: DispatchQueue.main)
@@ -24,19 +23,28 @@ class PageCache {
                     self.clear()
                 }
             }.store(in: &cancelSet)
-        
+
         NotificationCenter.default.publisher(for: .didFinishAccountLogin)
             .receive(on: DispatchQueue.main)
             .sink { _ in
                 self.clear()
             }.store(in: &cancelSet)
     }
-    
+
+    // MARK: Internal
+
+    static let cache = PageCache()
+
+    // MARK: Private
+
+    private var cacheObj = Cache<Data>(name: "PageCache")
+    private var cancelSet = Set<AnyCancellable>()
+
     private func clear() {
         cacheObj.removeAll()
         createCache()
     }
-    
+
     private func createCache() {
         cacheObj = Cache<Data>(name: "PageCache")
     }
@@ -52,7 +60,7 @@ extension PageCache {
             debugPrint("PageCache -> set failed: \(error)")
         }
     }
-    
+
     func get<T: Decodable>(forKey key: String, type: T.Type) async throws -> T {
         try await withCheckedThrowingContinuation { config in
             cacheObj.fetch(key: key).onSuccess { data in

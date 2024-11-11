@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-typealias Callback = () -> ()
+typealias Callback = () -> Void
 
 struct DragGestureViewModifier: ViewModifier {
     @GestureState private var isDragging: Bool = false
@@ -49,7 +49,7 @@ struct DragGestureViewModifier: ViewModifier {
         onUpdate?(value)
     }
 
-    func onDragEnded(_ value: DragGesture.Value) {
+    func onDragEnded(_: DragGesture.Value) {
         gestureState = .ended
         onEnd?()
     }

@@ -12,7 +12,7 @@ struct SearchBar: View {
     @State private var isEditing = false
     var purpose: String = "Search..."
     var iconColor: Color = .gray
-    
+
     var body: some View {
         HStack {
             TextField(purpose, text: $text)
@@ -26,14 +26,13 @@ struct SearchBar: View {
                             .foregroundColor(iconColor)
                             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                             .padding(.leading, 8)
-                        
                     }
                 }
                 .animation(.easeInOut, value: self.isEditing)
                 .onTapGesture {
                     self.isEditing = true
                 }
-                
+
             if isEditing {
                 Button {
                     self.isEditing = false
@@ -42,13 +41,12 @@ struct SearchBar: View {
 
                 } label: {
                     Image(systemName: "multiply.circle.fill")
-                                        .foregroundColor(.gray)
-                                        .padding(.trailing, 8)
+                        .foregroundColor(.gray)
+                        .padding(.trailing, 8)
                 }
                 .padding(.trailing, 10)
                 .transition(.move(edge: .trailing))
                 .animation(.easeInOut, value: self.isEditing)
-
             }
         }
     }

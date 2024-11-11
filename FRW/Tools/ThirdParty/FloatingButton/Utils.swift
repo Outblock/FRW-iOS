@@ -1,6 +1,6 @@
 //
 //  SwiftUIView.swift
-//  
+//
 //
 //  Created by Alisa Mylnikova on 31.03.2023.
 //
@@ -8,15 +8,13 @@
 import SwiftUI
 
 extension View {
-
     func sizeGetter(_ size: Binding<CGSize>) -> some View {
         modifier(SizeGetter(size: size))
     }
 }
 
 extension Collection where Element == CGPoint {
-    
-    subscript (safe index: Index) -> CGPoint {
+    subscript(safe index: Index) -> CGPoint {
         return indices.contains(index) ? self[index] : .zero
     }
 }
@@ -50,7 +48,6 @@ struct SubmenuButtonPreferenceKey: PreferenceKey {
 }
 
 struct SubmenuButtonPreferenceViewSetter: View {
-
     var body: some View {
         GeometryReader { geometry in
             Rectangle()

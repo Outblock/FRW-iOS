@@ -5,16 +5,50 @@
 //  Created by cat on 2024/9/10.
 //
 
+import CryptoKit
+import FlowWalletKit
 import Foundation
 import KeychainAccess
-import FlowWalletKit
-import CryptoKit
 
-struct SecureEnclaveMigration {
+// MARK: - SecureEnclaveMigration
+
+enum SecureEnclaveMigration {
+    // MARK: Internal
+
+    static func start() {
+        migrationFromOldSE()
+        migrationFromLilicoTag()
+    }
+
+    // migrate from lilico tag,Caused by a misquote
+    static func migrationFromLilicoTag() {
+        let lilicoService = "io.outblock.lilico.securekey"
+        let userKey = "user.keystore"
+        let keychain = Keychain(service: lilicoService)
+        guard let data = try? keychain.getData(userKey) else {
+            log.info("[SecureEnclave] migration empty ")
+            return
+        }
+        guard let users = try? JSONDecoder().decode([StoreInfo].self, from: data) else {
+            log.info("[SecureEnclave] decoder failed on loginedUser ")
+            return
+        }
+        for model in users {
+            let se = try? SecureEnclaveKey.restore(
+                secret: model.publicKey,
+                storage: SecureEnclaveKey.KeychainStorage
+            )
+            try? se?.store(id: model.uniq)
+        }
+        log.debug("[Migration] total: \(users.count)")
+    }
+
+    // MARK: Private
+
     private static var service: String = "com.flowfoundation.wallet.securekey"
     private static var userKey: String = "user.keystore"
-    
-    static func start() {
+
+    static private func migrationFromOldSE() {
         let keychain = Keychain(service: service)
         guard let data = try? keychain.getData(userKey) else {
             print("[Migration] SecureEnclave get value from keychain empty,\(service)")
@@ -27,24 +61,36 @@ struct SecureEnclaveMigration {
         let startAt = CFAbsoluteTimeGetCurrent()
         var finishCount = 0
         for item in users {
-            if let privateKey = try? SecureEnclave.P256.Signing.PrivateKey(dataRepresentation: item.publicKey) {
-                let secureKey = SecureEnclaveKey(key: privateKey, storage: SecureEnclaveKey.KeychainStorage)
+            if let privateKey = try? SecureEnclave.P256.Signing
+                .PrivateKey(dataRepresentation: item.publicKey) {
+                let secureKey = SecureEnclaveKey(
+                    key: privateKey,
+                    storage: SecureEnclaveKey.KeychainStorage
+                )
                 try? secureKey.store(id: item.uniq, password: KeyProvider.password(with: item.uniq))
                 finishCount += 1
             }
         }
         let endAt = CFAbsoluteTimeGetCurrent()
-        log.debug("[Migration] total: \(users.count), finish: \(finishCount), time:\((endAt - startAt))")
-        
+        log
+            .debug(
+                "[Migration] total: \(users.count), finish: \(finishCount), time:\(endAt - startAt)"
+            )
     }
 }
 
+// MARK: - StoreInfo
+
 private struct StoreInfo: Codable {
-    var uniq: String
-    var publicKey: Data
-    
+    // MARK: Lifecycle
+
     init(uniq: String, publicKey: Data) {
         self.uniq = uniq
         self.publicKey = publicKey
     }
+
+    // MARK: Internal
+
+    var uniq: String
+    var publicKey: Data
 }

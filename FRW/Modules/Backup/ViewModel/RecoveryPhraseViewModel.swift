@@ -9,7 +9,23 @@ import SPIndicator
 import UIKit
 
 class RecoveryPhraseViewModel: ViewModel {
-    @Published private(set) var state: RecoveryPhraseView.ViewState
+    // MARK: Lifecycle
+
+    init() {
+        if let mnemonic = WalletManager.shared.getCurrentMnemonic() {
+            self.state = RecoveryPhraseView
+                .ViewState(dataSource: mnemonic.split(separator: " ").enumerated().map { item in
+                    WordListView.WordItem(id: item.offset + 1, word: String(item.element))
+                })
+        } else {
+            self.state = RecoveryPhraseView.ViewState(dataSource: mockData)
+        }
+    }
+
+    // MARK: Internal
+
+    @Published
+    private(set) var state: RecoveryPhraseView.ViewState
 
     let mockData = [
         WordListView.WordItem(id: 1, word: "---"),
@@ -26,16 +42,6 @@ class RecoveryPhraseViewModel: ViewModel {
         WordListView.WordItem(id: 12, word: "---"),
     ]
 
-    init() {
-        if let mnemonic = WalletManager.shared.getCurrentMnemonic() {
-            state = RecoveryPhraseView.ViewState(dataSource: mnemonic.split(separator: " ").enumerated().map { item in
-                WordListView.WordItem(id: item.offset + 1, word: String(item.element))
-            })
-        } else {
-            state = RecoveryPhraseView.ViewState(dataSource: mockData)
-        }
-    }
-
     func trigger(_ input: RecoveryPhraseView.Action) {
         switch input {
         case .icloudBackup:
@@ -47,7 +53,6 @@ class RecoveryPhraseViewModel: ViewModel {
         case .copy:
             UIPasteboard.general.string = WalletManager.shared.getCurrentMnemonic() ?? ""
             HUD.success(title: "copied".localized)
-            break
         }
     }
 }

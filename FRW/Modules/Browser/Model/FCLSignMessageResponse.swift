@@ -7,17 +7,21 @@
 
 import Foundation
 
+// MARK: - FCLSignMessageResponse
+
 struct FCLSignMessageResponse: Codable, FCLResponseProtocol {
     let body: Body?
     let config: FCLResponseConfig?
     let fclVersion: String
     let service: FCLSimpleService
     let type: String
-    
+
     func uniqueId() -> String {
-        return "\(service.type.rawValue)-\(type)-\(body?.message ?? "")"
+        "\(service.type.rawValue)-\(type)-\(body?.message ?? "")"
     }
 }
+
+// MARK: FCLSignMessageResponse.Body
 
 extension FCLSignMessageResponse {
     struct Body: Codable {

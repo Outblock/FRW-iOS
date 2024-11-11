@@ -8,19 +8,16 @@
 import SwiftUI
 
 struct ThingsNeedKnowView: RouteableView {
-    
-    @StateObject var viewModel = ThingsNeedKnowViewModel()
-    
+    @StateObject
+    var viewModel = ThingsNeedKnowViewModel()
+
+    @State
+    var allCheck = false
+
     var title: String {
-        return ""
+        ""
     }
-    
-    @State var allCheck = false
-    
-    var buttonState: VPrimaryButtonState {
-        return allCheck ? .enabled : .disabled
-    }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
@@ -48,23 +45,26 @@ struct ThingsNeedKnowView: RouteableView {
                 TextCheckListView(titles: [
                     "things_need_know_check_1".localized,
                     "things_need_know_check_2".localized,
-                    "things_need_know_check_3".localized
+                    "things_need_know_check_3".localized,
                 ], allChecked: $allCheck)
             }
             .padding(.top, 24)
             Spacer()
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: buttonState,
-                           action: {
-                onConfirm()
-            }, title: "create_backup".localized)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: allCheck ? .enabled : .disabled,
+                action: {
+                    onConfirm()
+                },
+                title: "create_backup".localized
+            )
             .padding(.bottom)
         }
         .padding(.horizontal, 28)
         .background(Color.LL.background, ignoresSafeAreaEdges: .all)
         .applyRouteable(self)
     }
-    
+
     func onConfirm() {
         viewModel.onCreate()
     }

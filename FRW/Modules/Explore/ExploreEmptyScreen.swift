@@ -7,11 +7,13 @@
 
 import SwiftUI
 
+// MARK: - ExploreEmptyScreen
+
 struct ExploreEmptyScreen: View {
     var body: some View {
         VStack(alignment: .center) {
             Image("empty-box")
-            
+
             Text("empty_bookmark".localized)
                 .font(.LL.body)
                 .fontWeight(.medium)
@@ -20,6 +22,8 @@ struct ExploreEmptyScreen: View {
         .background(.LL.Neutrals.background)
     }
 }
+
+// MARK: - ExploreEmptyScreen_Previews
 
 struct ExploreEmptyScreen_Previews: PreviewProvider {
     static var previews: some View {

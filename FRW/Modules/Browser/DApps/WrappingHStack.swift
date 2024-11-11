@@ -2,15 +2,15 @@ import SwiftUI
 
 // Adapted from: https://stackoverflow.com/questions/62102647/swiftui-hstack-with-wrap-and-dynamic-height/62103264#62103264
 struct WrappingHStack<Model, V>: View where Model: Hashable, V: View {
+    // MARK: Internal
+
     typealias ViewGenerator = (Model) -> V
-    
+
     var models: [Model]
     var viewGenerator: ViewGenerator
     var horizontalSpacing: CGFloat = 4
     var verticalSpacing: CGFloat = 4
 
-    @State private var totalHeight
-          = CGFloat.zero       // << variant for ScrollView/List
 //        = CGFloat.infinity   // << variant for VStack
 
     var body: some View {
@@ -19,9 +19,15 @@ struct WrappingHStack<Model, V>: View where Model: Hashable, V: View {
                 self.generateContent(in: geometry)
             }
         }
-        .frame(height: totalHeight)// << variant for ScrollView/List
-        //.frame(maxHeight: totalHeight) // << variant for VStack
+        .frame(height: totalHeight) // << variant for ScrollView/List
+        // .frame(maxHeight: totalHeight) // << variant for VStack
     }
+
+    // MARK: Private
+
+    @State
+    private var totalHeight
+        = CGFloat.zero // << variant for ScrollView/List
 
     private func generateContent(in geometry: GeometryProxy) -> some View {
         var width = CGFloat.zero
@@ -33,20 +39,19 @@ struct WrappingHStack<Model, V>: View where Model: Hashable, V: View {
                     .padding(.horizontal, horizontalSpacing)
                     .padding(.vertical, verticalSpacing)
                     .alignmentGuide(.leading, computeValue: { dimension in
-                        if (abs(width - dimension.width) > geometry.size.width)
-                        {
+                        if abs(width - dimension.width) > geometry.size.width {
                             width = 0
                             height -= dimension.height
                         }
                         let result = width
                         if models == self.models.last! {
-                            width = 0 //last item
+                            width = 0 // last item
                         } else {
                             width -= dimension.width
                         }
                         return result
                     })
-                    .alignmentGuide(.top, computeValue: {dimension in
+                    .alignmentGuide(.top, computeValue: { _ in
                         let result = height
                         if models == self.models.last! {
                             height = 0 // last item
@@ -58,7 +63,7 @@ struct WrappingHStack<Model, V>: View where Model: Hashable, V: View {
     }
 
     private func viewHeightReader(_ binding: Binding<CGFloat>) -> some View {
-        return GeometryReader { geometry -> Color in
+        GeometryReader { geometry -> Color in
             let rect = geometry.frame(in: .local)
             DispatchQueue.main.async {
                 binding.wrappedValue = rect.size.height

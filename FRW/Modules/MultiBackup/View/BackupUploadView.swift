@@ -7,26 +7,34 @@
 
 import SwiftUI
 
+// MARK: - BackupUploadView
+
 struct BackupUploadView: RouteableView {
-    @StateObject var viewModel: BackupUploadViewModel
-    
-    
+    // MARK: Lifecycle
+
     init(items: [MultiBackupType]) {
         _viewModel = StateObject(wrappedValue: BackupUploadViewModel(items: items))
     }
-    
+
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: BackupUploadViewModel
+
     var title: String {
-        return "multi_backup".localized
+        "multi_backup".localized
     }
-    
+
     var body: some View {
         VStack(alignment: .center) {
-            BackupUploadView.ProgressView(items: viewModel.items,
-                                          currentIndex: $viewModel.currentIndex)
-                .padding(.top, 24)
-                .padding(.horizontal, 56)
-                .visibility(viewModel.process == .end ? .gone : .visible)
-            
+            BackupUploadView.ProgressView(
+                items: viewModel.items,
+                currentIndex: $viewModel.currentIndex
+            )
+            .padding(.top, 24)
+            .padding(.horizontal, 56)
+            .visibility(viewModel.process == .end ? .gone : .visible)
+
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
                     if viewModel.process != .end {
@@ -37,13 +45,15 @@ struct BackupUploadView: RouteableView {
                             .background(.Theme.Background.white)
                             .cornerRadius(60)
                             .clipped()
-                            .visibility((viewModel.currentType == .phrase && viewModel.process != .idle) ? .gone : .visible)
+                            .visibility((
+                                viewModel.currentType == .phrase && viewModel
+                                    .process != .idle
+                            ) ? .gone : .visible)
                     }
-                    
+
                     BackupUploadView.CompletedView(items: viewModel.items)
                         .visibility(viewModel.process == .end ? .visible : .gone)
-                    
-                    
+
                     Text(viewModel.currentTitle)
                         .font(.inter(size: 20, weight: .bold))
                         .foregroundStyle(Color.Theme.Text.black)
@@ -57,50 +67,55 @@ struct BackupUploadView: RouteableView {
                 }
                 .padding(.top, 32)
                 .padding(.horizontal, 40)
-                
-                
+
                 if viewModel.currentType != .phrase {
-                    BackupUploadTimeline(backupType: viewModel.currentType, isError: viewModel.hasError, process: viewModel.process)
-                        .padding(.top, 64)
-                        .visibility(viewModel.showTimeline() ? .visible : .gone)
+                    BackupUploadTimeline(
+                        backupType: viewModel.currentType,
+                        isError: viewModel.hasError,
+                        process: viewModel.process
+                    )
+                    .padding(.top, 64)
+                    .visibility(viewModel.showTimeline() ? .visible : .gone)
                 }
-                
-                if viewModel.currentType == .phrase{
+
+                if viewModel.currentType == .phrase {
                     ScrollView(showsIndicators: false, content: {
                         if viewModel.process == .idle {
                             VStack {
                                 TextCheckListView(titles: [
                                     "multi_check_phrase_1".localized,
                                     "multi_check_phrase_2".localized,
-                                    "multi_check_phrase_3".localized
+                                    "multi_check_phrase_3".localized,
                                 ], allChecked: $viewModel.checkAllPhrase)
-                                
+
                                 Button {
                                     viewModel.learnMore()
                                 } label: {
                                     Text("Learn__more::message".localized)
-                                        .font(.inter(size:14, weight: .semibold))
+                                        .font(.inter(size: 14, weight: .semibold))
                                         .foregroundStyle(Color.Theme.Accent.blue)
                                         .padding(.vertical, 16)
                                 }
                             }
                             .padding(.top, 16)
                             .padding(.horizontal, 18)
-                        }
-                        else if viewModel.process == .regist || viewModel.process == .upload || viewModel.process == .finish {
-                            if  let mnemonic = MultiBackupManager.shared.mnemonic {
-                                BackupUploadView.PhraseWords(isBlur: viewModel.mnemonicBlur ,mnemonic:mnemonic)
-                                    .padding(.horizontal, 24)
+                        } else if viewModel.process == .regist || viewModel
+                            .process == .upload || viewModel.process == .finish {
+                            if let mnemonic = MultiBackupManager.shared.mnemonic {
+                                BackupUploadView.PhraseWords(
+                                    isBlur: viewModel.mnemonicBlur,
+                                    mnemonic: mnemonic
+                                )
+                                .padding(.horizontal, 24)
                             }
                         }
                     })
                 }
-                
-                
+
                 if viewModel.process == .end {
                     VStack {
                         VStack {
-                            ForEach(viewModel.items,id: \.self) { backupType in
+                            ForEach(viewModel.items, id: \.self) { backupType in
                                 BackupedItemView(backupType: backupType)
                             }
                             Spacer()
@@ -111,24 +126,24 @@ struct BackupUploadView: RouteableView {
                 }
             }
             .clipped()
-            
-            
-            
-            
+
             Spacer()
-            
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: viewModel.buttonState,
-                           action: {
-                               viewModel.onClickButton()
-                           }, title: viewModel.currentButton)
-                .padding(.horizontal, 18)
-                .padding(.bottom)
+
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: viewModel.buttonState,
+                action: {
+                    viewModel.onClickButton()
+                },
+                title: viewModel.currentButton
+            )
+            .padding(.horizontal, 18)
+            .padding(.bottom)
         }
         .applyRouteable(self)
         .backgroundFill(Color.LL.Neutrals.background)
     }
-    
+
     func backButtonAction() {
         Router.popToRoot()
     }
@@ -137,21 +152,26 @@ struct BackupUploadView: RouteableView {
 extension BackupUploadView {
     struct ProgressView: View {
         let items: [MultiBackupType]
-        @Binding var currentIndex: Int
+        @Binding
+        var currentIndex: Int
+
         var body: some View {
             HStack(spacing: 0) {
                 ForEach(items.indices, id: \.self) { index in
                     let isSelected = currentIndex >= index
-                    BackupUploadView.ProgressItem(itemType: items[index],
-                                                  isSelected: isSelected)
+                    BackupUploadView.ProgressItem(
+                        itemType: items[index],
+                        isSelected: isSelected
+                    )
                     Rectangle()
                         .foregroundColor(.clear)
                         .frame(height: 1)
-                        .background(isSelected ? .Theme.Accent.green
-                            : .Theme.Background.silver
+                        .background(
+                            isSelected ? .Theme.Accent.green
+                                : .Theme.Background.silver
                         )
                 }
-                
+
                 Image(currentIndex >= items.count ? "icon.finish.highlight" : "icon.finish.normal")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -159,49 +179,57 @@ extension BackupUploadView {
             }
         }
     }
-    
+
     struct ProgressItem: View {
         let itemType: MultiBackupType
         var isSelected: Bool = false
 
         var body: some View {
             ZStack {
-                Image(isSelected ? itemType.highlightIcon
-                    : itemType.normalIcon)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 40, height: 40)
+                Image(
+                    isSelected ? itemType.highlightIcon
+                        : itemType.normalIcon
+                )
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 40, height: 40)
             }
         }
     }
 }
 
+// MARK: BackupUploadView.CompletedView
+
 extension BackupUploadView {
     struct CompletedView: View {
+        // MARK: Internal
+
         let items: [MultiBackupType]
-        
+
         var body: some View {
             build()
         }
-        
+
         func build() -> some View {
-            return VStack {
+            VStack {
                 if items.count == 1 {
                     firstBuild()
-                }else if items.count == 2 {
+                } else if items.count == 2 {
                     twoBuild()
-                }else {
+                } else {
                     moreBuild()
                 }
             }
         }
-        
+
+        // MARK: Private
+
         private func firstBuild() -> some View {
-            return icon(name: items.first!.iconName())
+            icon(name: items.first!.iconName())
         }
-        
+
         private func twoBuild() -> some View {
-            return HStack {
+            HStack {
                 if items.count == 2 {
                     icon(name: items[0].iconName())
                     linkIcon()
@@ -209,9 +237,9 @@ extension BackupUploadView {
                 }
             }
         }
-        
+
         private func moreBuild() -> some View {
-            return VStack(spacing: 0) {
+            VStack(spacing: 0) {
                 HStack {
                     if items.count >= 2 {
                         icon(name: items[0].iconName())
@@ -220,8 +248,8 @@ extension BackupUploadView {
                     }
                 }
                 linkIcon()
-                    .offset(y:-12)
-                    .rotationEffect( items.count > 3 ? Angle.init(degrees: 30) : .zero)
+                    .offset(y: -12)
+                    .rotationEffect(items.count > 3 ? Angle(degrees: 30) : .zero)
                 HStack {
                     if items.count >= 3 {
                         icon(name: items[2].iconName())
@@ -232,13 +260,11 @@ extension BackupUploadView {
                     }
                 }
                 .padding(.top, 16)
-                
             }
         }
-        
-        
+
         private func icon(name: String) -> some View {
-            return Image(name)
+            Image(name)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 80, height: 80)
@@ -246,8 +272,9 @@ extension BackupUploadView {
                 .cornerRadius(40)
                 .clipped()
         }
+
         private func linkIcon() -> some View {
-            return Image("icon.backup.link")
+            Image("icon.backup.link")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 24, height: 24)
@@ -257,13 +284,12 @@ extension BackupUploadView {
     }
 }
 
+// MARK: BackupUploadView.PhraseWords
+
 extension BackupUploadView {
     struct PhraseWords: View {
-        
-        var isBlur: Bool = true
-        private var dataSource: [WordListView.WordItem]
-        var mnemonic: String
-        
+        // MARK: Lifecycle
+
         init(isBlur: Bool, mnemonic: String) {
             self.mnemonic = mnemonic
             self.isBlur = isBlur
@@ -271,9 +297,13 @@ extension BackupUploadView {
                 WordListView.WordItem(id: item.offset + 1, word: String(item.element))
             }
         }
-        
+
+        // MARK: Internal
+
+        var isBlur: Bool = true
+        var mnemonic: String
+
         var body: some View {
-            
             VStack {
                 VStack {
                     HStack {
@@ -290,7 +320,7 @@ extension BackupUploadView {
                 .border(Color.Theme.Text.black, cornerRadius: 16)
                 .animation(.linear(duration: 0.2), value: isBlur)
                 .padding(.top, 20)
-                
+
                 VStack(alignment: .leading) {
                     Button {
                         UIPasteboard.general.string = self.mnemonic
@@ -300,7 +330,7 @@ extension BackupUploadView {
                             .resizable()
                             .renderingMode(.template)
                             .foregroundStyle(Color.Theme.Accent.green)
-                            .frame(width: 100,height: 40)
+                            .frame(width: 100, height: 40)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -325,17 +355,20 @@ extension BackupUploadView {
                 .padding(.bottom)
                 .visibility(isBlur ? .gone : .visible)
             }
-            
         }
+
+        // MARK: Private
+
+        private var dataSource: [WordListView.WordItem]
     }
 }
+
+// MARK: BackupUploadView.AllBackupView
 
 extension BackupUploadView {
     struct AllBackupView: View {
         var body: some View {
-            VStack {
-                
-            }
+            VStack {}
         }
     }
 }
@@ -343,5 +376,8 @@ extension BackupUploadView {
 #Preview {
 //    BackupUploadView(items: [])
 //    BackupUploadView.CompletedView(items: [.google,.passkey, .icloud, ])
-    BackupUploadView.PhraseWords(isBlur: true, mnemonic: "timber bulk peace tree cannon vault tomorrow case violin decade bread song song song song")
+    BackupUploadView.PhraseWords(
+        isBlur: true,
+        mnemonic: "timber bulk peace tree cannon vault tomorrow case violin decade bread song song song song"
+    )
 }

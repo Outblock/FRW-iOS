@@ -8,42 +8,44 @@
 import Foundation
 import Moya
 
+// MARK: - FRWAPI.IP
+
 extension FRWAPI {
     enum IP {
         case info
     }
 }
 
+// MARK: - FRWAPI.IP + TargetType, AccessTokenAuthorizable
+
 extension FRWAPI.IP: TargetType, AccessTokenAuthorizable {
-    
     var authorizationType: AuthorizationType? {
-        return .bearer
+        .bearer
     }
-    
+
     var baseURL: URL {
-        return Config.get(.lilico)
+        Config.get(.lilico)
     }
-    
+
     var path: String {
         switch self {
         case .info:
             return "/v1/user/location"
         }
     }
-    
+
     var method: Moya.Method {
-        return .get
+        .get
     }
-    
+
     var task: Task {
         switch self {
-        case .info: 
+        case .info:
             return .requestParameters(parameters: [:], encoding: URLEncoding.queryString)
         }
     }
-    
-    var headers: [String : String]? {
-        return FRWAPI.commonHeaders
+
+    var headers: [String: String]? {
+        FRWAPI.commonHeaders
     }
-    
 }

@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct BackupedItemView: View {
-    
+    // MARK: Internal
+
     let backupType: MultiBackupType
     var mnemonic: String? = nil
     var deviceInfo: DeviceInfoRequest? = nil
 
-    
     var body: some View {
         VStack {
             HStack(alignment: .top) {
@@ -43,15 +43,14 @@ struct BackupedItemView: View {
             .padding(16)
             .frame(minWidth: 0, maxWidth: .infinity)
             .frame(height: 96)
-            
+
             if backupType == .phrase {
                 VStack {
-                    
                     Divider()
                         .background(Color.Theme.Line.line)
                         .frame(height: 1)
                         .padding(.horizontal, 18)
-                    
+
                     HStack {
                         Spacer()
                         WordListView(data: Array(mnemonicList().prefix(colum())))
@@ -61,7 +60,7 @@ struct BackupedItemView: View {
                     }
                     .padding(.top, 8)
                     .padding(.horizontal, 30)
-                    
+
                     HStack(alignment: .center) {
                         Spacer()
                         Button {
@@ -72,12 +71,12 @@ struct BackupedItemView: View {
                                 .resizable()
                                 .renderingMode(.template)
                                 .foregroundStyle(Color.Theme.Accent.green)
-                                .frame(width: 100,height: 40)
+                                .frame(width: 100, height: 40)
                         }
                         Spacer()
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    
+
                     VStack(spacing: 10) {
                         Text("not_share_secret_tips".localized)
                             .font(.LL.caption)
@@ -94,18 +93,18 @@ struct BackupedItemView: View {
                         RoundedRectangle(cornerRadius: 12)
                             .foregroundColor(.LL.warning6)
                     }
-                    .padding(.horizontal,10)
+                    .padding(.horizontal, 10)
                     .padding(.top)
                     .padding(.bottom)
                 }
             }
-            
         }
         .background(.Theme.Background.grey)
         .cornerRadius(16)
-        
     }
-    
+
+    // MARK: Private
+
     private func showApp() -> String {
         if let info = deviceInfo {
             return info.showApp()
@@ -113,7 +112,7 @@ struct BackupedItemView: View {
         let item = MultiBackupManager.shared.getTarget(with: backupType)
         return item.registeredDeviceInfo?.deviceInfo.showApp() ?? ""
     }
-    
+
     private func showLocation() -> String {
         if let info = deviceInfo {
             return info.showLocation()
@@ -121,13 +120,12 @@ struct BackupedItemView: View {
         let item = MultiBackupManager.shared.getTarget(with: backupType)
         return item.registeredDeviceInfo?.deviceInfo.showLocation() ?? ""
     }
-    
+
     private func validMnemonic() -> String? {
-        
         if let mnemonic = mnemonic {
             return mnemonic
         }
-        
+
         guard let mnemonic = MultiBackupManager.shared.mnemonic else {
             return nil
         }
@@ -136,23 +134,21 @@ struct BackupedItemView: View {
         }
         return mnemonic
     }
-    
+
     private func mnemonicList() -> [WordListView.WordItem] {
         guard let mnemonic = validMnemonic() else {
             return []
         }
-        
+
         let list = mnemonic.split(separator: " ").enumerated().map { item in
             WordListView.WordItem(id: item.offset + 1, word: String(item.element))
         }
         return list
     }
-    
+
     private func colum() -> Int {
-        return Int(ceil(Double(mnemonicList().count) / 2.0))
+        Int(ceil(Double(mnemonicList().count) / 2.0))
     }
-    
-    
 }
 
 #Preview {

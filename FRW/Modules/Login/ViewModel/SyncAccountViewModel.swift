@@ -5,18 +5,18 @@
 //  Created by cat on 2023/11/24.
 //
 
+import Combine
 import UIKit
 import WalletConnectPairing
 import WalletConnectSign
-import Combine
 
 class SyncAccountViewModel: ObservableObject {
     @Published var uriString: String?
     @Published var isConnect: Bool = false
     private var publishers = [AnyCancellable]()
-    
+
     private var topic: String?
-    
+
     init() {
         Task {
             try await setupInitialState()
@@ -30,7 +30,7 @@ class SyncAccountViewModel: ObservableObject {
                         self.isConnect = true
                     }
                 }
-                
+
             }.store(in: &publishers)
     }
 
@@ -39,7 +39,7 @@ class SyncAccountViewModel: ObservableObject {
         do {
             let uri = try await WalletConnectSyncDevice.createAndPair()
             WalletConnectManager.shared.prepareSyncAccount()
-            
+
             log.info("[sync device] connect to topic: \(uri.absoluteString)")
             log.info("[sync device] connect to topic: \(uri)")
             DispatchQueue.main.async {

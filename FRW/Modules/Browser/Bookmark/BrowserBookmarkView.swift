@@ -5,20 +5,16 @@
 //  Created by Selina on 10/10/2022.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 struct BrowserBookmarkView: RouteableView {
-    @StateObject private var vm = BrowserBookmarkViewModel()
-    
+    // MARK: Internal
+
     var title: String {
-        return "browser_bookmark".localized
+        "browser_bookmark".localized
     }
-    
-    func backButtonAction() {
-        Router.dismiss()
-    }
-    
+
     var body: some View {
         List {
             ForEach(vm.bookmarkList, id: \.id) { bookmark in
@@ -47,25 +43,29 @@ struct BrowserBookmarkView: RouteableView {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .applyRouteable(self)
     }
-    
+
+    func backButtonAction() {
+        Router.dismiss()
+    }
+
     func createCell(_ bookmark: WebBookmark) -> some View {
         HStack(spacing: 24) {
             KFImage.url(bookmark.url.toFavIcon())
-                .placeholder({
+                .placeholder {
                     Image("placeholder")
                         .resizable()
-                })
+                }
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 56, height: 56)
                 .clipShape(Circle())
-            
+
             VStack(alignment: .leading, spacing: 8) {
                 Text(bookmark.title)
                     .font(.Ukraine(size: 14, weight: .bold))
                     .foregroundColor(Color.LL.Neutrals.text)
                     .lineLimit(1)
-                
+
                 Text(bookmark.host)
                     .font(.inter(size: 12, weight: .regular))
                     .foregroundColor(Color.LL.Neutrals.text3)
@@ -74,4 +74,9 @@ struct BrowserBookmarkView: RouteableView {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = BrowserBookmarkViewModel()
 }

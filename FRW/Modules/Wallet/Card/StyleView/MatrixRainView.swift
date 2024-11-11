@@ -7,22 +7,21 @@
 
 import SwiftUI
 
+// MARK: - MatrixRainView
+
 struct MatrixRainView: View {
-    
     var body: some View {
-        
         ZStack {
-            
             Color(hex: "#262626")
-            
-            GeometryReader{proxy in
+
+            GeometryReader { proxy in
                 let size = proxy.size
-                
-                HStack(spacing: 15){
+
+                HStack(spacing: 15) {
                     // Repeating the effects until it occupied the full screen
                     // With the help of ForEach
                     // For Count since our font size is 25 so width/fontSize will the give the count
-                    ForEach(1...Int(size.width / 25),id: \.self){_ in
+                    ForEach(1...Int(size.width / 25), id: \.self) { _ in
                         MatrixRainCharacters(size: size)
                     }
                 }
@@ -32,33 +31,38 @@ struct MatrixRainView: View {
     }
 }
 
-struct MatrixRainCharacters: View{
+// MARK: - MatrixRainCharacters
+
+struct MatrixRainCharacters: View {
     var size: CGSize
+
     // MARK: Animation Properties
-    @State var startAnimation: Bool = false
-    
-    @State var random: Int = 0
-    
-    var body: some View{
-        
+
+    @State
+    var startAnimation: Bool = false
+
+    @State
+    var random: Int = 0
+
+    var body: some View {
         // Random Height
         let randomHeight: CGFloat = .random(in: (size.height / 2)...size.height)
-        
-        VStack{
-            
+
+        VStack {
             // MARK: Iterating String
-            ForEach(0..<constant.count,id: \.self){index in
-                
+
+            ForEach(0..<constant.count, id: \.self) { index in
+
                 // Retriving Character at String
                 let character = Array(constant)[getRandomIndex(index: index)]
-                
+
                 Text(String(character))
                     .font(.custom("Matrix Code NFI", size: 15))
                     .foregroundColor(Color(hex: "#00EF8B"))
             }
         }
         // Fade like Animation Using Mask
-        .mask(alignment: .top){
+        .mask(alignment: .top) {
             Rectangle()
                 .fill(
                     LinearGradient(colors: [
@@ -68,50 +72,53 @@ struct MatrixRainCharacters: View{
                         .black.opacity(0.3),
                         .black.opacity(0.5),
                         .black.opacity(0.7),
-                        .black
+                        .black,
                     ], startPoint: .top, endPoint: .bottom)
                 )
                 .frame(height: size.height / 2)
-            // Animating
-            // To look like its coming from Top
+                // Animating
+                // To look like its coming from Top
                 .offset(y: startAnimation ? size.height : -randomHeight)
         }
         .onAppear {
             // Moving Slowly down with linear Animation
             // Endless loop without reversing
             // Random delay for more fluent Effect
-            withAnimation(.linear(duration: 10).delay(.random(in: 0...2)).repeatForever(autoreverses: false)){
+            withAnimation(
+                .linear(duration: 10).delay(.random(in: 0...2))
+                    .repeatForever(autoreverses: false)
+            ) {
                 startAnimation = true
             }
         }
         // Timer
         .onReceive(Timer.publish(every: 0.2, on: .main, in: .common).autoconnect()) { _ in
-            
+
             random = Int.random(in: 0..<constant.count)
         }
     }
-    
+
     // Changing Characters randomly with the help of Timer
-    func getRandomIndex(index: Int)->Int{
-        
+    func getRandomIndex(index: Int) -> Int {
         // To avoid index out bound range
         let max = constant.count - 1
-        
-        if (index + random) > max{
-            if (index - random) < 0{
+
+        if (index + random) > max {
+            if (index - random) < 0 {
                 return index
             }
-            return (index - random)
-        }
-        else{
-            return (index + random)
+            return index - random
+        } else {
+            return index + random
         }
     }
 }
 
+// MARK: - MatrixRainView_Previews
+
 struct MatrixRainView_Previews: PreviewProvider {
     static var previews: some View {
-        ZStack{
+        ZStack {
             Color.black
             MatrixRainView()
         }
@@ -120,5 +127,6 @@ struct MatrixRainView_Previews: PreviewProvider {
 }
 
 // MARK: Random Characters
+
 // Your Own
 let constant = "abcdefghijklmnopqrstuvwxyzabcquepaje123jdj09"

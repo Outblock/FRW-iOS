@@ -7,35 +7,38 @@
 
 import SwiftUI
 
+// MARK: - BackupTipsView
+
 struct BackupTipsView: View {
-    var closeAction: () -> ()
-    
-    @State var isChecked = false
-    
+    var closeAction: () -> Void
+
+    @State
+    var isChecked = false
+
     var body: some View {
         VStack(spacing: 0) {
             SheetHeaderView(title: "backup".localized) {
                 onCloseAction()
             }
-            
+
             contentView
         }
         .backgroundFill(Color.LL.Neutrals.background)
     }
-    
+
     var contentView: some View {
         VStack(spacing: 0) {
             Text("backup_tips_desc".localized)
                 .font(.inter(size: 14))
                 .foregroundColor(Color.LL.Neutrals.text2)
                 .multilineTextAlignment(.center)
-            
+
             Spacer()
-            
+
             Image("backup-tips-safe-img")
-            
+
             Spacer()
-            
+
             HStack {
                 Spacer()
                 if isChecked {
@@ -49,7 +52,7 @@ struct BackupTipsView: View {
                         .foregroundStyle(Color.Theme.Text.black8)
                         .frame(width: 16, height: 16)
                 }
-                    
+
                 Text("do_not_ask".localized)
                     .font(.inter(size: 16))
                     .foregroundStyle(Color.Theme.Text.black8)
@@ -60,8 +63,7 @@ struct BackupTipsView: View {
                 isChecked.toggle()
                 LocalUserDefaults.shared.backupSheetNotAsk = isChecked
             }
-            
-            
+
             Button {
                 onBackupAction()
             } label: {
@@ -74,7 +76,7 @@ struct BackupTipsView: View {
                     .cornerRadius(14)
             }
             .padding(.bottom, 20)
-            
+
             Button {
                 onCloseAction()
             } label: {
@@ -92,7 +94,7 @@ extension BackupTipsView {
     private func onCloseAction() {
         closeAction()
     }
-    
+
     private func onBackupAction() {
         onCloseAction()
         Router.route(to: RouteMap.Backup.backupList)
@@ -100,7 +102,5 @@ extension BackupTipsView {
 }
 
 #Preview {
-    BackupTipsView {
-        
-    }
+    BackupTipsView {}
 }

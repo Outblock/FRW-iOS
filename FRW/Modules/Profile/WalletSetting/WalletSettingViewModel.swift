@@ -5,21 +5,35 @@
 //  Created by Selina on 24/10/2022.
 //
 
-import SwiftUI
 import Flow
+import SwiftUI
+
+// MARK: - WalletSettingViewModel
 
 class WalletSettingViewModel: ObservableObject {
-    @Published var storageUsagePercent: Double = 0
-    @Published var storageUsageDesc: String = ""
-    
-    var usagePercentString: String {
-        return String(format: "%.2f%%", storageUsagePercent * 100)
-    }
-    
+    // MARK: Lifecycle
+
     init() {
         fetchStorageInfo()
     }
-    
+
+    // MARK: Internal
+
+    @Published
+    var storageUsagePercent: Double = 0
+    @Published
+    var storageUsageDesc: String = ""
+
+    var usagePercentString: String {
+        String(format: "%.2f%%", storageUsagePercent * 100)
+    }
+
+    func resetWalletAction() {
+        Router.route(to: RouteMap.Profile.resetWalletConfirm)
+    }
+
+    // MARK: Private
+
     private func fetchStorageInfo() {
         Task {
             do {
@@ -28,34 +42,28 @@ class WalletSettingViewModel: ObservableObject {
                     self.storageUsagePercent = info.usedPercent
                     self.storageUsageDesc = info.usedString
                 }
-            } catch {
-                
-            }
+            } catch {}
         }
-    }
-    
-    func resetWalletAction() {
-        Router.route(to: RouteMap.Profile.resetWalletConfirm)
     }
 }
 
 extension Flow.StorageInfo {
     var usedPercent: Double {
-        if self.capacity <= 0 {
+        if capacity <= 0 {
             return 0
         }
-        
-        return min(1, max(0, Double(self.used) / Double(self.capacity)))
+
+        return min(1, max(0, Double(used) / Double(capacity)))
     }
-    
+
     var usedString: String {
-        let usedStr = humanReadableByteCount(bytes: self.used)
-        let capacityStr = humanReadableByteCount(bytes: self.capacity)
+        let usedStr = humanReadableByteCount(bytes: used)
+        let capacityStr = humanReadableByteCount(bytes: capacity)
         return "\(usedStr) / \(capacityStr)"
     }
-    
+
     private func humanReadableByteCount(bytes: UInt64) -> String {
-        if (bytes < 1024) { return "\(bytes) B" }
+        if bytes < 1024 { return "\(bytes) B" }
         let exp = Int(log2(Double(bytes)) / log2(1024.0))
         let unit = ["KB", "MB", "GB", "TB", "PB", "EB"][exp - 1]
         let number = Double(bytes) / pow(1024, Double(exp))

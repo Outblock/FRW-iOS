@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 class CreatePinCodeViewModel: ViewModel {
     @Published
     private(set) var state: CreatePinCodeView.ViewState = .init()

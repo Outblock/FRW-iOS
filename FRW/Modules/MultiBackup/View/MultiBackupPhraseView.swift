@@ -8,16 +8,8 @@
 import SwiftUI
 
 struct MultiBackupPhraseView: RouteableView {
-    
-    enum From {
-        case create
-        case backup
-    }
-    
-    @State var isBlur: Bool = false
-    var from: MultiBackupPhraseView.From = .backup
-    var mnemonic: String
-    private var dataSource: [WordListView.WordItem]
+    // MARK: Lifecycle
+
     init(mnemonic: String) {
         self.mnemonic = mnemonic
         self.dataSource = mnemonic.split(separator: " ").enumerated().map { item in
@@ -25,8 +17,20 @@ struct MultiBackupPhraseView: RouteableView {
         }
     }
 
+    // MARK: Internal
+
+    enum From {
+        case create
+        case backup
+    }
+
+    @State
+    var isBlur: Bool = false
+    var from: MultiBackupPhraseView.From = .backup
+    var mnemonic: String
+
     var title: String {
-        return ""
+        ""
     }
 
     var copyBtn: some View {
@@ -81,7 +85,7 @@ struct MultiBackupPhraseView: RouteableView {
                             .onTapGesture {
                                 isBlur = true
                             }
-                            .visibility( from == .backup ? .gone : .visible )
+                            .visibility(from == .backup ? .gone : .visible)
                     }
                     .onTapGesture {
 //                        isBlur.toggle()
@@ -141,26 +145,33 @@ struct MultiBackupPhraseView: RouteableView {
                     .padding(.bottom)
 
                     Spacer()
-                    
                 }
             }
             Spacer()
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: .enabled,
-                           action: {
-                               Router.pop(animated: false)
-                           },
-                           title: "next".localized)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: .enabled,
+                action: {
+                    Router.pop(animated: false)
+                },
+                title: "next".localized
+            )
             .padding(.bottom)
-            .visibility(from == .backup ? .gone : .visible )
+            .visibility(from == .backup ? .gone : .visible)
         }
-        
+
         .padding(.horizontal, 28)
         .backgroundFill(Color.LL.background)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    private var dataSource: [WordListView.WordItem]
 }
 
 #Preview {
-    MultiBackupPhraseView(mnemonic: "tent breeze custom call thought mixed humble dilemma fold share feel food destroy arrive capable")
+    MultiBackupPhraseView(
+        mnemonic: "tent breeze custom call thought mixed humble dilemma fold share feel food destroy arrive capable"
+    )
 }

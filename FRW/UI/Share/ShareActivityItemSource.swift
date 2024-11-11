@@ -6,15 +6,12 @@
 //
 
 import Foundation
-import UIKit
 import LinkPresentation
+import UIKit
 
 class ShareActivityItemSource: NSObject, UIActivityItemSource {
-    
-    var shareText: String
-    var shareImage: UIImage
-    var linkMetaData = LPLinkMetadata()
-    
+    // MARK: Lifecycle
+
     init(shareText: String, shareImage: UIImage) {
         self.shareText = shareText
         self.shareImage = shareImage
@@ -22,16 +19,25 @@ class ShareActivityItemSource: NSObject, UIActivityItemSource {
         linkMetaData.imageProvider = NSItemProvider(object: shareImage)
         super.init()
     }
-    
-    func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
-        return UIImage(named: "AppIcon") as Any
+
+    // MARK: Internal
+
+    var shareText: String
+    var shareImage: UIImage
+    var linkMetaData = LPLinkMetadata()
+
+    func activityViewControllerPlaceholderItem(_: UIActivityViewController) -> Any {
+        UIImage(named: "AppIcon") as Any
     }
-    
-    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
-        return nil
+
+    func activityViewController(
+        _: UIActivityViewController,
+        itemForActivityType _: UIActivity.ActivityType?
+    ) -> Any? {
+        nil
     }
-    
-    func activityViewControllerLinkMetadata(_ activityViewController: UIActivityViewController) -> LPLinkMetadata? {
-        return linkMetaData
+
+    func activityViewControllerLinkMetadata(_: UIActivityViewController) -> LPLinkMetadata? {
+        linkMetaData
     }
 }

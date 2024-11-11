@@ -5,10 +5,13 @@
 //  Created by Selina on 25/7/2022.
 //
 
-import UIKit
-import SwiftUI
 import Combine
-//import Lottie
+import SwiftUI
+import UIKit
+
+// MARK: - AppTabType
+
+// import Lottie
 
 enum AppTabType {
     case wallet
@@ -17,36 +20,47 @@ enum AppTabType {
     case profile
 }
 
+// MARK: - AppTabBarPageProtocol
+
 protocol AppTabBarPageProtocol {
     static func tabTag() -> AppTabType
     static func iconName() -> String
     static func color() -> Color
 }
 
+// MARK: - Coordinator
+
 final class Coordinator {
-    let window: UIWindow
-    lazy var rootNavi: UINavigationController? = nil
-    
-    private lazy var privateView: AppPrivateView = {
-        let view = AppPrivateView()
-        return view
-    }()
-    
-    private var cancelSets = Set<AnyCancellable>()
-    
+    // MARK: Lifecycle
+
     init(window: UIWindow) {
         self.window = window
-        
-        ThemeManager.shared.$style.sink { scheme in
+
+        ThemeManager.shared.$style.sink { _ in
             DispatchQueue.main.async {
                 self.refreshColorScheme()
             }
         }.store(in: &cancelSets)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
-    
+
+    // MARK: Internal
+
+    let window: UIWindow
+    lazy var rootNavi: UINavigationController? = nil
+
     func showRootView() {
         if LocalUserDefaults.shared.onBoardingShown {
             showNormalView()
@@ -54,21 +68,30 @@ final class Coordinator {
             showOnBoardingView()
         }
     }
+
+    // MARK: Private
+
+    private lazy var privateView: AppPrivateView = {
+        let view = AppPrivateView()
+        return view
+    }()
+
+    private var cancelSets = Set<AnyCancellable>()
 }
 
 extension Coordinator {
     private func refreshColorScheme() {
-        self.window.overrideUserInterfaceStyle = ThemeManager.shared.getUIKitStyle()
+        window.overrideUserInterfaceStyle = ThemeManager.shared.getUIKitStyle()
     }
-    
+
     private func showOnBoardingView() {
         LocalUserDefaults.shared.onBoardingShown = true
-        
+
         let view = OnBoardingView()
         let hostingView = UIHostingController(rootView: view)
         window.rootViewController = hostingView
     }
-    
+
     private func showNormalView() {
         let rootView = SideContainerView()
         let hostingView = UIHostingController(rootView: rootView)
@@ -76,12 +99,12 @@ extension Coordinator {
         navi.setNavigationBarHidden(true, animated: true)
         rootNavi = navi
         window.rootViewController = rootNavi
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             TransactionUIHandler.shared.refreshPanelHolder()
             PushHandler.shared.showPushAlertIfNeeded()
         }
-        
+
 //        #if DEBUG
 //        LocalUserDefaults.shared.onBoardingShown = false
 //        #endif
@@ -89,8 +112,10 @@ extension Coordinator {
 }
 
 // MARK: - Private Screen
+
 extension Coordinator {
-    @objc private func didEnterBackground() {
+    @objc
+    private func didEnterBackground() {
         privateView.alpha = 1
         privateView.removeFromSuperview()
         privateView.frame = window.bounds
@@ -99,8 +124,9 @@ extension Coordinator {
             make.edges.equalToSuperview()
         }
     }
-    
-    @objc private func didBecomeActive() {
+
+    @objc
+    private func didBecomeActive() {
         UIView.animate(withDuration: 0.25) {
             self.privateView.alpha = 0
         } completion: { _ in

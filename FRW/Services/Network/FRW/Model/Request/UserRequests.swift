@@ -8,7 +8,6 @@
 import Foundation
 import MapKit
 
-
 struct RegisterRequest: Codable {
     let username: String?
     let accountKey: AccountKey
@@ -61,15 +60,14 @@ struct DeviceInfoRequest: Codable {
 }
 
 extension DeviceInfoRequest {
-    
     func showApp() -> String {
         return userAgent ?? ""
     }
-    
+
     func showIP() -> String {
         return ip ?? ""
     }
-    
+
     func showLocation() -> String {
         var res = ""
         if city != nil {
@@ -80,9 +78,8 @@ extension DeviceInfoRequest {
         }
         return res
     }
-    
+
     func coordinate() -> CLLocationCoordinate2D {
-        
         guard let latitude = lat, let longitude = lon else {
             return CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
         }

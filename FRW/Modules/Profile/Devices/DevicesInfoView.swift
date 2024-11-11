@@ -17,16 +17,16 @@ extension CLLocationCoordinate2D: Identifiable {
 struct DevicesInfoView: RouteableView {
     var info: DeviceInfoModel
     @StateObject var viewModel: DevicesInfoViewModel
-    
+
     var title: String {
         return "device_info".localized
     }
-    
+
     init(info: DeviceInfoModel) {
         self.info = info
         _viewModel = StateObject(wrappedValue: DevicesInfoViewModel(model: info))
     }
-    
+
     var body: some View {
         VStack {
             ScrollView {
@@ -48,10 +48,10 @@ struct DevicesInfoView: RouteableView {
                         .frame(height: 24)
                     Color.clear
                         .frame(height: 24)
-                    
+
                     keyView
                         .padding(.top, 16)
-                    
+
                     VStack {
                         HStack(spacing: 0) {
                             Text("device_info".localized)
@@ -59,7 +59,7 @@ struct DevicesInfoView: RouteableView {
                                 .foregroundColor(Color.Theme.Text.black3)
                             Spacer()
                         }
-                        
+
                         VStack {
                             DeviceInfoItem(title: "application_tag".localized, detail: info.showApp())
                             Divider()
@@ -80,20 +80,19 @@ struct DevicesInfoView: RouteableView {
                         .cornerRadius(16)
                     }
                     .padding(.top, 24)
-                    
                 }
                 .padding(.horizontal, 18)
                 .frame(maxHeight: .infinity)
             }
-            
+
             Spacer()
-            
+
             VStack {
                 Button {
                     viewModel.onRevoke()
                 } label: {
                     Text("revoke_device".localized)
-                        .font(.inter(size: 16,weight: .semibold))
+                        .font(.inter(size: 16, weight: .semibold))
                         .foregroundStyle(Color.Theme.Text.white9)
                 }
                 .frame(height: 54)
@@ -115,7 +114,7 @@ struct DevicesInfoView: RouteableView {
             }
         }
     }
-    
+
     var keyView: some View {
         VStack(spacing: 8) {
             HStack(spacing: 0) {
@@ -124,31 +123,31 @@ struct DevicesInfoView: RouteableView {
                     .foregroundColor(Color.Theme.Text.black3)
                 Spacer()
             }
-            
+
             HStack(spacing: 8) {
                 HStack(alignment: .center, spacing: 8) {
                     Image(viewModel.keyIcon)
                         .resizable()
                         .frame(width: 24, height: 24)
                         .padding(.trailing, 8)
-                    
+
                     Text(viewModel.showKeyTitle)
                         .padding(.horizontal, 8)
                         .frame(height: 20)
                         .font(.inter(size: 12, weight: .bold))
                         .foregroundStyle(viewModel.showKeyTitleColor)
-                    
+
                     Spacer()
-                    
+
                     Text("full_access".localized)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 2)
                         .frame(height: 20)
-                        .font(.inter(size: 9,weight: .bold))
+                        .font(.inter(size: 9, weight: .bold))
                         .foregroundStyle(Color.Theme.Text.black3)
                         .background(Color.Theme.Text.black3.fixedOpacity())
                         .cornerRadius(4)
-                    
+
                     Image("icon-account-arrow-right")
                         .renderingMode(.template)
                         .foregroundColor(.LL.Neutrals.text)
@@ -165,15 +164,15 @@ struct DevicesInfoView: RouteableView {
             }
         }
     }
-    
+
     func region() -> MKCoordinateRegion {
         let region = MKCoordinateRegion(center: info.coordinate(), span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
         return region
     }
-    
+
     func annotations() -> [CLLocationCoordinate2D] {
         return [
-            info.coordinate()
+            info.coordinate(),
         ]
     }
 }

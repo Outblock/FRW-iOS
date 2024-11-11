@@ -13,7 +13,7 @@ extension UsernameView {
         var status: LL.TextField.Status = .normal
         var isRegisting: Bool = false
     }
-    
+
     enum Action {
         case next
         case onEditingChanged(String)
@@ -22,32 +22,40 @@ extension UsernameView {
 
 extension UsernameView {
     var title: String {
-        return ""
+        ""
     }
-    
+
     func backButtonAction() {
         UIApplication.shared.endEditing()
         Router.pop()
     }
 }
 
+// MARK: - UsernameView
+
 struct UsernameView: RouteableView {
-    @StateObject var viewModel: UsernameViewModel
-    
+    // MARK: Lifecycle
+
     init(mnemonic: String?) {
         _viewModel = StateObject(wrappedValue: UsernameViewModel(mnemonic: mnemonic))
     }
-    
-    @State var text: String = ""
-    
+
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: UsernameViewModel
+
+    @State
+    var text: String = ""
+
     var buttonState: VPrimaryButtonState {
         if viewModel.state.isRegisting {
             return .loading
         }
-        
+
         return highlight == .success ? .enabled : .disabled
     }
-    
+
     var highlight: VTextFieldHighlight {
         switch viewModel.state.status {
         case .success:
@@ -60,7 +68,7 @@ struct UsernameView: RouteableView {
             return .loading
         }
     }
-    
+
     var footerText: String {
         switch viewModel.state.status {
         case .success:
@@ -73,7 +81,7 @@ struct UsernameView: RouteableView {
             return "checking".localized
         }
     }
-    
+
     var body: some View {
         VStack {
             Spacer()
@@ -93,29 +101,35 @@ struct UsernameView: RouteableView {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             Spacer()
-            
-            VTextField(model: TextFieldStyle.primary,
-                       type: .userName,
-                       highlight: highlight,
-                       placeholder: "username".localized,
-                       footerTitle: footerText,
-                       text: $text,
-                       onChange: {
-                viewModel.trigger(.onEditingChanged(text))
-            },
-                       onReturn: .returnAndCustom {
-                viewModel.trigger(.next)
-            }, onClear: .clearAndCustom {
-                viewModel.trigger(.onEditingChanged(text))
-            })
+
+            VTextField(
+                model: TextFieldStyle.primary,
+                type: .userName,
+                highlight: highlight,
+                placeholder: "username".localized,
+                footerTitle: footerText,
+                text: $text,
+                onChange: {
+                    viewModel.trigger(.onEditingChanged(text))
+                },
+                onReturn: .returnAndCustom {
+                    viewModel.trigger(.next)
+                },
+                onClear: .clearAndCustom {
+                    viewModel.trigger(.onEditingChanged(text))
+                }
+            )
             .disabled(viewModel.state.isRegisting)
             .padding(.bottom, 10)
-            
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: buttonState,
-                           action: {
-                viewModel.trigger(.next)
-            }, title: "next".localized)
+
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: buttonState,
+                action: {
+                    viewModel.trigger(.next)
+                },
+                title: "next".localized
+            )
             .padding(.bottom)
         }
         .dismissKeyboardOnDrag()
@@ -124,6 +138,8 @@ struct UsernameView: RouteableView {
         .applyRouteable(self)
     }
 }
+
+// MARK: - UsernameView_Previews
 
 struct UsernameView_Previews: PreviewProvider {
     static var previews: some View {

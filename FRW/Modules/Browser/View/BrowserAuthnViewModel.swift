@@ -5,27 +5,28 @@
 //  Created by Selina on 6/9/2022.
 //
 
-import SwiftUI
 import Flow
+import SwiftUI
+
+// MARK: - BrowserAuthnViewModel.Callback
 
 extension BrowserAuthnViewModel {
-    typealias Callback = (Bool) -> ()
+    typealias Callback = (Bool) -> Void
 }
 
+// MARK: - BrowserAuthnViewModel
+
 class BrowserAuthnViewModel: ObservableObject {
-    @Published var title: String
-    @Published var urlString: String
-    @Published var walletAddress: String?
-    @Published var logo: String?
-    @Published var network: Flow.ChainID?
-    private var callback: BrowserAuthnViewModel.Callback?
-    
-    init(title: String,
-         url: String,
-         logo: String?,
-         walletAddress: String?,
-         network: Flow.ChainID? = nil,
-         callback: @escaping BrowserAuthnViewModel.Callback) {
+    // MARK: Lifecycle
+
+    init(
+        title: String,
+        url: String,
+        logo: String?,
+        walletAddress: String?,
+        network: Flow.ChainID? = nil,
+        callback: @escaping BrowserAuthnViewModel.Callback
+    ) {
         self.title = title
         self.urlString = url
         self.logo = logo
@@ -33,15 +34,34 @@ class BrowserAuthnViewModel: ObservableObject {
         self.walletAddress = walletAddress
         self.callback = callback
     }
-    
-    func didChooseAction(_ result: Bool) {
-        callback?(result)
-        callback = nil
-        Router.dismiss()
-    }
-    
+
     deinit {
         callback?(false)
         WalletConnectManager.shared.reloadPendingRequests()
     }
+
+    // MARK: Internal
+
+    @Published
+    var title: String
+    @Published
+    var urlString: String
+    @Published
+    var walletAddress: String?
+    @Published
+    var logo: String?
+    @Published
+    var network: Flow.ChainID?
+
+    func didChooseAction(_ result: Bool) {
+        Router.dismiss { [weak self] in
+            guard let self else { return }
+            callback?(result)
+            callback = nil
+        }
+    }
+
+    // MARK: Private
+
+    private var callback: BrowserAuthnViewModel.Callback?
 }

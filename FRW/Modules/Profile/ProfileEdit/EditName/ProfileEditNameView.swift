@@ -7,17 +7,21 @@
 
 import SwiftUI
 
+// MARK: - ProfileEditNameView_Previews
+
 struct ProfileEditNameView_Previews: PreviewProvider {
     static var previews: some View {
         ProfileEditNameView()
     }
 }
 
+// MARK: - ProfileEditNameView
+
 struct ProfileEditNameView: RouteableView {
-    @StateObject private var vm = ProfileEditNameViewModel()
-    
+    // MARK: Internal
+
     var title: String {
-        return "edit_nickname".localized
+        "edit_nickname".localized
     }
 
     var body: some View {
@@ -42,6 +46,11 @@ struct ProfileEditNameView: RouteableView {
         .backgroundFill(.LL.Neutrals.background)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = ProfileEditNameViewModel()
 }
 
 extension ProfileEditNameView {

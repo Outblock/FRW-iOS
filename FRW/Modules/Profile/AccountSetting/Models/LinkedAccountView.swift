@@ -5,19 +5,17 @@
 //  Created by cat on 2023/9/11.
 //
 
-import SwiftUI
 import Combine
 import Kingfisher
-
+import SwiftUI
 
 struct LinkedAccountView: RouteableView {
-    
     @StateObject private var cm = ChildAccountManager.shared
-    
+
     var title: String {
         "linked_account".localized.capitalized
     }
-    
+
     var body: some View {
         ZStack {
             if cm.sortedChildAccounts.count == 0 && !cm.isLoading {
@@ -39,7 +37,6 @@ struct LinkedAccountView: RouteableView {
                 }
                 .padding(.top, 18)
             }
-            
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .backgroundFill(Color.LL.Neutrals.background)
@@ -48,34 +45,34 @@ struct LinkedAccountView: RouteableView {
             cm.refresh()
         })
     }
-    
+
     func childAccountCell(_ childAccount: ChildAccount) -> some View {
         ZStack(alignment: .topTrailing) {
             HStack(spacing: 18) {
                 KFImage.url(URL(string: childAccount.icon))
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 36, height: 36)
                     .cornerRadius(18)
-                
+
                 VStack(alignment: .leading, spacing: 5) {
                     Text(childAccount.aName)
                         .foregroundColor(Color.LL.Neutrals.text)
                         .font(.inter(size: 14, weight: .semibold))
-                    
+
                     Text(childAccount.addr ?? "")
                         .foregroundColor(Color.LL.Neutrals.text3)
                         .font(.inter(size: 12))
                 }
-                
+
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            
+
             Button {
                 withAnimation(.none) {
                     cm.togglePinStatus(childAccount)
@@ -112,15 +109,12 @@ extension LinkedAccountView {
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 180, height: 148)
-                
+
             Text("No Linked Account")
                 .font(Font.inter(size: 18))
                 .foregroundStyle(
                     Color(UIColor(hex: "#8C9BAB"))
                 )
-            
         }
     }
 }
-
-

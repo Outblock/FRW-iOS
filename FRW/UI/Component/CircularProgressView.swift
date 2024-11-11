@@ -14,7 +14,6 @@ struct CircularProgressBackground: View {
             .rotation(.degrees(-90))
             .stroke(Color.Theme.Accent.green.opacity(0.15), style: .init(lineWidth: 2, lineCap: .round))
             .animation(.bouncy, value: animationPhase)
-
     }
 }
 
@@ -43,8 +42,8 @@ struct AnimationValues {
 }
 
 enum AnimationPhase: Int {
-    case initial = 0, pending, finalized,executed,sealed
-    
+    case initial = 0, pending, finalized, executed, sealed
+
     var values: AnimationValues {
         switch self {
         case .initial:
@@ -60,4 +59,3 @@ enum AnimationPhase: Int {
         }
     }
 }
-

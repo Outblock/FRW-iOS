@@ -8,20 +8,25 @@
 import Kingfisher
 import SwiftUI
 
+// MARK: - NFTShareView
+
 struct NFTShareView: View {
-    @State var nft: NFTModel
-    @State var colors: [Color]
-    @State var name: String = "ZYANZ"
+    @State
+    var nft: NFTModel
+    @State
+    var colors: [Color]
+    @State
+    var name: String = "ZYANZ"
 
     var body: some View {
         VStack(alignment: .leading) {
             HStack(spacing: 0) {
                 KFImage
                     .url(nft.logoUrl)
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .onSuccess { _ in
                     }
@@ -44,7 +49,7 @@ struct NFTShareView: View {
             .padding(.horizontal, 18)
             .padding(.vertical, 12)
             .background(
-                colors.count > 0 ? colors.first : Color.white
+                !colors.isEmpty ? colors.first : Color.white
             )
             .cornerRadius(12)
             .clipped()
@@ -59,10 +64,10 @@ struct NFTShareView: View {
                     HStack(alignment: .center, spacing: 6) {
                         KFImage
                             .url(nft.logoUrl)
-                            .placeholder({
+                            .placeholder {
                                 Image("placeholder")
                                     .resizable()
-                            })
+                            }
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 20, height: 20, alignment: .center)
@@ -77,10 +82,10 @@ struct NFTShareView: View {
 
                 KFImage
                     .url(nft.imageURL)
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .onSuccess { _ in
 //                        color(from: result.image)
                     }
@@ -97,7 +102,7 @@ struct NFTShareView: View {
             HDashLine().stroke(style: StrokeStyle(lineWidth: 1, dash: [5]))
                 .frame(height: 1)
                 .foregroundColor(
-                    colors.count > 0 ? colors[0].opacity(0.18) : .LL.Neutrals.background
+                    !colors.isEmpty ? colors[0].opacity(0.18) : .LL.Neutrals.background
                 )
 
             HStack(spacing: 0) {
@@ -139,6 +144,8 @@ struct NFTShareView: View {
         .padding(18)
     }
 }
+
+// MARK: - NFTShareView_Previews
 
 struct NFTShareView_Previews: PreviewProvider {
     static var previews: some View {

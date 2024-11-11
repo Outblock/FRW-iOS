@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: - BackAppBar
+
 struct BackAppBar: View {
     var title: String?
     var showShare = false
@@ -22,11 +24,11 @@ struct BackAppBar: View {
                     .foregroundColor(.LL.Button.color)
                     .frame(width: 54, height: 30)
             }
-            
+
             Spacer()
             if showShare {
                 Button {
-                   onShare?()
+                    onShare?()
                 } label: {
                     Image(systemName: "square.and.arrow.up")
                         .foregroundColor(.LL.Button.color)
@@ -34,7 +36,7 @@ struct BackAppBar: View {
                 }
             }
         }
-        .overlay() {
+        .overlay {
             if let title = self.title {
                 Text(title)
                     .font(.title2)
@@ -46,6 +48,8 @@ struct BackAppBar: View {
         .frame(maxHeight: .infinity, alignment: .top)
     }
 }
+
+// MARK: - NFTNavigationBar_Previews
 
 struct NFTNavigationBar_Previews: PreviewProvider {
     static var previews: some View {

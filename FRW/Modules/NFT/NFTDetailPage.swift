@@ -11,72 +11,83 @@ import SPIndicator
 import SwiftUI
 import SwiftUIX
 
-struct NFTDetailPage: RouteableView {
-    static var ShareNFTView: NFTShareView? = nil
-    
-    var title: String {
-        ""
-    }
-    
-    var isNavigationBarHidden: Bool {
-        return true
-    }
-    
-    @StateObject
-    var viewModel: NFTTabViewModel
-    
-    @StateObject
-    var vm: NFTDetailPageViewModel
-    
-    @State var opacity: Double = 0
-    
-    var theColor: Color {
-//        if let color = viewModel.state.colorsMap[vm.nft.imageURL.absoluteString]?[safe: 1] {
-//            return color.adjustbyTheme()
-//        }
-        return Color.LL.Primary.salmonPrimary
-    }
-    
-    @State
-    private var isSharePresented: Bool = false
-    
-    @State
-    private var isFavorited: Bool = false
-    
-    @State
-    private var items: [UIImage] = []
-    
-    @State var image: Image?
-    @State var rect: CGRect = .zero
-    
-    @State var viewState = CGSize.zero
-    @State var isDragging = false
-    
-    @State
-    var showImageViewer = false
-    
-    @Namespace var heroAnimation: Namespace.ID
+// MARK: - NFTDetailPage
 
-    var player = AVPlayer()
-    
-    var fromChildAccount: ChildAccount?
-    
+struct NFTDetailPage: RouteableView {
+    // MARK: Lifecycle
 
     init(viewModel: NFTTabViewModel, nft: NFTModel, from childAccount: ChildAccount? = nil) {
         _viewModel = StateObject(wrappedValue: viewModel)
         _vm = StateObject(wrappedValue: NFTDetailPageViewModel(nft: nft))
-        fromChildAccount = childAccount
+        self.fromChildAccount = childAccount
     }
-    
+
+    // MARK: Internal
+
+    static var ShareNFTView: NFTShareView?
+
+    static var retryCount: Int = 0
+
+    @StateObject
+    var viewModel: NFTTabViewModel
+
+    @StateObject
+    var vm: NFTDetailPageViewModel
+
+    @State
+    var opacity: Double = 0
+
+    @State
+    var image: Image?
+    @State
+    var rect: CGRect = .zero
+
+    @State
+    var viewState = CGSize.zero
+    @State
+    var isDragging = false
+
+    @State
+    var showImageViewer = false
+
+    @Namespace
+    var heroAnimation: Namespace.ID
+
+    var player = AVPlayer()
+
+    var fromChildAccount: ChildAccount?
+
+    var title: String {
+        ""
+    }
+
+    var isNavigationBarHidden: Bool {
+        true
+    }
+
+    var theColor: Color {
+//        if let color = viewModel.state.colorsMap[vm.nft.imageURL.absoluteString]?[safe: 1] {
+//            return color.adjustbyTheme()
+//        }
+        Color.LL.Primary.salmonPrimary
+    }
+
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             OffsetScrollViewWithAppBar(title: "") {
                 Spacer()
                     .frame(height: 64)
-                CalloutView(type: .warning, corners: [.topLeading, .topTrailing, .bottomTrailing, .bottomLeading], content: calloutTitle())
-                    .padding(.horizontal, 18)
-                    .padding(.bottom, 12)
-                    .visibility(WalletManager.shared.accessibleManager.isAccessible(vm.nft) ? .gone : .visible)
+                CalloutView(
+                    type: .warning,
+                    corners: [.topLeading, .topTrailing, .bottomTrailing, .bottomLeading],
+                    content: calloutTitle()
+                )
+                .padding(.horizontal, 18)
+                .padding(.bottom, 12)
+                .visibility(
+                    WalletManager.shared.accessibleManager
+                        .isAccessible(vm.nft) ? .gone : .visible
+                )
                 VStack(alignment: .leading) {
                     VStack(spacing: 0) {
                         if vm.nft.isSVG {
@@ -90,8 +101,7 @@ struct NFTDetailPage: RouteableView {
                                 .onAppear {
                                     fetchColor()
                                 }
-                        } 
-                        else if let video = vm.nft.video {
+                        } else if let video = vm.nft.video {
                             VideoPlayer(player: player)
                                 .onAppear {
                                     if player.currentItem == nil {
@@ -102,8 +112,11 @@ struct NFTDetailPage: RouteableView {
                                         player.play()
                                     }
                                 }
-                                .frame(width: UIScreen.screenWidth - 16 * 2, height: UIScreen.screenWidth - 16 * 2)
-                        } 
+                                .frame(
+                                    width: UIScreen.screenWidth - 16 * 2,
+                                    height: UIScreen.screenWidth - 16 * 2
+                                )
+                        }
 //                        else if let base64ImageData = vm.nft.imageData {
 //                            let provider = Base64ImageDataProvider.init(base64String: base64ImageData, cacheKey: vm.nft.id)
 //                            KFImage.source(.provider(provider))
@@ -122,7 +135,7 @@ struct NFTDetailPage: RouteableView {
 //                                .clipped()
 //                                .scaleEffect(isDragging ? 0.9 : 1)
 //                                .animation(.timingCurve(0.2, 0.8, 0.2, 1, duration: 0.8), value: isDragging)
-//                            
+//
 //                                .rotation3DEffect(Angle(degrees: 5), axis: (x: viewState.width, y: viewState.height, z: 0))
 //                                .modifier(DragGestureViewModifier(onStart: nil, onUpdate: { value in
 //                                    self.viewState = value.translation
@@ -158,9 +171,15 @@ struct NFTDetailPage: RouteableView {
                                 .padding(.horizontal, 18)
                                 .clipped()
                                 .scaleEffect(isDragging ? 0.9 : 1)
-                                .animation(.timingCurve(0.2, 0.8, 0.2, 1, duration: 0.8), value: isDragging)
-                            
-                                .rotation3DEffect(Angle(degrees: 5), axis: (x: viewState.width, y: viewState.height, z: 0))
+                                .animation(
+                                    .timingCurve(0.2, 0.8, 0.2, 1, duration: 0.8),
+                                    value: isDragging
+                                )
+
+                                .rotation3DEffect(
+                                    Angle(degrees: 5),
+                                    axis: (x: viewState.width, y: viewState.height, z: 0)
+                                )
                                 .modifier(DragGestureViewModifier(onStart: nil, onUpdate: { value in
                                     self.viewState = value.translation
                                     self.isDragging = true
@@ -178,7 +197,7 @@ struct NFTDetailPage: RouteableView {
                                 .matchedGeometryEffect(id: "imageView", in: heroAnimation)
                                 .visible(!showImageViewer)
                         }
-                        
+
                         HStack(alignment: .center, spacing: 0) {
                             VStack(alignment: .leading, spacing: 0) {
                                 Text(vm.nft.title)
@@ -186,9 +205,12 @@ struct NFTDetailPage: RouteableView {
                                     .fontWeight(.w700)
                                     .foregroundColor(.LL.Neutrals.text)
                                     .frame(height: 28)
-                                
+
                                 Button {
-                                    NotificationCenter.default.post(name: .openNFTCollectionList, object: vm.nft.collection?.id)
+                                    NotificationCenter.default.post(
+                                        name: .openNFTCollectionList,
+                                        object: vm.nft.collection?.id
+                                    )
                                 } label: {
                                     HStack(alignment: .center, spacing: 6) {
                                         KFImage
@@ -211,7 +233,7 @@ struct NFTDetailPage: RouteableView {
                                 }
                             }
                             Spacer()
-                            
+
 //                            Button {
 //                                Task {
 //                                    let image = await vm.image()
@@ -222,7 +244,7 @@ struct NFTDetailPage: RouteableView {
 //                                    Circle()
 //                                        .stroke(theColor, lineWidth: 2)
 //                                        .frame(width: 44, height: 44)
-//                                    
+//
 //                                    ResizableLottieView(lottieView: vm.animationView,
 //                                                        color: theColor)
 //                                        .aspectRatio(contentMode: .fit)
@@ -236,7 +258,7 @@ struct NFTDetailPage: RouteableView {
 //                            .sheet(isPresented: $isSharePresented) {} content: {
 //                                ShareSheet(items: $items)
 //                            }
-                            
+
                             Button {
                                 if NFTUIKitCache.cache.isFav(id: vm.nft.id) {
                                     NFTUIKitCache.cache.removeFav(id: vm.nft.id)
@@ -249,27 +271,39 @@ struct NFTDetailPage: RouteableView {
                             } label: {
                                 ZStack(alignment: .center) {
                                     Circle()
-                                        .strokeBorder(isFavorited ? theColor : Color.LL.outline, lineWidth: 2)
-                                        .background(Circle().fill(isFavorited ? theColor.opacity(0.2) : .clear))
+                                        .strokeBorder(
+                                            isFavorited ? theColor : Color.LL.outline,
+                                            lineWidth: 2
+                                        )
+                                        .background(
+                                            Circle()
+                                                .fill(isFavorited ? theColor.opacity(0.2) : .clear)
+                                        )
                                         .frame(width: 44, height: 44)
-                                    
-                                    DOFavoriteButtonView(isSelected: isFavorited, imageColor: UIColor(theColor))
+
+                                    DOFavoriteButtonView(
+                                        isSelected: isFavorited,
+                                        imageColor: UIColor(theColor)
+                                    )
                                 }
                                 .frame(width: 44, height: 44)
                                 .foregroundColor(theColor)
                             }
                             .padding(.horizontal, 6)
-                            .visibility(WalletManager.shared.isSelectedChildAccount ? .gone : .visible)
+                            .visibility(
+                                WalletManager.shared
+                                    .isSelectedChildAccount ? .gone : .visible
+                            )
                         }
                         .padding(.top, 16)
                         .padding(.horizontal, 26)
                     }
-                    
+
                     VStack(alignment: .leading, spacing: 18) {
                         if !vm.nft.tags.isEmpty {
                             NFTTagsView(tags: vm.nft.tags, color: theColor)
                         }
-                        
+
                         Text(vm.nft.declare)
                             .font(Font.inter(size: 14, weight: .w400))
                             .foregroundColor(.LL.Neutrals.text)
@@ -283,7 +317,7 @@ struct NFTDetailPage: RouteableView {
                     .shadow(color: .LL.Shades.front, radius: 16, x: 0, y: 8)
                     .cornerRadius(16)
                 }
-                
+
             } appBar: {
                 BackAppBar(showShare: true) {
                     viewModel.trigger(.back)
@@ -291,34 +325,47 @@ struct NFTDetailPage: RouteableView {
                     Task {
                         UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                         let image = await vm.image()
-                        let itemSource = ShareActivityItemSource(shareText: vm.nft.title, shareImage: image)
-                        let activityController = UIActivityViewController(activityItems: [image, vm.nft.title, itemSource], applicationActivities: nil)
+                        let itemSource = ShareActivityItemSource(
+                            shareText: vm.nft.title,
+                            shareImage: image
+                        )
+                        let activityController = UIActivityViewController(
+                            activityItems: [image, vm.nft.title, itemSource],
+                            applicationActivities: nil
+                        )
                         activityController.isModalInPresentation = true
-                        UIApplication.shared.windows.first?.rootViewController?.present(activityController, animated: true, completion: nil)
+                        UIApplication.shared.windows.first?.rootViewController?.present(
+                            activityController,
+                            animated: true,
+                            completion: nil
+                        )
                     }
                 }
             }
             .halfSheet(showSheet: $vm.isPresentMove) {
-                MoveSingleNFTView(nft: vm.nft,fromChildAccount: fromChildAccount) {
+                MoveSingleNFTView(nft: vm.nft, fromChildAccount: fromChildAccount) {
                     withAnimation {
-                        vm.isPresentMove = false
+                        DispatchQueue.main.async {
+                            vm.isPresentMove = false
+                        }
                     }
-                    
+
                     Router.pop()
                 }
             }
         }
         .background(
-            NFTBlurImageView(colors: viewModel.state.colorsMap[vm.nft.imageURL.absoluteString] ?? [])
-                .ignoresSafeArea()
-                .offset(y: -4)
+            NFTBlurImageView(
+                colors: viewModel.state
+                    .colorsMap[vm.nft.imageURL.absoluteString] ?? []
+            )
+            .ignoresSafeArea()
+            .offset(y: -4)
         )
         .safeAreaInset(edge: .bottom, content: {
             HStack(spacing: 8) {
                 Spacer()
-                
-                
-                
+
                 Button {
                     vm.sendNFTAction(fromChildAccount: fromChildAccount)
                 } label: {
@@ -337,11 +384,11 @@ struct NFTDetailPage: RouteableView {
                 .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
                 .visibility(vm.showSendButton ? .visible : .gone)
                 .disabled(!WalletManager.shared.accessibleManager.isAccessible(vm.nft))
-                
+
                 Button {
                     vm.showMoveAction()
                 } label: {
-                    HStack { 
+                    HStack {
                         Image("icon_move")
                             .resizable()
                             .renderingMode(.template)
@@ -358,7 +405,7 @@ struct NFTDetailPage: RouteableView {
                 .shadow(color: theColor.opacity(0.1), radius: 15, x: 0, y: 5)
                 .visibility(vm.movable ? .visible : .gone)
                 .disabled(!WalletManager.shared.accessibleManager.isAccessible(vm.nft))
-                
+
                 Menu {
                     Button {
                         Task {
@@ -372,10 +419,9 @@ struct NFTDetailPage: RouteableView {
                         Text("download".localized)
                             .foregroundColor(.LL.Neutrals.text)
                     }
-                    
+
                     if let urlString = vm.nft.response.externalURL,
-                       let url = URL(string: urlString)
-                    {
+                       let url = URL(string: urlString) {
                         Button {
                             Router.route(to: RouteMap.Explore.browser(url))
                         } label: {
@@ -388,7 +434,7 @@ struct NFTDetailPage: RouteableView {
                             }
                         }
                     }
-                    
+
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(.system(size: 16))
@@ -409,19 +455,22 @@ struct NFTDetailPage: RouteableView {
             vm.animationView.play()
         }
         .overlay(
-            ImageViewer(imageURL: vm.nft.imageURL.absoluteString,
-                        viewerShown: self.$showImageViewer,
-                        backgroundColor: viewModel.state.colorsMap[vm.nft.imageURL.absoluteString]?.first ?? .LL.background,
-                        heroAnimation: heroAnimation)
+            ImageViewer(
+                imageURL: vm.nft.imageURL.absoluteString,
+                viewerShown: $showImageViewer,
+                backgroundColor: viewModel.state.colorsMap[vm.nft.imageURL.absoluteString]?
+                    .first ?? .LL.background,
+                heroAnimation: heroAnimation
+            )
         )
-        .animation(.spring(), value: self.showImageViewer)
+        .animation(.spring(), value: showImageViewer)
         .applyRouteable(self)
     }
-    
+
     var childOpacity: CGFloat {
         WalletManager.shared.accessibleManager.isAccessible(vm.nft) ? 1 : 0.3
     }
-    
+
     var date: some View {
         VStack(spacing: 0) {
             HStack(alignment: .top, spacing: 0) {
@@ -440,9 +489,9 @@ struct NFTDetailPage: RouteableView {
                             .frame(height: 24)
                     }
                 }
-                
+
                 Spacer()
-                
+
                 VStack(alignment: .trailing, spacing: 0) {
                     Text("purchase_date".localized)
                         .font(.LL.body)
@@ -459,12 +508,11 @@ struct NFTDetailPage: RouteableView {
         .padding(.vertical, 8)
         .padding(.horizontal, 8)
     }
-    
+
     func fetchColor() {
         viewModel.trigger(.fetchColors(vm.nft.imageURL.absoluteString))
     }
-    
-    static var retryCount: Int = 0
+
     func share() {
         if let colors = viewModel.state.colorsMap[vm.nft.imageURL.absoluteString] {
             NFTDetailPage.ShareNFTView = NFTShareView(nft: vm.nft, colors: colors)
@@ -483,7 +531,18 @@ struct NFTDetailPage: RouteableView {
             }
         }
     }
-    
+
+    // MARK: Private
+
+    @State
+    private var isSharePresented: Bool = false
+
+    @State
+    private var isFavorited: Bool = false
+
+    @State
+    private var items: [UIImage] = []
+
     private func calloutTitle() -> String {
         let token = vm.nft.title
         let account = WalletManager.shared.selectedAccountWalletName
@@ -492,8 +551,11 @@ struct NFTDetailPage: RouteableView {
     }
 }
 
+// MARK: - NFTDetailPage_Previews
+
 struct NFTDetailPage_Previews: PreviewProvider {
     static var nft = NFTTabViewModel.testNFT()
+
     static var previews: some View {
         NFTDetailPage(viewModel: NFTTabViewModel(), nft: nft)
     }

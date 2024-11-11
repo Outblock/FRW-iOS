@@ -21,19 +21,26 @@ extension RecoveryPhraseView {
     }
 }
 
+// MARK: - RecoveryPhraseView
+
 struct RecoveryPhraseView: RouteableView {
-    @StateObject var viewModel = RecoveryPhraseViewModel()
-    @State var isBlur: Bool = true
-    private var isInBackupMode = false
-    
+    // MARK: Lifecycle
+
     init(backupMode: Bool) {
         self.isInBackupMode = backupMode
     }
-    
+
+    // MARK: Internal
+
+    @StateObject
+    var viewModel = RecoveryPhraseViewModel()
+    @State
+    var isBlur: Bool = true
+
     var title: String {
-        return ""
+        ""
     }
-    
+
     var copyBtn: some View {
         Button {
             viewModel.trigger(.copy)
@@ -118,7 +125,7 @@ struct RecoveryPhraseView: RouteableView {
                 }
                 .animation(.linear(duration: 0.2), value: isBlur)
                 .padding(.top, 20)
-                
+
                 VStack(alignment: .leading) {
                     copyBtn
                 }
@@ -142,25 +149,34 @@ struct RecoveryPhraseView: RouteableView {
                 .padding(.top)
                 .padding(.bottom)
 
-                VPrimaryButton(model: ButtonStyle.primary,
-                               state: viewModel.state.icloudLoading ? .loading : .enabled,
-                               action: {
-                                   viewModel.trigger(.icloudBackup)
-                               }, title: "backup_to_icloud".localized)
+                VPrimaryButton(
+                    model: ButtonStyle.primary,
+                    state: viewModel.state.icloudLoading ? .loading : .enabled,
+                    action: {
+                        viewModel.trigger(.icloudBackup)
+                    },
+                    title: "backup_to_icloud".localized
+                )
                 .padding(.top, 20)
                 .visibility(isInBackupMode ? .gone : .visible)
 
-                VPrimaryButton(model: ButtonStyle.primary,
-                               action: {
-                                   viewModel.trigger(.googleBackup)
-                               }, title: "backup_to_gd".localized)
+                VPrimaryButton(
+                    model: ButtonStyle.primary,
+                    action: {
+                        viewModel.trigger(.googleBackup)
+                    },
+                    title: "backup_to_gd".localized
+                )
                 .padding(.top, 8)
                 .visibility(isInBackupMode ? .gone : .visible)
 
-                VPrimaryButton(model: ButtonStyle.border,
-                               action: {
-                                   viewModel.trigger(.manualBackup)
-                               }, title: "backup_manually".localized)
+                VPrimaryButton(
+                    model: ButtonStyle.border,
+                    action: {
+                        viewModel.trigger(.manualBackup)
+                    },
+                    title: "backup_manually".localized
+                )
                 .padding(.top, 8)
                 .padding(.bottom, 20)
                 .visibility(isInBackupMode ? .gone : .visible)
@@ -170,13 +186,21 @@ struct RecoveryPhraseView: RouteableView {
         .backgroundFill(Color.LL.background)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    private var isInBackupMode = false
 }
+
+// MARK: - RecoveryPhraseView_Previews
 
 struct RecoveryPhraseView_Previews: PreviewProvider {
     static var previews: some View {
         RecoveryPhraseView(backupMode: false)
     }
 }
+
+// MARK: - WordListView
 
 struct WordListView: View {
     struct WordItem: Identifiable {

@@ -19,14 +19,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import AVKit
 import Foundation
 import UIKit
-import AVKit
 
 public class SPQRCode {
-    
     public static func scanning(
-        detect: ((SPQRCodeData?, SPQRCameraController)->SPQRCodeData?)? = nil,
+        detect: ((SPQRCodeData?, SPQRCameraController) -> SPQRCodeData?)? = nil,
         handled: SPQRCodeCallback?,
         click: SPQRCodeCallback? = nil,
         on controller: UIViewController
@@ -35,7 +34,7 @@ public class SPQRCode {
             HUD.error(title: "camera_is_invalid".localized)
             return
         }
-        
+
         let qrController = SPQRCameraController()
         if let detect = detect {
             qrController.detectQRCodeData = detect
@@ -45,16 +44,16 @@ public class SPQRCode {
         qrController.modalPresentationStyle = .fullScreen
         controller.present(qrController)
     }
-    
+
     private class func deviceIsValid() -> Bool {
         guard let device = AVCaptureDevice.default(for: AVMediaType.video) else {
             return false
         }
-        
+
         guard let input = try? AVCaptureDeviceInput(device: device) else {
             return false
         }
-        
+
         return true
     }
 }

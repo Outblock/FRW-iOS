@@ -7,18 +7,21 @@
 
 import SwiftUI
 
+// MARK: - WallpaperView
+
 struct WallpaperView: RouteableView {
     var title: String {
-        return "Wallpaper".localized
+        "Wallpaper".localized
     }
-    
+
     private let columns = [
         GridItem(.adaptive(minimum: 150), spacing: 8),
-        GridItem(.adaptive(minimum: 150), spacing: 8)
+        GridItem(.adaptive(minimum: 150), spacing: 8),
     ]
-    
-    @State var dynamicCase = CardBackground.dynamicCases
-    
+
+    @State
+    var dynamicCase = CardBackground.dynamicCases
+
     var body: some View {
         GeometryReader { proxy in
             ScrollView(showsIndicators: false) {
@@ -28,7 +31,7 @@ struct WallpaperView: RouteableView {
                             ForEach(0..<dynamicCase.count, id: \.self) { index in
                                 let card = dynamicCase[index]
                                 Card(cardBackgroud: card)
-                                    .frame(width: (proxy.size.width - 32)/2.0)
+                                    .frame(width: (proxy.size.width - 32) / 2.0)
                             }
                         }
                     } header: {
@@ -45,7 +48,7 @@ struct WallpaperView: RouteableView {
 
                     Section {
                         LazyVGrid(columns: columns, spacing: 8) {
-                            ForEach(0 ..< CardBackground.imageCases.count, id: \.self) { index in
+                            ForEach(0..<CardBackground.imageCases.count, id: \.self) { index in
                                 let card = CardBackground.imageCases[index]
                                 Card(cardBackgroud: card)
                             }
@@ -69,15 +72,16 @@ struct WallpaperView: RouteableView {
     }
 }
 
+// MARK: WallpaperView.Card
+
 extension WallpaperView {
     struct Card: View {
+        // MARK: Internal
+
         var cardBackgroud: CardBackground
-        
-        @AppStorage("WalletCardBackrgound")
-        private var walletCardBackrgound: String = "fade:0"
-        
+
         var body: some View {
-            VStack() {
+            VStack {
                 Button {
                     walletCardBackrgound = cardBackgroud.rawValue
 //                    Router.popToRoot()
@@ -101,10 +105,15 @@ extension WallpaperView {
 //            .onTapGesture {
 //                log.error("[Paper] click: \(index)-\(cardBackgroud.rawValue)")
 //                walletCardBackrgound = cardBackgroud.rawValue
-////                Router.popToRoot()
+            ////                Router.popToRoot()
 //            }
             .clipped()
         }
+
+        // MARK: Private
+
+        @AppStorage("WalletCardBackrgound")
+        private var walletCardBackrgound: String = "fade:0"
     }
 }
 

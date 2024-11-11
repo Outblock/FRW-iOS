@@ -10,10 +10,8 @@ import UIKit
 
 extension SPQRCodeData {
     enum Colors {
-        
         static var flow_color: UIColor {
             UIColor(named: "Flow") ?? .darkText
         }
-        
     }
 }

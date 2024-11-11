@@ -10,15 +10,15 @@ import SwiftUI
 
 struct MultiBackupDetailView: RouteableView {
     @StateObject var viewModel: MultiBackupDetailViewModel
-    
+
     init(item: KeyDeviceModel) {
         _viewModel = StateObject(wrappedValue: MultiBackupDetailViewModel(item: item))
     }
-    
+
     var title: String {
         return "backup_detail".localized
     }
-    
+
     var body: some View {
         VStack {
             ScrollView {
@@ -37,7 +37,7 @@ struct MultiBackupDetailView: RouteableView {
                         .foregroundColor(Color.Theme.Text.black8)
                         .frame(height: 24)
                         .padding(.top, 8)
-                    
+
                     keyView
                         .padding(.top, 16)
                     backupInfo
@@ -46,9 +46,9 @@ struct MultiBackupDetailView: RouteableView {
                 .padding(.horizontal, 18)
                 .frame(maxHeight: .infinity)
             }
-            
+
             Spacer()
-            
+
             Button {
                 viewModel.onDisplayPharse()
             } label: {
@@ -62,8 +62,7 @@ struct MultiBackupDetailView: RouteableView {
             }
             .padding(.horizontal, 18)
             .visibility(viewModel.showPhrase ? .visible : .gone)
-            
-            
+
             Button {
                 viewModel.onDelete()
             } label: {
@@ -86,7 +85,7 @@ struct MultiBackupDetailView: RouteableView {
             }
         }
     }
-    
+
     var keyView: some View {
         VStack(spacing: 8) {
             HStack(spacing: 0) {
@@ -95,14 +94,14 @@ struct MultiBackupDetailView: RouteableView {
                     .foregroundColor(Color.Theme.Text.black3)
                 Spacer()
             }
-            
+
             HStack(spacing: 8) {
                 HStack(alignment: .center, spacing: 8) {
                     Image(viewModel.item.backupInfo?.backupType().smallIcon ?? "")
                         .resizable()
                         .frame(width: 24, height: 24)
                         .padding(.trailing, 8)
-                    
+
                     Text("backup".localized + " - " + viewModel.item.multiBackupType()!.title)
                         .padding(.horizontal, 8)
                         .frame(height: 20)
@@ -110,18 +109,18 @@ struct MultiBackupDetailView: RouteableView {
                         .foregroundStyle(Color.Theme.Text.black3)
                         .background(Color.Theme.Text.black3.fixedOpacity())
                         .cornerRadius(4)
-                    
+
                     Spacer()
-                    
+
                     Text("multi_sign".localized)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 2)
                         .frame(height: 20)
-                        .font(.inter(size: 9,weight: .bold))
+                        .font(.inter(size: 9, weight: .bold))
                         .foregroundStyle(Color.Theme.Text.black3)
                         .background(Color.Theme.Text.black3.fixedOpacity())
                         .cornerRadius(4)
-                    
+
                     Image("icon-account-arrow-right")
                         .renderingMode(.template)
                         .foregroundColor(.LL.Neutrals.text)
@@ -138,7 +137,7 @@ struct MultiBackupDetailView: RouteableView {
             }
         }
     }
-    
+
     var backupInfo: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
@@ -147,10 +146,10 @@ struct MultiBackupDetailView: RouteableView {
                     .foregroundColor(Color.Theme.Text.black3)
                 Spacer()
             }
-            
+
             Color.clear
                 .frame(height: 8)
-            
+
             VStack {
                 DeviceInfoItem(title: "application_tag".localized, detail: viewModel.item.device.showApp())
                 Divider()
@@ -171,15 +170,15 @@ struct MultiBackupDetailView: RouteableView {
             .cornerRadius(16)
         }
     }
-    
+
     func region() -> MKCoordinateRegion {
         let region = MKCoordinateRegion(center: viewModel.item.device.coordinate(), span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
         return region
     }
-    
+
     func annotations() -> [CLLocationCoordinate2D] {
         return [
-            viewModel.item.device.coordinate()
+            viewModel.item.device.coordinate(),
         ]
     }
 }

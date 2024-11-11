@@ -6,9 +6,9 @@
 //
 
 import Combine
+import Flow
 import SwiftUI
 import SwiftUICharts
-import Flow
 
 extension TokenDetailView {
     struct Quote: Codable {
@@ -19,7 +19,7 @@ extension TokenDetailView {
         let closePrice: Double
         let volume: Double
         let quoteVolume: Double
-        
+
         var generateChartPoint: LineChartDataPoint {
             let date = Date(timeIntervalSince1970: closeTime)
             let price = Double(closePrice.formatCurrencyString(digits: 2, considerCustomCurrency: true)) ?? 0
@@ -31,10 +31,10 @@ extension TokenDetailView {
         case halfHour = 1800
         case oneHour = 3600
         case oneDay = 86400
-        case threeDay = 259200
-        case oneWeek = 604800
+        case threeDay = 259_200
+        case oneWeek = 604_800
     }
-    
+
     enum ChartRangeType: CaseIterable {
         case d1
         case w1
@@ -42,7 +42,7 @@ extension TokenDetailView {
         case m3
         case y1
         case all
-        
+
         var title: String {
             switch self {
             case .d1:
@@ -59,7 +59,7 @@ extension TokenDetailView {
                 return "ALL"
             }
         }
-        
+
         var frequency: TokenDetailView.PeriodFrequency {
             switch self {
             case .d1:
@@ -74,7 +74,7 @@ extension TokenDetailView {
                 return .oneWeek
             }
         }
-        
+
         var after: String {
             let oneDayInterval: TimeInterval = 24 * 60 * 60
             switch self {
@@ -112,23 +112,23 @@ class TokenDetailViewModel: ObservableObject {
     @Published var changePercent: Double = 0
     @Published var rate: Double = 0
     @Published var recentTransfers: [FlowScanTransfer] = []
-    
+
     @Published var showSwapButton: Bool = true
     @Published var showBuyButton: Bool = true
-    
-    
+    @Published var showDeleteToken: Bool = false
+
     @Published var showSheet: Bool = false
     var buttonAction: TokenDetailViewModel.Action = .none
-    
+
     private var cancelSets = Set<AnyCancellable>()
-    
+
     init(token: TokenModel) {
         self.token = token
         setupObserver()
         fetchAllData()
         refreshButtonState()
     }
-    
+
     private func setupObserver() {
         NotificationCenter.default.publisher(for: .quoteMarketUpdated).sink { [weak self] _ in
             DispatchQueue.main.async {
@@ -142,7 +142,7 @@ class TokenDetailViewModel: ObservableObject {
                 self?.refreshSummary()
             }
         }.store(in: &cancelSets)
-        
+
         WalletManager.shared.$coinBalances.sink { [weak self] _ in
             DispatchQueue.main.async {
                 self?.refreshSummary()
@@ -158,23 +158,23 @@ extension TokenDetailViewModel {
         let num = String(format: "%.1f", fabsf(Float(changePercent) * 100))
         return "\(num)%"
     }
-    
+
     var balanceString: String {
         return balance.formatCurrencyString()
     }
-    
+
     var balanceAsCurrentCurrencyString: String {
         return balanceAsUSD.formatCurrencyString(considerCustomCurrency: true)
     }
-    
+
     var changeIsNegative: Bool {
         return changePercent < 0
     }
-    
+
     var changeColor: Color {
         return changeIsNegative ? Color.LL.Warning.warning2 : Color.LL.Success.success2
     }
-    
+
     var hasRateAndChartData: Bool {
         if let token = ListedToken(rawValue: token.symbol ?? "") {
             if case .query = token.priceAction {
@@ -183,7 +183,7 @@ extension TokenDetailViewModel {
         }
         return false
     }
-    
+
     var movable: Bool {
         EVMAccountManager.shared.hasAccount && (token.evmAddress != nil || token.flowIdentifier != nil || token.isFlowCoin)
     }
@@ -196,38 +196,38 @@ extension TokenDetailViewModel {
         LocalUserDefaults.shared.recentToken = token.symbol
         Router.route(to: RouteMap.Wallet.send())
     }
-    
+
     func receiveAction() {
         Router.route(to: RouteMap.Wallet.receiveQR)
     }
-    
+
     func changeSelectRangeTypeAction(_ type: TokenDetailView.ChartRangeType) {
         if selectedRangeType == type {
             return
         }
-        
+
         selectedRangeType = type
         fetchChartData()
     }
-    
+
     func changeMarketAction(_ market: QuoteMarket) {
         if self.market == market {
             return
         }
-        
+
         LocalUserDefaults.shared.market = market
     }
-    
+
     func moreTransfersAction() {
         Router.route(to: RouteMap.Wallet.transactionList(token.contractId))
     }
-    
+
     func transferDetailAction(_ model: FlowScanTransfer) {
         if let txid = model.txid, let url = txid.toFlowScanTransactionDetailURL {
             UIApplication.shared.open(url)
         }
     }
-    
+
     func stakeDetailAction() {
         StakingManager.shared.goStakingAction()
     }
@@ -237,7 +237,7 @@ extension TokenDetailViewModel {
         buttonAction = .move
         showSheetAction()
     }
-    
+
     func showSheetAction() {
         if showSheet {
             showSheet = false
@@ -245,6 +245,14 @@ extension TokenDetailViewModel {
         withAnimation(.easeOut(duration: 0.2)) {
             showSheet = true
         }
+    }
+    
+    func deleteCustomToken() {
+        guard let customToken = token.findCustomToken() else {
+            return
+        }
+        WalletManager.shared.customTokenManager.delete(token: customToken)
+        HUD.success(title: "")
     }
 }
 
@@ -255,44 +263,44 @@ extension TokenDetailViewModel {
         Task {
             try? await WalletManager.shared.fetchBalance()
         }
-        
+
         if hasRateAndChartData {
             fetchChartData()
         }
-        
+
         fetchTransactionsData()
     }
-    
+
     private func refreshSummary() {
         guard let symbol = token.symbol else {
             return
         }
-        
+
         balance = WalletManager.shared.getBalance(bySymbol: symbol)
         rate = CoinRateCache.cache.getSummary(for: symbol)?.getLastRate() ?? 0
         balanceAsUSD = balance * rate
         changePercent = CoinRateCache.cache.getSummary(for: symbol)?.getChangePercentage() ?? 0
     }
-    
+
     private func fetchChartData() {
         Task {
             let pair = token.getPricePair(market: market)
             if pair.isEmpty {
                 return
             }
-            
+
             let currentRangeType = selectedRangeType
-            
+
             let request = CryptoHistoryRequest(provider: market.rawValue, pair: pair, after: currentRangeType.after, period: "\(currentRangeType.frequency.rawValue)")
-            
+
             do {
                 let response: CryptoHistoryResponse = try await Network.request(FRWAPI.Crypto.history(request))
-                
+
                 if currentRangeType != self.selectedRangeType {
                     // selectedRangeType is changed, this is an outdated response
                     return
                 }
-                
+
                 DispatchQueue.main.async {
                     self.generateChartData(response: response)
                 }
@@ -301,12 +309,12 @@ extension TokenDetailViewModel {
             }
         }
     }
-    
+
     private func generateChartData(response: CryptoHistoryResponse) {
         let quotes = response.parseMarketQuoteData(rangeType: selectedRangeType)
         let linePoints = quotes.map { $0.generateChartPoint }
         let chartLineStyle = LineStyle(lineColour: ColourStyle(colours: [Color.LL.Primary.salmonPrimary.opacity(0.24), Color.LL.Primary.salmonPrimary.opacity(0)], startPoint: .top, endPoint: .bottom))
-        
+
         let set = LineDataSet(dataPoints: linePoints, style: chartLineStyle)
         let chartStyle = LineChartStyle(infoBoxPlacement: .floating,
                                         infoBoxBorderColour: .LL.Primary.salmonPrimary,
@@ -318,14 +326,14 @@ extension TokenDetailViewModel {
                                         yAxisNumberOfLabels: 4)
         let cd = LineChartData(dataSets: set, chartStyle: chartStyle)
         cd.legends = []
-        
+
         chartData = cd
     }
-    
+
     var transactionsCacheKey: String {
         return "token_detail_transaction_cache_\(token.contractId)"
     }
-    
+
     private func fetchTransactionsData() {
         Task {
             if let cachedTransactions = try? await PageCache.cache.get(forKey: self.transactionsCacheKey, type: [FlowScanTransfer].self), !cachedTransactions.isEmpty {
@@ -333,14 +341,14 @@ extension TokenDetailViewModel {
                     self.recentTransfers = cachedTransactions
                 }
             }
-            
+
             do {
                 let request = TokenTransfersRequest(address: WalletManager.shared.getPrimaryWalletAddress() ?? "", limit: 3, after: "", token: self.token.contractId)
                 let response: TransfersResponse = try await Network.request(FRWAPI.Account.tokenTransfers(request))
-                
+
                 let list = response.transactions ?? []
                 PageCache.cache.set(value: list, forKey: self.transactionsCacheKey)
-                
+
                 DispatchQueue.main.async {
                     self.recentTransfers = list
                 }
@@ -353,33 +361,31 @@ extension TokenDetailViewModel {
 
 extension TokenDetailViewModel {
     func refreshButtonState() {
-        
-        
         // Swap
         if (RemoteConfigManager.shared.config?.features.swap ?? false) == true {
             // don't show when current is Linked account
-            if ChildAccountManager.shared.selectedChildAccount != nil {
-                self.showSwapButton = false
-            }else {
-                self.showSwapButton = true
+            if ChildAccountManager.shared.selectedChildAccount != nil || ChildAccountManager.shared.selectedChildAccount != nil {
+                showSwapButton = false
+            } else {
+                showSwapButton = true
             }
-        }else {
-            
-            self.showSwapButton = false
+        } else {
+            showSwapButton = false
         }
-        
-       
+
         // buy
-        if RemoteConfigManager.shared.config?.features.onRamp ?? false == true && flow.chainID == .mainnet {
-            if (ChildAccountManager.shared.selectedChildAccount != nil) {
-                self.showBuyButton = false
+        if RemoteConfigManager.shared.config?.features.onRamp ?? false == true, flow.chainID == .mainnet {
+            if ChildAccountManager.shared.selectedChildAccount != nil {
+                showBuyButton = false
+            } else {
+                showBuyButton = true
             }
-            else {
-                self.showBuyButton = true
-            }
-            
-        }else {
-            self.showBuyButton = false
+
+        } else {
+            showBuyButton = false
         }
+        // delete custom token
+        showDeleteToken = token.findCustomToken() != nil
+        
     }
 }

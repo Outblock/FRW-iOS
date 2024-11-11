@@ -8,6 +8,8 @@
 import Kingfisher
 import SwiftUI
 
+// MARK: - EditAvatarView_Previews
+
 struct EditAvatarView_Previews: PreviewProvider {
     static var previews: some View {
         EmptyView()
@@ -17,15 +19,17 @@ struct EditAvatarView_Previews: PreviewProvider {
 private let PreviewContainerSize: CGFloat = 54
 private let PreviewImageSize: CGFloat = 40
 
+// MARK: - EditAvatarView
+
 struct EditAvatarView: RouteableView {
-    @StateObject private var vm: EditAvatarViewModel = EditAvatarViewModel()
-    
+    // MARK: Internal
+
     var title: String {
-        return ""
+        ""
     }
-    
+
     var forceColorScheme: UIUserInterfaceStyle? {
-        return .dark
+        .dark
     }
 
     var body: some View {
@@ -71,6 +75,11 @@ struct EditAvatarView: RouteableView {
         })
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = EditAvatarViewModel()
 }
 
 extension EditAvatarView {
@@ -78,10 +87,10 @@ extension EditAvatarView {
         GeometryReader { geometry in
             ZStack {
                 KFImage.url(URL(string: vm.currentSelectModel()?.getCover() ?? ""))
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: geometry.size.width, height: geometry.size.width)
@@ -105,7 +114,8 @@ extension EditAvatarView {
                 ScrollViewReader { reader in
                     LazyHStack(spacing: 0) {
                         ForEach(vm.items, id: \.id) { item in
-                            AvatarCell(isSelected: item.id == vm.selectedItemId, model: item).snapID(item.id)
+                            AvatarCell(isSelected: item.id == vm.selectedItemId, model: item)
+                                .snapID(item.id)
                                 .onTapGesture {
                                     DispatchQueue.main.async {
                                         withAnimation {
@@ -122,7 +132,10 @@ extension EditAvatarView {
                     .padding(.horizontal, proxy.size.width / 2.0 - PreviewContainerSize / 2.0)
                 }
             }
-            .snappable(alignment: .center, mode: .afterScrolling(decelerationRate: .fast)) { snapID in
+            .snappable(
+                alignment: .center,
+                mode: .afterScrolling(decelerationRate: .fast)
+            ) { snapID in
                 if let selectedId = snapID as? String, selectedId != vm.selectedItemId {
                     vm.selectedItemId = selectedId
                     vm.loadMoreAvatarIfNeededAction()
@@ -144,6 +157,8 @@ extension EditAvatarView {
     }
 }
 
+// MARK: EditAvatarView.AvatarCell
+
 extension EditAvatarView {
     struct AvatarCell: View {
         let isSelected: Bool
@@ -151,17 +166,19 @@ extension EditAvatarView {
 
         var body: some View {
             ZStack {
-                LinearGradient(colors: [Color(hex: "#000000", alpha: 0), Color(hex: "#777777", alpha: 1)],
-                               startPoint: .top,
-                               endPoint: .bottom)
-                    .cornerRadius(4)
-                    .visibility(isSelected ? .visible : .invisible)
+                LinearGradient(
+                    colors: [Color(hex: "#000000", alpha: 0), Color(hex: "#777777", alpha: 1)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .cornerRadius(4)
+                .visibility(isSelected ? .visible : .invisible)
 
                 KFImage.url(URL(string: model.getCover()))
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: PreviewImageSize, height: PreviewImageSize)

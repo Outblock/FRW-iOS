@@ -9,10 +9,10 @@ import UIKit
 
 class RouterNavigationController: UINavigationController {
     override var childForStatusBarStyle: UIViewController? {
-        return topViewController
+        topViewController
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return childForStatusBarStyle?.preferredStatusBarStyle ?? .default
+        childForStatusBarStyle?.preferredStatusBarStyle ?? .default
     }
 }

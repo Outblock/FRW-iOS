@@ -9,10 +9,10 @@ import SwiftUI
 
 struct TextCheckBox: View {
     var text: String
-    var callback: (String,Bool)->()
-    
+    var callback: (String, Bool) -> Void
+
     @State private var isCheck: Bool = false
-    
+
     var body: some View {
         HStack(alignment: .center, spacing: 18) {
             Text(text)
@@ -30,19 +30,18 @@ struct TextCheckBox: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .cornerRadius(16)
         .overlay(
-          RoundedRectangle(cornerRadius: 16)
-            .inset(by: 0.5)
-            .stroke(Color.Theme.Accent.green, lineWidth: 1)
+            RoundedRectangle(cornerRadius: 16)
+                .inset(by: 0.5)
+                .stroke(Color.Theme.Accent.green, lineWidth: 1)
         )
         .onTapGesture {
             isCheck.toggle()
-            callback(text,isCheck)
+            callback(text, isCheck)
         }
     }
 }
 
 #Preview {
-    TextCheckBox(text: "I understand if I lose my recovery phrase, I may not be able to recover my account.") { text,isSelected in
-        
+    TextCheckBox(text: "I understand if I lose my recovery phrase, I may not be able to recover my account.") { _, _ in
     }
 }

@@ -13,7 +13,7 @@ extension FRWAPI {
         case collection(String, String)
         case collectionInfo(String, String)
         // Address, path, offset, limit
-        case nftList(String, String,Int,Int)
+        case nftList(String, String, Int, Int)
     }
 }
 
@@ -30,34 +30,33 @@ extension FRWAPI.ChildAccount: TargetType, AccessTokenAuthorizable {
         var thePath = ""
         let network = LocalUserDefaults.shared.flowNetwork == .testnet ? "testnet" : "mainnet"
         switch self {
-            case .collection:
-                thePath = "/hc/{{network}}/nftIdWithDisplay"
-            case .collectionInfo:
-                thePath = "/storage/{{network}}/nft/collection"
-            case .nftList:
-                thePath = "/storage/{{network}}/nft"
+        case .collection:
+            thePath = "/hc/{{network}}/nftIdWithDisplay"
+        case .collectionInfo:
+            thePath = "/storage/{{network}}/nft/collection"
+        case .nftList:
+            thePath = "/storage/{{network}}/nft"
         }
-        
+
         thePath = thePath.replace("{{network}}", with: network)
         return thePath
     }
-    
 
     var method: Moya.Method {
         switch self {
-            default:
-                return .get
+        default:
+            return .get
         }
     }
 
     var task: Task {
         switch self {
-            case let .collection(address, childAddress):
-                return .requestParameters(parameters: ["address": address,"childAddress":childAddress], encoding: URLEncoding.queryString)
-            case let .collectionInfo(addr, path):
-                return .requestParameters(parameters: ["address": addr, "path": path], encoding: URLEncoding.queryString)
-            case let .nftList(addr, path, offset, limit):
-                return .requestParameters(parameters: ["address": addr, "path": path, "offset": offset, "limit": limit], encoding: URLEncoding.queryString)
+        case let .collection(address, childAddress):
+            return .requestParameters(parameters: ["address": address, "childAddress": childAddress], encoding: URLEncoding.queryString)
+        case let .collectionInfo(addr, path):
+            return .requestParameters(parameters: ["address": addr, "path": path], encoding: URLEncoding.queryString)
+        case let .nftList(addr, path, offset, limit):
+            return .requestParameters(parameters: ["address": addr, "path": path, "offset": offset, "limit": limit], encoding: URLEncoding.queryString)
         }
     }
 

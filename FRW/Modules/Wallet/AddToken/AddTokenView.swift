@@ -5,23 +5,29 @@
 //  Created by Selina on 27/6/2022.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
-//struct AddTokenView_Previews: PreviewProvider {
+// MARK: - AddTokenView
+
+// struct AddTokenView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        AddTokenView.AddTokenConfirmView(token: nil)
 //    }
-//}
-
+// }
 
 struct AddTokenView: RouteableView {
-    @StateObject var vm: AddTokenViewModel
-    
+    // MARK: Lifecycle
+
     init(vm: AddTokenViewModel) {
         _vm = StateObject(wrappedValue: vm)
     }
-    
+
+    // MARK: Internal
+
+    @StateObject
+    var vm: AddTokenViewModel
+
     var title: String {
         if vm.mode == .addToken {
             return "add_token".localized
@@ -29,15 +35,7 @@ struct AddTokenView: RouteableView {
             return "swap_select_token".localized
         }
     }
-    
-    func backButtonAction() {
-        if vm.mode == .addToken {
-            Router.pop()
-        } else {
-            Router.dismiss()
-        }
-    }
-    
+
     var body: some View {
         ZStack {
             listView
@@ -53,7 +51,7 @@ struct AddTokenView: RouteableView {
         .disabled(vm.isRequesting)
         .applyRouteable(self)
     }
-    
+
     var listView: some View {
         IndexedList(vm.searchResults) { section in
             Section {
@@ -82,8 +80,19 @@ struct AddTokenView: RouteableView {
         .background(Color.LL.background)
         .searchable(text: $vm.searchText)
     }
-    
-    @ViewBuilder private func sectionHeader(_ section: AddTokenViewModel.Section) -> some View {
+
+    func backButtonAction() {
+        if vm.mode == .addToken {
+            Router.pop()
+        } else {
+            Router.dismiss()
+        }
+    }
+
+    // MARK: Private
+
+    @ViewBuilder
+    private func sectionHeader(_ section: AddTokenViewModel.Section) -> some View {
         let sectionName = section.sectionName
         Text(sectionName)
             .foregroundColor(.LL.Neutrals.text2)
@@ -94,13 +103,16 @@ struct AddTokenView: RouteableView {
 private let TokenIconWidth: CGFloat = 40
 private let TokenCellHeight: CGFloat = 64
 
+// MARK: AddTokenView.TokenItemCell
+
 extension AddTokenView {
     struct TokenItemCell: View {
         let token: TokenModel
         let isActivated: Bool
         let action: () -> Void
-        @EnvironmentObject var vm: AddTokenViewModel
-        
+        @EnvironmentObject
+        var vm: AddTokenViewModel
+
         var body: some View {
             Button {
                 if isEVMAccount && vm.mode == .addToken {
@@ -110,30 +122,29 @@ extension AddTokenView {
             } label: {
                 HStack {
                     KFImage.url(token.iconURL)
-                        .placeholder({
+                        .placeholder {
                             Image("placeholder")
                                 .resizable()
-                        })
+                        }
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: TokenIconWidth, height: TokenIconWidth)
                         .clipShape(Circle())
-                    
+
                     VStack(alignment: .leading, spacing: 3) {
                         Text(token.name)
                             .foregroundColor(.LL.Neutrals.text)
                             .font(.inter(size: 14, weight: .semibold))
-                        
-                        
+
                         Text(token.symbol?.uppercased() ?? "")
                             .foregroundColor(.LL.Neutrals.note)
                             .font(.inter(size: 12, weight: .medium))
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    
+
                     if isEVMAccount && vm.mode == .addToken {
-                        HStack{}
-                    }else {
+                        HStack {}
+                    } else {
                         if isActivated {
                             Image(systemName: .checkmarkSelected)
                                 .foregroundColor(.LL.Success.success3)
@@ -145,44 +156,45 @@ extension AddTokenView {
                 }
                 .padding(.horizontal, 12)
                 .frame(height: TokenCellHeight)
-                .background({
+                .background {
                     Color.LL.Neutrals.background.cornerRadius(16)
-                })
+                }
             }
         }
-        
+
         var isEVMAccount: Bool {
             EVMAccountManager.shared.selectedAccount != nil
         }
     }
-    
-    
 }
+
+// MARK: AddTokenView.AddTokenConfirmView
 
 extension AddTokenView {
     struct AddTokenConfirmView: View {
-        @EnvironmentObject var vm: AddTokenViewModel
+        @EnvironmentObject
+        var vm: AddTokenViewModel
         let token: TokenModel
-        
+
         @State
         var color = Color.LL.Neutrals.note.opacity(0.1)
-        
+
         var buttonState: VPrimaryButtonState {
             if vm.isRequesting {
                 return .loading
             }
             return .enabled
         }
-        
+
         var body: some View {
             VStack {
                 SheetHeaderView(title: "add_token".localized) {
                     vm.confirmSheetIsPresented = false
                 }
-                
+
                 VStack {
                     Spacer()
-                    
+
                     ZStack {
                         ZStack(alignment: .top) {
                             color
@@ -190,7 +202,7 @@ extension AddTokenView {
                                 .frame(height: 188)
                                 .cornerRadius(16)
                                 .animation(.easeInOut, value: color)
-                            
+
                             Text(token.name)
                                 .foregroundColor(.LL.Button.light)
                                 .font(.inter(size: 18, weight: .bold))
@@ -199,35 +211,39 @@ extension AddTokenView {
                                 .background(Color(hex: "#1A1A1A"))
                                 .cornerRadius([.bottomLeft, .bottomRight], 16)
                         }
-                        
+
                         KFImage
                             .url(token.iconURL)
-                            .placeholder({
+                            .placeholder {
                                 Image("placeholder")
                                     .resizable()
-                            })
+                            }
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 114, height: 114)
                             .clipShape(Circle())
                             .padding(.top, 45)
                     }
-                    
-                    Spacer()
-                    
 
-                    VPrimaryButton(model: ButtonStyle.primary,
-                                   state: buttonState,
-                                   action: {
-                        vm.confirmActiveTokenAction(token)
-                    }, title: buttonState == .loading ? "working_on_it".localized : "enable".localized)
+                    Spacer()
+
+                    VPrimaryButton(
+                        model: ButtonStyle.primary,
+                        state: buttonState,
+                        action: {
+                            vm.confirmActiveTokenAction(token)
+                        },
+                        title: buttonState == .loading ? "working_on_it"
+                            .localized : "enable".localized
+                    )
                     .padding(.bottom)
                 }
                 .padding(.horizontal, 36)
             }
             .task {
                 Task { @MainActor in
-                    if let color = await ImageHelper.colors(from: token.icon?.absoluteString ?? placeholder).first {
+                    if let color = await ImageHelper
+                        .colors(from: token.icon?.absoluteString ?? placeholder).first {
                         self.color = color.opacity(0.1)
                     }
                 }

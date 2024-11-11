@@ -8,25 +8,29 @@
 import SwiftUI
 
 struct ShowRecoveryPhraseBackup: RouteableView {
-    
-    @StateObject var viewModel: CreateRecoveryPhraseBackupViewModel
-    
-    var title: String {
-        return "backup".localized
-    }
-    
-    
+    // MARK: Lifecycle
+
     init(mnemonic: String) {
-        _viewModel = StateObject(wrappedValue: CreateRecoveryPhraseBackupViewModel(mnemonic: mnemonic))
+        _viewModel =
+            StateObject(wrappedValue: CreateRecoveryPhraseBackupViewModel(mnemonic: mnemonic))
     }
-    
+
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: CreateRecoveryPhraseBackupViewModel
+
+    var title: String {
+        "backup".localized
+    }
+
     var body: some View {
         VStack {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 0) {
                     VStack(alignment: .center, spacing: 8) {
                         HStack {
-                            Text("recovery".localized + "phrase".localized)
+                            Text("Recovery__Phrase::message".localized)
                                 .font(.inter(size: 20, weight: .bold))
                                 .foregroundColor(Color.Theme.Text.black)
                         }
@@ -56,7 +60,7 @@ struct ShowRecoveryPhraseBackup: RouteableView {
                         .allowsHitTesting(false)
                     }
                     .padding(.top, 20)
-                    
+
                     VStack(alignment: .leading) {
                         Button {
                             viewModel.onCopy()
@@ -65,7 +69,7 @@ struct ShowRecoveryPhraseBackup: RouteableView {
                                 .resizable()
                                 .renderingMode(.template)
                                 .foregroundStyle(Color.Theme.Accent.green)
-                                .frame(width: 100,height: 40)
+                                .frame(width: 100, height: 40)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -87,16 +91,17 @@ struct ShowRecoveryPhraseBackup: RouteableView {
                     }
                     .padding(.top)
                     .padding(.bottom)
-
-                    
                 }
             }
             Spacer()
 
-            VPrimaryButton(model: ButtonStyle.primary,
-                           action: {
-                               viewModel.onCreate()
-                           }, title: "done".localized)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                action: {
+                    viewModel.onCreate()
+                },
+                title: "done".localized
+            )
 
             .padding(.bottom, 20)
         }
@@ -105,7 +110,6 @@ struct ShowRecoveryPhraseBackup: RouteableView {
         .backgroundFill(Color.LL.background)
         .applyRouteable(self)
     }
-    
 }
 
 #Preview {

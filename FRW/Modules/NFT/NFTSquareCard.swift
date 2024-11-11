@@ -8,7 +8,11 @@
 import Kingfisher
 import SwiftUI
 
+// MARK: - NFTSquareCard
+
 struct NFTSquareCard: View {
+    // MARK: Internal
+
     var nft: NFTModel
     var imageEffect: Namespace.ID
     var onClick: (NFTModel) -> Void
@@ -18,10 +22,10 @@ struct NFTSquareCard: View {
             VStack(alignment: .leading) {
                 KFImage
                     .url(nft.imageURL)
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: geo.size.width, height: geo.size.width, alignment: .center)
@@ -34,7 +38,6 @@ struct NFTSquareCard: View {
                     .lineLimit(1)
 
                 HStack {
-                    
                     Text("Inaccessible".localized)
                         .foregroundStyle(Color.LL.Primary.salmonPrimary)
                         .font(Font.inter(size: 10, weight: .semibold))
@@ -43,21 +46,22 @@ struct NFTSquareCard: View {
                         .background(.LL.Primary.salmon5.opacity(0.75))
                         .cornerRadius(4, style: .continuous)
                         .visibility(isAccessible() ? .gone : .visible)
-                    
+
                     Text(nft.subtitle)
                         .font(.LL.body)
                         .foregroundColor(.LL.note)
                         .lineLimit(1)
                         .visibility(isAccessible() ? .visible : .gone)
                 }
-                
             }
         }
         .onTapGesture {
             onClick(nft)
         }
     }
-    
+
+    // MARK: Private
+
     private func isAccessible() -> Bool {
         let nftAccessible = WalletManager.shared.accessibleManager.isAccessible(nft)
         guard let collection = nft.collection else {
@@ -68,8 +72,12 @@ struct NFTSquareCard: View {
     }
 }
 
+// MARK: - NFTSquareCard_Previews
+
 struct NFTSquareCard_Previews: PreviewProvider {
-    @Namespace static var namespace
+    @Namespace
+    static var namespace
+
     static var previews: some View {
         NFTSquareCard(nft: NFTTabViewModel.testNFT(), imageEffect: namespace, onClick: { _ in
 

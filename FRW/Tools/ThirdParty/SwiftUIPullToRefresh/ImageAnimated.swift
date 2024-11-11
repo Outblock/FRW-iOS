@@ -5,8 +5,8 @@
 //  Created by Selina on 8/9/2022.
 //
 
-import SwiftUI
 import SnapKit
+import SwiftUI
 
 extension ImageAnimated {
     static func appRefreshImageNames() -> [String] {
@@ -14,22 +14,35 @@ extension ImageAnimated {
         for i in 0...95 {
             images.append("refresh-header-seq-\(i)")
         }
-        
+
         return images
     }
 }
 
+// MARK: - ImageAnimated
+
 struct ImageAnimated: UIViewRepresentable {
+    // MARK: Internal
+
     let imageSize: CGSize
     let imageNames: [String]
     let duration: Double
     var isAnimating: Bool = false
 
-    func makeUIView(context: Self.Context) -> UIView {
-        let containerView = UIView(frame: CGRect(x: 0, y: 0
-            , width: imageSize.width, height: imageSize.height))
+    func makeUIView(context _: Self.Context) -> UIView {
+        let containerView = UIView(frame: CGRect(
+            x: 0,
+            y: 0,
+            width: imageSize.width,
+            height: imageSize.height
+        ))
 
-        let animationImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
+        let animationImageView = UIImageView(frame: CGRect(
+            x: 0,
+            y: 0,
+            width: imageSize.width,
+            height: imageSize.height
+        ))
 
         animationImageView.clipsToBounds = true
         animationImageView.contentMode = UIView.ContentMode.scaleAspectFill
@@ -47,11 +60,11 @@ struct ImageAnimated: UIViewRepresentable {
         return containerView
     }
 
-    func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<ImageAnimated>) {
+    func updateUIView(_ uiView: UIView, context _: UIViewRepresentableContext<ImageAnimated>) {
         guard let imageView = uiView.subviews.first as? UIImageView else {
             return
         }
-        
+
         if isAnimating {
             imageView.startAnimating()
         } else {
@@ -59,7 +72,9 @@ struct ImageAnimated: UIViewRepresentable {
             imageView.image = generateImages().first
         }
     }
-    
+
+    // MARK: Private
+
     private func generateImages() -> [UIImage] {
         var images = [UIImage]()
         imageNames.forEach { imageName in
@@ -67,7 +82,7 @@ struct ImageAnimated: UIViewRepresentable {
                 images.append(img)
             }
         }
-        
+
         return images
     }
 }

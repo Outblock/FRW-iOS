@@ -7,11 +7,13 @@
 
 import SwiftUI
 
+// MARK: - BackupUploadTimeline
+
 struct BackupUploadTimeline: View {
     var backupType: MultiBackupType
     var isError: Bool
     var process: BackupProcess
-    
+
     var body: some View {
         ZStack(alignment: .leading) {
             GeometryReader(content: { geometry in
@@ -21,28 +23,35 @@ struct BackupUploadTimeline: View {
                     .offset(x: 3, y: 12)
             })
             .layoutPriority(-1)
-            
+
             VStack(alignment: .leading, spacing: 0) {
-                BackupUploadTimeline.Item(title: "backup.upload.key.x".localized(backupType.title),
-                                          backupType: backupType,
-                                          isError: isError,
-                                          process: .upload,
-                                          currentProcess: process)
+                BackupUploadTimeline.Item(
+                    title: "backup.upload.key.x".localized(backupType.title),
+                    backupType: backupType,
+                    isError: isError,
+                    process: .upload,
+                    currentProcess: process
+                )
                 Spacer()
-                BackupUploadTimeline.Item(title: "backup.register.key".localized,
-                                          backupType: backupType,
-                                          isError: isError,
-                                          process: .regist,
-                                          currentProcess: process)
+                BackupUploadTimeline.Item(
+                    title: "backup.register.key".localized,
+                    backupType: backupType,
+                    isError: isError,
+                    process: .regist,
+                    currentProcess: process
+                )
             }
         }
         .frame(height: 120)
     }
-    
+
     var lineColor: Color {
-        (process == .regist || process == .finish) ? Color.Theme.Text.black8 : Color.Theme.Text.black3
+        (process == .regist || process == .finish) ? Color.Theme.Text.black8 : Color.Theme.Text
+            .black3
     }
 }
+
+// MARK: BackupUploadTimeline.Item
 
 extension BackupUploadTimeline {
     struct Item: View {
@@ -51,7 +60,7 @@ extension BackupUploadTimeline {
         var isError: Bool = true
         var process: BackupProcess
         var currentProcess: BackupProcess
-        
+
         var body: some View {
             HStack {
                 Circle()
@@ -63,11 +72,14 @@ extension BackupUploadTimeline {
                     .font(.inter(size: 14))
                     .lineLimit(1)
                     .foregroundColor(themeColor())
-                Image(isError && process == currentProcess ? "backup.status.error" : "backup.status.finish")
-                    .visibility(showIcon() ? .visible : .gone)
+                Image(
+                    isError && process == currentProcess ? "backup.status.error" :
+                        "backup.status.finish"
+                )
+                .visibility(showIcon() ? .visible : .gone)
             }
         }
-        
+
         func themeColor() -> Color {
             if isError && process == currentProcess {
                 return Color.Theme.Accent.red
@@ -77,7 +89,7 @@ extension BackupUploadTimeline {
             }
             return Color.Theme.Text.black3
         }
-        
+
         func showIcon() -> Bool {
             isError || currentProcess == process.next
         }

@@ -7,6 +7,8 @@
 
 import Foundation
 
+// MARK: - LLError
+
 enum LLError: Error {
     case aesKeyEncryptionFailed
     case aesEncryptionFailed
@@ -26,6 +28,8 @@ enum LLError: Error {
     case unknown
 }
 
+// MARK: - WalletError
+
 enum WalletError: Error {
     case fetchFailed
     case fetchBalanceFailed
@@ -34,7 +38,10 @@ enum WalletError: Error {
     case mnemonicMissing
     case emptyPublicKey
     case insufficientBalance
+    case securityVerifyFailed
 }
+
+// MARK: - BackupError
 
 enum BackupError: Error {
     case missingUserName
@@ -47,11 +54,15 @@ enum BackupError: Error {
     case CloudFileData
 }
 
+// MARK: - GoogleBackupError
+
 enum GoogleBackupError: Error {
     case missingLoginUser
     case noDriveScope
     case createFileError
 }
+
+// MARK: - iCloudBackupError
 
 enum iCloudBackupError: Error {
     case initError
@@ -64,11 +75,15 @@ enum iCloudBackupError: Error {
     case fileIsNotExist
 }
 
+// MARK: - NFTError
+
 enum NFTError: Error {
     case noCollectionInfo
     case invalidTokenId
     case sendInvalidAddress
 }
+
+// MARK: - StakingError
 
 enum StakingError: Error {
     case stakingDisabled
@@ -76,7 +91,9 @@ enum StakingError: Error {
     case stakingSetupFailed
     case stakingCreateDelegatorIdFailed
     case unknown
-    
+
+    // MARK: Internal
+
     var desc: String {
         switch self {
         case .stakingDisabled:
@@ -88,6 +105,8 @@ enum StakingError: Error {
         }
     }
 }
+
+// MARK: - EVMError
 
 enum EVMError: Error {
     case createAccount

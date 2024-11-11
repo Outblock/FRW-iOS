@@ -5,10 +5,12 @@
 //  Created by Hao Fu on 25/12/21.
 //
 
+import Alamofire
 import Combine
 import Foundation
 import SwiftUI
-import Alamofire
+
+// MARK: - EmptyWalletViewModel.Placeholder
 
 extension EmptyWalletViewModel {
     struct Placeholder {
@@ -19,10 +21,11 @@ extension EmptyWalletViewModel {
     }
 }
 
+// MARK: - EmptyWalletViewModel
+
 class EmptyWalletViewModel: ObservableObject {
-    @Published var placeholders: [EmptyWalletViewModel.Placeholder] = []
-    private var cancelSets = Set<AnyCancellable>()
-    private var net: NetworkReachabilityManager? = NetworkReachabilityManager()
+    // MARK: Lifecycle
+
     init() {
         UserManager.shared.$loginUIDList
             .receive(on: DispatchQueue.main)
@@ -32,7 +35,8 @@ class EmptyWalletViewModel: ObservableObject {
                 var index = 1
                 self.placeholders = list.map { uid in
                     let userInfo = MultiAccountStorage.shared.getUserInfo(uid)
-                    var address = MultiAccountStorage.shared.getWalletInfo(uid)?.getNetworkWalletModel(network: .mainnet)?.getAddress ?? "0x"
+                    var address = MultiAccountStorage.shared.getWalletInfo(uid)?
+                        .getNetworkWalletModel(network: .mainnet)?.getAddress ?? "0x"
                     if address == "0x" {
                         address = LocalUserDefaults.shared.userAddressOfDeletedApp[uid] ?? "0x"
                     }
@@ -41,11 +45,21 @@ class EmptyWalletViewModel: ObservableObject {
                         username = "Account \(index)"
                         index += 1
                     }
-                    return Placeholder(uid: uid, avatar: userInfo?.avatar ?? "", username: username ?? "", address: address)
+                    return Placeholder(
+                        uid: uid,
+                        avatar: userInfo?.avatar ?? "",
+                        username: username ?? "",
+                        address: address
+                    )
                 }
             }.store(in: &cancelSets)
     }
-    
+
+    // MARK: Internal
+
+    @Published
+    var placeholders: [EmptyWalletViewModel.Placeholder] = []
+
     func switchAccountAction(_ uid: String) {
         Task {
             do {
@@ -59,34 +73,33 @@ class EmptyWalletViewModel: ObservableObject {
             }
         }
     }
-    
+
     func createNewAccountAction() {
         Router.route(to: RouteMap.Register.root(nil))
     }
-    
+
     func loginAccountAction() {
         Router.route(to: RouteMap.RestoreLogin.restoreList)
     }
-    
+
     func syncAccountAction() {
         Router.route(to: RouteMap.RestoreLogin.syncQC)
     }
-    
+
     func tryToRestoreAccountWhenFirstLaunch() {
         if LocalUserDefaults.shared.tryToRestoreAccountFlag {
             // has been triggered or no old account to restore
             return
         }
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                
             guard let isReachable = self.net?.isReachable else { return }
-            
+
             if isReachable {
                 self.net?.stopListening()
                 UserManager.shared.tryToRestoreOldAccountOnFirstLaunch()
                 return
-            }else {
+            } else {
                 self.net?.startListening(onQueue: .main, onUpdatePerforming: { status in
                     log.info("[NET] network changed")
                     switch status {
@@ -99,4 +112,9 @@ class EmptyWalletViewModel: ObservableObject {
             }
         }
     }
+
+    // MARK: Private
+
+    private var cancelSets = Set<AnyCancellable>()
+    private var net: NetworkReachabilityManager? = NetworkReachabilityManager()
 }

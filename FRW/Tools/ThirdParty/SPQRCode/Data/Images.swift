@@ -22,24 +22,23 @@
 import UIKit
 
 extension SPQRCodeData {
-enum Images {
-    
-    static func detail_safari() -> UIImage {
-        return .init(systemName: "safari.fill")!
-    }
-    
-    static func detail_text() -> UIImage {
-        return .init(systemName: "textformat.alt")!
-    }
-    
-    static func detail_eth_wallet() -> UIImage {
-        return UIImage.init(named: "ethereum") ?? UIImage()
-    }
-    
-    static func detail_flow_wallet() -> UIImage {
-        return UIImage.init(named: "flow") ?? UIImage()
-    }
-    
+    enum Images {
+        static func detail_safari() -> UIImage {
+            .init(systemName: "safari.fill")!
+        }
+
+        static func detail_text() -> UIImage {
+            .init(systemName: "textformat.alt")!
+        }
+
+        static func detail_eth_wallet() -> UIImage {
+            UIImage(named: "ethereum") ?? UIImage()
+        }
+
+        static func detail_flow_wallet() -> UIImage {
+            UIImage(named: "flow") ?? UIImage()
+        }
+
 //    // MARK: - Internal
 //
 //    static var bundle: Bundle {
@@ -57,5 +56,5 @@ enum Images {
 //        return bundle
 //        #endif
 //    }
-}
+    }
 }

@@ -7,13 +7,15 @@
 
 import SwiftUI
 
+// MARK: - DevicesView
+
 struct DevicesView: RouteableView {
-    @StateObject private var vm = DevicesViewModel()
-    
+    // MARK: Internal
+
     var title: String {
-        return "devices".localized
+        "devices".localized
     }
-    
+
     var body: some View {
         ScrollView {
             Text("Scan_to_Sync_Extension_Wallet".localized)
@@ -47,17 +49,17 @@ struct DevicesView: RouteableView {
                 .background(Color.LL.Neutrals.background)
                 .padding(.horizontal, 18)
                 .padding(.top, 24)
-            
+
             LazyVStack(alignment: .leading) {
                 VStack(alignment: .leading) {
                     Text("current_device".localized)
                         .font(.inter(size: 14, weight: .bold))
                         .foregroundColor(Color.Theme.Text.black3)
-                      
+
                     DevicesView.Cell(model: vm.current ?? DeviceInfoModel.empty(), isCurrent: true)
                 }
                 .visibility(vm.showCurrent ? .visible : .gone)
-                
+
                 VStack(alignment: .leading) {
                     Text("other_device".localized)
                         .font(.inter(size: 14, weight: .bold))
@@ -75,12 +77,20 @@ struct DevicesView: RouteableView {
         .mockPlaceholder(vm.status == PageStatus.loading)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = DevicesViewModel()
 }
+
+// MARK: DevicesView.Cell
 
 extension DevicesView {
     struct Cell: View {
         var model: DeviceInfoModel
         var isCurrent: Bool = false
+
         var body: some View {
             Button {
                 Router.route(to: RouteMap.Profile.deviceInfo(model))

@@ -5,51 +5,53 @@
 //  Created by Selina on 12/7/2022.
 //
 
-import SwiftUI
-import Kingfisher
 import Combine
+import Kingfisher
+import SwiftUI
 import SwiftUIX
 
-//struct WalletSendAmountView_Previews: PreviewProvider {
+// MARK: - WalletSendAmountView
+
+// struct WalletSendAmountView_Previews: PreviewProvider {
 //    static var previews: some View {
 ////        WalletSendAmountView()
 ////        WalletSendAmountView.SendConfirmProgressView()
 //    }
-//}
+// }
 
 struct WalletSendAmountView: RouteableView {
-    @StateObject private var vm: WalletSendAmountViewModel
-    
-    @FocusState private var isAmountFocused: Bool
-    
-    var title: String {
-        return "send_to".localized
-    }
-    
-    var navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
-        return .large
-    }
-    
+    // MARK: Lifecycle
+
     init(target: Contact, token: TokenModel) {
         _vm = StateObject(wrappedValue: WalletSendAmountViewModel(target: target, token: token))
     }
-    
+
+    // MARK: Internal
+
+    var title: String {
+        "send_to".localized
+    }
+
+    var navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
+        .large
+    }
+
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 24) {
                 targetView
                 transferInputContainerView
                 amountBalanceView
-                
+
                 Spacer()
-                
+
                 nextButton
             }
         }
-        .onAppear{
+        .onAppear {
             isAmountFocused = true
         }
-        .onDisappear{
+        .onDisappear {
             isAmountFocused = false
         }
         .hideKeyboardWhenTappedAround()
@@ -63,7 +65,7 @@ struct WalletSendAmountView: RouteableView {
         .applyRouteable(self)
         .environmentObject(vm)
     }
-    
+
     var targetView: some View {
         VStack(spacing: 0) {
             HStack(spacing: 15) {
@@ -71,13 +73,13 @@ struct WalletSendAmountView: RouteableView {
                 ZStack {
                     if vm.targetContact.user?.emoji != nil {
                         vm.targetContact.user?.emoji.icon(size: 44)
-                    }
-                    else if let avatar = vm.targetContact.avatar?.convertedAvatarString(), avatar.isEmpty == false {
+                    } else if let avatar = vm.targetContact.avatar?.convertedAvatarString(),
+                              avatar.isEmpty == false {
                         KFImage.url(URL(string: avatar))
-                            .placeholder({
+                            .placeholder {
                                 Image("placeholder")
                                     .resizable()
-                            })
+                            }
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 44, height: 44)
@@ -87,14 +89,16 @@ struct WalletSendAmountView: RouteableView {
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: 44, height: 44)
-                        }else {
+                        } else {
                             Text(String((vm.targetContact.contactName?.first ?? "A").uppercased()))
                                 .foregroundColor(.Theme.Accent.grey)
                                 .font(.inter(size: 24, weight: .semibold))
                         }
-                        
+
                     } else {
-                        if let contactType = vm.targetContact.contactType, let contactName = vm.targetContact.contactName, contactType == .external, contactName.isFlowOrEVMAddress {
+                        if let contactType = vm.targetContact.contactType,
+                           let contactName = vm.targetContact.contactName, contactType == .external,
+                           contactName.isFlowOrEVMAddress {
                             Text("0x")
                                 .foregroundColor(.Theme.Accent.grey)
                                 .font(.inter(size: 24, weight: .semibold))
@@ -122,10 +126,9 @@ struct WalletSendAmountView: RouteableView {
                         .font(.inter(size: 14, weight: .regular))
                         .lineLimit(1)
                         .truncationMode(.middle)
-                        
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 Button {
                     Router.pop()
                 } label: {
@@ -138,20 +141,23 @@ struct WalletSendAmountView: RouteableView {
             .background(.LL.bgForIcon)
             .cornerRadius(16)
             .padding(.horizontal, 18)
-            CalloutView(corners: [.bottomLeading, .bottomTrailing], content: "wallet_send_token_empty".localized)
-                .padding(.horizontal, 30)
-                .visibility(vm.isValidToken ? .gone : .visible)
-                .transition(.move(edge: .top))
+            CalloutView(
+                corners: [.bottomLeading, .bottomTrailing],
+                content: "wallet_send_token_empty".localized
+            )
+            .padding(.horizontal, 30)
+            .visibility(vm.isValidToken ? .gone : .visible)
+            .transition(.move(edge: .top))
         }
     }
-    
+
     var transferInputContainerView: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("transfer_amount".localized)
                 .foregroundColor(.LL.Neutrals.note)
                 .font(.inter(size: 14, weight: .medium))
                 .padding(.bottom, 9)
-            
+
             VStack(spacing: 34) {
                 HStack(spacing: 8) {
                     // dollar type string
@@ -159,7 +165,7 @@ struct WalletSendAmountView: RouteableView {
                         .foregroundColor(.LL.Neutrals.note)
                         .font(.inter(size: 16, weight: .bold))
                         .visibility(vm.exchangeType == .dollar ? .visible : .gone)
-                    
+
                     switchMenuButton
                         .visibility(vm.exchangeType == .token ? .visible : .gone)
 
@@ -167,10 +173,12 @@ struct WalletSendAmountView: RouteableView {
                     TextField("", text: $vm.inputText)
                         .keyboardType(.decimalPad)
                         .disableAutocorrection(true)
-                        .modifier(PlaceholderStyle(showPlaceHolder: vm.inputText.isEmpty,
-                                                   placeholder: "enter_amount".localized,
-                                                   font: .inter(size: 14, weight: .medium),
-                                                   color: Color.LL.Neutrals.note))
+                        .modifier(PlaceholderStyle(
+                            showPlaceHolder: vm.inputText.isEmpty,
+                            placeholder: "enter_amount".localized,
+                            font: .inter(size: 14, weight: .medium),
+                            color: Color.LL.Neutrals.note
+                        ))
                         .font(.inter(size: 20, weight: .medium))
                         .onChange(of: vm.inputText) { text in
                             withAnimation {
@@ -178,7 +186,7 @@ struct WalletSendAmountView: RouteableView {
                             }
                         }
                         .focused($isAmountFocused)
-                    
+
                     // max btn
                     Button {
                         vm.maxAction()
@@ -192,40 +200,44 @@ struct WalletSendAmountView: RouteableView {
                             .cornerRadius(16)
                     }
                 }
-                
+
                 // rate container
                 HStack {
                     Text("≈")
                         .foregroundColor(.LL.Neutrals.note)
                         .font(.inter(size: 16, weight: .medium))
-                    
+
                     Text(CurrencyCache.cache.currencySymbol)
                         .foregroundColor(.LL.Neutrals.note)
                         .font(.inter(size: 16, weight: .medium))
                         .visibility(vm.exchangeType == .token ? .visible : .gone)
-                    
+
                     KFImage.url(vm.token.iconURL)
-                        .placeholder({
+                        .placeholder {
                             Image("placeholder")
                                 .resizable()
-                        })
+                        }
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 20, height: 20)
                         .clipShape(Circle())
                         .visibility(vm.exchangeType == .dollar ? .visible : .gone)
-                    
-                    Text(vm.exchangeType == .token ? vm.inputDollarNum.formatCurrencyString() : vm.inputTokenNum.formatCurrencyString())
-                        .foregroundColor(.LL.Neutrals.note)
-                        .font(.inter(size: 16, weight: .medium))
-                        .lineLimit(1)
-                    
+
+                    Text(
+                        vm.exchangeType == .token ? vm.inputDollarNum.formatCurrencyString() : vm
+                            .inputTokenNum.formatCurrencyString()
+                    )
+                    .foregroundColor(.LL.Neutrals.note)
+                    .font(.inter(size: 16, weight: .medium))
+                    .lineLimit(1)
+
                     Button {
                         vm.toggleExchangeTypeAction()
                     } label: {
-                        Image("icon-exchange").renderingMode(.template).foregroundColor(.LL.Neutrals.text)
+                        Image("icon-exchange").renderingMode(.template)
+                            .foregroundColor(.LL.Neutrals.text)
                     }
-                    
+
                     Spacer()
                 }
             }
@@ -234,12 +246,12 @@ struct WalletSendAmountView: RouteableView {
             .background(.LL.bgForIcon)
             .cornerRadius(16)
             .zIndex(1)
-            
+
             errorTipsView
         }
         .padding(.horizontal, 18)
     }
-    
+
     var switchMenuButton: some View {
         Menu {
             ForEach(WalletManager.shared.activatedCoins) { token in
@@ -247,10 +259,10 @@ struct WalletSendAmountView: RouteableView {
                     vm.changeTokenModelAction(token: token)
                 } label: {
                     KFImage.url(token.iconURL)
-                        .placeholder({
+                        .placeholder {
                             Image("placeholder")
                                 .resizable()
-                        })
+                        }
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 32, height: 32)
@@ -261,29 +273,29 @@ struct WalletSendAmountView: RouteableView {
         } label: {
             HStack(spacing: 8) {
                 KFImage.url(vm.token.iconURL)
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 32, height: 32)
                     .clipShape(Circle())
-                
+
                 Image("icon-arrow-bottom")
                     .foregroundColor(.LL.Neutrals.neutrals3)
             }
         }
     }
-    
+
     var errorTipsView: some View {
         VStack {
             Spacer()
-            
+
             HStack(spacing: 9) {
                 Image(systemName: .error)
                     .foregroundColor(Color(hex: "#C44536"))
-                
+
                 Text(vm.errorType.desc)
                     .foregroundColor(.LL.Neutrals.note)
                     .font(.inter(size: 12, weight: .regular))
@@ -300,38 +312,42 @@ struct WalletSendAmountView: RouteableView {
         .visibility(vm.errorType == .none ? .gone : .visible)
         .transition(.move(edge: .top))
     }
-    
+
     var amountBalanceView: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("amount_balance".localized)
                 .foregroundColor(.LL.Neutrals.note)
                 .font(.inter(size: 14, weight: .medium))
                 .padding(.bottom, 9)
-            
+
             HStack {
                 KFImage.url(vm.token.iconURL)
-                    .placeholder({
+                    .placeholder {
                         Image("placeholder")
                             .resizable()
-                    })
+                    }
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 32, height: 32)
                     .clipShape(Circle())
-                
-                Text("\(vm.amountBalance.formatCurrencyString()) \(vm.token.symbol?.uppercased() ?? "?")")
-                    .foregroundColor(.LL.Neutrals.text)
-                    .font(.inter(size: 14, weight: .medium))
-                
-                Text("≈ \(CurrencyCache.cache.currencySymbol) \(vm.amountBalanceAsDollar.formatCurrencyString(considerCustomCurrency: true))")
-                    .foregroundColor(.LL.Neutrals.text)
-                    .font(.inter(size: 14, weight: .medium))
+
+                Text(
+                    "\(vm.amountBalance.formatCurrencyString()) \(vm.token.symbol?.uppercased() ?? "?")"
+                )
+                .foregroundColor(.LL.Neutrals.text)
+                .font(.inter(size: 14, weight: .medium))
+
+                Text(
+                    "≈ \(CurrencyCache.cache.currencySymbol) \(vm.amountBalanceAsDollar.formatCurrencyString(considerCustomCurrency: true))"
+                )
+                .foregroundColor(.LL.Neutrals.text)
+                .font(.inter(size: 14, weight: .medium))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 18)
     }
-    
+
     var nextButton: some View {
         Button {
             isAmountFocused = false
@@ -350,46 +366,69 @@ struct WalletSendAmountView: RouteableView {
         }
         .disabled(!vm.isReadyForSend)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm: WalletSendAmountViewModel
+
+    @FocusState
+    private var isAmountFocused: Bool
 }
 
 extension WalletSendAmountView {
     struct SendConfirmView: View {
-        @EnvironmentObject var vm: WalletSendAmountViewModel
+        @EnvironmentObject
+        var vm: WalletSendAmountViewModel
 
         var fromTargetContent: Contact {
-            
             if let account = EVMAccountManager.shared.selectedAccount {
                 let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
-                let contact = Contact(address: account.showAddress, avatar: nil, contactName: user.name, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName,user: user)
+                let contact = Contact(
+                    address: account.showAddress,
+                    avatar: nil,
+                    contactName: user.name,
+                    contactType: .user,
+                    domain: nil,
+                    id: UUID().hashValue,
+                    username: account.showName,
+                    user: user
+                )
                 return contact
-            }
-            else if let account = ChildAccountManager.shared.selectedChildAccount {
-                
-                let contact = Contact(address: account.showAddress, avatar: account.icon, contactName: account.aName, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName)
+            } else if let account = ChildAccountManager.shared.selectedChildAccount {
+                let contact = Contact(
+                    address: account.showAddress,
+                    avatar: account.icon,
+                    contactName: account.aName,
+                    contactType: .user,
+                    domain: nil,
+                    id: UUID().hashValue,
+                    username: account.showName
+                )
                 return contact
-            }else {
+            } else {
                 return UserManager.shared.userInfo!.toContactWithCurrentUserAddress()
             }
         }
-        
+
         var body: some View {
             VStack {
                 SheetHeaderView(title: "confirmation".localized)
-                
+
                 VStack(spacing: 0) {
                     Spacer()
-                    
+
                     ZStack {
                         fromToView
                         WalletSendAmountView.SendConfirmProgressView()
                             .padding(.bottom, 37)
                     }
-                    
+
                     amountDetailView
                         .padding(.top, 37)
-                    
+
                     Spacer()
-                    
+
                     sendButton
                         .padding(.bottom, 10)
                 }
@@ -406,18 +445,77 @@ extension WalletSendAmountView {
             }
         }
 
+        var amountDetailView: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("amount_confirmation".localized)
+                    .foregroundColor(.LL.Neutrals.note)
+                    .font(.inter(size: 14, weight: .medium))
+
+                HStack(spacing: 0) {
+                    KFImage.url(vm.token.iconURL)
+                        .placeholder {
+                            Image("placeholder")
+                                .resizable()
+                        }
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 32, height: 32)
+                        .clipShape(Circle())
+
+                    Text(vm.token.name)
+                        .foregroundColor(.LL.Neutrals.text)
+                        .font(.inter(size: 18, weight: .medium))
+                        .padding(.leading, 8)
+
+                    Spacer()
+
+                    Text("\(vm.inputTokenNum) \(vm.token.name.uppercased())")
+                        .foregroundColor(.LL.Neutrals.text)
+                        .font(.inter(size: 20, weight: .semibold))
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                }
+                .frame(height: 32)
+                .padding(.top, 25)
+
+                HStack {
+                    Spacer()
+
+                    Text(
+                        "\(CurrencyCache.cache.currentCurrency.rawValue) \(CurrencyCache.cache.currencySymbol) \(vm.inputDollarNum.formatCurrencyString())"
+                    )
+                    .foregroundColor(.LL.Neutrals.neutrals8)
+                    .font(.inter(size: 14, weight: .medium))
+                }
+                .padding(.top, 14)
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 18)
+            .background(Color.LL.bgForIcon)
+            .cornerRadius(16)
+        }
+
+        var sendButton: some View {
+            WalletSendButtonView(allowEnable: $vm.isEmptyTransation) {
+                if vm.isEmptyTransation {
+                    vm.sendWithVerifyAction()
+                }
+            }
+        }
+
         func contactView(contact: Contact) -> some View {
             VStack(spacing: 5) {
                 // avatar
                 ZStack {
                     if contact.user?.emoji != nil {
                         contact.user?.emoji.icon(size: 44)
-                    }else if let avatar = contact.avatar?.convertedAvatarString(), avatar.isEmpty == false {
+                    } else if let avatar = contact.avatar?.convertedAvatarString(),
+                              avatar.isEmpty == false {
                         KFImage.url(URL(string: avatar))
-                            .placeholder({
+                            .placeholder {
                                 Image("placeholder")
                                     .resizable()
-                            })
+                            }
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 44, height: 44)
@@ -427,14 +525,16 @@ extension WalletSendAmountView {
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: 44, height: 44)
-                        }else {
+                        } else {
                             Text(String((contact.contactName?.first ?? "A").uppercased()))
                                 .foregroundColor(.Theme.Accent.grey)
                                 .font(.inter(size: 24, weight: .semibold))
                         }
-                        
+
                     } else {
-                        if let contactType = vm.targetContact.contactType, let contactName = vm.targetContact.contactName, contactType == .external, contactName.isFlowOrEVMAddress {
+                        if let contactType = vm.targetContact.contactType,
+                           let contactName = vm.targetContact.contactName, contactType == .external,
+                           contactName.isFlowOrEVMAddress {
                             Text("0x")
                                 .foregroundColor(.Theme.Accent.grey)
                                 .font(.inter(size: 24, weight: .semibold))
@@ -463,68 +563,10 @@ extension WalletSendAmountView {
             }
             .frame(maxWidth: .infinity)
         }
-        
-        var amountDetailView: some View {
-            VStack(alignment: .leading, spacing: 0) {
-                Text("amount_confirmation".localized)
-                    .foregroundColor(.LL.Neutrals.note)
-                    .font(.inter(size: 14, weight: .medium))
-                
-                HStack(spacing: 0) {
-                    KFImage.url(vm.token.iconURL)
-                        .placeholder({
-                            Image("placeholder")
-                                .resizable()
-                        })
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 32, height: 32)
-                        .clipShape(Circle())
-                    
-                    Text(vm.token.name)
-                        .foregroundColor(.LL.Neutrals.text)
-                        .font(.inter(size: 18, weight: .medium))
-                        .padding(.leading, 8)
-                    
-                    Spacer()
-                    
-                    Text("\(vm.inputTokenNum) \(vm.token.name.uppercased())")
-                        .foregroundColor(.LL.Neutrals.text)
-                        .font(.inter(size: 20, weight: .semibold))
-                        .minimumScaleFactor(0.5)
-                        .lineLimit(1)
-                }
-                .frame(height: 32)
-                .padding(.top, 25)
-                
-                HStack {
-                    Spacer()
-                    
-                    Text("\(CurrencyCache.cache.currentCurrency.rawValue) \(CurrencyCache.cache.currencySymbol) \(vm.inputDollarNum.formatCurrencyString())")
-                        .foregroundColor(.LL.Neutrals.neutrals8)
-                        .font(.inter(size: 14, weight: .medium))
-                }
-                .padding(.top, 14)
-            }
-            .padding(.horizontal, 18)
-            .padding(.vertical, 18)
-            .background(Color.LL.bgForIcon)
-            .cornerRadius(16)
-        }
-        
-        var sendButton: some View {
-            WalletSendButtonView(allowEnable: $vm.isEmptyTransation) {
-                if vm.isEmptyTransation {
-                    vm.sendWithVerifyAction()
-                }
-            }
-        }
     }
-    
+
     struct SendConfirmProgressView: View {
-        private let totalNum: Int = 7
-        @State private var step: Int = 0
-        private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+        // MARK: Internal
 
         var body: some View {
             HStack(spacing: 12) {
@@ -577,5 +619,12 @@ extension WalletSendAmountView {
                 }
             }
         }
+
+        // MARK: Private
+
+        private let totalNum: Int = 7
+        @State
+        private var step: Int = 0
+        private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     }
 }

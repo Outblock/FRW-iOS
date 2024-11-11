@@ -16,7 +16,7 @@ struct ProfileEditView_Previews: PreviewProvider {
 
 struct ProfileEditView: RouteableView {
     @StateObject private var vm = ProfileEditViewModel()
-    
+
     var title: String {
         return "edit_account".localized
     }
@@ -32,7 +32,7 @@ struct ProfileEditView: RouteableView {
         .backgroundFill(.LL.Neutrals.background)
         .applyRouteable(self)
     }
-    
+
     var editContainer: some View {
         VStack(spacing: 0) {
             editAvatarCell
@@ -45,21 +45,21 @@ struct ProfileEditView: RouteableView {
         .cornerRadius(16)
         .padding(.horizontal, 18)
     }
-    
+
     var domainEnabledView: some View {
         HStack {
             VStack(alignment: .leading, spacing: 8) {
                 Text("domain_title2".localized)
                     .font(titleFont)
                     .foregroundColor(titleColor)
-                
+
                 Text(UserManager.shared.userInfo?.meowDomain ?? "")
                     .font(.inter(size: 12))
                     .foregroundColor(.LL.Neutrals.note)
             }
-            
+
             Spacer()
-            
+
             Image(systemName: .checkmarkSelected)
                 .foregroundColor(Color.LL.Primary.salmonPrimary)
         }
@@ -70,7 +70,7 @@ struct ProfileEditView: RouteableView {
         .padding(.horizontal, 18)
         .visibility(UserManager.shared.isMeowDomainEnabled ? .visible : .gone)
     }
-    
+
     var claimDomainBanner: some View {
         Button {
             Router.route(to: RouteMap.Explore.claimDomain)
@@ -80,25 +80,25 @@ struct ProfileEditView: RouteableView {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: .infinity)
-                
+
                 HStack(spacing: 0) {
                     Text("claim_free_domain_substring1".localized)
                         .font(Font.LL.miniTitle2)
                         .fontWeight(.w700)
                         .foregroundColor(.LL.Neutrals.text)
-                    
+
                     Text("claim_free_domain_substring2".localized)
                         .font(Font.LL.miniTitle2)
                         .fontWeight(.w700)
                         .foregroundColor(.LL.Primary.salmonPrimary)
-                    
+
                     Text("claim_free_domain_substring3".localized)
                         .font(Font.LL.miniTitle2)
                         .fontWeight(.w700)
                         .foregroundColor(.LL.Neutrals.text)
-                    
+
                     Spacer()
-                    
+
                     Text("domain_claim".localized)
                         .font(.inter(size: 12, weight: .semibold))
                         .foregroundColor(.white)
@@ -124,10 +124,10 @@ extension ProfileEditView {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             KFImage.url(URL(string: vm.state.avatar))
-                .placeholder({
+                .placeholder {
                     Image("placeholder")
                         .resizable()
-                })
+                }
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 40, height: 40)

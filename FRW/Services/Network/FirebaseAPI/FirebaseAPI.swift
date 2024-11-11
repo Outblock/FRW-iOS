@@ -5,15 +5,19 @@
 //  Created by Hao Fu on 5/9/2022.
 //
 
+import BigInt
+import Flow
 import Foundation
 import Moya
-import Flow
-import BigInt
+
+// MARK: - FirebaseAPI
 
 enum FirebaseAPI {
     case signAsPayer(SignPayerRequest)
     case moonPay(MoonPayRequest)
 }
+
+// MARK: TargetType, AccessTokenAuthorizable
 
 extension FirebaseAPI: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
@@ -50,6 +54,6 @@ extension FirebaseAPI: TargetType, AccessTokenAuthorizable {
     }
 
     var headers: [String: String]? {
-        return FRWAPI.commonHeaders
+        FRWAPI.commonHeaders
     }
 }

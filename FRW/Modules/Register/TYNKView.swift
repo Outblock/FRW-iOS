@@ -8,16 +8,20 @@
 import SwiftUI
 import SwiftUIX
 
+// MARK: - TYNKView
+
 struct TYNKView: RouteableView {
-    @StateObject var viewModel = TYNKViewModel()
-    @State var stateList: [Bool] = [false, false, false]
-    
+    @StateObject
+    var viewModel = TYNKViewModel()
+    @State
+    var stateList: [Bool] = [false, false, false]
+
     var title: String {
-        return ""
+        ""
     }
 
     var buttonState: VPrimaryButtonState {
-        return stateList.contains(false) ? .disabled : .enabled
+        stateList.contains(false) ? .disabled : .enabled
     }
 
     var body: some View {
@@ -48,20 +52,30 @@ struct TYNKView: RouteableView {
             Spacer()
 
             VStack(spacing: 12) {
-                ConditionView(isOn: $stateList[0],
-                              text: "secret_phrase_tips_1".localized)
-                ConditionView(isOn: $stateList[1],
-                              text: "secret_phrase_tips_2".localized)
-                ConditionView(isOn: $stateList[2],
-                              text: "secret_phrase_tips_3".localized)
+                ConditionView(
+                    isOn: $stateList[0],
+                    text: "secret_phrase_tips_1".localized
+                )
+                ConditionView(
+                    isOn: $stateList[1],
+                    text: "secret_phrase_tips_2".localized
+                )
+                ConditionView(
+                    isOn: $stateList[2],
+                    text: "secret_phrase_tips_3".localized
+                )
             }
             .padding(.bottom, 40)
 
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: buttonState,
-                           action: {
-                viewModel.chooseBackupMethodAction()
-            }, title: buttonState == .loading ? "almost_there".localized : "next".localized)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: buttonState,
+                action: {
+                    viewModel.chooseBackupMethodAction()
+                },
+                title: buttonState == .loading ? "almost_there".localized : "next"
+                    .localized
+            )
             .padding(.bottom)
         }
         .padding(.horizontal, 28)
@@ -69,6 +83,8 @@ struct TYNKView: RouteableView {
         .applyRouteable(self)
     }
 }
+
+// MARK: - ConditionView
 
 struct ConditionView: View {
     @Binding
@@ -82,29 +98,35 @@ struct ConditionView: View {
         model.layout.cornerRadius = 6
         model.layout.contentMarginLeading = 15
 
-        model.colors.textContent = .init(off: Color.LL.text,
-                                         on: Color.LL.text,
-                                         indeterminate: Color.LL.text,
-                                         pressedOff: Color.LL.text,
-                                         pressedOn: Color.LL.text,
-                                         pressedIndeterminate: Color.LL.text,
-                                         disabled: Color.LL.text)
+        model.colors.textContent = .init(
+            off: Color.LL.text,
+            on: Color.LL.text,
+            indeterminate: Color.LL.text,
+            pressedOff: Color.LL.text,
+            pressedOn: Color.LL.text,
+            pressedIndeterminate: Color.LL.text,
+            disabled: Color.LL.text
+        )
 
-        model.colors.fill = .init(off: .clear,
-                                  on: Color.LL.orange,
-                                  indeterminate: Color.LL.orange,
-                                  pressedOff: Color.LL.orange.opacity(0.5),
-                                  pressedOn: Color.LL.orange.opacity(0.5),
-                                  pressedIndeterminate: Color.LL.orange,
-                                  disabled: .gray)
+        model.colors.fill = .init(
+            off: .clear,
+            on: Color.LL.orange,
+            indeterminate: Color.LL.orange,
+            pressedOff: Color.LL.orange.opacity(0.5),
+            pressedOn: Color.LL.orange.opacity(0.5),
+            pressedIndeterminate: Color.LL.orange,
+            disabled: .gray
+        )
 
-        model.colors.icon = .init(off: .clear,
-                                  on: Color.LL.background,
-                                  indeterminate: Color.LL.background,
-                                  pressedOff: Color.LL.background.opacity(0.5),
-                                  pressedOn: Color.LL.background.opacity(0.5),
-                                  pressedIndeterminate: Color.LL.background,
-                                  disabled: Color.LL.background)
+        model.colors.icon = .init(
+            off: .clear,
+            on: Color.LL.background,
+            indeterminate: Color.LL.background,
+            pressedOff: Color.LL.background.opacity(0.5),
+            pressedOn: Color.LL.background.opacity(0.5),
+            pressedIndeterminate: Color.LL.background,
+            disabled: Color.LL.background
+        )
         return model
     }()
 
@@ -114,13 +136,15 @@ struct ConditionView: View {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         } label: {
             HStack {
-                VCheckBox(model: model,
-                          isOn: $isOn)
-                    .padding(.horizontal, 12)
-                    .aspectRatio(1, contentMode: .fill)
-                    .frame(width: 30, alignment: .leading)
-                    .allowsHitTesting(false)
-                    .frame(width: 30, height: 30, alignment: .center)
+                VCheckBox(
+                    model: model,
+                    isOn: $isOn
+                )
+                .padding(.horizontal, 12)
+                .aspectRatio(1, contentMode: .fill)
+                .frame(width: 30, alignment: .leading)
+                .allowsHitTesting(false)
+                .frame(width: 30, height: 30, alignment: .center)
 
                 Text(text)
                     .padding(.horizontal, 13)

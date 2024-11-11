@@ -9,10 +9,9 @@
 import SwiftUI
 
 struct HeartImageView: View {
-    
     @Binding
     var isLike: Bool
-    
+
     var body: some View {
         Image(isLike ? "icon-star-fill" : "icon-star")
             .renderingMode(.template)

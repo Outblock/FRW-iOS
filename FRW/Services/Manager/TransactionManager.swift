@@ -5,9 +5,9 @@
 //  Created by Selina on 25/8/2022.
 //
 
-import UIKit
 import Flow
 import SwiftUI
+import UIKit
 
 extension Flow.Transaction.Status {
     var progressPercent: CGFloat {
@@ -30,11 +30,11 @@ extension Flow.ID {
     var transactionFlowScanURL: URL? {
         switch LocalUserDefaults.shared.flowNetwork {
         case .testnet:
-            return URL(string: "https://testnet.flowscan.io/tx/\(self.hex)")
+            return URL(string: "https://testnet.flowscan.io/tx/\(hex)")
         case .mainnet:
-            return URL(string: "https://flowscan.io/tx/\(self.hex)")
+            return URL(string: "https://flowscan.io/tx/\(hex)")
         case .previewnet:
-            return URL(string: "https://previewnet.flowscan.io/tx/\(self.hex)")
+            return URL(string: "https://previewnet.flowscan.io/tx/\(hex)")
         }
     }
 }
@@ -56,7 +56,7 @@ extension TransactionManager.TransactionHolder {
             return "Expired"
         }
     }
-    
+
     var successHUDMessage: String {
         switch type {
         case .claimDomain:
@@ -65,7 +65,7 @@ extension TransactionManager.TransactionHolder {
             return "transaction_success".localized
         }
     }
-    
+
     var errorHUDMessage: String {
         switch type {
         case .claimDomain:
@@ -74,7 +74,7 @@ extension TransactionManager.TransactionHolder {
             return "transaction_failed".localized
         }
     }
-    
+
     var toFlowScanTransaction: FlowScanTransaction {
         let time = ISO8601Formatter.string(from: Date(timeIntervalSince1970: createTime))
         let model = FlowScanTransaction(authorizers: nil, contractInteractions: nil, error: errorMsg, eventCount: nil, hash: transactionId.hex, index: nil, payer: nil, proposer: nil, status: statusString, time: time)
@@ -96,12 +96,12 @@ extension TransactionManager {
         case editChildAccount
         case moveAsset
     }
-    
+
     enum InternalStatus: Int, Codable {
         case pending
         case success
         case failed
-        
+
         var statusColor: UIColor {
             switch self {
             case .pending:
@@ -113,7 +113,7 @@ extension TransactionManager {
             }
         }
     }
-    
+
     class TransactionHolder: Codable {
         var transactionId: Flow.ID
         var createTime: TimeInterval
@@ -122,14 +122,14 @@ extension TransactionManager {
         var type: TransactionManager.TransactionType
         var data: Data = .init()
         var errorMsg: String?
-        
+
         private var timer: Timer?
         private var retryTimes: Int = 0
-        
+
         var flowStatus: Flow.Transaction.Status {
             return Flow.Transaction.Status(status)
         }
-        
+
         enum CodingKeys: String, CodingKey {
             case transactionId
             case createTime
@@ -138,26 +138,26 @@ extension TransactionManager {
             case data
             case internalStatus
         }
-        
+
         init(id: Flow.ID, createTime: TimeInterval = Date().timeIntervalSince1970, type: TransactionManager.TransactionType, data: Data = Data()) {
-            self.transactionId = id
+            transactionId = id
             self.createTime = createTime
             self.type = type
             self.data = data
             log.info("[Cadence] txi:\(id.hex)")
         }
-        
+
         func decodedObject<T: Decodable>(_ type: T.Type) -> T? {
             return try? JSONDecoder().decode(type, from: data)
         }
-        
+
         func icon() -> URL? {
             switch type {
             case .transferCoin:
                 guard let model = decodedObject(CoinTransferModel.self), let token = WalletManager.shared.getToken(bySymbol: model.symbol) else {
                     return nil
                 }
-                
+
                 return token.iconURL
             case .addToken:
                 return decodedObject(TokenModel.self)?.icon
@@ -169,35 +169,35 @@ extension TransactionManager {
                 guard let model = decodedObject(AuthzTransaction.self), let urlString = model.url else {
                     return nil
                 }
-                
+
                 return urlString.toFavIcon()
             case .unlinkAccount:
                 guard let iconString = decodedObject(ChildAccount.self)?.icon, let url = URL(string: iconString) else {
                     return nil
                 }
-                
+
                 return url
             default:
                 return nil
             }
         }
-        
+
         func startTimer() {
             stopTimer()
-            
+
             if retryTimes > 5 {
                 internalStatus = .failed
                 postNotification()
                 return
             }
-            
+
             let timer = Timer(timeInterval: 2, target: self, selector: #selector(onCheck), userInfo: nil, repeats: false)
             RunLoop.main.add(timer, forMode: .common)
             self.timer = timer
-            
+
             debugPrint("TransactionHolder -> startTimer")
         }
-        
+
         func stopTimer() {
             if let timer = timer {
                 timer.invalidate()
@@ -205,21 +205,21 @@ extension TransactionManager {
                 debugPrint("TransactionHolder -> stopTimer")
             }
         }
-        
+
         @objc private func onCheck() {
             debugPrint("TransactionHolder -> onCheck")
-            
+
             Task {
                 do {
                     let result = try await FlowNetwork.getTransactionResult(by: transactionId.hex)
                     debugPrint("TransactionHolder -> onCheck status: \(result.status)")
-                    
+
                     DispatchQueue.main.async {
-                        if result.status == self.flowStatus && result.status < .sealed {
+                        if result.status == self.flowStatus, result.status < .sealed {
                             self.startTimer()
                             return
                         }
-                        
+
                         self.status = result.status.rawValue
                         if result.isFailed {
                             self.errorMsg = result.errorMessage
@@ -231,7 +231,7 @@ extension TransactionManager {
                             self.internalStatus = .pending
                             self.startTimer()
                         }
-                        
+
                         self.postNotification()
                     }
                 } catch {
@@ -243,7 +243,7 @@ extension TransactionManager {
                 }
             }
         }
-        
+
         private func postNotification() {
             debugPrint("TransactionHolder -> postNotification status: \(status)")
             NotificationCenter.default.post(name: .transactionStatusDidChanged, object: self)
@@ -253,53 +253,53 @@ extension TransactionManager {
 
 class TransactionManager: ObservableObject {
     static let shared = TransactionManager()
-    
+
     private lazy var rootFolder = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("transaction_cache")
     private lazy var transactionCacheFile = rootFolder.appendingPathComponent("transaction_cache_file")
-    
+
     @Published
     private(set) var holders: [TransactionHolder] = []
-    
+
     init() {
         checkFolder()
         addNotification()
         loadHoldersFromCache()
         startCheckIfNeeded()
     }
-    
+
     private func addNotification() {
         NotificationCenter.default.addObserver(self, selector: #selector(onHolderChanged(noti:)), name: .transactionStatusDidChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
     }
-    
+
     @objc private func willReset() {
         holders = []
         saveHoldersToCache()
         postDidChangedNotification()
     }
-    
+
     @objc private func onHolderChanged(noti: Notification) {
         guard let holder = noti.object as? TransactionHolder else {
             return
         }
-        
+
         if holder.internalStatus == .pending {
             return
         }
-        
+
         if holder.internalStatus == .failed {
             removeTransaction(id: holder.transactionId.hex)
             HUD.error(title: holder.errorHUDMessage)
             return
         }
-        
+
         HUD.success(title: holder.successHUDMessage, message: nil, preset: .done, haptic: .none)
-        
+
         let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
         feedbackGenerator.impactOccurred()
-        
+
         removeTransaction(id: holder.transactionId.hex)
-        
+
         switch holder.type {
         case .claimDomain:
             DispatchQueue.main.async {
@@ -336,13 +336,13 @@ class TransactionManager: ObservableObject {
             break
         }
     }
-    
+
     private func startCheckIfNeeded() {
         for holder in holders {
             holder.startTimer()
         }
     }
-    
+
     private func postDidChangedNotification() {
         DispatchQueue.syncOnMain {
             NotificationCenter.default.post(name: .transactionManagerDidChanged, object: nil)
@@ -357,59 +357,59 @@ extension TransactionManager {
         holders.insert(holder, at: 0)
         saveHoldersToCache()
         postDidChangedNotification()
-        
+
         holder.startTimer()
     }
-    
+
     func removeTransaction(id: String) {
         for holder in holders {
             if holder.transactionId.hex == id {
                 holder.stopTimer()
             }
         }
-        
+
         holders.removeAll { $0.transactionId.hex == id }
         saveHoldersToCache()
         postDidChangedNotification()
     }
-    
+
     func isExist(tid: String) -> Bool {
         for holder in holders {
             if holder.transactionId.hex == tid {
                 return true
             }
         }
-        
+
         return false
     }
-    
+
     func isTokenEnabling(symbol: String) -> Bool {
         for holder in holders {
             if holder.type == .addToken, let token = holder.decodedObject(TokenModel.self), token.symbol == symbol {
                 return true
             }
         }
-        
+
         return false
     }
-    
+
     func isCollectionEnabling(contractName: String) -> Bool {
         for holder in holders {
             if holder.type == .addCollection, let collection = holder.decodedObject(NFTCollectionInfo.self), collection.contractName == contractName {
                 return true
             }
         }
-        
+
         return false
     }
-    
+
     func isNFTTransfering(id: String) -> Bool {
         for holder in holders {
             if holder.type == .transferNFT, let model = holder.decodedObject(NFTTransferModel.self), model.nft.id == id {
                 return true
             }
         }
-        
+
         return false
     }
 }
@@ -422,22 +422,22 @@ extension TransactionManager {
             if !FileManager.default.fileExists(atPath: rootFolder.relativePath) {
                 try FileManager.default.createDirectory(at: rootFolder, withIntermediateDirectories: true)
             }
-            
+
         } catch {
             debugPrint("TransactionManager -> checkFolder error: \(error)")
         }
     }
-    
+
     private func loadHoldersFromCache() {
         if !FileManager.default.fileExists(atPath: transactionCacheFile.relativePath) {
             return
         }
-        
+
         do {
             let data = try Data(contentsOf: transactionCacheFile)
             let list = try JSONDecoder().decode([TransactionManager.TransactionHolder].self, from: data)
             let filterdList = list.filter { $0.internalStatus == .pending }
-            
+
             if !filterdList.isEmpty {
                 holders = filterdList
             }
@@ -445,10 +445,10 @@ extension TransactionManager {
             debugPrint("TransactionManager -> loadHoldersFromCache error: \(error)")
         }
     }
-    
+
     private func saveHoldersToCache() {
         let filterdHolders = holders.filter { $0.internalStatus == .pending }
-        
+
         do {
             let data = try JSONEncoder().encode(filterdHolders)
             try data.write(to: transactionCacheFile)

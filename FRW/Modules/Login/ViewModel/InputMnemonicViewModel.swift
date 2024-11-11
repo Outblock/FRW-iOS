@@ -6,11 +6,14 @@
 //
 
 import Foundation
-import WalletCore
 import SwiftUI
+import WalletCore
 
 class InputMnemonicViewModel: ViewModel {
-    @Published var state: InputMnemonicView.ViewState = .init()
+    // MARK: Internal
+
+    @Published
+    var state: InputMnemonicView.ViewState = .init()
 
     func trigger(_ input: InputMnemonicView.Action) {
         switch input {
@@ -19,7 +22,7 @@ class InputMnemonicViewModel: ViewModel {
             let words = original.split(separator: " ")
             var hasError = false
             for word in words {
-                if Mnemonic.search(prefix: String(word)).count == 0 {
+                if Mnemonic.search(prefix: String(word)).isEmpty {
                     hasError = true
                     break
                 }
@@ -47,26 +50,29 @@ class InputMnemonicViewModel: ViewModel {
         }
     }
 
+    // MARK: Private
+
     private func getRawMnemonic() -> String {
-        return state.text.condenseWhitespace()
+        state.text.condenseWhitespace()
     }
 
     private func restoreLogin() {
         UIApplication.shared.endEditing()
-        
+
         HUD.loading()
-        
+
         let mnemonic = getRawMnemonic()
         Task {
             do {
                 try await UserManager.shared.restoreLogin(withMnemonic: mnemonic)
-                
+
                 DispatchQueue.main.async {
-                    if let uid = UserManager.shared.activatedUID, MultiAccountStorage.shared.getBackupType(uid) == .none {
+                    if let uid = UserManager.shared.activatedUID,
+                       MultiAccountStorage.shared.getBackupType(uid) == .none {
                         MultiAccountStorage.shared.setBackupType(.manual, uid: uid)
                     }
                 }
-                
+
                 HUD.dismissLoading()
                 HUD.success(title: "login_success".localized)
                 Router.popToRoot()
@@ -81,13 +87,13 @@ class InputMnemonicViewModel: ViewModel {
             }
         }
     }
-    
+
     private func showCreateWalletAlertView() {
         withAnimation(.alertViewSpring) {
             self.state.isAlertViewPresented = true
         }
     }
-    
+
     private func createAccountWithCurrentMnemonic() {
         let mnemonic = getRawMnemonic()
         Router.route(to: RouteMap.Register.root(mnemonic))

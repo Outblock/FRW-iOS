@@ -8,7 +8,6 @@
 import Foundation
 
 protocol NFTMask {
-    
     var maskLogo: String { get }
     var maskId: String { get }
     var maskFlowIdentifier: String? { get }
@@ -25,6 +24,7 @@ protocol CollectionMask {
 }
 
 // MARK: NFTResponse
+
 extension NFTResponse: NFTMask {
     var maskLogo: String {
         if let media = postMedia {
@@ -36,64 +36,66 @@ extension NFTResponse: NFTMask {
         }
         return cover() ?? thumbnail ?? ""
     }
-    
+
     var maskId: String {
         return id
     }
-    
+
     var maskFlowIdentifier: String? {
         flowIdentifier
     }
-    
 }
 
 // MARK: NFTCollection
+
 extension NFTCollection: CollectionMask {
     var maskName: String {
-        collection.name
+        collection.name ?? ""
     }
-    
+
     var maskAddress: String {
-        collection.address
+        collection.address ?? ""
     }
-    
+
     var maskContractName: String {
-        collection.contractName
+        collection.contractName ?? ""
     }
-    
+
     var maskId: String {
         collection.id
     }
-    
+
     var maskLogo: URL? {
         collection.logoURL
     }
-    
+
     var maskCount: Int {
         return count
     }
-    
+
     var maskFlowIdentifier: String? {
         collection.flowIdentifier
     }
 }
 
 // MARK: EVMNFT
+
 extension EVMNFT: NFTMask {
     var maskLogo: String {
         return thumbnail
     }
-    
+
     var maskId: String {
         id
     }
-    
+
     var maskFlowIdentifier: String? {
         return nil
     }
 }
 
 // MARK: EVMCollection
+
 extension EVMCollection: CollectionMask {
     var maskAddress: String {
         guard let addr = flowIdentifier?.split(separator: ".")[1] else {
@@ -101,32 +103,31 @@ extension EVMCollection: CollectionMask {
         }
         return String(addr).addHexPrefix()
     }
-    
+
     var maskName: String {
         name
     }
-    
+
     var maskContractName: String {
         guard let name = flowIdentifier?.split(separator: ".")[2] else {
             return ""
         }
         return String(name)
     }
-    
+
     var maskLogo: URL? {
         URL(string: logoURI)
     }
-    
+
     var maskId: String {
         ""
     }
-    
+
     var maskCount: Int {
         nfts.count
     }
-    
+
     var maskFlowIdentifier: String? {
         flowIdentifier
     }
-    
 }

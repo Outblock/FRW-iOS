@@ -22,34 +22,40 @@
 import Foundation
 
 extension SPQRCodeData {
-enum Texts {
-    
-    static var action_handle: String { "action_handle".localized }
-    static var action_cancel: String { "action_cancel".localized }
-    
-    static var qr_code_data_text_prefix: String { "qr_code_data_text_prefix".localized }
-    static var qr_code_data_url_prefix: String { "qr_code_data_url_prefix".localized }
-    static var qr_code_data_eth_wallet_prefix: String { "qr_code_data_eth_wallet_prefix".localized }
-    static var qr_code_data_flow_wallet_prefix: String { "qr_code_data_flow_wallet_prefix".localized }
-    static var qr_code_data_wallet_connect_prefix: String { "qr_code_data_wallet_connect_prefix".localized }
-    
-    
+    enum Texts {
+        static var action_handle: String { "action_handle".localized }
+        static var action_cancel: String { "action_cancel".localized }
+
+        static var qr_code_data_text_prefix: String { "qr_code_data_text_prefix".localized }
+        static var qr_code_data_url_prefix: String { "qr_code_data_url_prefix".localized }
+        static var qr_code_data_eth_wallet_prefix: String {
+            "qr_code_data_eth_wallet_prefix".localized
+        }
+
+        static var qr_code_data_flow_wallet_prefix: String {
+            "qr_code_data_flow_wallet_prefix".localized
+        }
+
+        static var qr_code_data_wallet_connect_prefix: String {
+            "qr_code_data_wallet_connect_prefix".localized
+        }
+
 //    // MARK: - Internal
-//    
+//
 //    static var bundle: Bundle {
-//        
+//
 //        // If installed via SPM, will be available bundle .module.
-//        
+//
 //        #if SPQRCODE_SPM
 //        return .module
 //        #else
-//        
+//
 //        // If installed via Cocoapods, should use bundle from podspec.
-//        
+//
 //        let path = Bundle(for: SPQRCode.self).path(forResource: "SPQRCode", ofType: "bundle") ?? ""
 //        let bundle = Bundle(path: path) ?? Bundle.main
 //        return bundle
 //        #endif
 //    }
-}
+    }
 }

@@ -8,21 +8,12 @@
 import SwiftUI
 import SwiftUIX
 
-struct WalletAccountEditor: View {
-    
-    @State var address: String
-    var callback:()->()
-    
-    @State private var current: WalletAccount.User
-    @State private var walletName: String
+// MARK: - WalletAccountEditor
 
-    private var emojis: [WalletAccount.Emoji]
-    private let columns: Int = 7
-    private let spacing: CGFloat = 8.0
-    
-    
-    
-    init(address: String, callback:@escaping ()->()) {
+struct WalletAccountEditor: View {
+    // MARK: Lifecycle
+
+    init(address: String, callback: @escaping () -> Void) {
         let user = WalletManager.shared.walletAccount.readInfo(at: address)
         self.address = address
         self.current = user
@@ -30,7 +21,13 @@ struct WalletAccountEditor: View {
         self.walletName = user.name
         self.callback = callback
     }
-    
+
+    // MARK: Internal
+
+    @State
+    var address: String
+    var callback: () -> Void
+
     var body: some View {
         VStack(spacing: 24) {
             Text("Edit Wallet")
@@ -38,27 +35,30 @@ struct WalletAccountEditor: View {
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.Theme.Text.black8)
                 .padding(.top, 24)
-            
+
             current.emoji.icon(size: 80)
-            
+
             VStack(spacing: 8) {
                 // Calculate number of full rows
                 let rows = emojis.count / columns
                 let remainingItems = emojis.count % columns
-                                    
+
                 // Create grid for full rows
                 ForEach(0..<rows, id: \.self) { rowIndex in
                     HStack(spacing: spacing) {
                         ForEach(0..<columns, id: \.self) { columnIndex in
                             let index = rowIndex * columns + columnIndex
                             let emoji = emojis[index]
-                            WalletAccountEditor.EmojiView(emoji: emoji, isSelected: self.current.emoji == emoji) {
+                            WalletAccountEditor.EmojiView(
+                                emoji: emoji,
+                                isSelected: self.current.emoji == emoji
+                            ) {
                                 updateEmoji(emoji: emoji)
                             }
                         }
                     }
                 }
-                                    
+
                 // Create grid for remaining items
                 if remainingItems > 0 {
                     HStack(spacing: spacing) {
@@ -66,7 +66,10 @@ struct WalletAccountEditor: View {
                         ForEach(0..<remainingItems, id: \.self) { columnIndex in
                             let index = rows * columns + columnIndex
                             let emoji = emojis[index]
-                            WalletAccountEditor.EmojiView(emoji: emoji, isSelected: self.current.emoji == emoji) {
+                            WalletAccountEditor.EmojiView(
+                                emoji: emoji,
+                                isSelected: self.current.emoji == emoji
+                            ) {
                                 updateEmoji(emoji: emoji)
                             }
                         }
@@ -74,14 +77,14 @@ struct WalletAccountEditor: View {
                     }
                 }
             }
-            
+
             // Text Field
             TextField("Wallet Name", text: $walletName)
                 .font(.inter(size: 14, weight: .semibold))
                 .frame(height: 56)
                 .padding(.horizontal, 16)
                 .border(Color.Theme.Text.black3, cornerRadius: 16)
-            
+
             HStack {
                 Button(action: {
                     onCancel()
@@ -95,7 +98,7 @@ struct WalletAccountEditor: View {
                         .cornerRadius(12)
                 }
                 .buttonStyle(ScaleButtonStyle())
-                                
+
                 Button(action: {
                     onSave()
                 }) {
@@ -119,34 +122,50 @@ struct WalletAccountEditor: View {
                 .cornerRadius(12)
                 .shadow(color: .black.opacity(0.12), radius: 6, x: 0, y: 24)
         }
-        .padding(.horizontal,18)
+        .padding(.horizontal, 18)
     }
-    
-    private func updateEmoji(emoji: WalletAccount.Emoji) {
-        if self.current.emoji.name == walletName {
-            walletName = emoji.name
-        }
-        self.current.emoji = emoji
-        self.current.name = walletName
-    }
-    
+
     func onCancel() {
         callback()
     }
-    
-    func onSave() {
 
-        WalletManager.shared.walletAccount.update(at: self.current.address, emoji: self.current.emoji, name: walletName)
+    func onSave() {
+        WalletManager.shared.walletAccount.update(
+            at: current.address,
+            emoji: current.emoji,
+            name: walletName
+        )
         onCancel()
     }
+
+    // MARK: Private
+
+    @State
+    private var current: WalletAccount.User
+    @State
+    private var walletName: String
+
+    private var emojis: [WalletAccount.Emoji]
+    private let columns: Int = 7
+    private let spacing: CGFloat = 8.0
+
+    private func updateEmoji(emoji: WalletAccount.Emoji) {
+        if current.emoji.name == walletName {
+            walletName = emoji.name
+        }
+        current.emoji = emoji
+        current.name = walletName
+    }
 }
+
+// MARK: WalletAccountEditor.EmojiView
 
 extension WalletAccountEditor {
     struct EmojiView: View {
         var emoji: WalletAccount.Emoji
         var isSelected: Bool
         var action: () -> Void
-        
+
         var body: some View {
             emoji.icon(size: 32)
                 .padding(2)
@@ -160,8 +179,6 @@ extension WalletAccountEditor {
 }
 
 #Preview {
-    WalletAccountEditor(address: "0x",callback: {
-        
-    })
+    WalletAccountEditor(address: "0x", callback: {})
         .padding(.horizontal, 16)
 }

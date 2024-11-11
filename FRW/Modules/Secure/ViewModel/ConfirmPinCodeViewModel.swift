@@ -8,11 +8,16 @@
 import SwiftUI
 
 class ConfirmPinCodeViewModel: ViewModel {
-    @Published var state: ConfirmPinCodeView.ViewState
+    // MARK: Lifecycle
 
     init(pin: String) {
-        state = .init(lastPin: pin)
+        self.state = .init(lastPin: pin)
     }
+
+    // MARK: Internal
+
+    @Published
+    var state: ConfirmPinCodeView.ViewState
 
     func trigger(_ input: ConfirmPinCodeView.Action) {
         switch input {
@@ -24,16 +29,18 @@ class ConfirmPinCodeViewModel: ViewModel {
                 }
                 return
             }
-            
+
             if !SecurityManager.shared.enablePinCode(confirmPIN) {
                 HUD.error(title: "enable_pin_code_failed".localized)
                 return
             }
-            
+
             HUD.success(title: "pin_code_enabled".localized)
-            
+
             DispatchQueue.main.async {
-                if let navi = Router.topNavigationController(), let existVC = navi.viewControllers.first { $0.navigationItem.title == "security".localized } {
+                if let navi = Router.topNavigationController(),
+                   let existVC = navi.viewControllers
+                   .first { $0.navigationItem.title == "security".localized } {
                     Router.route(to: RouteMap.Profile.security(true))
                 } else {
                     Router.popToRoot()

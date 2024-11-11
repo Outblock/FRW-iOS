@@ -19,14 +19,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import UIKit
 import SparrowKit
 import SwiftUI
+import UIKit
 
 class SPQRDetailButton: SPDimmedButton {
-    
     // MARK: - Init
-    
+
     override func commonInit() {
         super.commonInit()
         titleLabel?.lineBreakMode = .byTruncatingTail
@@ -35,9 +34,9 @@ class SPQRDetailButton: SPDimmedButton {
         contentEdgeInsets = .init(horizontal: 10, vertical: 6)
         applyDefaultAppearance(with: .init(content: .white, background: UIColor.LL.Primary.salmonPrimary))
     }
-    
+
     // MARK: - Layout
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
         roundMinimumSide()

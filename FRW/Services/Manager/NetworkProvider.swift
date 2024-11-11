@@ -18,7 +18,7 @@ extension LocalUserDefaults.FlowNetworkType {
             return 646
         }
     }
-    
+
     var evmUrl: URL? {
         switch self {
         case .testnet:

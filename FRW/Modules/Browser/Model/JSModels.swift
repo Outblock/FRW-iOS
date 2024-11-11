@@ -7,19 +7,25 @@
 
 import UIKit
 
+// MARK: - FCLResponseProtocol
+
 protocol FCLResponseProtocol {
     func uniqueId() -> String
 }
+
+// MARK: - JSFCLServiceModelWrapper
 
 struct JSFCLServiceModelWrapper: Codable {
     let service: Service
 }
 
-// MARK: -
+// MARK: - FCLIdentity
 
 struct FCLIdentity: Codable {
     let address: String
 }
+
+// MARK: - FCLProvider
 
 struct FCLProvider: Codable {
     let address: String
@@ -27,6 +33,8 @@ struct FCLProvider: Codable {
     let icon: String
     let name: String
 }
+
+// MARK: - FCLExtension
 
 struct FCLExtension: Codable {
     let endpoint: String?
@@ -40,14 +48,20 @@ struct FCLExtension: Codable {
     let uid: String?
 }
 
+// MARK: - FCLSimpleService
+
 struct FCLSimpleService: Codable {
     let type: FCLServiceType
 }
+
+// MARK: - FCLApp
 
 struct FCLApp: Codable {
     let icon: String?
     let title: String?
 }
+
+// MARK: - FCLClient
 
 struct FCLClient: Codable {
     let extensions: [FCLExtension]?
@@ -57,13 +71,17 @@ struct FCLClient: Codable {
     let network: String?
 }
 
+// MARK: - FCLServices
+
 struct FCLServices: Codable {
-    let openIDScopes: String?
-    
     enum CodingKeys: String, CodingKey {
         case openIDScopes = "OpenID.scopes"
     }
+
+    let openIDScopes: String?
 }
+
+// MARK: - FCLResponseConfig
 
 struct FCLResponseConfig: Codable {
     let app: FCLApp?
@@ -71,29 +89,31 @@ struct FCLResponseConfig: Codable {
     let services: FCLServices?
 }
 
-// MARK: -
+// MARK: - FCLSimpleResponse
 
 struct FCLSimpleResponse: Codable {
     let service: FCLSimpleService
     let type: String
     let config: FCLResponseConfig?
-    
+
     var serviceType: FCLServiceType {
-        return service.type
+        service.type
     }
-    
+
     var network: String? {
-        return config?.client?.network
+        config?.client?.network
     }
-    
+
     var networkIsMatch: Bool {
         guard let network = network, !network.isEmpty else {
             return true
         }
-        
+
         return network.lowercased() == LocalUserDefaults.shared.flowNetwork.rawValue
     }
 }
+
+// MARK: - AuthzTransaction
 
 struct AuthzTransaction: Codable {
     let url: String?

@@ -7,15 +7,21 @@
 
 import Foundation
 
+// MARK: - CheckUserResponse
+
 struct CheckUserResponse: Codable {
     let unique: Bool
     let username: String
 }
 
+// MARK: - LoginResponse
+
 struct LoginResponse: Codable {
     let customToken: String
     let id: String
 }
+
+// MARK: - RegisterResponse
 
 struct RegisterResponse: Codable {
     let customToken: String
@@ -23,12 +29,16 @@ struct RegisterResponse: Codable {
     let txId: String?
 }
 
+// MARK: - UserInfoResponse
+
 struct UserInfoResponse: Codable {
     let avatar: String
     let nickname: String
     let username: String
     let `private`: Int
 }
+
+// MARK: - UserWalletResponse
 
 struct UserWalletResponse: Codable {
     let id: String
@@ -47,15 +57,20 @@ struct UserWalletResponse: Codable {
 //
 //        return nil
 //    }
-    
+
     var currentNetworkWalletModel: WalletResponse? {
-        return wallets?.first(where: { $0.chainId == LocalUserDefaults.shared.flowNetwork.rawValue && $0.blockchain != nil })
+        wallets?
+            .first(where: {
+                $0.chainId == LocalUserDefaults.shared.flowNetwork.rawValue && $0.blockchain != nil
+            })
     }
-    
+
     func getNetworkWalletModel(network: LocalUserDefaults.FlowNetworkType) -> WalletResponse? {
-        return wallets?.first(where: { $0.chainId == network.rawValue && $0.blockchain != nil })
+        wallets?.first(where: { $0.chainId == network.rawValue && $0.blockchain != nil })
     }
 }
+
+// MARK: - WalletResponse
 
 struct WalletResponse: Codable {
     let color: String?
@@ -74,13 +89,15 @@ struct WalletResponse: Codable {
     }
 
     var getAddress: String? {
-        return blockchain?.first?.address
+        blockchain?.first?.address
     }
 
     var getName: String? {
-        return blockchain?.first?.name
+        blockchain?.first?.name
     }
 }
+
+// MARK: - BlockChainResponse
 
 struct BlockChainResponse: Codable {
     let id: Int
@@ -89,6 +106,8 @@ struct BlockChainResponse: Codable {
     let address: String?
     let coins: [String]?
 }
+
+// MARK: - UserSearchResponse
 
 struct UserSearchResponse: Codable {
     let users: [UserInfo]?

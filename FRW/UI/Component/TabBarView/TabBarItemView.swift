@@ -5,8 +5,8 @@
 //  Created by cat on 2022/5/25.
 //
 
-import SwiftUI
 import Lottie
+import SwiftUI
 
 struct TabBarItemView<T: Hashable>: View {
     var pageModel: TabBarPageModel<T>
@@ -16,12 +16,12 @@ struct TabBarItemView<T: Hashable>: View {
     var animationView: some View {
         ResizableLottieView(lottieView: pageModel.lottieView,
                             color: selected == pageModel.tag ? pageModel.color : Color.gray)
-        .aspectRatio(contentMode: .fit)
-        .frame(width: 30, height: 30)
-        .frame(maxWidth: .infinity)
-        .contentShape(Rectangle())
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 30, height: 30)
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
     }
-    
+
     var body: some View {
         Button(action: {
             withAnimation(.spring()) { selected = pageModel.tag }
@@ -44,17 +44,16 @@ struct TabBarItemView<T: Hashable>: View {
 }
 
 struct WalletView_Previews: PreviewProvider {
-    
     static let animation = AnimationView(name: "Copy", bundle: .main)
-    
+
     static var previews: some View {
-            ResizableLottieView(lottieView: animation,
-                                color: Color.gray)
+        ResizableLottieView(lottieView: animation,
+                            color: Color.gray)
 //        LottieView(name: "Coin2", loopMode: .loop)
             .aspectRatio(contentMode: .fit)
             .frame(width: 300, height: 300)
             .frame(maxWidth: .infinity)
-            .onAppear{
+            .onAppear {
                 animation.play()
             }.onTapGesture {
                 animation.play()

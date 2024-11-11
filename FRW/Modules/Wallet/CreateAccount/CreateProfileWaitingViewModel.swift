@@ -5,27 +5,16 @@
 //  Created by cat on 2024/6/5.
 //
 
+import Combine
+import Flow
 import Foundation
 import SwiftUI
-import Flow
-import Combine
 import SwiftUIPager
 
 class CreateProfileWaitingViewModel: ObservableObject {
-    
-    @Published var animationPhase: AnimationPhase = .initial
-    @Published var page: Page = .first()
-    @Published var createFinished = false
-    @Published var currentPage: Int = 0
-    
-    private var timer: Timer?
-    
-    private var cancellableSet = Set<AnyCancellable>()
+    // MARK: Lifecycle
 
-    var txId: Flow.ID = Flow.ID(hex: "")
-    var callback:(Bool)->()
-    
-    init(txId: String, callback:@escaping (Bool)->()) {
+    init(txId: String, callback: @escaping (Bool) -> Void) {
         self.txId = Flow.ID(hex: txId)
         self.callback = callback
 
@@ -34,19 +23,61 @@ class CreateProfileWaitingViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .map { $0 }
             .sink { walletInfo in
-                let isEmptyBlockChain = walletInfo?.currentNetworkWalletModel?.isEmptyBlockChain ?? true
+                let isEmptyBlockChain = walletInfo?.currentNetworkWalletModel?
+                    .isEmptyBlockChain ?? true
                 if !isEmptyBlockChain {
                     self.createFinished = true
                 }
-                
+
             }.store(in: &cancellableSet)
-        DispatchQueue.main.asyncAfter(deadline: .now()+3, execute: DispatchWorkItem(block: {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: DispatchWorkItem(block: {
             self.startTimer()
         }))
-        
     }
-    
-    @objc private func onHolderStatusChanged(noti: Notification) {
+
+    // MARK: Internal
+
+    @Published
+    var animationPhase: AnimationPhase = .initial
+    @Published
+    var page: Page = .first()
+    @Published
+    var createFinished = false
+    @Published
+    var currentPage: Int = 0
+
+    var txId = Flow.ID(hex: "")
+    var callback: (Bool) -> Void
+
+    func onPageIndexChangeAction(_ index: Int) {
+        withAnimation(.default) {
+            currentPage = index
+        }
+    }
+
+    func onPageDrag(_ isDraging: Bool) {
+        if isDraging {
+            stopTimer()
+        } else {
+            startTimer()
+        }
+    }
+
+    func onConfirm() {
+        HUD.success(title: "create_user_success".localized)
+        stopTimer()
+        callback(true)
+        ConfettiManager.show()
+    }
+
+    // MARK: Private
+
+    private var timer: Timer?
+
+    private var cancellableSet = Set<AnyCancellable>()
+
+    @objc
+    private func onHolderStatusChanged(noti: Notification) {
         guard let holder = noti.object as? TransactionManager.TransactionHolder,
               holder.transactionId.hex == txId.hex
         else {
@@ -55,53 +86,38 @@ class CreateProfileWaitingViewModel: ObservableObject {
         guard let current = AnimationPhase(rawValue: holder.flowStatus.rawValue) else {
             return
         }
-        
+
         animationPhase = current
     }
-    
-    func onPageIndexChangeAction(_ index: Int) {
-        withAnimation(.default) {
-            currentPage = index
-        }
-    }
-    
-    func onPageDrag(_ isDraging: Bool) {
-        if isDraging {
-            stopTimer()
-        }else {
-            startTimer()
-        }
-    }
-    
-    func onConfirm() {
-        HUD.success(title: "create_user_success".localized)
-        stopTimer()
-        callback(true)
-        ConfettiManager.show()
-    }
-    
+
     private func startTimer() {
         stopTimer()
-        let timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(onTimer), userInfo: nil, repeats: true)
+        let timer = Timer.scheduledTimer(
+            timeInterval: 10,
+            target: self,
+            selector: #selector(onTimer),
+            userInfo: nil,
+            repeats: true
+        )
         self.timer = timer
         RunLoop.main.add(timer, forMode: .common)
     }
-    
+
     private func stopTimer() {
         if let current = timer {
             current.invalidate()
             timer = nil
         }
     }
-    
-    @objc private func onTimer() {
+
+    @objc
+    private func onTimer() {
         if page.index == 2 {
             page.update(.moveToFirst)
         } else {
             withAnimation {
                 page.update(.next)
             }
-            
         }
         currentPage = page.index
     }

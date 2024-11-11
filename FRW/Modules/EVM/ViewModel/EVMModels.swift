@@ -5,15 +5,25 @@
 //  Created by cat on 2024/4/24.
 //
 
-import Foundation
-import web3swift
-import Web3Core
 import BigInt
+import Foundation
+import Web3Core
+import web3swift
+
+// MARK: - EVMTransactionExecuted
 
 struct EVMTransactionExecuted: Codable {
-    let hash: String?
-    let blockHash: String?    
+    let hash: [UInt8]?
+
+    var hashString: String? {
+        guard let hash = hash else {
+            return nil
+        }
+        return Data(hash).hexValue.addHexPrefix()
+    }
 }
+
+// MARK: - EVMTransactionReceive
 
 struct EVMTransactionReceive: Codable {
     let to: String?
@@ -21,28 +31,27 @@ struct EVMTransactionReceive: Codable {
     let value: String?
     let gas: String?
     let data: String?
-    
+
     var amount: String {
         let defaultValue = "0"
         guard let balance = value else { return defaultValue }
         guard let value = BigUInt(from: balance) else { return defaultValue }
-        return Utilities.formatToPrecision(value)
+        return Utilities.formatToPrecision(value, formattingDecimals: 64)
     }
-    
+
     var gasValue: UInt64 {
         let defaultValue: UInt64 = WalletManager.defaultGas
         guard let gasStr = gas else { return defaultValue }
         guard let value = UInt64(gasStr.stripHexPrefix(), radix: 16) else { return defaultValue }
         return value
     }
-    
+
     var dataValue: Data? {
         guard let dataStr = data else { return nil }
-        guard let value = BigUInt(from: dataStr) else { return nil }
-        return Data(from: value.hexString)
+        return Data(hex: dataStr)
     }
-    
+
     var toAddress: String? {
-        return to?.stripHexPrefix()
+        to?.stripHexPrefix()
     }
 }

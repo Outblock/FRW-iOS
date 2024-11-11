@@ -5,8 +5,8 @@
 //  Created by Hao Fu on 8/9/2022.
 //
 
-import Foundation
 import Flow
+import Foundation
 
 struct FCLVoucher: Codable {
     let cadence: Flow.Script
@@ -17,13 +17,13 @@ struct FCLVoucher: Codable {
     let computeLimit: UInt64
     let authorizers: [Flow.Address]
     let payloadSigs: [Signature]
-    
+
     struct ProposalKey: Codable {
         let address: Flow.Address
         let keyId: Int
         let sequenceNum: UInt64
     }
-    
+
     struct Signature: Codable {
         let address: Flow.Address
         let keyId: Int
@@ -42,12 +42,11 @@ struct SignPayerRequest: Codable {
 
 struct PayerMessage: Codable {
     let envelopeMessage: String
-    
+
     enum CodingKeys: String, CodingKey {
         case envelopeMessage = "envelope_message"
     }
 }
-
 
 extension Flow.Transaction {
     var voucher: FCLVoucher {
@@ -60,10 +59,10 @@ extension Flow.Transaction {
                                                        sequenceNum: UInt64(proposalKey.sequenceNumber)),
                    computeLimit: UInt64(gasLimit),
                    authorizers: authorizers,
-                   payloadSigs: payloadSignatures.compactMap{
-            FCLVoucher.Signature(address: $0.address,
-                                 keyId: $0.keyIndex,
-                                 sig: $0.signature.hexValue)
-        })
+                   payloadSigs: payloadSignatures.compactMap {
+                       FCLVoucher.Signature(address: $0.address,
+                                            keyId: $0.keyIndex,
+                                            sig: $0.signature.hexValue)
+                   })
     }
 }

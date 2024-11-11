@@ -11,47 +11,50 @@ import SwiftUI
 
 typealias PresentActionView = PresentActionDelegate & View
 
+// MARK: - PresentActionDelegate
 
 protocol PresentActionDelegate {
     func customViewDidDismiss()
     var detents: [UISheetPresentationController.Detent] { get }
     var prefersGrabberVisible: Bool { get }
 
-    var changeHeight: (() -> ())? { get set }
+    var changeHeight: (() -> Void)? { get set }
 }
 
 extension PresentActionDelegate {
-    
     var detents: [UISheetPresentationController.Detent] {
-        return [.medium()]
+        [.medium()]
     }
 
     var prefersGrabberVisible: Bool {
-        return true
+        true
     }
 
     func customViewDidDismiss() {}
 }
 
+// MARK: - PresentHostingController
 
+class PresentHostingController<Content: PresentActionView>: UIHostingController<Content>,
+    UISheetPresentationControllerDelegate {
+    // MARK: Lifecycle
 
-
-
-// MARK: PresentHostingController
-class PresentHostingController<Content: PresentActionView>: UIHostingController<Content>, UISheetPresentationControllerDelegate {
     override public init(rootView: Content) {
         super.init(rootView: rootView)
-        self.overrideUserInterfaceStyle = ThemeManager.shared.getUIKitStyle()
+        overrideUserInterfaceStyle = ThemeManager.shared.getUIKitStyle()
     }
 
     @available(*, unavailable)
-    @MainActor dynamic required init?(coder aDecoder: NSCoder) {
+    @MainActor
+    dynamic required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .clear
+        view.backgroundColor = .clear
 
         // setting presentation controller properties...
         if let presentationController = presentationController as? UISheetPresentationController {
@@ -69,13 +72,14 @@ class PresentHostingController<Content: PresentActionView>: UIHostingController<
             return
         }
         let oldValue = sheet.selectedDetentIdentifier ?? .medium
-        
+
         sheet.animateChanges {
             sheet.selectedDetentIdentifier = oldValue.oppositeValue
         }
     }
 
-    @objc func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+    @objc
+    func presentationControllerDidDismiss(_: UIPresentationController) {
         rootView.customViewDidDismiss()
     }
 }

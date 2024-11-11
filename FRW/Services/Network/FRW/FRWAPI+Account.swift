@@ -8,6 +8,8 @@
 import Foundation
 import Moya
 
+// MARK: - FRWAPI.Account
+
 extension FRWAPI {
     enum Account {
         case flowScanQuery(String)
@@ -16,15 +18,17 @@ extension FRWAPI {
     }
 }
 
+// MARK: - FRWAPI.Account + TargetType, AccessTokenAuthorizable
+
 extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
-        return .bearer
+        .bearer
     }
-    
+
     var baseURL: URL {
-        return Config.get(.lilico)
+        Config.get(.lilico)
     }
-    
+
     var path: String {
         switch self {
         case .flowScanQuery:
@@ -35,7 +39,7 @@ extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
             return "/v1/account/tokentransfers"
         }
     }
-    
+
     var method: Moya.Method {
         switch self {
         case .flowScanQuery:
@@ -44,20 +48,29 @@ extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
             return .get
         }
     }
-    
+
     var task: Task {
         switch self {
-        case .flowScanQuery(let query):
-            return .requestParameters(parameters: ["address": query], encoding: URLEncoding.queryString)
-        case .transfers(let request):
-            return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding.queryString)
-        case .tokenTransfers(let request):
-            return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding.queryString)
+        case let .flowScanQuery(query):
+            return .requestParameters(
+                parameters: ["address": query],
+                encoding: URLEncoding.queryString
+            )
+        case let .transfers(request):
+            return .requestParameters(
+                parameters: request.dictionary ?? [:],
+                encoding: URLEncoding.queryString
+            )
+        case let .tokenTransfers(request):
+            return .requestParameters(
+                parameters: request.dictionary ?? [:],
+                encoding: URLEncoding.queryString
+            )
         }
     }
-    
-    var headers: [String : String]? {
-        return FRWAPI.commonHeaders
+
+    var headers: [String: String]? {
+        FRWAPI.commonHeaders
     }
 }
 
@@ -66,16 +79,17 @@ extension FRWAPI.Account {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             return 0
         }
-        
-        let response: FlowTransferCountResponse = try await Network.request(FRWAPI.Account.flowScanQuery(address))
+
+        let response: FlowTransferCountResponse = try await Network
+            .request(FRWAPI.Account.flowScanQuery(address))
         return response.data?.participationsAggregate?.aggregate?.count ?? 0
     }
-    
+
     static func fetchAccountTransfers() async throws -> ([FlowScanTransaction], Int) {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             return ([], 0)
         }
-        
+
         let script = """
            query AccountTransfers {
                account(id: "\(address)") {
@@ -110,28 +124,29 @@ extension FRWAPI.Account {
                }
            }
         """
-        
-        let response: FlowScanAccountTransferResponse = try await Network.request(FRWAPI.Account.flowScanQuery(script))
-        
+
+        let response: FlowScanAccountTransferResponse = try await Network
+            .request(FRWAPI.Account.flowScanQuery(script))
+
         guard let edges = response.data?.account?.transactions?.edges else {
             return ([], 0)
         }
-        
+
         var results = [FlowScanTransaction]()
         for edge in edges {
             if let transaction = edge?.node, transaction.hash != nil, transaction.time != nil {
                 results.append(transaction)
             }
         }
-        
+
         return (results, response.data?.account?.transactionCount ?? results.count)
     }
-    
+
     static func fetchTokenTransfers(contractId: String) async throws -> [FlowScanTransaction] {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             return []
         }
-        
+
         let script = """
            query AccountTransfers {
                 account(id: "\(address)") {
@@ -183,20 +198,22 @@ extension FRWAPI.Account {
                 }
             }
         """
-        
-        let response: FlowScanTokenTransferResponse = try await Network.request(FRWAPI.Account.flowScanQuery(script))
-        
+
+        let response: FlowScanTokenTransferResponse = try await Network
+            .request(FRWAPI.Account.flowScanQuery(script))
+
         guard let edges = response.data?.account?.tokenTransfers?.edges else {
             return []
         }
-        
+
         var results = [FlowScanTransaction]()
         for edge in edges {
-            if let transaction = edge?.node?.transaction, transaction.hash != nil, transaction.time != nil {
+            if let transaction = edge?.node?.transaction, transaction.hash != nil,
+               transaction.time != nil {
                 results.append(transaction)
             }
         }
-        
+
         return results
     }
 }

@@ -5,8 +5,8 @@
 //  Created by cat on 2024/1/29.
 //
 
-import Foundation
 import Flow
+import Foundation
 
 class AccountKeyManager {
     class func revokeKey(at index: Int) async throws -> Bool {
@@ -20,7 +20,10 @@ class AccountKeyManager {
         guard index != WalletManager.shared.keyIndex else {
             return false
         }
-        let flowId = try await FlowNetwork.revokeAccountKey(by: index, at: Flow.Address(hex: address))
+        let flowId = try await FlowNetwork.revokeAccountKey(
+            by: index,
+            at: Flow.Address(hex: address)
+        )
         let holder = TransactionManager.TransactionHolder(id: flowId, type: .addToken, data: data)
         TransactionManager.shared.newTransaction(holder: holder)
         let result = try await flowId.onceSealed()

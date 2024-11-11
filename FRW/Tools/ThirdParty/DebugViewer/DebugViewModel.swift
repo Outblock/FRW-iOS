@@ -1,6 +1,6 @@
 //
 //  DebugViewModel.swift
-//  
+//
 //
 //  Created by Jin Kim on 6/13/22.
 //
@@ -16,7 +16,7 @@ open class DebugViewModel {
 
     public let name: String
     public let detail: String
-    
+
     var showDetails: Bool = false
 
     public init(

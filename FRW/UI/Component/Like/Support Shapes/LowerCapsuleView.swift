@@ -9,16 +9,18 @@
 import SwiftUI
 
 struct LowerCapsuleView: View {
-    
     let likeColor: Color
-    // MARK:- variables
+
+    // MARK: - variables
+
     @Binding var isAnimating: Bool
-    
-    // MARK:- views
+
+    // MARK: - views
+
     var body: some View {
         ZStack {
             ShrinkingCapsule(likeColor: likeColor, rotationAngle: .degrees(16), offset: CGSize(width: -42.5, height: 10), isAnimating: $isAnimating)
-            ShrinkingCapsule(likeColor: likeColor, rotationAngle: .degrees( -16), offset: CGSize(width: 42.5, height: 10), isAnimating: $isAnimating)
+            ShrinkingCapsule(likeColor: likeColor, rotationAngle: .degrees(-16), offset: CGSize(width: 42.5, height: 10), isAnimating: $isAnimating)
             ShrinkingCapsule(likeColor: likeColor, rotationAngle: .degrees(48), offset: CGSize(width: -107, height: -30), isAnimating: $isAnimating)
             ShrinkingCapsule(likeColor: likeColor, rotationAngle: .degrees(-48), offset: CGSize(width: 107, height: -30), isAnimating: $isAnimating)
             ShrinkingCapsule(likeColor: likeColor, rotationAngle: .degrees(82), offset: CGSize(width: -142, height: -95), isAnimating: $isAnimating)

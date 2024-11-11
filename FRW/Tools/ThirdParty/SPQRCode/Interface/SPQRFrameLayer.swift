@@ -19,16 +19,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import UIKit
 import SwiftUI
+import UIKit
 
 class SPQRFrameLayer: CAShapeLayer {
-    
-    private let cLength: CGFloat
-    private let cRadius: CGFloat
-    
+    // MARK: Lifecycle
+
     // MARK: - Init
-    
+
     init(
         length: CGFloat = 16.0,
         radius: CGFloat = 16.0,
@@ -37,68 +35,76 @@ class SPQRFrameLayer: CAShapeLayer {
     ) {
         self.cLength = length
         self.cRadius = radius
-        
+
         super.init()
-        
-        self.strokeColor = lineColor.cgColor
-        self.fillColor = UIColor.clear.cgColor
-        
+
+        strokeColor = lineColor.cgColor
+        fillColor = UIColor.clear.cgColor
+
         self.lineWidth = lineWidth
     }
-    
+
     override init(layer: Any) {
         self.cLength = 16
         self.cRadius = 16
         super.init(layer: layer)
     }
-    
-    required init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
+    // MARK: Internal
+
     override func action(forKey event: String) -> CAAction? {
         if event == "path" {
             let animation: CABasicAnimation = .init(keyPath: event)
-            
+
             animation.duration = 0.3
             animation.timingFunction = CATransaction.animationTimingFunction()
-            
+
             return animation
         }
-        
+
         return super.action(forKey: event)
     }
-    
+
     // MARK: - Actions
-    
+
     func update(using points: [CGPoint]) {
         let corners = buildCorners(for: points)
-        
+
         let framePath: UIBezierPath = .init()
-        
+
         for corner in corners {
             guard let cStartPoint = corner.startPoint(using: corners),
                   let cPreCurvePoint = corner.preCurvePoint(using: corners),
                   let cPostCurvePoint = corner.postCurvePoint(using: corners),
                   let cEndPoint = corner.endPoint(using: corners)
             else { return }
-            
+
             framePath.move(to: cStartPoint)
             framePath.addLine(to: cPreCurvePoint)
             framePath.addQuadCurve(to: cPostCurvePoint, controlPoint: corner.point)
             framePath.addLine(to: cEndPoint)
         }
-        
+
         path = framePath.cgPath
     }
-    
+
     func dissapear() {
         path = nil
     }
-    
+
+    // MARK: Private
+
+    private let cLength: CGFloat
+    private let cRadius: CGFloat
+
     private func buildCorners(for points: [CGPoint]) -> [SPQRCorner] {
         var corners: [SPQRCorner] = .init()
-        
+
         for corner in SPQRCorner.Kind.allCases {
             corners.append(
                 .init(
@@ -109,7 +115,7 @@ class SPQRFrameLayer: CAShapeLayer {
                 )
             )
         }
-        
+
         return corners
     }
 }

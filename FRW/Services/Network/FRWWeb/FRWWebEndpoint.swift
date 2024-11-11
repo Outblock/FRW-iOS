@@ -8,18 +8,22 @@
 import Foundation
 import Moya
 
+// MARK: - FRWWebEndpoint
+
 enum FRWWebEndpoint {
     case txTemplate(TxTemplateRequest)
     case swapEstimate(SwapEstimateRequest)
 }
 
+// MARK: TargetType
+
 extension FRWWebEndpoint: TargetType {
     var authorizationType: AuthorizationType? {
-        return .bearer
+        .bearer
     }
-    
+
     var baseURL: URL {
-        return URL(string: "https://lilico.app/api/")!
+        URL(string: "https://lilico.app/api/")!
     }
 
     var path: String {
@@ -44,12 +48,15 @@ extension FRWWebEndpoint: TargetType {
         switch self {
         case let .txTemplate(request):
             return .requestJSONEncodable(request)
-        case .swapEstimate(let request):
-            return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding.queryString)
+        case let .swapEstimate(request):
+            return .requestParameters(
+                parameters: request.dictionary ?? [:],
+                encoding: URLEncoding.queryString
+            )
         }
     }
 
     var headers: [String: String]? {
-        return FRWAPI.commonHeaders
+        FRWAPI.commonHeaders
     }
 }

@@ -9,20 +9,19 @@
 import SwiftUI
 
 struct FloatingLike: View {
-    
     let likeColor: Color
     let animationDuration: TimeInterval = 0.45
     let animation = Animation.spring(response: 0.75).speed(0.75)
-    
+
     @State var scale: CGFloat = 1.25
-    @State var offset: CGSize = CGSize(width: 0, height: 0)
-    @State var rotationAngle: Angle = Angle.degrees(-4)
+    @State var offset = CGSize(width: 0, height: 0)
+    @State var rotationAngle = Angle.degrees(-4)
     @State var opacity: Double = 1
-    
+
     @Binding var isAnimating: Bool
-    
+
     var body: some View {
-        ZStack{
+        ZStack {
             Capsule(style: .circular)
                 .fill(likeColor)
             HStack {
@@ -36,22 +35,23 @@ struct FloatingLike: View {
                 Spacer()
             }
         }.frame(width: 165, height: 130, alignment: .center)
-        .rotationEffect(rotationAngle)
-        .scaleEffect(scale)
-        .offset(offset)
-        .opacity(opacity)
-        .onAppear() {
-            self.scale = 0.1
-            Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { checkingTimer in
-                if (isAnimating) {
-                    checkingTimer.invalidate()
-                    floatCapsule()
+            .rotationEffect(rotationAngle)
+            .scaleEffect(scale)
+            .offset(offset)
+            .opacity(opacity)
+            .onAppear {
+                self.scale = 0.1
+                Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { checkingTimer in
+                    if isAnimating {
+                        checkingTimer.invalidate()
+                        floatCapsule()
+                    }
                 }
             }
-        }
     }
-    
-    // MARK:- functions
+
+    // MARK: - functions
+
     func floatCapsule() {
         withAnimation(animation) {
             self.scale = 0.75
@@ -66,13 +66,13 @@ struct FloatingLike: View {
                 self.rotationAngle = .degrees(10)
             }
         }
-        Timer.scheduledTimer(withTimeInterval: animationDuration , repeats: false) { _ in
+        Timer.scheduledTimer(withTimeInterval: animationDuration, repeats: false) { _ in
             withAnimation(animation) {
                 self.offset = CGSize(width: 0, height: -300)
                 self.rotationAngle = .degrees(0)
             }
         }
-        
+
         Timer.scheduledTimer(withTimeInterval: animationDuration * 1.5, repeats: false) { _ in
             withAnimation(animation) {
                 self.opacity = 0

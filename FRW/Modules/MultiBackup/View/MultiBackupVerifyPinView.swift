@@ -8,30 +8,31 @@
 import SwiftUI
 
 struct MultiBackupVerifyPinView: RouteableView {
-    @StateObject private var viewModel: MultiBackupVerifyPinViewModel
-    @FocusState private var pinCodeViewIsFocus: Bool
-    var callback: MultiBackupVerifyPinViewModel.VerifyCallback? = nil
-    
-    func backButtonAction() {
-        Router.dismiss()
-        callback?(false, "")
-    }
-    
-    init(from: MultiBackupVerifyPinViewModel.From,
-         callback: MultiBackupVerifyPinViewModel.VerifyCallback?)
-    {
+    // MARK: Lifecycle
+
+    init(
+        from: MultiBackupVerifyPinViewModel.From,
+        callback: MultiBackupVerifyPinViewModel.VerifyCallback?
+    ) {
         self.callback = callback
-        _viewModel = StateObject(wrappedValue: MultiBackupVerifyPinViewModel(from: from, callback: callback))
+        _viewModel = StateObject(wrappedValue: MultiBackupVerifyPinViewModel(
+            from: from,
+            callback: callback
+        ))
     }
-    
+
+    // MARK: Internal
+
+    var callback: MultiBackupVerifyPinViewModel.VerifyCallback?
+
     var title: String {
-        return " "
+        " "
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             Spacer()
-            
+
             VStack(alignment: .leading, spacing: 70) {
                 HStack {
                     Text("verify".localized)
@@ -43,12 +44,12 @@ struct MultiBackupVerifyPinView: RouteableView {
                         .foregroundColor(Color.Theme.Accent.green)
                 }
                 .font(.inter(size: 36, weight: .bold))
-                
+
                 Text(viewModel.desc)
                     .font(.LL.body)
                     .foregroundColor(.LL.note)
                     .padding(.top, 1)
-                
+
                 PinCodeTextField(text: $viewModel.inputPin)
                     .keyboardType(.numberPad)
                     .fixedSize()
@@ -73,6 +74,18 @@ struct MultiBackupVerifyPinView: RouteableView {
         .backgroundFill(Color.LL.Neutrals.background)
         .applyRouteable(self)
     }
+
+    func backButtonAction() {
+        Router.dismiss()
+        callback?(false, "")
+    }
+
+    // MARK: Private
+
+    @StateObject
+    private var viewModel: MultiBackupVerifyPinViewModel
+    @FocusState
+    private var pinCodeViewIsFocus: Bool
 }
 
 #Preview {

@@ -10,13 +10,15 @@
 import CollectionViewPagingLayout
 import IrregularGradient
 import Kingfisher
+import Lottie
 import SwiftUI
 import WebKit
-import Lottie
+
+// MARK: - NFTTabScreen + AppTabBarPageProtocol
 
 extension NFTTabScreen: AppTabBarPageProtocol {
     static func tabTag() -> AppTabType {
-        return .nft
+        .nft
     }
 
     static func iconName() -> String {
@@ -24,16 +26,21 @@ extension NFTTabScreen: AppTabBarPageProtocol {
     }
 
     static func color() -> SwiftUI.Color {
-        return .LL.Secondary.mangoNFT
+        .LL.Secondary.mangoNFT
     }
 }
 
+// MARK: - NFTTabScreen
+
 struct NFTTabScreen: View {
-    @StateObject var viewModel = NFTTabViewModel()
+    @StateObject
+    var viewModel = NFTTabViewModel()
 
-    @State var offset: CGFloat = 0
+    @State
+    var offset: CGFloat = 0
 
-    @Namespace var NFTImageEffect
+    @Namespace
+    var NFTImageEffect
 
     let modifier = AnyModifier { request in
         var r = request
@@ -59,33 +66,35 @@ struct NFTTabScreen: View {
     }
 }
 
+// MARK: NFTTabScreen.Layout
+
 extension NFTTabScreen {
     private enum Layout {
         static let menuHeight = 32.0
     }
 }
 
-// MARK: TopBar
+// MARK: NFTTabScreen.TopBar
 
 extension NFTTabScreen {
     struct TopBar: View {
-        @Binding var listStyle: NFTTabScreen.ViewStyle
-        @Binding var offset: CGFloat
+        // MARK: Internal
 
-        @EnvironmentObject private var viewModel: NFTTabViewModel
+        @Binding
+        var listStyle: NFTTabScreen.ViewStyle
+        @Binding
+        var offset: CGFloat
 
         var body: some View {
             VStack(spacing: 0) {
                 Spacer()
-                
+
                 HStack(alignment: .center) {
                     NFTSegmentControl(currentTab: $listStyle, styles: [.normal, .grid])
-                    
+
                     Spacer()
 
-                    Button {
-                        
-                    } label: {
+                    Button {} label: {
                         Image(systemName: "plus")
                             .foregroundColor(.white)
                             .padding(8)
@@ -105,16 +114,23 @@ extension NFTTabScreen {
                 Color.LL.Shades.front.opacity(offset < 0 ? abs(offset / 100.0) : 0)
             )
         }
+
+        // MARK: Private
+
+        @EnvironmentObject
+        private var viewModel: NFTTabViewModel
     }
 }
 
-// MARK: Collection Bar
+// MARK: NFTTabScreen.CollectionBar
 
 extension NFTTabScreen {
     struct CollectionBar: View {
         enum BarStyle {
             case horizontal
             case vertical
+
+            // MARK: Internal
 
             mutating func toggle() {
                 switch self {
@@ -126,8 +142,10 @@ extension NFTTabScreen {
             }
         }
 
-        @Binding var barStyle: NFTTabScreen.CollectionBar.BarStyle
-        @Binding var listStyle: String
+        @Binding
+        var barStyle: NFTTabScreen.CollectionBar.BarStyle
+        @Binding
+        var listStyle: String
 
         var body: some View {
             VStack {
@@ -142,7 +160,10 @@ extension NFTTabScreen {
                         Button {
                             barStyle.toggle()
                         } label: {
-                            Image(barStyle == .horizontal ? .Image.Logo.gridHLayout : .Image.Logo.gridHLayout)
+                            Image(
+                                barStyle == .horizontal ? .Image.Logo.gridHLayout : .Image.Logo
+                                    .gridHLayout
+                            )
                         }
                     }
                     .foregroundColor(.LL.text)
@@ -161,8 +182,7 @@ extension NFTTabScreen {
     }
 }
 
-
-// MARK: Preview
+// MARK: - NFTTabScreen_Previews
 
 struct NFTTabScreen_Previews: PreviewProvider {
     static var previews: some View {

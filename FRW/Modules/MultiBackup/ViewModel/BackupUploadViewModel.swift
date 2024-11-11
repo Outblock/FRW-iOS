@@ -8,9 +8,13 @@
 import Foundation
 import SwiftUI
 
+// MARK: - BackupProcess
+
 enum BackupProcess {
     case idle, upload, regist, finish, end
-    
+
+    // MARK: Internal
+
     var title: String {
         switch self {
         case .idle:
@@ -25,7 +29,7 @@ enum BackupProcess {
             "backup.status.end".localized
         }
     }
-    
+
     var icon: String {
         switch self {
         case .finish:
@@ -34,7 +38,7 @@ enum BackupProcess {
             return ""
         }
     }
-    
+
     var next: BackupProcess {
         switch self {
         case .idle:
@@ -54,9 +58,36 @@ enum BackupProcess {
 // MARK: - BackupUploadViewModel
 
 class BackupUploadViewModel: ObservableObject {
+    // MARK: Lifecycle
+
+    init(items: [MultiBackupType]) {
+        self.items = items
+        self.currentIndex = 0
+        if !self.items.isEmpty {
+            self.currentType = self.items[0]
+        }
+        if currentType == .phrase {
+            self.buttonState = .disabled
+        }
+    }
+
+    // MARK: Internal
+
     let items: [MultiBackupType]
-    
-    @Published var currentIndex: Int = 0 {
+
+    @Published
+    var process: BackupProcess = .idle
+    @Published
+    var hasError: Bool = false
+    @Published
+    var mnemonicBlur: Bool = true
+
+    var currentType: MultiBackupType = .google
+    @Published
+    var buttonState: VPrimaryButtonState = .enabled
+
+    @Published
+    var currentIndex: Int = 0 {
         didSet {
             if currentIndex < items.count {
                 currentType = items[currentIndex]
@@ -64,46 +95,27 @@ class BackupUploadViewModel: ObservableObject {
         }
     }
 
-    @Published var process: BackupProcess = .idle
-    @Published var hasError: Bool = false
-    @Published var mnemonicBlur: Bool = true
-    
-    //TODO: 
-    @Published var checkAllPhrase: Bool = true {
+    // TODO:
+    @Published
+    var checkAllPhrase: Bool = true {
         didSet {
             if checkAllPhrase {
                 buttonState = .enabled
             }
         }
     }
-    
-    var currentType: MultiBackupType = .google
-    init(items: [MultiBackupType]) {
-        self.items = items
-        currentIndex = 0
-        if !self.items.isEmpty {
-            currentType = self.items[0]
-        }
-        if currentType == .phrase {
-            buttonState = .disabled
-        }
-    }
-    
-    func reset() {
-        hasError = false
-        process = .idle
-    }
-    
+
     // MARK: UI element
 
     var currentIcon: String {
         currentType.iconName()
     }
-    
+
     var currentTitle: String {
         switch process {
         case .idle:
-            return "backup".localized + " \(currentIndex + 1):\(currentType.title) " + "backup".localized
+            return "backup".localized + " \(currentIndex + 1):\(currentType.title) " + "backup"
+                .localized
         case .upload:
             return "backup.status.upload".localized
         case .regist:
@@ -114,41 +126,44 @@ class BackupUploadViewModel: ObservableObject {
             return "backup.status.end.title".localized
         }
     }
-    
-    @Published var buttonState: VPrimaryButtonState = .enabled
-    
+
     var currentNote: String {
         currentType.noteDes
     }
-    
+
     var currentButton: String {
-        if process == .upload && hasError {
+        if process == .upload, hasError {
             return "upload_again".localized
         }
         return process.title
     }
-    
-    func showTimeline() -> Bool {
-        return process == .upload || process == .regist
+
+    func reset() {
+        hasError = false
+        process = .idle
     }
-    
+
+    func showTimeline() -> Bool {
+        process == .upload || process == .regist
+    }
+
     func learnMore() {
         let closure = {}
         Router.route(to: RouteMap.Backup.introduction(.aboutRecoveryPhrase, closure, true))
     }
-    
+
     func onClickButton() {
         switch process {
         case .idle:
             Task {
                 do {
-                    
                     DispatchQueue.main.async {
                         self.buttonState = .loading
                         self.mnemonicBlur = true
                     }
                     try await MultiBackupManager.shared.preLogin(with: currentType)
-                    let result = try await MultiBackupManager.shared.registerKeyToChain(on: currentType)
+                    let result = try await MultiBackupManager.shared
+                        .registerKeyToChain(on: currentType)
                     if result {
                         toggleProcess(process: .upload)
                         onClickButton()
@@ -156,7 +171,7 @@ class BackupUploadViewModel: ObservableObject {
                         DispatchQueue.main.async {
                             self.buttonState = .enabled
                         }
-                        
+
                         HUD.error(title: "create error on chain")
                     }
                 } catch {
@@ -168,7 +183,10 @@ class BackupUploadViewModel: ObservableObject {
         case .upload:
             Task {
                 do {
-                    buttonState = .loading
+                    DispatchQueue.main.async {
+                        self.buttonState = .loading
+                    }
+
                     try await MultiBackupManager.shared.backupKey(on: currentType)
                     toggleProcess(process: .regist)
                     onClickButton()
@@ -181,14 +199,18 @@ class BackupUploadViewModel: ObservableObject {
         case .regist:
             Task {
                 do {
-                    buttonState = .loading
+                    DispatchQueue.main.async {
+                        self.buttonState = .loading
+                    }
+
                     try await MultiBackupManager.shared.syncKeyToServer(on: currentType)
                     DispatchQueue.main.async {
                         self.mnemonicBlur = false
+                        self.buttonState = .enabled
                     }
                     toggleProcess(process: .finish)
 //                    onClickButton()
-                    buttonState = .enabled
+
                 } catch {
                     buttonState = .enabled
                     HUD.dismissLoading()
@@ -208,19 +230,11 @@ class BackupUploadViewModel: ObservableObject {
             Router.popToRoot()
         }
     }
-    
+
     func toggleProcess(process: BackupProcess) {
-        hasError = false
-        self.process = process
-//        switch self.process {
-//        case .idle:
-//            <#code#>
-//        case .upload:
-//            <#code#>
-//        case .regist:
-//            <#code#>
-//        case .finish:
-//            <#code#>
-//        }
+        DispatchQueue.main.async {
+            self.hasError = false
+            self.process = process
+        }
     }
 }

@@ -9,7 +9,8 @@ import SwiftUI
 
 struct TitleWithClosedView: View {
     var title: String
-    var closeAction: ()->()
+    var closeAction: () -> Void
+
     var body: some View {
         HStack {
             Color.clear
@@ -37,7 +38,5 @@ struct TitleWithClosedView: View {
 }
 
 #Preview {
-    TitleWithClosedView(title: "Select NFTs", closeAction: {
-        
-    })
+    TitleWithClosedView(title: "Select NFTs", closeAction: {})
 }

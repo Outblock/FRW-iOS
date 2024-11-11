@@ -8,27 +8,28 @@
 import SwiftUI
 import SwiftUIX
 
-
 struct KeyStoreLoginView: RouteableView {
     var title: String {
-        return "import_wallet".localized
+        "import_wallet".localized
     }
-    
+
     private let backupType: RestoreWalletViewModel.ImportType = .keyStore
-    
-    @StateObject var viewModel = KeyStoreLoginViewModel()
-    
+
+    @StateObject
+    var viewModel = KeyStoreLoginViewModel()
+
     var body: some View {
         VStack {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 16) {
-                    
                     ImportTitleHeader(backupType: .keyStore)
                         .padding(.top, 48)
-                    
-                    Section() {
-                        
-                        ImportTextView(content: $viewModel.json, placeholder: "keystore_json".localized) { value in
+
+                    Section {
+                        ImportTextView(
+                            content: $viewModel.json,
+                            placeholder: "keystore_json".localized
+                        ) { value in
                             viewModel.update(json: value)
                         }
                         .frame(height: 120)
@@ -36,48 +37,52 @@ struct KeyStoreLoginView: RouteableView {
                     } header: {
                         ImportSectionTitleView(title: "JSON", isStar: true)
                     }
-                    
-                    
-                    Section() {
-                        AnimatedSecureTextField(placeholder: "keystore_password".localized, text: $viewModel.password) { value in
+
+                    Section {
+                        AnimatedSecureTextField(
+                            placeholder: "keystore_password".localized,
+                            text: $viewModel.password
+                        ) { value in
                             viewModel.update(password: value)
                         }
-                            .frame(height: 64)
-                        
+                        .frame(height: 64)
+
                     } header: {
                         ImportSectionTitleView(title: "password", isStar: true)
                     }
-                    
-                    Section() {
-                        AnimatedSecureTextField(placeholder: "keystore_address".localized, text: $viewModel.wantedAddress) { text in
+
+                    Section {
+                        AnimatedSecureTextField(
+                            placeholder: "keystore_address".localized,
+                            text: $viewModel.wantedAddress
+                        ) { text in
                             viewModel.update(address: text)
                         }
-                            .frame(height: 64)
-                        
+                        .frame(height: 64)
+
                     } header: {
                         ImportSectionTitleView(title: "address", isStar: false)
                     }
                 }
             }
             .padding(.bottom, 24)
-            
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: viewModel.buttonState,
-                           action: {
-                viewModel.onSumbit()
-            }, title: "import_btn_text".localized.lowercased().uppercasedFirstLetter())
+
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: viewModel.buttonState,
+                action: {
+                    viewModel.onSumbit()
+                },
+                title: "import_btn_text".localized.lowercased().uppercasedFirstLetter()
+            )
             .padding(.bottom)
         }
         .padding(.horizontal, 24)
-        .backgroundFill(Color.Theme.Background.grey)
+        .backgroundColor(Color.Theme.Background.grey)
         .hideKeyboardWhenTappedAround()
         .applyRouteable(self)
-        
     }
 }
-
-
-
 
 #Preview {
     KeyStoreLoginView()

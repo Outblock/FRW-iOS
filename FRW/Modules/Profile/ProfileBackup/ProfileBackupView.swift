@@ -20,22 +20,29 @@ extension BackupManager.BackupType {
     }
 }
 
+// MARK: - ProfileBackupView
+
 struct ProfileBackupView: RouteableView {
+    // MARK: Internal
+
     let types: [BackupManager.BackupType] = [.icloud, .googleDrive]
-    @StateObject private var vm = ProfileBackupViewModel()
-    
+
     var title: String {
-        return "backup".localized
+        "backup".localized
     }
-    
+
     var body: some View {
         VStack {
             VStack(spacing: 0) {
                 ForEach(types, id: \.self) { type in
-                    ItemCell(title: type.descLocalizedString, icon: type.littleIcon, isSelected: vm.selectedBackupType == type) {
+                    ItemCell(
+                        title: type.descLocalizedString,
+                        icon: type.littleIcon,
+                        isSelected: vm.selectedBackupType == type
+                    ) {
                         vm.changeBackupTypeAction(type)
                     }
-                    
+
                     if type != .manual {
                         Divider().background(Color.LL.Neutrals.background)
                     }
@@ -49,15 +56,22 @@ struct ProfileBackupView: RouteableView {
         .backgroundFill(Color.LL.Neutrals.background)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = ProfileBackupViewModel()
 }
+
+// MARK: ProfileBackupView.ItemCell
 
 extension ProfileBackupView {
     struct ItemCell: View {
         let title: String
         let icon: String
         let isSelected: Bool
-        let syncAction: () -> ()
-        
+        let syncAction: () -> Void
+
         var body: some View {
             HStack(spacing: 0) {
                 Image(icon)
@@ -65,16 +79,16 @@ extension ProfileBackupView {
 //                    .background(Color.LL.Secondary.navy5)
 //                    .clipShape(Circle())
                     .padding(.trailing, 15)
-                
+
                 Text(title)
                     .font(.inter(size: 16, weight: .medium))
                     .foregroundColor(Color.LL.Neutrals.text)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 Image(systemName: .checkmarkSelected)
                     .foregroundColor(Color.LL.Success.success2)
                     .visibility(isSelected ? .visible : .gone)
-                
+
                 Button {
                     syncAction()
                 } label: {
@@ -89,6 +103,8 @@ extension ProfileBackupView {
         }
     }
 }
+
+// MARK: - Previews_ProfileBackupView_Previews
 
 struct Previews_ProfileBackupView_Previews: PreviewProvider {
     static var previews: some View {
