@@ -14,7 +14,7 @@ class WalletNewsHandler: ObservableObject {
     // MARK: Lifecycle
 
     private init() {
-        removeIds = LocalUserDefaults.shared.removedNewsIds
+        self.removeIds = LocalUserDefaults.shared.removedNewsIds
     }
 
     // MARK: Internal
@@ -177,8 +177,7 @@ extension WalletNewsHandler {
 
         if item.flag == .walletconnect,
            let request = WalletConnectManager.shared.pendingRequests
-           .first(where: { $0.topic == item.id })
-        {
+           .first(where: { $0.topic == item.id }) {
             WalletConnectManager.shared.handleRequest(request)
         }
 

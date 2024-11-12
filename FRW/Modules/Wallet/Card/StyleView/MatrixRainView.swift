@@ -21,7 +21,7 @@ struct MatrixRainView: View {
                     // Repeating the effects until it occupied the full screen
                     // With the help of ForEach
                     // For Count since our font size is 25 so width/fontSize will the give the count
-                    ForEach(1 ... Int(size.width / 25), id: \.self) { _ in
+                    ForEach(1...Int(size.width / 25), id: \.self) { _ in
                         MatrixRainCharacters(size: size)
                     }
                 }
@@ -46,12 +46,12 @@ struct MatrixRainCharacters: View {
 
     var body: some View {
         // Random Height
-        let randomHeight: CGFloat = .random(in: (size.height / 2) ... size.height)
+        let randomHeight: CGFloat = .random(in: (size.height / 2)...size.height)
 
         VStack {
             // MARK: Iterating String
 
-            ForEach(0 ..< constant.count, id: \.self) { index in
+            ForEach(0..<constant.count, id: \.self) { index in
 
                 // Retriving Character at String
                 let character = Array(constant)[getRandomIndex(index: index)]
@@ -85,7 +85,7 @@ struct MatrixRainCharacters: View {
             // Endless loop without reversing
             // Random delay for more fluent Effect
             withAnimation(
-                .linear(duration: 10).delay(.random(in: 0 ... 2))
+                .linear(duration: 10).delay(.random(in: 0...2))
                     .repeatForever(autoreverses: false)
             ) {
                 startAnimation = true
@@ -94,7 +94,7 @@ struct MatrixRainCharacters: View {
         // Timer
         .onReceive(Timer.publish(every: 0.2, on: .main, in: .common).autoconnect()) { _ in
 
-            random = Int.random(in: 0 ..< constant.count)
+            random = Int.random(in: 0..<constant.count)
         }
     }
 

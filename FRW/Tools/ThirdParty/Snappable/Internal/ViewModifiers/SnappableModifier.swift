@@ -4,11 +4,11 @@ struct SnappableModifier: ViewModifier {
     // MARK: Lifecycle
 
     init(alignment: SnapAlignment, mode: SnapMode, onChange: ((SnapID?) -> Void)? = nil) {
-        snapAlignment = alignment
-        snapMode = mode
-        draggingDetector = DraggingDetector(snapMode: mode)
-        coordinateSpaceName = UUID()
-        onSelectChanged = onChange
+        self.snapAlignment = alignment
+        self.snapMode = mode
+        self.draggingDetector = DraggingDetector(snapMode: mode)
+        self.coordinateSpaceName = UUID()
+        self.onSelectChanged = onChange
     }
 
     // MARK: Internal

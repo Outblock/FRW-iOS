@@ -10,12 +10,13 @@ import SwiftUIX
 
 struct PrivateKeyLoginView: RouteableView {
     var title: String {
-        return "import_wallet".localized
+        "import_wallet".localized
     }
 
     private let backupType: RestoreWalletViewModel.ImportType = .privateKey
 
-    @StateObject var viewModel = PrivateKeyLoginViewModel()
+    @StateObject
+    var viewModel = PrivateKeyLoginViewModel()
 
     var body: some View {
         VStack {
@@ -25,7 +26,10 @@ struct PrivateKeyLoginView: RouteableView {
                         .padding(.top, 48)
 
                     Section {
-                        ImportTextView(content: $viewModel.key, placeholder: "private_key_placeholder".localized) { value in
+                        ImportTextView(
+                            content: $viewModel.key,
+                            placeholder: "private_key_placeholder".localized
+                        ) { value in
                             viewModel.update(key: value)
                         }
                         .frame(height: 120)
@@ -35,7 +39,10 @@ struct PrivateKeyLoginView: RouteableView {
                     }
 
                     Section {
-                        AnimatedSecureTextField(placeholder: "keystore_address".localized, text: $viewModel.wantedAddress) { text in
+                        AnimatedSecureTextField(
+                            placeholder: "keystore_address".localized,
+                            text: $viewModel.wantedAddress
+                        ) { text in
                             viewModel.update(address: text)
                         }
                         .frame(height: 64)
@@ -47,12 +54,16 @@ struct PrivateKeyLoginView: RouteableView {
             }
             .padding(.bottom, 24)
 
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: viewModel.buttonState,
-                           action: {
-                               viewModel.onSumbit()
-                           }, title: "import_btn_text".localized.lowercased().uppercasedFirstLetter())
-                .padding(.bottom)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: viewModel.buttonState,
+                action: {
+                    viewModel.onSumbit()
+                },
+                title: "import_btn_text".localized.lowercased()
+                    .uppercasedFirstLetter()
+            )
+            .padding(.bottom)
         }
         .padding(.horizontal, 24)
         .backgroundFill(Color.Theme.Background.grey)

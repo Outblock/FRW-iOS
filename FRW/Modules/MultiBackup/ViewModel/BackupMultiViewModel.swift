@@ -13,8 +13,8 @@ class BackupMultiViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(backups: [MultiBackupType]) {
-        list = []
-        selectedList = backups
+        self.list = []
+        self.selectedList = backups
         for type in MultiBackupType.allCases {
             if type != .passkey {
                 list.append(MultiItem(type: type, isBackup: backups.contains(type)))

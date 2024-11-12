@@ -83,8 +83,7 @@ class EVMAccountManager: ObservableObject {
 
     @Published
     var selectedAccount: EVMAccountManager.Account? = LocalUserDefaults.shared
-        .selectedEVMAccount
-    {
+        .selectedEVMAccount {
         didSet {
             LocalUserDefaults.shared.selectedEVMAccount = selectedAccount
             NotificationCenter.default.post(name: .watchAddressDidChanged, object: nil)
@@ -271,8 +270,7 @@ extension EVMAccountManager {
 
         var isSelected: Bool {
             if let selectedAccount = EVMAccountManager.shared.selectedAccount,
-               selectedAccount.address.lowercased() == address.lowercased(), !address.isEmpty
-            {
+               selectedAccount.address.lowercased() == address.lowercased(), !address.isEmpty {
                 return true
             }
             return false

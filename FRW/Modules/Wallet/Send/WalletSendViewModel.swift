@@ -406,8 +406,7 @@ extension WalletSendViewModel {
     private func refreshCurrentSearchingStatusAfterPerSearchComplete() {
         if let serverSearchList = serverSearchList, serverSearchList.isEmpty,
            let findSearchList = findSearchList, findSearchList.isEmpty,
-           let flownsSearchList = flownsSearchList, flownsSearchList.isEmpty
-        {
+           let flownsSearchList = flownsSearchList, flownsSearchList.isEmpty {
             errorType = .notFound
             status = .error
             return

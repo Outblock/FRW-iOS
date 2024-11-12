@@ -28,7 +28,7 @@ class BrowserAuthnViewModel: ObservableObject {
         callback: @escaping BrowserAuthnViewModel.Callback
     ) {
         self.title = title
-        urlString = url
+        self.urlString = url
         self.logo = logo
         self.network = network
         self.walletAddress = walletAddress

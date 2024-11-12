@@ -40,9 +40,9 @@ public struct SVGWebView: View {
     // MARK: Internal
 
     #if os(macOS)
-        typealias UXViewRepresentable = NSViewRepresentable
+    typealias UXViewRepresentable = NSViewRepresentable
     #else
-        typealias UXViewRepresentable = UIViewRepresentable
+    typealias UXViewRepresentable = UIViewRepresentable
     #endif
 
     // MARK: Private
@@ -53,21 +53,21 @@ public struct SVGWebView: View {
         let html: String
 
         #if os(macOS)
-            func makeNSView(context _: Context) -> WKWebView {
-                makeWebView()
-            }
+        func makeNSView(context _: Context) -> WKWebView {
+            makeWebView()
+        }
 
-            func updateNSView(_ webView: WKWebView, context: Context) {
-                updateWebView(webView, context: context)
-            }
+        func updateNSView(_ webView: WKWebView, context: Context) {
+            updateWebView(webView, context: context)
+        }
         #else // iOS etc
-            func makeUIView(context _: Context) -> WKWebView {
-                makeWebView()
-            }
+        func makeUIView(context _: Context) -> WKWebView {
+            makeWebView()
+        }
 
-            func updateUIView(_ webView: WKWebView, context: Context) {
-                updateWebView(webView, context: context)
-            }
+        func updateUIView(_ webView: WKWebView, context: Context) {
+            updateWebView(webView, context: context)
+        }
         #endif
 
         // MARK: Private
@@ -75,7 +75,7 @@ public struct SVGWebView: View {
         private func makeWebView() -> WKWebView {
             let prefs = WKPreferences()
             #if os(macOS)
-                if #available(macOS 10.5, *) {} else { prefs.javaEnabled = false }
+            if #available(macOS 10.5, *) {} else { prefs.javaEnabled = false }
             #endif
             if #available(macOS 11, *) {} else { prefs.javaScriptEnabled = false }
             prefs.javaScriptCanOpenWindowsAutomatically = false
@@ -110,7 +110,7 @@ public struct SVGWebView: View {
 
             let webView = WKWebView(frame: .zero, configuration: config)
             #if !os(macOS)
-                webView.scrollView.isScrollEnabled = false
+            webView.scrollView.isScrollEnabled = false
             #endif
 
             webView.loadHTMLString(html, baseURL: nil)
@@ -140,12 +140,12 @@ public struct SVGWebView: View {
     /// A hacky way to patch the size in the SVG root tag.
     private func rewriteSVGSize(_ string: String) -> String {
         guard let startRange = string.range(of: "<svg") else { return string }
-        let remainder = startRange.upperBound ..< string.endIndex
+        let remainder = startRange.upperBound..<string.endIndex
         guard let endRange = string.range(of: ">", range: remainder) else {
             return string
         }
 
-        let tagRange = startRange.lowerBound ..< endRange.upperBound
+        let tagRange = startRange.lowerBound..<endRange.upperBound
         let oldTag = string[tagRange]
 
         var attrs: [String: String] = {
@@ -171,8 +171,7 @@ public struct SVGWebView: View {
         }()
 
         if attrs["viewBox"] == nil &&
-            (attrs["width"] != nil || attrs["height"] != nil)
-        { // convert to viewBox
+            (attrs["width"] != nil || attrs["height"] != nil) { // convert to viewBox
             let w = attrs.removeValue(forKey: "width") ?? "100%"
             let h = attrs.removeValue(forKey: "height") ?? "100%"
             let x = attrs.removeValue(forKey: "x") ?? "0"

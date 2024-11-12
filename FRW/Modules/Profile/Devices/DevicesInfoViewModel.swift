@@ -16,22 +16,22 @@ class DevicesInfoViewModel: ObservableObject {
     init(model: DeviceInfoModel) {
         self.model = model
         if let deviceId = self.model.id {
-            accountKey = DeviceManager.shared.findFlowAccount(deviceId: deviceId)
-            userKey = DeviceManager.shared.findUserKey(deviceId: deviceId)
+            self.accountKey = DeviceManager.shared.findFlowAccount(deviceId: deviceId)
+            self.userKey = DeviceManager.shared.findUserKey(deviceId: deviceId)
             let localKey = WalletManager.shared.getCurrentPublicKey()
             if DeviceManager.shared.isCurrent(deviceId: deviceId) {
-                showRevokeButton = false
+                self.showRevokeButton = false
             } else if accountKey != nil {
                 if localKey == accountKey?.publicKey.description {
-                    showRevokeButton = false
+                    self.showRevokeButton = false
                 } else {
-                    showRevokeButton = true
+                    self.showRevokeButton = true
                 }
             } else {
-                showRevokeButton = false
+                self.showRevokeButton = false
             }
         } else {
-            showRevokeButton = false
+            self.showRevokeButton = false
         }
     }
 

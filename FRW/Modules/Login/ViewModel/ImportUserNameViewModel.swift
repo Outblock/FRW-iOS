@@ -8,13 +8,18 @@
 import Foundation
 
 class ImportUserNameViewModel: ObservableObject {
-    @Published var userName: String = ""
-
-    var callback: (String) -> Void
+    // MARK: Lifecycle
 
     init(callback: @escaping (String) -> Void) {
         self.callback = callback
     }
+
+    // MARK: Internal
+
+    @Published
+    var userName: String = ""
+
+    var callback: (String) -> Void
 
     func onEditingChanged(_: String) {}
 

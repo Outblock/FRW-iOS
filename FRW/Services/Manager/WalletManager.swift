@@ -196,8 +196,7 @@ class WalletManager: ObservableObject {
                 self.walletInfo = cacheWalletInfo
 
                 if let cacheSupportedCoins = cacheSupportedCoins,
-                   let cacheActivatedCoins = cacheActivatedCoins
-                {
+                   let cacheActivatedCoins = cacheActivatedCoins {
                     self.supportedCoins = cacheSupportedCoins
                     self.activatedCoins = cacheActivatedCoins
                 }
@@ -706,8 +705,7 @@ extension WalletManager {
                key: uid,
                data: encryptedData
            ),
-           var mnemonic = String(data: decryptedData, encoding: .utf8)
-        {
+           var mnemonic = String(data: decryptedData, encoding: .utf8) {
             defer {
                 encryptedData = Data()
                 decryptedData = Data()
@@ -1342,8 +1340,7 @@ extension WalletManager: FlowSigner {
     @discardableResult
     func warningIfKeyIsInvalid(userId: String, markHide _: Bool = false) -> Bool {
         if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: userId),
-           !mnemonic.isEmpty, mnemonic.split(separator: " ").count != 15
-        {
+           !mnemonic.isEmpty, mnemonic.split(separator: " ").count != 15 {
             return false
         }
         // FIXME: private key migrate from device to device, it's destructive, this only for fix bugs, move to migrate

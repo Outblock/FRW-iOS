@@ -92,64 +92,64 @@ extension AlertIcon {
 }
 
 // -----------------------------------------------------------------------------------------------------------------------------------------------
-public extension ProgressHUD {
-    class var animationType: AnimationType {
+extension ProgressHUD {
+    public class var animationType: AnimationType {
         get { shared.animationType }
         set { shared.animationType = newValue }
     }
 
-    class var colorBackground: UIColor {
+    public class var colorBackground: UIColor {
         get { shared.colorBackground }
         set { shared.colorBackground = newValue }
     }
 
-    class var colorHUD: UIColor {
+    public class var colorHUD: UIColor {
         get { shared.colorHUD }
         set { shared.colorHUD = newValue }
     }
 
-    class var colorStatus: UIColor {
+    public class var colorStatus: UIColor {
         get { shared.colorStatus }
         set { shared.colorStatus = newValue }
     }
 
-    class var colorAnimation: UIColor {
+    public class var colorAnimation: UIColor {
         get { shared.colorAnimation }
         set { shared.colorAnimation = newValue }
     }
 
-    class var colorProgress: UIColor {
+    public class var colorProgress: UIColor {
         get { shared.colorProgress }
         set { shared.colorProgress = newValue }
     }
 
-    class var fontStatus: UIFont {
+    public class var fontStatus: UIFont {
         get { shared.fontStatus }
         set { shared.fontStatus = newValue }
     }
 
-    class var imageSuccess: UIImage {
+    public class var imageSuccess: UIImage {
         get { shared.imageSuccess }
         set { shared.imageSuccess = newValue }
     }
 
-    class var imageError: UIImage {
+    public class var imageError: UIImage {
         get { shared.imageError }
         set { shared.imageError = newValue }
     }
 }
 
 // -----------------------------------------------------------------------------------------------------------------------------------------------
-public extension ProgressHUD {
+extension ProgressHUD {
     // -------------------------------------------------------------------------------------------------------------------------------------------
-    class func dismiss() {
+    public class func dismiss() {
         DispatchQueue.main.async {
             shared.hudHide()
         }
     }
 
     // -------------------------------------------------------------------------------------------------------------------------------------------
-    class func show(_ status: String? = nil, interaction: Bool = true) {
+    public class func show(_ status: String? = nil, interaction: Bool = true) {
         DispatchQueue.main.async {
             shared.setup(status: status, hide: false, interaction: interaction)
         }
@@ -158,7 +158,7 @@ public extension ProgressHUD {
     // MARK: -
 
     // -------------------------------------------------------------------------------------------------------------------------------------------
-    class func show(_ status: String? = nil, icon: AlertIcon, interaction: Bool = true) {
+    public class func show(_ status: String? = nil, icon: AlertIcon, interaction: Bool = true) {
         let image = icon.image?.withTintColor(shared.colorAnimation, renderingMode: .alwaysOriginal)
 
         DispatchQueue.main.async {
@@ -167,7 +167,7 @@ public extension ProgressHUD {
     }
 
     // -------------------------------------------------------------------------------------------------------------------------------------------
-    class func show(
+    public class func show(
         _ status: String? = nil,
         icon animatedIcon: AnimatedIcon,
         interaction: Bool = true
@@ -185,7 +185,7 @@ public extension ProgressHUD {
     // MARK: -
 
     // -------------------------------------------------------------------------------------------------------------------------------------------
-    class func showSuccess(
+    public class func showSuccess(
         _ status: String? = nil,
         image: UIImage? = nil,
         interaction: Bool = true
@@ -201,7 +201,7 @@ public extension ProgressHUD {
     }
 
     // -------------------------------------------------------------------------------------------------------------------------------------------
-    class func showError(
+    public class func showError(
         _ status: String? = nil,
         image: UIImage? = nil,
         interaction: Bool = true
@@ -219,7 +219,7 @@ public extension ProgressHUD {
     // MARK: -
 
     // -------------------------------------------------------------------------------------------------------------------------------------------
-    class func showSucceed(_ status: String? = nil, interaction: Bool = true) {
+    public class func showSucceed(_ status: String? = nil, interaction: Bool = true) {
         DispatchQueue.main.async {
             shared.setup(
                 status: status,
@@ -231,7 +231,7 @@ public extension ProgressHUD {
     }
 
     // -------------------------------------------------------------------------------------------------------------------------------------------
-    class func showFailed(_ status: String? = nil, interaction: Bool = true) {
+    public class func showFailed(_ status: String? = nil, interaction: Bool = true) {
         DispatchQueue.main.async {
             shared.setup(
                 status: status,
@@ -243,7 +243,7 @@ public extension ProgressHUD {
     }
 
     // -------------------------------------------------------------------------------------------------------------------------------------------
-    class func showAdded(_ status: String? = nil, interaction: Bool = true) {
+    public class func showAdded(_ status: String? = nil, interaction: Bool = true) {
         DispatchQueue.main.async {
             shared.setup(status: status, animatedIcon: .added, hide: true, interaction: interaction)
         }
@@ -252,14 +252,14 @@ public extension ProgressHUD {
     // MARK: -
 
     // -------------------------------------------------------------------------------------------------------------------------------------------
-    class func showProgress(_ progress: CGFloat, interaction: Bool = false) {
+    public class func showProgress(_ progress: CGFloat, interaction: Bool = false) {
         DispatchQueue.main.async {
             shared.setup(progress: progress, hide: false, interaction: interaction)
         }
     }
 
     // -------------------------------------------------------------------------------------------------------------------------------------------
-    class func showProgress(
+    public class func showProgress(
         _ status: String?,
         _ progress: CGFloat,
         interaction: Bool = false
@@ -609,8 +609,7 @@ public class ProgressHUD: UIView {
             if (notification.name == keyboardWillShow) || (notification.name == keyboardDidShow) {
                 heightKeyboard = frameKeyboard.size.height
             } else if (notification.name == keyboardWillHide) ||
-                (notification.name == keyboardDidHide)
-            {
+                (notification.name == keyboardDidHide) {
                 heightKeyboard = 0
             } else {
                 heightKeyboard = keyboardHeight()
@@ -639,8 +638,7 @@ public class ProgressHUD: UIView {
     private func keyboardHeight() -> CGFloat {
         if let keyboardWindowClass = NSClassFromString("UIRemoteKeyboardWindow"),
            let inputSetContainerView = NSClassFromString("UIInputSetContainerView"),
-           let inputSetHostView = NSClassFromString("UIInputSetHostView")
-        {
+           let inputSetHostView = NSClassFromString("UIInputSetHostView") {
             for window in UIApplication.shared.windows {
                 if window.isKind(of: keyboardWindowClass) {
                     for firstSubView in window.subviews {
@@ -761,7 +759,7 @@ public class ProgressHUD: UIView {
             clockwise: false
         )
 
-        for i in 0 ..< 3 {
+        for i in 0..<3 {
             let layer = CAShapeLayer()
             layer.frame = CGRect(
                 x: (radius + spacing) * CGFloat(i),
@@ -803,7 +801,7 @@ public class ProgressHUD: UIView {
             cornerRadius: width / 2
         )
 
-        for i in 0 ..< 5 {
+        for i in 0..<5 {
             let layer = CAShapeLayer()
             layer.frame = CGRect(
                 x: lineWidth * 2 * CGFloat(i),
@@ -897,7 +895,7 @@ public class ProgressHUD: UIView {
             clockwise: false
         )
 
-        for i in 0 ..< 3 {
+        for i in 0..<3 {
             let layer = CAShapeLayer()
             layer.frame = CGRect(x: 0, y: 0, width: width, height: height)
             layer.path = path.cgPath
@@ -993,7 +991,7 @@ public class ProgressHUD: UIView {
             clockwise: false
         )
 
-        for i in 0 ..< 3 {
+        for i in 0..<3 {
             let layer = CAShapeLayer()
             layer.frame = CGRect(x: 0, y: 0, width: width, height: height)
             layer.path = path.cgPath
@@ -1046,7 +1044,7 @@ public class ProgressHUD: UIView {
             clockwise: false
         )
 
-        for i in 0 ..< 8 {
+        for i in 0..<8 {
             let angle = .pi / 4 * CGFloat(i)
 
             let layer = CAShapeLayer()
@@ -1096,7 +1094,7 @@ public class ProgressHUD: UIView {
             cornerRadius: lineWidth / 2
         )
 
-        for i in 0 ..< 8 {
+        for i in 0..<8 {
             let angle = .pi / 4 * CGFloat(i)
 
             let line = CAShapeLayer()
@@ -1154,7 +1152,7 @@ public class ProgressHUD: UIView {
             clockwise: true
         )
 
-        for i in 0 ..< 5 {
+        for i in 0..<5 {
             let rate = Float(i) * 1 / 5
             let fromScale = 1 - rate
             let toScale = 0.2 + rate
@@ -1306,7 +1304,7 @@ public class ProgressHUD: UIView {
         animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
 
-        for i in 0 ..< 2 {
+        for i in 0..<2 {
             let layer = CAShapeLayer()
             layer.path = paths[i].cgPath
             layer.fillColor = UIColor.clear.cgColor
@@ -1346,7 +1344,7 @@ public class ProgressHUD: UIView {
         animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
 
-        for i in 0 ..< 2 {
+        for i in 0..<2 {
             let layer = CAShapeLayer()
             layer.path = paths[i].cgPath
             layer.fillColor = UIColor.clear.cgColor

@@ -151,7 +151,7 @@ class MoveAccountsViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(selected address: String, callback: @escaping (Contact?) -> Void) {
-        selectedAddr = address
+        self.selectedAddr = address
         self.callback = callback
         let currentAddr = WalletManager.shared
             .getWatchAddressOrChildAccountAddressOrPrimaryAddress()
@@ -160,8 +160,7 @@ class MoveAccountsViewModel: ObservableObject {
         let isEVM = EVMAccountManager.shared.selectedAccount != nil
 
         if let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress(),
-           currentAddr != primaryAddr
-        {
+           currentAddr != primaryAddr {
             let user = WalletManager.shared.walletAccount.readInfo(at: primaryAddr)
             let contact = Contact(
                 address: primaryAddr,

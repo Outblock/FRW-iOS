@@ -11,8 +11,7 @@ import SwiftUI
 struct IndexBar<Indices>: View
     where Indices: Equatable,
     Indices: RandomAccessCollection,
-    Indices.Element == Index
-{
+    Indices.Element == Index {
     var accessory: ScrollAccessory
     var indices: Indices
     var scrollView: ScrollViewProxy
@@ -40,8 +39,7 @@ var indexBarInsets: EdgeInsets {
 private struct IndexReducer<Indices>: View
     where Indices: Equatable,
     Indices: RandomAccessCollection,
-    Indices.Element == Index
-{
+    Indices.Element == Index {
     // MARK: Internal
 
     var frameHeight: CGFloat
@@ -129,8 +127,7 @@ private struct IndexReducer<Indices>: View
 private struct IndexLayout<Indices>: View
     where Indices: Equatable,
     Indices: RandomAccessCollection,
-    Indices.Element == Index
-{
+    Indices.Element == Index {
     @GestureState
     private var currentIndex: Index? = nil
 

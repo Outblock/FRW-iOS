@@ -16,18 +16,15 @@ public class ResizableView: UIView {
             touchStart = touch.location(in: self)
             currentEdge = {
                 if self.bounds.size.width - touchStart.x < Self.edgeSize,
-                   self.bounds.size.height - touchStart.y < Self.edgeSize
-                {
+                   self.bounds.size.height - touchStart.y < Self.edgeSize {
                     return .bottomRight
                 } else if touchStart.x < Self.edgeSize, touchStart.y < Self.edgeSize {
                     return .topLeft
                 } else if self.bounds.size.width - touchStart.x < Self.edgeSize,
-                          touchStart.y < Self.edgeSize
-                {
+                          touchStart.y < Self.edgeSize {
                     return .topRight
                 } else if touchStart.x < Self.edgeSize,
-                          self.bounds.size.height - touchStart.y < Self.edgeSize
-                {
+                          self.bounds.size.height - touchStart.y < Self.edgeSize {
                     return .bottomLeft
                 }
                 return .none
