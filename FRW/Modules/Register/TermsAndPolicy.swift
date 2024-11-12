@@ -59,7 +59,6 @@ struct TermsAndPolicy: RouteableView {
                 }.padding()
             }
             .foregroundColor(Color.LL.text)
-
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(

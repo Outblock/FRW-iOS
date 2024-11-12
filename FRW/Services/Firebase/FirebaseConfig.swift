@@ -1,5 +1,5 @@
 //
-//  FlowCoins.swift
+//  FirebaseConfig.swift
 //  Flow Wallet
 //
 //  Created by cat on 2022/4/30.

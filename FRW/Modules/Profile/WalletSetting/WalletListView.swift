@@ -43,7 +43,7 @@ class WalletListViewModel: ObservableObject {
             mainWallets.append(mainWallet)
         }
         multiVMWallets = []
-        EVMAccountManager.shared.accounts.forEach { account in
+        for account in EVMAccountManager.shared.accounts {
             let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
             var balance = WalletManager.shared.balanceProvider
                 .balanceValue(at: account.showAddress) ?? ""

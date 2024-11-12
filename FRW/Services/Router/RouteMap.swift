@@ -1,5 +1,5 @@
 //
-//  RouterMap.swift
+//  RouteMap.swift
 //  Flow Wallet
 //
 //  Created by Selina on 25/7/2022.
@@ -68,7 +68,6 @@ extension RouteMap.RestoreLogin: RouterTarget {
         case let .syncDevice(vm):
             let vc = CustomHostingController(rootView: SyncAddDeviceView(viewModel: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
-
         case .restoreList:
             navi.push(content: RestoreListView())
         case .restoreMulti:
@@ -169,7 +168,6 @@ extension RouteMap.Backup: RouterTarget {
             navi.push(content: BackupPasswordView(backupType: type))
         case .backupManual:
             navi.push(content: ManualBackupView())
-
         case .backupList:
             navi.push(content: BackupListView())
         case let .multiBackup(items):
@@ -482,7 +480,6 @@ extension RouteMap.Profile: RouterTarget {
             navi.push(content: DevicesInfoView(info: model))
         case .keychain:
             navi.push(content: KeychainListView())
-
         case .walletList:
             navi.push(content: WalletListView())
         case .wallpaper:
@@ -659,7 +656,6 @@ extension RouteMap.Explore: RouterTarget {
             } else {
                 UIApplication.shared.open(url)
             }
-
         case let .safariBrowser(url):
             let vc = SFSafariViewController(url: url)
             navi.present(vc, animated: true)

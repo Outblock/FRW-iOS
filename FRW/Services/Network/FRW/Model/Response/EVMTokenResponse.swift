@@ -1,5 +1,5 @@
 //
-//  EVMResponse.swift
+//  EVMTokenResponse.swift
 //  FRW
 //
 //  Created by cat on 2024/4/29.

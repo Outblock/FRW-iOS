@@ -1,5 +1,5 @@
 //
-//  SettingView.swift
+//  ProfileView.swift
 //  Flow Wallet-lite
 //
 //  Created by Hao Fu on 30/11/21.

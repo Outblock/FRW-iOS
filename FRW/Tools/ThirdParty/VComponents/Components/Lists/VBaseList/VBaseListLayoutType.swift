@@ -1,5 +1,5 @@
 //
-//  VGenericListContentLayout.swift
+//  VBaseListLayoutType.swift
 //  VComponents
 //
 //  Created by Vakhtang Kontridze on 1/11/21.
@@ -33,6 +33,8 @@ public enum VBaseListLayoutType: Int, CaseIterable {
     ///
     /// Component stretches vertically to occupy maximum space, but is constrainted in space given by container. Scrolling may be enabled inside component.
     case flexible
+
+    // MARK: Public
 
     // MARK: Initailizers
 

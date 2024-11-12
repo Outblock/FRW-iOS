@@ -1,5 +1,5 @@
 //
-//  BackupEncryption.swift
+//  SymmetricEncryption.swift
 //  Dapper
 //
 //  Created by Hao Fu on 7/10/2022.

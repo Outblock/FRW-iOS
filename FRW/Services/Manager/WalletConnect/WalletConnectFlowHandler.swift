@@ -36,9 +36,9 @@ struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
         }
 
         var sessionNamespaces = [String: SessionNamespace]()
-        sessionProposal.requiredNamespaces.forEach {
-            let caip2Namespace = $0.key
-            let proposalNamespace = $0.value
+        for requiredNamespace in sessionProposal.requiredNamespaces {
+            let caip2Namespace = requiredNamespace.key
+            let proposalNamespace = requiredNamespace.value
             if let chains = proposalNamespace.chains {
                 let accounts = Array(
                     chains
@@ -70,16 +70,16 @@ struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
     }
 
     func handleSignTypedDataV4(
-        request: Request,
-        confirm: @escaping (String) -> Void,
+        request _: Request,
+        confirm _: @escaping (String) -> Void,
         cancel: @escaping () -> Void
     ) {
         cancel()
     }
 
     func handleWatchAsset(
-        request: Request,
-        confirm: @escaping (String) -> Void,
+        request _: Request,
+        confirm _: @escaping (String) -> Void,
         cancel: @escaping () -> Void
     ) {
         cancel()

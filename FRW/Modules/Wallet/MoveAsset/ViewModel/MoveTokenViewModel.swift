@@ -88,7 +88,7 @@ class MoveTokenViewModel: ObservableObject {
         refreshTokenData()
     }
 
-    func inputTextDidChangeAction(text: String) {
+    func inputTextDidChangeAction(text _: String) {
         if !maxButtonClickedOnce {
             actualBalance = showBalance.doubleValue
         }

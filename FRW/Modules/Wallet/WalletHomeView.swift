@@ -712,7 +712,6 @@ extension WalletHomeView {
                     UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                     Router.route(to: RouteMap.Explore.browser(url))
                 }
-
 //                Router.route(to: RouteMap.Wallet.swap(nil))
             case .stake:
                 if !LocalUserDefaults.shared.stakingGuideDisplayed && !StakingManager.shared
@@ -824,31 +823,29 @@ struct VisualEffectBlur: UIViewRepresentable {
 }
 
 extension StackTransformViewOptions {
-    static let flowStack: StackTransformViewOptions = {
-        StackTransformViewOptions(
-            scaleFactor: 0.06,
-            minScale: 0.00,
-            maxScale: 1.00,
-            maxStackSize: 4,
-            spacingFactor: 0.12,
-            maxSpacing: nil,
-            alphaFactor: 0.05,
-            bottomStackAlphaSpeedFactor: 10.00,
-            topStackAlphaSpeedFactor: 0.10,
-            perspectiveRatio: 0.00,
-            shadowEnabled: true,
-            shadowColor: .black,
-            shadowOpacity: 0.06,
-            shadowOffset: .zero,
-            shadowRadius: 10.00,
-            stackRotateAngel: 0.00,
-            popAngle: 0.00,
-            popOffsetRatio: .init(width: -0.50, height: 0.30),
-            stackPosition: .init(x: -0.08, y: 1.00),
-            reverse: false,
-            blurEffectEnabled: false,
-            maxBlurEffectRadius: 0.00,
-            blurEffectStyle: .light
-        )
-    }()
+    static let flowStack: StackTransformViewOptions = .init(
+        scaleFactor: 0.06,
+        minScale: 0.00,
+        maxScale: 1.00,
+        maxStackSize: 4,
+        spacingFactor: 0.12,
+        maxSpacing: nil,
+        alphaFactor: 0.05,
+        bottomStackAlphaSpeedFactor: 10.00,
+        topStackAlphaSpeedFactor: 0.10,
+        perspectiveRatio: 0.00,
+        shadowEnabled: true,
+        shadowColor: .black,
+        shadowOpacity: 0.06,
+        shadowOffset: .zero,
+        shadowRadius: 10.00,
+        stackRotateAngel: 0.00,
+        popAngle: 0.00,
+        popOffsetRatio: .init(width: -0.50, height: 0.30),
+        stackPosition: .init(x: -0.08, y: 1.00),
+        reverse: false,
+        blurEffectEnabled: false,
+        maxBlurEffectRadius: 0.00,
+        blurEffectStyle: .light
+    )
 }

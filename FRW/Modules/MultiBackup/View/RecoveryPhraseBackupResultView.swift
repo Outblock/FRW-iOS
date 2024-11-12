@@ -47,7 +47,6 @@ struct RecoveryPhraseBackupResultView: RouteableView {
                 },
                 title: "done".localized
             )
-
             .padding(.bottom, 20)
         }
         .padding(.horizontal, 18)

@@ -27,7 +27,7 @@ struct ShrinkingCapsule: View {
                 .frame(width: 5, height: self.isAnimating ? 10 : 15, alignment: .bottomLeading)
                 .rotationEffect(rotationAngle)
         }.offset(offset)
-            .opacity(self.hideCapsule ? 0 : 0.8)
+            .opacity(hideCapsule ? 0 : 0.8)
             .animation(Animation.easeIn(duration: animationDuration), value: isAnimating)
             .onAppear {
                 Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in

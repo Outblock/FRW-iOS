@@ -1,5 +1,5 @@
 //
-//  SyncAccount.swift
+//  SyncAccountView.swift
 //  FRW
 //
 //  Created by cat on 2023/11/24.

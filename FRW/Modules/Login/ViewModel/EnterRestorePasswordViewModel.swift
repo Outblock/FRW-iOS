@@ -1,5 +1,5 @@
 //
-//  EnterPasswordViewModel.swift
+//  EnterRestorePasswordViewModel.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 10/1/22.

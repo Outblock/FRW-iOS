@@ -106,7 +106,7 @@ class AddTokenViewModel: ObservableObject {
                 key: "name"
             ) { success, _, sectionTitleArr, sortedObjArr in
                 if !success {
-                    assert(false, "can not be here")
+                    assertionFailure("can not be here")
                     return
                 }
 

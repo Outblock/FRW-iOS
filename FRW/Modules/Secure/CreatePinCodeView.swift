@@ -1,5 +1,5 @@
 //
-//  CreatePinCode.swift
+//  CreatePinCodeView.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 6/1/22.

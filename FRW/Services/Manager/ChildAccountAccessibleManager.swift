@@ -106,7 +106,7 @@ extension ChildAccountManager {
             WalletManager.shared.childAccount?.addr
         }
 
-        private func isAccessible(contractName: String, address: String) -> Bool {
+        private func isAccessible(contractName _: String, address: String) -> Bool {
             let result = collections?.filter { idStr in
                 let list = idStr.split(separator: ".")
                 if let contractName = list[safe: 2],

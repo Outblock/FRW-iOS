@@ -281,7 +281,6 @@ extension MultiBackupManager {
             try await gdTarget.loginCloud()
         case .passkey:
             log.info("not finished")
-
         case .icloud:
             try await iCloudTarget.loginCloud()
             log.info("not finished")
@@ -478,7 +477,7 @@ extension MultiBackupManager {
 
         let account = try await FlowNetwork.getAccountAtLatestBlock(address: addressDes)
         var sequenNum: Int64 = 0
-        account.keys.forEach { accountKey in
+        for accountKey in account.keys {
             let publicKey = accountKey.publicKey.description
             if publicKey == firstItem.publicKey {
                 sequenNum = accountKey.sequenceNumber

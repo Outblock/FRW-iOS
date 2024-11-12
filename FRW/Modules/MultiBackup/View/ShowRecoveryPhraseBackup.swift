@@ -1,5 +1,5 @@
 //
-//  CreateRecoveryPhraseBackup.swift
+//  ShowRecoveryPhraseBackup.swift
 //  FRW
 //
 //  Created by cat on 2024/9/19.
@@ -102,7 +102,6 @@ struct ShowRecoveryPhraseBackup: RouteableView {
                 },
                 title: "done".localized
             )
-
             .padding(.bottom, 20)
         }
         .frame(maxHeight: .infinity)

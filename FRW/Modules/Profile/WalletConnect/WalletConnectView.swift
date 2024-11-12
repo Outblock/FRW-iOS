@@ -1,5 +1,5 @@
 //
-//  ProfileBackupView.swift
+//  WalletConnectView.swift
 //  Flow Wallet
 //
 //  Created by Selina on 2/8/2022.

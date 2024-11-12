@@ -77,7 +77,7 @@ struct ImageAnimated: UIViewRepresentable {
 
     private func generateImages() -> [UIImage] {
         var images = [UIImage]()
-        imageNames.forEach { imageName in
+        for imageName in imageNames {
             if let img = UIImage(named: imageName) {
                 images.append(img)
             }

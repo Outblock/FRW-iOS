@@ -22,9 +22,9 @@ class SPQRMaskView: UIView {
 
     // MARK: Internal
 
-    internal let maskLayer = CAShapeLayer()
-    internal let maskBorder = UIImageView(image: UIImage(named: "scan_border"))
-    internal let padding = 35.0
+    let maskLayer = CAShapeLayer()
+    let maskBorder = UIImageView(image: UIImage(named: "scan_border"))
+    let padding = 35.0
     var top = 72.0
     var statusBarHeight = 20.0
 

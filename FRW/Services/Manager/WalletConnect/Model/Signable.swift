@@ -389,7 +389,7 @@ extension Interaction {
         )
 
         let insideSigners = findInsideSigners
-        insideSigners.forEach { address in
+        for address in insideSigners {
             if let account = accounts[address],
                let address = account.addr,
                let keyId = account.keyID,
@@ -404,7 +404,7 @@ extension Interaction {
 
         let outsideSigners = findOutsideSigners
 
-        outsideSigners.forEach { address in
+        for address in outsideSigners {
             if let account = accounts[address],
                let address = account.addr,
                let keyId = account.keyID,

@@ -72,7 +72,7 @@ extension FluidGradient {
             context.coordinator.view
         }
 
-        func updateView(_ view: FluidGradientView, context: Context) {
+        func updateView(_: FluidGradientView, context: Context) {
             context.coordinator.create(blobs: blobs, highlights: highlights)
             DispatchQueue.main.async {
                 context.coordinator.update(speed: speed)

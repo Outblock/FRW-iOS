@@ -175,7 +175,6 @@ struct NFTDetailPage: RouteableView {
                                     .timingCurve(0.2, 0.8, 0.2, 1, duration: 0.8),
                                     value: isDragging
                                 )
-
                                 .rotation3DEffect(
                                     Angle(degrees: 5),
                                     axis: (x: viewState.width, y: viewState.height, z: 0)

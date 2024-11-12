@@ -176,8 +176,7 @@ class MoveAccountsViewModel: ObservableObject {
             list.append(contact)
         }
 
-        EVMAccountManager.shared.accounts.forEach { account in
-
+        for account in EVMAccountManager.shared.accounts {
             if currentAddr != account.showAddress {
                 let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
                 let contact = Contact(
@@ -195,8 +194,7 @@ class MoveAccountsViewModel: ObservableObject {
             }
         }
 
-        ChildAccountManager.shared.childAccounts.forEach { account in
-
+        for account in ChildAccountManager.shared.childAccounts {
             if currentAddr != account.showAddress {
                 let contact = Contact(
                     address: account.showAddress,

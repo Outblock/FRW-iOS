@@ -208,7 +208,6 @@ class NFTTransferViewModel: ObservableObject {
                             id: nftId,
                             toAddress: toAddress
                         )
-
                 case (.coa, .flow):
                     let nftId = nft.response.id
                     guard let identifier = nft.collection?.flowIdentifier ?? nft.response
@@ -232,7 +231,6 @@ class NFTTransferViewModel: ObservableObject {
                             receiver: toAddress
                         )
                     }
-
                 case (.coa, .eoa):
                     // sendTransaction
 
@@ -320,7 +318,8 @@ class NFTTransferViewModel: ObservableObject {
                         )
                 case (.coa, .linked):
                     guard let nftIdentifier = nft.response.flowIdentifier,
-                          let nftId = UInt64(nft.response.id) else {
+                          let nftId = UInt64(nft.response.id)
+                    else {
                         return
                     }
                     let childAddr = fromChildAccount?.addr ?? toAddress

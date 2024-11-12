@@ -1599,7 +1599,7 @@ extension FlowNetwork {
         ])
     }
 
-    static func checkCoaLink(address: String) async throws -> Bool? {
+    static func checkCoaLink(address _: String) async throws -> Bool? {
         guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
         }

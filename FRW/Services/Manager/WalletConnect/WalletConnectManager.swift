@@ -432,7 +432,6 @@ extension WalletConnectManager {
                     rejectRequest(request: sessionRequest)
                 }
             }
-
         case FCLWalletConnectMethod.preAuthz.rawValue:
 
             let result = AuthnResponse(
@@ -479,7 +478,6 @@ extension WalletConnectManager {
                     rejectRequest(request: sessionRequest)
                 }
             }
-
         case FCLWalletConnectMethod.authz.rawValue:
 
             do {
@@ -558,7 +556,6 @@ extension WalletConnectManager {
                 log.error("WalletConnectManager -> Respond Error:", context: error)
                 rejectRequest(request: sessionRequest)
             }
-
         case FCLWalletConnectMethod.userSignature.rawValue:
 
             do {

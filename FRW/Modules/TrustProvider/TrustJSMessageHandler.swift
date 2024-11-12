@@ -89,10 +89,7 @@ extension TrustJSMessageHandler {
 // MARK: WKScriptMessageHandler
 
 extension TrustJSMessageHandler: WKScriptMessageHandler {
-    func userContentController(
-        _ userContentController: WKUserContentController,
-        didReceive message: WKScriptMessage
-    ) {
+    func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
         let json = message.json
         let url = message.frameInfo.request.url ?? webVC?.webView.url
 
@@ -120,10 +117,10 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
             handleSendTransaction(url: url, network: network, id: id, info: obj)
         case .signMessage:
             log.info("[Trust] signMessage")
-
         case .signTypedMessage:
             guard let data = extractMessage(json: json),
-                  let raw = extractRaw(json: json) else {
+                  let raw = extractRaw(json: json)
+            else {
                 print("data is missing")
                 return
             }
@@ -136,10 +133,8 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
             handleSignPersonal(url: url, network: network, id: id, data: data, addPrefix: true)
         case .sendTransaction:
             log.info("[Trust] sendTransaction")
-
         case .ecRecover:
             log.info("[Trust] ecRecover")
-
         case .watchAsset:
             print("[Trust] watchAsset")
             guard let obj = extractObject(json: json)

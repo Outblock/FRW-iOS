@@ -6,7 +6,7 @@
 
 import SwiftUI
 
-internal struct UITableViewCustomizer: UIViewRepresentable {
+struct UITableViewCustomizer: UIViewRepresentable {
     var showsVerticalScrollIndicator: Bool
 
     func makeUIView(context _: Context) -> UIView {

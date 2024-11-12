@@ -1,5 +1,5 @@
 //
-//  LocalUserDefaultsManager.swift
+//  LocalUserDefaults.swift
 //  Flow Wallet
 //
 //  Created by Selina on 7/6/2022.
@@ -51,6 +51,7 @@ extension LocalUserDefaults {
 
         case userList
         case checkCoa
+
         case customToken
     }
 

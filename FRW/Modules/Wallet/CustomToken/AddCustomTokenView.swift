@@ -1,5 +1,5 @@
 //
-//  AddCustomToken.swift
+//  AddCustomTokenView.swift
 //  FRW
 //
 //  Created by cat on 10/30/24.

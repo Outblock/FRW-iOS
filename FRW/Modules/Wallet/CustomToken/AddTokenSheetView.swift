@@ -146,6 +146,6 @@ struct AddTokenSheetView: RouteableView & PresentActionDelegate {
             balance: nil,
             icon: nil
         )
-    ) { result in
+    ) { _ in
     }
 }

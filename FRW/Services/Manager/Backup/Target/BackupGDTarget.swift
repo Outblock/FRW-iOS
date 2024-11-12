@@ -44,9 +44,7 @@ class BackupGDTarget: BackupTarget {
     // MARK: Private
 
     private var clientID = ""
-    private lazy var config: GIDConfiguration = {
-        GIDConfiguration(clientID: clientID)
-    }()
+    private lazy var config: GIDConfiguration = .init(clientID: clientID)
 
     private var api: GoogleDriveAPI?
 

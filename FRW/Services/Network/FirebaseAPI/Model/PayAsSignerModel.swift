@@ -1,5 +1,5 @@
 //
-//  PayAsSigner.swift
+//  PayAsSignerModel.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 8/9/2022.

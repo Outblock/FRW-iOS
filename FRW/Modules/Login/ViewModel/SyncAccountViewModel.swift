@@ -21,7 +21,7 @@ class SyncAccountViewModel: ObservableObject {
             .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
             .receive(on: DispatchQueue.main)
             .sink { sessions in
-                sessions.forEach { session in
+                for session in sessions {
                     if session.pairingTopic == self.topic {
                         self.isConnect = true
                     }

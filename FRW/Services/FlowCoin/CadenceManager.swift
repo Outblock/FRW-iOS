@@ -56,7 +56,7 @@ class CadenceManager {
                 let providers = try JSONDecoder().decode(CadenceResponse.self, from: data)
                 scripts = providers.scripts
                 version = providers.version ?? localVersion
-                log.info("[Cadence] cache version is \(String(describing: providers.version))")
+                log.info("[Cadence] local file version is \(String(describing: providers.version))")
             } catch {
                 log.error("CadenceManager -> decode failed", context: error)
             }

@@ -31,14 +31,12 @@ enum CardBackground: CaseIterable {
                 return
             }
             self = .color(color: UIColor(hex: String(hex)))
-
         case CardBackground.fade(imageIndex: 0).identify:
             guard let imageString = list[safe: 1], let index = Int(imageString) else {
                 self = .fade(imageIndex: 0)
                 return
             }
             self = .fade(imageIndex: index)
-
         case CardBackground.image(imageIndex: 0).identify:
             guard let imageString = list[safe: 1], let index = Int(imageString) else {
                 self = .image(imageIndex: 0)

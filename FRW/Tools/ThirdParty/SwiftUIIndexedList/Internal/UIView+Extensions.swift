@@ -6,7 +6,7 @@
 
 import UIKit
 
-internal extension UIView {
+extension UIView {
     func firstUITableView() -> UITableView? {
         for subview in subviews {
             if let tableView = subview as? UITableView {

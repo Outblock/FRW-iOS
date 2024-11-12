@@ -249,7 +249,7 @@ extension UserManager {
 //                list = list.filter({ $0.isShow ?? true })
 
                 var addressList: [String: String] = [:]
-
+                // FIXME: all key type
                 for userId in list {
                     if let se = try? SecureEnclaveKey.wallet(id: userId),
                        let publicKey = try? se.publicKey()?.hexValue {
@@ -280,6 +280,7 @@ extension UserManager {
 //                        log.error("[Launch] first login check failed:\(item.uniq):\(error)")
 //                    }
 //                }
+
                 let uidList = addressList.map { $0.key }
 
                 let userAddress = addressList
@@ -446,6 +447,7 @@ extension UserManager {
         let signature = try secureKey.sign(data: signData, hashAlgo: .SHA2_256)
 
         await IPManager.shared.fetch()
+        // FIXME: hash and sign algo is dynamic
         let key = AccountKey(
             hashAlgo: Flow.HashAlgorithm.SHA2_256.index,
             publicKey: publicKey,

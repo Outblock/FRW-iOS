@@ -23,6 +23,6 @@ extension Decimal {
 
 extension CaseIterable {
     static var count: Int {
-        Self.allCases.count
+        allCases.count
     }
 }

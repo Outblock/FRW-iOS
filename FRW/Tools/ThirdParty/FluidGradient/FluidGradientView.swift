@@ -10,10 +10,12 @@ import SwiftUI
 
 #if os(OSX)
 import AppKit
+
 public typealias SystemColor = NSColor
 public typealias SystemView = NSView
 #else
 import UIKit
+
 public typealias SystemColor = UIColor
 public typealias SystemView = UIView
 #endif
@@ -60,7 +62,8 @@ public class FluidGradientView: SystemView {
         }
     }
 
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -115,7 +118,7 @@ public class FluidGradientView: SystemView {
 
     /// Functional methods
     #if os(OSX)
-    public override func viewDidMoveToWindow() {
+    override public func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
         let scale = window?.backingScaleFactor ?? 2
         layer?.contentsScale = scale
@@ -125,11 +128,11 @@ public class FluidGradientView: SystemView {
         updateBlur()
     }
 
-    public override func resize(withOldSuperviewSize oldSize: NSSize) {
+    override public func resize(withOldSuperviewSize _: NSSize) {
         updateBlur()
     }
     #else
-    public override func layoutSubviews() {
+    override public func layoutSubviews() {
         layer.frame = bounds
         baseLayer.frame = bounds
         highlightLayer.frame = bounds
@@ -166,9 +169,9 @@ protocol FluidGradientDelegate: AnyObject {
 #if os(OSX)
 extension FluidGradientView: CALayerDelegate, NSViewLayerContentScaleDelegate {
     public func layer(
-        _ layer: CALayer,
-        shouldInheritContentsScale newScale: CGFloat,
-        from window: NSWindow
+        _: CALayer,
+        shouldInheritContentsScale _: CGFloat,
+        from _: NSWindow
     ) -> Bool {
         true
     }

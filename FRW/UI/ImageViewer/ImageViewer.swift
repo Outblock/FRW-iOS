@@ -280,6 +280,7 @@ class PinchZoomView: UIView {
                 anchor = .center
                 offset = .zero
             }
+
         default:
             break
         }

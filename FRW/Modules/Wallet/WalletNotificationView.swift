@@ -1,5 +1,5 @@
 //
-//  NotificationView.swift
+//  WalletNotificationView.swift
 //  FRW
 //
 //  Created by cat on 2024/6/27.

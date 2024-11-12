@@ -1,5 +1,5 @@
 //
-//  ResizableView.swift
+//  ResizeableView.swift
 //
 //
 //  Created by Jin Kim on 6/13/22.

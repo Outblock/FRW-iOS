@@ -243,7 +243,7 @@ extension DBManager {
 
         let columnString = columns.joined(separator: ",")
         var valuesArray = [String]()
-        columns.forEach { _ in
+        for _ in columns {
             valuesArray.append("?")
         }
         let valuesString = valuesArray.joined(separator: ",")

@@ -15,8 +15,6 @@ protocol EventTrackNameProtocol {
 
 // MARK: - EventTrack.General
 
-// MARK: General
-
 extension EventTrack {
     enum General: String, EventTrackNameProtocol {
         case rpcError = "script_error"
@@ -34,8 +32,6 @@ extension EventTrack {
 
 // MARK: - EventTrack.Backup
 
-// MARK: Backup
-
 extension EventTrack {
     enum Backup: String, EventTrackNameProtocol {
         case multiCreated = "multi_backup_created"
@@ -50,8 +46,6 @@ extension EventTrack {
 }
 
 // MARK: - EventTrack.Transaction
-
-// MARK: Transaction
 
 extension EventTrack {
     enum Transaction: String, EventTrackNameProtocol {
@@ -69,8 +63,6 @@ extension EventTrack {
 }
 
 // MARK: - EventTrack.Account
-
-// MARK: Account
 
 extension EventTrack {
     enum Account: String, EventTrackNameProtocol {

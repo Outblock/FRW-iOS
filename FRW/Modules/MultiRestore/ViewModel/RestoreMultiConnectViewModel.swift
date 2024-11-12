@@ -180,8 +180,8 @@ extension RestoreMultiConnectViewModel {
 
     func checkValidUser() -> [[MultiBackupManager.StoreItem]] {
         var items: [String: [MultiBackupManager.StoreItem]] = [:]
-        storeItems.forEach { list in
-            list.forEach { storeItem in
+        for list in storeItems {
+            for storeItem in list {
                 if var exitList = items[storeItem.userId] {
                     exitList.append(storeItem)
                     items[storeItem.userId] = exitList

@@ -43,10 +43,10 @@ extension EditAvatarView {
             if let tokenID = nft?.id {
                 return tokenID
             } else {
-                assert(false, "tokenID should not be nil")
+                assertionFailure("tokenID should not be nil")
             }
 
-            assert(false, "AvatarItemModel id should not be nil")
+            assertionFailure("AvatarItemModel id should not be nil")
             return ""
         }
 

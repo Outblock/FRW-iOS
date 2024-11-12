@@ -1,5 +1,5 @@
 //
-//  VSectionListSectionViewModelable.swift
+//  VSectionListSection.swift
 //  VComponents
 //
 //  Created by Vakhtang Kontridze on 1/14/21.

@@ -127,7 +127,7 @@ extension CoinRateCache {
             // flow token
             if EVMAccountManager.shared.selectedAccount == nil {
                 await withTaskGroup(of: Void.self) { group in
-                    supportedCoins.forEach { coin in
+                    for coin in supportedCoins {
                         group.addTask { [weak self] in
                             do {
                                 try await self?.fetchCoinRate(coin)
@@ -144,7 +144,7 @@ extension CoinRateCache {
             if EVMAccountManager.shared.selectedAccount != nil {
                 await withTaskGroup(of: Void.self) { group in
 
-                    supportedCoins.forEach { coin in
+                    for coin in supportedCoins {
                         if coin.isFlowCoin {
                             group.addTask { [weak self] in
                                 do {

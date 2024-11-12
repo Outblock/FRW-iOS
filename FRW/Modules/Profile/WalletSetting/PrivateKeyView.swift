@@ -1,5 +1,5 @@
 //
-//  PrivateKeyScreen.swift
+//  PrivateKeyView.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 7/9/2022.

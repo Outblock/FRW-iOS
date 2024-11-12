@@ -1,5 +1,5 @@
 //
-//  Utils.swift
+//  PopupViewUtils.swift
 //  PopupView
 //
 //  Created by Alisa Mylnikova on 01.06.2022.
@@ -94,7 +94,7 @@ struct FrameGetter: ViewModifier {
 }
 
 extension View {
-    internal func frameGetter(_ frame: Binding<CGRect>) -> some View {
+    func frameGetter(_ frame: Binding<CGRect>) -> some View {
         modifier(FrameGetter(frame: frame))
     }
 }

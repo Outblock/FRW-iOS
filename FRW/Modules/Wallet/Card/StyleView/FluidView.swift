@@ -1,5 +1,5 @@
 //
-//  WebView.swift
+//  FluidView.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 21/8/2022.

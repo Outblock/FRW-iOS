@@ -104,7 +104,7 @@ class CustomTokenManager: ObservableObject {
 
     private func filterWhite(list: [CustomToken]) -> [CustomToken] {
         var result: [CustomToken] = []
-        list.forEach { customToken in
+        for customToken in list {
             if !isInWhite(token: customToken) {
                 result.append(customToken)
             }
@@ -166,7 +166,7 @@ extension CustomTokenManager {
 
     func fetchAllEVMBalance() async {
         await withTaskGroup(of: Void.self) { group in
-            allTokens.forEach { token in
+            for token in allTokens {
                 group.addTask { [weak self] in
                     do {
                         var model = token
@@ -207,8 +207,6 @@ extension CustomTokenManager {
 
 // MARK: - CustomToken
 
-// MARK: - Model
-
 struct CustomToken: Codable {
     // MARK: Lifecycle
 
@@ -220,7 +218,7 @@ struct CustomToken: Codable {
         flowIdentifier: String? = nil,
         belong: CustomToken.Belong = .evm,
         balance: BigUInt? = nil,
-        icon: String? = nil
+        icon _: String? = nil
     ) {
         self.address = address
         self.decimals = decimals

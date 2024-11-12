@@ -89,22 +89,22 @@ open class SPQRCameraController: SPController {
 
     // MARK: Internal
 
-    internal static let supportedCodeTypes = [
+    static let supportedCodeTypes = [
         AVMetadataObject.ObjectType.aztec,
         AVMetadataObject.ObjectType.qr,
     ]
 
-    internal var updateTimer: Timer?
-    internal lazy var captureSession: AVCaptureSession = makeCaptureSession()
+    var updateTimer: Timer?
+    lazy var captureSession: AVCaptureSession = makeCaptureSession()
 
     // MARK: - Views
 
-    internal let frameLayer = SPQRFrameLayer()
-    internal let detailView = SPQRDetailButton()
-    internal lazy var previewLayer = makeVideoPreviewLayer()
-    internal let maskView = SPQRMaskView()
+    let frameLayer = SPQRFrameLayer()
+    let detailView = SPQRDetailButton()
+    lazy var previewLayer = makeVideoPreviewLayer()
+    let maskView = SPQRMaskView()
 
-    internal var qrCodeData: SPQRCodeData? {
+    var qrCodeData: SPQRCodeData? {
         didSet {
             updateInterface()
             didTapHandledButton()
@@ -130,7 +130,7 @@ open class SPQRCameraController: SPController {
         dismissAnimated()
     }
 
-    internal func updateInterface() {
+    func updateInterface() {
         let duration: TimeInterval = 0.22
         if qrCodeData != nil {
             detailView.isHidden = false
@@ -173,13 +173,13 @@ open class SPQRCameraController: SPController {
         }
     }
 
-    internal func makeVideoPreviewLayer() -> AVCaptureVideoPreviewLayer {
+    func makeVideoPreviewLayer() -> AVCaptureVideoPreviewLayer {
         let videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         videoPreviewLayer.videoGravity = .resizeAspectFill
         return videoPreviewLayer
     }
 
-    internal func makeCaptureSession() -> AVCaptureSession {
+    func makeCaptureSession() -> AVCaptureSession {
         let captureSession = AVCaptureSession()
         guard let device = AVCaptureDevice.default(for: AVMediaType.video) else { fatalError() }
         guard let input = try? AVCaptureDeviceInput(device: device) else { fatalError() }

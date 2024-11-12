@@ -389,7 +389,6 @@ extension WalletSendAmountViewModel {
                             receiver: targetAddress
                         )
                     }
-
                 case (.coa, .coa):
 
                     txId = try await FlowNetwork.sendTransaction(
@@ -413,7 +412,6 @@ extension WalletSendAmountViewModel {
                             recipient: targetAddress
                         )
                     }
-
                 case (.coa, .eoa):
                     if token.isFlowCoin {
                         txId = try await FlowNetwork

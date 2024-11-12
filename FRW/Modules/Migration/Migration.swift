@@ -52,7 +52,7 @@ extension Migration {
         defer {
             data = Data()
         }
-        UserManager.shared.loginUIDList.forEach { uid in
+        for uid in UserManager.shared.loginUIDList {
             do {
                 var encodedData = try WalletManager.encryptionChaChaPoly(key: uid, data: data)
                 let newKey = "lilico.pinCode.\(uid)"

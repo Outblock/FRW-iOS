@@ -338,7 +338,7 @@ class CollectionItem: Identifiable, ObservableObject {
         }
     }
 
-    func load(address: String? = nil) {
+    func load(address _: String? = nil) {
         if isRequesting || isEnd {
             return
         }

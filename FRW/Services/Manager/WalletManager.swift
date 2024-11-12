@@ -928,7 +928,7 @@ extension WalletManager {
             self.activatedCoins = [tokenModel]
             self.coinBalances = [symbol: balance.doubleValue]
 
-            list.forEach { item in
+            for item in list {
                 if item.flowBalance > 0 {
                     let result = self.evmSupportedCoins?.first(where: { model in
                         model.getAddress()?.lowercased() == item.address.lowercased()
@@ -949,7 +949,7 @@ extension WalletManager {
         await customTokenManager.fetchAllEVMBalance()
         let list = customTokenManager.list
         DispatchQueue.main.sync {
-            list.forEach { token in
+            for token in list {
                 addCustomToken(token: token)
             }
         }

@@ -6,11 +6,12 @@
 
 import SwiftUI
 
-internal struct IndexBar<Indices>: View
+// MARK: - IndexBar
+
+struct IndexBar<Indices>: View
     where Indices: Equatable,
     Indices: RandomAccessCollection,
-    Indices.Element == Index
-{
+    Indices.Element == Index {
     var accessory: ScrollAccessory
     var indices: Indices
     var scrollView: ScrollViewProxy
@@ -18,34 +19,43 @@ internal struct IndexBar<Indices>: View
     var body: some View {
         GeometryReader { geometry in
             if accessory.showsIndexBar(indices: indices) {
-                IndexReducer(frameHeight: geometry.size.height,
-                             indices: indices,
-                             scrollView: scrollView)
-                    .transition(.identity)
+                IndexReducer(
+                    frameHeight: geometry.size.height,
+                    indices: indices,
+                    scrollView: scrollView
+                )
+                .transition(.identity)
             }
         }
     }
 }
 
-internal var indexBarInsets: EdgeInsets {
+var indexBarInsets: EdgeInsets {
     EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: labelSize.width)
 }
+
+// MARK: - IndexReducer
 
 private struct IndexReducer<Indices>: View
     where Indices: Equatable,
     Indices: RandomAccessCollection,
-    Indices.Element == Index
-{
+    Indices.Element == Index {
+    // MARK: Internal
+
     var frameHeight: CGFloat
     var indices: Indices
     var scrollView: ScrollViewProxy
 
     var body: some View {
-        IndexLayout(frameHeight: frameHeight,
-                    indices: indices,
-                    reducedIndices: reducedIndices,
-                    scrollView: scrollView)
+        IndexLayout(
+            frameHeight: frameHeight,
+            indices: indices,
+            reducedIndices: reducedIndices,
+            scrollView: scrollView
+        )
     }
+
+    // MARK: Private
 
     private var reducedIndices: [Index] {
         var innerIndices = Array(indices)
@@ -86,7 +96,8 @@ private struct IndexReducer<Indices>: View
             }
 
             // Evenly remove indices to reach target
-            let skipLimit = Double(innerIndexTarget) / Double(innerIndices.count + 1 - innerIndexTarget)
+            let skipLimit = Double(innerIndexTarget) /
+                Double(innerIndices.count + 1 - innerIndexTarget)
             var skipCount: Double = 0
 
             innerIndices = innerIndices
@@ -111,12 +122,14 @@ private struct IndexReducer<Indices>: View
     }
 }
 
+// MARK: - IndexLayout
+
 private struct IndexLayout<Indices>: View
     where Indices: Equatable,
     Indices: RandomAccessCollection,
-    Indices.Element == Index
-{
-    @GestureState private var currentIndex: Index? = nil
+    Indices.Element == Index {
+    @GestureState
+    private var currentIndex: Index? = nil
 
     var frameHeight: CGFloat
     var indices: Indices
@@ -148,7 +161,11 @@ private struct IndexLayout<Indices>: View
         CGFloat(reducedIndices.count) * labelSize.height
     }
 
-    private func dragUpdating(value: DragGesture.Value, currentIndex: inout Index?, transaction _: inout Transaction) {
+    private func dragUpdating(
+        value: DragGesture.Value,
+        currentIndex: inout Index?,
+        transaction _: inout Transaction
+    ) {
         guard !indices.isEmpty else { return }
 
         let dragLocation = value.location.y + ((stackHeight - frameHeight) / 2)
@@ -168,6 +185,8 @@ private struct IndexLayout<Indices>: View
         }
     }
 }
+
+// MARK: - IndexStack
 
 private struct IndexStack: View {
     var frameHeight: CGFloat
@@ -190,8 +209,11 @@ private struct IndexStack: View {
     }
 }
 
+// MARK: - IndexBarBackgroundView
+
 private struct IndexBarBackgroundView: View {
-    @Environment(\.indexBarBackground) private var background
+    @Environment(\.indexBarBackground)
+    private var background
 
     var stackHeight: CGFloat
 

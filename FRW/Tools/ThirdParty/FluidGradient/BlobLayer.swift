@@ -14,7 +14,7 @@ public class BlobLayer: CAGradientLayer {
     init(color: Color) {
         super.init()
 
-        self.type = .radial
+        type = .radial
         #if os(OSX)
         autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         #endif
@@ -24,19 +24,20 @@ public class BlobLayer: CAGradientLayer {
 
         // Center point
         let position = newPosition()
-        self.startPoint = position
+        startPoint = position
 
         // Radius
         let radius = newRadius()
-        self.endPoint = position.displace(by: radius)
+        endPoint = position.displace(by: radius)
     }
 
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     // Required by the framework
-    public override init(layer: Any) {
+    override public init(layer: Any) {
         super.init(layer: layer)
     }
 

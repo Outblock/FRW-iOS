@@ -1,5 +1,5 @@
 //
-//  FlowAuditotEndpoint.swift
+//  FlixAuditEndpoint.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 14/9/2022.

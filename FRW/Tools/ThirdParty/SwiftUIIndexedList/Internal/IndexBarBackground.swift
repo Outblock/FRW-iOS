@@ -6,7 +6,7 @@
 
 import SwiftUI
 
-internal struct IndexBarBackground {
+struct IndexBarBackground {
     let contentMode: ContentMode
     let view: () -> AnyView
 }

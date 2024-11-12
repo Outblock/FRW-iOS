@@ -1,5 +1,5 @@
 //
-//  GasManager.swift
+//  RemoteConfigManager.swift
 //  Flow Wallet
 //
 //  Created by Selina on 5/9/2022.

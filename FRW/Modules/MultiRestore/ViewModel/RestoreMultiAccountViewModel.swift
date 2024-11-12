@@ -32,6 +32,7 @@ class RestoreMultiAccountViewModel: ObservableObject {
 
         // If it is the current user, do nothing and return directly.
         if let userId = UserManager.shared.activatedUID, userId == selectedUserId {
+            // FIXME: must find the key, eg. walletmanager
             Router.popToRoot()
             return
         }

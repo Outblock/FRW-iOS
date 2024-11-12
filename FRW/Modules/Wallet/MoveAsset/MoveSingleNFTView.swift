@@ -36,7 +36,7 @@ struct MoveSingleNFTView: RouteableView, PresentActionDelegate {
     }
 
     var body: some View {
-        GeometryReader { geometry in
+        GeometryReader { _ in
             VStack {
                 HStack {
                     Text("move_single_nft".localized)

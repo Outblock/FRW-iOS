@@ -1,5 +1,5 @@
 //
-//  AddSyncDeviceViewModel.swift
+//  SyncAddDeviceViewModel.swift
 //  FRW
 //
 //  Created by cat on 2023/11/30.

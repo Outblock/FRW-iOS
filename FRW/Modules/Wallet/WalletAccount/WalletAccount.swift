@@ -111,7 +111,6 @@ extension WalletAccount {
             case .panda: return "Panda"
             case .butterfly: return "Butterfly"
             case .penguin: return "Penguin"
-
             case .cherry: return "Cherry"
             case .chestnut: return "Chestnut"
             case .peach: return "Peach"

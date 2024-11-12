@@ -8,7 +8,7 @@
 import SwiftUI
 import UIKit
 
-typealias RouteableView = View & RouterContentDelegate
+typealias RouteableView = RouterContentDelegate & View
 
 // MARK: - RouterContentDelegate
 

@@ -292,7 +292,8 @@ struct SideMenuView: View {
                     ) { _, action in
                         if action == .card {
                             vm.switchProfile()
-                            WalletManager.shared.changeNetwork(LocalUserDefaults.shared.flowNetwork)
+                            WalletManager.shared
+                                .changeNetwork(LocalUserDefaults.shared.flowNetwork)
                         }
                     }
                 }
