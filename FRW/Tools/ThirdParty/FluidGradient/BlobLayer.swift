@@ -9,12 +9,14 @@ import SwiftUI
 
 /// A CALayer that draws a single blob on the screen
 public class BlobLayer: CAGradientLayer {
+    // MARK: Lifecycle
+
     init(color: Color) {
         super.init()
 
         type = .radial
         #if os(OSX)
-            autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+        autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         #endif
 
         // Set color
@@ -29,20 +31,36 @@ public class BlobLayer: CAGradientLayer {
         endPoint = position.displace(by: radius)
     }
 
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // Required by the framework
+    override public init(layer: Any) {
+        super.init(layer: layer)
+    }
+
+    // MARK: Internal
+
     /// Generate a random point on the canvas
     func newPosition() -> CGPoint {
-        return CGPoint(x: CGFloat.random(in: 0.0 ... 1.0),
-                       y: CGFloat.random(in: 0.0 ... 1.0)).capped()
+        CGPoint(
+            x: CGFloat.random(in: 0.0...1.0),
+            y: CGFloat.random(in: 0.0...1.0)
+        ).capped()
     }
 
     /// Generate a random radius for the blob
     func newRadius() -> CGPoint {
-        let size = CGFloat.random(in: 0.15 ... 0.75)
+        let size = CGFloat.random(in: 0.15...0.75)
         let viewRatio = frame.width / frame.height
         let safeRatio = max(viewRatio.isNaN ? 1 : viewRatio, 1)
-        let ratio = safeRatio * CGFloat.random(in: 0.25 ... 1.75)
-        return CGPoint(x: size,
-                       y: size * ratio)
+        let ratio = safeRatio * CGFloat.random(in: 0.25...1.75)
+        return CGPoint(
+            x: size,
+            y: size * ratio
+        )
     }
 
     /// Animate the blob to a random point and size on screen at set speed
@@ -79,7 +97,7 @@ public class BlobLayer: CAGradientLayer {
         endPoint = position.displace(by: radius)
 
         // Opacity
-        let value = Float.random(in: 0.5 ... 1)
+        let value = Float.random(in: 0.5...1)
         let opacity = animation.copy() as! CASpringAnimation
         opacity.fromValue = self.opacity
         opacity.toValue = value
@@ -94,19 +112,11 @@ public class BlobLayer: CAGradientLayer {
     /// Set the color of the blob
     func set(color: Color) {
         // Converted to the system color so that cgColor isn't nil
-        colors = [SystemColor(color).cgColor,
-                  SystemColor(color).cgColor,
-                  SystemColor(color.opacity(0.0)).cgColor]
+        colors = [
+            SystemColor(color).cgColor,
+            SystemColor(color).cgColor,
+            SystemColor(color.opacity(0.0)).cgColor,
+        ]
         locations = [0.0, 0.9, 1.0]
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    // Required by the framework
-    override public init(layer: Any) {
-        super.init(layer: layer)
     }
 }

@@ -10,6 +10,8 @@ import Combine
 import Flow
 import Foundation
 
+// MARK: - FCLError
+
 public enum FCLError: String, Error, LocalizedError {
     case generic
     case invaildURL
@@ -26,10 +28,14 @@ public enum FCLError: String, Error, LocalizedError {
     case invaildProposer
     case fetchAccountFailure
 
+    // MARK: Public
+
     public var errorDescription: String? {
-        return rawValue
+        rawValue
     }
 }
+
+// MARK: - SignableMessage
 
 struct SignableMessage: Codable {
     let addr: String
@@ -37,7 +43,35 @@ struct SignableMessage: Codable {
     let message: String
 }
 
+// MARK: - Signable
+
 struct Signable: Codable {
+    // MARK: Lifecycle
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.fType = try container.decode(String.self, forKey: .fType)
+        self.fVsn = try container.decode(String.self, forKey: .fVsn)
+        self.data = try? container.decode([String: String].self, forKey: .data)
+        self.message = try container.decode(String.self, forKey: .message)
+        self.keyId = try? container.decode(Int.self, forKey: .keyId)
+        self.addr = try? container.decode(String.self, forKey: .addr)
+        self.roles = try container.decode(Role.self, forKey: .roles)
+        self.cadence = try? container.decode(String.self, forKey: .cadence)
+        self.args = try container.decode([Flow.Argument].self, forKey: .args)
+
+//        voucher = try container.decode(Voucher.self, forKey: .voucher)
+//        interaction = try container.decode(Interaction.self, forKey: .interaction)
+    }
+
+    // MARK: Internal
+
+    enum CodingKeys: String, CodingKey {
+        case fType = "f_type"
+        case fVsn = "f_vsn"
+        case roles, data, message, keyId, addr, cadence, args
+    }
+
     var fType: String = "Signable"
     var fVsn: String = "1.0.1"
     var data: [String: String]?
@@ -49,56 +83,40 @@ struct Signable: Codable {
     let args: [Flow.Argument]
     var interaction = Interaction()
 
-    enum CodingKeys: String, CodingKey {
-        case fType = "f_type"
-        case fVsn = "f_vsn"
-        case roles, data, message, keyId, addr, cadence, args
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        fType = try container.decode(String.self, forKey: .fType)
-        fVsn = try container.decode(String.self, forKey: .fVsn)
-        data = try? container.decode([String: String].self, forKey: .data)
-        message = try container.decode(String.self, forKey: .message)
-        keyId = try? container.decode(Int.self, forKey: .keyId)
-        addr = try? container.decode(String.self, forKey: .addr)
-        roles = try container.decode(Role.self, forKey: .roles)
-        cadence = try? container.decode(String.self, forKey: .cadence)
-        args = try container.decode([Flow.Argument].self, forKey: .args)
-
-//        voucher = try container.decode(Voucher.self, forKey: .voucher)
-//        interaction = try container.decode(Interaction.self, forKey: .interaction)
-    }
-
     var voucher: Voucher {
         let insideSigners: [Singature] = interaction.findInsideSigners.compactMap { id in
             guard let account = interaction.accounts[id] else { return nil }
-            return Singature(address: account.addr?.sansPrefix(),
-                             keyId: account.keyID,
-                             sig: account.signature)
+            return Singature(
+                address: account.addr?.sansPrefix(),
+                keyId: account.keyID,
+                sig: account.signature
+            )
         }
 
         let outsideSigners: [Singature] = interaction.findOutsideSigners.compactMap { id in
             guard let account = interaction.accounts[id] else { return nil }
-            return Singature(address: account.addr?.sansPrefix(),
-                             keyId: account.keyID,
-                             sig: account.signature)
+            return Singature(
+                address: account.addr?.sansPrefix(),
+                keyId: account.keyID,
+                sig: account.signature
+            )
         }
 
-        return Voucher(cadence: interaction.message.cadence,
-                       refBlock: interaction.message.refBlock,
-                       computeLimit: interaction.message.computeLimit,
-                       arguments: interaction.message.arguments.compactMap { tempId in
-                           interaction.arguments[tempId]?.asArgument
-                       },
-                       proposalKey: interaction.createProposalKey(),
-                       payer: interaction.accounts[interaction.payer ?? ""]?.addr?.sansPrefix(),
-                       authorizers: interaction.authorizations
-                           .compactMap { cid in interaction.accounts[cid]?.addr?.sansPrefix() }
-                           .uniqued(),
-                       payloadSigs: insideSigners,
-                       envelopeSigs: outsideSigners)
+        return Voucher(
+            cadence: interaction.message.cadence,
+            refBlock: interaction.message.refBlock,
+            computeLimit: interaction.message.computeLimit,
+            arguments: interaction.message.arguments.compactMap { tempId in
+                interaction.arguments[tempId]?.asArgument
+            },
+            proposalKey: interaction.createProposalKey(),
+            payer: interaction.accounts[interaction.payer ?? ""]?.addr?.sansPrefix(),
+            authorizers: interaction.authorizations
+                .compactMap { cid in interaction.accounts[cid]?.addr?.sansPrefix() }
+                .uniqued(),
+            payloadSigs: insideSigners,
+            envelopeSigs: outsideSigners
+        )
     }
 
     func encode(to encoder: Encoder) throws {
@@ -117,7 +135,16 @@ struct Signable: Codable {
     }
 }
 
+// MARK: - PreSignable
+
 struct PreSignable: Encodable {
+    enum CodingKeys: String, CodingKey {
+        case fType = "f_type"
+        case fVsn = "f_vsn"
+        case roles, cadence, args, interaction
+        case voucher
+    }
+
     let fType: String = "PreSignable"
     let fVsn: String = "1.0.1"
     let roles: Role
@@ -129,38 +156,37 @@ struct PreSignable: Encodable {
     var voucher: Voucher {
         let insideSigners: [Singature] = interaction.findInsideSigners.compactMap { id in
             guard let account = interaction.accounts[id] else { return nil }
-            return Singature(address: account.addr,
-                             keyId: account.keyID,
-                             sig: account.signature)
+            return Singature(
+                address: account.addr,
+                keyId: account.keyID,
+                sig: account.signature
+            )
         }
 
         let outsideSigners: [Singature] = interaction.findOutsideSigners.compactMap { id in
             guard let account = interaction.accounts[id] else { return nil }
-            return Singature(address: account.addr,
-                             keyId: account.keyID,
-                             sig: account.signature)
+            return Singature(
+                address: account.addr,
+                keyId: account.keyID,
+                sig: account.signature
+            )
         }
 
-        return Voucher(cadence: interaction.message.cadence,
-                       refBlock: interaction.message.refBlock,
-                       computeLimit: interaction.message.computeLimit,
-                       arguments: interaction.message.arguments.compactMap { tempId in
-                           interaction.arguments[tempId]?.asArgument
-                       },
-                       proposalKey: interaction.createProposalKey(),
-                       payer: interaction.payer,
-                       authorizers: interaction.authorizations
-                           .compactMap { cid in interaction.accounts[cid]?.addr }
-                           .uniqued(),
-                       payloadSigs: insideSigners,
-                       envelopeSigs: outsideSigners)
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case fType = "f_type"
-        case fVsn = "f_vsn"
-        case roles, cadence, args, interaction
-        case voucher
+        return Voucher(
+            cadence: interaction.message.cadence,
+            refBlock: interaction.message.refBlock,
+            computeLimit: interaction.message.computeLimit,
+            arguments: interaction.message.arguments.compactMap { tempId in
+                interaction.arguments[tempId]?.asArgument
+            },
+            proposalKey: interaction.createProposalKey(),
+            payer: interaction.payer,
+            authorizers: interaction.authorizations
+                .compactMap { cid in interaction.accounts[cid]?.addr }
+                .uniqued(),
+            payloadSigs: insideSigners,
+            envelopeSigs: outsideSigners
+        )
     }
 
     func encode(to encoder: Encoder) throws {
@@ -175,6 +201,8 @@ struct PreSignable: Encodable {
     }
 }
 
+// MARK: - Argument
+
 struct Argument: Codable {
     var kind: String
     var tempId: String
@@ -182,6 +210,8 @@ struct Argument: Codable {
     var asArgument: Flow.Argument
     var xform: Xform
 }
+
+// MARK: - Xform
 
 struct Xform: Codable {
     var label: String
@@ -191,35 +221,22 @@ extension Flow.Argument {
     func toFCLArgument() -> Argument {
         func randomString(length: Int) -> String {
             let letters = "abcdefghijklmnopqrstuvwxyz0123456789"
-            return String((0 ..< length).map { _ in letters.randomElement()! })
+            return String((0..<length).map { _ in letters.randomElement()! })
         }
 
-        return Argument(kind: "ARGUMENT",
-                        tempId: randomString(length: 10),
-                        value: value,
-                        asArgument: self,
-                        xform: Xform(label: type.rawValue))
+        return Argument(
+            kind: "ARGUMENT",
+            tempId: randomString(length: 10),
+            value: value,
+            asArgument: self,
+            xform: Xform(label: type.rawValue)
+        )
     }
 }
 
-struct Interaction: Codable {
-    var tag: Tag = .unknown
-    var assigns = [String: String]()
-    var status: Status = .ok
-    var reason: String?
-    var accounts = [String: SignableUser]()
-    var params = [String: String]()
-    var arguments = [String: Argument]()
-    var message = Message()
-    var proposer: String?
-    var authorizations = [String]()
-    var payer: String?
-    var events = Events()
-    var transaction = Id()
-    var block = Block()
-    var account = Account()
-    var collection = Id()
+// MARK: - Interaction
 
+struct Interaction: Codable {
     enum Status: String, CaseIterable, Codable {
         case ok = "OK"
         case bad = "BAD"
@@ -242,19 +259,26 @@ struct Interaction: Codable {
         case getCollection = "GET_COLLECTION"
     }
 
+    var tag: Tag = .unknown
+    var assigns = [String: String]()
+    var status: Status = .ok
+    var reason: String?
+    var accounts = [String: SignableUser]()
+    var params = [String: String]()
+    var arguments = [String: Argument]()
+    var message = Message()
+    var proposer: String?
+    var authorizations = [String]()
+    var payer: String?
+    var events = Events()
+    var transaction = Id()
+    var block = Block()
+    var account = Account()
+    var collection = Id()
+
     var isUnknown: Bool { `is`(.unknown) }
     var isScript: Bool { `is`(.script) }
     var isTransaction: Bool { `is`(.transaction) }
-
-    func `is`(_ tag: Tag) -> Bool {
-        self.tag == tag
-    }
-
-    @discardableResult
-    mutating func setTag(_ tag: Tag) -> Self {
-        self.tag = tag
-        return self
-    }
 
     var findInsideSigners: [String] {
         // Inside Signers Are: (authorizers + proposer) - payer
@@ -277,6 +301,16 @@ struct Interaction: Codable {
         return Array(outside)
     }
 
+    func `is`(_ tag: Tag) -> Bool {
+        self.tag == tag
+    }
+
+    @discardableResult
+    mutating func setTag(_ tag: Tag) -> Self {
+        self.tag = tag
+        return self
+    }
+
     func createProposalKey() -> ProposalKey {
         guard let proposer = proposer,
               let account = accounts[proposer]
@@ -284,9 +318,11 @@ struct Interaction: Codable {
             return ProposalKey()
         }
 
-        return ProposalKey(address: account.addr?.sansPrefix(),
-                           keyID: account.keyID,
-                           sequenceNum: account.sequenceNum)
+        return ProposalKey(
+            address: account.addr?.sansPrefix(),
+            keyID: account.keyID,
+            sequenceNum: account.sequenceNum
+        )
     }
 
     func createFlowProposalKey() async throws -> Flow.TransactionProposalKey {
@@ -303,21 +339,28 @@ struct Interaction: Codable {
         if account.sequenceNum == nil {
             let accountData = try await flow.accessAPI.getAccountAtLatestBlock(address: flowAddress)
             account.sequenceNum = Int(accountData.keys[keyID].sequenceNumber)
-            return Flow.TransactionProposalKey(address: Flow.Address(hex: address),
-                                               keyIndex: keyID,
-                                               sequenceNumber: Int64(account.sequenceNum ?? 0))
+            return Flow.TransactionProposalKey(
+                address: Flow.Address(hex: address),
+                keyIndex: keyID,
+                sequenceNumber: Int64(account.sequenceNum ?? 0)
+            )
         }
 
-        return Flow.TransactionProposalKey(address: Flow.Address(hex: address),
-                                           keyIndex: keyID,
-                                           sequenceNumber: Int64(account.sequenceNum ?? 0))
+        return Flow.TransactionProposalKey(
+            address: Flow.Address(hex: address),
+            keyIndex: keyID,
+            sequenceNumber: Int64(account.sequenceNum ?? 0)
+        )
     }
 
     func buildPreSignable(role: Role) -> PreSignable {
-        return PreSignable(roles: role,
-                           cadence: message.cadence ?? "",
-                           args: message.arguments.compactMap { tempId in arguments[tempId]?.asArgument },
-                           interaction: self)
+        PreSignable(
+            roles: role,
+            cadence: message.cadence ?? "",
+            args: message.arguments
+                .compactMap { tempId in arguments[tempId]?.asArgument },
+            interaction: self
+        )
     }
 }
 
@@ -331,27 +374,31 @@ extension Interaction {
             throw FCLError.missingPayer
         }
 
-        var tx = Flow.Transaction(script: Flow.Script(text: message.cadence ?? ""),
-                                  arguments: message.arguments.compactMap { tempId in arguments[tempId]?.asArgument },
-                                  referenceBlockId: Flow.ID(hex: message.refBlock ?? ""),
-                                  gasLimit: BigUInt(message.computeLimit ?? 100),
-                                  proposalKey: proposalKey,
-                                  payer: Flow.Address(hex: payerAddress),
-                                  authorizers: authorizations
-                                      .compactMap { cid in accounts[cid]?.addr }
-                                      .uniqued()
-                                      .compactMap { Flow.Address(hex: $0) })
+        var tx = Flow.Transaction(
+            script: Flow.Script(text: message.cadence ?? ""),
+            arguments: message.arguments
+                .compactMap { tempId in arguments[tempId]?.asArgument },
+            referenceBlockId: Flow.ID(hex: message.refBlock ?? ""),
+            gasLimit: BigUInt(message.computeLimit ?? 100),
+            proposalKey: proposalKey,
+            payer: Flow.Address(hex: payerAddress),
+            authorizers: authorizations
+                .compactMap { cid in accounts[cid]?.addr }
+                .uniqued()
+                .compactMap { Flow.Address(hex: $0) }
+        )
 
         let insideSigners = findInsideSigners
         for address in insideSigners {
             if let account = accounts[address],
                let address = account.addr,
                let keyId = account.keyID,
-               let signature = account.signature
-            {
-                tx.addPayloadSignature(address: Flow.Address(hex: address),
-                                       keyIndex: keyId,
-                                       signature: Data(signature.hexValue))
+               let signature = account.signature {
+                tx.addPayloadSignature(
+                    address: Flow.Address(hex: address),
+                    keyIndex: keyId,
+                    signature: Data(signature.hexValue)
+                )
             }
         }
 
@@ -361,16 +408,19 @@ extension Interaction {
             if let account = accounts[address],
                let address = account.addr,
                let keyId = account.keyID,
-               let signature = account.signature
-            {
-                tx.addEnvelopeSignature(address: Flow.Address(hex: address),
-                                        keyIndex: keyId,
-                                        signature: Data(signature.hexValue))
+               let signature = account.signature {
+                tx.addEnvelopeSignature(
+                    address: Flow.Address(hex: address),
+                    keyIndex: keyId,
+                    signature: Data(signature.hexValue)
+                )
             }
         }
         return tx
     }
 }
+
+// MARK: - Block
 
 struct Block: Codable {
     var id: String?
@@ -378,25 +428,33 @@ struct Block: Codable {
     var isSealed: Bool?
 }
 
+// MARK: - Account
+
 struct Account: Codable {
     var addr: String?
 }
+
+// MARK: - Id
 
 struct Id: Codable {
     var id: String?
 }
 
-struct Events: Codable {
-    var eventType: String?
-    var start: String?
-    var end: String?
-    var blockIDS: [String] = []
+// MARK: - Events
 
+struct Events: Codable {
     enum CodingKeys: String, CodingKey {
         case eventType, start, end
         case blockIDS = "blockIds"
     }
+
+    var eventType: String?
+    var start: String?
+    var end: String?
+    var blockIDS: [String] = []
 }
+
+// MARK: - Message
 
 struct Message: Codable {
     var cadence: String?
@@ -408,6 +466,8 @@ struct Message: Codable {
     var params: [String] = []
     var arguments: [String] = []
 }
+
+// MARK: - Voucher
 
 struct Voucher: Codable {
     let cadence: String?
@@ -421,22 +481,43 @@ struct Voucher: Codable {
     let envelopeSigs: [Singature]?
 
     func toFCLVoucher() -> FCLVoucher {
-        let pkey = FCLVoucher.ProposalKey(address: Flow.Address(hex: proposalKey.address ?? ""), keyId: proposalKey.keyID ?? 0, sequenceNum: UInt64(proposalKey.sequenceNum ?? 0))
+        let pkey = FCLVoucher.ProposalKey(
+            address: Flow.Address(hex: proposalKey.address ?? ""),
+            keyId: proposalKey.keyID ?? 0,
+            sequenceNum: UInt64(proposalKey.sequenceNum ?? 0)
+        )
         let authorArray = authorizers?.map { Flow.Address(hex: $0) } ?? [Flow.Address]()
-        let payloadSigsArray = payloadSigs?.map { FCLVoucher.Signature(address: Flow.Address(hex: $0.address ?? ""), keyId: $0.keyId ?? 0, sig: $0.sig ?? "") } ?? [FCLVoucher.Signature]()
+        let payloadSigsArray = payloadSigs?.map { FCLVoucher.Signature(
+            address: Flow.Address(hex: $0.address ?? ""),
+            keyId: $0.keyId ?? 0,
+            sig: $0.sig ?? ""
+        ) } ?? [FCLVoucher.Signature]()
 
-        let v = FCLVoucher(cadence: Flow.Script(text: cadence ?? ""), payer: Flow.Address(hex: payer ?? ""), refBlock: Flow.ID(hex: refBlock ?? ""), arguments: arguments, proposalKey: pkey, computeLimit: UInt64(computeLimit ?? 0), authorizers: authorArray, payloadSigs: payloadSigsArray)
+        let v = FCLVoucher(
+            cadence: Flow.Script(text: cadence ?? ""),
+            payer: Flow.Address(hex: payer ?? ""),
+            refBlock: Flow.ID(hex: refBlock ?? ""),
+            arguments: arguments,
+            proposalKey: pkey,
+            computeLimit: UInt64(computeLimit ?? 0),
+            authorizers: authorArray,
+            payloadSigs: payloadSigsArray
+        )
         return v
     }
 }
 
-struct Accounts: Codable {
-    let currentUser: SignableUser
+// MARK: - Accounts
 
+struct Accounts: Codable {
     enum CodingKeys: String, CodingKey {
         case currentUser = "CURRENT_USER"
     }
+
+    let currentUser: SignableUser
 }
+
+// MARK: - Singature
 
 struct Singature: Codable {
     let address: String?
@@ -444,16 +525,23 @@ struct Singature: Codable {
     let sig: String?
 }
 
-// MARK: - CurrentUser
+// MARK: - SignableUser
 
 struct SignableUser: Codable {
-    var kind: String?
-    var tempID: String?
-    var addr: String?
-    var signature: String?
-    var keyID: Int?
-    var sequenceNum: Int?
-    var role: Role
+    // MARK: Lifecycle
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.kind = try? container.decode(String.self, forKey: .kind)
+        self.tempID = try? container.decode(String.self, forKey: .tempID)
+        self.addr = try? container.decode(String.self, forKey: .addr)
+        self.signature = try? container.decode(String.self, forKey: .signature)
+        self.keyID = try? container.decode(Int.self, forKey: .keyID)
+        self.sequenceNum = try? container.decode(Int.self, forKey: .sequenceNum)
+        self.role = try container.decode(Role.self, forKey: .role)
+    }
+
+    // MARK: Internal
 
     enum CodingKeys: String, CodingKey {
         case kind
@@ -463,16 +551,13 @@ struct SignableUser: Codable {
         case sequenceNum, signature, role
     }
 
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        kind = try? container.decode(String.self, forKey: .kind)
-        tempID = try? container.decode(String.self, forKey: .tempID)
-        addr = try? container.decode(String.self, forKey: .addr)
-        signature = try? container.decode(String.self, forKey: .signature)
-        keyID = try? container.decode(Int.self, forKey: .keyID)
-        sequenceNum = try? container.decode(Int.self, forKey: .sequenceNum)
-        role = try container.decode(Role.self, forKey: .role)
-    }
+    var kind: String?
+    var tempID: String?
+    var addr: String?
+    var signature: String?
+    var keyID: Int?
+    var sequenceNum: Int?
+    var role: Role
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -486,17 +571,21 @@ struct SignableUser: Codable {
     }
 }
 
-struct ProposalKey: Codable {
-    var address: String?
-    var keyID: Int?
-    var sequenceNum: Int?
+// MARK: - ProposalKey
 
+struct ProposalKey: Codable {
     enum CodingKeys: String, CodingKey {
         case address
         case keyID = "keyId"
         case sequenceNum
     }
+
+    var address: String?
+    var keyID: Int?
+    var sequenceNum: Int?
 }
+
+// MARK: - Role
 
 struct Role: Codable {
     var proposer: Bool = false
@@ -511,9 +600,11 @@ struct Role: Codable {
     }
 }
 
+// MARK: - NullDecodable
+
 @propertyWrapper
 struct NullDecodable<T>: Decodable where T: Decodable {
-    var wrappedValue: T?
+    // MARK: Lifecycle
 
     init(wrappedValue: T?) {
         self.wrappedValue = wrappedValue
@@ -526,6 +617,10 @@ struct NullDecodable<T>: Decodable where T: Decodable {
 //        case .none: try container.encodeNil()
 //        }
 //    }
+
+    // MARK: Internal
+
+    var wrappedValue: T?
 }
 
 extension String {
@@ -537,7 +632,7 @@ extension String {
     }
 
     func withPrefix() -> String {
-        return "0x" + sansPrefix()
+        "0x" + sansPrefix()
     }
 }
 
@@ -548,6 +643,8 @@ extension Array where Element: Hashable {
     }
 }
 
+// MARK: - BaseConfigRequest
+
 public struct BaseConfigRequest: Codable {
     var app: [String: String]?
     var service: [String: String]?
@@ -557,6 +654,8 @@ public struct BaseConfigRequest: Codable {
     var accountProofNonce: String?
     var nonce: String?
 }
+
+// MARK: - ClientInfo
 
 public struct ClientInfo: Codable {
     var fclVersion: String?

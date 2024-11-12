@@ -21,39 +21,28 @@ import WalletConnectUtils
 import WalletCore
 import Web3Wallet
 
+// MARK: - WalletConnectManager
+
 class WalletConnectManager: ObservableObject {
-    static let shared = WalletConnectManager()
-
-    @Published
-    var activeSessions: [Session] = []
-
-    @Published
-    var activePairings: [Pairing] = []
-
-    @Published var pendingRequests: [WalletConnectSign.Request] = []
-
-    var onClientConnected: (() -> Void)?
-
-    private var publishers = [AnyCancellable]()
-    private var pendingRequestCheckTimer: Timer?
-    private var handler = WalletConnectHandler()
-
-    var currentProposal: Session.Proposal?
-    var currentRequest: WalletConnectSign.Request?
-    var currentSessionInfo: SessionInfo?
-    var currentRequestInfo: RequestInfo?
-    var currentMessageInfo: RequestMessageInfo?
-
-    @Published var setSessions: [Session] = []
-
-    private var syncAccountFlag: Bool = false
-
-    private var cacheReqeust: [String] = []
+    // MARK: Lifecycle
 
     init() {
-        let redirect = try! AppMetadata.Redirect(native: "frw://", universal: "https://frw-link.lilico.app")
-        let metadata = AppMetadata(name: "Flow Wallet", description: "Digital wallet created for everyone.", url: "https://frw-link.lilico.app", icons: ["https://frw-link.lilico.app/logo.png"], redirect: redirect)
-        Networking.configure(groupIdentifier: AppGroupName, projectId: LocalEnvManager.shared.walletConnectProjectID, socketFactory: SocketFactory())
+        let redirect = try! AppMetadata.Redirect(
+            native: "frw://",
+            universal: "https://frw-link.lilico.app"
+        )
+        let metadata = AppMetadata(
+            name: "Flow Wallet",
+            description: "Digital wallet created for everyone.",
+            url: "https://frw-link.lilico.app",
+            icons: ["https://frw-link.lilico.app/logo.png"],
+            redirect: redirect
+        )
+        Networking.configure(
+            groupIdentifier: AppGroupName,
+            projectId: LocalEnvManager.shared.walletConnectProjectID,
+            socketFactory: SocketFactory()
+        )
         Pair.configure(metadata: metadata)
         Sign.configure(crypto: DefaultCryptoProvider())
         Web3Wallet.configure(metadata: metadata, crypto: DefaultCryptoProvider())
@@ -81,8 +70,37 @@ class WalletConnectManager: ObservableObject {
                 }
             }.store(in: &publishers)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(reloadPendingRequests), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(reloadPendingRequests),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
+
+    // MARK: Internal
+
+    static let shared = WalletConnectManager()
+
+    @Published
+    var activeSessions: [Session] = []
+
+    @Published
+    var activePairings: [Pairing] = []
+
+    @Published
+    var pendingRequests: [WalletConnectSign.Request] = []
+
+    var onClientConnected: (() -> Void)?
+
+    var currentProposal: Session.Proposal?
+    var currentRequest: WalletConnectSign.Request?
+    var currentSessionInfo: SessionInfo?
+    var currentRequestInfo: RequestInfo?
+    var currentMessageInfo: RequestMessageInfo?
+
+    @Published
+    var setSessions: [Session] = []
 
     func connect(link: String) {
         debugPrint("WalletConnectManager -> connect(), Thread: \(Thread.isMainThread)")
@@ -90,8 +108,7 @@ class WalletConnectManager: ObservableObject {
         Task {
             do {
                 if let removedLink = link.removingPercentEncoding,
-                   let uri = WalletConnectURI(string: removedLink)
-                {
+                   let uri = WalletConnectURI(string: removedLink) {
                     // TODO: commit
                     #if DEBUG
 //                    if Pair.instance.getPairings().contains(where: { $0.topic == uri.topic }) {
@@ -130,8 +147,17 @@ class WalletConnectManager: ObservableObject {
         self.activePairings = activePairings
     }
 
-    func encodeAccountProof(address: String, nonce: String, appIdentifier: String, includeDomaintag: Bool = true) -> Data? {
-        let list: [Any] = [appIdentifier.data(using: .utf8) ?? Data(), Data(hex: address), Data(hex: nonce)]
+    func encodeAccountProof(
+        address: String,
+        nonce: String,
+        appIdentifier: String,
+        includeDomaintag: Bool = true
+    ) -> Data? {
+        let list: [Any] = [
+            appIdentifier.data(using: .utf8) ?? Data(),
+            Data(hex: address),
+            Data(hex: nonce),
+        ]
         guard let rlp = RLP.encode(list) else {
             return nil
         }
@@ -226,6 +252,16 @@ class WalletConnectManager: ObservableObject {
             }.store(in: &publishers)
     }
 
+    // MARK: Private
+
+    private var publishers = [AnyCancellable]()
+    private var pendingRequestCheckTimer: Timer?
+    private var handler = WalletConnectHandler()
+
+    private var syncAccountFlag: Bool = false
+
+    private var cacheReqeust: [String] = []
+
     private func navigateBackTodApp(topic: String) {
         // TODO: #six
 //        WalletConnectRouter.Router.goBack()
@@ -241,7 +277,13 @@ extension WalletConnectManager {
     private func startPendingRequestCheckTimer() {
         stopPendingRequestCheckTimer()
 
-        let timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(reloadPendingRequests), userInfo: nil, repeats: true)
+        let timer = Timer.scheduledTimer(
+            timeInterval: 5,
+            target: self,
+            selector: #selector(reloadPendingRequests),
+            userInfo: nil,
+            repeats: true
+        )
         RunLoop.main.add(timer, forMode: .common)
 
         pendingRequestCheckTimer = timer
@@ -254,13 +296,18 @@ extension WalletConnectManager {
         }
     }
 
-    @objc func reloadPendingRequests() {
+    @objc
+    func reloadPendingRequests() {
         if UserManager.shared.isLoggedIn {
-            pendingRequests = Sign.instance.getPendingRequests().map { (request: Request, _: VerifyContext?) in
+            pendingRequests = Sign.instance.getPendingRequests().map { (
+                request: Request,
+                _: VerifyContext?
+            ) in
                 request
             }
 
-            WalletNewsHandler.shared.refreshWalletConnectNews(pendingRequests.map { $0.toLocalNews() })
+            WalletNewsHandler.shared
+                .refreshWalletConnectNews(pendingRequests.map { $0.toLocalNews() })
         }
     }
 }
@@ -278,7 +325,8 @@ extension WalletConnectManager {
         guard network == LocalUserDefaults.shared.flowNetwork.toFlowType() else {
             rejectSession(proposal: sessionProposal)
             let current = LocalUserDefaults.shared.flowNetwork
-            guard let toNetwork = LocalUserDefaults.FlowNetworkType(chainId: network) else { return }
+            guard let toNetwork = LocalUserDefaults.FlowNetworkType(chainId: network)
+            else { return }
             Router.route(to: RouteMap.Explore.switchNetwork(current, toNetwork, nil))
             return
         }
@@ -295,12 +343,13 @@ extension WalletConnectManager {
             address = EVMAccountManager.shared.accounts.first?.showAddress ?? ""
         }
         currentSessionInfo = info
-        let authnVM = BrowserAuthnViewModel(title: info.name,
-                                            url: info.dappURL,
-                                            logo: info.iconURL,
-                                            walletAddress: address,
-                                            network: network)
-        { result in
+        let authnVM = BrowserAuthnViewModel(
+            title: info.name,
+            url: info.dappURL,
+            logo: info.iconURL,
+            walletAddress: address,
+            network: network
+        ) { result in
             if result {
                 // TODO: Handle network mismatch
                 self.approveSession(proposal: sessionProposal)
@@ -331,7 +380,11 @@ extension WalletConnectManager {
 
                     var services = [
                         // Since fcl-js is not implement pre-authz, hence we disable it for now
-                        serviceDefinition(address: RemoteConfigManager.shared.payer, keyId: RemoteConfigManager.shared.keyIndex, type: .preAuthz),
+                        serviceDefinition(
+                            address: RemoteConfigManager.shared.payer,
+                            keyId: RemoteConfigManager.shared.keyIndex,
+                            type: .preAuthz
+                        ),
                         serviceDefinition(address: address, keyId: keyId, type: .authn),
                         serviceDefinition(address: address, keyId: keyId, type: .authz),
                         serviceDefinition(address: address, keyId: keyId, type: .userSignature),
@@ -341,18 +394,38 @@ extension WalletConnectManager {
                     if let model = try? JSONDecoder().decode(BaseConfigRequest.self, from: data),
                        let nonce = model.accountProofNonce ?? model.nonce,
                        let appIdentifier = model.appIdentifier,
-                       let data = self.encodeAccountProof(address: address, nonce: nonce, appIdentifier: appIdentifier),
-                       let signedData = try? await WalletManager.shared.sign(signableData: data)
-                    {
-                        services.append(accountProofServiceDefinition(address: address, keyId: keyId, nonce: nonce, signature: signedData.hexValue))
+                       let data = self.encodeAccountProof(
+                           address: address,
+                           nonce: nonce,
+                           appIdentifier: appIdentifier
+                       ),
+                       let signedData = try? await WalletManager.shared.sign(signableData: data) {
+                        services.append(accountProofServiceDefinition(
+                            address: address,
+                            keyId: keyId,
+                            nonce: nonce,
+                            signature: signedData.hexValue
+                        ))
                     }
 
-                    let result = AuthnResponse(fType: "PollingResponse", fVsn: "1.0.0", status: .approved,
-                                               data: AuthnData(addr: address, fType: "AuthnResponse", fVsn: "1.0.0",
-                                                               services: services),
-                                               reason: nil,
-                                               compositeSignature: nil)
-                    try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable(result)))
+                    let result = AuthnResponse(
+                        fType: "PollingResponse",
+                        fVsn: "1.0.0",
+                        status: .approved,
+                        data: AuthnData(
+                            addr: address,
+                            fType: "AuthnResponse",
+                            fVsn: "1.0.0",
+                            services: services
+                        ),
+                        reason: nil,
+                        compositeSignature: nil
+                    )
+                    try await Sign.instance.respond(
+                        topic: sessionRequest.topic,
+                        requestId: sessionRequest.id,
+                        response: .response(AnyCodable(result))
+                    )
                     self.navigateBackTodApp(topic: sessionRequest.topic)
                 } catch {
                     print("[WALLET] Respond Error: \(error.localizedDescription)")
@@ -361,19 +434,45 @@ extension WalletConnectManager {
             }
         case FCLWalletConnectMethod.preAuthz.rawValue:
 
-            let result = AuthnResponse(fType: "PollingResponse", fVsn: "1.0.0", status: .approved,
-                                       data: AuthnData(addr: address, fType: "AuthnResponse", fVsn: "1.0.0",
-                                                       services: nil,
-                                                       proposer: serviceDefinition(address: address, keyId: keyId, type: .authz),
-                                                       payer:
-                                                       [serviceDefinition(address: RemoteConfigManager.shared.payer, keyId: RemoteConfigManager.shared.keyIndex, type: .authz)],
-                                                       authorization: [serviceDefinition(address: address, keyId: keyId, type: .authz)]),
-                                       reason: nil,
-                                       compositeSignature: nil)
+            let result = AuthnResponse(
+                fType: "PollingResponse",
+                fVsn: "1.0.0",
+                status: .approved,
+                data: AuthnData(
+                    addr: address,
+                    fType: "AuthnResponse",
+                    fVsn: "1.0.0",
+                    services: nil,
+                    proposer: serviceDefinition(
+                        address: address,
+                        keyId: keyId,
+                        type: .authz
+                    ),
+                    payer:
+                    [serviceDefinition(
+                        address: RemoteConfigManager.shared
+                            .payer,
+                        keyId: RemoteConfigManager.shared
+                            .keyIndex,
+                        type: .authz
+                    )],
+                    authorization: [serviceDefinition(
+                        address: address,
+                        keyId: keyId,
+                        type: .authz
+                    )]
+                ),
+                reason: nil,
+                compositeSignature: nil
+            )
 
             Task {
                 do {
-                    try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable(result)))
+                    try await Sign.instance.respond(
+                        topic: sessionRequest.topic,
+                        requestId: sessionRequest.id,
+                        response: .response(AnyCodable(result))
+                    )
                 } catch {
                     print("[WALLET] Respond Error: \(error.localizedDescription)")
                     rejectRequest(request: sessionRequest)
@@ -395,8 +494,7 @@ extension WalletConnectManager {
                 var model: Signable?
                 if let data = Data(base64Encoded: json),
                    data.isGzipped,
-                   let uncompressData = try? data.gunzipped()
-                {
+                   let uncompressData = try? data.gunzipped() {
                     model = try JSONDecoder().decode(Signable.self, from: uncompressData)
                 } else if let data = json.data(using: .utf8) {
                     model = try JSONDecoder().decode(Signable.self, from: data)
@@ -407,17 +505,38 @@ extension WalletConnectManager {
                 }
 
                 if model.roles.payer, !model.roles.proposer, !model.roles.authorizer {
-                    approvePayerRequest(request: sessionRequest, model: model, message: model.message)
+                    approvePayerRequest(
+                        request: sessionRequest,
+                        model: model,
+                        message: model.message
+                    )
                     navigateBackTodApp(topic: sessionRequest.topic)
                     return
                 }
 
                 if let session = activeSessions.first(where: { $0.topic == sessionRequest.topic }) {
-                    let request = RequestInfo(cadence: model.cadence ?? "", agrument: model.args, name: session.peer.name, descriptionText: session.peer.description, dappURL: session.peer.url, iconURL: session.peer.icons.first ?? "", chains: Set(arrayLiteral: sessionRequest.chainId), methods: nil, pendingRequests: [], message: model.message)
+                    let request = RequestInfo(
+                        cadence: model.cadence ?? "",
+                        agrument: model.args,
+                        name: session.peer.name,
+                        descriptionText: session.peer.description,
+                        dappURL: session.peer.url,
+                        iconURL: session.peer.icons.first ?? "",
+                        chains: Set(arrayLiteral: sessionRequest.chainId),
+                        methods: nil,
+                        pendingRequests: [],
+                        message: model.message
+                    )
 
                     currentRequestInfo = request
 
-                    let authzVM = BrowserAuthzViewModel(title: request.name, url: request.dappURL, logo: request.iconURL, cadence: request.cadence, arguments: request.agrument) { result in
+                    let authzVM = BrowserAuthzViewModel(
+                        title: request.name,
+                        url: request.dappURL,
+                        logo: request.iconURL,
+                        cadence: request.cadence,
+                        arguments: request.agrument
+                    ) { result in
                         if result {
                             self.approveRequest(request: sessionRequest, requestInfo: request)
                         } else {
@@ -449,8 +568,7 @@ extension WalletConnectManager {
                 var model: SignableMessage?
                 if let data = Data(base64Encoded: json),
                    data.isGzipped,
-                   let uncompressData = try? data.gunzipped()
-                {
+                   let uncompressData = try? data.gunzipped() {
                     model = try JSONDecoder().decode(SignableMessage.self, from: uncompressData)
                 } else if let data = json.data(using: .utf8) {
                     model = try JSONDecoder().decode(SignableMessage.self, from: data)
@@ -460,12 +578,29 @@ extension WalletConnectManager {
                 }
 
                 if let session = activeSessions.first(where: { $0.topic == sessionRequest.topic }) {
-                    let request = RequestMessageInfo(name: session.peer.name, descriptionText: session.peer.description, dappURL: session.peer.url, iconURL: session.peer.icons.first ?? "", chains: Set(arrayLiteral: sessionRequest.chainId), methods: nil, pendingRequests: [], message: model.message)
+                    let request = RequestMessageInfo(
+                        name: session.peer.name,
+                        descriptionText: session.peer.description,
+                        dappURL: session.peer.url,
+                        iconURL: session.peer.icons.first ?? "",
+                        chains: Set(arrayLiteral: sessionRequest.chainId),
+                        methods: nil,
+                        pendingRequests: [],
+                        message: model.message
+                    )
                     currentMessageInfo = request
 
-                    let vm = BrowserSignMessageViewModel(title: request.name, url: request.dappURL, logo: request.iconURL, cadence: request.message) { result in
+                    let vm = BrowserSignMessageViewModel(
+                        title: request.name,
+                        url: request.dappURL,
+                        logo: request.iconURL,
+                        cadence: request.message
+                    ) { result in
                         if result {
-                            self.approveRequestMessage(request: sessionRequest, requestInfo: request)
+                            self.approveRequestMessage(
+                                request: sessionRequest,
+                                requestInfo: request
+                            )
                         } else {
                             self.rejectRequest(request: sessionRequest)
                         }
@@ -482,7 +617,11 @@ extension WalletConnectManager {
             Task {
                 do {
                     let param = try WalletConnectSyncDevice.packageUserInfo()
-                    try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(param))
+                    try await Sign.instance.respond(
+                        topic: sessionRequest.topic,
+                        requestId: sessionRequest.id,
+                        response: .response(param)
+                    )
                 } catch {
                     log.error("[WALLET] Respond Error: [accountInfo] \(error.localizedDescription)")
                     rejectRequest(request: sessionRequest)
@@ -491,15 +630,22 @@ extension WalletConnectManager {
         case FCLWalletConnectMethod.addDeviceInfo.rawValue:
             Task {
                 do {
-                    let res = try sessionRequest.params.get(SyncInfo.SyncResponse<SyncInfo.DeviceInfo>.self)
+                    let res = try sessionRequest.params
+                        .get(SyncInfo.SyncResponse<SyncInfo.DeviceInfo>.self)
                     let viewModel = SyncAddDeviceViewModel(with: res.data!) { result in
                         if result {
                             Task {
                                 do {
-                                    try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable("")))
+                                    try await Sign.instance.respond(
+                                        topic: sessionRequest.topic,
+                                        requestId: sessionRequest.id,
+                                        response: .response(AnyCodable(""))
+                                    )
                                 } catch {
                                     self.rejectRequest(request: sessionRequest)
-                                    print("[WALLET] Request Error: [addDeviceInfo] \(error.localizedDescription)")
+                                    print(
+                                        "[WALLET] Request Error: [addDeviceInfo] \(error.localizedDescription)"
+                                    )
                                 }
                             }
                         } else {
@@ -518,7 +664,11 @@ extension WalletConnectManager {
             handler.handlePersonalSignRequest(request: sessionRequest) { signStr in
                 Task {
                     do {
-                        try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable(signStr)))
+                        try await Sign.instance.respond(
+                            topic: sessionRequest.topic,
+                            requestId: sessionRequest.id,
+                            response: .response(AnyCodable(signStr))
+                        )
                     } catch {
                         self.rejectRequest(request: sessionRequest)
                         log.error("[EVM] Request Error: [personalSign] \(error)")
@@ -533,7 +683,11 @@ extension WalletConnectManager {
             handler.handleSendTransactionRequest(request: sessionRequest) { signStr in
                 Task {
                     do {
-                        try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable(signStr)))
+                        try await Sign.instance.respond(
+                            topic: sessionRequest.topic,
+                            requestId: sessionRequest.id,
+                            response: .response(AnyCodable(signStr))
+                        )
                     } catch {
                         self.rejectRequest(request: sessionRequest)
                         log.error("[EVM] Request Error: [sendTransaction] \(error)")
@@ -570,10 +724,16 @@ extension WalletConnectManager {
                     let user = try WalletConnectSyncDevice.parseAccount(data: data)
                     Router.route(to: RouteMap.RestoreLogin.syncAccount(user))
                 } catch {
-                    log.error("[WALLET] Respond Error: [account info] \(error.localizedDescription)")
+                    log
+                        .error(
+                            "[WALLET] Respond Error: [account info] \(error.localizedDescription)"
+                        )
                 }
             } else if WalletConnectSyncDevice.isDevice(request: request, with: response) {
-                NotificationCenter.default.post(name: .syncDeviceStatusDidChanged, object: WalletConnectSyncDevice.SyncResult.success)
+                NotificationCenter.default.post(
+                    name: .syncDeviceStatusDidChanged,
+                    object: WalletConnectSyncDevice.SyncResult.success
+                )
             }
         case let .error(error):
             if WalletConnectSyncDevice.isDevice(request: request, with: response) {
@@ -589,7 +749,11 @@ extension WalletConnectManager {
         handler.handleSignTypedDataV4(request: sessionRequest) { signStr in
             Task {
                 do {
-                    try await Sign.instance.respond(topic: sessionRequest.topic, requestId: sessionRequest.id, response: .response(AnyCodable(signStr)))
+                    try await Sign.instance.respond(
+                        topic: sessionRequest.topic,
+                        requestId: sessionRequest.id,
+                        response: .response(AnyCodable(signStr))
+                    )
                 } catch {
                     self.rejectRequest(request: sessionRequest)
                     log.error("[EVM] Request Error: [signTypedDataV4] \(error)")
@@ -647,7 +811,10 @@ extension WalletConnectManager {
     private func rejectSession(proposal: Session.Proposal) {
         Task {
             do {
-                try await Sign.instance.rejectSession(proposalId: proposal.id, reason: .userRejected)
+                try await Sign.instance.rejectSession(
+                    proposalId: proposal.id,
+                    reason: .userRejected
+                )
                 HUD.success(title: "rejected".localized)
             } catch {
                 HUD.error(title: "reject_failed".localized)
@@ -665,12 +832,27 @@ extension WalletConnectManager {
                 let data = Data(requestInfo.message.hexValue)
                 let signedData = try await WalletManager.shared.sign(signableData: data)
                 let signature = signedData.hexValue
-                let result = AuthnResponse(fType: "PollingResponse", fVsn: "1.0.0", status: .approved,
-                                           data: AuthnData(addr: account, fType: "CompositeSignature", fVsn: "1.0.0", services: nil, keyId: 0, signature: signature),
-                                           reason: nil,
-                                           compositeSignature: nil)
+                let result = AuthnResponse(
+                    fType: "PollingResponse",
+                    fVsn: "1.0.0",
+                    status: .approved,
+                    data: AuthnData(
+                        addr: account,
+                        fType: "CompositeSignature",
+                        fVsn: "1.0.0",
+                        services: nil,
+                        keyId: 0,
+                        signature: signature
+                    ),
+                    reason: nil,
+                    compositeSignature: nil
+                )
 
-                try await Sign.instance.respond(topic: request.topic, requestId: request.id, response: .response(AnyCodable(result)))
+                try await Sign.instance.respond(
+                    topic: request.topic,
+                    requestId: request.id,
+                    response: .response(AnyCodable(result))
+                )
 
                 HUD.success(title: "approved".localized)
             } catch {
@@ -690,13 +872,31 @@ extension WalletConnectManager {
             do {
                 let tx = model.voucher.toFCLVoucher()
                 let data = Data(message.hexValue)
-                let signedData = try await RemoteConfigManager.shared.sign(voucher: tx, signableData: data)
+                let signedData = try await RemoteConfigManager.shared.sign(
+                    voucher: tx,
+                    signableData: data
+                )
                 let signature = signedData.hexValue
-                let result = AuthnResponse(fType: "PollingResponse", fVsn: "1.0.0", status: .approved,
-                                           data: AuthnData(addr: account, fType: "CompositeSignature", fVsn: "1.0.0", services: nil, keyId: 0, signature: signature),
-                                           reason: nil,
-                                           compositeSignature: nil)
-                try await Sign.instance.respond(topic: request.topic, requestId: request.id, response: .response(AnyCodable(result)))
+                let result = AuthnResponse(
+                    fType: "PollingResponse",
+                    fVsn: "1.0.0",
+                    status: .approved,
+                    data: AuthnData(
+                        addr: account,
+                        fType: "CompositeSignature",
+                        fVsn: "1.0.0",
+                        services: nil,
+                        keyId: 0,
+                        signature: signature
+                    ),
+                    reason: nil,
+                    compositeSignature: nil
+                )
+                try await Sign.instance.respond(
+                    topic: request.topic,
+                    requestId: request.id,
+                    response: .response(AnyCodable(result))
+                )
                 HUD.success(title: "payer_approved".localized)
             } catch {
                 log.error("WalletConnectManager -> approveRequest failed", context: error)
@@ -706,13 +906,21 @@ extension WalletConnectManager {
     }
 
     private func rejectRequest(request: Request, reason: String = "User reject request") {
-        let result = AuthnResponse(fType: "PollingResponse", fVsn: "1.0.0", status: .declined,
-                                   reason: reason,
-                                   compositeSignature: nil)
+        let result = AuthnResponse(
+            fType: "PollingResponse",
+            fVsn: "1.0.0",
+            status: .declined,
+            reason: reason,
+            compositeSignature: nil
+        )
 
         Task {
             do {
-                try await Sign.instance.respond(topic: request.topic, requestId: request.id, response: .response(AnyCodable(result)))
+                try await Sign.instance.respond(
+                    topic: request.topic,
+                    requestId: request.id,
+                    response: .response(AnyCodable(result))
+                )
                 HUD.success(title: "rejected".localized)
             } catch {
                 log.error("WalletConnectManager -> approveRequest failed", context: error)
@@ -734,11 +942,26 @@ extension WalletConnectManager {
                 let data = Flow.DomainTag.user.normalize + Data(requestInfo.message.hexValue)
                 let signedData = try await WalletManager.shared.sign(signableData: data)
                 let signature = signedData.hexValue
-                let result = AuthnResponse(fType: "PollingResponse", fVsn: "1.0.0", status: .approved,
-                                           data: AuthnData(addr: account, fType: "CompositeSignature", fVsn: "1.0.0", services: nil, keyId: 0, signature: signature),
-                                           reason: nil,
-                                           compositeSignature: nil)
-                try await Sign.instance.respond(topic: request.topic, requestId: request.id, response: .response(AnyCodable(result)))
+                let result = AuthnResponse(
+                    fType: "PollingResponse",
+                    fVsn: "1.0.0",
+                    status: .approved,
+                    data: AuthnData(
+                        addr: account,
+                        fType: "CompositeSignature",
+                        fVsn: "1.0.0",
+                        services: nil,
+                        keyId: 0,
+                        signature: signature
+                    ),
+                    reason: nil,
+                    compositeSignature: nil
+                )
+                try await Sign.instance.respond(
+                    topic: request.topic,
+                    requestId: request.id,
+                    response: .response(AnyCodable(result))
+                )
                 HUD.success(title: "approved".localized)
             } catch {
                 debugPrint("WalletConnectManager -> approveRequestMessage failed: \(error)")
@@ -772,7 +995,8 @@ extension WalletConnectManager {
 
         Task {
             do {
-                self.currentRequest = try await WalletConnectSyncDevice.requestSyncAccount(in: session)
+                self.currentRequest = try await WalletConnectSyncDevice
+                    .requestSyncAccount(in: session)
             } catch {
                 // TODO:
                 log.error("[sync]-account: send sync account requst failed")
@@ -790,22 +1014,25 @@ extension WalletConnectManager {
     }
 
     func findSession(topic: String) -> Session? {
-        return activeSessions.first(where: { $0.topic == topic })
+        activeSessions.first(where: { $0.topic == topic })
     }
 }
 
 extension WalletConnectSign.Request {
     func toLocalNews() -> RemoteConfigManager.News {
-        return RemoteConfigManager.News(id: topic,
-                                        priority: .urgent,
-                                        type: .message,
-                                        title: "Pending Request - \(name ?? "Unknown")",
-                                        body: "You have a pending request from \((dappURL?.host) ?? "Unknown").",
-                                        icon: logoURL?.absoluteString ?? AppPlaceholder.image,
-                                        image: nil,
-                                        url: nil,
-                                        expiryTime: .distantFuture,
-                                        displayType: .click,
-                                        flag: .walletconnect, conditions: nil)
+        RemoteConfigManager.News(
+            id: topic,
+            priority: .urgent,
+            type: .message,
+            title: "Pending Request - \(name ?? "Unknown")",
+            body: "You have a pending request from \((dappURL?.host) ?? "Unknown").",
+            icon: logoURL?.absoluteString ?? AppPlaceholder.image,
+            image: nil,
+            url: nil,
+            expiryTime: .distantFuture,
+            displayType: .click,
+            flag: .walletconnect,
+            conditions: nil
+        )
     }
 }

@@ -28,26 +28,10 @@ import UIKit
 
 public typealias SPQRCodeCallback = (SPQRCodeData, SPQRCameraController) -> Void
 
+// MARK: - SPQRCameraController
+
 open class SPQRCameraController: SPController {
-    open var detectQRCodeData: ((SPQRCodeData, SPQRCameraController) -> SPQRCodeData?) = { data, _ in data }
-    open var handledQRCodeData: SPQRCodeCallback?
-    open var clickQRCodeData: SPQRCodeCallback?
-
-    var updateTimer: Timer?
-    lazy var captureSession: AVCaptureSession = makeCaptureSession()
-    var qrCodeData: SPQRCodeData? {
-        didSet {
-            updateInterface()
-            didTapHandledButton()
-        }
-    }
-
-    // MARK: - Views
-
-    let frameLayer = SPQRFrameLayer()
-    let detailView = SPQRDetailButton()
-    lazy var previewLayer = makeVideoPreviewLayer()
-    let maskView = SPQRMaskView()
+    // MARK: Lifecycle
 
     override public init() {
         super.init()
@@ -59,11 +43,19 @@ open class SPQRCameraController: SPController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override open var prefersStatusBarHidden: Bool {
-        return true
-    }
+    // MARK: Open
 
-    // MARK: - Lifecycle
+    open var detectQRCodeData: ((SPQRCodeData, SPQRCameraController) -> SPQRCodeData?) =
+        { data, _ in
+            data
+        }
+
+    open var handledQRCodeData: SPQRCodeCallback?
+    open var clickQRCodeData: SPQRCodeCallback?
+
+    override open var prefersStatusBarHidden: Bool {
+        true
+    }
 
     override open func viewDidLoad() {
         super.viewDidLoad()
@@ -84,6 +76,41 @@ open class SPQRCameraController: SPController {
         updateInterface()
     }
 
+    override open func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        previewLayer.frame = .init(
+            x: .zero, y: .zero,
+            width: view.layer.bounds.width,
+            height: view.layer.bounds.height
+        )
+        maskView.frame = previewLayer.frame
+    }
+
+    // MARK: Internal
+
+    static let supportedCodeTypes = [
+        AVMetadataObject.ObjectType.aztec,
+        AVMetadataObject.ObjectType.qr,
+    ]
+
+    var updateTimer: Timer?
+    lazy var captureSession: AVCaptureSession = makeCaptureSession()
+
+    // MARK: - Views
+
+    let frameLayer = SPQRFrameLayer()
+    let detailView = SPQRDetailButton()
+    lazy var previewLayer = makeVideoPreviewLayer()
+    let maskView = SPQRMaskView()
+
+    var qrCodeData: SPQRCodeData? {
+        didSet {
+            updateInterface()
+            didTapHandledButton()
+        }
+    }
+
     func stopRunning() {
         if captureSession.isRunning {
             captureSession.stopRunning()
@@ -92,16 +119,82 @@ open class SPQRCameraController: SPController {
 
     // MARK: - Actions
 
-    @objc func didTapHandledButton() {
+    @objc
+    func didTapHandledButton() {
         guard let data = qrCodeData else { return }
         handledQRCodeData?(data, self)
     }
 
-    @objc func didTapCancelButton() {
+    @objc
+    func didTapCancelButton() {
         dismissAnimated()
     }
 
-    @objc private func didTapDetailButtonClick() {
+    func updateInterface() {
+        let duration: TimeInterval = 0.22
+        if qrCodeData != nil {
+            detailView.isHidden = false
+            if case .flowWallet = qrCodeData {
+                detailView.applyDefaultAppearance(with: .init(
+                    content: .white,
+                    background: UIColor(hex: "#00EF8B")
+                ))
+                frameLayer.strokeColor = UIColor(hex: "#00EF8B").cgColor
+            }
+            if case .ethWallet = qrCodeData {
+                detailView.applyDefaultAppearance(with: .init(
+                    content: .white,
+                    background: UIColor(hex: "#00EF8B")
+                ))
+                frameLayer.strokeColor = UIColor(hex: "#00EF8B").cgColor
+            }
+            UIView.animate(
+                withDuration: duration,
+                delay: .zero,
+                options: .curveEaseInOut,
+                animations: {
+                    self.detailView.transform = .identity
+                    self.detailView.alpha = 1
+                }
+            )
+        } else {
+            UIView.animate(
+                withDuration: duration,
+                delay: .zero,
+                options: .curveEaseInOut,
+                animations: {
+                    self.detailView.transform = .init(scale: 0.9)
+                    self.detailView.alpha = .zero
+                },
+                completion: { _ in
+                    self.detailView.isHidden = true
+                }
+            )
+        }
+    }
+
+    func makeVideoPreviewLayer() -> AVCaptureVideoPreviewLayer {
+        let videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+        videoPreviewLayer.videoGravity = .resizeAspectFill
+        return videoPreviewLayer
+    }
+
+    func makeCaptureSession() -> AVCaptureSession {
+        let captureSession = AVCaptureSession()
+        guard let device = AVCaptureDevice.default(for: AVMediaType.video) else { fatalError() }
+        guard let input = try? AVCaptureDeviceInput(device: device) else { fatalError() }
+        captureSession.addInput(input)
+        let captureMetadataOutput = AVCaptureMetadataOutput()
+        captureSession.addOutput(captureMetadataOutput)
+        captureMetadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
+        captureMetadataOutput.metadataObjectTypes = Self.supportedCodeTypes
+        return captureSession
+    }
+
+    // MARK: Private
+
+    @objc
+    private func didTapDetailButtonClick() {
         guard let data = qrCodeData else { return }
         clickQRCodeData?(data, self)
     }
@@ -135,75 +228,12 @@ open class SPQRCameraController: SPController {
             make.centerY.equalTo(backButton.snp.centerY)
         }
     }
-
-    override open func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-        previewLayer.frame = .init(
-            x: .zero, y: .zero,
-            width: view.layer.bounds.width,
-            height: view.layer.bounds.height
-        )
-        maskView.frame = previewLayer.frame
-    }
-
-    // MARK: - Internal
-
-    func updateInterface() {
-        let duration: TimeInterval = 0.22
-        if qrCodeData != nil {
-            detailView.isHidden = false
-            if case .flowWallet = qrCodeData {
-                detailView.applyDefaultAppearance(with: .init(content: .white, background: UIColor(hex: "#00EF8B")))
-                frameLayer.strokeColor = UIColor(hex: "#00EF8B").cgColor
-            }
-            if case .ethWallet = qrCodeData {
-                detailView.applyDefaultAppearance(with: .init(content: .white, background: UIColor(hex: "#00EF8B")))
-                frameLayer.strokeColor = UIColor(hex: "#00EF8B").cgColor
-            }
-            UIView.animate(withDuration: duration, delay: .zero, options: .curveEaseInOut, animations: {
-                self.detailView.transform = .identity
-                self.detailView.alpha = 1
-            })
-        } else {
-            UIView.animate(withDuration: duration, delay: .zero, options: .curveEaseInOut, animations: {
-                self.detailView.transform = .init(scale: 0.9)
-                self.detailView.alpha = .zero
-            }, completion: { _ in
-                self.detailView.isHidden = true
-            })
-        }
-    }
-
-    static let supportedCodeTypes = [
-        AVMetadataObject.ObjectType.aztec,
-        AVMetadataObject.ObjectType.qr,
-    ]
-
-    func makeVideoPreviewLayer() -> AVCaptureVideoPreviewLayer {
-        let videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        videoPreviewLayer.videoGravity = .resizeAspectFill
-        return videoPreviewLayer
-    }
-
-    func makeCaptureSession() -> AVCaptureSession {
-        let captureSession = AVCaptureSession()
-        guard let device = AVCaptureDevice.default(for: AVMediaType.video) else { fatalError() }
-        guard let input = try? AVCaptureDeviceInput(device: device) else { fatalError() }
-        captureSession.addInput(input)
-        let captureMetadataOutput = AVCaptureMetadataOutput()
-        captureSession.addOutput(captureMetadataOutput)
-        captureMetadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-        captureMetadataOutput.metadataObjectTypes = Self.supportedCodeTypes
-        return captureSession
-    }
 }
 
 extension UIViewController {
     var statusBarHeight: CGFloat {
-        guard
-            let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-            let height = scene.statusBarManager?.statusBarFrame.height
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let height = scene.statusBarManager?.statusBarFrame.height
         else {
             return 0
         }
