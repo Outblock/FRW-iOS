@@ -98,9 +98,9 @@ struct MatrixRainCharacters: View {
             if (index - random) < 0 {
                 return index
             }
-            return (index - random)
+            return index - random
         } else {
-            return (index + random)
+            return index + random
         }
     }
 }

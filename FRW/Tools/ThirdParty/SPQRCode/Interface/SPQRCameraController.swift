@@ -26,16 +26,16 @@ import SparrowKit
 import SwiftUI
 import UIKit
 
-public typealias SPQRCodeCallback = ((SPQRCodeData, SPQRCameraController) -> Void)
+public typealias SPQRCodeCallback = (SPQRCodeData, SPQRCameraController) -> Void
 
 open class SPQRCameraController: SPController {
     open var detectQRCodeData: ((SPQRCodeData, SPQRCameraController) -> SPQRCodeData?) = { data, _ in data }
     open var handledQRCodeData: SPQRCodeCallback?
     open var clickQRCodeData: SPQRCodeCallback?
 
-    internal var updateTimer: Timer?
-    internal lazy var captureSession: AVCaptureSession = makeCaptureSession()
-    internal var qrCodeData: SPQRCodeData? {
+    var updateTimer: Timer?
+    lazy var captureSession: AVCaptureSession = makeCaptureSession()
+    var qrCodeData: SPQRCodeData? {
         didSet {
             updateInterface()
             didTapHandledButton()
@@ -44,10 +44,10 @@ open class SPQRCameraController: SPController {
 
     // MARK: - Views
 
-    internal let frameLayer = SPQRFrameLayer()
-    internal let detailView = SPQRDetailButton()
-    internal lazy var previewLayer = makeVideoPreviewLayer()
-    internal let maskView = SPQRMaskView()
+    let frameLayer = SPQRFrameLayer()
+    let detailView = SPQRDetailButton()
+    lazy var previewLayer = makeVideoPreviewLayer()
+    let maskView = SPQRMaskView()
 
     override public init() {
         super.init()
@@ -149,7 +149,7 @@ open class SPQRCameraController: SPController {
 
     // MARK: - Internal
 
-    internal func updateInterface() {
+    func updateInterface() {
         let duration: TimeInterval = 0.22
         if qrCodeData != nil {
             detailView.isHidden = false
@@ -175,18 +175,18 @@ open class SPQRCameraController: SPController {
         }
     }
 
-    internal static let supportedCodeTypes = [
+    static let supportedCodeTypes = [
         AVMetadataObject.ObjectType.aztec,
         AVMetadataObject.ObjectType.qr,
     ]
 
-    internal func makeVideoPreviewLayer() -> AVCaptureVideoPreviewLayer {
+    func makeVideoPreviewLayer() -> AVCaptureVideoPreviewLayer {
         let videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         videoPreviewLayer.videoGravity = .resizeAspectFill
         return videoPreviewLayer
     }
 
-    internal func makeCaptureSession() -> AVCaptureSession {
+    func makeCaptureSession() -> AVCaptureSession {
         let captureSession = AVCaptureSession()
         guard let device = AVCaptureDevice.default(for: AVMediaType.video) else { fatalError() }
         guard let input = try? AVCaptureDeviceInput(device: device) else { fatalError() }

@@ -1,5 +1,5 @@
 //
-//  FlowCoins.swift
+//  FirebaseConfig.swift
 //  Flow Wallet
 //
 //  Created by cat on 2022/4/30.
@@ -9,10 +9,14 @@ import FirebaseRemoteConfig
 import Foundation
 import Haneke
 
+// MARK: - FirebaseConfigError
+
 enum FirebaseConfigError: Error {
     case fetch
     case decode
 }
+
+// MARK: - FirebaseConfig
 
 enum FirebaseConfig: String {
     case all
@@ -23,6 +27,8 @@ enum FirebaseConfig: String {
     case appSecret = "app_secret"
     case ENVConfig = "i_config"
     case news
+
+    // MARK: Internal
 
     static func start() {
         Task {
@@ -85,7 +91,7 @@ extension FirebaseConfig {
             setting.minimumFetchInterval = 3600
 
             #if DEBUG
-                setting.minimumFetchInterval = 0
+            setting.minimumFetchInterval = 0
             #endif
 
             remoteConfig.configSettings = setting
@@ -93,10 +99,14 @@ extension FirebaseConfig {
             remoteConfig.fetchAndActivate(completionHandler: { status, error in
                 if status == .error {
                     continuation.resume(throwing: FirebaseConfigError.fetch)
-                    log.error("[Firebase] fetch Error: \(error?.localizedDescription ?? "No error available.")")
+                    log
+                        .error(
+                            "[Firebase] fetch Error: \(error?.localizedDescription ?? "No error available.")"
+                        )
                 } else {
                     log.info("[Firebase] Config fetched!")
-                    let configValues: RemoteConfigValue = remoteConfig.configValue(forKey: self.rawValue)
+                    let configValues: RemoteConfigValue = remoteConfig
+                        .configValue(forKey: self.rawValue)
                     continuation.resume(returning: configValues)
                 }
             })

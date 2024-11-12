@@ -1,5 +1,5 @@
 //
-//  SyncAccount.swift
+//  SyncAccountView.swift
 //  FRW
 //
 //  Created by cat on 2023/11/24.
@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct SyncAccountView: RouteableView {
-    @ObservedObject var viewModel: SyncAccountViewModel = .init()
+    @ObservedObject
+    var viewModel: SyncAccountViewModel = .init()
 
     var title: String {
         "sync_flow_reference".localized

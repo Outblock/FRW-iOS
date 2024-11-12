@@ -1,5 +1,5 @@
 //
-//  LLCadence.swift
+//  FlowQuery.swift
 //  Flow Wallet
 //
 //  Created by cat on 2022/5/2.
@@ -13,11 +13,15 @@ typealias TokenCadence = LLCadence<LLCadenceAction.token>
 typealias BalanceCadence = LLCadence<LLCadenceAction.balance>
 typealias NFTCadence = LLCadence<LLCadenceAction.nft>
 
+// MARK: - LLCadenceAction
+
 enum LLCadenceAction {
     enum token {}
     enum balance {}
     enum nft {}
 }
+
+// MARK: - LLCadence
 
 struct LLCadence<T> {}
 
@@ -55,13 +59,17 @@ extension LLCadence {
 // MARK: NFT
 
 extension LLCadence where T == LLCadenceAction.nft {
-    static func collectionListCheckEnabled(with list: [NFTCollectionInfo], on _: Flow.ChainID) -> String {
+    static func collectionListCheckEnabled(
+        with list: [NFTCollectionInfo],
+        on _: Flow.ChainID
+    ) -> String {
         let tokenImports = list.map {
             $0.formatCadence(script: "import <Token> from <TokenAddress>")
         }.joined(separator: "\r\n")
 
         let tokenFunctions = list.map {
-            $0.formatCadence(script:
+            $0.formatCadence(
+                script:
                 """
                 pub fun check<Token>Vault(address: Address) : Bool {
                     let account = getAccount(address)
@@ -75,7 +83,8 @@ extension LLCadence where T == LLCadenceAction.nft {
         }.joined(separator: "\r\n")
 
         let tokenCalls = list.map {
-            $0.formatCadence(script:
+            $0.formatCadence(
+                script:
                 """
                 check<Token>Vault(address: address)
                 """
@@ -135,10 +144,16 @@ extension NFTCollectionInfo {
         if let path = path {
             newScript = newScript
                 .replacingOccurrences(of: "<CollectionStoragePath>", with: path.storagePath)
-                .replacingOccurrences(of: "<CollectionPublic>", with: path.publicCollectionName ?? "")
+                .replacingOccurrences(
+                    of: "<CollectionPublic>",
+                    with: path.publicCollectionName ?? ""
+                )
                 .replacingOccurrences(of: "<CollectionPublicPath>", with: path.publicPath)
                 .replacingOccurrences(of: "<TokenCollectionStoragePath>", with: path.storagePath)
-                .replacingOccurrences(of: "<TokenCollectionPublic>", with: path.publicCollectionName ?? "")
+                .replacingOccurrences(
+                    of: "<TokenCollectionPublic>",
+                    with: path.publicCollectionName ?? ""
+                )
                 .replacingOccurrences(of: "<TokenCollectionPublicPath>", with: path.publicPath)
                 .replacingOccurrences(of: "<CollectionPublicType>", with: path.publicType ?? "")
                 .replacingOccurrences(of: "<CollectionPrivateType>", with: path.privateType ?? "")

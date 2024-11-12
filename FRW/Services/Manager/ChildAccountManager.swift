@@ -8,9 +8,31 @@
 import Combine
 import SwiftUI
 
+// MARK: - ChildAccount
+
 struct ChildAccount: Codable {
+    // MARK: Lifecycle
+
+    init(address: String, name: String?, desc: String?, icon: String?, pinTime: TimeInterval) {
+        self.addr = address
+        self.name = name
+        self.description = desc
+        self.thumbnail = Thumbnail(url: icon)
+        self.time = pinTime
+    }
+
+    // MARK: Internal
+
+    struct Thumbnail: Codable {
+        let url: String?
+    }
+
     var addr: String?
     let name: String?
+    let description: String?
+    let thumbnail: Thumbnail?
+    var time: TimeInterval?
+
     var aName: String {
         if let n = name?.trim, !n.isEmpty {
             return n
@@ -18,8 +40,6 @@ struct ChildAccount: Codable {
         return "Linked Account"
     }
 
-    let description: String?
-    let thumbnail: Thumbnail?
     var icon: String {
         if let t = thumbnail?.url, !t.isEmpty {
             return t
@@ -28,29 +48,17 @@ struct ChildAccount: Codable {
         return AppPlaceholder.image
     }
 
-    var time: TimeInterval?
     var pinTime: TimeInterval {
         time ?? 0
     }
 
     var isPinned: Bool {
-        return pinTime > 0
-    }
-
-    struct Thumbnail: Codable {
-        let url: String?
-    }
-
-    init(address: String, name: String?, desc: String?, icon: String?, pinTime: TimeInterval) {
-        addr = address
-        self.name = name
-        description = desc
-        thumbnail = Thumbnail(url: icon)
-        time = pinTime
+        pinTime > 0
     }
 
     var isSelected: Bool {
-        if let selectedChildAccount = ChildAccountManager.shared.selectedChildAccount, selectedChildAccount.addr == addr, let addr = addr, !addr.isEmpty {
+        if let selectedChildAccount = ChildAccountManager.shared.selectedChildAccount,
+           selectedChildAccount.addr == addr, let addr = addr, !addr.isEmpty {
             return true
         }
 
@@ -58,9 +66,11 @@ struct ChildAccount: Codable {
     }
 }
 
+// MARK: ChildAccountSideCellItem
+
 extension ChildAccount: ChildAccountSideCellItem {
     var showAddress: String {
-        return addr ?? ""
+        addr ?? ""
     }
 
     var showIcon: String {
@@ -76,29 +86,10 @@ extension ChildAccount: ChildAccountSideCellItem {
     }
 }
 
+// MARK: - ChildAccountManager
+
 class ChildAccountManager: ObservableObject {
-    static let shared = ChildAccountManager()
-
-    @Published var isLoading: Bool = false
-
-    @Published var childAccounts: [ChildAccount] = [] {
-        didSet {
-            validSelectedChildAccount()
-        }
-    }
-
-    @Published var selectedChildAccount: ChildAccount? = LocalUserDefaults.shared.selectedChildAccount {
-        didSet {
-            LocalUserDefaults.shared.selectedChildAccount = selectedChildAccount
-        }
-    }
-
-    var sortedChildAccounts: [ChildAccount] {
-        return childAccounts.sorted { $0.pinTime > $1.pinTime }
-    }
-
-    private var cacheLoaded = false
-    private var cancelSets = Set<AnyCancellable>()
+    // MARK: Lifecycle
 
     private init() {
         UserManager.shared.$activatedUID
@@ -131,7 +122,12 @@ class ChildAccountManager: ObservableObject {
                 self.clean()
             }.store(in: &cancelSets)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(willReset),
+            name: .willResetWallet,
+            object: nil
+        )
 
         NotificationCenter.default.publisher(for: .transactionStatusDidChanged)
             .receive(on: DispatchQueue.main)
@@ -141,44 +137,35 @@ class ChildAccountManager: ObservableObject {
             }.store(in: &cancelSets)
     }
 
-    @objc private func onTransactionStatusChanged(_ noti: Notification) {
-        guard let obj = noti.object as? TransactionManager.TransactionHolder, obj.type == .editChildAccount else {
-            return
-        }
+    // MARK: Internal
 
-        switch obj.internalStatus {
-        case .success:
-            refresh()
-        default:
-            break
+    static let shared = ChildAccountManager()
+
+    @Published
+    var isLoading: Bool = false
+
+    @Published
+    var childAccounts: [ChildAccount] = [] {
+        didSet {
+            validSelectedChildAccount()
         }
     }
 
-    @objc private func willReset() {
-        childAccounts = []
+    @Published
+    var selectedChildAccount: ChildAccount? = LocalUserDefaults.shared
+        .selectedChildAccount {
+        didSet {
+            LocalUserDefaults.shared.selectedChildAccount = selectedChildAccount
+        }
     }
 
-    private func loadCache() {
-        if cacheLoaded {
-            return
-        }
-        cacheLoaded = true
-
-        guard let uid = UserManager.shared.activatedUID, let address = WalletManager.shared.getPrimaryWalletAddress() else {
-            log.warning("uid or address is nil")
-            return
-        }
-
-        childAccounts = MultiAccountStorage.shared.getChildAccounts(uid: uid, address: address) ?? []
-    }
-
-    private func clean() {
-        log.debug("cleaned")
-        childAccounts = []
+    var sortedChildAccounts: [ChildAccount] {
+        childAccounts.sorted { $0.pinTime > $1.pinTime }
     }
 
     func refresh() {
-        guard let uid = UserManager.shared.activatedUID, let address = WalletManager.shared.getPrimaryWalletAddress() else {
+        guard let uid = UserManager.shared.activatedUID,
+              let address = WalletManager.shared.getPrimaryWalletAddress() else {
             log.warning("uid or address is nil")
             clean()
             return
@@ -190,7 +177,7 @@ class ChildAccountManager: ObservableObject {
         DispatchQueue.main.async {
             self.isLoading = true
         }
-        
+
         Task {
             do {
                 let list = try await FlowNetwork.queryChildAccountMeta(address)
@@ -199,10 +186,19 @@ class ChildAccountManager: ObservableObject {
                     if UserManager.shared.activatedUID != uid { return }
                     if LocalUserDefaults.shared.flowNetwork != network { return }
 
-                    let oldList = MultiAccountStorage.shared.getChildAccounts(uid: uid, address: address) ?? []
+                    let oldList = MultiAccountStorage.shared.getChildAccounts(
+                        uid: uid,
+                        address: address
+                    ) ?? []
                     let finalList = list.map { newAccount in
                         if let oldAccount = oldList.first(where: { $0.addr == newAccount.addr }) {
-                            return ChildAccount(address: newAccount.addr ?? "", name: newAccount.name, desc: newAccount.description, icon: newAccount.icon, pinTime: oldAccount.pinTime)
+                            return ChildAccount(
+                                address: newAccount.addr ?? "",
+                                name: newAccount.name,
+                                desc: newAccount.description,
+                                icon: newAccount.icon,
+                                pinTime: oldAccount.pinTime
+                            )
                         } else {
                             return newAccount
                         }
@@ -222,9 +218,59 @@ class ChildAccountManager: ObservableObject {
         }
     }
 
+    // MARK: Private
+
+    private var cacheLoaded = false
+    private var cancelSets = Set<AnyCancellable>()
+
+    @objc
+    private func onTransactionStatusChanged(_ noti: Notification) {
+        guard let obj = noti.object as? TransactionManager.TransactionHolder,
+              obj.type == .editChildAccount else {
+            return
+        }
+
+        switch obj.internalStatus {
+        case .success:
+            refresh()
+        default:
+            break
+        }
+    }
+
+    @objc
+    private func willReset() {
+        childAccounts = []
+    }
+
+    private func loadCache() {
+        if cacheLoaded {
+            return
+        }
+        cacheLoaded = true
+
+        guard let uid = UserManager.shared.activatedUID,
+              let address = WalletManager.shared.getPrimaryWalletAddress() else {
+            log.warning("uid or address is nil")
+            return
+        }
+
+        childAccounts = MultiAccountStorage.shared
+            .getChildAccounts(uid: uid, address: address) ?? []
+    }
+
+    private func clean() {
+        log.debug("cleaned")
+        childAccounts = []
+    }
+
     private func saveToCache(_ childAccounts: [ChildAccount], uid: String, address: String) {
         do {
-            try MultiAccountStorage.shared.saveChildAccounts(childAccounts, uid: uid, address: address)
+            try MultiAccountStorage.shared.saveChildAccounts(
+                childAccounts,
+                uid: uid,
+                address: address
+            )
         } catch {
             log.error("save to cache failed", context: error)
         }
@@ -251,12 +297,19 @@ extension ChildAccountManager {
 
         oldList.removeAll(where: { $0.addr == childAccount.addr })
 
-        let newChildAccount = ChildAccount(address: oldChildAccount.addr ?? "", name: oldChildAccount.name, desc: oldChildAccount.description, icon: oldChildAccount.icon, pinTime: oldChildAccount.isPinned ? 0 : Date().timeIntervalSince1970)
+        let newChildAccount = ChildAccount(
+            address: oldChildAccount.addr ?? "",
+            name: oldChildAccount.name,
+            desc: oldChildAccount.description,
+            icon: oldChildAccount.icon,
+            pinTime: oldChildAccount.isPinned ? 0 : Date().timeIntervalSince1970
+        )
         oldList.append(newChildAccount)
 
         childAccounts = oldList
 
-        guard let uid = UserManager.shared.activatedUID, let address = WalletManager.shared.getPrimaryWalletAddress() else {
+        guard let uid = UserManager.shared.activatedUID,
+              let address = WalletManager.shared.getPrimaryWalletAddress() else {
             log.error("uid or address is nil")
             return
         }
@@ -269,7 +322,8 @@ extension ChildAccountManager {
         oldList.removeAll(where: { $0.addr == childAccount.addr })
         childAccounts = oldList
 
-        guard let uid = UserManager.shared.activatedUID, let address = WalletManager.shared.getPrimaryWalletAddress() else {
+        guard let uid = UserManager.shared.activatedUID,
+              let address = WalletManager.shared.getPrimaryWalletAddress() else {
             log.error("uid or address is nil")
             return
         }

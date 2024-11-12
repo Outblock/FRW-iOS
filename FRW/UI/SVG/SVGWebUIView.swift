@@ -1,5 +1,5 @@
 //
-//  SVGWebView.swift
+//  SVGWebUIView.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 22/8/2022.
@@ -10,8 +10,7 @@ import UIKit
 import WebKit
 
 class SVGWebUIView: UIView {
-    var urlString: String
-    var container = UIView()
+    // MARK: Lifecycle
 
     required init(urlString: String) {
         self.urlString = urlString
@@ -24,6 +23,11 @@ class SVGWebUIView: UIView {
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var urlString: String
+    var container = UIView()
 
     func setupView() {
         // Can do the setup of the view, including adding subviews
@@ -59,25 +63,30 @@ class SVGWebUIView: UIView {
         container.addSubview(webView)
     }
 
+    // MARK: Private
+
     /// A hacky way to patch the size in the SVG root tag.
     private func rewriteSVGSize(_ string: String) -> String {
         guard let startRange = string.range(of: "<svg") else { return string }
-        let remainder = startRange.upperBound ..< string.endIndex
+        let remainder = startRange.upperBound..<string.endIndex
         guard let endRange = string.range(of: ">", range: remainder) else {
             return string
         }
 
-        let tagRange = startRange.lowerBound ..< endRange.upperBound
+        let tagRange = startRange.lowerBound..<endRange.upperBound
         let oldTag = string[tagRange]
 
         var attrs: [String: String] = {
             final class Handler: NSObject, XMLParserDelegate {
                 var attrs: [String: String]?
 
-                func parser(_: XMLParser, didStartElement _: String,
-                            namespaceURI _: String?, qualifiedName _: String?,
-                            attributes: [String: String])
-                {
+                func parser(
+                    _: XMLParser,
+                    didStartElement _: String,
+                    namespaceURI _: String?,
+                    qualifiedName _: String?,
+                    attributes: [String: String]
+                ) {
                     self.attrs = attributes
                 }
             }
@@ -90,8 +99,7 @@ class SVGWebUIView: UIView {
         }()
 
         if attrs["viewBox"] == nil,
-           attrs["width"] != nil || attrs["height"] != nil
-        { // convert to viewBox
+           attrs["width"] != nil || attrs["height"] != nil { // convert to viewBox
             let w = attrs.removeValue(forKey: "width") ?? "100%"
             let h = attrs.removeValue(forKey: "height") ?? "100%"
             let x = attrs.removeValue(forKey: "x") ?? "0"

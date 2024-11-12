@@ -10,21 +10,31 @@ import Moya
 
 public typealias AsyncTask = Task
 
-public extension AsyncSequence where Element == Result<ProgressResponse, MoyaError> {
-    func forEach(_ body: (Element) async throws -> Void) async throws {
+extension AsyncSequence where Element == Result<ProgressResponse, MoyaError> {
+    public func forEach(_ body: (Element) async throws -> Void) async throws {
         for try await element in self {
             try await body(element)
         }
     }
 }
 
-internal class AsyncMoyaRequestWrapper {
-    var performRequest: (CheckedContinuation<Result<Response, MoyaError>, Never>) -> Moya.Cancellable?
-    var cancellable: Moya.Cancellable?
+// MARK: - AsyncMoyaRequestWrapper
 
-    init(_ performRequest: @escaping (CheckedContinuation<Result<Response, MoyaError>, Never>) -> Moya.Cancellable?) {
+class AsyncMoyaRequestWrapper {
+    // MARK: Lifecycle
+
+    init(
+        _ performRequest: @escaping (CheckedContinuation<Result<Response, MoyaError>, Never>)
+            -> Moya.Cancellable?
+    ) {
         self.performRequest = performRequest
     }
+
+    // MARK: Internal
+
+    var performRequest: (CheckedContinuation<Result<Response, MoyaError>, Never>) -> Moya
+        .Cancellable?
+    var cancellable: Moya.Cancellable?
 
     func perform(continuation: CheckedContinuation<Result<Response, MoyaError>, Never>) {
         cancellable = performRequest(continuation)
@@ -35,11 +45,11 @@ internal class AsyncMoyaRequestWrapper {
     }
 }
 
-public extension MoyaProvider {
+extension MoyaProvider {
     /// Async request
     /// - Parameter target: Entity, with provides Moya.Target protocol
     /// - Returns: Result type with response and error
-    func asyncRequest(_ target: Target) async -> Result<Response, MoyaError> {
+    public func asyncRequest(_ target: Target) async -> Result<Response, MoyaError> {
         let asyncRequestWrapper = AsyncMoyaRequestWrapper { [weak self] continuation in
             guard let self = self else { return nil }
             return self.request(target) { result in
@@ -64,8 +74,11 @@ public extension MoyaProvider {
     /// Async request with progress using `AsyncStream`
     /// - Parameter target: Entity, with provides Moya.Target protocol
     /// - Returns: `AsyncStream<Result<ProgressResponse, MoyaError>>`  with Result type of progress and error
-    func requestWithProgress(_ target: Target) async -> AsyncStream<Result<ProgressResponse, MoyaError>> {
-        return AsyncStream { stream in
+    public func requestWithProgress(_ target: Target) async -> AsyncStream<Result<
+        ProgressResponse,
+        MoyaError
+    >> {
+        AsyncStream { stream in
             let cancelable = self.request(target) { progress in
                 stream.yield(.success(progress))
             } completion: { result in

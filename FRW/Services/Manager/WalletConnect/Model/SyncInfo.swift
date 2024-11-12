@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SyncInfo {
+enum SyncInfo {
     struct SyncResponse<T: Codable>: Codable {
         var method: String?
         var status: String?

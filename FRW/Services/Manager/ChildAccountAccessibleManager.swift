@@ -9,13 +9,7 @@ import Foundation
 
 extension ChildAccountManager {
     struct AccessibleManager {
-        private var parentAddr: String? {
-            return WalletManager.shared.getPrimaryWalletAddress()
-        }
-
-        private var childAddr: String? {
-            return WalletManager.shared.childAccount?.addr
-        }
+        // MARK: Internal
 
         var coins: [FlowModel.TokenInfo]?
         var collections: [String]?
@@ -33,7 +27,10 @@ extension ChildAccountManager {
                 collections = []
                 return
             }
-            collections = try await FlowNetwork.fetchAccessibleCollection(parent: parentAddr, child: childAddr)
+            collections = try await FlowNetwork.fetchAccessibleCollection(
+                parent: parentAddr,
+                child: childAddr
+            )
         }
 
         func isChildAccount() -> Bool {
@@ -69,26 +66,11 @@ extension ChildAccountManager {
             let result = collections?.filter { idStr in
                 let list = idStr.split(separator: ".")
                 if let contractName = list[safe: 2],
-                   let address = list[safe: 1]
-                {
+                   let address = list[safe: 1] {
                     if let name = model.contractName, let modelAddress = model.address {
-                        return (contractName == name && modelAddress.hasSuffix(address))
+                        return contractName == name && modelAddress.hasSuffix(address)
                     }
                     return false
-                } else {
-                    return false
-                }
-            }
-            return result?.count == 1
-        }
-
-        private func isAccessible(contractName: String, address: String) -> Bool {
-            let result = collections?.filter { idStr in
-                let list = idStr.split(separator: ".")
-                if let contractName = list[safe: 2],
-                   let addr = list[safe: 1]
-                {
-                    return contractName == contractName && address.hasSuffix(addr)
                 } else {
                     return false
                 }
@@ -106,11 +88,35 @@ extension ChildAccountManager {
                 return isAccessible(collection)
             }
 
-            if let address = model.response.contractAddress, let name = model.response.collectionContractName {
+            if let address = model.response.contractAddress,
+               let name = model.response.collectionContractName {
                 return isAccessible(contractName: name, address: address)
             }
 
             return false
+        }
+
+        // MARK: Private
+
+        private var parentAddr: String? {
+            WalletManager.shared.getPrimaryWalletAddress()
+        }
+
+        private var childAddr: String? {
+            WalletManager.shared.childAccount?.addr
+        }
+
+        private func isAccessible(contractName _: String, address: String) -> Bool {
+            let result = collections?.filter { idStr in
+                let list = idStr.split(separator: ".")
+                if let contractName = list[safe: 2],
+                   let addr = list[safe: 1] {
+                    return contractName == contractName && address.hasSuffix(addr)
+                } else {
+                    return false
+                }
+            }
+            return result?.count == 1
         }
     }
 }

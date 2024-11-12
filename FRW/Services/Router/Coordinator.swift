@@ -8,6 +8,9 @@
 import Combine
 import SwiftUI
 import UIKit
+
+// MARK: - AppTabType
+
 // import Lottie
 
 enum AppTabType {
@@ -17,22 +20,18 @@ enum AppTabType {
     case profile
 }
 
+// MARK: - AppTabBarPageProtocol
+
 protocol AppTabBarPageProtocol {
     static func tabTag() -> AppTabType
     static func iconName() -> String
     static func color() -> Color
 }
 
+// MARK: - Coordinator
+
 final class Coordinator {
-    let window: UIWindow
-    lazy var rootNavi: UINavigationController? = nil
-
-    private lazy var privateView: AppPrivateView = {
-        let view = AppPrivateView()
-        return view
-    }()
-
-    private var cancelSets = Set<AnyCancellable>()
+    // MARK: Lifecycle
 
     init(window: UIWindow) {
         self.window = window
@@ -43,9 +42,24 @@ final class Coordinator {
             }
         }.store(in: &cancelSets)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
+
+    // MARK: Internal
+
+    let window: UIWindow
+    lazy var rootNavi: UINavigationController? = nil
 
     func showRootView() {
         if LocalUserDefaults.shared.onBoardingShown {
@@ -54,6 +68,15 @@ final class Coordinator {
             showOnBoardingView()
         }
     }
+
+    // MARK: Private
+
+    private lazy var privateView: AppPrivateView = {
+        let view = AppPrivateView()
+        return view
+    }()
+
+    private var cancelSets = Set<AnyCancellable>()
 }
 
 extension Coordinator {
@@ -91,7 +114,8 @@ extension Coordinator {
 // MARK: - Private Screen
 
 extension Coordinator {
-    @objc private func didEnterBackground() {
+    @objc
+    private func didEnterBackground() {
         privateView.alpha = 1
         privateView.removeFromSuperview()
         privateView.frame = window.bounds
@@ -101,7 +125,8 @@ extension Coordinator {
         }
     }
 
-    @objc private func didBecomeActive() {
+    @objc
+    private func didBecomeActive() {
         UIView.animate(withDuration: 0.25) {
             self.privateView.alpha = 0
         } completion: { _ in

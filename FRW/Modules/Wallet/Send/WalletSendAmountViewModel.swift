@@ -160,7 +160,7 @@ extension WalletSendAmountViewModel {
             errorType = .formatError
             return
         }
-        
+
         if exchangeType == .token {
             inputTokenNum = actualBalance.doubleValue
             inputDollarNum = inputTokenNum * coinRate * CurrencyCache.cache.currentCurrencyRate
@@ -172,7 +172,7 @@ extension WalletSendAmountViewModel {
                 inputTokenNum = inputDollarNum / CurrencyCache.cache.currentCurrencyRate / coinRate
             }
         }
-        
+
         if inputTokenNum > amountBalance {
             errorType = .insufficientBalance
             return
@@ -182,7 +182,7 @@ extension WalletSendAmountViewModel {
             let validBalance = (
                 Decimal(amountBalance) - Decimal(minBalance)
             ).doubleValue
-            if validBalance < inputTokenNum  {
+            if validBalance < inputTokenNum {
                 errorType = .belowMinimum
                 return
             }
@@ -215,8 +215,9 @@ extension WalletSendAmountViewModel {
 
     func maxAction() {
         exchangeType = .token
-        if token.isFlowCoin && WalletManager.shared
-            .isCoa(targetContact.address) && WalletManager.shared.isMain() {
+        if token.isFlowCoin, WalletManager.shared
+            .isCoa(targetContact.address), WalletManager.shared.isMain()
+        {
             Task {
                 do {
                     let topAmount = try await FlowNetwork.minFlowBalance()
@@ -227,7 +228,7 @@ extension WalletSendAmountViewModel {
                     DispatchQueue.main.async {
                         self.inputText = num.formatCurrencyString()
                     }
-                    
+
                     actualBalance = num.formatCurrencyString(digits: token.decimal)
                 } catch {
                     let num = max(amountBalance - minBalance, 0)
@@ -346,7 +347,6 @@ extension WalletSendAmountViewModel {
 
                         txId = try await FlowNetwork.bridgeTokensFromEvmToFlow(identifier: flowIdentifier, amount: bigUIntValue, receiver: targetAddress)
                     }
-
                 case (.coa, .coa):
 
                     txId = try await FlowNetwork.sendTransaction(amount: amount.description, data: nil, toAddress: targetAddress.stripHexPrefix(), gas: gas)
@@ -357,7 +357,6 @@ extension WalletSendAmountViewModel {
                         let flowIdentifier = "\(self.token.contractId).Vault"
                         txId = try await FlowNetwork.sendNoFlowTokenToEVM(vaultIdentifier: flowIdentifier, amount: amount, recipient: targetAddress)
                     }
-
                 case (.coa, .eoa):
                     if token.isFlowCoin {
                         txId = try await FlowNetwork

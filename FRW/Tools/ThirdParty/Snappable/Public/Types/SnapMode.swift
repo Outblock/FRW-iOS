@@ -11,8 +11,8 @@ public struct SnapMode {
     /// The default setting for snapping immediately.
     public static let immediately: SnapMode = Self.immediately(decelerationRate: .normal, withFlick: true)
 
-    internal let decelerationRate: DecelerationRate
-    internal let snapTiming: SnapTiming
+    let decelerationRate: DecelerationRate
+    let snapTiming: SnapTiming
 
     /// An editable setting for snapping after scrolling.
     /// - Parameter decelerationRate: The deceleration rate of the ScrollView after dragging end.

@@ -8,8 +8,12 @@
 import Foundation
 import SwiftUI
 
+// MARK: - BackupProcess
+
 enum BackupProcess {
     case idle, upload, regist, finish, end
+
+    // MARK: Internal
 
     var title: String {
         switch self {
@@ -54,9 +58,36 @@ enum BackupProcess {
 // MARK: - BackupUploadViewModel
 
 class BackupUploadViewModel: ObservableObject {
+    // MARK: Lifecycle
+
+    init(items: [MultiBackupType]) {
+        self.items = items
+        self.currentIndex = 0
+        if !self.items.isEmpty {
+            self.currentType = self.items[0]
+        }
+        if currentType == .phrase {
+            self.buttonState = .disabled
+        }
+    }
+
+    // MARK: Internal
+
     let items: [MultiBackupType]
 
-    @Published var currentIndex: Int = 0 {
+    @Published
+    var process: BackupProcess = .idle
+    @Published
+    var hasError: Bool = false
+    @Published
+    var mnemonicBlur: Bool = true
+
+    var currentType: MultiBackupType = .google
+    @Published
+    var buttonState: VPrimaryButtonState = .enabled
+
+    @Published
+    var currentIndex: Int = 0 {
         didSet {
             if currentIndex < items.count {
                 currentType = items[currentIndex]
@@ -64,34 +95,14 @@ class BackupUploadViewModel: ObservableObject {
         }
     }
 
-    @Published var process: BackupProcess = .idle
-    @Published var hasError: Bool = false
-    @Published var mnemonicBlur: Bool = true
-
     // TODO:
-    @Published var checkAllPhrase: Bool = true {
+    @Published
+    var checkAllPhrase: Bool = true {
         didSet {
             if checkAllPhrase {
                 buttonState = .enabled
             }
         }
-    }
-
-    var currentType: MultiBackupType = .google
-    init(items: [MultiBackupType]) {
-        self.items = items
-        currentIndex = 0
-        if !self.items.isEmpty {
-            currentType = self.items[0]
-        }
-        if currentType == .phrase {
-            buttonState = .disabled
-        }
-    }
-
-    func reset() {
-        hasError = false
-        process = .idle
     }
 
     // MARK: UI element
@@ -103,7 +114,8 @@ class BackupUploadViewModel: ObservableObject {
     var currentTitle: String {
         switch process {
         case .idle:
-            return "backup".localized + " \(currentIndex + 1):\(currentType.title) " + "backup".localized
+            return "backup".localized + " \(currentIndex + 1):\(currentType.title) " + "backup"
+                .localized
         case .upload:
             return "backup.status.upload".localized
         case .regist:
@@ -114,8 +126,6 @@ class BackupUploadViewModel: ObservableObject {
             return "backup.status.end.title".localized
         }
     }
-
-    @Published var buttonState: VPrimaryButtonState = .enabled
 
     var currentNote: String {
         currentType.noteDes
@@ -128,8 +138,13 @@ class BackupUploadViewModel: ObservableObject {
         return process.title
     }
 
+    func reset() {
+        hasError = false
+        process = .idle
+    }
+
     func showTimeline() -> Bool {
-        return process == .upload || process == .regist
+        process == .upload || process == .regist
     }
 
     func learnMore() {
@@ -147,7 +162,8 @@ class BackupUploadViewModel: ObservableObject {
                         self.mnemonicBlur = true
                     }
                     try await MultiBackupManager.shared.preLogin(with: currentType)
-                    let result = try await MultiBackupManager.shared.registerKeyToChain(on: currentType)
+                    let result = try await MultiBackupManager.shared
+                        .registerKeyToChain(on: currentType)
                     if result {
                         toggleProcess(process: .upload)
                         onClickButton()
@@ -165,7 +181,7 @@ class BackupUploadViewModel: ObservableObject {
                     DispatchQueue.main.async {
                         self.buttonState = .loading
                     }
-                    
+
                     try await MultiBackupManager.shared.backupKey(on: currentType)
                     toggleProcess(process: .regist)
                     onClickButton()
@@ -181,7 +197,7 @@ class BackupUploadViewModel: ObservableObject {
                     DispatchQueue.main.async {
                         self.buttonState = .loading
                     }
-                    
+
                     try await MultiBackupManager.shared.syncKeyToServer(on: currentType)
                     DispatchQueue.main.async {
                         self.mnemonicBlur = false
@@ -189,7 +205,7 @@ class BackupUploadViewModel: ObservableObject {
                     }
                     toggleProcess(process: .finish)
 //                    onClickButton()
-                    
+
                 } catch {
                     buttonState = .enabled
                     HUD.dismissLoading()

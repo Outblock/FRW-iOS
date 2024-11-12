@@ -1,5 +1,5 @@
 //
-//  VPrimaryButtonModelBordered.swift
+//  VPrimaryButtonModel.swift
 //  VComponents
 //
 //  Created by Vakhtang Kontridze on 12/24/20.

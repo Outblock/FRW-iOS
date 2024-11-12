@@ -1,11 +1,13 @@
 //
-//  AddressBookAddRequest.swift
+//  AddressBookRequest.swift
 //  Flow Wallet
 //
 //  Created by Selina on 2/6/2022.
 //
 
 import Foundation
+
+// MARK: - AddressBookAddRequest
 
 struct AddressBookAddRequest: Codable {
     let contactName: String
@@ -14,6 +16,8 @@ struct AddressBookAddRequest: Codable {
     let domainType: Contact.DomainType
     let username: String?
 }
+
+// MARK: - AddressBookEditRequest
 
 struct AddressBookEditRequest: Codable {
     let id: Int

@@ -11,7 +11,7 @@ import FirebaseStorage
 import SwiftUI
 import UIKit
 
-struct FirebaseStorageUtils {
+enum FirebaseStorageUtils {
     static func upload(avatar: UIImage, removeQuery: Bool = true) async -> String? {
         await withCheckedContinuation { config in
             guard let username = UserManager.shared.userInfo?.username else {

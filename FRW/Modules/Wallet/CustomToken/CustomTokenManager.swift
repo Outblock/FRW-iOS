@@ -5,21 +5,21 @@
 //  Created by cat on 11/1/24.
 //
 
-import Foundation
-import web3swift
 import BigInt
+import Foundation
 import Web3Core
+import web3swift
 
+// MARK: - CustomTokenManager
 
 class CustomTokenManager: ObservableObject {
-    
-    @Published var list: [CustomToken] = []
-    
+    // MARK: Internal
+
+    @Published
+    var list: [CustomToken] = []
+
     var allTokens: [CustomToken] = LocalUserDefaults.shared.customToken
-    
-    private var queue = DispatchQueue(label: "CustomToken.add")
-    
-    
+
     func refresh() {
         queue.sync {
             var result = findCurrent(list: allTokens)
@@ -27,32 +27,7 @@ class CustomTokenManager: ObservableObject {
             list = result
         }
     }
-    
-    private func findCurrent(list: [CustomToken]) -> [CustomToken] {
-        guard let address = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress(), let userId = UserManager.shared.activatedUID else {
-            return []
-        }
-        let currentNetwork = LocalUserDefaults.shared.flowNetwork
-        let belong = EVMAccountManager.shared.selectedAccount != nil ? CustomToken.Belong.evm : .flow
-        
-        let result = list.filter { token in
-            token.network == currentNetwork && token.belong == belong 
-        }
-        return result
-    }
-    
-    private func filterWhite(list: [CustomToken]) -> [CustomToken] {
-        
-        var result: [CustomToken] = []
-        list.forEach { customToken in
-            if !isInWhite(token: customToken) {
-                result.append(customToken)
-            }
-        }
-        return result
-    }
-    
-    
+
     func isInWhite(token: CustomToken) -> Bool {
         guard let support = WalletManager.shared.supportedCoins else {
             return true
@@ -60,25 +35,26 @@ class CustomTokenManager: ObservableObject {
         let filterList = support.filter { model in
             model.evmAddress?.lowercased() == token.address.lowercased()
         }
-        return filterList.count > 0
+        return !filterList.isEmpty
     }
-    
+
     func isExist(token: CustomToken) -> Bool {
         queue.sync {
             let result = allTokens.filter { model in
-                token.network == model.network && model.address == token.address && token.belong == model.belong
+                token.network == model.network && model.address == token.address && token
+                    .belong == model.belong
             }
-            return result.count > 0
+            return !result.isEmpty
         }
     }
-    
+
     func allowDelete(token: CustomToken) -> Bool {
         guard !isInWhite(token: token) else {
             return false
         }
         return isExist(token: token)
     }
-    
+
     func add(token: CustomToken) async {
         guard !isExist(token: token) else {
             return
@@ -93,24 +69,56 @@ class CustomTokenManager: ObservableObject {
         refresh()
         WalletManager.shared.addCustomToken(token: tmpToken)
     }
-    
+
     func delete(token: CustomToken) {
         queue.sync {
             allTokens.removeAll { model in
-                token.network == model.network && token.belong == model.belong  && model.address == token.address
+                token.network == model.network && token.belong == model.belong && model
+                    .address == token.address
             }
             LocalUserDefaults.shared.customToken = allTokens
         }
         refresh()
         WalletManager.shared.deleteCustomToken(token: token)
     }
-    
+
+    // MARK: Private
+
+    private var queue = DispatchQueue(label: "CustomToken.add")
+
+    private func findCurrent(list: [CustomToken]) -> [CustomToken] {
+        guard let address = WalletManager.shared
+            .getWatchAddressOrChildAccountAddressOrPrimaryAddress(),
+            let userId = UserManager.shared.activatedUID else {
+            return []
+        }
+        let currentNetwork = LocalUserDefaults.shared.flowNetwork
+        let belong = EVMAccountManager.shared.selectedAccount != nil ? CustomToken.Belong
+            .evm : .flow
+
+        let result = list.filter { token in
+            token.network == currentNetwork && token.belong == belong
+        }
+        return result
+    }
+
+    private func filterWhite(list: [CustomToken]) -> [CustomToken] {
+        var result: [CustomToken] = []
+        for customToken in list {
+            if !isInWhite(token: customToken) {
+                result.append(customToken)
+            }
+        }
+        return result
+    }
+
     private func update(token: CustomToken) {
         queue.sync {
             let index = allTokens.firstIndex { model in
-                token.belong == model.belong && model.address == token.address && token.network == model.network
+                token.belong == model.belong && model.address == token.address && token
+                    .network == model.network
             }
-            guard let index  else {
+            guard let index else {
                 return
             }
             allTokens[index] = token
@@ -122,28 +130,29 @@ class CustomTokenManager: ObservableObject {
 extension CustomTokenManager {
     func findToken(evmAddress: String) async throws -> CustomToken? {
         let evmAddress = evmAddress.addHexPrefix()
-        
-        guard let web3 = try await FlowProvider.Web3.default() else{
+
+        guard let web3 = try await FlowProvider.Web3.default() else {
             throw AddCustomTokenError.providerFailed
         }
         let contratc = web3.contract(Web3Utils.erc20ABI, at: .init(evmAddress))
         async let decimalsRequest = contratc?.createReadOperation("decimals")?.callContractMethod()
-        
+
         let decimals = try await decimalsRequest?["0"] as? BigUInt
         let decimalInt = Int(decimals?.description ?? "6") ?? 0
-        
+
         async let symbolRequest = contratc?.createReadOperation("symbol")?.callContractMethod()
         async let nameRequest = contratc?.createReadOperation("name")?.callContractMethod()
-        let result: [String] = try await [symbolRequest, nameRequest].compactMap{ $0?["0"] as? String }
+        let result: [String] = try await [symbolRequest, nameRequest]
+            .compactMap { $0?["0"] as? String }
         guard result.count == 2 else {
             return nil
         }
-        
+
         let name = result[1]
         let symbol = result[0]
-        
+
         let flowIdentifier = try? await FlowNetwork.getAssociatedFlowIdentifier(address: evmAddress)
-        
+
         let token = CustomToken(
             address: evmAddress,
             decimals: decimalInt,
@@ -154,18 +163,17 @@ extension CustomTokenManager {
         )
         return token
     }
-    
+
     func fetchAllEVMBalance() async {
         await withTaskGroup(of: Void.self) { group in
-            allTokens.forEach { token in
+            for token in allTokens {
                 group.addTask { [weak self] in
                     do {
                         var model = token
                         let balance = try await self?.fetchBalance(token: model)
                         model.balance = balance
                         self?.update(token: model)
-                    }
-                    catch {
+                    } catch {
                         log.info("[Custom Token] fetch balance failed.\(token.address)")
                     }
                 }
@@ -173,12 +181,12 @@ extension CustomTokenManager {
         }
         refresh()
     }
-    
+
     func fetchBalance(token: CustomToken) async throws -> BigUInt? {
         guard let coaAddresss = EVMAccountManager.shared.selectedAccount?.showAddress else {
             throw AddCustomTokenError.invalidProfile
         }
-        guard let web3 = try await FlowProvider.Web3.default() else{
+        guard let web3 = try await FlowProvider.Web3.default() else {
             throw AddCustomTokenError.providerFailed
         }
         let contratc = web3.contract(
@@ -186,7 +194,10 @@ extension CustomTokenManager {
             at: .init(token.address)
         )
         // Parameters is user wallet address
-        let balanceRequest = try await contratc?.createReadOperation("balanceOf", parameters: [coaAddresss])?.callContractMethod()
+        let balanceRequest = try await contratc?.createReadOperation(
+            "balanceOf",
+            parameters: [coaAddresss]
+        )?.callContractMethod()
         if let balanceUInt = balanceRequest?["balance"] as? BigUInt {
             return balanceUInt
         }
@@ -194,30 +205,11 @@ extension CustomTokenManager {
     }
 }
 
-//MARK: - Model
+// MARK: - CustomToken
 
 struct CustomToken: Codable {
+    // MARK: Lifecycle
 
-    enum Belong: Codable {
-        case flow
-        case evm
-    }
-    
-    var address: String
-    var decimals: Int
-    var name: String
-    var symbol: String
-    var flowIdentifier: String?
-    
-    
-    var userId: String
-    var belongAddress: String
-    var network: LocalUserDefaults.FlowNetworkType = .mainnet
-    var belong: CustomToken.Belong = .flow
-    // not store,
-    var balance: BigUInt?
-    var icon: String? = nil
-    
     init(
         address: String,
         decimals: Int,
@@ -226,7 +218,7 @@ struct CustomToken: Codable {
         flowIdentifier: String? = nil,
         belong: CustomToken.Belong = .evm,
         balance: BigUInt? = nil,
-        icon: String? = nil
+        icon _: String? = nil
     ) {
         self.address = address
         self.decimals = decimals
@@ -235,13 +227,44 @@ struct CustomToken: Codable {
         self.belong = belong
         self.balance = balance
         self.flowIdentifier = flowIdentifier
-        
+
         self.userId = UserManager.shared.activatedUID ?? ""
-        self.belongAddress = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? ""
+        self.belongAddress = WalletManager.shared
+            .getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? ""
         self.network = LocalUserDefaults.shared.flowNetwork
-        
     }
-    
+
+    // MARK: Internal
+
+    enum Belong: Codable {
+        case flow
+        case evm
+    }
+
+    var address: String
+    var decimals: Int
+    var name: String
+    var symbol: String
+    var flowIdentifier: String?
+
+    var userId: String
+    var belongAddress: String
+    var network: LocalUserDefaults.FlowNetworkType = .mainnet
+    var belong: CustomToken.Belong = .flow
+    // not store,
+    var balance: BigUInt?
+    var icon: String? = nil
+
+    var balanceValue: String {
+        let balance = balance ?? BigUInt(0)
+        let result = Utilities.formatToPrecision(
+            balance,
+            units: .custom(decimals),
+            formattingDecimals: decimals
+        )
+        return result
+    }
+
     func toToken() -> TokenModel {
         TokenModel(
             name: name,
@@ -259,16 +282,6 @@ struct CustomToken: Codable {
             evmAddress: nil
         )
     }
-    
-    var balanceValue: String {
-        let balance = balance ?? BigUInt(0)
-        let result = Utilities.formatToPrecision(
-            balance,
-            units: .custom(decimals),
-            formattingDecimals: decimals
-        )
-        return result
-    }
 }
 
 extension TokenModel {
@@ -281,10 +294,9 @@ extension TokenModel {
     }
 }
 
+// MARK: - AddCustomTokenError
+
 enum AddCustomTokenError: Error {
     case invalidProfile
     case providerFailed
-    
-    
 }
-

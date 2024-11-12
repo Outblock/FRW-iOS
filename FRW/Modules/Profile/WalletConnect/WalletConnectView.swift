@@ -1,5 +1,5 @@
 //
-//  ProfileBackupView.swift
+//  WalletConnectView.swift
 //  Flow Wallet
 //
 //  Created by Selina on 2/8/2022.
@@ -10,6 +10,8 @@ import Lottie
 import SwiftUI
 import WalletConnectSign
 
+// MARK: - WalletConnectView
+
 struct WalletConnectView: RouteableView {
     @StateObject
     private var vm = WalletConnectViewModel()
@@ -18,7 +20,7 @@ struct WalletConnectView: RouteableView {
     var manager = WalletConnectManager.shared
 
     var title: String {
-        return "walletconnect".localized
+        "walletconnect".localized
     }
 
     var connectedViews: some View {
@@ -46,14 +48,19 @@ struct WalletConnectView: RouteableView {
                             .foregroundColor(.LL.warning2)
                     }
                 } label: {
-                    ItemCell(title: session.peer.name,
-                             url: session.peer.url,
-                             network: String(session.namespaces.values.first?.accounts.first?.reference ?? ""),
-                             icon: session.peer.icons.first ?? AppPlaceholder.image)
-                        .buttonStyle(ScaleButtonStyle())
-                        .padding(.horizontal, 16)
-                        .roundedBg()
-                        .padding(.bottom, 12)
+                    ItemCell(
+                        title: session.peer.name,
+                        url: session.peer.url,
+                        network: String(
+                            session.namespaces.values.first?.accounts.first?
+                                .reference ?? ""
+                        ),
+                        icon: session.peer.icons.first ?? AppPlaceholder.image
+                    )
+                    .buttonStyle(ScaleButtonStyle())
+                    .padding(.horizontal, 16)
+                    .roundedBg()
+                    .padding(.bottom, 12)
                 }
             }
         }
@@ -111,42 +118,20 @@ struct WalletConnectView: RouteableView {
     }
 
     var body: some View {
-        if manager.activeSessions.count > 0 || manager.pendingRequests.count > 0 {
+        if !manager.activeSessions.isEmpty || !manager.pendingRequests.isEmpty {
             ScrollView {
                 VStack(spacing: 0) {
                     pendingViews
-                        .visibility(manager.pendingRequests.count > 0 ? .visible : .gone)
+                        .visibility(!manager.pendingRequests.isEmpty ? .visible : .gone)
 
                     connectedViews
-                        .visibility(manager.activeSessions.count > 0 ? .visible : .gone)
+                        .visibility(!manager.activeSessions.isEmpty ? .visible : .gone)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .padding(.horizontal, 18)
             }
-            .navigationBarItems(center: HStack {
-                Image("walletconnect")
-                    .frame(width: 24, height: 24)
-                Text("walletconnect".localized)
-                    .font(.LL.body)
-                    .fontWeight(.semibold)
-            },
-            trailing:
-            Button {
-                ScanHandler.scan()
-            } label: {
-                Image("icon-wallet-scan")
-                    .renderingMode(.template)
-                    .foregroundColor(.primary)
-            })
-            .backgroundFill(Color.LL.Neutrals.background)
-            .applyRouteable(self)
-        } else {
-            WalletConnectView.EmptyView()
-                .backgroundFill(Color.LL.Neutrals.background)
-                .navigationBarBackButtonHidden(true)
-                .navigationBarTitleDisplayMode(navigationBarTitleDisplayMode)
-                .navigationBarHidden(isNavigationBarHidden)
-                .navigationBarItems(center: HStack {
+            .navigationBarItems(
+                center: HStack {
                     Image("walletconnect")
                         .frame(width: 24, height: 24)
                     Text("walletconnect".localized)
@@ -160,10 +145,38 @@ struct WalletConnectView: RouteableView {
                     Image("icon-wallet-scan")
                         .renderingMode(.template)
                         .foregroundColor(.primary)
-                })
+                }
+            )
+            .backgroundFill(Color.LL.Neutrals.background)
+            .applyRouteable(self)
+        } else {
+            WalletConnectView.EmptyView()
+                .backgroundFill(Color.LL.Neutrals.background)
+                .navigationBarBackButtonHidden(true)
+                .navigationBarTitleDisplayMode(navigationBarTitleDisplayMode)
+                .navigationBarHidden(isNavigationBarHidden)
+                .navigationBarItems(
+                    center: HStack {
+                        Image("walletconnect")
+                            .frame(width: 24, height: 24)
+                        Text("walletconnect".localized)
+                            .font(.LL.body)
+                            .fontWeight(.semibold)
+                    },
+                    trailing:
+                    Button {
+                        ScanHandler.scan()
+                    } label: {
+                        Image("icon-wallet-scan")
+                            .renderingMode(.template)
+                            .foregroundColor(.primary)
+                    }
+                )
         }
     }
 }
+
+// MARK: WalletConnectView.EmptyView
 
 extension WalletConnectView {
     struct EmptyView: View {
@@ -172,12 +185,14 @@ extension WalletConnectView {
         var body: some View {
             VStack(alignment: .center, spacing: 18) {
                 Spacer()
-                ResizableLottieView(lottieView: animationView,
-                                    color: Color(hex: "#3B99FC"))
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 120, height: 120)
-                    .frame(maxWidth: .infinity)
-                    .contentShape(Rectangle())
+                ResizableLottieView(
+                    lottieView: animationView,
+                    color: Color(hex: "#3B99FC")
+                )
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 120, height: 120)
+                .frame(maxWidth: .infinity)
+                .contentShape(Rectangle())
 
                 Text("Scan to Connect")
                     .foregroundColor(.LL.text)
@@ -214,18 +229,11 @@ extension WalletConnectView {
     }
 }
 
+// MARK: WalletConnectView.ItemCell
+
 extension WalletConnectView {
     struct ItemCell: View {
-        let title: String
-        let url: String
-        let network: String
-        let icon: String
-
-        @State var svgString: String? = nil
-
-        var color: SwiftUI.Color {
-            network == "testnet" ? Color.LL.flow : Color.LL.Primary.salmonPrimary
-        }
+        // MARK: Lifecycle
 
         init(title: String, url: String, network: String, icon: String) {
             self.title = title
@@ -233,6 +241,20 @@ extension WalletConnectView {
             self.network = network
             self.icon = icon
             fetchSVG()
+        }
+
+        // MARK: Internal
+
+        let title: String
+        let url: String
+        let network: String
+        let icon: String
+
+        @State
+        var svgString: String? = nil
+
+        var color: SwiftUI.Color {
+            network == "testnet" ? Color.LL.flow : Color.LL.Primary.salmonPrimary
         }
 
         var body: some View {

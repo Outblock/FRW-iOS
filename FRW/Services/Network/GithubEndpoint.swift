@@ -44,7 +44,6 @@ extension GithubEndpoint: TargetType {
                     return "/Outblock/token-list-jsons/outblock/jsons/previewnet/flow/default.json"
                 }
             }
-
         case .EVMNFTList:
             switch LocalUserDefaults.shared.flowNetwork {
             case .testnet:

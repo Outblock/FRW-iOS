@@ -28,7 +28,7 @@ extension VMenuPickerButtonType {
     ) -> some View
         where Content: View
     {
-        Self.menuButton(
+        menuButton(
             buttonType: buttonType,
             isEnabled: isEnabled,
             label: label

@@ -8,14 +8,13 @@
 import Foundation
 
 extension EventTrack.General {
-    
-    
     static func rpcError(error: String, scriptId: String) {
         EventTrack.send(event: EventTrack.General.rpcError, properties: [
             "error": error,
-            "script_id": scriptId
+            "script_id": scriptId,
         ])
     }
+
     /// StakeAmountViewModel  stake
     static func delegationCreated(
         address: String,
@@ -26,9 +25,10 @@ extension EventTrack.General {
             .send(event: EventTrack.General.delegationCreated, properties: [
                 "address": address,
                 "node_id": nodeId,
-                "amount": amount
+                "amount": amount,
             ])
     }
+
     ///  BuyProvderView button action
     static func rampClick(source: String) {
         EventTrack
@@ -36,6 +36,7 @@ extension EventTrack.General {
                 "source": source,
             ])
     }
+
     /// home page buy button clicked
     static func security(type: String) {
         EventTrack

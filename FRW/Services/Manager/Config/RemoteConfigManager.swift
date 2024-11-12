@@ -1,5 +1,5 @@
 //
-//  GasManager.swift
+//  RemoteConfigManager.swift
 //  Flow Wallet
 //
 //  Created by Selina on 5/9/2022.
@@ -11,8 +11,28 @@ import SwiftUI
 import UIKit
 import WalletCore
 
+// MARK: - RemoteConfigManager
+
 class RemoteConfigManager {
+    // MARK: Lifecycle
+
+    init() {
+        do {
+            try loadLocalConfig()
+        } catch {
+            log.error("[Firebase] load local file config failed:\(error)")
+        }
+        updateFromRemote()
+    }
+
+    // MARK: Internal
+
     static let shared = RemoteConfigManager()
+
+    var config: Config?
+    var contractAddress: ContractAddress?
+
+    var isFailed: Bool = false
 
     var emptyAddress: String {
         switch LocalUserDefaults.shared.flowNetwork.toFlowType() {
@@ -27,12 +47,6 @@ class RemoteConfigManager {
         }
     }
 
-    private var envConfig: ENVConfig?
-    var config: Config?
-    var contractAddress: ContractAddress?
-
-    var isFailed: Bool = false
-
     var freeGasEnabled: Bool {
         if !remoteGreeGas {
             return false
@@ -40,7 +54,6 @@ class RemoteConfigManager {
         return localGreeGas
     }
 
-    @AppStorage(LocalUserDefaults.Keys.freeGas.rawValue) private var localGreeGas = true
     var remoteGreeGas: Bool {
         if let config = config {
             return config.features.freeGas
@@ -95,31 +108,26 @@ class RemoteConfigManager {
         }
     }
 
-    init() {
-        do {
-            try loadLocalConfig()
-        } catch {
-            log.error("[Firebase] load local file config failed:\(error)")
-        }
-        updateFromRemote()
-    }
-
     func updateFromRemote() {
         fetchNews()
         do {
             let data: String = try FirebaseConfig.ENVConfig.fetch()
             let key = LocalEnvManager.shared.backupAESKey
             if let keyData = key.data(using: .utf8),
-               let ivData = key.sha256().prefix(16).data(using: .utf8)
-            {
-                let decodeData = AES.decryptCBC(key: keyData, data: Data(hex: data), iv: ivData, mode: .pkcs7)!
+               let ivData = key.sha256().prefix(16).data(using: .utf8) {
+                let decodeData = AES.decryptCBC(
+                    key: keyData,
+                    data: Data(hex: data),
+                    iv: ivData,
+                    mode: .pkcs7
+                )!
                 let decoder = JSONDecoder()
                 let config = try decoder.decode(ENVConfig.self, from: decodeData)
                 envConfig = config
                 self.config = nil
-                if let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
-                   let version = envConfig?.version
-                {
+                if let currentVersion = Bundle.main
+                    .infoDictionary?["CFBundleShortVersionString"] as? String,
+                    let version = envConfig?.version {
                     if version.compareVersion(to: currentVersion) == .orderedDescending {
                         self.config = envConfig?.prod
                     }
@@ -149,7 +157,8 @@ class RemoteConfigManager {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let list: [RemoteConfigManager.News] = try FirebaseConfig.news.fetch(decoder: decoder)
+                let list: [RemoteConfigManager.News] = try FirebaseConfig.news
+                    .fetch(decoder: decoder)
                 DispatchQueue.main.async {
                     WalletNewsHandler.shared.addRemoteNews(list)
                 }
@@ -159,14 +168,24 @@ class RemoteConfigManager {
         }
     }
 
+    // MARK: Private
+
+    private var envConfig: ENVConfig?
+    @AppStorage(LocalUserDefaults.Keys.freeGas.rawValue)
+    private var localGreeGas = true
+
     private func loadLocalConfig() throws {
         do {
             let data: String = try FirebaseConfig.ENVConfig.fetch()
             let key = LocalEnvManager.shared.backupAESKey
             if let keyData = key.data(using: .utf8),
-               let ivData = key.sha256().prefix(16).data(using: .utf8)
-            {
-                let decodeData = AES.decryptCBC(key: keyData, data: Data(hex: data), iv: ivData, mode: .pkcs7)!
+               let ivData = key.sha256().prefix(16).data(using: .utf8) {
+                let decodeData = AES.decryptCBC(
+                    key: keyData,
+                    data: Data(hex: data),
+                    iv: ivData,
+                    mode: .pkcs7
+                )!
                 let config = try? JSONDecoder().decode(ENVConfig.self, from: decodeData)
                 self.config = config?.staging
             }
@@ -177,6 +196,8 @@ class RemoteConfigManager {
         contractAddress = try FirebaseConfig.contractAddress.fetchLocal()
     }
 }
+
+// MARK: FlowSigner
 
 extension RemoteConfigManager: FlowSigner {
     var address: Flow.Address {
@@ -196,20 +217,28 @@ extension RemoteConfigManager: FlowSigner {
     }
 
     func sign(transaction: Flow.Transaction, signableData: Data) async throws -> Data {
-        let request = SignPayerRequest(transaction: transaction.voucher, message: .init(envelopeMessage: signableData.hexValue))
-        let signature: SignPayerResponse = try await Network.requestWithRawModel(FirebaseAPI.signAsPayer(request))
+        let request = SignPayerRequest(
+            transaction: transaction.voucher,
+            message: .init(envelopeMessage: signableData.hexValue)
+        )
+        let signature: SignPayerResponse = try await Network
+            .requestWithRawModel(FirebaseAPI.signAsPayer(request))
         return Data(hex: signature.envelopeSigs.sig)
     }
 
     func sign(voucher: FCLVoucher, signableData: Data) async throws -> Data {
-        let request = SignPayerRequest(transaction: voucher, message: .init(envelopeMessage: signableData.hexValue))
-        let signature: SignPayerResponse = try await Network.requestWithRawModel(FirebaseAPI.signAsPayer(request))
+        let request = SignPayerRequest(
+            transaction: voucher,
+            message: .init(envelopeMessage: signableData.hexValue)
+        )
+        let signature: SignPayerResponse = try await Network
+            .requestWithRawModel(FirebaseAPI.signAsPayer(request))
         return Data(hex: signature.envelopeSigs.sig)
     }
 }
 
 extension RemoteConfigManager {
     var remoteVersion: String? {
-        return envConfig?.versionProd
+        envConfig?.versionProd
     }
 }

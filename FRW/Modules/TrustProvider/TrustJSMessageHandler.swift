@@ -58,7 +58,7 @@ extension TrustJSMessageHandler {
         }
         return data
     }
-    
+
     private func extractRaw(json: [String: Any]) -> String? {
         guard
             let params = json["object"] as? [String: Any],
@@ -90,7 +90,7 @@ extension TrustJSMessageHandler {
 }
 
 extension TrustJSMessageHandler: WKScriptMessageHandler {
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
         let json = message.json
         let url = message.frameInfo.request.url ?? webVC?.webView.url
 
@@ -118,10 +118,10 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
             handleSendTransaction(url: url, network: network, id: id, info: obj)
         case .signMessage:
             log.info("[Trust] signMessage")
-
         case .signTypedMessage:
             guard let data = extractMessage(json: json),
-                    let raw = extractRaw(json: json) else {
+                  let raw = extractRaw(json: json)
+            else {
                 print("data is missing")
                 return
             }
@@ -134,10 +134,8 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
             handleSignPersonal(url: url, network: network, id: id, data: data, addPrefix: true)
         case .sendTransaction:
             log.info("[Trust] sendTransaction")
-
         case .ecRecover:
             log.info("[Trust] ecRecover")
-
         case .watchAsset:
             print("[Trust] watchAsset")
             guard let obj = extractObject(json: json)
@@ -174,7 +172,7 @@ extension TrustJSMessageHandler {
             guard let self = self else {
                 return
             }
-            
+
             let address = webVC?.trustProvider?.config.ethereum.address ?? ""
 
             let title = webVC?.webView.title ?? "unknown"
@@ -183,7 +181,8 @@ extension TrustJSMessageHandler {
                                            url: url?.host ?? "unknown",
                                            logo: url?.absoluteString.toFavIcon()?.absoluteString,
                                            walletAddress: address,
-                                           network: chainID) { [weak self] result in
+                                           network: chainID)
+            { [weak self] result in
                 guard let self = self else {
                     return
                 }
@@ -207,7 +206,7 @@ extension TrustJSMessageHandler {
 
         MoveAssetsAction.shared.startBrowserWithMoveAssets(appName: webVC?.webView.title, callback: callback)
     }
-    
+
     private func handleSignPersonal(url: URL?, network: ProviderNetwork, id: Int64, data: Data, addPrefix _: Bool) {
         Task {
             await TrustJSMessageHandler.checkCoa()
@@ -220,7 +219,8 @@ extension TrustJSMessageHandler {
         let vm = BrowserSignMessageViewModel(title: title,
                                              url: url?.absoluteString ?? "unknown",
                                              logo: url?.absoluteString.toFavIcon()?.absoluteString,
-                                             cadence: data.hexString) { [weak self] result in
+                                             cadence: data.hexString)
+        { [weak self] result in
             guard let self = self else {
                 return
             }
@@ -251,7 +251,7 @@ extension TrustJSMessageHandler {
 
         Router.route(to: RouteMap.Explore.signMessage(vm))
     }
-    
+
     func handleSignTypedMessage(url: URL?, id: Int64, data: Data, raw: String) {
         Task {
             await TrustJSMessageHandler.checkCoa()
@@ -318,7 +318,8 @@ extension TrustJSMessageHandler {
                                        url: url?.absoluteString ?? "unknown",
                                        logo: url?.absoluteString.toFavIcon()?.absoluteString,
                                        cadence: originCadence,
-                                       arguments: args.toArguments()) { [weak self] result in
+                                       arguments: args.toArguments())
+        { [weak self] result in
 
             guard let self = self else {
                 self?.webVC?.webView.tw.send(network: .ethereum, error: "Canceled", to: id)
@@ -402,7 +403,7 @@ extension TrustJSMessageHandler {
             self.webVC?.webView.tw.send(network: .ethereum, error: "Canceled", to: id)
         }
     }
-    
+
     private func handleWatchAsset(network: ProviderNetwork, id: Int64, json: [String: Any]) {
         let manager = WalletManager.shared.customTokenManager
         guard let contract = json["contract"] as? String else {
@@ -443,18 +444,18 @@ extension TrustJSMessageHandler {
         do {
             HUD.loading()
             let result = try await FlowNetwork.checkCoaLink(address: addrStr)
-            if result != nil && result == false {
+            if result != nil, result == false {
                 let txid = try await FlowNetwork.coaLink()
                 let result = try await txid.onceSealed()
                 if !result.isFailed {
                     list.append(addrStr)
                 }
-            }else {
+            } else {
                 list.append(addrStr)
             }
             LocalUserDefaults.shared.checkCoa = list
             HUD.dismissLoading()
-        }catch {
+        } catch {
             HUD.dismissLoading()
         }
     }

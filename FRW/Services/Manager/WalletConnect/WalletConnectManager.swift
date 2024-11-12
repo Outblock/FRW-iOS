@@ -48,8 +48,7 @@ class WalletConnectManager: ObservableObject {
 
     private var syncAccountFlag: Bool = false
 
-    private var cacheReqeust:[String] = []
-
+    private var cacheReqeust: [String] = []
 
     init() {
         let redirect = try! AppMetadata.Redirect(native: "frw://", universal: "https://frw-link.lilico.app")
@@ -300,7 +299,8 @@ extension WalletConnectManager {
                                             url: info.dappURL,
                                             logo: info.iconURL,
                                             walletAddress: address,
-                                            network: network) { result in
+                                            network: network)
+        { result in
             if result {
                 // TODO: Handle network mismatch
                 self.approveSession(proposal: sessionProposal)
@@ -310,18 +310,17 @@ extension WalletConnectManager {
         }
 
         Router.route(to: RouteMap.Explore.authn(authnVM))
-
     }
 
     func handleRequest(_ sessionRequest: WalletConnectSign.Request) {
         let address = WalletManager.shared.address.hex.addHexPrefix()
         let keyId = WalletManager.shared.keyIndex
-        
+
         if cacheReqeust.contains(sessionRequest.id.string) {
             return
         }
         cacheReqeust.append(sessionRequest.id.string)
-        
+
         switch sessionRequest.method {
         case FCLWalletConnectMethod.authn.rawValue:
 
@@ -337,7 +336,7 @@ extension WalletConnectManager {
                         serviceDefinition(address: address, keyId: keyId, type: .authz),
                         serviceDefinition(address: address, keyId: keyId, type: .userSignature),
                     ]
-                    
+
                     SecurityManager.shared.openIgnoreOnce()
                     if let model = try? JSONDecoder().decode(BaseConfigRequest.self, from: data),
                        let nonce = model.accountProofNonce ?? model.nonce,
@@ -360,7 +359,6 @@ extension WalletConnectManager {
                     rejectRequest(request: sessionRequest)
                 }
             }
-
         case FCLWalletConnectMethod.preAuthz.rawValue:
 
             let result = AuthnResponse(fType: "PollingResponse", fVsn: "1.0.0", status: .approved,
@@ -381,7 +379,6 @@ extension WalletConnectManager {
                     rejectRequest(request: sessionRequest)
                 }
             }
-
         case FCLWalletConnectMethod.authz.rawValue:
 
             do {
@@ -440,7 +437,6 @@ extension WalletConnectManager {
                 log.error("WalletConnectManager -> Respond Error:", context: error)
                 rejectRequest(request: sessionRequest)
             }
-
         case FCLWalletConnectMethod.userSignature.rawValue:
 
             do {
@@ -518,7 +514,7 @@ extension WalletConnectManager {
             }
         case WalletConnectEVMMethod.personalSign.rawValue:
             log.info("[EVM] sign person")
-            
+
             handler.handlePersonalSignRequest(request: sessionRequest) { signStr in
                 Task {
                     do {
@@ -588,7 +584,7 @@ extension WalletConnectManager {
             HUD.error(title: "process_failed_text".localized)
         }
     }
-    
+
     private func handleSignTypedData(_ sessionRequest: WalletConnectSign.Request) {
         handler.handleSignTypedDataV4(request: sessionRequest) { signStr in
             Task {
@@ -604,7 +600,7 @@ extension WalletConnectManager {
             self.rejectRequest(request: sessionRequest)
         }
     }
-    
+
     private func handleWatchAsset(_ sessionRequest: WalletConnectSign.Request) {
         handler.handleWatchAsset(request: sessionRequest) { result in
             Task {
@@ -620,12 +616,11 @@ extension WalletConnectManager {
                     log.error("[EVM] Add Custom Token Error: \(error)")
                 }
             }
-            
+
         } cancel: {
             log.error("[EVM] invalid token")
             self.rejectRequest(request: sessionRequest)
         }
-
     }
 }
 

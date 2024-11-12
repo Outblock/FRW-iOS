@@ -1,5 +1,5 @@
 //
-//  ResizableView.swift
+//  DebugViewer.swift
 //
 //
 //  Created by Jin Kim on 6/13/22.
@@ -9,121 +9,10 @@ import Foundation
 import SnapKit
 import UIKit
 
+// MARK: - DebugViewer
+
 public class DebugViewer: ResizableView {
-    public static let shared = DebugViewer()
-    public var theme: Theme = .dark {
-        didSet {
-            updateTheme()
-        }
-    }
-
-    private var data = ThreadSafeDictionary<String, CappedCollection<DebugViewModel>>()
-
-    private var selectedCategory: String?
-
-    private var latestSize = CGSize(width: 300, height: 300)
-    private let buttonSize = CGSize(width: 28, height: 28)
-
-    private let collapseButton = UIButton(frame: .zero)
-    private let squareButton = UIView()
-    private let draggablePoint = UIView(frame: .zero)
-    private let shapeLayer = CAShapeLayer()
-    private let tableView = UITableView()
-    private lazy var collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 0
-        layout.minimumInteritemSpacing = 0
-
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.backgroundColor = .clear
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.register(DebugViewCategoryCell.self, forCellWithReuseIdentifier: DebugViewCategoryCell.description())
-        return collectionView
-    }()
-
-    private lazy var clearAllButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Clear", for: .normal)
-        button.titleLabel?.font = UIFont(name: "CourierNewPS-BoldMT", size: 12.0)
-        button.addTarget(self, action: #selector(clearAll), for: .touchUpInside)
-        return button
-    }()
-
-    public enum Theme {
-        case dark
-        case light
-
-        var baseColor: UIColor {
-            switch self {
-            case .dark:
-                return .black
-            case .light:
-                return .white
-            }
-        }
-
-        var backgroundColor: UIColor {
-            switch self {
-            case .dark:
-                return UIColor.black.withAlphaComponent(0.7)
-            case .light:
-                return UIColor.white.withAlphaComponent(0.8)
-            }
-        }
-
-        var fontColor: UIColor {
-            switch self {
-            case .dark:
-                return .white
-            case .light:
-                return .black
-            }
-        }
-    }
-
-    private lazy var viewerFrameKey: String = "com.dapperlabs.mobile.debug-viewer.frame.\(String(describing: type(of: self)))"
-
-    private var items: CappedCollection<DebugViewModel> {
-        guard let category = selectedCategory, data.keys.contains(category) else {
-            return data.first?.value ?? CappedCollection(elements: [], maxCount: 100)
-        }
-        return data[category] ?? CappedCollection(elements: [], maxCount: 100)
-    }
-
-    override public var frame: CGRect {
-        didSet {
-            guard frame != .zero else { return }
-            UserDefaults.standard.setValue(NSCoder.string(for: frame), forKey: viewerFrameKey)
-        }
-    }
-
-    override public var center: CGPoint {
-        didSet {
-            guard frame != .zero else { return }
-            UserDefaults.standard.setValue(NSCoder.string(for: frame), forKey: viewerFrameKey)
-        }
-    }
-
-    private func updateTheme() {
-        layer.borderColor = theme.baseColor.cgColor
-        layer.borderWidth = 2.0
-        backgroundColor = theme.backgroundColor
-
-        collapseButton.backgroundColor = theme.baseColor
-        squareButton.backgroundColor = theme.fontColor
-
-        shapeLayer.strokeColor = layer.borderColor
-        shapeLayer.fillColor = theme.fontColor.withAlphaComponent(0.7).cgColor
-
-        clearAllButton.setTitleColor(theme.fontColor, for: .normal)
-        clearAllButton.backgroundColor = theme.baseColor
-
-        collectionView.reloadData()
-        tableView.reloadData()
-    }
+    // MARK: Lifecycle
 
     override init(
         frame: CGRect
@@ -182,7 +71,11 @@ public class DebugViewer: ResizableView {
             make.left.right.top.equalToSuperview()
         }
 
-        collapseButton.addTarget(self, action: #selector(didPressCollapseButton), for: .touchUpInside)
+        collapseButton.addTarget(
+            self,
+            action: #selector(didPressCollapseButton),
+            for: .touchUpInside
+        )
 
         collapseButton.snp.makeConstraints { make in
             make.size.equalTo(buttonSize)
@@ -226,45 +119,62 @@ public class DebugViewer: ResizableView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func addPanGestureRecoginizer(_ view: UIView) {
-        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(viewDidPan(_:)))
-        view.addGestureRecognizer(panGesture)
+    // MARK: Public
+
+    public enum Theme {
+        case dark
+        case light
+
+        // MARK: Internal
+
+        var baseColor: UIColor {
+            switch self {
+            case .dark:
+                return .black
+            case .light:
+                return .white
+            }
+        }
+
+        var backgroundColor: UIColor {
+            switch self {
+            case .dark:
+                return UIColor.black.withAlphaComponent(0.7)
+            case .light:
+                return UIColor.white.withAlphaComponent(0.8)
+            }
+        }
+
+        var fontColor: UIColor {
+            switch self {
+            case .dark:
+                return .white
+            case .light:
+                return .black
+            }
+        }
     }
 
-    @objc private func viewDidPan(_ sender: UIPanGestureRecognizer) {
-        let translation = sender.translation(in: self)
-        center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
-        sender.setTranslation(CGPoint.zero, in: self)
-    }
+    public static let shared = DebugViewer()
 
-    private var isCollapsed: Bool = false {
+    public var theme: Theme = .dark {
         didSet {
-            collectionView.isHidden = isCollapsed
-            clearAllButton.isHidden = isCollapsed
-            tableView.isHidden = isCollapsed
+            updateTheme()
         }
     }
 
-    @objc private func didPressCollapseButton() {
-        if !isCollapsed {
-            latestSize = frame.size
-        }
-        let targetSize = isCollapsed ? latestSize : collapseButton.frame.size
-        isCollapsed = !isCollapsed
-        UIView.animate(withDuration: 0.1) {
-            self.frame.size = targetSize
-        } completion: { _ in
+    override public var frame: CGRect {
+        didSet {
+            guard frame != .zero else { return }
+            UserDefaults.standard.setValue(NSCoder.string(for: frame), forKey: viewerFrameKey)
         }
     }
 
-    private var keyWindow: UIWindow? {
-        return UIApplication.shared.windows.first(where: { $0.isKeyWindow })
-    }
-
-    @objc private func keyWindowChanged() {
-        guard superview != keyWindow else { return }
-        removeFromSuperview()
-        keyWindow?.addSubview(self)
+    override public var center: CGPoint {
+        didSet {
+            guard frame != .zero else { return }
+            UserDefaults.standard.setValue(NSCoder.string(for: frame), forKey: viewerFrameKey)
+        }
     }
 
     public func show(theme: Theme = .dark) {
@@ -273,8 +183,7 @@ public class DebugViewer: ResizableView {
             keyWindow?.addSubview(self)
         }
         if let storedFrame = UserDefaults.standard.string(forKey: viewerFrameKey),
-           NSCoder.cgRect(for: storedFrame) != CGRect.zero
-        {
+           NSCoder.cgRect(for: storedFrame) != CGRect.zero {
             frame = NSCoder.cgRect(for: storedFrame)
         } else {
             frame.size = latestSize
@@ -285,7 +194,8 @@ public class DebugViewer: ResizableView {
         alwaysShowOnTop()
     }
 
-    @objc public func close() {
+    @objc
+    public func close() {
         isHidden = true
         UserDefaults.standard.removeObject(forKey: viewerFrameKey)
     }
@@ -296,7 +206,10 @@ public class DebugViewer: ResizableView {
     }
 
     public func addViewModel(category: String, viewModel: DebugViewModel) {
-        var dataSource: CappedCollection<DebugViewModel> = data[category] ?? CappedCollection(elements: [], maxCount: 100)
+        var dataSource: CappedCollection<DebugViewModel> = data[category] ?? CappedCollection(
+            elements: [],
+            maxCount: 100
+        )
         dataSource.append(viewModel)
         data[category] = dataSource
         if selectedCategory == nil {
@@ -310,7 +223,120 @@ public class DebugViewer: ResizableView {
         }
     }
 
-    @objc private func clearAll() {
+    // MARK: Private
+
+    private var data = ThreadSafeDictionary<String, CappedCollection<DebugViewModel>>()
+
+    private var selectedCategory: String?
+
+    private var latestSize = CGSize(width: 300, height: 300)
+    private let buttonSize = CGSize(width: 28, height: 28)
+
+    private let collapseButton = UIButton(frame: .zero)
+    private let squareButton = UIView()
+    private let draggablePoint = UIView(frame: .zero)
+    private let shapeLayer = CAShapeLayer()
+    private let tableView = UITableView()
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.backgroundColor = .clear
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.register(
+            DebugViewCategoryCell.self,
+            forCellWithReuseIdentifier: DebugViewCategoryCell.description()
+        )
+        return collectionView
+    }()
+
+    private lazy var clearAllButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Clear", for: .normal)
+        button.titleLabel?.font = UIFont(name: "CourierNewPS-BoldMT", size: 12.0)
+        button.addTarget(self, action: #selector(clearAll), for: .touchUpInside)
+        return button
+    }()
+
+    private lazy var viewerFrameKey: String =
+        "com.dapperlabs.mobile.debug-viewer.frame.\(String(describing: type(of: self)))"
+
+    private var items: CappedCollection<DebugViewModel> {
+        guard let category = selectedCategory, data.keys.contains(category) else {
+            return data.first?.value ?? CappedCollection(elements: [], maxCount: 100)
+        }
+        return data[category] ?? CappedCollection(elements: [], maxCount: 100)
+    }
+
+    private var isCollapsed: Bool = false {
+        didSet {
+            collectionView.isHidden = isCollapsed
+            clearAllButton.isHidden = isCollapsed
+            tableView.isHidden = isCollapsed
+        }
+    }
+
+    private var keyWindow: UIWindow? {
+        UIApplication.shared.windows.first(where: { $0.isKeyWindow })
+    }
+
+    private func updateTheme() {
+        layer.borderColor = theme.baseColor.cgColor
+        layer.borderWidth = 2.0
+        backgroundColor = theme.backgroundColor
+
+        collapseButton.backgroundColor = theme.baseColor
+        squareButton.backgroundColor = theme.fontColor
+
+        shapeLayer.strokeColor = layer.borderColor
+        shapeLayer.fillColor = theme.fontColor.withAlphaComponent(0.7).cgColor
+
+        clearAllButton.setTitleColor(theme.fontColor, for: .normal)
+        clearAllButton.backgroundColor = theme.baseColor
+
+        collectionView.reloadData()
+        tableView.reloadData()
+    }
+
+    private func addPanGestureRecoginizer(_ view: UIView) {
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(viewDidPan(_:)))
+        view.addGestureRecognizer(panGesture)
+    }
+
+    @objc
+    private func viewDidPan(_ sender: UIPanGestureRecognizer) {
+        let translation = sender.translation(in: self)
+        center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
+        sender.setTranslation(CGPoint.zero, in: self)
+    }
+
+    @objc
+    private func didPressCollapseButton() {
+        if !isCollapsed {
+            latestSize = frame.size
+        }
+        let targetSize = isCollapsed ? latestSize : collapseButton.frame.size
+        isCollapsed = !isCollapsed
+        UIView.animate(withDuration: 0.1) {
+            self.frame.size = targetSize
+        } completion: { _ in
+        }
+    }
+
+    @objc
+    private func keyWindowChanged() {
+        guard superview != keyWindow else { return }
+        removeFromSuperview()
+        keyWindow?.addSubview(self)
+    }
+
+    @objc
+    private func clearAll() {
         for (category, collection) in data {
             var mutableCollection = collection
             mutableCollection.removeAllElements()
@@ -324,7 +350,7 @@ public class DebugViewer: ResizableView {
 
 extension DebugViewer: UITableViewDataSource, UITableViewDelegate {
     public func numberOfSections(in _: UITableView) -> Int {
-        return items.count
+        items.count
     }
 
     public func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -334,10 +360,17 @@ extension DebugViewer: UITableViewDataSource, UITableViewDelegate {
         return 0
     }
 
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
         let item = items[indexPath.section]
-        let cell: DebugViewCell = tableView.dequeueReusableCell(withIdentifier: DebugViewCell.description(), for: indexPath) as! DebugViewCell
-        cell.backgroundColor = (indexPath.section % 2) == 0 ? theme.baseColor.withAlphaComponent(0.6) : theme.baseColor.withAlphaComponent(0.3)
+        let cell: DebugViewCell = tableView.dequeueReusableCell(
+            withIdentifier: DebugViewCell.description(),
+            for: indexPath
+        ) as! DebugViewCell
+        cell.backgroundColor = (indexPath.section % 2) == 0 ? theme.baseColor
+            .withAlphaComponent(0.6) : theme.baseColor.withAlphaComponent(0.3)
         let showDetails = indexPath.row == 1
         cell.configure(event: item, showDetails: showDetails, theme: theme)
         return cell
@@ -351,7 +384,10 @@ extension DebugViewer: UITableViewDataSource, UITableViewDelegate {
         }
     }
 
-    public func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    public func tableView(
+        _: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
         let item = items[indexPath.section]
         let contextItem = UIContextualAction(style: .normal, title: "Copy") { _, _, boolValue in
             if indexPath.row == 0 {
@@ -366,9 +402,10 @@ extension DebugViewer: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
+// MARK: - DebugViewCell
+
 class DebugViewCell: UITableViewCell {
-    static var font = UIFont(name: "CourierNewPS-BoldMT", size: 10)!
-    static var detailFont = UIFont(name: "CourierNewPS-BoldMT", size: 8)!
+    // MARK: Lifecycle
 
     override init(
         style _: UITableViewCell.CellStyle, reuseIdentifier: String?
@@ -395,6 +432,11 @@ class DebugViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    static var font = UIFont(name: "CourierNewPS-BoldMT", size: 10)!
+    static var detailFont = UIFont(name: "CourierNewPS-BoldMT", size: 8)!
+
     func configure(event: DebugViewModel, showDetails: Bool = false, theme: DebugViewer.Theme) {
         textLabel?.textColor = theme.fontColor
         if showDetails {
@@ -413,7 +455,7 @@ class DebugViewCell: UITableViewCell {
     }
 }
 
-// MARK: UICollectionViewDataSource, UICollectionViewDelegate
+// MARK: - DebugViewer + UICollectionViewDataSource
 
 extension DebugViewer: UICollectionViewDataSource {
     private func category(_ indexPath: IndexPath) -> String {
@@ -430,11 +472,17 @@ extension DebugViewer: UICollectionViewDataSource {
     }
 
     public func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return data.keys.count
+        data.keys.count
     }
 
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DebugViewCategoryCell.description(), for: indexPath) as! DebugViewCategoryCell
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: DebugViewCategoryCell.description(),
+            for: indexPath
+        ) as! DebugViewCategoryCell
         cell.theme = theme
         cell.category = category(indexPath)
         cell.current = isCurrent(indexPath)
@@ -442,43 +490,41 @@ extension DebugViewer: UICollectionViewDataSource {
     }
 }
 
+// MARK: - DebugViewer + UICollectionViewDelegate
+
 extension DebugViewer: UICollectionViewDelegate {
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
         selectedCategory = category(indexPath)
         tableView.reloadData()
         collectionView.reloadSections(IndexSet(integer: 0))
     }
 }
 
+// MARK: - DebugViewer + UICollectionViewDelegateFlowLayout
+
 extension DebugViewer: UICollectionViewDelegateFlowLayout {
-    public func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    public func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         let category = category(indexPath)
-        let boundingRect = category.boundingRect(with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: buttonSize.height),
-                                                 options: [.usesLineFragmentOrigin, .usesFontLeading],
-                                                 context: nil)
+        let boundingRect = category.boundingRect(
+            with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: buttonSize.height),
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            context: nil
+        )
         return CGSize(width: boundingRect.width + 40, height: buttonSize.height)
     }
 }
 
+// MARK: - DebugViewCategoryCell
+
 class DebugViewCategoryCell: UICollectionViewCell {
-    private let label = UILabel(frame: .zero)
-    var category: String? {
-        didSet {
-            label.text = category
-        }
-    }
-
-    var current: Bool = false {
-        didSet {
-            contentView.backgroundColor = current ? theme.baseColor : .clear
-        }
-    }
-
-    var theme: DebugViewer.Theme = .dark {
-        didSet {
-            label.textColor = theme.fontColor
-        }
-    }
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -497,4 +543,28 @@ class DebugViewCategoryCell: UICollectionViewCell {
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var category: String? {
+        didSet {
+            label.text = category
+        }
+    }
+
+    var current: Bool = false {
+        didSet {
+            contentView.backgroundColor = current ? theme.baseColor : .clear
+        }
+    }
+
+    var theme: DebugViewer.Theme = .dark {
+        didSet {
+            label.textColor = theme.fontColor
+        }
+    }
+
+    // MARK: Private
+
+    private let label = UILabel(frame: .zero)
 }

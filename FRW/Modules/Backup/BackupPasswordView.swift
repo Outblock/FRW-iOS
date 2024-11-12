@@ -8,29 +8,40 @@
 import SwiftUI
 import SwiftUIX
 
+// MARK: - BackupPasswordView
+
 struct BackupPasswordView: RouteableView {
-    @StateObject var vm: BackupPasswordViewModel
+    // MARK: Lifecycle
 
-    @State var isTick: Bool = false
-    @State var highlight: VTextFieldHighlight = .none
-    @State var confrimHighlight: VTextFieldHighlight = .none
-    @State var text: String = ""
-    @State var confrimText: String = ""
-
-    var title: String {
-        return ""
+    init(backupType: BackupManager.BackupType) {
+        _vm = StateObject(wrappedValue: BackupPasswordViewModel(backupType: backupType))
     }
 
-    func backButtonAction() {
-        UIApplication.shared.endEditing()
-        Router.pop()
-    }
+    // MARK: Internal
+
+    @StateObject
+    var vm: BackupPasswordViewModel
+
+    @State
+    var isTick: Bool = false
+    @State
+    var highlight: VTextFieldHighlight = .none
+    @State
+    var confrimHighlight: VTextFieldHighlight = .none
+    @State
+    var text: String = ""
+    @State
+    var confrimText: String = ""
 
     var model: VTextFieldModel = {
         var model = TextFieldStyle.primary
         model.misc.textContentType = .newPassword
         return model
     }()
+
+    var title: String {
+        ""
+    }
 
     var canGoNext: Bool {
         if confrimText.count < 8 || text.count < 8 {
@@ -41,11 +52,7 @@ struct BackupPasswordView: RouteableView {
     }
 
     var buttonState: VPrimaryButtonState {
-        return canGoNext ? .enabled : .disabled
-    }
-
-    init(backupType: BackupManager.BackupType) {
-        _vm = StateObject(wrappedValue: BackupPasswordViewModel(backupType: backupType))
+        canGoNext ? .enabled : .disabled
     }
 
     var body: some View {
@@ -72,48 +79,65 @@ struct BackupPasswordView: RouteableView {
             Spacer()
 
             VStack(spacing: 25) {
-                VTextField(model: model,
-                           type: .secure,
-                           highlight: highlight,
-                           placeholder: "backup_password".localized,
-                           footerTitle: "minimum_8_char".localized,
-                           text: $text,
-                           onChange: {})
+                VTextField(
+                    model: model,
+                    type: .secure,
+                    highlight: highlight,
+                    placeholder: "backup_password".localized,
+                    footerTitle: "minimum_8_char".localized,
+                    text: $text,
+                    onChange: {}
+                )
 
-                VTextField(model: model,
-                           type: .secure,
-                           highlight: confrimHighlight,
-                           placeholder: "confirm_password".localized,
-                           footerTitle: "",
-                           text: $confrimText,
-                           onChange: {},
-                           onReturn: .returnAndCustom {})
+                VTextField(
+                    model: model,
+                    type: .secure,
+                    highlight: confrimHighlight,
+                    placeholder: "confirm_password".localized,
+                    footerTitle: "",
+                    text: $confrimText,
+                    onChange: {},
+                    onReturn: .returnAndCustom {}
+                )
             }.padding(.bottom, 25)
 
-            VCheckBox(model: CheckBoxStyle.secondary,
-                      isOn: $isTick) {
-                VText(type: .oneLine,
-                      font: .footnote,
-                      color: Color.LL.rebackground,
-                      title: "can_not_recover_pwd_tips".localized)
+            VCheckBox(
+                model: CheckBoxStyle.secondary,
+                isOn: $isTick
+            ) {
+                VText(
+                    type: .oneLine,
+                    font: .footnote,
+                    color: Color.LL.rebackground,
+                    title: "can_not_recover_pwd_tips".localized
+                )
             }
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: buttonState,
-                           action: {
-                               UIApplication.shared.endEditing()
-                               vm.backupToCloudAction(password: confrimText)
-                           },
-                           title: "secure_backup".localized)
-                .padding(.bottom, 20)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: buttonState,
+                action: {
+                    UIApplication.shared.endEditing()
+                    vm.backupToCloudAction(password: confrimText)
+                },
+                title: "secure_backup".localized
+            )
+            .padding(.bottom, 20)
         }
         .padding(.horizontal, 28)
         .backgroundFill(Color.LL.background)
         .applyRouteable(self)
     }
+
+    func backButtonAction() {
+        UIApplication.shared.endEditing()
+        Router.pop()
+    }
 }
+
+// MARK: - BackupPasswordView_Previews
 
 struct BackupPasswordView_Previews: PreviewProvider {
     static var previews: some View {

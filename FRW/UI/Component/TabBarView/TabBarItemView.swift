@@ -1,5 +1,5 @@
 //
-//  TabbarItem.swift
+//  TabBarItemView.swift
 //  Test
 //
 //  Created by cat on 2022/5/25.

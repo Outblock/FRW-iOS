@@ -5,22 +5,25 @@
 //  Created by cat on 10/30/24.
 //
 
+import BigInt
 import Foundation
 import UIKit
-import web3swift
-import BigInt
 import Web3Core
+import web3swift
+
+// MARK: - AddCustomTokenViewModel
 
 class AddCustomTokenViewModel: ObservableObject {
-    @Published var customAddress: String = ""
-    
+    @Published
+    var customAddress: String = ""
+
     func onPaste() {
         guard let address = UIPasteboard.general.string else {
             return
         }
         customAddress = address
     }
-    
+
     func onSearch() {
         guard isValidAddress(address: customAddress) else {
             HUD.error(title: "invalid_address".localized)
@@ -38,7 +41,7 @@ class AddCustomTokenViewModel: ObservableObject {
             }
         }
     }
-    
+
     func isValidAddress(address: String) -> Bool {
         let result = address.lowercased().hasPrefix("0x")
         return result
@@ -55,4 +58,3 @@ extension AddCustomTokenViewModel {
         Router.route(to: RouteMap.Wallet.showCustomToken(token))
     }
 }
-

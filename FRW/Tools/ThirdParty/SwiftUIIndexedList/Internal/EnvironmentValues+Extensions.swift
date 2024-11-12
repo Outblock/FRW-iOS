@@ -6,7 +6,7 @@
 
 import SwiftUI
 
-internal extension EnvironmentValues {
+extension EnvironmentValues {
     var indexBarBackground: IndexBarBackground {
         get { self[IndexBarBackgroundKey.self] }
         set { self[IndexBarBackgroundKey.self] = newValue }
@@ -18,9 +18,13 @@ internal extension EnvironmentValues {
     }
 }
 
+// MARK: - IndexBarBackgroundKey
+
 private struct IndexBarBackgroundKey: EnvironmentKey {
     static let defaultValue = IndexBarBackground(contentMode: .fit, view: { AnyView(EmptyView()) })
 }
+
+// MARK: - IndexBarInsetsKey
 
 private struct IndexBarInsetsKey: EnvironmentKey {
     static let defaultValue: EdgeInsets? = nil

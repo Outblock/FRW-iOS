@@ -7,13 +7,15 @@
 
 import SwiftUI
 
+// MARK: - CustomTokenDetailView
+
 struct CustomTokenDetailView: RouteableView {
     let token: CustomToken
-    
+
     var title: String {
-        return "Add Custom Token".localized
+        "Add Custom Token".localized
     }
-    
+
     var body: some View {
         VStack(spacing: 12) {
             CustomTokenDetailView
@@ -25,39 +27,43 @@ struct CustomTokenDetailView: RouteableView {
                 .foregroundStyle(Color.Theme.Line.stroke)
             CustomTokenDetailView
                 .Item(title: "Token Name".localized, content: token.name)
-            
+
             CustomTokenDetailView
                 .Item(title: "Token Symbol".localized, content: token.symbol)
-            
+
             CustomTokenDetailView
                 .Item(title: "Token Decimal".localized, content: String(token.decimals))
-            
+
             CustomTokenDetailView
                 .Item(
                     title: "Flow Identifier".localized,
-                    content: token.flowIdentifier ?? "")
+                    content: token.flowIdentifier ?? ""
+                )
                 .visibility(token.flowIdentifier == nil ? .gone : .visible)
-            
+
             Spacer()
-            
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: .enabled,
-                           action: {
-                onClickImport()
-            }, title: "import_btn_text".localized)
+
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: .enabled,
+                action: {
+                    onClickImport()
+                },
+                title: "import_btn_text".localized
+            )
         }
         .padding(16)
         .background(.Theme.Background.bg2)
         .applyRouteable(self)
     }
-    
+
     func onClickImport() {
         Task {
             let manager = WalletManager.shared.customTokenManager
             let inWhite = manager.isInWhite(token: token)
             if inWhite {
                 HUD.success(title: "the token is added")
-            }else {
+            } else {
                 HUD.loading()
                 await manager.add(token: token)
                 HUD.dismissLoading()
@@ -67,13 +73,14 @@ struct CustomTokenDetailView: RouteableView {
     }
 }
 
+// MARK: CustomTokenDetailView.Item
 
 extension CustomTokenDetailView {
     struct Item: View {
         var title: String
         var content: String
         var dark: Bool = false
-        
+
         var body: some View {
             VStack(alignment: .leading) {
                 TitleView(title: title, isStar: false)
@@ -81,7 +88,7 @@ extension CustomTokenDetailView {
                     Text(content)
                         .font(.inter(size: 14))
                         .foregroundStyle(
-                            dark ? Color.Theme.Text.black8 :Color.Theme.Text.black3
+                            dark ? Color.Theme.Text.black8 : Color.Theme.Text.black3
                         )
                     Spacer()
                 }

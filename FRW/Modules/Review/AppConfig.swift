@@ -7,7 +7,9 @@
 
 import Foundation
 
-struct AppHide {
+// MARK: - AppHide
+
+enum AppHide {
     static var FTAdd: ViewVisibility {
         if isChildAccount {
             return .gone
@@ -46,6 +48,6 @@ struct AppHide {
 
 extension AppHide {
     private static var isChildAccount: Bool {
-        return ChildAccountManager.shared.selectedChildAccount != nil
+        ChildAccountManager.shared.selectedChildAccount != nil
     }
 }

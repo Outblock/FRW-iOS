@@ -133,9 +133,10 @@ class MoveSingleNFTViewModel: ObservableObject {
                         nft: nftIdentifier,
                         id: nftId,
                         child: fromContact
-                            .address ?? "")
+                            .address ?? ""
+                    )
             case (.evm, .link):
-                guard let nftIdentifier = nft.response.flowIdentifier else {   
+                guard let nftIdentifier = nft.response.flowIdentifier else {
                     return
                 }
                 tid = try await FlowNetwork
@@ -143,7 +144,8 @@ class MoveSingleNFTViewModel: ObservableObject {
                         nft: nftIdentifier,
                         id: nftId,
                         child: toContact
-                            .address ?? "")
+                            .address ?? ""
+                    )
             default:
                 log.info("===")
             }
@@ -174,11 +176,11 @@ extension MoveSingleNFTViewModel {
         let isSelectedEVM = EVMAccountManager.shared.selectedAccount != nil
         return isSelectedEVM ? Image("icon_qr_evm") : Image("Flow")
     }
-    
+
     var showFee: Bool {
         !(fromContact.walletType == .link || toContact.walletType == .link)
     }
-    
+
     var isFeeFree: Bool {
         fromContact.walletType == toContact.walletType
     }

@@ -1,5 +1,5 @@
 //
-//  VMenuPreset.swift
+//  VMenuButtonType.swift
 //  VComponents
 //
 //  Created by Vakhtang Kontridze on 1/28/21.
@@ -21,13 +21,13 @@ public typealias VMenuButtonPreset = DerivedButtonPreset
 // MARK: - Button
 
 extension VMenuButtonType {
-    @ViewBuilder static func menuButton<Content>(
+    @ViewBuilder
+    static func menuButton<Content>(
         buttonType: VMenuButtonType,
         isEnabled: Bool,
         @ViewBuilder label: @escaping () -> Content
     ) -> some View
-        where Content: View
-    {
+        where Content: View {
         switch buttonType {
         case let .primary(model):
             VPrimaryButton(

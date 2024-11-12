@@ -1,5 +1,5 @@
 //
-//  EnterPasswordView.swift
+//  EnterRestorePasswordView.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 31/12/21.
@@ -10,20 +10,33 @@ import SwiftUIX
 
 extension EnterRestorePasswordView {
     var title: String {
-        return ""
+        ""
     }
 }
 
+// MARK: - EnterRestorePasswordView
+
 struct EnterRestorePasswordView: RouteableView {
-    @StateObject var vm: EnterRestorePasswordViewModel
+    // MARK: Lifecycle
 
-    @State var text: String = ""
-    @State var textStatus: LL.TextField.Status = .normal
-    @State var state: VTextFieldState = .enabled
-
-    var buttonState: VPrimaryButtonState {
-        text.count >= 8 ? .enabled : .disabled
+    init(driveItem: BackupManager.DriveItem, backupType: BackupManager.BackupType) {
+        _vm = StateObject(wrappedValue: EnterRestorePasswordViewModel(
+            driveItem: driveItem,
+            backupType: backupType
+        ))
     }
+
+    // MARK: Internal
+
+    @StateObject
+    var vm: EnterRestorePasswordViewModel
+
+    @State
+    var text: String = ""
+    @State
+    var textStatus: LL.TextField.Status = .normal
+    @State
+    var state: VTextFieldState = .enabled
 
     var model: VTextFieldModel = {
         var model = TextFieldStyle.primary
@@ -31,8 +44,8 @@ struct EnterRestorePasswordView: RouteableView {
         return model
     }()
 
-    init(driveItem: BackupManager.DriveItem, backupType: BackupManager.BackupType) {
-        _vm = StateObject(wrappedValue: EnterRestorePasswordViewModel(driveItem: driveItem, backupType: backupType))
+    var buttonState: VPrimaryButtonState {
+        text.count >= 8 ? .enabled : .disabled
     }
 
     var body: some View {
@@ -54,24 +67,29 @@ struct EnterRestorePasswordView: RouteableView {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            VTextField(model: model,
-                       type: .secure,
-                       state: $state,
-                       placeholder: "enter_your_password".localized,
-                       footerTitle: "minimum_8_char".localized,
-                       text: $text) {}
+            VTextField(
+                model: model,
+                type: .secure,
+                state: $state,
+                placeholder: "enter_your_password".localized,
+                footerTitle: "minimum_8_char".localized,
+                text: $text
+            ) {}
                 .frame(height: 120)
                 .padding(.top, 80)
 
             Spacer()
 
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: buttonState,
-                           action: {
-                               state = .enabled
-                               vm.restoreAction(password: text)
-                           }, title: "restore_account".localized)
-                .padding(.bottom, 20)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: buttonState,
+                action: {
+                    state = .enabled
+                    vm.restoreAction(password: text)
+                },
+                title: "restore_account".localized
+            )
+            .padding(.bottom, 20)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 28)

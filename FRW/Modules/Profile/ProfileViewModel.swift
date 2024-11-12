@@ -29,14 +29,7 @@ extension ProfileView {
     enum ProfileInput {}
 
     class ProfileViewModel: ViewModel {
-        @Published var state = ProfileState()
-
-        private var cancelSets = Set<AnyCancellable>()
-
-        let version = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
-        let buildVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-
-        @Published var isLinkedAccount = false
+        // MARK: Lifecycle
 
         init() {
             state.colorScheme = ThemeManager.shared.style
@@ -80,7 +73,22 @@ extension ProfileView {
                 }.store(in: &cancelSets)
         }
 
+        // MARK: Internal
+
+        @Published
+        var state = ProfileState()
+
+        let version = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+        let buildVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+
+        @Published
+        var isLinkedAccount = false
+
         func trigger(_: ProfileInput) {}
+
+        // MARK: Private
+
+        private var cancelSets = Set<AnyCancellable>()
 
         private func refreshBackupState() {
             guard let uid = UserManager.shared.activatedUID else {
@@ -124,7 +132,6 @@ extension ProfileView {
 
 extension ProfileView.ProfileViewModel {
     func securityAction() {
-
         Task {
             let result = await SecurityManager.shared.SecurityVerify()
             if result {

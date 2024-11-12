@@ -1,5 +1,5 @@
 //
-//  SecureEnclave.swift
+//  WallectSecureEnclave.swift
 //  FRW
 //
 //  Created by cat on 2023/11/6.
@@ -8,10 +8,14 @@
 import CryptoKit
 import Foundation
 
+// MARK: - SignError
+
 enum SignError: Error, LocalizedError {
     case unknown
     case privateKeyEmpty
     case emptySignature
+
+    // MARK: Internal
 
     var errorDescription: String? {
         switch self {
@@ -21,16 +25,22 @@ enum SignError: Error, LocalizedError {
     }
 }
 
+// MARK: - WallectSecureEnclave
+
 struct WallectSecureEnclave {
-    let key: WallectSecureEnclave.PrivateKey
+    // MARK: Lifecycle
 
     init(privateKey data: Data) {
-        key = PrivateKey(data: data)
+        self.key = PrivateKey(data: data)
     }
 
     init() {
-        key = PrivateKey()
+        self.key = PrivateKey()
     }
+
+    // MARK: Internal
+
+    let key: WallectSecureEnclave.PrivateKey
 
     func sign(data: Data) throws -> Data {
         guard let privateKey = key.privateKey else {
