@@ -55,9 +55,9 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
             return Config.get(.lilico)
         default:
             #if LILICOPROD
-            return URL(string: "https://lilico.app/api/")!
+                return URL(string: "https://lilico.app/api/")!
             #else
-            return URL(string: "https://test.lilico.app/api/")!
+                return URL(string: "https://test.lilico.app/api/")!
             #endif
         }
     }

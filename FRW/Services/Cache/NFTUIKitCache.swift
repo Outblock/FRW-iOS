@@ -362,7 +362,8 @@ extension NFTUIKitCache {
         }
 
         guard var address = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress(),
-              let collectionId = nft.response.collectionID else {
+              let collectionId = nft.response.collectionID
+        else {
             return
         }
 
@@ -427,7 +428,8 @@ extension NFTUIKitCache {
         }
 
         guard let address = WalletManager.shared
-            .getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
+            .getWatchAddressOrChildAccountAddressOrPrimaryAddress()
+        else {
             return
         }
 

@@ -164,7 +164,8 @@ class ChildAccountDetailViewModel: ObservableObject {
 
         Task {
             guard let parent = WalletManager.shared.getPrimaryWalletAddress(),
-                  let child = self.childAccount.addr else {
+                  let child = self.childAccount.addr
+            else {
                 DispatchQueue.main.async {
                     self.collections = []
                     self.accessibleItems = []
@@ -238,7 +239,8 @@ class ChildAccountDetailViewModel: ObservableObject {
 
         Task {
             guard let parent = WalletManager.shared.getPrimaryWalletAddress(),
-                  let child = childAccount.addr else {
+                  let child = childAccount.addr
+            else {
                 DispatchQueue.main.async {
                     self.coins = []
                     self.accessibleItems = []

@@ -49,7 +49,8 @@ protocol WalletConnectChildHandlerProtocol {
 extension WalletConnectChildHandlerProtocol {
     func chainReference(sessionProposal: WalletConnectSign.Session.Proposal) -> String? {
         guard let chains = sessionProposal.requiredNamespaces[nameTag]?.chains,
-              let reference = chains.first(where: { $0.namespace == nameTag })?.reference else {
+              let reference = chains.first(where: { $0.namespace == nameTag })?.reference
+        else {
             return nil
         }
         return reference

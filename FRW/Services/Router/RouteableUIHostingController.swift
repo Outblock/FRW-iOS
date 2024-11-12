@@ -54,7 +54,8 @@ extension RouterContentDelegate {
 // MARK: - RouteableUIHostingController
 
 class RouteableUIHostingController<Content: RouteableView>: UIHostingController<Content>,
-    UIPopoverPresentationControllerDelegate {
+    UIPopoverPresentationControllerDelegate
+{
     // MARK: Lifecycle
 
     override init(rootView: Content) {

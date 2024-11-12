@@ -122,7 +122,8 @@ extension InboxViewModel {
 
     func claimTokenAction(_ model: InboxToken) {
         guard let coin = model.matchedCoin,
-              let domainHost = UserManager.shared.userInfo?.meowDomainHost else {
+              let domainHost = UserManager.shared.userInfo?.meowDomainHost
+        else {
             return
         }
 
@@ -158,7 +159,8 @@ extension InboxViewModel {
 
     func claimNFTAction(_ model: InboxNFT) {
         guard let collection = model.localCollection,
-              let domainHost = UserManager.shared.userInfo?.meowDomainHost else {
+              let domainHost = UserManager.shared.userInfo?.meowDomainHost
+        else {
             return
         }
 
@@ -193,7 +195,8 @@ extension InboxViewModel {
 
     func openNFTCollectionAction(_ model: InboxNFT) {
         guard let urlString = model.localCollection?.officialWebsite,
-              let url = URL(string: urlString) else {
+              let url = URL(string: urlString)
+        else {
             return
         }
 

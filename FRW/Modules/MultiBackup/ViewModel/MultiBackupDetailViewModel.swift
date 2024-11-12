@@ -63,7 +63,8 @@ class MultiBackupDetailViewModel: ObservableObject {
 
     func onDisplayPharse() {
         guard let backupType = item.multiBackupType(),
-              backupType == .google || backupType == .icloud else {
+              backupType == .google || backupType == .icloud
+        else {
             return
         }
 

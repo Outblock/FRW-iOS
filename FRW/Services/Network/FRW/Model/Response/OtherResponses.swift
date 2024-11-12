@@ -16,7 +16,7 @@ extension SwapEstimateResponse {
         init(from decoder: Decoder) throws {
             let container: KeyedDecodingContainer<SwapEstimateResponse.Route.CodingKeys> =
                 try decoder.container(keyedBy: SwapEstimateResponse.Route.CodingKeys.self)
-            self.route = try container.decode(
+            route = try container.decode(
                 [String].self,
                 forKey: SwapEstimateResponse.Route.CodingKeys.route
             )
@@ -26,9 +26,9 @@ extension SwapEstimateResponse {
                     String.self,
                     forKey: SwapEstimateResponse.Route.CodingKeys.routeAmountIn
                 )
-                self.routeAmountIn = Double(routeAmountInString) ?? 0
+                routeAmountIn = Double(routeAmountInString) ?? 0
             } catch {
-                self.routeAmountIn = try container.decode(
+                routeAmountIn = try container.decode(
                     Double.self,
                     forKey: SwapEstimateResponse.Route.CodingKeys.routeAmountIn
                 )
@@ -39,9 +39,9 @@ extension SwapEstimateResponse {
                     String.self,
                     forKey: SwapEstimateResponse.Route.CodingKeys.routeAmountOut
                 )
-                self.routeAmountOut = Double(routeAmountOutString) ?? 0
+                routeAmountOut = Double(routeAmountOutString) ?? 0
             } catch {
-                self.routeAmountOut = try container.decode(
+                routeAmountOut = try container.decode(
                     Double.self,
                     forKey: SwapEstimateResponse.Route.CodingKeys.routeAmountOut
                 )
@@ -66,29 +66,29 @@ struct SwapEstimateResponse: Codable {
 
         do {
             let priceImpactString = try container.decode(String.self, forKey: .priceImpact)
-            self.priceImpact = Double(priceImpactString) ?? 0
+            priceImpact = Double(priceImpactString) ?? 0
         } catch {
-            self.priceImpact = try container.decode(Double.self, forKey: .priceImpact)
+            priceImpact = try container.decode(Double.self, forKey: .priceImpact)
         }
 
-        self.routes = try container.decode([SwapEstimateResponse.Route?].self, forKey: .routes)
+        routes = try container.decode([SwapEstimateResponse.Route?].self, forKey: .routes)
 
         do {
             let tokenInAmountString = try container.decode(String.self, forKey: .tokenInAmount)
-            self.tokenInAmount = Double(tokenInAmountString) ?? 0
+            tokenInAmount = Double(tokenInAmountString) ?? 0
         } catch {
-            self.tokenInAmount = try container.decode(Double.self, forKey: .tokenInAmount)
+            tokenInAmount = try container.decode(Double.self, forKey: .tokenInAmount)
         }
 
         do {
             let tokenOutAmountString = try container.decode(String.self, forKey: .tokenOutAmount)
-            self.tokenOutAmount = Double(tokenOutAmountString) ?? 0
+            tokenOutAmount = Double(tokenOutAmountString) ?? 0
         } catch {
-            self.tokenOutAmount = try container.decode(Double.self, forKey: .tokenOutAmount)
+            tokenOutAmount = try container.decode(Double.self, forKey: .tokenOutAmount)
         }
 
-        self.tokenInKey = try container.decode(String.self, forKey: .tokenInKey)
-        self.tokenOutKey = try container.decode(String.self, forKey: .tokenOutKey)
+        tokenInKey = try container.decode(String.self, forKey: .tokenInKey)
+        tokenOutKey = try container.decode(String.self, forKey: .tokenOutKey)
     }
 
     // MARK: Internal

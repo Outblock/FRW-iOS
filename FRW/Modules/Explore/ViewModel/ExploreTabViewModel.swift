@@ -68,7 +68,8 @@ class ExploreTabViewModel: ViewModel {
                 do {
                     guard let config: RemoteConfigManager.Config = RemoteConfigManager.shared
                         .config,
-                        config.features.appList ?? false else {
+                        config.features.appList ?? false
+                    else {
                         return
                     }
 

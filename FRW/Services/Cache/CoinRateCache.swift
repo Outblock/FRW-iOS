@@ -204,7 +204,8 @@ extension CoinRateCache {
             await set(summary: response, forSymbol: symbol)
         case let .mirror(token):
             guard let mirrorTokenModel = WalletManager.shared.supportedCoins?
-                .first(where: { $0.symbol == token.rawValue }) else {
+                .first(where: { $0.symbol == token.rawValue })
+            else {
                 break
             }
 

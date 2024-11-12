@@ -55,17 +55,17 @@ extension View {
     @ViewBuilder
     func addTapIfNotTV(if condition: Bool, onTap: @escaping () -> Void) -> some View {
         #if os(tvOS)
-        self
-        #else
-        if condition {
-            gesture(
-                TapGesture().onEnded {
-                    onTap()
-                }
-            )
-        } else {
             self
-        }
+        #else
+            if condition {
+                gesture(
+                    TapGesture().onEnded {
+                        onTap()
+                    }
+                )
+            } else {
+                self
+            }
         #endif
     }
 }
@@ -122,8 +122,8 @@ struct SafeAreaGetter: ViewModifier {
     }
 }
 
-extension View {
-    public func safeAreaGetter(_ safeArea: Binding<EdgeInsets>) -> some View {
+public extension View {
+    func safeAreaGetter(_ safeArea: Binding<EdgeInsets>) -> some View {
         modifier(SafeAreaGetter(safeArea: safeArea))
     }
 }
@@ -131,13 +131,14 @@ extension View {
 // MARK: - AnimationCompletionObserverModifier
 
 struct AnimationCompletionObserverModifier<Value>: AnimatableModifier where Value: VectorArithmetic,
-    Value: Comparable {
+    Value: Comparable
+{
     // MARK: Lifecycle
 
     init(observedValue: Value, completion: @escaping () -> Void) {
         self.completion = completion
-        self.animatableData = observedValue
-        self.targetValue = observedValue
+        animatableData = observedValue
+        targetValue = observedValue
     }
 
     // MARK: Internal
@@ -187,8 +188,8 @@ struct AnimatableModifierDouble: AnimatableModifier {
         // and gradually varies the value while the body
         // is being called to animate. Following line serves the purpose of
         // associating the extenal argument with the animatableData.
-        self.animatableData = bindedValue
-        self.targetValue = bindedValue
+        animatableData = bindedValue
+        targetValue = bindedValue
         AnimatableModifierDouble.done = false
     }
 
@@ -210,7 +211,8 @@ struct AnimatableModifierDouble: AnimatableModifier {
         if AnimatableModifierDouble.done { return }
         let delta = 0.1
         if animatableData > targetValue - delta &&
-            animatableData < targetValue + delta {
+            animatableData < targetValue + delta
+        {
             AnimatableModifierDouble.done = true
             DispatchQueue.main.async {
                 self.completion()
@@ -233,75 +235,75 @@ extension View {
 
 #if os(iOS)
 
-extension View {
-    func transparentNonAnimatingFullScreenCover<Content: View>(
-        isPresented: Binding<Bool>,
-        dismissSource: DismissSource?,
-        userDismissCallback: @escaping (DismissSource) -> Void,
-        content: @escaping () -> Content
-    ) -> some View {
-        modifier(TransparentNonAnimatableFullScreenModifier(
-            isPresented: isPresented,
-            dismissSource: dismissSource,
-            userDismissCallback: userDismissCallback,
-            fullScreenContent: content
-        ))
-    }
-}
-
-private struct TransparentNonAnimatableFullScreenModifier<
-    FullScreenContent: View
->: ViewModifier {
-    @Binding
-    var isPresented: Bool
-    var dismissSource: DismissSource?
-    var userDismissCallback: (DismissSource) -> Void
-    let fullScreenContent: () -> (FullScreenContent)
-
-    func body(content: Content) -> some View {
-        content
-            .onChange(of: isPresented) { _ in
-                UIView.setAnimationsEnabled(false)
-            }
-            .fullScreenCover(isPresented: $isPresented, content: {
-                ZStack {
-                    fullScreenContent()
-                }
-                .background(FullScreenCoverBackgroundRemovalView())
-                .onAppear {
-                    if !UIView.areAnimationsEnabled {
-                        UIView.setAnimationsEnabled(true)
-                    }
-                }
-                .onDisappear {
-                    userDismissCallback(dismissSource ?? .binding)
-                    if !UIView.areAnimationsEnabled {
-                        UIView.setAnimationsEnabled(true)
-                    }
-                }
-            })
-    }
-}
-
-private struct FullScreenCoverBackgroundRemovalView: UIViewRepresentable {
-    // MARK: Internal
-
-    func makeUIView(context _: Context) -> UIView {
-        BackgroundRemovalView()
-    }
-
-    func updateUIView(_: UIView, context _: Context) {}
-
-    // MARK: Private
-
-    private class BackgroundRemovalView: UIView {
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
-
-            superview?.superview?.backgroundColor = .clear
+    extension View {
+        func transparentNonAnimatingFullScreenCover<Content: View>(
+            isPresented: Binding<Bool>,
+            dismissSource: DismissSource?,
+            userDismissCallback: @escaping (DismissSource) -> Void,
+            content: @escaping () -> Content
+        ) -> some View {
+            modifier(TransparentNonAnimatableFullScreenModifier(
+                isPresented: isPresented,
+                dismissSource: dismissSource,
+                userDismissCallback: userDismissCallback,
+                fullScreenContent: content
+            ))
         }
     }
-}
+
+    private struct TransparentNonAnimatableFullScreenModifier<
+        FullScreenContent: View
+    >: ViewModifier {
+        @Binding
+        var isPresented: Bool
+        var dismissSource: DismissSource?
+        var userDismissCallback: (DismissSource) -> Void
+        let fullScreenContent: () -> (FullScreenContent)
+
+        func body(content: Content) -> some View {
+            content
+                .onChange(of: isPresented) { _ in
+                    UIView.setAnimationsEnabled(false)
+                }
+                .fullScreenCover(isPresented: $isPresented, content: {
+                    ZStack {
+                        fullScreenContent()
+                    }
+                    .background(FullScreenCoverBackgroundRemovalView())
+                    .onAppear {
+                        if !UIView.areAnimationsEnabled {
+                            UIView.setAnimationsEnabled(true)
+                        }
+                    }
+                    .onDisappear {
+                        userDismissCallback(dismissSource ?? .binding)
+                        if !UIView.areAnimationsEnabled {
+                            UIView.setAnimationsEnabled(true)
+                        }
+                    }
+                })
+        }
+    }
+
+    private struct FullScreenCoverBackgroundRemovalView: UIViewRepresentable {
+        // MARK: Internal
+
+        func makeUIView(context _: Context) -> UIView {
+            BackgroundRemovalView()
+        }
+
+        func updateUIView(_: UIView, context _: Context) {}
+
+        // MARK: Private
+
+        private class BackgroundRemovalView: UIView {
+            override func didMoveToWindow() {
+                super.didMoveToWindow()
+
+                superview?.superview?.backgroundColor = .clear
+            }
+        }
+    }
 
 #endif
 
@@ -309,55 +311,55 @@ private struct FullScreenCoverBackgroundRemovalView: UIViewRepresentable {
 
 #if os(iOS)
 
-class KeyboardHeightHelper: ObservableObject {
-    // MARK: Lifecycle
+    class KeyboardHeightHelper: ObservableObject {
+        // MARK: Lifecycle
 
-    init() {
-        listenForKeyboardNotifications()
-    }
-
-    // MARK: Internal
-
-    @Published
-    var keyboardHeight: CGFloat = 0
-    @Published
-    var keyboardDisplayed: Bool = false
-
-    // MARK: Private
-
-    private func listenForKeyboardNotifications() {
-        NotificationCenter.default.addObserver(
-            forName: UIResponder.keyboardWillShowNotification,
-            object: nil,
-            queue: .main
-        ) { notification in
-            guard let userInfo = notification.userInfo,
-                  let keyboardRect =
-                  userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-
-            self.keyboardHeight = keyboardRect.height
-            self.keyboardDisplayed = true
+        init() {
+            listenForKeyboardNotifications()
         }
 
-        NotificationCenter.default.addObserver(
-            forName: UIResponder.keyboardWillHideNotification,
-            object: nil,
-            queue: .main
-        ) { _ in
-            self.keyboardHeight = 0
-            self.keyboardDisplayed = false
+        // MARK: Internal
+
+        @Published
+        var keyboardHeight: CGFloat = 0
+        @Published
+        var keyboardDisplayed: Bool = false
+
+        // MARK: Private
+
+        private func listenForKeyboardNotifications() {
+            NotificationCenter.default.addObserver(
+                forName: UIResponder.keyboardWillShowNotification,
+                object: nil,
+                queue: .main
+            ) { notification in
+                guard let userInfo = notification.userInfo,
+                      let keyboardRect =
+                      userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+
+                self.keyboardHeight = keyboardRect.height
+                self.keyboardDisplayed = true
+            }
+
+            NotificationCenter.default.addObserver(
+                forName: UIResponder.keyboardWillHideNotification,
+                object: nil,
+                queue: .main
+            ) { _ in
+                self.keyboardHeight = 0
+                self.keyboardDisplayed = false
+            }
         }
     }
-}
 
 #else
 
-class KeyboardHeightHelper: ObservableObject {
-    @Published
-    var keyboardHeight: CGFloat = 0
-    @Published
-    var keyboardDisplayed: Bool = false
-}
+    class KeyboardHeightHelper: ObservableObject {
+        @Published
+        var keyboardHeight: CGFloat = 0
+        @Published
+        var keyboardDisplayed: Bool = false
+    }
 
 #endif
 
@@ -372,11 +374,11 @@ extension CGPoint {
 extension CGSize {
     static var screenSize: CGSize {
         #if os(iOS) || os(tvOS)
-        return UIScreen.main.bounds.size
+            return UIScreen.main.bounds.size
         #elseif os(watchOS)
-        return WKInterfaceDevice.current().screenBounds.size
+            return WKInterfaceDevice.current().screenBounds.size
         #elseif os(macOS)
-        return NSScreen.main?.frame.size ?? .zero
+            return NSScreen.main?.frame.size ?? .zero
         #endif
     }
 }

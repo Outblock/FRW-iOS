@@ -48,7 +48,7 @@ enum SecureEnclaveMigration {
     private static var service: String = "com.flowfoundation.wallet.securekey"
     private static var userKey: String = "user.keystore"
 
-    static private func migrationFromOldSE() {
+    private static func migrationFromOldSE() {
         let keychain = Keychain(service: service)
         guard let data = try? keychain.getData(userKey) else {
             print("[Migration] SecureEnclave get value from keychain empty,\(service)")

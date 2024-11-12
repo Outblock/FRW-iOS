@@ -8,14 +8,14 @@
 import MJRefresh
 import UIKit
 
-extension UIScrollView {
+public extension UIScrollView {
     // refreshing
 
-    public func setRefreshingAction(_ action: @escaping () -> Void) {
+    func setRefreshingAction(_ action: @escaping () -> Void) {
         let header = MJRefreshGifHeader(refreshingBlock: action)
 
         var images: [UIImage] = []
-        for i in 0...95 {
+        for i in 0 ... 95 {
             let image = UIImage(named: "refresh-header-seq-\(i)")!
             images.append(image)
         }
@@ -31,23 +31,23 @@ extension UIScrollView {
         mj_header = header
     }
 
-    public func beginRefreshing() {
+    func beginRefreshing() {
         mj_header?.beginRefreshing()
     }
 
-    public func stopRefreshing() {
+    func stopRefreshing() {
         if isRefreshing() {
             mj_header?.endRefreshing()
         }
     }
 
-    public func isRefreshing() -> Bool {
+    func isRefreshing() -> Bool {
         mj_header?.isRefreshing ?? false
     }
 
     // loading
 
-    public func setLoadingAction(
+    func setLoadingAction(
         _ action: @escaping () -> Void,
         noMoreDataLabelEnabled: Bool = true
     ) {
@@ -63,25 +63,25 @@ extension UIScrollView {
         mj_footer = footer
     }
 
-    public func removeLoadingAction() {
+    func removeLoadingAction() {
         mj_footer = nil
     }
 
-    public func beginLoading() {
+    func beginLoading() {
         mj_footer?.beginRefreshing()
     }
 
-    public func stopLoading() {
+    func stopLoading() {
         if isLoading() {
             mj_footer?.endRefreshing()
         }
     }
 
-    public func isLoading() -> Bool {
+    func isLoading() -> Bool {
         mj_footer?.isRefreshing ?? false
     }
 
-    public func setNoMoreData(_ noMore: Bool) {
+    func setNoMoreData(_ noMore: Bool) {
         if noMore {
             mj_footer?.endRefreshingWithNoMoreData()
             return
@@ -91,8 +91,8 @@ extension UIScrollView {
     }
 }
 
-extension UIScrollView {
-    public func scrollToTop(animated: Bool = true) {
+public extension UIScrollView {
+    func scrollToTop(animated: Bool = true) {
         var off = contentOffset
         off.y = 0 - contentInset.top
         setContentOffset(off, animated: animated)

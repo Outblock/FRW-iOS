@@ -209,7 +209,8 @@ extension FRWAPI.Account {
         var results = [FlowScanTransaction]()
         for edge in edges {
             if let transaction = edge?.node?.transaction, transaction.hash != nil,
-               transaction.time != nil {
+               transaction.time != nil
+            {
                 results.append(transaction)
             }
         }

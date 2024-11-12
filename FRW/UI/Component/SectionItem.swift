@@ -83,7 +83,7 @@ struct SingleInputView: View {
 #Preview {
     TitleView(title: "Hello", isStar: false)
 
-    SingleInputView(content: .constant("abc"), onChange: { str in
+    SingleInputView(content: .constant("abc"), onChange: { _ in
 
     })
 }

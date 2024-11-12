@@ -197,7 +197,8 @@ class TransactionHolderView: UIView {
     private func onHolderStatusChanged(noti: Notification) {
         guard let holder = noti.object as? TransactionManager.TransactionHolder,
               let current = model,
-              current.transactionId.hex == holder.transactionId.hex else {
+              current.transactionId.hex == holder.transactionId.hex
+        else {
             return
         }
 

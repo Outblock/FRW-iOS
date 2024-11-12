@@ -196,7 +196,8 @@ class WalletManager: ObservableObject {
                 self.walletInfo = cacheWalletInfo
 
                 if let cacheSupportedCoins = cacheSupportedCoins,
-                   let cacheActivatedCoins = cacheActivatedCoins {
+                   let cacheActivatedCoins = cacheActivatedCoins
+                {
                     self.supportedCoins = cacheSupportedCoins
                     self.activatedCoins = cacheActivatedCoins
                 }
@@ -230,7 +231,7 @@ extension WalletManager {
             _ = try? await self.walletEntity?.fetchAllNetworkAccounts()
             let list = self.walletEntity?.flowAccounts?[chainId]
             list?.forEach { account in
-                account.keys.forEach { key in
+                for key in account.keys {
                     if key.publicKey.description == publicKey {
                         accountKey = key
                     }
@@ -253,7 +254,7 @@ extension WalletManager {
             _ = try? await walletEntity.fetchAllNetworkAccounts()
             let list = walletEntity.flowAccounts?[chainId]
             list?.forEach { account in
-                account.keys.forEach { key in
+                for key in account.keys {
                     if key.publicKey.description == publicKey {
                         accountKey = key
                     }
@@ -398,7 +399,8 @@ extension WalletManager {
 
     func isMain() -> Bool {
         guard let currentAddress = getWatchAddressOrChildAccountAddressOrPrimaryAddress(),
-              !currentAddress.isEmpty else {
+              !currentAddress.isEmpty
+        else {
             return false
         }
         guard let primaryAddress = getPrimaryWalletAddress() else {
@@ -704,7 +706,8 @@ extension WalletManager {
                key: uid,
                data: encryptedData
            ),
-           var mnemonic = String(data: decryptedData, encoding: .utf8) {
+           var mnemonic = String(data: decryptedData, encoding: .utf8)
+        {
             defer {
                 encryptedData = Data()
                 decryptedData = Data()
@@ -1294,11 +1297,12 @@ extension WalletManager: FlowSigner {
         try await findFlowAccount(with: userId, at: address)
     }
 
-    func findFlowAccount(with userId: String, at address: String) async throws {
+    func findFlowAccount(with _: String, at address: String) async throws {
         // TODO: 111
         guard let provider = keyProvider,
               let key = accountKey,
-              let publicKey = try? provider.publicKey(signAlgo: key.signAlgo)?.hexValue else {
+              let publicKey = try? provider.publicKey(signAlgo: key.signAlgo)?.hexValue
+        else {
             return
         }
 
@@ -1336,9 +1340,10 @@ extension WalletManager: FlowSigner {
     }
 
     @discardableResult
-    func warningIfKeyIsInvalid(userId: String, markHide: Bool = false) -> Bool {
+    func warningIfKeyIsInvalid(userId: String, markHide _: Bool = false) -> Bool {
         if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: userId),
-           !mnemonic.isEmpty, mnemonic.split(separator: " ").count != 15 {
+           !mnemonic.isEmpty, mnemonic.split(separator: " ").count != 15
+        {
             return false
         }
         // FIXME: private key migrate from device to device, it's destructive, this only for fix bugs, move to migrate

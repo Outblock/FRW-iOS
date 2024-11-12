@@ -19,7 +19,8 @@ extension String {
         }
 
         guard let path = Bundle.main.path(forResource: "en", ofType: "lproj"),
-              let bundle = Bundle(path: path) else {
+              let bundle = Bundle(path: path)
+        else {
             return value
         }
 
@@ -217,7 +218,8 @@ extension String {
         }
 
         guard let encodedString = trim()
-            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        else {
             return nil
         }
 

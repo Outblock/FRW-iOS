@@ -8,19 +8,16 @@
 import Foundation
 
 class ImportUserNameViewModel: ObservableObject {
-    
     @Published var userName: String = ""
-    
-    var callback: (String)->()
-    
+
+    var callback: (String) -> Void
+
     init(callback: @escaping (String) -> Void) {
         self.callback = callback
     }
-    
-    func onEditingChanged(_ text: String) {
-        
-    }
-    
+
+    func onEditingChanged(_: String) {}
+
     func onConfirm() {
         callback(userName)
         Router.pop()

@@ -91,12 +91,14 @@ class SwapViewModel: ObservableObject {
 
     var rateText: String {
         guard let fromToken = fromToken, let toToken = toToken,
-              let response = estimateResponse else {
+              let response = estimateResponse
+        else {
             return ""
         }
 
         guard let amountIn = response.routes.first??.routeAmountIn,
-              let amountOut = response.routes.first??.routeAmountOut else {
+              let amountOut = response.routes.first??.routeAmountOut
+        else {
             return ""
         }
 
@@ -358,7 +360,8 @@ extension SwapViewModel {
 
     func confirmSwapAction() {
         guard let response = estimateResponse, let fromToken = fromToken,
-              let toToken = toToken else {
+              let toToken = toToken
+        else {
             return
         }
 

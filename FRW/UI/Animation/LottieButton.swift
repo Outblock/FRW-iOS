@@ -26,7 +26,7 @@ struct LottieButton: View {
         self.size = size
         self.padding = padding
         self.action = action
-        self.animationView = AnimationView(name: iconName, bundle: .main)
+        animationView = AnimationView(name: iconName, bundle: .main)
     }
 
     // MARK: Internal

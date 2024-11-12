@@ -59,7 +59,7 @@ extension EventTrack.Transaction {
         from: String,
         to: String,
         type: String,
-        amount: Double,
+        amount _: Double,
         identifier: String
     ) {
         EventTrack

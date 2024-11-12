@@ -13,9 +13,9 @@ extension View {
             return self
                 .scrollContentBackground(.hidden)
                 .background(content)
-        }else {
+        } else {
             UITextView.appearance().backgroundColor = .clear
-            return self.background(content)
+            return background(content)
         }
     }
 }

@@ -192,7 +192,8 @@ extension MultiBackupGoogleDriveTarget {
                         }
 
                         guard let scopes = grantedUser.grantedScopes,
-                              scopes.contains(driveScope) else {
+                              scopes.contains(driveScope)
+                        else {
                             continuation.resume(throwing: GoogleBackupError.noDriveScope)
                             return
                         }

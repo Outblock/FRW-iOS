@@ -34,10 +34,10 @@ class UserManager: ObservableObject {
     init() {
         checkIfHasOldAccount()
 
-        self.loginUIDList = LocalUserDefaults.shared.loginUIDList
+        loginUIDList = LocalUserDefaults.shared.loginUIDList
 
         if let activatedUID = activatedUID {
-            self.userInfo = MultiAccountStorage.shared.getUserInfo(activatedUID)
+            userInfo = MultiAccountStorage.shared.getUserInfo(activatedUID)
             uploadUserNameIfNeeded()
             initRefreshUserInfo()
             verifyUserType(by: activatedUID)
@@ -141,7 +141,8 @@ class UserManager: ObservableObject {
         let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
 
         if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid),
-           !mnemonic.isEmpty {
+           !mnemonic.isEmpty
+        {
             let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic)
             let accountKeys = account.keys
                 .first { $0.publicKey.description == hdWallet?.getPublicKey() }
@@ -252,7 +253,8 @@ extension UserManager {
                 // FIXME: all key type
                 for userId in list {
                     if let se = try? SecureEnclaveKey.wallet(id: userId),
-                       let publicKey = try? se.publicKey()?.hexValue {
+                       let publicKey = try? se.publicKey()?.hexValue
+                    {
                         let response: AccountResponse = try await Network
                             .requestWithRawModel(FRWAPI.Utils.flowAddress(publicKey))
                         let account = response.accounts?
@@ -304,7 +306,8 @@ extension UserManager {
     func restoreLogin(withMnemonic mnemonic: String, userId: String? = nil) async throws {
         if let uid = userId {
             if let address = MultiAccountStorage.shared.getWalletInfo(uid)?
-                .currentNetworkWalletModel?.getAddress {
+                .currentNetworkWalletModel?.getAddress
+            {
                 try? await WalletManager.shared.findFlowAccount(with: uid, at: address)
             }
         }
@@ -542,7 +545,8 @@ extension UserManager {
 
         userType = .fromImport
         guard let customToken = loginResponse?.customToken, let uid = loginResponse?.id,
-              !customToken.isEmpty else {
+              !customToken.isEmpty
+        else {
             throw LLError.restoreLoginFailed
         }
         try await finishLogin(mnemonic: "", customToken: customToken)
@@ -574,7 +578,8 @@ extension UserManager {
         }
 
         if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid),
-           !mnemonic.isEmpty {
+           !mnemonic.isEmpty
+        {
             var addressStr = LocalUserDefaults.shared.userAddressOfDeletedApp[uid]
             if addressStr == nil {
                 addressStr = MultiAccountStorage.shared.getWalletInfo(uid)?

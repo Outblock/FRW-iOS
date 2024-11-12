@@ -65,7 +65,8 @@ extension AddAddressView {
 
             if isEditingMode {
                 if finalName == editingContact?.contactName,
-                   finalAddress == editingContact?.address {
+                   finalAddress == editingContact?.address
+                {
                     isReadyForSave = false
                     return
                 }
@@ -84,14 +85,14 @@ extension AddAddressView {
         // MARK: Lifecycle
 
         init(addressBookVM: AddressBookView.AddressBookViewModel) {
-            self.state = AddAddressState()
+            state = AddAddressState()
             self.addressBookVM = addressBookVM
         }
 
         init(contact: Contact, addressBookVM: AddressBookView.AddressBookViewModel) {
             self.addressBookVM = addressBookVM
 
-            self.state = AddAddressState()
+            state = AddAddressState()
             state.isEditingMode = true
             state.editingContact = contact
             state.name = contact.contactName ?? ""
@@ -203,7 +204,8 @@ extension AddAddressView {
             Task {
                 do {
                     guard let id = state.editingContact?.id,
-                          let domainType = state.editingContact?.domain?.domainType else {
+                          let domainType = state.editingContact?.domain?.domainType
+                    else {
                         errorAction()
                         return
                     }

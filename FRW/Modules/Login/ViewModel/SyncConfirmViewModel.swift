@@ -47,7 +47,8 @@ class SyncConfirmViewModel: ObservableObject {
         Task {
             do {
                 guard let currentSession = WalletConnectManager.shared
-                    .findSession(method: FCLWalletConnectMethod.accountInfo.rawValue) else {
+                    .findSession(method: FCLWalletConnectMethod.accountInfo.rawValue)
+                else {
                     return
                 }
                 let methods: String = FCLWalletConnectMethod.addDeviceInfo.rawValue

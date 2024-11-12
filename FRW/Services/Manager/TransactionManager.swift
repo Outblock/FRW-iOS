@@ -174,7 +174,8 @@ extension TransactionManager {
             switch type {
             case .transferCoin:
                 guard let model = decodedObject(CoinTransferModel.self),
-                      let token = WalletManager.shared.getToken(bySymbol: model.symbol) else {
+                      let token = WalletManager.shared.getToken(bySymbol: model.symbol)
+                else {
                     return nil
                 }
 
@@ -187,14 +188,16 @@ extension TransactionManager {
                 return decodedObject(NFTTransferModel.self)?.nft.logoUrl
             case .fclTransaction:
                 guard let model = decodedObject(AuthzTransaction.self),
-                      let urlString = model.url else {
+                      let urlString = model.url
+                else {
                     return nil
                 }
 
                 return urlString.toFavIcon()
             case .unlinkAccount:
                 guard let iconString = decodedObject(ChildAccount.self)?.icon,
-                      let url = URL(string: iconString) else {
+                      let url = URL(string: iconString)
+                else {
                     return nil
                 }
 

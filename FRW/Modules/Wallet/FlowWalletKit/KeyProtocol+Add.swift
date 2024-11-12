@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct KeyProvider {
-    static func password(with uid: String) -> String {
+enum KeyProvider {
+    static func password(with _: String) -> String {
         let aseKey = LocalEnvManager.shared.backupAESKey
         return aseKey
     }

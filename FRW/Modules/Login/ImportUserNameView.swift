@@ -1,5 +1,5 @@
 //
-//  ImortUserNameView.swift
+//  ImportUserNameView.swift
 //  FRW
 //
 //  Created by cat on 2024/9/13.
@@ -8,26 +8,23 @@
 import SwiftUI
 
 struct ImportUserNameView: RouteableView {
-    
-    
-    @State var status: LL.TextField.Status = .normal
-    @StateObject var viewModel: ImportUserNameViewModel
-    
+    // MARK: Lifecycle
+
     init(viewModel: ImportUserNameViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
-    
+
+    // MARK: Internal
+
+    @State
+    var status: LL.TextField.Status = .normal
+    @StateObject
+    var viewModel: ImportUserNameViewModel
+
     var title: String {
-        return ""
+        ""
     }
-    
-    func backButtonAction() {
-        UIApplication.shared.endEditing()
-        Router.pop()
-    }
-    
-    
-    
+
     var body: some View {
         VStack {
             Spacer()
@@ -47,28 +44,34 @@ struct ImportUserNameView: RouteableView {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             Spacer()
-            
-            VTextField(model: TextFieldStyle.primary,
-                       type: .userName,
-                       highlight: highlight,
-                       placeholder: "username".localized,
-                       footerTitle: footerText,
-                       text: $viewModel.userName,
-                       onChange: {
-                viewModel.onEditingChanged(viewModel.userName)
-            },
-                       onReturn: .returnAndCustom {
-                viewModel.onEditingChanged(viewModel.userName)
-            }, onClear: .clearAndCustom {
-                viewModel.onEditingChanged(viewModel.userName)
-            })
+
+            VTextField(
+                model: TextFieldStyle.primary,
+                type: .userName,
+                highlight: highlight,
+                placeholder: "username".localized,
+                footerTitle: footerText,
+                text: $viewModel.userName,
+                onChange: {
+                    viewModel.onEditingChanged(viewModel.userName)
+                },
+                onReturn: .returnAndCustom {
+                    viewModel.onEditingChanged(viewModel.userName)
+                },
+                onClear: .clearAndCustom {
+                    viewModel.onEditingChanged(viewModel.userName)
+                }
+            )
             .padding(.bottom, 10)
-            
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: buttonState,
-                           action: {
-                viewModel.onConfirm()
-            }, title: "next".localized)
+
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: buttonState,
+                action: {
+                    viewModel.onConfirm()
+                },
+                title: "next".localized
+            )
             .padding(.bottom)
         }
         .dismissKeyboardOnDrag()
@@ -76,7 +79,7 @@ struct ImportUserNameView: RouteableView {
         .background(Color.LL.background, ignoresSafeAreaEdges: .all)
         .applyRouteable(self)
     }
-    
+
     var highlight: VTextFieldHighlight {
         switch status {
         case .success:
@@ -89,7 +92,7 @@ struct ImportUserNameView: RouteableView {
             return .loading
         }
     }
-    
+
     var footerText: String {
         switch status {
         case .success:
@@ -102,15 +105,19 @@ struct ImportUserNameView: RouteableView {
             return "checking".localized
         }
     }
-    
+
     var buttonState: VPrimaryButtonState {
-        return viewModel.userName.isEmpty ? .disabled : .enabled
+        viewModel.userName.isEmpty ? .disabled : .enabled
     }
-    
+
+    func backButtonAction() {
+        UIApplication.shared.endEditing()
+        Router.pop()
+    }
 }
 
 #Preview {
-    ImportUserNameView(viewModel: ImportUserNameViewModel(callback: { name in
-        
+    ImportUserNameView(viewModel: ImportUserNameViewModel(callback: { _ in
+
     }))
 }

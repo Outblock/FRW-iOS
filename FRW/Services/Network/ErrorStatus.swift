@@ -14,7 +14,7 @@ extension Error {
             return nil
         }
         switch error {
-        case .statusCode(let response):
+        case let .statusCode(response):
             return response.statusCode
         default:
             return nil

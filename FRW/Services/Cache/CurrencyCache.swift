@@ -67,7 +67,8 @@ extension CurrencyCache {
 
         let now = Date()
         if let lastUpdateTime = lastUpdateTime,
-           abs(lastUpdateTime.timeIntervalSince(now)) < CacheUpdateInverval {
+           abs(lastUpdateTime.timeIntervalSince(now)) < CacheUpdateInverval
+        {
             return
         }
 

@@ -8,7 +8,7 @@
 
 import SwiftUI
 #if os(iOS)
-import Introspect
+    import Introspect
 #endif
 
 // MARK: - DismissSource
@@ -35,17 +35,17 @@ public struct Popup<PopupContent: View>: ViewModifier {
         animationCompletedCallback: @escaping () -> Void,
         dismissCallback: @escaping (DismissSource) -> Void
     ) {
-        self.type = params.type
-        self.position = params.position ?? params.type.defaultPosition
-        self.appearFrom = params.appearFrom
-        self.verticalPadding = params.type.verticalPadding
-        self.horizontalPadding = params.type.horizontalPadding
-        self.useSafeAreaInset = params.type.useSafeAreaInset
-        self.useKeyboardSafeArea = params.useKeyboardSafeArea
-        self.animation = params.animation
-        self.dragToDismiss = params.dragToDismiss
-        self.closeOnTap = params.closeOnTap
-        self.isOpaque = params.isOpaque
+        type = params.type
+        position = params.position ?? params.type.defaultPosition
+        appearFrom = params.appearFrom
+        verticalPadding = params.type.verticalPadding
+        horizontalPadding = params.type.horizontalPadding
+        useSafeAreaInset = params.type.useSafeAreaInset
+        useKeyboardSafeArea = params.useKeyboardSafeArea
+        animation = params.animation
+        dragToDismiss = params.dragToDismiss
+        closeOnTap = params.closeOnTap
+        isOpaque = params.isOpaque
 
         self.view = view
 
@@ -67,7 +67,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
             useSafeAreaInset: Bool = true
         )
         #if os(iOS)
-        case scroll(headerView: AnyView)
+            case scroll(headerView: AnyView)
         #endif
 
         // MARK: Internal
@@ -209,7 +209,8 @@ public struct Popup<PopupContent: View>: ViewModifier {
         }
 
         public func backgroundView<BackgroundView: View>(_ backgroundView: () -> (BackgroundView))
-            -> PopupParameters {
+            -> PopupParameters
+        {
             var params = self
             params.backgroundView = AnyView(backgroundView())
             return params
@@ -230,14 +231,16 @@ public struct Popup<PopupContent: View>: ViewModifier {
         // MARK: - dismiss callbacks
 
         public func willDismissCallback(_ dismissCallback: @escaping (DismissSource) -> Void)
-            -> PopupParameters {
+            -> PopupParameters
+        {
             var params = self
             params.willDismissCallback = dismissCallback
             return params
         }
 
         public func willDismissCallback(_ dismissCallback: @escaping () -> Void)
-            -> PopupParameters {
+            -> PopupParameters
+        {
             var params = self
             params.willDismissCallback = { _ in
                 dismissCallback()
@@ -247,14 +250,16 @@ public struct Popup<PopupContent: View>: ViewModifier {
 
         @available(*, deprecated, renamed: "dismissCallback")
         public func dismissSourceCallback(_ dismissCallback: @escaping (DismissSource) -> Void)
-            -> PopupParameters {
+            -> PopupParameters
+        {
             var params = self
             params.dismissCallback = dismissCallback
             return params
         }
 
         public func dismissCallback(_ dismissCallback: @escaping (DismissSource) -> Void)
-            -> PopupParameters {
+            -> PopupParameters
+        {
             var params = self
             params.dismissCallback = dismissCallback
             return params
@@ -379,14 +384,14 @@ public struct Popup<PopupContent: View>: ViewModifier {
 
     var screenSize: CGSize {
         #if os(iOS)
-        return UIScreen.main.bounds.size
+            return UIScreen.main.bounds.size
         #elseif os(watchOS)
-        return WKInterfaceDevice.current().screenBounds.size
+            return WKInterfaceDevice.current().screenBounds.size
         #else
-        return CGSize(
-            width: presenterContentRect.size.width,
-            height: presenterContentRect.size.height - presenterContentRect.minY
-        )
+            return CGSize(
+                width: presenterContentRect.size.width,
+                height: presenterContentRect.size.height - presenterContentRect.minY
+            )
         #endif
     }
 
@@ -405,20 +410,21 @@ public struct Popup<PopupContent: View>: ViewModifier {
                 .onChange(of: targetCurrentOffset) { newValue in
                     if !shouldShowContent,
                        newValue ==
-                       hiddenOffset { // don't animate initial positioning outside the screen
+                       hiddenOffset
+                    { // don't animate initial positioning outside the screen
                         actualCurrentOffset = newValue
                     } else {
                         if #available(iOS 17.0, tvOS 17.0, macOS 14.0, watchOS 10.0, *) {
                             #if swift(>=5.9)
-                            withAnimation(animation) {
-                                actualCurrentOffset = newValue
-                            } completion: {
-                                animationCompletedCallback()
-                            }
+                                withAnimation(animation) {
+                                    actualCurrentOffset = newValue
+                                } completion: {
+                                    animationCompletedCallback()
+                                }
                             #else
-                            withAnimation(animation) {
-                                actualCurrentOffset = newValue
-                            }
+                                withAnimation(animation) {
+                                    actualCurrentOffset = newValue
+                                }
                             #endif
                         } else {
                             withAnimation(animation) {
@@ -433,93 +439,93 @@ public struct Popup<PopupContent: View>: ViewModifier {
         }
 
         #if !os(tvOS)
-        let drag = DragGesture()
-            .updating($dragState) { drag, state, _ in
-                state = .dragging(translation: drag.translation)
-            }
-            .onEnded(onDragEnded)
+            let drag = DragGesture()
+                .updating($dragState) { drag, state, _ in
+                    state = .dragging(translation: drag.translation)
+                }
+                .onEnded(onDragEnded)
 
-        return sheet
-            .applyIf(dragToDismiss) {
-                $0.offset(dragOffset())
-                    .simultaneousGesture(drag)
-            }
+            return sheet
+                .applyIf(dragToDismiss) {
+                    $0.offset(dragOffset())
+                        .simultaneousGesture(drag)
+                }
         #else
-        return sheet
+            return sheet
         #endif
     }
 
     #if !os(tvOS)
-    func dragOffset() -> CGSize {
-        if dragState.translation == .zero {
-            return lastDragPosition
+        func dragOffset() -> CGSize {
+            if dragState.translation == .zero {
+                return lastDragPosition
+            }
+
+            switch calculatedAppearFrom {
+            case .top:
+                if dragState.translation.height < 0 {
+                    return CGSize(width: 0, height: dragState.translation.height)
+                }
+            case .bottom:
+                if dragState.translation.height > 0 {
+                    return CGSize(width: 0, height: dragState.translation.height)
+                }
+            case .left:
+                if dragState.translation.width < 0 {
+                    return CGSize(width: dragState.translation.width, height: 0)
+                }
+            case .right:
+                if dragState.translation.width > 0 {
+                    return CGSize(width: dragState.translation.width, height: 0)
+                }
+            }
+            return .zero
         }
 
-        switch calculatedAppearFrom {
-        case .top:
-            if dragState.translation.height < 0 {
-                return CGSize(width: 0, height: dragState.translation.height)
+        private func onDragEnded(drag: DragGesture.Value) {
+            let referenceX = sheetContentRect.width / 3
+            let referenceY = sheetContentRect.height / 3
+
+            var shouldDismiss = false
+            switch calculatedAppearFrom {
+            case .top:
+                if drag.translation.height < 0 {
+                    lastDragPosition = CGSize(width: 0, height: drag.translation.height)
+                }
+                if drag.translation.height < -referenceY {
+                    shouldDismiss = true
+                }
+            case .bottom:
+                if drag.translation.height > 0 {
+                    lastDragPosition = CGSize(width: 0, height: drag.translation.height)
+                }
+                if drag.translation.height > referenceY {
+                    shouldDismiss = true
+                }
+            case .left:
+                if drag.translation.width < 0 {
+                    lastDragPosition = CGSize(width: drag.translation.width, height: 0)
+                }
+                if drag.translation.width < -referenceX {
+                    shouldDismiss = true
+                }
+            case .right:
+                if drag.translation.width > 0 {
+                    lastDragPosition = CGSize(width: drag.translation.width, height: 0)
+                }
+                if drag.translation.width > referenceX {
+                    shouldDismiss = true
+                }
             }
-        case .bottom:
-            if dragState.translation.height > 0 {
-                return CGSize(width: 0, height: dragState.translation.height)
-            }
-        case .left:
-            if dragState.translation.width < 0 {
-                return CGSize(width: dragState.translation.width, height: 0)
-            }
-        case .right:
-            if dragState.translation.width > 0 {
-                return CGSize(width: dragState.translation.width, height: 0)
+
+            if shouldDismiss {
+                dismissCallback(.drag)
+            } else {
+                withAnimation {
+                    lastDragPosition = .zero
+                }
             }
         }
-        return .zero
-    }
-
-    private func onDragEnded(drag: DragGesture.Value) {
-        let referenceX = sheetContentRect.width / 3
-        let referenceY = sheetContentRect.height / 3
-
-        var shouldDismiss = false
-        switch calculatedAppearFrom {
-        case .top:
-            if drag.translation.height < 0 {
-                lastDragPosition = CGSize(width: 0, height: drag.translation.height)
-            }
-            if drag.translation.height < -referenceY {
-                shouldDismiss = true
-            }
-        case .bottom:
-            if drag.translation.height > 0 {
-                lastDragPosition = CGSize(width: 0, height: drag.translation.height)
-            }
-            if drag.translation.height > referenceY {
-                shouldDismiss = true
-            }
-        case .left:
-            if drag.translation.width < 0 {
-                lastDragPosition = CGSize(width: drag.translation.width, height: 0)
-            }
-            if drag.translation.width < -referenceX {
-                shouldDismiss = true
-            }
-        case .right:
-            if drag.translation.width > 0 {
-                lastDragPosition = CGSize(width: drag.translation.width, height: 0)
-            }
-            if drag.translation.width > referenceX {
-                shouldDismiss = true
-            }
-        }
-
-        if shouldDismiss {
-            dismissCallback(.drag)
-        } else {
-            withAnimation {
-                lastDragPosition = .zero
-            }
-        }
-    }
     #endif
 
     // MARK: Private
@@ -573,9 +579,9 @@ public struct Popup<PopupContent: View>: ViewModifier {
     // MARK: - Drag to dismiss with scroll
 
     #if os(iOS)
-    /// UIScrollView delegate, needed for calling didEndDragging
-    @StateObject
-    private var scrollViewDelegate = PopupScrollViewDelegate()
+        /// UIScrollView delegate, needed for calling didEndDragging
+        @StateObject
+        private var scrollViewDelegate = PopupScrollViewDelegate()
     #endif
 
     /// Position when the scroll content offset became less than 0
@@ -697,58 +703,58 @@ public struct Popup<PopupContent: View>: ViewModifier {
     }
 
     #if os(iOS)
-    private func configure(scrollView: UIScrollView) {
-        scrollView.delegate = scrollViewDelegate
+        private func configure(scrollView: UIScrollView) {
+            scrollView.delegate = scrollViewDelegate
 
-        scrollViewDelegate.scrollView = scrollView
-        scrollViewDelegate.addGestureIfNeeded()
-        let referenceY = sheetContentRect.height / 3
+            scrollViewDelegate.scrollView = scrollView
+            scrollViewDelegate.addGestureIfNeeded()
+            let referenceY = sheetContentRect.height / 3
 
-        DispatchQueue.main.async {
-            scrollViewContentHeight = scrollView.contentSize.height
-        }
+            DispatchQueue.main.async {
+                scrollViewContentHeight = scrollView.contentSize.height
+            }
 
-        scrollViewDelegate.didReachTop = { value in
-            scrollViewOffset = CGSize(width: 0, height: -value)
-        }
+            scrollViewDelegate.didReachTop = { value in
+                scrollViewOffset = CGSize(width: 0, height: -value)
+            }
 
-        scrollViewDelegate.scrollEnded = { value in
-            if -value >= referenceY {
-                dismissCallback(.drag)
-            } else {
-                withAnimation {
-                    scrollViewOffset = .zero
+            scrollViewDelegate.scrollEnded = { value in
+                if -value >= referenceY {
+                    dismissCallback(.drag)
+                } else {
+                    withAnimation {
+                        scrollViewOffset = .zero
+                    }
                 }
             }
         }
-    }
 
     #endif
 
     @ViewBuilder
     private func contentView() -> some View {
         #if os(iOS)
-        switch type {
-        case let .scroll(headerView):
-            VStack(spacing: 0) {
-                headerView
-                    .fixedSize(horizontal: false, vertical: true)
-                ScrollView {
-                    view()
+            switch type {
+            case let .scroll(headerView):
+                VStack(spacing: 0) {
+                    headerView
+                        .fixedSize(horizontal: false, vertical: true)
+                    ScrollView {
+                        view()
+                    }
+                    // no heigher than its contents
+                    .frame(maxHeight: scrollViewContentHeight)
                 }
-                // no heigher than its contents
-                .frame(maxHeight: scrollViewContentHeight)
-            }
-            .introspectScrollView(customize: { scrollView in
-                configure(scrollView: scrollView)
-            })
-            .offset(CGSize(width: 0, height: scrollViewOffset.height))
+                .introspectScrollView(customize: { scrollView in
+                    configure(scrollView: scrollView)
+                })
+                .offset(CGSize(width: 0, height: scrollViewOffset.height))
 
-        default:
-            view()
-        }
+            default:
+                view()
+            }
         #else
-        view()
+            view()
         #endif
     }
 }

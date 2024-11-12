@@ -48,7 +48,7 @@ class KeychainListViewModel: ObservableObject {
         }
     }
 
-    func radomUpdatePrivateKey(index: Int) {
+    func radomUpdatePrivateKey(index _: Int) {
 //        if isDevModel {
 //            let model = seList[index]
 //            if let key = model.keys.first, let model = try? WallectSecureEnclave.Store.fetchModel(by: key) {

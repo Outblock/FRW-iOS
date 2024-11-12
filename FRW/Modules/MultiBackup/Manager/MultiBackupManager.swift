@@ -121,7 +121,8 @@ extension MultiBackupManager {
         }
 
         guard let hdWallet = WalletManager.shared.createHDWallet(),
-              let mnemonicData = hdWallet.mnemonic.data(using: .utf8) else {
+              let mnemonicData = hdWallet.mnemonic.data(using: .utf8)
+        else {
             HUD.error(title: "empty_wallet_key".localized)
             throw BackupError.missingMnemonic
         }

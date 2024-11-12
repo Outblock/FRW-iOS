@@ -7,9 +7,11 @@
 
 import SwiftUI
 
+// MARK: - ImportTitleHeader
+
 struct ImportTitleHeader: View {
     var backupType: RestoreWalletViewModel.ImportType
-    
+
     var body: some View {
         VStack(spacing: 16) {
             Image(backupType.icon40)
@@ -23,10 +25,12 @@ struct ImportTitleHeader: View {
     }
 }
 
+// MARK: - ImportSectionTitleView
+
 struct ImportSectionTitleView: View {
     let title: String
     let isStar: Bool
-    
+
     var body: some View {
         HStack(spacing: 0) {
             Text(title)
@@ -42,13 +46,15 @@ struct ImportSectionTitleView: View {
     }
 }
 
+// MARK: - ImportTextView
+
 struct ImportTextView: View {
-    
-    @Binding var content: String
+    @Binding
+    var content: String
     var placeholder: String? = ""
     var isFirstResponder: Bool = false
-    var textDidChange:(String)->()
-    
+    var textDidChange: (String) -> Void
+
     var body: some View {
         ZStack(alignment: .topLeading) {
             if content.isEmpty {
@@ -68,7 +74,6 @@ struct ImportTextView: View {
                     view.backgroundColor = .clear
                 }
                 .keyboardType(.alphabet)
-                
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
                 .onChange(of: content, perform: { value in
@@ -76,7 +81,6 @@ struct ImportTextView: View {
                 })
                 .textEditorBackground(.clear)
                 .font(.inter(size: 14))
-            
         }
         .padding(20)
         .background {
@@ -86,35 +90,36 @@ struct ImportTextView: View {
     }
 }
 
+// MARK: - AnimatedSecureTextField
+
 public struct AnimatedSecureTextField: View {
-    private enum FocusedField: Int, Hashable {
-        case password
-    }
+    // MARK: Lifecycle
 
-    @State var isSecure = false
-    @FocusState private var field: FocusedField?
-    public let placeholder: String
-    @Binding var text: String
-
-    var textDidChange:(String)->()
-    
-    public init(placeholder: String, text: Binding<String>, textDidChange: @escaping (String)->()) {
+    public init(
+        placeholder: String,
+        text: Binding<String>,
+        textDidChange: @escaping (String) -> Void
+    ) {
         self.placeholder = placeholder
-        self._text = text
+        _text = text
         self.textDidChange = textDidChange
         self.field = .password
     }
 
+    // MARK: Public
+
+    public let placeholder: String
+
     public var body: some View {
         ZStack(alignment: .leading) {
-            if  text.isEmpty {
+            if text.isEmpty {
                 HStack {
                     Text(placeholder)
                         .font(.inter(size: 14))
                         .foregroundStyle(Color.Theme.Text.black3)
                     Spacer()
                 }
-    //            .padding(.horizontal, 16.0)
+                //            .padding(.horizontal, 16.0)
                 .frame(maxWidth: .infinity)
                 .layoutPriority(1)
                 .onTapGesture {
@@ -123,7 +128,6 @@ public struct AnimatedSecureTextField: View {
                     }
                 }
             }
-            
 
             if isSecure {
                 SecureField("", text: $text)
@@ -137,7 +141,7 @@ public struct AnimatedSecureTextField: View {
                     .onChange(of: text) { text in
                         textDidChange(text)
                     }
-                    
+
             } else {
                 TextField("", text: $text)
                     .disableAutocorrection(true)
@@ -150,12 +154,11 @@ public struct AnimatedSecureTextField: View {
                     .onChange(of: text) { text in
                         textDidChange(text)
                     }
-                    
             }
 
             HStack {
                 Spacer()
-                    
+
                 if !text.isEmpty {
                     Button {
                         isSecure.toggle()
@@ -175,13 +178,31 @@ public struct AnimatedSecureTextField: View {
                 }
             }
         }
-        .padding(.horizontal,20)
+        .padding(.horizontal, 20)
         .frame(height: 64)
         .background {
             RoundedRectangle(cornerRadius: 16.0)
                 .foregroundColor(.Theme.Background.bg2)
         }
     }
+
+    // MARK: Internal
+
+    @State
+    var isSecure = false
+    @Binding
+    var text: String
+
+    var textDidChange: (String) -> Void
+
+    // MARK: Private
+
+    private enum FocusedField: Int, Hashable {
+        case password
+    }
+
+    @FocusState
+    private var field: FocusedField?
 }
 
 #Preview("1") {
@@ -193,22 +214,19 @@ public struct AnimatedSecureTextField: View {
 }
 
 #Preview("3") {
-    ImportTextView(content: .constant(""), placeholder: "abc") { value in
-        
+    ImportTextView(content: .constant(""), placeholder: "abc") { _ in
     }
-    
 }
 
 #Preview("4") {
     struct AnimatedSecureTextFieldPreview: View {
-        @State private var text = ""
+        @State
+        private var text = ""
         var body: some View {
-            AnimatedSecureTextField(placeholder: "abc", text: $text) { text in
+            AnimatedSecureTextField(placeholder: "abc", text: $text) { _ in
             }
         }
     }
-    
+
     return AnimatedSecureTextFieldPreview()
 }
-
-

@@ -328,7 +328,8 @@ extension WalletSendAmountViewModel {
         }
 
         guard let address = WalletManager.shared.getPrimaryWalletAddress(),
-              let targetAddress = targetContact.address else {
+              let targetAddress = targetContact.address
+        else {
             return
         }
 

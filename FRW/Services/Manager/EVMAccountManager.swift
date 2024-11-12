@@ -83,7 +83,8 @@ class EVMAccountManager: ObservableObject {
 
     @Published
     var selectedAccount: EVMAccountManager.Account? = LocalUserDefaults.shared
-        .selectedEVMAccount {
+        .selectedEVMAccount
+    {
         didSet {
             LocalUserDefaults.shared.selectedEVMAccount = selectedAccount
             NotificationCenter.default.post(name: .watchAddressDidChanged, object: nil)
@@ -134,7 +135,8 @@ class EVMAccountManager: ObservableObject {
     @objc
     private func onTransactionStatusChanged(_ noti: Notification) {
         guard let obj = noti.object as? TransactionManager.TransactionHolder,
-              obj.type == .editChildAccount else {
+              obj.type == .editChildAccount
+        else {
             return
         }
 
@@ -269,7 +271,8 @@ extension EVMAccountManager {
 
         var isSelected: Bool {
             if let selectedAccount = EVMAccountManager.shared.selectedAccount,
-               selectedAccount.address.lowercased() == address.lowercased(), !address.isEmpty {
+               selectedAccount.address.lowercased() == address.lowercased(), !address.isEmpty
+            {
                 return true
             }
             return false
