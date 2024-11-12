@@ -1,5 +1,5 @@
 //
-//  Color.swift
+//  Colors.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 6/9/2022.

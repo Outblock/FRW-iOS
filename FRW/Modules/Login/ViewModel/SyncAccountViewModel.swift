@@ -11,11 +11,7 @@ import WalletConnectPairing
 import WalletConnectSign
 
 class SyncAccountViewModel: ObservableObject {
-    @Published var uriString: String?
-    @Published var isConnect: Bool = false
-    private var publishers = [AnyCancellable]()
-
-    private var topic: String?
+    // MARK: Lifecycle
 
     init() {
         Task {
@@ -25,7 +21,7 @@ class SyncAccountViewModel: ObservableObject {
             .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
             .receive(on: DispatchQueue.main)
             .sink { sessions in
-                sessions.forEach { session in
+                for session in sessions {
                     if session.pairingTopic == self.topic {
                         self.isConnect = true
                     }
@@ -33,6 +29,13 @@ class SyncAccountViewModel: ObservableObject {
 
             }.store(in: &publishers)
     }
+
+    // MARK: Internal
+
+    @Published
+    var uriString: String?
+    @Published
+    var isConnect: Bool = false
 
     func setupInitialState() async throws {
         uriString = nil
@@ -51,4 +54,10 @@ class SyncAccountViewModel: ObservableObject {
             log.error("[sync device] create uri error:\(error)")
         }
     }
+
+    // MARK: Private
+
+    private var publishers = [AnyCancellable]()
+
+    private var topic: String?
 }

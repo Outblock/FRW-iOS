@@ -1,25 +1,19 @@
 import SwiftUI
 
-internal struct SnappableModifier: ViewModifier {
-    private let snapAlignment: SnapAlignment
-    private let snapMode: SnapMode
-    private let draggingDetector: DraggingDetector
-    private let coordinateSpaceName: UUID
-    private let onSelectChanged: ((SnapID?) -> Void)?
+struct SnappableModifier: ViewModifier {
+    // MARK: Lifecycle
 
-    @State private var parentAnchor: CGPoint = .zero
-    @State private var childSnapAnchors: [SnapID: CGPoint] = [:]
-    @State private var snapCandidateID: SnapID?
-
-    internal init(alignment: SnapAlignment, mode: SnapMode, onChange: ((SnapID?) -> Void)? = nil) {
-        snapAlignment = alignment
-        snapMode = mode
-        draggingDetector = DraggingDetector(snapMode: mode)
-        coordinateSpaceName = UUID()
-        onSelectChanged = onChange
+    init(alignment: SnapAlignment, mode: SnapMode, onChange: ((SnapID?) -> Void)? = nil) {
+        self.snapAlignment = alignment
+        self.snapMode = mode
+        self.draggingDetector = DraggingDetector(snapMode: mode)
+        self.coordinateSpaceName = UUID()
+        self.onSelectChanged = onChange
     }
 
-    internal func body(content: Content) -> some View {
+    // MARK: Internal
+
+    func body(content: Content) -> some View {
         ScrollViewReader { scrollViewProxy in
             content
                 .coordinateSpace(name: coordinateSpaceName)
@@ -55,7 +49,8 @@ internal struct SnappableModifier: ViewModifier {
                     draggingDetector.captureSnapID = { snapCandidateID }
                     draggingDetector.flickTarget = { velocity in
                         guard let current = snapCandidateID,
-                              let currentAnchor = childSnapAnchors[current] else { return snapCandidateID }
+                              let currentAnchor = childSnapAnchors[current]
+                        else { return snapCandidateID }
 
                         let willSnap = childSnapAnchors
                             .filter { _, value in
@@ -72,7 +67,8 @@ internal struct SnappableModifier: ViewModifier {
                         return willSnap?.key ?? snapCandidateID
                     }
                     draggingDetector.scrollTo = { id in
-                        DispatchQueue.main.async { // Avoid a crash when scrolling is stopped by touch
+                        DispatchQueue.main.async {
+                            // Avoid a crash when scrolling is stopped by touch
                             withAnimation {
                                 scrollViewProxy.scrollTo(id, anchor: snapAlignment.unitPoint)
                             }
@@ -83,4 +79,19 @@ internal struct SnappableModifier: ViewModifier {
                 }
         }
     }
+
+    // MARK: Private
+
+    private let snapAlignment: SnapAlignment
+    private let snapMode: SnapMode
+    private let draggingDetector: DraggingDetector
+    private let coordinateSpaceName: UUID
+    private let onSelectChanged: ((SnapID?) -> Void)?
+
+    @State
+    private var parentAnchor: CGPoint = .zero
+    @State
+    private var childSnapAnchors: [SnapID: CGPoint] = [:]
+    @State
+    private var snapCandidateID: SnapID?
 }

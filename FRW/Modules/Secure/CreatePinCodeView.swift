@@ -1,5 +1,5 @@
 //
-//  CreatePinCode.swift
+//  CreatePinCodeView.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 6/1/22.
@@ -17,14 +17,20 @@ extension CreatePinCodeView {
     }
 }
 
+// MARK: - CreatePinCodeView
+
 struct CreatePinCodeView: RouteableView {
-    @StateObject var viewModel = CreatePinCodeViewModel()
-    @State var text: String = ""
-    @State var focuse: Bool = false
-    @FocusState private var pinCodeViewIsFocus: Bool
+    // MARK: Internal
+
+    @StateObject
+    var viewModel = CreatePinCodeViewModel()
+    @State
+    var text: String = ""
+    @State
+    var focuse: Bool = false
 
     var title: String {
-        return ""
+        ""
     }
 
     var body: some View {
@@ -69,7 +75,14 @@ struct CreatePinCodeView: RouteableView {
         .backgroundFill(.LL.background)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    @FocusState
+    private var pinCodeViewIsFocus: Bool
 }
+
+// MARK: - CreatePinCodeView_Previews
 
 struct CreatePinCodeView_Previews: PreviewProvider {
     static var previews: some View {

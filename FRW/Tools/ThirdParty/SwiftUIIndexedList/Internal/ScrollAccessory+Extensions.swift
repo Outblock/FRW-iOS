@@ -6,10 +6,9 @@
 
 import Foundation
 
-internal extension ScrollAccessory {
+extension ScrollAccessory {
     func showsIndexBar<Indices>(indices: Indices) -> Bool
-        where Indices: RandomAccessCollection
-    {
+        where Indices: RandomAccessCollection {
         switch self {
         case .automatic: return !indices.isEmpty
         case .indexBar: return true
@@ -19,8 +18,7 @@ internal extension ScrollAccessory {
     }
 
     func showsScrollIndicator<Indices>(indices: Indices) -> Bool
-        where Indices: RandomAccessCollection
-    {
+        where Indices: RandomAccessCollection {
         switch self {
         case .automatic: return indices.isEmpty
         case .indexBar: return false

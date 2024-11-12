@@ -33,6 +33,8 @@ extension WalletSendView {
         case notFound
         case failed
 
+        // MARK: Internal
+
         var desc: String {
             switch self {
             case .none:
@@ -52,28 +54,10 @@ extension WalletSendView {
     }
 }
 
+// MARK: - WalletSendViewModel
+
 class WalletSendViewModel: ObservableObject {
-    @Published var status: WalletSendView.ViewStatus = .normal
-    @Published var errorType: WalletSendView.ErrorType = .none
-
-    @Published var tabType: WalletSendView.TabType = .recent
-    @Published var searchText: String = ""
-    @Published var page: Page = .first()
-
-    @Published var recentList: [Contact] = []
-    @Published var linkedWalletList: [Contact] = []
-    @Published var ownAccountList: [Contact] = []
-    let addressBookVM = AddressBookView.AddressBookViewModel()
-
-    @Published var localSearchResults: [WalletSendView.SearchSection] = []
-    @Published var serverSearchList: [Contact]?
-    @Published var findSearchList: [Contact]?
-    @Published var flownsSearchList: [Contact]?
-    @Published var meowSearchList: [Contact]?
-
-    private var cancelSets = Set<AnyCancellable>()
-
-    private var selectCallback: WalletSendView.WalletSendViewSelectTargetCallback?
+    // MARK: Lifecycle
 
     init(selectCallback: WalletSendView.WalletSendViewSelectTargetCallback? = nil) {
         self.selectCallback = selectCallback
@@ -97,48 +81,125 @@ class WalletSendViewModel: ObservableObject {
             addresList.append(primaryAddr)
         }
 
-        addresList.forEach { address in
+        for address in addresList {
             let user = WalletManager.shared.walletAccount.readInfo(at: address)
-            let contract = Contact(address: address, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: nil, user: user)
-            self.ownAccountList.append(contract)
+            let contract = Contact(
+                address: address,
+                avatar: nil,
+                contactName: nil,
+                contactType: .user,
+                domain: nil,
+                id: UUID().hashValue,
+                username: nil,
+                user: user
+            )
+            ownAccountList.append(contract)
         }
 
         if WalletManager.shared.isSelectedEVMAccount == false,
            let emvAddr = EVMAccountManager.shared.accounts.first?.showAddress {}
 
-        EVMAccountManager.shared.accounts.forEach { account in
+        for account in EVMAccountManager.shared.accounts {
             let evmAddr = account.showAddress
             let user = WalletManager.shared.walletAccount.readInfo(at: evmAddr)
-            let contract = Contact(address: evmAddr, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: nil, user: user)
+            let contract = Contact(
+                address: evmAddr,
+                avatar: nil,
+                contactName: nil,
+                contactType: .user,
+                domain: nil,
+                id: UUID().hashValue,
+                username: nil,
+                user: user
+            )
             linkedWalletList.append(contract)
         }
 
-        ChildAccountManager.shared.childAccounts.forEach { account in
-            let contact = Contact(address: account.showAddress, avatar: account.showIcon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.aName)
+        for account in ChildAccountManager.shared.childAccounts {
+            let contact = Contact(
+                address: account.showAddress,
+                avatar: account.showIcon,
+                contactName: nil,
+                contactType: .user,
+                domain: nil,
+                id: UUID().hashValue,
+                username: account.aName
+            )
             linkedWalletList.append(contact)
         }
     }
 
+    // MARK: Internal
+
+    @Published
+    var status: WalletSendView.ViewStatus = .normal
+    @Published
+    var errorType: WalletSendView.ErrorType = .none
+
+    @Published
+    var tabType: WalletSendView.TabType = .recent
+    @Published
+    var searchText: String = ""
+    @Published
+    var page: Page = .first()
+
+    @Published
+    var recentList: [Contact] = []
+    @Published
+    var linkedWalletList: [Contact] = []
+    @Published
+    var ownAccountList: [Contact] = []
+    let addressBookVM = AddressBookView.AddressBookViewModel()
+
+    @Published
+    var localSearchResults: [WalletSendView.SearchSection] = []
+    @Published
+    var serverSearchList: [Contact]?
+    @Published
+    var findSearchList: [Contact]?
+    @Published
+    var flownsSearchList: [Contact]?
+    @Published
+    var meowSearchList: [Contact]?
+
     var remoteSearchResults: [WalletSendView.SearchSection] {
         var sections = [WalletSendView.SearchSection]()
         if let serverSearchList = serverSearchList, !serverSearchList.isEmpty {
-            sections.append(WalletSendView.SearchSection(title: "lilico_user".localized, rows: serverSearchList))
+            sections.append(WalletSendView.SearchSection(
+                title: "lilico_user".localized,
+                rows: serverSearchList
+            ))
         }
 
         if let findSearchList = findSearchList, !findSearchList.isEmpty {
-            sections.append(WalletSendView.SearchSection(title: ".find".localized, rows: findSearchList))
+            sections.append(WalletSendView.SearchSection(
+                title: ".find".localized,
+                rows: findSearchList
+            ))
         }
 
         if let flownsSearchList = flownsSearchList, !flownsSearchList.isEmpty {
-            sections.append(WalletSendView.SearchSection(title: ".flowns".localized, rows: flownsSearchList))
+            sections.append(WalletSendView.SearchSection(
+                title: ".flowns".localized,
+                rows: flownsSearchList
+            ))
         }
 
         if let meowSearchList = meowSearchList, !meowSearchList.isEmpty {
-            sections.append(WalletSendView.SearchSection(title: ".meow".localized, rows: meowSearchList))
+            sections.append(WalletSendView.SearchSection(
+                title: ".meow".localized,
+                rows: meowSearchList
+            ))
         }
 
         return sections
     }
+
+    // MARK: Private
+
+    private var cancelSets = Set<AnyCancellable>()
+
+    private var selectCallback: WalletSendView.WalletSendViewSelectTargetCallback?
 }
 
 // MARK: - Search
@@ -171,7 +232,8 @@ extension WalletSendViewModel {
 
         Task {
             do {
-                let response: UserSearchResponse = try await Network.request(FRWAPI.User.search(trimedText))
+                let response: UserSearchResponse = try await Network
+                    .request(FRWAPI.User.search(trimedText))
                 if trimedText != self.searchText.trim() {
                     return
                 }
@@ -208,19 +270,25 @@ extension WalletSendViewModel {
 
         Task {
             do {
-                let address = try await FlowNetwork.queryAddressByDomainFind(domain: trimedText.lowercased().removeSuffix(".find"))
+                let address = try await FlowNetwork
+                    .queryAddressByDomainFind(domain: trimedText.lowercased().removeSuffix(".find"))
                 if trimedText != self.searchText.trim() {
                     return
                 }
 
                 DispatchQueue.main.async {
-                    let contact = Contact(address: address,
-                                          avatar: nil,
-                                          contactName: trimedText,
-                                          contactType: .domain,
-                                          domain: Contact.Domain(domainType: .find, value: trimedText),
-                                          id: UUID().hashValue,
-                                          username: nil)
+                    let contact = Contact(
+                        address: address,
+                        avatar: nil,
+                        contactName: trimedText,
+                        contactType: .domain,
+                        domain: Contact.Domain(
+                            domainType: .find,
+                            value: trimedText
+                        ),
+                        id: UUID().hashValue,
+                        username: nil
+                    )
 
                     self.findSearchList = [contact]
                     self.refreshCurrentSearchingStatusAfterPerSearchComplete()
@@ -245,19 +313,25 @@ extension WalletSendViewModel {
 
         Task {
             do {
-                let address = try await FlowNetwork.queryAddressByDomainFlowns(domain: trimedText.removeSuffix(".fn"))
+                let address = try await FlowNetwork
+                    .queryAddressByDomainFlowns(domain: trimedText.removeSuffix(".fn"))
                 if trimedText != self.searchText.trim() {
                     return
                 }
 
                 DispatchQueue.main.async {
-                    let contact = Contact(address: address,
-                                          avatar: nil,
-                                          contactName: trimedText,
-                                          contactType: .domain,
-                                          domain: Contact.Domain(domainType: .flowns, value: trimedText),
-                                          id: UUID().hashValue,
-                                          username: nil)
+                    let contact = Contact(
+                        address: address,
+                        avatar: nil,
+                        contactName: trimedText,
+                        contactType: .domain,
+                        domain: Contact.Domain(
+                            domainType: .flowns,
+                            value: trimedText
+                        ),
+                        id: UUID().hashValue,
+                        username: nil
+                    )
 
                     self.flownsSearchList = [contact]
                     self.refreshCurrentSearchingStatusAfterPerSearchComplete()
@@ -282,19 +356,27 @@ extension WalletSendViewModel {
 
         Task {
             do {
-                let address = try await FlowNetwork.queryAddressByDomainFlowns(domain: trimedText.removeSuffix(".meow"), root: Contact.DomainType.meow.domain)
+                let address = try await FlowNetwork.queryAddressByDomainFlowns(
+                    domain: trimedText.removeSuffix(".meow"),
+                    root: Contact.DomainType.meow.domain
+                )
                 if trimedText != self.searchText.trim() {
                     return
                 }
 
                 DispatchQueue.main.async {
-                    let contact = Contact(address: address,
-                                          avatar: nil,
-                                          contactName: trimedText,
-                                          contactType: .domain,
-                                          domain: Contact.Domain(domainType: .meow, value: trimedText),
-                                          id: UUID().hashValue,
-                                          username: nil)
+                    let contact = Contact(
+                        address: address,
+                        avatar: nil,
+                        contactName: trimedText,
+                        contactType: .domain,
+                        domain: Contact.Domain(
+                            domainType: .meow,
+                            value: trimedText
+                        ),
+                        id: UUID().hashValue,
+                        username: nil
+                    )
 
                     self.meowSearchList = [contact]
                     self.refreshCurrentSearchingStatusAfterPerSearchComplete()
@@ -324,8 +406,7 @@ extension WalletSendViewModel {
     private func refreshCurrentSearchingStatusAfterPerSearchComplete() {
         if let serverSearchList = serverSearchList, serverSearchList.isEmpty,
            let findSearchList = findSearchList, findSearchList.isEmpty,
-           let flownsSearchList = flownsSearchList, flownsSearchList.isEmpty
-        {
+           let flownsSearchList = flownsSearchList, flownsSearchList.isEmpty {
             errorType = .notFound
             status = .error
             return
@@ -357,7 +438,15 @@ extension WalletSendViewModel {
 
         if trimedText.isFlowOrEVMAddress {
             if let callback = selectCallback {
-                let target = Contact(address: trimedText, avatar: nil, contactName: trimedText, contactType: .external, domain: nil, id: UUID().hashValue, username: nil)
+                let target = Contact(
+                    address: trimedText,
+                    avatar: nil,
+                    contactName: trimedText,
+                    contactType: .external,
+                    domain: nil,
+                    id: UUID().hashValue,
+                    username: nil
+                )
                 callback(target)
                 return
             }
@@ -383,7 +472,15 @@ extension WalletSendViewModel {
     }
 
     private func sendToAddressAction(_ address: String) {
-        let contact = Contact(address: address, avatar: nil, contactName: address, contactType: .external, domain: nil, id: UUID().hashValue, username: nil)
+        let contact = Contact(
+            address: address,
+            avatar: nil,
+            contactName: address,
+            contactType: .external,
+            domain: nil,
+            id: UUID().hashValue,
+            username: nil
+        )
         let symbol = LocalUserDefaults.shared.recentToken ?? "flow"
         guard let token = WalletManager.shared.getToken(bySymbol: symbol) else {
             return
@@ -451,12 +548,16 @@ extension WalletSendViewModel {
 
         Task {
             do {
-                let request = AddressBookAddRequest(contactName: contactName,
-                                                    address: address,
-                                                    domain: contact.domain?.value ?? "",
-                                                    domainType: contact.domain?.domainType ?? .unknown,
-                                                    username: contact.username ?? "")
-                let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.AddressBook.addExternal(request))
+                let request = AddressBookAddRequest(
+                    contactName: contactName,
+                    address: address,
+                    domain: contact.domain?.value ?? "",
+                    domainType: contact.domain?
+                        .domainType ?? .unknown,
+                    username: contact.username ?? ""
+                )
+                let response: Network.EmptyResponse = try await Network
+                    .requestWithRawModel(FRWAPI.AddressBook.addExternal(request))
 
                 if response.httpCode != 200 {
                     errorAction()

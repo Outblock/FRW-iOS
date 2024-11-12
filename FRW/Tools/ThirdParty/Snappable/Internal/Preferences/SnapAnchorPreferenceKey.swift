@@ -1,9 +1,9 @@
 import SwiftUI
 
-internal struct SnapAnchorPreferenceKey: PreferenceKey {
-    internal static var defaultValue: [SnapID: CGPoint] = [:]
+struct SnapAnchorPreferenceKey: PreferenceKey {
+    static var defaultValue: [SnapID: CGPoint] = [:]
 
-    internal static func reduce(
+    static func reduce(
         value: inout [SnapID: CGPoint],
         nextValue: () -> [SnapID: CGPoint]
     ) {

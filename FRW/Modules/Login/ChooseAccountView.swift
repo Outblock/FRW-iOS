@@ -1,5 +1,5 @@
 //
-//  ChooseAccount.swift
+//  ChooseAccountView.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 31/12/21.
@@ -15,16 +15,26 @@ private func createFakeItem() -> BackupManager.DriveItem {
 
 extension ChooseAccountView {
     var title: String {
-        return ""
+        ""
     }
 }
 
+// MARK: - ChooseAccountView
+
 struct ChooseAccountView: RouteableView {
-    @StateObject var vm: ChooseAccountViewModel
+    // MARK: Lifecycle
 
     init(driveItems: [BackupManager.DriveItem], backupType: BackupManager.BackupType) {
-        _vm = StateObject(wrappedValue: ChooseAccountViewModel(driveItems: driveItems, backupType: backupType))
+        _vm = StateObject(wrappedValue: ChooseAccountViewModel(
+            driveItems: driveItems,
+            backupType: backupType
+        ))
     }
+
+    // MARK: Internal
+
+    @StateObject
+    var vm: ChooseAccountViewModel
 
     var body: some View {
         VStack(spacing: 10) {

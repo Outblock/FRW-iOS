@@ -9,17 +9,24 @@ import Kingfisher
 import SwiftUI
 import SwiftUIX
 
+// MARK: - MoveAccountsView
+
 struct MoveAccountsView: RouteableView, PresentActionDelegate {
-    var changeHeight: (() -> Void)?
-
-    var title: String {
-        return ""
-    }
-
-    @StateObject var viewModel: MoveAccountsViewModel
+    // MARK: Lifecycle
 
     init(viewModel: MoveAccountsViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
+    }
+
+    // MARK: Internal
+
+    var changeHeight: (() -> Void)?
+
+    @StateObject
+    var viewModel: MoveAccountsViewModel
+
+    var title: String {
+        ""
     }
 
     var body: some View {
@@ -66,10 +73,13 @@ struct MoveAccountsView: RouteableView, PresentActionDelegate {
     }
 }
 
+// MARK: MoveAccountsView.AccountCell
+
 extension MoveAccountsView {
     struct AccountCell: View {
         var contact: Contact
         var isSelected: Bool
+
         var name: String {
             contact.user?.name ?? contact.name
         }
@@ -79,7 +89,8 @@ extension MoveAccountsView {
         }
 
         var isEVM: Bool {
-            guard let evmAdd = EVMAccountManager.shared.accounts.first?.showAddress else { return false }
+            guard let evmAdd = EVMAccountManager.shared.accounts.first?.showAddress
+            else { return false }
             return evmAdd == address
         }
 
@@ -134,42 +145,78 @@ extension MoveAccountsView {
     }
 }
 
+// MARK: - MoveAccountsViewModel
+
 class MoveAccountsViewModel: ObservableObject {
-    @Published var list: [Contact] = []
-    var selectedAddr: String
-    var callback: (Contact?) -> Void
+    // MARK: Lifecycle
 
     init(selected address: String, callback: @escaping (Contact?) -> Void) {
-        selectedAddr = address
+        self.selectedAddr = address
         self.callback = callback
-        let currentAddr = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress()
+        let currentAddr = WalletManager.shared
+            .getWatchAddressOrChildAccountAddressOrPrimaryAddress()
 
         let isChild = ChildAccountManager.shared.selectedChildAccount != nil
         let isEVM = EVMAccountManager.shared.selectedAccount != nil
 
-        if let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress(), currentAddr != primaryAddr {
+        if let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress(),
+           currentAddr != primaryAddr {
             let user = WalletManager.shared.walletAccount.readInfo(at: primaryAddr)
-            let contact = Contact(address: primaryAddr, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: user.name, user: user, walletType: .flow)
+            let contact = Contact(
+                address: primaryAddr,
+                avatar: nil,
+                contactName: nil,
+                contactType: .user,
+                domain: nil,
+                id: UUID().hashValue,
+                username: user.name,
+                user: user,
+                walletType: .flow
+            )
             list.append(contact)
         }
 
-        EVMAccountManager.shared.accounts.forEach { account in
-            
+        for account in EVMAccountManager.shared.accounts {
             if currentAddr != account.showAddress {
                 let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
-                let contact = Contact(address: account.showAddress, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: user.name, user: user, walletType: .evm)
+                let contact = Contact(
+                    address: account.showAddress,
+                    avatar: nil,
+                    contactName: nil,
+                    contactType: .user,
+                    domain: nil,
+                    id: UUID().hashValue,
+                    username: user.name,
+                    user: user,
+                    walletType: .evm
+                )
                 list.append(contact)
             }
         }
 
-        ChildAccountManager.shared.childAccounts.forEach { account in
-            
+        for account in ChildAccountManager.shared.childAccounts {
             if currentAddr != account.showAddress {
-                let contact = Contact(address: account.showAddress, avatar: account.showIcon, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName, walletType: .link)
+                let contact = Contact(
+                    address: account.showAddress,
+                    avatar: account.showIcon,
+                    contactName: nil,
+                    contactType: .user,
+                    domain: nil,
+                    id: UUID().hashValue,
+                    username: account.showName,
+                    walletType: .link
+                )
                 list.append(contact)
             }
         }
     }
+
+    // MARK: Internal
+
+    @Published
+    var list: [Contact] = []
+    var selectedAddr: String
+    var callback: (Contact?) -> Void
 
     func onSelect(contact: Contact) {
         callback(contact)

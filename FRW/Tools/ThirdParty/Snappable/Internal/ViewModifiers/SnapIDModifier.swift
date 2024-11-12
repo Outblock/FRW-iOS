@@ -1,16 +1,15 @@
 import SwiftUI
 
-internal struct SnapIDModifier<ID>: ViewModifier where ID: Hashable {
-    @Environment(\.coordinateSpaceName) private var coordinateSpaceName: UUID
-    @Environment(\.snapAlignment) private var snapAlignment: SnapAlignment
+struct SnapIDModifier<ID>: ViewModifier where ID: Hashable {
+    // MARK: Lifecycle
 
-    private let id: ID
-
-    internal init(id: ID) {
+    init(id: ID) {
         self.id = id
     }
 
-    internal func body(content: Content) -> some View {
+    // MARK: Internal
+
+    func body(content: Content) -> some View {
         content
             .id(id)
             .background(
@@ -19,10 +18,23 @@ internal struct SnapIDModifier<ID>: ViewModifier where ID: Hashable {
                         .preference(
                             key: SnapAnchorPreferenceKey.self,
                             value: [
-                                id: snapAlignment.point(in: proxy.frame(in: CoordinateSpace.named(coordinateSpaceName))),
+                                id: snapAlignment
+                                    .point(
+                                        in: proxy
+                                            .frame(in: CoordinateSpace.named(coordinateSpaceName))
+                                    ),
                             ]
                         )
                 }
             )
     }
+
+    // MARK: Private
+
+    @Environment(\.coordinateSpaceName)
+    private var coordinateSpaceName: UUID
+    @Environment(\.snapAlignment)
+    private var snapAlignment: SnapAlignment
+
+    private let id: ID
 }

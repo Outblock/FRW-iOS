@@ -13,7 +13,13 @@ enum AppExternalLinks: String, CaseIterable {
     case lilico = "lilico://"
     case frwUL = "https://frw-link.lilico.app"
     case fcwUL = "https://fcw-link.lilico.app"
-    
+
+    // MARK: Internal
+
+    static var allLinks: [String] {
+        AppExternalLinks.allCases.map(\.rawValue)
+    }
+
     var isUniversalLink: Bool {
         switch self {
         case .frwUL, .fcwUL:
@@ -22,19 +28,15 @@ enum AppExternalLinks: String, CaseIterable {
             return false
         }
     }
-    
-    static var allLinks: [String] {
-        AppExternalLinks.allCases.map(\.rawValue)
-    }
-    
+
     static func exactWCLink(link: String) -> String {
         let newLink = link
             .replacingOccurrences(of: "wc%2Fwc", with: "wc")
             .replacingOccurrences(of: "wc/wc", with: "wc")
-        
+
         return newLink
-            .deletingPrefixes(allLinks.map{link in "\(link)/wc?uri=" })
-            .deletingPrefixes(allLinks.map{link in "\(link)wc?uri=" })
+            .deletingPrefixes(allLinks.map { link in "\(link)/wc?uri=" })
+            .deletingPrefixes(allLinks.map { link in "\(link)wc?uri=" })
             .deletingPrefixes(allLinks)
     }
 }

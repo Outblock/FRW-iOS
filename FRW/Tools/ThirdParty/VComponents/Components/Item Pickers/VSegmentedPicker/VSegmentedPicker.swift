@@ -278,9 +278,7 @@ public struct VSegmentedPicker<Data, RowContent>: View
                         rowContent(data[i])
                             .padding(model.layout.actualRowContentMargin)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-
                             .opacity(contentOpacity(for: i))
-
                             .readSize(onChange: { rowWidth = $0.width })
                     }
                 )

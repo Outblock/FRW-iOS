@@ -8,16 +8,25 @@
 import UIKit
 
 class SPQRMaskView: UIView {
-    internal let maskLayer = CAShapeLayer()
-    internal let maskBorder = UIImageView(image: UIImage(named: "scan_border"))
-    internal let padding = 35.0
-    var top = 72.0
-    var statusBarHeight = 20.0
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         config()
     }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    let maskLayer = CAShapeLayer()
+    let maskBorder = UIImageView(image: UIImage(named: "scan_border"))
+    let padding = 35.0
+    var top = 72.0
+    var statusBarHeight = 20.0
 
     func config() {
         backgroundColor = .clear
@@ -37,11 +46,6 @@ class SPQRMaskView: UIView {
 
     override func layoutSubviews() {
         buildMaskPath()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     // MARK:
@@ -76,19 +80,46 @@ class SPQRMaskView: UIView {
 
         // 右下圆角
         let rightBottomCornerPoint = CGPoint(x: scanX + scanW - cornerRadius, y: scanY + scanH)
-        let rightBottomCenter = CGPoint(x: scanX + scanW - cornerRadius, y: scanY + scanH - cornerRadius)
+        let rightBottomCenter = CGPoint(
+            x: scanX + scanW - cornerRadius,
+            y: scanY + scanH - cornerRadius
+        )
 
         scanPath.move(to: leftTopCornerPoint)
-        scanPath.addArc(withCenter: leftTopCenter, radius: cornerRadius, startAngle: -.pi / 2, endAngle: -.pi, clockwise: false)
+        scanPath.addArc(
+            withCenter: leftTopCenter,
+            radius: cornerRadius,
+            startAngle: -.pi / 2,
+            endAngle: -.pi,
+            clockwise: false
+        )
 
         scanPath.addLine(to: leftBottomCornerPoint)
-        scanPath.addArc(withCenter: leftBottomCenter, radius: cornerRadius, startAngle: -.pi, endAngle: -.pi * 1.5, clockwise: false)
+        scanPath.addArc(
+            withCenter: leftBottomCenter,
+            radius: cornerRadius,
+            startAngle: -.pi,
+            endAngle: -.pi * 1.5,
+            clockwise: false
+        )
 
         scanPath.addLine(to: rightBottomCornerPoint)
-        scanPath.addArc(withCenter: rightBottomCenter, radius: cornerRadius, startAngle: -.pi * 1.5, endAngle: 0, clockwise: false)
+        scanPath.addArc(
+            withCenter: rightBottomCenter,
+            radius: cornerRadius,
+            startAngle: -.pi * 1.5,
+            endAngle: 0,
+            clockwise: false
+        )
 
         scanPath.addLine(to: rightTopCornerPoint)
-        scanPath.addArc(withCenter: rightTopCenter, radius: cornerRadius, startAngle: 0, endAngle: -.pi / 2, clockwise: false)
+        scanPath.addArc(
+            withCenter: rightTopCenter,
+            radius: cornerRadius,
+            startAngle: 0,
+            endAngle: -.pi / 2,
+            clockwise: false
+        )
         scanPath.close()
         coverPath.append(scanPath)
 
@@ -97,6 +128,6 @@ class SPQRMaskView: UIView {
     }
 
     func topMargin() -> CGFloat {
-        return top + statusBarHeight + 44
+        top + statusBarHeight + 44
     }
 }

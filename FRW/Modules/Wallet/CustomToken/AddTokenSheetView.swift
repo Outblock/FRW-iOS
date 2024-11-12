@@ -5,26 +5,26 @@
 //  Created by cat on 11/5/24.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 struct AddTokenSheetView: RouteableView & PresentActionDelegate {
     var changeHeight: (() -> Void)?
 
+    let customToken: CustomToken
+    let callback: (Bool) -> Void
+
     var title: String {
         ""
     }
-    
+
     var isNavigationBarHidden: Bool {
         true
     }
-    
-    let customToken: CustomToken
-    let callback: (Bool)->()
-    
+
     var body: some View {
         GeometryReader { _ in
-            VStack(alignment: .leading,spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
                         HStack {
@@ -33,7 +33,7 @@ struct AddTokenSheetView: RouteableView & PresentActionDelegate {
                                 .foregroundStyle(Color.LL.Neutrals.text)
                                 .padding(.top, 6)
                             Spacer()
-                            
+
                             Button {
                                 onClose()
                             } label: {
@@ -50,12 +50,12 @@ struct AddTokenSheetView: RouteableView & PresentActionDelegate {
                                 .padding(.top, 12)
                             Spacer()
                         }
-                        
+
                         Divider()
                             .foregroundStyle(Color.Theme.Line.line)
                             .padding(.top, 16)
                             .padding(.bottom, 16)
-                        
+
                         tokenView()
                             .padding(.bottom, 16)
                         Spacer()
@@ -67,30 +67,32 @@ struct AddTokenSheetView: RouteableView & PresentActionDelegate {
             .cornerRadius([.topLeading, .topTrailing], 16)
             .edgesIgnoringSafeArea(.bottom)
             .overlay(alignment: .bottom) {
-                VPrimaryButton(model: ButtonStyle.primary,
-                               state: .enabled,
-                               action: {
-                    onAdd()
-                }, title: "add_token".localized)
+                VPrimaryButton(
+                    model: ButtonStyle.primary,
+                    state: .enabled,
+                    action: {
+                        onAdd()
+                    },
+                    title: "add_token".localized
+                )
                 .padding(.horizontal, 18)
                 .padding(.bottom, 8)
             }
         }
         .applyRouteable(self)
     }
-    
+
     func onClose() {
         callback(false)
         Router.dismiss()
     }
-    
+
     func customViewDidDismiss() {
         callback(false)
     }
-    
+
     func onAdd() {
         Task {
-            
             let manager = WalletManager.shared.customTokenManager
             let isExist = manager.isExist(token: customToken)
             if !isExist {
@@ -103,7 +105,7 @@ struct AddTokenSheetView: RouteableView & PresentActionDelegate {
             }
         }
     }
-    
+
     func tokenView() -> some View {
         HStack {
             KFImage.url(URL(string: customToken.icon ?? ""))
@@ -115,13 +117,13 @@ struct AddTokenSheetView: RouteableView & PresentActionDelegate {
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 40, height: 40)
                 .clipShape(Circle())
-            
+
             Text(customToken.name)
                 .font(.inter(size: 16, weight: .bold))
                 .foregroundStyle(Color.Theme.Text.black)
-            
+
             Spacer()
-            
+
             Text(customToken.balanceValue + " " + "flow".localized.uppercased())
                 .font(.inter(size: 16))
                 .foregroundStyle(Color.Theme.Text.black)
@@ -143,7 +145,7 @@ struct AddTokenSheetView: RouteableView & PresentActionDelegate {
             belong: .evm,
             balance: nil,
             icon: nil
-        )) { result in
-            
-        }
+        )
+    ) { _ in
+    }
 }

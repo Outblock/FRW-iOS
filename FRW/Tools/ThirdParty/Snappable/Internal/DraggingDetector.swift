@@ -1,19 +1,21 @@
 import UIKit
 
-internal class DraggingDetector: NSObject, UIScrollViewDelegate {
-    private let snapMode: SnapMode
+class DraggingDetector: NSObject, UIScrollViewDelegate {
+    // MARK: Lifecycle
 
-    internal var captureSnapID: (() -> SnapID?)?
-    internal var flickTarget: ((CGPoint) -> SnapID?)?
-    internal var scrollTo: ((SnapID?) -> Void)?
-
-    internal init(snapMode: SnapMode) {
+    init(snapMode: SnapMode) {
         self.snapMode = snapMode
     }
 
+    // MARK: Internal
+
+    var captureSnapID: (() -> SnapID?)?
+    var flickTarget: ((CGPoint) -> SnapID?)?
+    var scrollTo: ((SnapID?) -> Void)?
+
     // MARK: UIScrollViewDelegate methods
 
-    internal func scrollViewWillEndDragging(
+    func scrollViewWillEndDragging(
         _: UIScrollView,
         withVelocity velocity: CGPoint,
         targetContentOffset _: UnsafeMutablePointer<CGPoint>
@@ -39,14 +41,14 @@ internal class DraggingDetector: NSObject, UIScrollViewDelegate {
         }
     }
 
-    internal func scrollViewDidEndScrollingAnimation(_: UIScrollView) {
+    func scrollViewDidEndScrollingAnimation(_: UIScrollView) {
         guard case .immediately = snapMode.snapTiming else { return }
 
         let currentSnapID = captureSnapID?()
         scrollTo?(currentSnapID)
     }
 
-    internal func scrollViewDidEndDragging(_: UIScrollView, willDecelerate decelerate: Bool) {
+    func scrollViewDidEndDragging(_: UIScrollView, willDecelerate decelerate: Bool) {
         guard case .afterScrolling = snapMode.snapTiming else { return }
 
         if !decelerate {
@@ -57,10 +59,14 @@ internal class DraggingDetector: NSObject, UIScrollViewDelegate {
         }
     }
 
-    internal func scrollViewDidEndDecelerating(_: UIScrollView) {
+    func scrollViewDidEndDecelerating(_: UIScrollView) {
         guard case .afterScrolling = snapMode.snapTiming else { return }
 
         let currentSnapID = captureSnapID?()
         scrollTo?(currentSnapID)
     }
+
+    // MARK: Private
+
+    private let snapMode: SnapMode
 }

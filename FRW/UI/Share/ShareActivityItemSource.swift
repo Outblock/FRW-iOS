@@ -1,5 +1,5 @@
 //
-//  ShareItem.swift
+//  ShareActivityItemSource.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 6/9/2022.
@@ -10,9 +10,7 @@ import LinkPresentation
 import UIKit
 
 class ShareActivityItemSource: NSObject, UIActivityItemSource {
-    var shareText: String
-    var shareImage: UIImage
-    var linkMetaData = LPLinkMetadata()
+    // MARK: Lifecycle
 
     init(shareText: String, shareImage: UIImage) {
         self.shareText = shareText
@@ -22,15 +20,24 @@ class ShareActivityItemSource: NSObject, UIActivityItemSource {
         super.init()
     }
 
+    // MARK: Internal
+
+    var shareText: String
+    var shareImage: UIImage
+    var linkMetaData = LPLinkMetadata()
+
     func activityViewControllerPlaceholderItem(_: UIActivityViewController) -> Any {
-        return UIImage(named: "AppIcon") as Any
+        UIImage(named: "AppIcon") as Any
     }
 
-    func activityViewController(_: UIActivityViewController, itemForActivityType _: UIActivity.ActivityType?) -> Any? {
-        return nil
+    func activityViewController(
+        _: UIActivityViewController,
+        itemForActivityType _: UIActivity.ActivityType?
+    ) -> Any? {
+        nil
     }
 
     func activityViewControllerLinkMetadata(_: UIActivityViewController) -> LPLinkMetadata? {
-        return linkMetaData
+        linkMetaData
     }
 }

@@ -11,7 +11,7 @@ import SwiftUI
 extension ImageAnimated {
     static func appRefreshImageNames() -> [String] {
         var images: [String] = []
-        for i in 0 ... 95 {
+        for i in 0...95 {
             images.append("refresh-header-seq-\(i)")
         }
 
@@ -19,17 +19,30 @@ extension ImageAnimated {
     }
 }
 
+// MARK: - ImageAnimated
+
 struct ImageAnimated: UIViewRepresentable {
+    // MARK: Internal
+
     let imageSize: CGSize
     let imageNames: [String]
     let duration: Double
     var isAnimating: Bool = false
 
     func makeUIView(context _: Self.Context) -> UIView {
-        let containerView = UIView(frame: CGRect(x: 0, y: 0,
-                                                 width: imageSize.width, height: imageSize.height))
+        let containerView = UIView(frame: CGRect(
+            x: 0,
+            y: 0,
+            width: imageSize.width,
+            height: imageSize.height
+        ))
 
-        let animationImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
+        let animationImageView = UIImageView(frame: CGRect(
+            x: 0,
+            y: 0,
+            width: imageSize.width,
+            height: imageSize.height
+        ))
 
         animationImageView.clipsToBounds = true
         animationImageView.contentMode = UIView.ContentMode.scaleAspectFill
@@ -60,9 +73,11 @@ struct ImageAnimated: UIViewRepresentable {
         }
     }
 
+    // MARK: Private
+
     private func generateImages() -> [UIImage] {
         var images = [UIImage]()
-        imageNames.forEach { imageName in
+        for imageName in imageNames {
             if let img = UIImage(named: imageName) {
                 images.append(img)
             }

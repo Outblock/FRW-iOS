@@ -8,12 +8,14 @@
 import SPConfetti
 import SwiftUI
 
-struct ConfettiManager {
+enum ConfettiManager {
     static func `default`() {
-        SPConfettiConfiguration.particlesConfig.colors = [Color.LL.Primary.salmonPrimary.toUIColor()!,
-                                                          Color.LL.Secondary.mangoNFT.toUIColor()!,
-                                                          Color.LL.Secondary.navy4.toUIColor()!,
-                                                          Color.LL.Secondary.violetDiscover.toUIColor()!]
+        SPConfettiConfiguration.particlesConfig.colors = [
+            Color.LL.Primary.salmonPrimary.toUIColor()!,
+            Color.LL.Secondary.mangoNFT.toUIColor()!,
+            Color.LL.Secondary.navy4.toUIColor()!,
+            Color.LL.Secondary.violetDiscover.toUIColor()!,
+        ]
         SPConfettiConfiguration.particlesConfig.velocity = 400
         SPConfettiConfiguration.particlesConfig.velocityRange = 200
         SPConfettiConfiguration.particlesConfig.birthRate = 200
@@ -23,9 +25,11 @@ struct ConfettiManager {
     static func show() {
         DispatchQueue.main.async {
             ConfettiManager.default()
-            SPConfetti.startAnimating(.fullWidthToDown,
-                                      particles: [.triangle, .arc, .polygon, .heart, .star],
-                                      duration: 4)
+            SPConfetti.startAnimating(
+                .fullWidthToDown,
+                particles: [.triangle, .arc, .polygon, .heart, .star],
+                duration: 4
+            )
         }
     }
 }

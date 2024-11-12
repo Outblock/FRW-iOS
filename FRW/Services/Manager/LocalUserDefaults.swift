@@ -1,5 +1,5 @@
 //
-//  LocalUserDefaultsManager.swift
+//  LocalUserDefaults.swift
 //  Flow Wallet
 //
 //  Created by Selina on 7/6/2022.
@@ -49,7 +49,7 @@ extension LocalUserDefaults {
         case whatIsBack
         case backupSheetNotAsk
         case checkCoa
-        
+
         case customToken
     }
 
@@ -57,6 +57,23 @@ extension LocalUserDefaults {
         case testnet
         case mainnet
         case previewnet
+
+        // MARK: Lifecycle
+
+        init?(chainId: Flow.ChainID) {
+            switch chainId {
+            case .testnet:
+                self = .testnet
+            case .mainnet:
+                self = .mainnet
+            case .previewnet:
+                self = .previewnet
+            default:
+                return nil
+            }
+        }
+
+        // MARK: Internal
 
         var color: Color {
             switch self {
@@ -83,19 +100,6 @@ extension LocalUserDefaults {
                 return Flow.ChainID.previewnet
             }
         }
-
-        init?(chainId: Flow.ChainID) {
-            switch chainId {
-            case .testnet:
-                self = .testnet
-            case .mainnet:
-                self = .mainnet
-            case .previewnet:
-                self = .previewnet
-            default:
-                return nil
-            }
-        }
     }
 }
 
@@ -105,20 +109,76 @@ extension Flow.ChainID {
     }
 }
 
+// MARK: - LocalUserDefaults
+
 class LocalUserDefaults: ObservableObject {
-    static let shared = LocalUserDefaults()
+    // MARK: Lifecycle
 
     init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(willReset),
+            name: .willResetWallet,
+            object: nil
+        )
     }
 
+    // MARK: Internal
+
+    static let shared = LocalUserDefaults()
+
     #if DEBUG
-        @AppStorage(Keys.flowNetwork.rawValue) var flowNetwork: FlowNetworkType = .testnet
+    @AppStorage(Keys.flowNetwork.rawValue)
+    var flowNetwork: FlowNetworkType = .testnet
     #else
-        @AppStorage(Keys.flowNetwork.rawValue) var flowNetwork: FlowNetworkType = .mainnet
+    @AppStorage(Keys.flowNetwork.rawValue)
+    var flowNetwork: FlowNetworkType = .mainnet
     #endif
 
-    @AppStorage(Keys.activatedUID.rawValue) var activatedUID: String?
+    @AppStorage(Keys.activatedUID.rawValue)
+    var activatedUID: String?
+
+    @AppStorage(Keys.recentSendByToken.rawValue)
+    var recentToken: String?
+
+    @AppStorage(Keys.legacyBackupType.rawValue)
+    var legacyBackupType: BackupManager
+        .BackupType = .none
+
+    @AppStorage(Keys.securityType.rawValue)
+    var securityType: SecurityManager.SecurityType = .none
+    @AppStorage(Keys.lockOnExit.rawValue)
+    var lockOnExit: Bool = false
+
+    @AppStorage(Keys.tryToRestoreAccountFlag.rawValue)
+    var tryToRestoreAccountFlag: Bool = false
+
+    @AppStorage(Keys.currentCurrency.rawValue)
+    var currentCurrency: Currency = .USD
+    @AppStorage(Keys.currentCurrencyRate.rawValue)
+    var currentCurrencyRate: Double = 1
+
+    @AppStorage(Keys.stakingGuideDisplayed.rawValue)
+    var stakingGuideDisplayed: Bool = false
+
+    @AppStorage(Keys.onBoardingShown.rawValue)
+    var onBoardingShown: Bool = false
+    @AppStorage(Keys.multiAccountUpgradeFlag.rawValue)
+    var multiAccountUpgradeFlag: Bool = false
+
+    @AppStorage(Keys.showMoveAssetOnBrowser.rawValue)
+    var showMoveAssetOnBrowser: Bool = true
+
+    @AppStorage(Keys.switchProfileTipsFlag.rawValue)
+    var switchProfileTipsFlag: Bool = false
+
+    var openLogWindow: Bool = false
+
+    @AppStorage(Keys.whatIsBack.rawValue)
+    var clickedWhatIsBack: Bool = false
+
+    @AppStorage(Keys.backupSheetNotAsk.rawValue)
+    var backupSheetNotAsk: Bool = false
 
     var legacyUserInfo: UserInfo? {
         set {
@@ -129,7 +189,11 @@ class LocalUserDefaults: ObservableObject {
             }
         }
         get {
-            if let data = UserDefaults.standard.data(forKey: Keys.legacyUserInfo.rawValue), let info = try? FRWAPI.jsonDecoder.decode(UserInfo.self, from: data) {
+            if let data = UserDefaults.standard.data(forKey: Keys.legacyUserInfo.rawValue),
+               let info = try? FRWAPI.jsonDecoder.decode(
+                   UserInfo.self,
+                   from: data
+               ) {
                 return info
             } else {
                 return nil
@@ -137,13 +201,15 @@ class LocalUserDefaults: ObservableObject {
         }
     }
 
-    @AppStorage(Keys.walletHidden.rawValue) var walletHidden: Bool = false {
+    @AppStorage(Keys.walletHidden.rawValue)
+    var walletHidden: Bool = false {
         didSet {
             NotificationCenter.default.post(name: .walletHiddenFlagUpdated, object: nil)
         }
     }
 
-    @AppStorage(Keys.quoteMarket.rawValue) var market: QuoteMarket = .binance {
+    @AppStorage(Keys.quoteMarket.rawValue)
+    var market: QuoteMarket = .binance {
         didSet {
             NotificationCenter.default.post(name: .quoteMarketUpdated, object: nil)
         }
@@ -158,20 +224,17 @@ class LocalUserDefaults: ObservableObject {
             }
         }
         get {
-            if let data = UserDefaults.standard.data(forKey: Keys.coinSummary.rawValue), let info = try? FRWAPI.jsonDecoder.decode([CoinRateCache.CoinRateModel].self, from: data) {
+            if let data = UserDefaults.standard.data(forKey: Keys.coinSummary.rawValue),
+               let info = try? FRWAPI.jsonDecoder.decode(
+                   [CoinRateCache.CoinRateModel].self,
+                   from: data
+               ) {
                 return info
             } else {
                 return nil
             }
         }
     }
-
-    @AppStorage(Keys.recentSendByToken.rawValue) var recentToken: String?
-
-    @AppStorage(Keys.legacyBackupType.rawValue) var legacyBackupType: BackupManager.BackupType = .none
-
-    @AppStorage(Keys.securityType.rawValue) var securityType: SecurityManager.SecurityType = .none
-    @AppStorage(Keys.lockOnExit.rawValue) var lockOnExit: Bool = false
 
     var panelHolderFrame: CGRect? {
         set {
@@ -191,42 +254,33 @@ class LocalUserDefaults: ObservableObject {
         }
     }
 
-    @AppStorage(Keys.transactionCount.rawValue) var transactionCount: Int = 0 {
+    @AppStorage(Keys.transactionCount.rawValue)
+    var transactionCount: Int = 0 {
         didSet {
             NotificationCenter.default.post(name: .transactionCountDidChanged, object: nil)
         }
     }
 
-    @AppStorage(Keys.customWatchAddress.rawValue) var customWatchAddress: String? {
+    @AppStorage(Keys.customWatchAddress.rawValue)
+    var customWatchAddress: String? {
         didSet {
             NotificationCenter.default.post(name: .watchAddressDidChanged, object: nil)
         }
     }
 
-    @AppStorage(Keys.tryToRestoreAccountFlag.rawValue) var tryToRestoreAccountFlag: Bool = false
-
-    @AppStorage(Keys.currentCurrency.rawValue) var currentCurrency: Currency = .USD
-    @AppStorage(Keys.currentCurrencyRate.rawValue) var currentCurrencyRate: Double = 1
-
-    @AppStorage(Keys.stakingGuideDisplayed.rawValue) var stakingGuideDisplayed: Bool = false
-
-    @AppStorage(Keys.nftCount.rawValue) var nftCount: Int = 0 {
+    @AppStorage(Keys.nftCount.rawValue)
+    var nftCount: Int = 0 {
         didSet {
             NotificationCenter.default.post(name: .nftCountChanged, object: nil)
         }
     }
-
-    @AppStorage(Keys.onBoardingShown.rawValue) var onBoardingShown: Bool = false
-    @AppStorage(Keys.multiAccountUpgradeFlag.rawValue) var multiAccountUpgradeFlag: Bool = false
-
-    @AppStorage(Keys.showMoveAssetOnBrowser.rawValue) var showMoveAssetOnBrowser: Bool = true
 
     var loginUIDList: [String] {
         set {
             UserDefaults.standard.setValue(newValue, forKey: Keys.loginUIDList.rawValue)
         }
         get {
-            return UserDefaults.standard.array(forKey: Keys.loginUIDList.rawValue) as? [String] ?? []
+            UserDefaults.standard.array(forKey: Keys.loginUIDList.rawValue) as? [String] ?? []
         }
     }
 
@@ -235,7 +289,9 @@ class LocalUserDefaults: ObservableObject {
             UserDefaults.standard.setValue(newValue, forKey: Keys.userAddressOfDeletedApp.rawValue)
         }
         get {
-            return UserDefaults.standard.dictionary(forKey: Keys.userAddressOfDeletedApp.rawValue) as? [String: String] ?? [:]
+            UserDefaults.standard
+                .dictionary(forKey: Keys.userAddressOfDeletedApp.rawValue) as? [String: String] ??
+                [:]
         }
     }
 
@@ -248,7 +304,11 @@ class LocalUserDefaults: ObservableObject {
             }
         }
         get {
-            if let data = UserDefaults.standard.data(forKey: Keys.selectedChildAccount.rawValue), let model = try? JSONDecoder().decode(ChildAccount.self, from: data) {
+            if let data = UserDefaults.standard.data(forKey: Keys.selectedChildAccount.rawValue),
+               let model = try? JSONDecoder().decode(
+                   ChildAccount.self,
+                   from: data
+               ) {
                 return model
             } else {
                 return nil
@@ -265,15 +325,17 @@ class LocalUserDefaults: ObservableObject {
             }
         }
         get {
-            if let data = UserDefaults.standard.data(forKey: Keys.selectedEVMAccount.rawValue), let model = try? JSONDecoder().decode(EVMAccountManager.Account.self, from: data) {
+            if let data = UserDefaults.standard.data(forKey: Keys.selectedEVMAccount.rawValue),
+               let model = try? JSONDecoder().decode(
+                   EVMAccountManager.Account.self,
+                   from: data
+               ) {
                 return model
             } else {
                 return nil
             }
         }
     }
-
-    @AppStorage(Keys.switchProfileTipsFlag.rawValue) var switchProfileTipsFlag: Bool = false
 
     var walletAccount: [String: [WalletAccount.User]]? {
         set {
@@ -285,8 +347,10 @@ class LocalUserDefaults: ObservableObject {
         }
         get {
             if let data = UserDefaults.standard.data(forKey: Keys.walletAccountInfo.rawValue),
-               let model = try? JSONDecoder().decode([String: [WalletAccount.User]].self, from: data)
-            {
+               let model = try? JSONDecoder().decode(
+                   [String: [WalletAccount.User]].self,
+                   from: data
+               ) {
                 return model
             } else {
                 return nil
@@ -299,35 +363,29 @@ class LocalUserDefaults: ObservableObject {
             UserDefaults.standard.setValue(newValue, forKey: Keys.EVMAddress.rawValue)
         }
         get {
-            return UserDefaults.standard.dictionary(forKey: Keys.EVMAddress.rawValue) as? [String: [String]] ?? [:]
+            UserDefaults.standard
+                .dictionary(forKey: Keys.EVMAddress.rawValue) as? [String: [String]] ?? [:]
         }
     }
-
-    var openLogWindow: Bool = false
 
     var removedNewsIds: [String] {
         set {
             UserDefaults.standard.setValue(newValue, forKey: Keys.removedNewsIds.rawValue)
         }
         get {
-            return UserDefaults.standard.array(forKey: Keys.removedNewsIds.rawValue) as? [String] ?? []
+            UserDefaults.standard.array(forKey: Keys.removedNewsIds.rawValue) as? [String] ?? []
         }
     }
 
-    @AppStorage(Keys.whatIsBack.rawValue) var clickedWhatIsBack: Bool = false
-
-    @AppStorage(Keys.backupSheetNotAsk.rawValue) var backupSheetNotAsk: Bool = false
-    
     var checkCoa: [String] {
         set {
             UserDefaults.standard.setValue(newValue, forKey: Keys.checkCoa.rawValue)
         }
         get {
-            return UserDefaults.standard.array(forKey: Keys.checkCoa.rawValue) as? [String] ?? []
+            UserDefaults.standard.array(forKey: Keys.checkCoa.rawValue) as? [String] ?? []
         }
     }
-    
-    
+
     var customToken: [CustomToken] {
         set {
             if let data = try? JSONEncoder().encode(newValue) {
@@ -340,8 +398,7 @@ class LocalUserDefaults: ObservableObject {
         }
         get {
             if let data = UserDefaults.standard.data(forKey: Keys.customToken.rawValue),
-               let list = try? JSONDecoder().decode([CustomToken].self, from: data)
-            {
+               let list = try? JSONDecoder().decode([CustomToken].self, from: data) {
                 return list
             } else {
                 return []
@@ -351,7 +408,8 @@ class LocalUserDefaults: ObservableObject {
 }
 
 extension LocalUserDefaults {
-    @objc private func willReset() {
+    @objc
+    private func willReset() {
         recentToken = nil
         WalletManager.shared.changeNetwork(.mainnet)
     }

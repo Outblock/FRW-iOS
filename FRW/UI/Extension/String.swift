@@ -18,7 +18,8 @@ extension String {
             return value
         }
 
-        guard let path = Bundle.main.path(forResource: "en", ofType: "lproj"), let bundle = Bundle(path: path) else {
+        guard let path = Bundle.main.path(forResource: "en", ofType: "lproj"),
+              let bundle = Bundle(path: path) else {
             return value
         }
 
@@ -26,7 +27,7 @@ extension String {
     }
 
     func localized(_ args: CVarArg...) -> String {
-        return String.localizedStringWithFormat(localized, args)
+        String.localizedStringWithFormat(localized, args)
     }
 
     func condenseWhitespace() -> String {
@@ -35,14 +36,14 @@ extension String {
     }
 
     func trim() -> String {
-        return trimmingCharacters(in: .whitespacesAndNewlines)
+        trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     func matchRegex(_ regex: String) -> Bool {
         do {
             let regex = try NSRegularExpression(pattern: regex, options: [])
             let matches = regex.matches(in: self, options: [], range: NSMakeRange(0, count))
-            return matches.count > 0
+            return !matches.isEmpty
         } catch {
             return false
         }
@@ -69,18 +70,23 @@ extension String {
 
     func replaceBeforeLast(_ delimiter: Character, replacement: String) -> String {
         if let index = lastIndex(of: delimiter) {
-            return replacingOccurrences(of: String(delimiter), with: replacement, options: [], range: startIndex ..< index)
+            return replacingOccurrences(
+                of: String(delimiter),
+                with: replacement,
+                options: [],
+                range: startIndex..<index
+            )
         } else {
             return self
         }
     }
 
     var isNumber: Bool {
-        return !isEmpty && Double.currencyFormatter.number(from: self) != nil
+        !isEmpty && Double.currencyFormatter.number(from: self) != nil
     }
 
     var isAddress: Bool {
-        return !isEmpty && hasPrefix("0x") && count == 18
+        !isEmpty && hasPrefix("0x") && count == 18
     }
 
     var isEVMAddress: Bool {
@@ -89,22 +95,30 @@ extension String {
     }
 
     var isFlowOrEVMAddress: Bool {
-        return isEVMAddress || isAddress
+        isEVMAddress || isAddress
     }
 
     var hexValue: [UInt8] {
         var startIndex = self.startIndex
-        return (0 ..< count / 2).compactMap { _ in
+        return (0..<count / 2).compactMap { _ in
             let endIndex = index(after: startIndex)
             defer { startIndex = index(after: endIndex) }
-            return UInt8(self[startIndex ... endIndex], radix: 16)
+            return UInt8(self[startIndex...endIndex], radix: 16)
         }
     }
 
     func width(withFont font: UIFont, maxWidth: CGFloat? = nil) -> CGFloat {
         let string = self as NSString
         let attr = [NSAttributedString.Key.font: font]
-        let rect = string.boundingRect(with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: attr, context: nil)
+        let rect = string.boundingRect(
+            with: CGSize(
+                width: CGFloat.greatestFiniteMagnitude,
+                height: CGFloat.greatestFiniteMagnitude
+            ),
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            attributes: attr,
+            context: nil
+        )
         let width = ceil(rect.size.width)
 
         if let maxWidth = maxWidth {
@@ -115,12 +129,21 @@ extension String {
     }
 
     var md5: String {
-        return Insecure.MD5.hash(data: data(using: .utf8)!).map { String(format: "%02hhx", $0) }.joined()
+        Insecure.MD5.hash(data: data(using: .utf8)!).map { String(format: "%02hhx", $0) }.joined()
     }
 
-    func ranges(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [Range<Index>] {
+    func ranges(
+        of substring: String,
+        options: CompareOptions = [],
+        locale: Locale? = nil
+    ) -> [Range<Index>] {
         var ranges: [Range<Index>] = []
-        while let range = range(of: substring, options: options, range: (ranges.last?.upperBound ?? self.startIndex) ..< self.endIndex, locale: locale) {
+        while let range = range(
+            of: substring,
+            options: options,
+            range: (ranges.last?.upperBound ?? startIndex)..<endIndex,
+            locale: locale
+        ) {
             ranges.append(range)
         }
         return ranges
@@ -151,7 +174,8 @@ extension String {
     }
 
     func convertedSVGURL() -> URL? {
-        guard let encodedString = addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+        guard let encodedString = addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        else {
             return nil
         }
 
@@ -174,7 +198,8 @@ extension String {
 
 extension String {
     var canOpenUrl: Bool {
-        guard let url = URL(string: self), UIApplication.shared.canOpenURL(url) else { return false }
+        guard let url = URL(string: self),
+              UIApplication.shared.canOpenURL(url) else { return false }
         let regEx = "((https|http)://)((\\w|-)+)(([.]|[/])((\\w|-)+))+"
         let predicate = NSPredicate(format: "SELF MATCHES %@", argumentArray: [regEx])
         return predicate.evaluate(with: self)
@@ -191,7 +216,8 @@ extension String {
             return url
         }
 
-        guard let encodedString = trim().addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+        guard let encodedString = trim()
+            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
             return nil
         }
 
@@ -212,7 +238,7 @@ extension String {
     /// Determine string has hexadecimal prefix.
     /// - returns: `Bool` type.
     func hasHexPrefix() -> Bool {
-        return hasPrefix("0x")
+        hasPrefix("0x")
     }
 
     /// If string has hexadecimal prefix, remove it
@@ -237,16 +263,15 @@ extension String {
 }
 
 extension String {
-    
     func hasPrefixes(_ prefixes: [String]) -> Bool {
         prefixes.contains(where: hasPrefix)
     }
-    
+
     func deletingPrefix(_ prefix: String) -> String {
         guard hasPrefix(prefix) else { return self }
         return String(dropFirst(prefix.count))
     }
-    
+
     func deletingPrefixes(_ prefixes: [String]) -> String {
         prefixes.reduce(self) { $0.deletingPrefix($1) }
     }
@@ -255,7 +280,11 @@ extension String {
 extension String {
     var isValidURL: Bool {
         let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
-        if let match = detector.firstMatch(in: self, options: [], range: NSRange(location: 0, length: self.utf16.count)) {
+        if let match = detector.firstMatch(
+            in: self,
+            options: [],
+            range: NSRange(location: 0, length: utf16.count)
+        ) {
             // it is a link, if the match covers the whole string
             return match.range.length == utf16.count
         } else {

@@ -1,5 +1,5 @@
 //
-//  UpperCapsuleView.swift
+//  CapusuleGroupView.swift
 //  SwiftUI-Animations
 //
 //  Created by Shubham Singh on 26/09/20.

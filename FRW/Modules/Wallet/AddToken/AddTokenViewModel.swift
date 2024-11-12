@@ -11,15 +11,17 @@ import SwiftUI
 
 extension AddTokenViewModel {
     class Section: ObservableObject, Identifiable, Indexable {
-        @Published var sectionName: String = "#"
-        @Published var tokenList: [TokenModel] = []
+        @Published
+        var sectionName: String = "#"
+        @Published
+        var tokenList: [TokenModel] = []
 
         var id: String {
-            return sectionName
+            sectionName
         }
 
         var index: Index? {
-            return Index(sectionName, contentID: id)
+            Index(sectionName, contentID: id)
         }
     }
 
@@ -29,29 +31,22 @@ extension AddTokenViewModel {
     }
 }
 
+// MARK: - AddTokenViewModel
+
 class AddTokenViewModel: ObservableObject {
-    @Published var sections: [Section] = []
-    @Published var searchText: String = ""
+    // MARK: Lifecycle
 
-    @Published var confirmSheetIsPresented = false
-    var pendingActiveToken: TokenModel?
-
-    var mode: AddTokenViewModel.Mode = .addToken
-    var selectedToken: TokenModel?
-    var disableTokens: [TokenModel] = []
-    var selectCallback: ((TokenModel) -> Void)?
-
-    @Published var isRequesting: Bool = false
-
-    private var cancelSets = Set<AnyCancellable>()
-
-    init(selectedToken: TokenModel? = nil, disableTokens: [TokenModel] = [], selectCallback: ((TokenModel) -> Void)? = nil) {
+    init(
+        selectedToken: TokenModel? = nil,
+        disableTokens: [TokenModel] = [],
+        selectCallback: ((TokenModel) -> Void)? = nil
+    ) {
         self.selectedToken = selectedToken
         self.disableTokens = disableTokens
         self.selectCallback = selectCallback
 
         if selectCallback != nil {
-            mode = .selectToken
+            self.mode = .selectToken
         }
 
         WalletManager.shared.$activatedCoins.sink { _ in
@@ -60,6 +55,29 @@ class AddTokenViewModel: ObservableObject {
             }
         }.store(in: &cancelSets)
     }
+
+    // MARK: Internal
+
+    @Published
+    var sections: [Section] = []
+    @Published
+    var searchText: String = ""
+
+    @Published
+    var confirmSheetIsPresented = false
+    var pendingActiveToken: TokenModel?
+
+    var mode: AddTokenViewModel.Mode = .addToken
+    var selectedToken: TokenModel?
+    var disableTokens: [TokenModel] = []
+    var selectCallback: ((TokenModel) -> Void)?
+
+    @Published
+    var isRequesting: Bool = false
+
+    // MARK: Private
+
+    private var cancelSets = Set<AnyCancellable>()
 
     private func reloadData() {
         guard let supportedTokenList = WalletManager.shared.supportedCoins else {
@@ -82,24 +100,28 @@ class AddTokenViewModel: ObservableObject {
 
     private func regroup(_ tokens: [TokenModel]) {
         BMChineseSort.share.compareTpye = .fullPinyin
-        BMChineseSort.sortAndGroup(objectArray: tokens, key: "name") { success, _, sectionTitleArr, sortedObjArr in
-            if !success {
-                assert(false, "can not be here")
-                return
-            }
+        BMChineseSort
+            .sortAndGroup(
+                objectArray: tokens,
+                key: "name"
+            ) { success, _, sectionTitleArr, sortedObjArr in
+                if !success {
+                    assertionFailure("can not be here")
+                    return
+                }
 
-            var sections = [AddTokenViewModel.Section]()
-            for (index, title) in sectionTitleArr.enumerated() {
-                let section = AddTokenViewModel.Section()
-                section.sectionName = title
-                section.tokenList = sortedObjArr[index]
-                sections.append(section)
-            }
+                var sections = [AddTokenViewModel.Section]()
+                for (index, title) in sectionTitleArr.enumerated() {
+                    let section = AddTokenViewModel.Section()
+                    section.sectionName = title
+                    section.tokenList = sortedObjArr[index]
+                    sections.append(section)
+                }
 
-            DispatchQueue.main.async {
-                self.sections = sections
+                DispatchQueue.main.async {
+                    self.sections = sections
+                }
             }
-        }
     }
 }
 
@@ -131,7 +153,7 @@ extension AddTokenViewModel {
                 }
             }
 
-            if list.count > 0 {
+            if !list.isEmpty {
                 let newSection = AddTokenViewModel.Section()
                 newSection.sectionName = section.sectionName
                 newSection.tokenList = list
@@ -211,7 +233,10 @@ extension AddTokenViewModel {
 
         Task {
             do {
-                let transactionId = try await FlowNetwork.enableToken(at: Flow.Address(hex: address), token: token)
+                let transactionId = try await FlowNetwork.enableToken(
+                    at: Flow.Address(hex: address),
+                    token: token
+                )
 
                 guard let data = try? JSONEncoder().encode(token) else {
                     failedBlock()
@@ -221,7 +246,11 @@ extension AddTokenViewModel {
                 DispatchQueue.main.async {
                     self.isRequesting = false
                     self.confirmSheetIsPresented = false
-                    let holder = TransactionManager.TransactionHolder(id: transactionId, type: .addToken, data: data)
+                    let holder = TransactionManager.TransactionHolder(
+                        id: transactionId,
+                        type: .addToken,
+                        data: data
+                    )
                     TransactionManager.shared.newTransaction(holder: holder)
                 }
             } catch {

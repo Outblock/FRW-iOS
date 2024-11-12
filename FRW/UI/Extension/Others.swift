@@ -17,12 +17,12 @@ extension UICollectionReusableView {
 
 extension Decimal {
     var doubleValue: Double {
-        return NSDecimalNumber(decimal: self).doubleValue
+        NSDecimalNumber(decimal: self).doubleValue
     }
 }
 
 extension CaseIterable {
     static var count: Int {
-        return Self.allCases.count
+        allCases.count
     }
 }

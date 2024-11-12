@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  TabBarView.swift
 //  Test
 //
 //  Created by cat on 2022/5/23.
@@ -7,13 +7,10 @@
 
 import SwiftUI
 
-struct TabBarView<T: Hashable>: View {
-    @State var current: T
-    var pages: [TabBarPageModel<T>]
+// MARK: - TabBarView
 
-    var maxWidth: CGFloat
-    @State private var offsetX: CGFloat
-    @State private var currentIndex: Int
+struct TabBarView<T: Hashable>: View {
+    // MARK: Lifecycle
 
     init(current: T, pages: [TabBarPageModel<T>], maxWidth: CGFloat) {
         _current = State(initialValue: current)
@@ -30,25 +27,38 @@ struct TabBarView<T: Hashable>: View {
         _offsetX = State(initialValue: maxWidth * CGFloat(selectIndex))
     }
 
+    // MARK: Internal
+
+    @State
+    var current: T
+    var pages: [TabBarPageModel<T>]
+
+    var maxWidth: CGFloat
+
     var body: some View {
         VStack(spacing: 0) {
             tabView
-            TabBar(pages: pages,
-                   indicatorColor: getCurrentPageModel()?.color ?? .black,
-                   offsetX: $offsetX,
-                   selected: $current)
+            TabBar(
+                pages: pages,
+                indicatorColor: getCurrentPageModel()?.color ?? .black,
+                offsetX: $offsetX,
+                selected: $current
+            )
         }
     }
 
     var tabView: some View {
         TabView(selection: $current) {
-            ForEach(0 ..< pages.count, id: \.self) { index in
+            ForEach(0..<pages.count, id: \.self) { index in
                 let pageModel = pages[index]
                 pageModel.view()
                     .tag(pageModel.tag)
                     .background(
                         GeometryReader {
-                            Color.clear.preference(key: ViewOffsetKey.self, value: $0.frame(in: .named("frameLayer")))
+                            Color.clear.preference(
+                                key: ViewOffsetKey.self,
+                                value: $0.frame(in: .named("frameLayer"))
+                            )
                         }
                     )
                     .onPreferenceChange(ViewOffsetKey.self) {
@@ -68,6 +78,13 @@ struct TabBarView<T: Hashable>: View {
         .coordinateSpace(name: "frameLayer")
     }
 
+    // MARK: Private
+
+    @State
+    private var offsetX: CGFloat
+    @State
+    private var currentIndex: Int
+
     private func offset(index: Int, frame: CGRect) {
         if currentIndex == index {
             let x = -frame.origin.x
@@ -84,10 +101,12 @@ struct TabBarView<T: Hashable>: View {
     }
 }
 
-// MARK: - Helper
+// MARK: - ViewOffsetKey
 
 private struct ViewOffsetKey: PreferenceKey {
     typealias Value = CGRect
+
     static var defaultValue = CGRect.zero
+
     static func reduce(value _: inout Value, nextValue _: () -> Value) {}
 }

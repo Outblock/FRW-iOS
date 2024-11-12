@@ -7,17 +7,23 @@
 
 import SwiftUI
 
+// MARK: - EnumeratedForEach
+
 struct EnumeratedForEach<ItemType, ContentView: View>: View {
-    let data: [ItemType]
-    let content: (Int, ItemType) -> ContentView
+    // MARK: Lifecycle
 
     init(_ data: [ItemType], @ViewBuilder content: @escaping (Int, ItemType) -> ContentView) {
         self.data = data
         self.content = content
     }
 
+    // MARK: Internal
+
+    let data: [ItemType]
+    let content: (Int, ItemType) -> ContentView
+
     var body: some View {
-        ForEach(Array(self.data.enumerated()), id: \.offset) { idx, item in
+        ForEach(Array(data.enumerated()), id: \.offset) { idx, item in
             self.content(idx, item)
         }
     }
@@ -35,13 +41,9 @@ extension ManualBackupView {
     }
 }
 
+// MARK: - ManualBackupView
+
 struct ManualBackupView: RouteableView {
-    @StateObject var viewModel = ManualBackupViewModel()
-
-    var title: String {
-        return ""
-    }
-
     struct BackupModel: Identifiable {
         let id = UUID()
         let position: Int
@@ -49,19 +51,18 @@ struct ManualBackupView: RouteableView {
         let list: [String]
     }
 
-    @State var selectArray: [Int?] = [nil, nil, nil, nil]
+    @StateObject
+    var viewModel = ManualBackupViewModel()
 
-    var isAllPass: Bool {
-        if case let .render(dataSource) = viewModel.state {
-            return dataSource.map { $0.correct } == selectArray
-        }
-        return false
-    }
+    @State
+    var selectArray: [Int?] = [nil, nil, nil, nil]
 
     var model: VSegmentedPickerModel = {
         var model = VSegmentedPickerModel()
-        model.colors.background = .init(enabled: .LL.bgForIcon,
-                                        disabled: .LL.bgForIcon)
+        model.colors.background = .init(
+            enabled: .LL.bgForIcon,
+            disabled: .LL.bgForIcon
+        )
 
         model.fonts.rows = .LL.body.weight(.semibold)
         model.layout.height = 64
@@ -72,21 +73,15 @@ struct ManualBackupView: RouteableView {
         return model
     }()
 
-    func getColor(selectIndex: Int?,
-                  item: String,
-                  list: [String],
-                  currentListIndex _: Int,
-                  correct: Int) -> Color
-    {
-        guard let selectIndex = selectIndex else {
-            return .LL.text
-        }
+    var title: String {
+        ""
+    }
 
-        guard let index = list.firstIndex(of: item), selectIndex == index else {
-            return .LL.text
+    var isAllPass: Bool {
+        if case let .render(dataSource) = viewModel.state {
+            return dataSource.map { $0.correct } == selectArray
         }
-
-        return selectIndex == correct ? Color.LL.success : Color.LL.error
+        return false
     }
 
     var body: some View {
@@ -123,30 +118,39 @@ struct ManualBackupView: RouteableView {
                             }
                             .font(.LL.body)
 
-                            VSegmentedPicker(model: model,
-                                             selectedIndex: $selectArray[index],
-                                             data: element.list) { item in
-                                VText(type: .oneLine,
-                                      font: model.fonts.rows,
-                                      color: getColor(selectIndex: selectArray[index],
-                                                      item: item,
-                                                      list: element.list,
-                                                      currentListIndex: index,
-                                                      correct: element.correct),
-                                      title: item)
+                            VSegmentedPicker(
+                                model: model,
+                                selectedIndex: $selectArray[index],
+                                data: element.list
+                            ) { item in
+                                VText(
+                                    type: .oneLine,
+                                    font: model.fonts.rows,
+                                    color: getColor(
+                                        selectIndex: selectArray[index],
+                                        item: item,
+                                        list: element.list,
+                                        currentListIndex: index,
+                                        correct: element.correct
+                                    ),
+                                    title: item
+                                )
                             }
                         }
                         .padding(.bottom)
                     }
                 }
 
-                VPrimaryButton(model: ButtonStyle.primary,
-                               state: isAllPass ? .enabled : .disabled,
-                               action: {
-                                   viewModel.trigger(.backupSuccess)
-                               }, title: "Next")
-                    .padding(.top, 20)
-                    .padding(.bottom)
+                VPrimaryButton(
+                    model: ButtonStyle.primary,
+                    state: isAllPass ? .enabled : .disabled,
+                    action: {
+                        viewModel.trigger(.backupSuccess)
+                    },
+                    title: "Next"
+                )
+                .padding(.top, 20)
+                .padding(.bottom)
             }
         }
         .padding(.horizontal, 28)
@@ -156,7 +160,27 @@ struct ManualBackupView: RouteableView {
         }
         .applyRouteable(self)
     }
+
+    func getColor(
+        selectIndex: Int?,
+        item: String,
+        list: [String],
+        currentListIndex _: Int,
+        correct: Int
+    ) -> Color {
+        guard let selectIndex = selectIndex else {
+            return .LL.text
+        }
+
+        guard let index = list.firstIndex(of: item), selectIndex == index else {
+            return .LL.text
+        }
+
+        return selectIndex == correct ? Color.LL.success : Color.LL.error
+    }
 }
+
+// MARK: - ManualBackupView_Previews
 
 struct ManualBackupView_Previews: PreviewProvider {
     static var previews: some View {

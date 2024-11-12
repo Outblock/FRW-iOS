@@ -11,13 +11,50 @@ import UIKit
 private let RecommendCellHeight: CGFloat = 50
 private let DAppCellHeight: CGFloat = 60
 
+// MARK: - Section
+
 private enum Section: Int {
     case dapp
     case recommend
 }
 
+// MARK: - BrowserSearchInputViewController
+
 class BrowserSearchInputViewController: UIViewController {
+    // MARK: Public
+
+    public func setSearchText(text: String? = "") {
+        searchingText = text ?? ""
+        inputBar.textField.text = text
+        inputBar.reloadView()
+        if let str = text, !str.isEmpty {
+            inputBar.textField.becomeFirstResponder()
+            inputBar.textField.selectAll(self)
+        }
+    }
+
+    // MARK: Internal
+
     var selectTextCallback: ((String) -> Void)?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setup()
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        reloadBgPaths()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !inputBar.textField.isFirstResponder {
+            inputBar.textField.becomeFirstResponder()
+        }
+    }
+
+    // MARK: Private
 
     private var recommendArray: [RecommendItemModel] = []
     private var remoteDAppList: [DAppModel] = []
@@ -61,8 +98,14 @@ class BrowserSearchInputViewController: UIViewController {
         view.delegate = self
         view.dataSource = self
 
-        view.register(BrowserSearchItemCell.self, forCellWithReuseIdentifier: "BrowserSearchItemCell")
-        view.register(BrowserSearchDAppItemCell.self, forCellWithReuseIdentifier: "BrowserSearchDAppItemCell")
+        view.register(
+            BrowserSearchItemCell.self,
+            forCellWithReuseIdentifier: "BrowserSearchItemCell"
+        )
+        view.register(
+            BrowserSearchDAppItemCell.self,
+            forCellWithReuseIdentifier: "BrowserSearchDAppItemCell"
+        )
         return view
     }()
 
@@ -70,11 +113,6 @@ class BrowserSearchInputViewController: UIViewController {
         let layer = CAShapeLayer()
         return layer
     }()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setup()
-    }
 
     private func setup() {
         view.backgroundColor = .black
@@ -100,42 +138,25 @@ class BrowserSearchInputViewController: UIViewController {
             make.bottom.equalTo(inputBar.snp.top)
         }
 
-        collectionView.transform = CGAffineTransform(rotationAngle: -(CGFloat)(Double.pi))
+        collectionView.transform = CGAffineTransform(rotationAngle: -CGFloat(Double.pi))
 
         hero.isEnabled = true
     }
 
-    public func setSearchText(text: String? = "") {
-        searchingText = text ?? ""
-        inputBar.textField.text = text
-        inputBar.reloadView()
-        if let str = text, !str.isEmpty {
-            inputBar.textField.becomeFirstResponder()
-            inputBar.textField.selectAll(self)
-        }
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        reloadBgPaths()
-    }
-
     private func reloadBgPaths() {
         contentViewBgMaskLayer.frame = contentView.bounds
-        let cPath = UIBezierPath(roundedRect: contentView.bounds, byRoundingCorners: [.topLeft, .topRight], cornerRadii: CGSize(width: 24.0, height: 24.0))
+        let cPath = UIBezierPath(
+            roundedRect: contentView.bounds,
+            byRoundingCorners: [.topLeft, .topRight],
+            cornerRadii: CGSize(width: 24.0, height: 24.0)
+        )
         contentViewBgMaskLayer.path = cPath.cgPath
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if !inputBar.textField.isFirstResponder {
-            inputBar.textField.becomeFirstResponder()
-        }
     }
 }
 
 extension BrowserSearchInputViewController {
-    @objc private func onCancelBtnClick() {
+    @objc
+    private func onCancelBtnClick() {
         close()
     }
 
@@ -186,7 +207,8 @@ extension BrowserSearchInputViewController {
 
         let engine = "https://www.google.com/search?q="
 
-        urlString = urlString.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed)!
+        urlString = urlString
+            .addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed)!
         urlString = "\(engine)\(urlString)"
 
         return urlString
@@ -197,7 +219,8 @@ extension BrowserSearchInputViewController {
 
         Task {
             do {
-                let result: [RecommendItemModel] = try await Network.requestWithRawModel(FRWAPI.Browser.recommend(currentText))
+                let result: [RecommendItemModel] = try await Network
+                    .requestWithRawModel(FRWAPI.Browser.recommend(currentText))
 
                 if self.searchingText != currentText {
                     // outdate result
@@ -235,7 +258,12 @@ extension BrowserSearchInputViewController {
                     return
                 }
 
-                var result = list.filter { $0.name.lowercased().contains(currentText.lowercased()) || $0.url.absoluteString.lowercased().contains(currentText.lowercased()) }
+                var result = list
+                    .filter {
+                        $0.name.lowercased().contains(currentText.lowercased()) || $0.url
+                            .absoluteString
+                            .lowercased().contains(currentText.lowercased())
+                    }
 
                 if result.count > 5 {
                     // max 5
@@ -258,7 +286,13 @@ extension BrowserSearchInputViewController {
     private func startTimer() {
         stopTimer()
 
-        let t = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(onTimer), userInfo: nil, repeats: false)
+        let t = Timer.scheduledTimer(
+            timeInterval: 0.2,
+            target: self,
+            selector: #selector(onTimer),
+            userInfo: nil,
+            repeats: false
+        )
         RunLoop.main.add(t, forMode: .common)
         timer = t
     }
@@ -270,7 +304,8 @@ extension BrowserSearchInputViewController {
         }
     }
 
-    @objc private func onTimer() {
+    @objc
+    private func onTimer() {
         doSearch()
         doSearchDApp()
     }
@@ -282,9 +317,12 @@ extension BrowserSearchInputViewController {
     }
 }
 
-extension BrowserSearchInputViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+// MARK: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource
+
+extension BrowserSearchInputViewController: UICollectionViewDelegateFlowLayout,
+    UICollectionViewDataSource {
     func numberOfSections(in _: UICollectionView) -> Int {
-        return 2
+        2
     }
 
     func collectionView(_: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -298,17 +336,26 @@ extension BrowserSearchInputViewController: UICollectionViewDelegateFlowLayout, 
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         switch Section(rawValue: indexPath.section) {
         case .recommend:
             let model = recommendArray[indexPath.item]
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BrowserSearchItemCell", for: indexPath) as! BrowserSearchItemCell
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "BrowserSearchItemCell",
+                for: indexPath
+            ) as! BrowserSearchItemCell
             cell.config(model, inputText: searchingText)
             cell.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
             return cell
         case .dapp:
             let model = dappArray[indexPath.item]
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BrowserSearchDAppItemCell", for: indexPath) as! BrowserSearchDAppItemCell
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "BrowserSearchDAppItemCell",
+                for: indexPath
+            ) as! BrowserSearchDAppItemCell
             cell.config(model)
             cell.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
             return cell
@@ -330,12 +377,22 @@ extension BrowserSearchInputViewController: UICollectionViewDelegateFlowLayout, 
         }
     }
 
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         switch Section(rawValue: indexPath.section) {
         case .recommend:
-            return CGSize(width: Router.coordinator.window.bounds.size.width, height: RecommendCellHeight)
+            return CGSize(
+                width: Router.coordinator.window.bounds.size.width,
+                height: RecommendCellHeight
+            )
         case .dapp:
-            return CGSize(width: Router.coordinator.window.bounds.size.width, height: DAppCellHeight)
+            return CGSize(
+                width: Router.coordinator.window.bounds.size.width,
+                height: DAppCellHeight
+            )
         default:
             return .zero
         }

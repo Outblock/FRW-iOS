@@ -1,5 +1,5 @@
 //
-//  BackupSelectOptionsView.swift
+//  BackupMultiView.swift
 //  FRW
 //
 //  Created by cat on 2023/12/7.
@@ -8,15 +8,22 @@
 import SwiftUI
 import SwiftUIX
 
+// MARK: - BackupMultiView
+
 struct BackupMultiView: RouteableView {
-    @StateObject var viewModel: BackupMultiViewModel
+    // MARK: Lifecycle
 
     init(items: [MultiBackupType]) {
         _viewModel = StateObject(wrappedValue: BackupMultiViewModel(backups: items))
     }
 
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: BackupMultiViewModel
+
     var title: String {
-        return "multi_backup".localized
+        "multi_backup".localized
     }
 
     var body: some View {
@@ -69,13 +76,16 @@ struct BackupMultiView: RouteableView {
 
             Spacer()
 
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: viewModel.nextable ? .enabled : .disabled,
-                           action: {
-                               onNext()
-                           }, title: "next".localized)
-                .padding(.horizontal, 18)
-                .padding(.bottom)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: viewModel.nextable ? .enabled : .disabled,
+                action: {
+                    onNext()
+                },
+                title: "next".localized
+            )
+            .padding(.horizontal, 18)
+            .padding(.bottom)
         }
         .applyRouteable(self)
         .backgroundFill(Color.LL.Neutrals.background)
@@ -83,8 +93,10 @@ struct BackupMultiView: RouteableView {
 
     func columns() -> [GridItem] {
         let width = (screenWidth - 64 * 2) / 2
-        return [GridItem(.adaptive(minimum: width)),
-                GridItem(.adaptive(minimum: width))]
+        return [
+            GridItem(.adaptive(minimum: width)),
+            GridItem(.adaptive(minimum: width)),
+        ]
     }
 
     func onClick(item: BackupMultiViewModel.MultiItem) {
@@ -100,19 +112,26 @@ struct BackupMultiView: RouteableView {
     }
 }
 
-// MARK: ItemView
+// MARK: BackupMultiView.ItemView
 
 extension BackupMultiView {
     struct ItemView: View {
-        @Binding var item: BackupMultiViewModel.MultiItem
-        var onClick: (BackupMultiViewModel.MultiItem) -> Void
-        @Binding private var isSelected: Bool
+        // MARK: Lifecycle
 
-        init(item: Binding<BackupMultiViewModel.MultiItem>, onClick: @escaping (BackupMultiViewModel.MultiItem) -> Void) {
+        init(
+            item: Binding<BackupMultiViewModel.MultiItem>,
+            onClick: @escaping (BackupMultiViewModel.MultiItem) -> Void
+        ) {
             _item = item
             self.onClick = onClick
             _isSelected = item.isBackup
         }
+
+        // MARK: Internal
+
+        @Binding
+        var item: BackupMultiViewModel.MultiItem
+        var onClick: (BackupMultiViewModel.MultiItem) -> Void
 
         var body: some View {
             VStack(alignment: .center, spacing: 16) {
@@ -145,6 +164,11 @@ extension BackupMultiView {
                 onClick(item)
             }
         }
+
+        // MARK: Private
+
+        @Binding
+        private var isSelected: Bool
     }
 }
 

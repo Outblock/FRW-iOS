@@ -1,5 +1,5 @@
 //
-//  AddSyncDeviceViewModel.swift
+//  SyncAddDeviceViewModel.swift
 //  FRW
 //
 //  Created by cat on 2023/11/30.
@@ -10,36 +10,59 @@ import Foundation
 import WalletConnectSign
 import WalletConnectUtils
 
+// MARK: - SyncAddDeviceViewModel.Callback
+
 extension SyncAddDeviceViewModel {
     typealias Callback = (Bool) -> Void
 }
 
-class SyncAddDeviceViewModel: ObservableObject {
-    var model: SyncInfo.DeviceInfo
-    private var callback: BrowserAuthzViewModel.Callback?
+// MARK: - SyncAddDeviceViewModel
 
-    @Published var result: String = ""
+class SyncAddDeviceViewModel: ObservableObject {
+    // MARK: Lifecycle
 
     init(with model: SyncInfo.DeviceInfo, callback: @escaping SyncAddDeviceViewModel.Callback) {
         self.model = model
         self.callback = callback
     }
 
+    deinit {
+        NotificationCenter().removeObserver(self)
+    }
+
+    // MARK: Internal
+
+    var model: SyncInfo.DeviceInfo
+    @Published
+    var result: String = ""
+
     func addDevice() {
         Task {
             let address = WalletManager.shared.address
-            let accountKey = Flow.AccountKey(publicKey: Flow.PublicKey(hex: model.accountKey.publicKey),
-                                             signAlgo: Flow.SignatureAlgorithm(index: model.accountKey.signAlgo),
-                                             hashAlgo: Flow.HashAlgorithm(cadence: model.accountKey.hashAlgo),
-                                             weight: 1000)
+            let accountKey = Flow.AccountKey(
+                publicKey: Flow.PublicKey(hex: model.accountKey.publicKey),
+                signAlgo: Flow.SignatureAlgorithm(index: model.accountKey.signAlgo),
+                hashAlgo: Flow.HashAlgorithm(cadence: model.accountKey.hashAlgo),
+                weight: 1000
+            )
             do {
                 let flowAccount = try await findFlowAccount(at: WalletManager.shared.keyIndex)
                 let sequenceNumber = flowAccount?.sequenceNumber ?? 0
-                let flowId = try await FlowNetwork.addKeyWithMulti(address: address, keyIndex: WalletManager.shared.keyIndex, sequenceNum: sequenceNumber, accountKey: accountKey, signers: WalletManager.shared.defaultSigners)
+                let flowId = try await FlowNetwork.addKeyWithMulti(
+                    address: address,
+                    keyIndex: WalletManager.shared.keyIndex,
+                    sequenceNum: sequenceNumber,
+                    accountKey: accountKey,
+                    signers: WalletManager.shared.defaultSigners
+                )
                 guard let data = try? JSONEncoder().encode(model) else {
                     return
                 }
-                let holder = TransactionManager.TransactionHolder(id: flowId, type: .addToken, data: data)
+                let holder = TransactionManager.TransactionHolder(
+                    id: flowId,
+                    type: .addToken,
+                    data: data
+                )
                 TransactionManager.shared.newTransaction(holder: holder)
 
                 HUD.loading()
@@ -64,9 +87,13 @@ class SyncAddDeviceViewModel: ObservableObject {
     func sendSuccessStatus() {
         Task {
             do {
-                let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.syncDevice(self.model))
+                let response: Network.EmptyResponse = try await Network
+                    .requestWithRawModel(FRWAPI.User.syncDevice(self.model))
                 if response.httpCode != 200 {
-                    log.info("[Sync Device] add device failed. publicKey: \(self.model.accountKey.publicKey)")
+                    log
+                        .info(
+                            "[Sync Device] add device failed. publicKey: \(self.model.accountKey.publicKey)"
+                        )
                     DispatchQueue.main.async {
                         self.result = "add device failed."
                     }
@@ -99,7 +126,7 @@ class SyncAddDeviceViewModel: ObservableObject {
         return flowAccountKey
     }
 
-    deinit {
-        NotificationCenter().removeObserver(self)
-    }
+    // MARK: Private
+
+    private var callback: BrowserAuthzViewModel.Callback?
 }

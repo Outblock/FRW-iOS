@@ -15,9 +15,11 @@ import SwiftUI
 import SwiftUIPager
 import SwiftUIX
 
+// MARK: - WalletHomeView + AppTabBarPageProtocol
+
 extension WalletHomeView: AppTabBarPageProtocol {
     static func tabTag() -> AppTabType {
-        return .wallet
+        .wallet
     }
 
     static func iconName() -> String {
@@ -25,29 +27,42 @@ extension WalletHomeView: AppTabBarPageProtocol {
     }
 
     static func color() -> Color {
-        return .Flow.accessory
+        .Flow.accessory
     }
 }
 
-struct WalletHomeView: View {
-    @State var safeArea: EdgeInsets = .zero
-    @State var size: CGSize = .zero
+// MARK: - WalletHomeView
 
-    @StateObject var um = UserManager.shared
-    @StateObject var wm = WalletManager.shared
-    @StateObject private var vm = WalletViewModel()
-    @StateObject var newsHandler = WalletNewsHandler.shared
-    @State var isRefreshing: Bool = false
-    @State private var showActionSheet = false
+struct WalletHomeView: View {
+    @State
+    var safeArea: EdgeInsets = .zero
+    @State
+    var size: CGSize = .zero
+
+    @StateObject
+    var um = UserManager.shared
+    @StateObject
+    var wm = WalletManager.shared
+    @StateObject
+    private var vm = WalletViewModel()
+    @StateObject
+    var newsHandler = WalletNewsHandler.shared
+    @State
+    var isRefreshing: Bool = false
+    @State
+    private var showActionSheet = false
     @AppStorage("WalletCardBackrgound")
     private var walletCardBackrgound: String = "fade:0"
 
-    @State var selectedNewsId: String? = nil
-    @State var scrollNext: Bool = false
+    @State
+    var selectedNewsId: String? = nil
+    @State
+    var scrollNext: Bool = false
 
     private let scrollName: String = "WALLETSCROLL"
 
-    @State private var logViewPresented: Bool = false
+    @State
+    private var logViewPresented: Bool = false
 
     var body: some View {
         GeometryReader { proxy in
@@ -87,18 +102,21 @@ struct WalletHomeView: View {
                 isRefreshing = false
             }
         } progress: { state in
-            ImageAnimated(imageSize: CGSize(width: 60, height: 60),
-                          imageNames: ImageAnimated.appRefreshImageNames(),
-                          duration: 1.6,
-                          isAnimating: state == .loading || state == .primed)
-                .frame(maxWidth: .infinity)
-                .frame(height: 60)
-                .transition(
-                    AnyTransition.move(edge: .bottom).combined(with: .scale).combined(with: .opacity)
-                )
-                .visibility(state == .waiting ? .gone : .visible)
-                .zIndex(2)
-                .offset(y: headerHeight + 20)
+            ImageAnimated(
+                imageSize: CGSize(width: 60, height: 60),
+                imageNames: ImageAnimated.appRefreshImageNames(),
+                duration: 1.6,
+                isAnimating: state == .loading || state == .primed
+            )
+            .frame(maxWidth: .infinity)
+            .frame(height: 60)
+            .transition(
+                AnyTransition.move(edge: .bottom).combined(with: .scale)
+                    .combined(with: .opacity)
+            )
+            .visibility(state == .waiting ? .gone : .visible)
+            .zIndex(2)
+            .offset(y: headerHeight + 20)
         } content: {
             VStack(spacing: 0) {
                 JailbreakTipsView()
@@ -124,7 +142,8 @@ struct WalletHomeView: View {
     func TopMenuView() -> some View {
         GeometryReader { proxy in
             let minY = proxy.frame(in: .named(scrollName)).minY
-            let progress = minY / (headerHeight * (minY > 0 ? 0.5 : 0.8) + proxy.safeAreaInsets.top - 33)
+            let progress = minY /
+                (headerHeight * (minY > 0 ? 0.5 : 0.8) + proxy.safeAreaInsets.top - 33)
 
             HStack {
                 Button {
@@ -295,7 +314,11 @@ struct WalletHomeView: View {
                     .opacity(-progress)
             }
             .offset(y: -minY)
-            .confirmationDialog("Select a color", isPresented: $showActionSheet, titleVisibility: .hidden) {
+            .confirmationDialog(
+                "Select a color",
+                isPresented: $showActionSheet,
+                titleVisibility: .hidden
+            ) {
                 Button("change wallpaper") {
                     showWallpaper()
                 }
@@ -324,7 +347,8 @@ struct WalletHomeView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .blur(radius: 6)
 
-            LinearGradient(colors:
+            LinearGradient(
+                colors:
                 [
                     Color(hex: "#333333"),
                     Color(hex: "#333333"),
@@ -332,7 +356,8 @@ struct WalletHomeView: View {
                     Color(hex: "#333333").opacity(0.32),
                 ],
                 startPoint: .leading,
-                endPoint: .trailing)
+                endPoint: .trailing
+            )
         }
     }
 
@@ -354,9 +379,13 @@ struct WalletHomeView: View {
         VStack(spacing: 0) {
             VStack(spacing: 4) {
                 HStack {
-                    Text(vm.isHidden ? "****" : "\(CurrencyCache.cache.currencySymbol) \(vm.balance.formatCurrencyString(considerCustomCurrency: true))")
-                        .font(.Ukraine(size: 30, weight: .bold))
-                        .foregroundStyle(Color.Theme.Text.black)
+                    Text(
+                        vm
+                            .isHidden ? "****" :
+                            "\(CurrencyCache.cache.currencySymbol) \(vm.balance.formatCurrencyString(considerCustomCurrency: true))"
+                    )
+                    .font(.Ukraine(size: 30, weight: .bold))
+                    .foregroundStyle(Color.Theme.Text.black)
 
                     Spacer()
 
@@ -420,13 +449,21 @@ struct WalletHomeView: View {
     }
 
     private func walletActionBar() -> some View {
-        return HStack {
-            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .send, allowClick: !wm.isSelectedChildAccount)
+        HStack {
+            WalletHomeView.ActionView(
+                isH: vm.showHorLayout,
+                action: .send,
+                allowClick: !wm.isSelectedChildAccount
+            )
             WalletHomeView.ActionView(isH: vm.showHorLayout, action: .receive, allowClick: true)
             WalletHomeView.ActionView(isH: vm.showHorLayout, action: .swap, allowClick: true)
                 .visibility(vm.showSwapButton ? .visible : .gone)
-            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .stake, allowClick: !wm.isSelectedChildAccount)
-                .visibility(vm.showStakeButton ? .visible : .gone)
+            WalletHomeView.ActionView(
+                isH: vm.showHorLayout,
+                action: .stake,
+                allowClick: !wm.isSelectedChildAccount
+            )
+            .visibility(vm.showStakeButton ? .visible : .gone)
         }
     }
 
@@ -434,7 +471,7 @@ struct WalletHomeView: View {
     func CoinListView() -> some View {
         VStack(spacing: 16) {
             HStack {
-                Text((vm.mCoinItems.count > 0 ? "\(vm.mCoinItems.count) " : "") + "tokens".localized)
+                Text((!vm.mCoinItems.isEmpty ? "\(vm.mCoinItems.count) " : "") + "tokens".localized)
                     .font(.inter(size: 18, weight: .bold))
                     .foregroundStyle(Color.Theme.Text.black3)
                 Spacer()
@@ -477,7 +514,10 @@ struct WalletHomeView: View {
             VStack(spacing: 5) {
                 ForEach(vm.mCoinItems, id: \.token.symbol) { coin in
                     Button {
-                        Router.route(to: RouteMap.Wallet.tokenDetail(coin.token, WalletManager.shared.accessibleManager.isAccessible(coin.token)))
+                        Router.route(to: RouteMap.Wallet.tokenDetail(
+                            coin.token,
+                            WalletManager.shared.accessibleManager.isAccessible(coin.token)
+                        ))
                     } label: {
                         WalletHomeView.CoinCell(coin: coin)
                             .contentShape(Rectangle())
@@ -508,11 +548,15 @@ struct WalletHomeView: View {
 private let CoinIconHeight: CGFloat = 44
 private let CoinCellHeight: CGFloat = 76
 
+// MARK: WalletHomeView.CoinCell
+
 extension WalletHomeView {
     struct CoinCell: View {
         let coin: WalletViewModel.WalletCoinItemModel
-        @EnvironmentObject var vm: WalletViewModel
-        @StateObject var stakingManager = StakingManager.shared
+        @EnvironmentObject
+        var vm: WalletViewModel
+        @StateObject
+        var stakingManager = StakingManager.shared
 
         var body: some View {
             VStack(spacing: 0) {
@@ -535,9 +579,11 @@ extension WalletHomeView {
 
                             Spacer()
 
-                            Text("\(vm.isHidden ? "****" : coin.balance.formatCurrencyString()) \(coin.token.symbol?.uppercased() ?? "?")")
-                                .foregroundColor(.LL.Neutrals.text)
-                                .font(.inter(size: 14, weight: .medium))
+                            Text(
+                                "\(vm.isHidden ? "****" : coin.balance.formatCurrencyString()) \(coin.token.symbol?.uppercased() ?? "?")"
+                            )
+                            .foregroundColor(.LL.Neutrals.text)
+                            .font(.inter(size: 14, weight: .medium))
                         }
 
                         HStack {
@@ -554,7 +600,10 @@ extension WalletHomeView {
                                     .background(coin.changeBG)
                                     .cornerRadius(11, style: .continuous)
                             }
-                            .visibility(WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .visible : .gone)
+                            .visibility(
+                                WalletManager.shared.accessibleManager
+                                    .isAccessible(coin.token) ? .visible : .gone
+                            )
 
                             Text("Inaccessible".localized)
                                 .foregroundStyle(Color.Flow.Font.inaccessible)
@@ -563,20 +612,28 @@ extension WalletHomeView {
                                 .padding(.vertical, 5)
                                 .background(.Flow.Font.inaccessible.opacity(0.16))
                                 .cornerRadius(4, style: .continuous)
-                                .visibility(WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .gone : .visible)
+                                .visibility(
+                                    WalletManager.shared.accessibleManager
+                                        .isAccessible(coin.token) ? .gone : .visible
+                                )
 
                             Spacer()
 
-                            Text(vm.isHidden ? "****" : "\(CurrencyCache.cache.currencySymbol)\(coin.balanceAsCurrentCurrency)")
-                                .foregroundColor(.LL.Neutrals.neutrals7)
-                                .font(.inter(size: 14, weight: .regular))
+                            Text(
+                                vm
+                                    .isHidden ? "****" :
+                                    "\(CurrencyCache.cache.currencySymbol)\(coin.balanceAsCurrentCurrency)"
+                            )
+                            .foregroundColor(.LL.Neutrals.neutrals7)
+                            .font(.inter(size: 14, weight: .regular))
                         }
                     }
                     .frame(maxWidth: .infinity)
                 }
                 .frame(minHeight: CoinCellHeight)
 
-                if EVMAccountManager.shared.selectedAccount == nil && ChildAccountManager.shared.selectedChildAccount == nil {
+                if EVMAccountManager.shared.selectedAccount == nil && ChildAccountManager.shared
+                    .selectedChildAccount == nil {
                     HStack(spacing: 0) {
                         Divider()
                             .frame(width: 1, height: 10)
@@ -603,9 +660,11 @@ extension WalletHomeView {
 
                             Spacer()
 
-                            Text("\(vm.isHidden ? "****" : stakingManager.stakingCount.formatCurrencyString()) FLOW")
-                                .foregroundColor(.LL.Neutrals.text)
-                                .font(.inter(size: 14, weight: .medium))
+                            Text(
+                                "\(vm.isHidden ? "****" : stakingManager.stakingCount.formatCurrencyString()) FLOW"
+                            )
+                            .foregroundColor(.LL.Neutrals.text)
+                            .font(.inter(size: 14, weight: .medium))
                         }
                     }
                     .padding(.leading, 19)
@@ -625,6 +684,8 @@ extension WalletHomeView {
 extension WalletHomeView {
     enum Action: String {
         case send, receive, swap, stake
+
+        // MARK: Internal
 
         var icon: String {
             switch self {
@@ -651,10 +712,10 @@ extension WalletHomeView {
                     UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                     Router.route(to: RouteMap.Explore.browser(url))
                 }
-
 //                Router.route(to: RouteMap.Wallet.swap(nil))
             case .stake:
-                if !LocalUserDefaults.shared.stakingGuideDisplayed && !StakingManager.shared.isStaked {
+                if !LocalUserDefaults.shared.stakingGuideDisplayed && !StakingManager.shared
+                    .isStaked {
                     Router.route(to: RouteMap.Wallet.stakeGuide)
                     return
                 }
@@ -662,6 +723,8 @@ extension WalletHomeView {
                 Router.route(to: RouteMap.Wallet.stakingList)
             }
         }
+
+        // MARK: Private
 
         private func incrementUrl() -> String {
             if LocalUserDefaults.shared.flowNetwork == .mainnet {
@@ -673,6 +736,29 @@ extension WalletHomeView {
     }
 
     struct ActionView: View {
+        // MARK: Public
+
+        public func container<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+            HStack(alignment: .center, spacing: 10) {
+                if isH {
+                    HStack {
+                        content()
+                    }
+                } else {
+                    VStack {
+                        content()
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 10)
+            .frame(alignment: .center)
+            .background(Color.Theme.Background.grey)
+            .cornerRadius(16)
+        }
+
+        // MARK: Internal
+
         let isH: Bool
         let action: WalletHomeView.Action
 
@@ -699,32 +785,19 @@ extension WalletHomeView {
             .buttonStyle(ScaleButtonStyle())
             .disabled(!allowClick)
         }
-
-        public func container<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-            return HStack(alignment: .center, spacing: 10) {
-                if isH {
-                    HStack {
-                        content()
-                    }
-                } else {
-                    VStack {
-                        content()
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 10)
-            .frame(alignment: .center)
-            .background(Color.Theme.Background.grey)
-            .cornerRadius(16)
-        }
     }
 }
 
+// MARK: - VisualEffectView
+
 struct VisualEffectView: UIViewRepresentable {
     var effect: UIVisualEffect?
-    func makeUIView(context _: UIViewRepresentableContext<Self>) -> UIVisualEffectView { UIVisualEffectView() }
-    func updateUIView(_ uiView: UIVisualEffectView, context _: UIViewRepresentableContext<Self>) { uiView.effect = effect }
+
+    func makeUIView(context _: UIViewRepresentableContext<Self>)
+        -> UIVisualEffectView { UIVisualEffectView() }
+    func updateUIView(_ uiView: UIVisualEffectView, context _: UIViewRepresentableContext<Self>) {
+        uiView.effect = effect
+    }
 }
 
 #Preview {
@@ -733,6 +806,8 @@ struct VisualEffectView: UIViewRepresentable {
             .preferredColorScheme(.dark)
     }
 }
+
+// MARK: - VisualEffectBlur
 
 struct VisualEffectBlur: UIViewRepresentable {
     var effect: UIBlurEffect.Style
@@ -748,31 +823,29 @@ struct VisualEffectBlur: UIViewRepresentable {
 }
 
 extension StackTransformViewOptions {
-    static let flowStack: StackTransformViewOptions = {
-        StackTransformViewOptions(
-            scaleFactor: 0.06,
-            minScale: 0.00,
-            maxScale: 1.00,
-            maxStackSize: 4,
-            spacingFactor: 0.12,
-            maxSpacing: nil,
-            alphaFactor: 0.05,
-            bottomStackAlphaSpeedFactor: 10.00,
-            topStackAlphaSpeedFactor: 0.10,
-            perspectiveRatio: 0.00,
-            shadowEnabled: true,
-            shadowColor: .black,
-            shadowOpacity: 0.06,
-            shadowOffset: .zero,
-            shadowRadius: 10.00,
-            stackRotateAngel: 0.00,
-            popAngle: 0.00,
-            popOffsetRatio: .init(width: -0.50, height: 0.30),
-            stackPosition: .init(x: -0.08, y: 1.00),
-            reverse: false,
-            blurEffectEnabled: false,
-            maxBlurEffectRadius: 0.00,
-            blurEffectStyle: .light
-        )
-    }()
+    static let flowStack: StackTransformViewOptions = .init(
+        scaleFactor: 0.06,
+        minScale: 0.00,
+        maxScale: 1.00,
+        maxStackSize: 4,
+        spacingFactor: 0.12,
+        maxSpacing: nil,
+        alphaFactor: 0.05,
+        bottomStackAlphaSpeedFactor: 10.00,
+        topStackAlphaSpeedFactor: 0.10,
+        perspectiveRatio: 0.00,
+        shadowEnabled: true,
+        shadowColor: .black,
+        shadowOpacity: 0.06,
+        shadowOffset: .zero,
+        shadowRadius: 10.00,
+        stackRotateAngel: 0.00,
+        popAngle: 0.00,
+        popOffsetRatio: .init(width: -0.50, height: 0.30),
+        stackPosition: .init(x: -0.08, y: 1.00),
+        reverse: false,
+        blurEffectEnabled: false,
+        maxBlurEffectRadius: 0.00,
+        blurEffectStyle: .light
+    )
 }

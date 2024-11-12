@@ -8,23 +8,32 @@
 import MapKit
 import SwiftUI
 
+// MARK: - CLLocationCoordinate2D + Identifiable
+
 extension CLLocationCoordinate2D: Identifiable {
     public var id: String {
         "\(latitude)-\(longitude)"
     }
 }
 
-struct DevicesInfoView: RouteableView {
-    var info: DeviceInfoModel
-    @StateObject var viewModel: DevicesInfoViewModel
+// MARK: - DevicesInfoView
 
-    var title: String {
-        return "device_info".localized
-    }
+struct DevicesInfoView: RouteableView {
+    // MARK: Lifecycle
 
     init(info: DeviceInfoModel) {
         self.info = info
         _viewModel = StateObject(wrappedValue: DevicesInfoViewModel(model: info))
+    }
+
+    // MARK: Internal
+
+    var info: DeviceInfoModel
+    @StateObject
+    var viewModel: DevicesInfoViewModel
+
+    var title: String {
+        "device_info".localized
     }
 
     var body: some View {
@@ -61,7 +70,10 @@ struct DevicesInfoView: RouteableView {
                         }
 
                         VStack {
-                            DeviceInfoItem(title: "application_tag".localized, detail: info.showApp())
+                            DeviceInfoItem(
+                                title: "application_tag".localized,
+                                detail: info.showApp()
+                            )
                             Divider()
                                 .background(Color.Theme.Line.line)
                                 .padding(.vertical, 16)
@@ -73,7 +85,10 @@ struct DevicesInfoView: RouteableView {
                             Divider()
                                 .background(Color.Theme.Line.line)
                                 .padding(.vertical, 16)
-                            DeviceInfoItem(title: "entry_date_tag".localized, detail: info.showDate())
+                            DeviceInfoItem(
+                                title: "entry_date_tag".localized,
+                                detail: info.showDate()
+                            )
                         }
                         .padding(.all, 16)
                         .background(.Theme.Background.grey)
@@ -105,9 +120,11 @@ struct DevicesInfoView: RouteableView {
         }
         .applyRouteable(self)
         .halfSheet(showSheet: $viewModel.showRemoveTipView) {
-            DangerousTipSheetView(title: "account_key_revoke_title".localized,
-                                  detail: "account_key_revoke_content".localized,
-                                  buttonTitle: "hold_to_revoke".localized) {
+            DangerousTipSheetView(
+                title: "account_key_revoke_title".localized,
+                detail: "account_key_revoke_content".localized,
+                buttonTitle: "hold_to_revoke".localized
+            ) {
                 viewModel.revokeAction()
             } onCancel: {
                 viewModel.onCancel()
@@ -166,12 +183,15 @@ struct DevicesInfoView: RouteableView {
     }
 
     func region() -> MKCoordinateRegion {
-        let region = MKCoordinateRegion(center: info.coordinate(), span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+        let region = MKCoordinateRegion(
+            center: info.coordinate(),
+            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+        )
         return region
     }
 
     func annotations() -> [CLLocationCoordinate2D] {
-        return [
+        [
             info.coordinate(),
         ]
     }
