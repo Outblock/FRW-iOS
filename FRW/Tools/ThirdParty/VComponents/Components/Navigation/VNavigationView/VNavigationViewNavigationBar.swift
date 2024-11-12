@@ -1,5 +1,5 @@
 //
-//  VNaviationViewNavigationBar.swift
+//  VNavigationViewNavigationBar.swift
 //  VComponents
 //
 //  Created by Vakhtang Kontridze on 12/22/20.
@@ -15,7 +15,7 @@ extension View {
     }
 }
 
-// MARK: - V Navigation View Navigation Bar
+// MARK: - VNaviggationViewNavigationBar
 
 struct VNaviggationViewNavigationBar: ViewModifier {
     func body(content: Content) -> some View {

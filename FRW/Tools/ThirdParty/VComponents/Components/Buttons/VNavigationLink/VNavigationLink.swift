@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Navigation Link
+// MARK: - VNavigationLink
 
 /// Button component that controls a navigation presentation.
 ///
@@ -85,36 +85,8 @@ import SwiftUI
 public struct VNavigationLink<Destination, Content>: View
     where
     Destination: View,
-    Content: View
-{
-    // MARK: Properties
-
-    private let navLinkButtonType: VNavigationLinkType
-
-    private let state: VNavigationLinkState
-
-    @State private var isActiveInternally: Bool = false
-    @Binding private var isActiveExternally: Bool
-    private let stateManagament: ComponentStateManagement
-    private var isActive: Binding<Bool> {
-        .init(
-            get: {
-                switch stateManagament {
-                case .internal: return isActiveInternally
-                case .external: return isActiveExternally
-                }
-            },
-            set: { value in
-                switch stateManagament {
-                case .internal: isActiveInternally = value
-                case .external: isActiveExternally = value
-                }
-            }
-        )
-    }
-
-    private let destination: Destination
-    private let content: () -> Content
+    Content: View {
+    // MARK: Lifecycle
 
     // MARK: Initializers - Preset and Tap
 
@@ -125,10 +97,10 @@ public struct VNavigationLink<Destination, Content>: View
         destination: Destination,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        navLinkButtonType = navLinkPreset.buttonType
+        self.navLinkButtonType = navLinkPreset.buttonType
         self.state = state
         _isActiveExternally = .constant(false)
-        stateManagament = .internal
+        self.stateManagament = .internal
         self.destination = destination
         self.content = content
     }
@@ -140,8 +112,7 @@ public struct VNavigationLink<Destination, Content>: View
         destination: Destination,
         title: String
     )
-        where Content == VText
-    {
+        where Content == VText {
         self.init(
             preset: navLinkPreset,
             state: state,
@@ -160,10 +131,10 @@ public struct VNavigationLink<Destination, Content>: View
         destination: Destination,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        navLinkButtonType = navLinkPreset.buttonType
+        self.navLinkButtonType = navLinkPreset.buttonType
         self.state = state
         _isActiveExternally = isActive
-        stateManagament = .external
+        self.stateManagament = .external
         self.destination = destination
         self.content = content
     }
@@ -176,8 +147,7 @@ public struct VNavigationLink<Destination, Content>: View
         destination: Destination,
         title: String
     )
-        where Content == VText
-    {
+        where Content == VText {
         self.init(
             preset: navLinkPreset,
             state: state,
@@ -195,10 +165,10 @@ public struct VNavigationLink<Destination, Content>: View
         destination: Destination,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        navLinkButtonType = .custom
+        self.navLinkButtonType = .custom
         self.state = state
         _isActiveExternally = .constant(false)
-        stateManagament = .internal
+        self.stateManagament = .internal
         self.destination = destination
         self.content = content
     }
@@ -212,23 +182,66 @@ public struct VNavigationLink<Destination, Content>: View
         destination: Destination,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        navLinkButtonType = .custom
+        self.navLinkButtonType = .custom
         self.state = state
         _isActiveExternally = isActive
-        stateManagament = .external
+        self.stateManagament = .external
         self.destination = destination
         self.content = content
     }
+
+    // MARK: Public
 
     // MARK: Body
 
     public var body: some View {
         contentView(isActive: isActive)
-            .background({
-                NavigationLink(destination: destinationView, isActive: isActive, label: { EmptyView() })
-                    .allowsHitTesting(false)
-                    .opacity(0)
-            }())
+            .background(
+                NavigationLink(
+                    destination: destinationView,
+                    isActive: isActive,
+                    label: { EmptyView() }
+                )
+                .allowsHitTesting(false)
+                .opacity(0)
+            )
+    }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let navLinkButtonType: VNavigationLinkType
+
+    private let state: VNavigationLinkState
+
+    @State
+    private var isActiveInternally: Bool = false
+    @Binding
+    private var isActiveExternally: Bool
+    private let stateManagament: ComponentStateManagement
+    private let destination: Destination
+    private let content: () -> Content
+
+    private var isActive: Binding<Bool> {
+        .init(
+            get: {
+                switch stateManagament {
+                case .internal: return isActiveInternally
+                case .external: return isActiveExternally
+                }
+            },
+            set: { value in
+                switch stateManagament {
+                case .internal: isActiveInternally = value
+                case .external: isActiveExternally = value
+                }
+            }
+        )
+    }
+
+    private var destinationView: some View {
+        destination.environment(\.vNavigationViewBackButtonHidden, false)
     }
 
     private func contentView(isActive: Binding<Bool>) -> some View {
@@ -239,24 +252,12 @@ public struct VNavigationLink<Destination, Content>: View
             content: content
         )
     }
-
-    private var destinationView: some View {
-        destination.environment(\.vNavigationViewBackButtonHidden, false)
-    }
 }
 
-// MARK: - Preview
+// MARK: - VNavigationLink_Previews
 
 struct VNavigationLink_Previews: PreviewProvider {
-    private static var destination: some View {
-        VBaseView(title: "Destination", content: {
-            ZStack(content: {
-                ColorBook.canvas.edgesIgnoringSafeArea(.all)
-
-                VSheet()
-            })
-        })
-    }
+    // MARK: Internal
 
     static var previews: some View {
         VNavigationView(content: {
@@ -272,6 +273,18 @@ struct VNavigationLink_Previews: PreviewProvider {
                         title: "Lorem ipsum"
                     )
                 })
+            })
+        })
+    }
+
+    // MARK: Private
+
+    private static var destination: some View {
+        VBaseView(title: "Destination", content: {
+            ZStack(content: {
+                ColorBook.canvas.edgesIgnoringSafeArea(.all)
+
+                VSheet()
             })
         })
     }

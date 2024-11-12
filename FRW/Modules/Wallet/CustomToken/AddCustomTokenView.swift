@@ -1,5 +1,5 @@
 //
-//  AddCustomToken.swift
+//  AddCustomTokenView.swift
 //  FRW
 //
 //  Created by cat on 10/30/24.
@@ -8,21 +8,21 @@
 import SwiftUI
 
 struct AddCustomTokenView: RouteableView {
+    @StateObject
+    var viewModel = AddCustomTokenViewModel()
 
-    @StateObject var viewModel = AddCustomTokenViewModel()
-    
     var title: String {
-        return "Add Custom Token".localized
+        "Add Custom Token".localized
     }
-    
+
     var body: some View {
         VStack {
             TitleView(title: "Token Contract Address".localized, isStar: false)
-            
+
             SingleInputView(content: $viewModel.customAddress) {
                 viewModel.onSearch()
             }
-            
+
             Button {
                 viewModel.onPaste()
             } label: {
@@ -34,16 +34,14 @@ struct AddCustomTokenView: RouteableView {
                     .background(Color.Theme.Background.white8)
                     .cornerRadius(12)
             }
-            
+
             Spacer()
         }
         .padding(16)
         .background(.Theme.Background.bg2)
         .applyRouteable(self)
-        
     }
 }
-
 
 #Preview {
     AddCustomTokenView()

@@ -1,5 +1,5 @@
 //
-//  BackupPatternView.swift
+//  BackupListView.swift
 //  FRW
 //
 //  Created by cat on 2023/12/8.
@@ -7,13 +7,17 @@
 
 import SwiftUI
 
-struct BackupListView: RouteableView {
-    @StateObject var viewModel = BackupListViewModel()
+// MARK: - BackupListView
 
-    @State var deletePhrase = false
+struct BackupListView: RouteableView {
+    @StateObject
+    var viewModel = BackupListViewModel()
+
+    @State
+    var deletePhrase = false
 
     var title: String {
-        return "backup".localized
+        "backup".localized
     }
 
     var body: some View {
@@ -42,7 +46,10 @@ struct BackupListView: RouteableView {
                 Divider()
                     .foregroundStyle(.clear)
                     .background(Color.Theme.Line.line)
-                    .visibility((viewModel.hasDeviceBackup && viewModel.hasMultiBackup) ? .gone : .visible)
+                    .visibility(
+                        (viewModel.hasDeviceBackup && viewModel.hasMultiBackup) ? .gone :
+                            .visible
+                    )
 
                 deviceListView
                     .visibility(viewModel.hasDeviceBackup ? .visible : .gone)
@@ -59,9 +66,11 @@ struct BackupListView: RouteableView {
         .applyRouteable(self)
         .backgroundFill(Color.LL.Neutrals.background)
         .halfSheet(showSheet: $viewModel.showRemoveTipView) {
-            DangerousTipSheetView(title: "account_key_revoke_title".localized,
-                                  detail: "account_key_revoke_content".localized,
-                                  buttonTitle: "hold_to_revoke".localized) {
+            DangerousTipSheetView(
+                title: "account_key_revoke_title".localized,
+                detail: "account_key_revoke_content".localized,
+                buttonTitle: "hold_to_revoke".localized
+            ) {
                 viewModel.removeBackup()
             } onCancel: {
                 viewModel.onCancelTip()
@@ -121,7 +130,7 @@ struct BackupListView: RouteableView {
                     .visibility(viewModel.showAllUITag ? .visible : .gone)
                 }
 
-                ForEach(0 ..< viewModel.showDevicesCount, id: \.self) { index in
+                ForEach(0..<viewModel.showDevicesCount, id: \.self) { index in
                     DevicesView.Cell(model: viewModel.deviceList[index])
                 }
             }
@@ -147,7 +156,7 @@ struct BackupListView: RouteableView {
             }
             .padding(.top, 24)
 
-            ForEach(0 ..< viewModel.backupList.count, id: \.self) { index in
+            ForEach(0..<viewModel.backupList.count, id: \.self) { index in
                 let item = viewModel.backupList[index]
                 BackupListView.BackupFinishItem(item: item, index: index) { _, deleteIndex in
                     deletePhrase = false
@@ -160,7 +169,7 @@ struct BackupListView: RouteableView {
     var phraseView: some View {
         VStack {
             HStack {
-                Text("Seed Phease Backup".localized)
+                Text("Seed Phrase Backup".localized)
                     .font(.inter(size: 16, weight: .semibold))
                     .foregroundStyle(Color.Theme.Text.black8)
                 Spacer()
@@ -174,7 +183,7 @@ struct BackupListView: RouteableView {
             }
             .padding(.top, 24)
 
-            ForEach(0 ..< viewModel.phraseList.count, id: \.self) { index in
+            ForEach(0..<viewModel.phraseList.count, id: \.self) { index in
                 let item = viewModel.phraseList[index]
                 BackupListView.BackupFinishItem(item: item, index: index) { _, deleteIndex in
                     deletePhrase = true
@@ -218,7 +227,7 @@ struct BackupListView: RouteableView {
     }
 }
 
-// MARK: Create Backup View
+// MARK: - BackupPatternItem
 
 struct BackupPatternItem: View {
     enum ItemStyle {
@@ -318,7 +327,7 @@ struct BackupPatternItem: View {
     }
 }
 
-// MARK: Finished Item View of Multi-Backup
+// MARK: - BackupListView.BackupFinishItem
 
 extension BackupListView {
     struct BackupFinishItem: View {

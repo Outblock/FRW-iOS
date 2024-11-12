@@ -1,5 +1,5 @@
 //
-//  CreateRecoveryPhraseBackup.swift
+//  ShowRecoveryPhraseBackup.swift
 //  FRW
 //
 //  Created by cat on 2024/9/19.
@@ -8,14 +8,20 @@
 import SwiftUI
 
 struct ShowRecoveryPhraseBackup: RouteableView {
-    @StateObject var viewModel: CreateRecoveryPhraseBackupViewModel
-
-    var title: String {
-        return "backup".localized
-    }
+    // MARK: Lifecycle
 
     init(mnemonic: String) {
-        _viewModel = StateObject(wrappedValue: CreateRecoveryPhraseBackupViewModel(mnemonic: mnemonic))
+        _viewModel =
+            StateObject(wrappedValue: CreateRecoveryPhraseBackupViewModel(mnemonic: mnemonic))
+    }
+
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: CreateRecoveryPhraseBackupViewModel
+
+    var title: String {
+        "backup".localized
     }
 
     var body: some View {
@@ -89,12 +95,14 @@ struct ShowRecoveryPhraseBackup: RouteableView {
             }
             Spacer()
 
-            VPrimaryButton(model: ButtonStyle.primary,
-                           action: {
-                               viewModel.onCreate()
-                           }, title: "done".localized)
-
-                .padding(.bottom, 20)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                action: {
+                    viewModel.onCreate()
+                },
+                title: "done".localized
+            )
+            .padding(.bottom, 20)
         }
         .frame(maxHeight: .infinity)
         .padding(.horizontal, 28)

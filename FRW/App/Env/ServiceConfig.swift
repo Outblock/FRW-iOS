@@ -8,21 +8,30 @@
 import Foundation
 import Instabug
 
+// MARK: - ServiceConfig
+
 class ServiceConfig {
-    static let shared = ServiceConfig()
-    private let dict: [String: String]
+    // MARK: Lifecycle
 
     init() {
         guard let filePath = Bundle.main.path(forResource: "ServiceConfig", ofType: "plist") else {
             fatalError("fatalError ===> Can't find ServiceConfig.plist")
         }
-        dict = NSDictionary(contentsOfFile: filePath) as? [String: String] ?? [:]
+        self.dict = NSDictionary(contentsOfFile: filePath) as? [String: String] ?? [:]
     }
+
+    // MARK: Internal
+
+    static let shared = ServiceConfig()
 
     static func configure() {
         ServiceConfig.shared.setupInstabug()
         ServiceConfig.shared.setupMixPanel()
     }
+
+    // MARK: Private
+
+    private let dict: [String: String]
 }
 
 // MARK: instabug config
@@ -35,7 +44,7 @@ extension ServiceConfig {
 
         InstabugConfig.start(token: token)
     }
-    
+
     private func setupMixPanel() {
         guard let token = dict["MixPanelToken"] else {
             fatalError("fatalError ===> Can't find MixPanel Token at ServiceConfig.plist")

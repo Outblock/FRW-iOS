@@ -1,6 +1,6 @@
 import UIKit
 
-internal extension CGPoint {
+extension CGPoint {
     func distance(_ point: CGPoint) -> CGFloat {
         let xDistance = x - point.x
         let yDistance = y - point.y

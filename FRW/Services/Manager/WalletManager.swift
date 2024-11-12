@@ -5,18 +5,17 @@
 //  Created by Hao Fu on 30/12/21.
 //
 
+import BigInt
 import Combine
 import Flow
 import FlowWalletCore
 import Foundation
 import KeychainAccess
 import Kingfisher
-import WalletCore
 import UIKit
-import web3swift
+import WalletCore
 import Web3Core
-import BigInt
-
+import web3swift
 
 // MARK: - Define
 
@@ -38,63 +37,18 @@ extension WalletManager {
     }
 }
 
+// MARK: - WalletManager
+
 class WalletManager: ObservableObject {
-    static let shared = WalletManager()
-
-    @Published var walletInfo: UserWalletResponse? {
-        didSet {
-            // TODO: remove after update new Flow Wallet SDK
-            updateFlowAccount()
-        }
-    }
-
-    @Published var supportedCoins: [TokenModel]?
-    @Published var evmSupportedCoins: [TokenModel]?
-    @Published var activatedCoins: [TokenModel] = []
-    @Published var coinBalances: [String: Double] = [:]
-    @Published var childAccount: ChildAccount? = nil
-    @Published var evmAccount: EVMAccountManager.Account? = nil
-
-    var accessibleManager: ChildAccountManager.AccessibleManager = .init()
-
-    private var childAccountInited: Bool = false
-
-    private var hdWallet: HDWallet?
-    var flowAccountKey: Flow.AccountKey?
-    // TODO: remove after update Flow Wallet SDK
-    var phraseAccountkey: Flow.AccountKey?
-
-    var mainKeychain = Keychain(service: (Bundle.main.bundleIdentifier ?? defaultBundleID) + ".local")
-        .label("Lilico app backup")
-        .synchronizable(false)
-        .accessibility(.whenUnlocked)
-
-    private var walletInfoRetryTimer: Timer?
-    private var cancellableSet = Set<AnyCancellable>()
-
-    var walletAccount: WalletAccount = .init()
-    @Published var balanceProvider = BalanceProvider()
-    
-    var customTokenManager: CustomTokenManager = CustomTokenManager()
-
-    var currentAccount: WalletAccount.User {
-        WalletManager.shared.walletAccount.readInfo(at: getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? "")
-    }
-
-    var defaultSigners: [FlowSigner] {
-        if RemoteConfigManager.shared.freeGasEnabled {
-            return [WalletManager.shared, RemoteConfigManager.shared]
-        }
-        return [WalletManager.shared]
-    }
-
-    private var retryCheckCount = 1
-    
-    
-    private var isShow: Bool = false
+    // MARK: Lifecycle
 
     init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(reset), name: .willResetWallet, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(reset),
+            name: .willResetWallet,
+            object: nil
+        )
 
         if UserManager.shared.activatedUID != nil {
             restoreMnemonicForCurrentUser()
@@ -108,6 +62,61 @@ class WalletManager: ObservableObject {
                 self.clearFlowAccount()
                 self.reloadWalletInfo()
             }.store(in: &cancellableSet)
+    }
+
+    // MARK: Internal
+
+    static let shared = WalletManager()
+
+    @Published
+    var supportedCoins: [TokenModel]?
+    @Published
+    var evmSupportedCoins: [TokenModel]?
+    @Published
+    var activatedCoins: [TokenModel] = []
+    @Published
+    var coinBalances: [String: Double] = [:]
+    @Published
+    var childAccount: ChildAccount? = nil
+    @Published
+    var evmAccount: EVMAccountManager.Account? = nil
+
+    var accessibleManager: ChildAccountManager.AccessibleManager = .init()
+
+    var flowAccountKey: Flow.AccountKey?
+    // TODO: remove after update Flow Wallet SDK
+    var phraseAccountkey: Flow.AccountKey?
+
+    var mainKeychain =
+        Keychain(service: (Bundle.main.bundleIdentifier ?? defaultBundleID) + ".local")
+            .label("Lilico app backup")
+            .synchronizable(false)
+            .accessibility(.whenUnlocked)
+
+    var walletAccount: WalletAccount = .init()
+    @Published
+    var balanceProvider = BalanceProvider()
+
+    var customTokenManager: CustomTokenManager = .init()
+
+    @Published
+    var walletInfo: UserWalletResponse? {
+        didSet {
+            // TODO: remove after update new Flow Wallet SDK
+            updateFlowAccount()
+        }
+    }
+
+    var currentAccount: WalletAccount.User {
+        WalletManager.shared.walletAccount
+            .readInfo(at: getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? "")
+    }
+
+    var defaultSigners: [FlowSigner] {
+        if RemoteConfigManager.shared.freeGasEnabled {
+            return [WalletManager.shared, RemoteConfigManager.shared]
+        }
+        return [WalletManager.shared]
     }
 
     func bindChildAccountManager() {
@@ -145,19 +154,41 @@ class WalletManager: ObservableObject {
             .store(in: &cancellableSet)
     }
 
+    // MARK: Private
+
+    private var childAccountInited: Bool = false
+
+    private var hdWallet: HDWallet?
+    private var walletInfoRetryTimer: Timer?
+    private var cancellableSet = Set<AnyCancellable>()
+
+    private var retryCheckCount = 1
+
+    private var isShow: Bool = false
+
     private func loadCacheData() {
         guard let uid = UserManager.shared.activatedUID else { return }
         let cacheWalletInfo = MultiAccountStorage.shared.getWalletInfo(uid)
 
         Task {
-            let cacheSupportedCoins = try? await PageCache.cache.get(forKey: CacheKeys.supportedCoins.rawValue, type: [TokenModel].self)
-            let cacheActivatedCoins = try? await PageCache.cache.get(forKey: CacheKeys.activatedCoins.rawValue, type: [TokenModel].self)
-            let cacheBalances = try? await PageCache.cache.get(forKey: CacheKeys.coinBalances.rawValue, type: [String: Double].self)
+            let cacheSupportedCoins = try? await PageCache.cache.get(
+                forKey: CacheKeys.supportedCoins.rawValue,
+                type: [TokenModel].self
+            )
+            let cacheActivatedCoins = try? await PageCache.cache.get(
+                forKey: CacheKeys.activatedCoins.rawValue,
+                type: [TokenModel].self
+            )
+            let cacheBalances = try? await PageCache.cache.get(
+                forKey: CacheKeys.coinBalances.rawValue,
+                type: [String: Double].self
+            )
 
             DispatchQueue.main.async {
                 self.walletInfo = cacheWalletInfo
 
-                if let cacheSupportedCoins = cacheSupportedCoins, let cacheActivatedCoins = cacheActivatedCoins {
+                if let cacheSupportedCoins = cacheSupportedCoins,
+                   let cacheActivatedCoins = cacheActivatedCoins {
                     self.supportedCoins = cacheSupportedCoins
                     self.activatedCoins = cacheActivatedCoins
                 }
@@ -174,11 +205,11 @@ class WalletManager: ObservableObject {
 
 extension WalletManager {
     var isSelectedChildAccount: Bool {
-        return childAccount != nil
+        childAccount != nil
     }
 
     var isSelectedEVMAccount: Bool {
-        return evmAccount != nil
+        evmAccount != nil
     }
 
     var selectedAccountIcon: String {
@@ -278,15 +309,15 @@ extension WalletManager {
         guard let address = address, !address.isEmpty else {
             return false
         }
-        return EVMAccountManager.shared.accounts
+        return !EVMAccountManager.shared.accounts
             .filter {
                 $0.showAddress.lowercased().contains(address.lowercased())
-            }.count > 0
+            }.isEmpty
     }
-    
+
     func isMain() -> Bool {
-        
-        guard let currentAddress = getWatchAddressOrChildAccountAddressOrPrimaryAddress(), !currentAddress.isEmpty else {
+        guard let currentAddress = getWatchAddressOrChildAccountAddressOrPrimaryAddress(),
+              !currentAddress.isEmpty else {
             return false
         }
         guard let primaryAddress = getPrimaryWalletAddress() else {
@@ -311,7 +342,8 @@ extension WalletManager {
         flowAccountKey = nil
     }
 
-    @objc private func reset() {
+    @objc
+    private func reset() {
         debugPrint("WalletManager: reset start")
 
         resetProperties()
@@ -341,7 +373,7 @@ extension WalletManager {
 
 extension WalletManager {
     func getCurrentMnemonic() -> String? {
-        return hdWallet?.mnemonic
+        hdWallet?.mnemonic
     }
 
     func getCurrentPublicKey() -> String? {
@@ -352,24 +384,24 @@ extension WalletManager {
     }
 
     func getCurrentPrivateKey() -> String? {
-        return hdWallet?.getPrivateKey()
+        hdWallet?.getPrivateKey()
     }
 
     func getCurrentFlowAccountKey() -> Flow.AccountKey? {
-        return hdWallet?.flowAccountKey
+        hdWallet?.flowAccountKey
     }
 
     func getPrimaryWalletAddress() -> String? {
-        return walletInfo?.currentNetworkWalletModel?.getAddress
+        walletInfo?.currentNetworkWalletModel?.getAddress
     }
 
     func getFlowNetworkTypeAddress(network: LocalUserDefaults.FlowNetworkType) -> String? {
-        return walletInfo?.getNetworkWalletModel(network: network)?.getAddress
+        walletInfo?.getNetworkWalletModel(network: network)?.getAddress
     }
 
     /// get custom watch address first, then primary address, this method is only used for tab2.
     func getPrimaryWalletAddressOrCustomWatchAddress() -> String? {
-        return LocalUserDefaults.shared.customWatchAddress ?? getPrimaryWalletAddress()
+        LocalUserDefaults.shared.customWatchAddress ?? getPrimaryWalletAddress()
     }
 
     /// watch address -> child account address -> primary address
@@ -394,7 +426,9 @@ extension WalletManager {
     }
 
     var isPreviewEnabled: Bool {
-        return walletInfo?.wallets?.first(where: { $0.chainId == LocalUserDefaults.FlowNetworkType.previewnet.rawValue })?.getAddress != nil
+        walletInfo?.wallets?
+            .first(where: { $0.chainId == LocalUserDefaults.FlowNetworkType.previewnet.rawValue })?
+            .getAddress != nil
     }
 
     func isTokenActivated(symbol: String) -> Bool {
@@ -418,7 +452,8 @@ extension WalletManager {
     }
 
     func getBalance(bySymbol symbol: String) -> Double {
-        return coinBalances[symbol] ?? coinBalances[symbol.lowercased()] ?? coinBalances[symbol.uppercased()] ?? 0
+        coinBalances[symbol] ?? coinBalances[symbol.lowercased()] ??
+            coinBalances[symbol.uppercased()] ?? 0
     }
 
     func currentContact() -> Contact {
@@ -428,7 +463,16 @@ extension WalletManager {
             user = WalletManager.shared.walletAccount.readInfo(at: addr)
         }
 
-        let contact = Contact(address: address, avatar: nil, contactName: nil, contactType: .user, domain: nil, id: UUID().hashValue, username: nil, user: user)
+        let contact = Contact(
+            address: address,
+            avatar: nil,
+            contactName: nil,
+            contactType: .user,
+            domain: nil,
+            id: UUID().hashValue,
+            username: nil,
+            user: user
+        )
         return contact
     }
 }
@@ -440,7 +484,8 @@ extension WalletManager {
     func asyncCreateWalletAddressFromServer() {
         Task {
             do {
-                let _: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.userAddress)
+                let _: Network.EmptyResponse = try await Network
+                    .requestWithRawModel(FRWAPI.User.userAddress)
                 debugPrint("WalletManager -> asyncCreateWalletAddressFromServer success")
             } catch {
                 debugPrint("WalletManager -> asyncCreateWalletAddressFromServer failed")
@@ -451,7 +496,13 @@ extension WalletManager {
     private func startWalletInfoRetryTimer() {
         debugPrint("WalletManager -> startWalletInfoRetryTimer")
         stopWalletInfoRetryTimer()
-        let timer = Timer.scheduledTimer(timeInterval: WalletManager.walletFetchInterval, target: self, selector: #selector(onWalletInfoRetryTimer), userInfo: nil, repeats: false)
+        let timer = Timer.scheduledTimer(
+            timeInterval: WalletManager.walletFetchInterval,
+            target: self,
+            selector: #selector(onWalletInfoRetryTimer),
+            userInfo: nil,
+            repeats: false
+        )
         walletInfoRetryTimer = timer
         RunLoop.main.add(timer, forMode: .common)
     }
@@ -463,7 +514,8 @@ extension WalletManager {
         }
     }
 
-    @objc private func onWalletInfoRetryTimer() {
+    @objc
+    private func onWalletInfoRetryTimer() {
         debugPrint("WalletManager -> onWalletInfoRetryTimer")
         reloadWalletInfo()
     }
@@ -506,7 +558,8 @@ extension WalletManager {
             Task {
                 do {
                     if retryCheckCount % 4 == 0 {
-                        let _: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.manualCheck)
+                        let _: Network.EmptyResponse = try await Network
+                            .requestWithRawModel(FRWAPI.User.manualCheck)
                     }
                     retryCheckCount += 1
                 } catch {
@@ -548,7 +601,11 @@ extension WalletManager {
             encodedData = Data()
         }
 
-        try set(toMainKeychain: encodedData, forKey: getMnemonicStoreKey(uid: uid), comment: "Lilico user uid: \(uid)")
+        try set(
+            toMainKeychain: encodedData,
+            forKey: getMnemonicStoreKey(uid: uid),
+            comment: "Lilico user uid: \(uid)"
+        )
 
         DispatchQueue.main.async {
             self.resetProperties()
@@ -562,9 +619,11 @@ extension WalletManager {
 extension WalletManager {
     func getMnemonicFromKeychain(uid: String) -> String? {
         if var encryptedData = getEncryptedMnemonicData(uid: uid),
-           var decryptedData = try? WalletManager.decryptionChaChaPoly(key: uid, data: encryptedData),
-           var mnemonic = String(data: decryptedData, encoding: .utf8)
-        {
+           var decryptedData = try? WalletManager.decryptionChaChaPoly(
+               key: uid,
+               data: encryptedData
+           ),
+           var mnemonic = String(data: decryptedData, encoding: .utf8) {
             defer {
                 encryptedData = Data()
                 decryptedData = Data()
@@ -591,9 +650,14 @@ extension WalletManager {
     private func restoreMnemonicFromKeychain(uid: String) -> Bool {
         do {
             if var encryptedData = getEncryptedMnemonicData(uid: uid) {
-                debugPrint("WalletManager -> start restore mnemonic from keychain, uid = \(uid), encryptedData.count = \(encryptedData.count)")
+                debugPrint(
+                    "WalletManager -> start restore mnemonic from keychain, uid = \(uid), encryptedData.count = \(encryptedData.count)"
+                )
 
-                var decryptedData = try WalletManager.decryptionChaChaPoly(key: uid, data: encryptedData)
+                var decryptedData = try WalletManager.decryptionChaChaPoly(
+                    key: uid,
+                    data: encryptedData
+                )
                 defer {
                     encryptedData = Data()
                     decryptedData = Data()
@@ -608,7 +672,9 @@ extension WalletManager {
                 }
             }
         } catch {
-            debugPrint("WalletManager -> restoreMnemonicFromKeyChain failed: uid = \(uid), error = \(error)")
+            debugPrint(
+                "WalletManager -> restoreMnemonicFromKeyChain failed: uid = \(uid), error = \(error)"
+            )
         }
 
         return false
@@ -628,11 +694,11 @@ extension WalletManager {
 
 extension WalletManager {
     private func getMnemonicStoreKey(uid: String) -> String {
-        return "\(WalletManager.mnemonicStoreKeyPrefix).\(uid)"
+        "\(WalletManager.mnemonicStoreKeyPrefix).\(uid)"
     }
 
     private func getEncryptedMnemonicData(uid: String) -> Data? {
-        return getData(fromMainKeychain: getMnemonicStoreKey(uid: uid))
+        getData(fromMainKeychain: getMnemonicStoreKey(uid: uid))
     }
 }
 
@@ -659,7 +725,8 @@ extension WalletManager {
     }
 
     private func fetchSupportedCoins() async throws {
-        let tokenResponse: SingleTokenResponse = try await Network.requestWithRawModel(GithubEndpoint.ftTokenList)
+        let tokenResponse: SingleTokenResponse = try await Network
+            .requestWithRawModel(GithubEndpoint.ftTokenList)
         let coins: [TokenModel] = tokenResponse.conversion()
         let validCoins = coins.filter { $0.getAddress()?.isEmpty == false }
         DispatchQueue.main.sync {
@@ -670,7 +737,7 @@ extension WalletManager {
     }
 
     private func fetchActivatedCoins() async throws {
-        guard let supportedCoins = supportedCoins, supportedCoins.count != 0 else {
+        guard let supportedCoins = supportedCoins, !supportedCoins.isEmpty else {
             DispatchQueue.main.sync {
                 self.activatedCoins.removeAll()
             }
@@ -687,15 +754,18 @@ extension WalletManager {
 
         var enabledList: [String: Bool] = [:]
         if let account = ChildAccountManager.shared.selectedChildAccount {
-            enabledList = try await FlowNetwork.linkedAccountEnabledTokenList(address: account.showAddress)
+            enabledList = try await FlowNetwork
+                .linkedAccountEnabledTokenList(address: account.showAddress)
         } else {
-            enabledList = try await FlowNetwork.checkTokensEnable(address: Flow.Address(hex: address))
+            enabledList = try await FlowNetwork
+                .checkTokensEnable(address: Flow.Address(hex: address))
         }
 
         var list = [TokenModel]()
         for (_, value) in enabledList.enumerated() {
             if value.value {
-                let model = supportedCoins.first { $0.contractId.lowercased() == value.key.lowercased() }
+                let model = supportedCoins
+                    .first { $0.contractId.lowercased() == value.key.lowercased() }
                 if let model = model {
                     list.append(model)
                 }
@@ -715,7 +785,8 @@ extension WalletManager {
             return
         }
         do {
-            let tokenResponse: SingleTokenResponse = try await Network.requestWithRawModel(GithubEndpoint.EVMTokenList)
+            let tokenResponse: SingleTokenResponse = try await Network
+                .requestWithRawModel(GithubEndpoint.EVMTokenList)
             let coins: [TokenModel] = tokenResponse.conversion()
             DispatchQueue.main.async {
                 self.evmSupportedCoins = coins
@@ -768,44 +839,41 @@ extension WalletManager {
         guard var tokenModel = tokenModel, let symbol = tokenModel.symbol else { return }
 
         let list = try await EVMAccountManager.shared.fetchTokens()
-        
+
         DispatchQueue.main.sync {
             log.info("[EVM] load balance success \(balance)")
             tokenModel.flowIdentifier = tokenModel.contractId
             self.activatedCoins = [tokenModel]
             self.coinBalances = [symbol: balance.doubleValue]
 
-            list.forEach { item in
+            for item in list {
                 if item.flowBalance > 0 {
                     let result = self.evmSupportedCoins?.first(where: { model in
                         model.getAddress()?.lowercased() == item.address.lowercased()
                     })
                     if let result = result {
                         self.activatedCoins.append(result)
-                    } else {
-                        self.activatedCoins.append(item.toTokenModel())
+                        self.coinBalances[item.symbol] = item.flowBalance
                     }
-                    self.coinBalances[item.symbol] = item.flowBalance
                 }
             }
         }
     }
-    
+
     private func fetchCustomBalance() async throws {
-        guard let evmAddress = EVMAccountManager.shared.selectedAccount?.showAddress else {
+        guard (EVMAccountManager.shared.selectedAccount?.showAddress) != nil else {
             return
         }
         await customTokenManager.fetchAllEVMBalance()
         let list = customTokenManager.list
         DispatchQueue.main.sync {
-            list.forEach { token in
+            for token in list {
                 addCustomToken(token: token)
             }
         }
     }
-    
+
     func addCustomToken(token: CustomToken) {
-        
         DispatchQueue.main.async {
             self.activatedCoins.append(token.toToken())
             let balance = token.balance ?? BigUInt(0)
@@ -815,6 +883,15 @@ extension WalletManager {
                 formattingDecimals: token.decimals
             ).doubleValue
             self.coinBalances[token.symbol] = result
+        }
+    }
+
+    func deleteCustomToken(token: CustomToken) {
+        DispatchQueue.main.async {
+            self.activatedCoins.removeAll { model in
+                model.getAddress() == token.address && model.name == token.name
+            }
+            self.coinBalances[token.symbol] = nil
         }
     }
 
@@ -839,7 +916,11 @@ extension WalletManager {
         try mainKeychain.set(value, key: key)
     }
 
-    private func set(toMainKeychain value: Data, forKey key: String, comment: String? = nil) throws {
+    private func set(
+        toMainKeychain value: Data,
+        forKey key: String,
+        comment: String? = nil
+    ) throws {
         if let comment = comment {
             try mainKeychain.comment(comment).set(value, key: key)
         } else {
@@ -848,14 +929,18 @@ extension WalletManager {
     }
 
     private func getString(fromMainKeychain key: String) -> String? {
-        return try? mainKeychain.getString(key)
+        try? mainKeychain.getString(key)
     }
 
     private func getData(fromMainKeychain key: String) -> Data? {
-        return try? mainKeychain.getData(key)
+        try? mainKeychain.getData(key)
     }
 
-    static func encryptionAES(key: String, iv: String = LocalEnvManager.shared.aesIV, data: Data) throws -> Data {
+    static func encryptionAES(
+        key: String,
+        iv: String = LocalEnvManager.shared.aesIV,
+        data: Data
+    ) throws -> Data {
         guard var keyData = key.data(using: .utf8), let ivData = iv.data(using: .utf8) else {
             throw LLError.aesKeyEncryptionFailed
         }
@@ -865,13 +950,18 @@ extension WalletManager {
             keyData = keyData.paddingZeroRight(blockSize: 16)
         }
 
-        guard let encrypted = AES.encryptCBC(key: keyData, data: data, iv: ivData, mode: .pkcs7) else {
+        guard let encrypted = AES.encryptCBC(key: keyData, data: data, iv: ivData, mode: .pkcs7)
+        else {
             throw LLError.aesEncryptionFailed
         }
         return encrypted
     }
 
-    static func decryptionAES(key: String, iv: String = LocalEnvManager.shared.aesIV, data: Data) throws -> Data {
+    static func decryptionAES(
+        key: String,
+        iv: String = LocalEnvManager.shared.aesIV,
+        data: Data
+    ) throws -> Data {
         guard var keyData = key.data(using: .utf8), let ivData = iv.data(using: .utf8) else {
             throw LLError.aesKeyEncryptionFailed
         }
@@ -882,7 +972,8 @@ extension WalletManager {
             keyData = keyData.paddingZeroRight(blockSize: 16)
         }
 
-        guard let decrypted = AES.decryptCBC(key: keyData, data: data, iv: ivData, mode: .pkcs7) else {
+        guard let decrypted = AES.decryptCBC(key: keyData, data: data, iv: ivData, mode: .pkcs7)
+        else {
             throw LLError.aesEncryptionFailed
         }
         return decrypted
@@ -902,6 +993,8 @@ extension WalletManager {
         return try cipher.decrypt(combinedData: data)
     }
 }
+
+// MARK: FlowSigner
 
 extension WalletManager: FlowSigner {
     public var address: Flow.Address {
@@ -941,13 +1034,14 @@ extension WalletManager: FlowSigner {
             HUD.error(title: "verify_failed".localized)
             throw WalletError.securityVerifyFailed
         }
-        
+
         if flowAccountKey == nil {
             try await findFlowAccount()
         }
 
         if userSecretSign() {
-            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey {
+            if let userId = walletInfo?.id,
+               let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey {
                 let sec = try WallectSecureEnclave(privateKey: data)
                 let signature = try sec.sign(data: signableData)
                 return signature
@@ -958,7 +1052,10 @@ extension WalletManager: FlowSigner {
             throw LLError.emptyWallet
         }
 
-        var privateKey = hdWallet.getKeyByCurve(curve: .secp256k1, derivationPath: WalletManager.flowPath)
+        var privateKey = hdWallet.getKeyByCurve(
+            curve: .secp256k1,
+            derivationPath: WalletManager.flowPath
+        )
         let hashedData = Hash.sha256(data: signableData)
 
         defer {
@@ -984,7 +1081,8 @@ extension WalletManager: FlowSigner {
             try await findFlowAccount()
         }
         if userSecretSign() {
-            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey {
+            if let userId = walletInfo?.id,
+               let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey {
                 let sec = try WallectSecureEnclave(privateKey: data)
                 let signature = try sec.sign(data: signableData)
                 return signature
@@ -995,7 +1093,10 @@ extension WalletManager: FlowSigner {
             throw LLError.emptyWallet
         }
 
-        var privateKey = hdWallet.getKeyByCurve(curve: .secp256k1, derivationPath: WalletManager.flowPath)
+        var privateKey = hdWallet.getKeyByCurve(
+            curve: .secp256k1,
+            derivationPath: WalletManager.flowPath
+        )
         let hashedData = Hash.sha256(data: signableData)
 
         defer {
@@ -1012,10 +1113,10 @@ extension WalletManager: FlowSigner {
     }
 
     public func signSync(signableData: Data) -> Data? {
-        
         if userSecretSign() {
             do {
-                if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey {
+                if let userId = walletInfo?.id,
+                   let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey {
                     let sec = try WallectSecureEnclave(privateKey: data)
                     let signature = try sec.sign(data: signableData)
                     return signature
@@ -1029,7 +1130,10 @@ extension WalletManager: FlowSigner {
             return nil
         }
 
-        var privateKey = hdWallet.getKeyByCurve(curve: .secp256k1, derivationPath: WalletManager.flowPath)
+        var privateKey = hdWallet.getKeyByCurve(
+            curve: .secp256k1,
+            derivationPath: WalletManager.flowPath
+        )
         let hashedData = Hash.sha256(data: signableData)
 
         defer {
@@ -1099,57 +1203,73 @@ extension WalletManager: FlowSigner {
             }
         }
     }
-    
-    
+
     @discardableResult
     func warningIfKeyIsInvalid(userId: String, markHide: Bool = false) -> Bool {
-        if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: userId), !mnemonic.isEmpty, mnemonic.split(separator: " ").count != 15 {
+        if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: userId),
+           !mnemonic.isEmpty, mnemonic.split(separator: " ").count != 15 {
             return false
         }
         do {
             let model = try WallectSecureEnclave.Store.fetchModel(by: userId)
             let list = try WallectSecureEnclave.Store.fetchAllModel(by: userId)
-            if model == nil && list.count > 0 {
+            if model == nil && !list.isEmpty {
                 DispatchQueue.main.async {
                     if self.isShow {
                         return
                     }
                     self.isShow = true
-                    let alertVC = BetterAlertController(title: "Something__is__wrong::message".localized, message: "profile_key_invalid".localized, preferredStyle: .alert)
+                    let alertVC = BetterAlertController(
+                        title: "Something__is__wrong::message".localized,
+                        message: "profile_key_invalid".localized,
+                        preferredStyle: .alert
+                    )
 
-                    let cancelAction = UIAlertAction(title: "action_cancel".localized, style: .cancel) { _ in
+                    let cancelAction = UIAlertAction(
+                        title: "action_cancel".localized,
+                        style: .cancel
+                    ) { _ in
                         self.isShow = false
                     }
 
-                    let restoreAction = UIAlertAction(title: "Restore Profile".localized, style: .default) { _ in
+                    let restoreAction = UIAlertAction(
+                        title: "Restore Profile".localized,
+                        style: .default
+                    ) { _ in
                         self.isShow = false
                         Router.route(to: RouteMap.RestoreLogin.restoreList)
                     }
                     alertVC.modalPresentationStyle = .overFullScreen
                     alertVC.addAction(cancelAction)
                     alertVC.addAction(restoreAction)
-                    
+
                     if markHide {
-                        let hideAction = UIAlertAction(title: "Hide Profile".localized, style: .default) { _ in
+                        let hideAction = UIAlertAction(
+                            title: "Hide Profile".localized,
+                            style: .default
+                        ) { _ in
                             self.isShow = false
                             do {
                                 try WallectSecureEnclave.Store.hideInvalidKey(by: userId)
                                 UserManager.shared.deleteLoginUID(userId)
-                            }catch {
-                                log.error("[SecureEnclave] hide key for \(userId) failed. \(error.localizedDescription)")
+                            } catch {
+                                log
+                                    .error(
+                                        "[SecureEnclave] hide key for \(userId) failed. \(error.localizedDescription)"
+                                    )
                             }
                         }
                         alertVC.addAction(hideAction)
                     }
                     Router.topNavigationController()?.present(alertVC, animated: true)
                 }
-                
+
                 return true
             }
-        }catch {
+        } catch {
             return true
         }
-        
+
         return false
     }
 }
@@ -1198,10 +1318,12 @@ extension HDWallet {
     var flowAccountKey: Flow.AccountKey {
         let p256PublicKey = getPublicKey()
         let key = Flow.PublicKey(hex: String(p256PublicKey))
-        return Flow.AccountKey(publicKey: key,
-                               signAlgo: .ECDSA_SECP256k1,
-                               hashAlgo: .SHA2_256,
-                               weight: 1000)
+        return Flow.AccountKey(
+            publicKey: key,
+            signAlgo: .ECDSA_SECP256k1,
+            hashAlgo: .SHA2_256,
+            weight: 1000
+        )
     }
 
     var flowAccountP256Key: Flow.AccountKey {
@@ -1212,19 +1334,23 @@ extension HDWallet {
             .hexValue
             .dropPrefix("04")
         let key = Flow.PublicKey(hex: String(p256PublicKey))
-        return Flow.AccountKey(publicKey: key,
-                               signAlgo: .ECDSA_P256,
-                               hashAlgo: .SHA2_256,
-                               weight: 1000)
+        return Flow.AccountKey(
+            publicKey: key,
+            signAlgo: .ECDSA_P256,
+            hashAlgo: .SHA2_256,
+            weight: 1000
+        )
     }
 }
 
 extension Flow.AccountKey {
     func toCodableModel() -> AccountKey {
-        return AccountKey(hashAlgo: hashAlgo.index,
-                          publicKey: publicKey.hex,
-                          signAlgo: signAlgo.index,
-                          weight: weight)
+        AccountKey(
+            hashAlgo: hashAlgo.index,
+            publicKey: publicKey.hex,
+            signAlgo: signAlgo.index,
+            weight: weight
+        )
     }
 }
 

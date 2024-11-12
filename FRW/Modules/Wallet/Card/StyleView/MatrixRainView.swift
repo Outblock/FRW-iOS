@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: - MatrixRainView
+
 struct MatrixRainView: View {
     var body: some View {
         ZStack {
@@ -19,7 +21,7 @@ struct MatrixRainView: View {
                     // Repeating the effects until it occupied the full screen
                     // With the help of ForEach
                     // For Count since our font size is 25 so width/fontSize will the give the count
-                    ForEach(1 ... Int(size.width / 25), id: \.self) { _ in
+                    ForEach(1...Int(size.width / 25), id: \.self) { _ in
                         MatrixRainCharacters(size: size)
                     }
                 }
@@ -29,23 +31,27 @@ struct MatrixRainView: View {
     }
 }
 
+// MARK: - MatrixRainCharacters
+
 struct MatrixRainCharacters: View {
     var size: CGSize
 
     // MARK: Animation Properties
 
-    @State var startAnimation: Bool = false
+    @State
+    var startAnimation: Bool = false
 
-    @State var random: Int = 0
+    @State
+    var random: Int = 0
 
     var body: some View {
         // Random Height
-        let randomHeight: CGFloat = .random(in: (size.height / 2) ... size.height)
+        let randomHeight: CGFloat = .random(in: (size.height / 2)...size.height)
 
         VStack {
             // MARK: Iterating String
 
-            ForEach(0 ..< constant.count, id: \.self) { index in
+            ForEach(0..<constant.count, id: \.self) { index in
 
                 // Retriving Character at String
                 let character = Array(constant)[getRandomIndex(index: index)]
@@ -78,14 +84,17 @@ struct MatrixRainCharacters: View {
             // Moving Slowly down with linear Animation
             // Endless loop without reversing
             // Random delay for more fluent Effect
-            withAnimation(.linear(duration: 10).delay(.random(in: 0 ... 2)).repeatForever(autoreverses: false)) {
+            withAnimation(
+                .linear(duration: 10).delay(.random(in: 0...2))
+                    .repeatForever(autoreverses: false)
+            ) {
                 startAnimation = true
             }
         }
         // Timer
         .onReceive(Timer.publish(every: 0.2, on: .main, in: .common).autoconnect()) { _ in
 
-            random = Int.random(in: 0 ..< constant.count)
+            random = Int.random(in: 0..<constant.count)
         }
     }
 
@@ -98,12 +107,14 @@ struct MatrixRainCharacters: View {
             if (index - random) < 0 {
                 return index
             }
-            return (index - random)
+            return index - random
         } else {
-            return (index + random)
+            return index + random
         }
     }
 }
+
+// MARK: - MatrixRainView_Previews
 
 struct MatrixRainView_Previews: PreviewProvider {
     static var previews: some View {

@@ -9,38 +9,10 @@ import Combine
 import Flow
 import Foundation
 
+// MARK: - AddCollectionViewModel
+
 class AddCollectionViewModel: ObservableObject {
-    private var cancelSets = Set<AnyCancellable>()
-
-    @Published var searchQuery = ""
-    @Published var isAddingCollection: Bool = false
-    @Published var isConfirmSheetPresented: Bool = false
-    @Published var isMock: Bool = false
-
-    var liveList: [NFTCollectionItem] {
-        if isMock {
-            return [NFTCollectionItem].mock(10)
-        }
-
-        if searchQuery.isEmpty {
-            return collectionList
-        }
-        var list: [NFTCollectionItem] = []
-        list = collectionList.filter { item in
-            let name = item.collection.name ?? ""
-            
-            if name.localizedCaseInsensitiveContains(searchQuery) {
-                return true
-            }
-            if let des = item.collection.description, des.localizedCaseInsensitiveContains(searchQuery) {
-                return true
-            }
-            return false
-        }
-        return list
-    }
-
-    private var collectionList: [NFTCollectionItem] = []
+    // MARK: Lifecycle
 
     init() {
         Task {
@@ -56,6 +28,41 @@ class AddCollectionViewModel: ObservableObject {
                 await self.load()
             }
         }.store(in: &cancelSets)
+    }
+
+    // MARK: Internal
+
+    @Published
+    var searchQuery = ""
+    @Published
+    var isAddingCollection: Bool = false
+    @Published
+    var isConfirmSheetPresented: Bool = false
+    @Published
+    var isMock: Bool = false
+
+    var liveList: [NFTCollectionItem] {
+        if isMock {
+            return [NFTCollectionItem].mock(10)
+        }
+
+        if searchQuery.isEmpty {
+            return collectionList
+        }
+        var list: [NFTCollectionItem] = []
+        list = collectionList.filter { item in
+            let name = item.collection.name ?? ""
+
+            if name.localizedCaseInsensitiveContains(searchQuery) {
+                return true
+            }
+            if let des = item.collection.description,
+               des.localizedCaseInsensitiveContains(searchQuery) {
+                return true
+            }
+            return false
+        }
+        return list
     }
 
     func load() async {
@@ -87,12 +94,18 @@ class AddCollectionViewModel: ObservableObject {
             self.isMock = false
         }
     }
+
+    // MARK: Private
+
+    private var cancelSets = Set<AnyCancellable>()
+
+    private var collectionList: [NFTCollectionItem] = []
 }
 
 extension AddCollectionViewModel {
     func hasTrending() -> Bool {
         // TODO:
-        return false
+        false
     }
 
     func addCollectionAction(item: NFTCollectionItem) {
@@ -123,7 +136,10 @@ extension AddCollectionViewModel {
 
         Task {
             do {
-                let transactionId = try await FlowNetwork.addCollection(at: Flow.Address(hex: address), collection: item.collection)
+                let transactionId = try await FlowNetwork.addCollection(
+                    at: Flow.Address(hex: address),
+                    collection: item.collection
+                )
 
                 guard let data = try? JSONEncoder().encode(item.collection) else {
                     failedBlock()
@@ -134,7 +150,11 @@ extension AddCollectionViewModel {
                     self.isAddingCollection = false
                     self.isConfirmSheetPresented = false
 
-                    let holder = TransactionManager.TransactionHolder(id: transactionId, type: .addCollection, data: data)
+                    let holder = TransactionManager.TransactionHolder(
+                        id: transactionId,
+                        type: .addCollection,
+                        data: data
+                    )
                     TransactionManager.shared.newTransaction(holder: holder)
                 }
             } catch {
@@ -144,6 +164,8 @@ extension AddCollectionViewModel {
         }
     }
 }
+
+// MARK: - NFTCollectionItem
 
 struct NFTCollectionItem: Hashable, Mockable, Codable {
     enum ItemStatus: Codable {
@@ -156,6 +178,10 @@ struct NFTCollectionItem: Hashable, Mockable, Codable {
     var collection: NFTCollectionInfo
     var status: ItemStatus = .idle
 
+    static func mock() -> NFTCollectionItem {
+        NFTCollectionItem(collection: NFTCollectionInfo.mock(), status: .idle)
+    }
+
     func processName() -> String {
         switch status {
         case .idle:
@@ -167,9 +193,5 @@ struct NFTCollectionItem: Hashable, Mockable, Codable {
         case .failed:
             return "nft_collection_add_failed".localized
         }
-    }
-
-    static func mock() -> NFTCollectionItem {
-        return NFTCollectionItem(collection: NFTCollectionInfo.mock(), status: .idle)
     }
 }

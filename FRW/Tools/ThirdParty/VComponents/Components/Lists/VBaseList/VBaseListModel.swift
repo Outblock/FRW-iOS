@@ -1,5 +1,5 @@
 //
-//  VGenericListContent.swift
+//  VBaseListModel.swift
 //  VComponents
 //
 //  Created by Vakhtang Kontridze on 1/10/21.
@@ -11,26 +11,33 @@ import SwiftUI
 
 /// Model that describes UI.
 public struct VBaseListModel {
-    // MARK: Properties
-
-    /// Sub-model containing layout properties.
-    public var layout: Layout = .init()
-
-    /// Sub-model containing color properties.
-    public var colors: Colors = .init()
-
-    /// Sub-model containing misc properties.
-    public var misc: Misc = .init()
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes model with default values.
     public init() {}
 
+    // MARK: Public
+
     // MARK: Layout
 
     /// Sub-model containing layout properties.
     public struct Layout {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: Horizontal Margins
+
+        /// Sub-model containing `leading` and `trailing` margins.
+        public typealias HorizontalMargins = LayoutGroup_LT
+
         // MARK: Properties
 
         /// Trailing margin. Defaults to `0`.
@@ -50,50 +57,63 @@ public struct VBaseListModel {
             trailing: 0
         )
 
+        // MARK: Internal
+
         var dividerMarginVertical: CGFloat { rowSpacing / 2 }
 
         var hasDivider: Bool { dividerHeight > 0 }
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: Horizontal Margins
-
-        /// Sub-model containing `leading` and `trailing` margins.
-        public typealias HorizontalMargins = LayoutGroup_LT
     }
 
     // MARK: Colors
 
     /// Sub-model containing color properties.
     public struct Colors {
-        // MARK: Properties
-
-        /// Divider color.
-        public var divider: Color = .init(componentAsset: "BaseList.Divider")
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
         /// Initializes sub-model with default values.
         public init() {}
+
+        // MARK: Public
+
+        // MARK: Properties
+
+        /// Divider color.
+        public var divider: Color = .init(componentAsset: "BaseList.Divider")
     }
 
     // MARK: Misc
 
     /// Sub-model containing misc properties.
     public struct Misc {
-        // MARK: Properties
-
-        /// Indicates if scrolling indicator is shown. Defaults to `true`.
-        public var showIndicator: Bool = true
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
         /// Initializes sub-model with default values.
         public init() {}
+
+        // MARK: Public
+
+        // MARK: Properties
+
+        /// Indicates if scrolling indicator is shown. Defaults to `true`.
+        public var showIndicator: Bool = true
     }
+
+    // MARK: Properties
+
+    /// Sub-model containing layout properties.
+    public var layout: Layout = .init()
+
+    /// Sub-model containing color properties.
+    public var colors: Colors = .init()
+
+    /// Sub-model containing misc properties.
+    public var misc: Misc = .init()
+
+    // MARK: Internal
 
     // MARK: Sub-Models
 

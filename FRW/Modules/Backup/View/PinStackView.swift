@@ -1,5 +1,5 @@
 //
-//  TestView.swift
+//  PinStackView.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 6/1/22.
@@ -8,6 +8,8 @@
 import Introspect
 import SwiftUI
 import SwiftUIX
+
+// MARK: - PinStackView
 
 struct PinStackView: View {
     var maxDigits: Int
@@ -44,8 +46,10 @@ struct PinStackView: View {
 
     var body: some View {
         ZStack {
-            VBaseTextField(state: $focuse,
-                           text: $pin) {
+            VBaseTextField(
+                state: $focuse,
+                text: $pin
+            ) {
                 handler(pin, pin.count == maxDigits)
             }
             .onReceive(pin.publisher.collect()) {
@@ -70,7 +74,7 @@ struct PinStackView: View {
 //                }
 
             HStack(spacing: 24) {
-                ForEach(0 ..< maxDigits) { digit in
+                ForEach(0..<maxDigits) { digit in
 //                    Text(self.getPinNumber(digit)).padding().background(Color(.systemFill))
                     Circle()
                         .frame(width: 20, height: 20, alignment: .center)
@@ -86,15 +90,20 @@ struct PinStackView: View {
     }
 }
 
+// MARK: - PinStackView_Previews
+
 struct PinStackView_Previews: PreviewProvider {
     @State
     static var test: Bool = false
+
     static var previews: some View {
-        PinStackView(maxDigits: 6,
-                     emptyColor: .gray,
-                     highlightColor: Color.LL.orange,
-                     needClear: false,
-                     pin: .constant("")) { pin, complete in
+        PinStackView(
+            maxDigits: 6,
+            emptyColor: .gray,
+            highlightColor: Color.LL.orange,
+            needClear: false,
+            pin: .constant("")
+        ) { pin, complete in
             print(pin)
             if complete {
                 test = true

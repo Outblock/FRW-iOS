@@ -16,6 +16,8 @@ import GoogleSignIn
 import GTMSessionFetcherCore
 import WalletCore
 
+// MARK: - MultiBackupTarget
+
 protocol MultiBackupTarget {
     var uploadedItem: MultiBackupManager.StoreItem? { get set }
     var registeredDeviceInfo: SyncInfo.DeviceInfo? { get set }
@@ -25,28 +27,43 @@ protocol MultiBackupTarget {
     func removeItem(password: String) async throws
 }
 
+// MARK: - MultiBackupManager
+
 class MultiBackupManager: ObservableObject {
+    // MARK: Lifecycle
+
+    init() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onTransactionManagerChanged),
+            name: .transactionManagerDidChanged,
+            object: nil
+        )
+    }
+
+    // MARK: Internal
+
     static let shared = MultiBackupManager()
 
-    private let gdTarget = MultiBackupGoogleDriveTarget()
-    private let iCloudTarget = MultiBackupiCloudTarget()
-    private let phraseTarget = MultiBackupPhraseTarget()
-    private let passkeyTarget = MultiBackupPasskeyTarget()
-    private let password = LocalEnvManager.shared.backupAESKey
     static let backupFileName = "outblock_multi_backup"
 
     var deviceInfo: SyncInfo.DeviceInfo?
     var backupType: BackupType = .undefined
     var backupList: [MultiBackupType] = []
 
-    @Published var mnemonic: String?
+    @Published
+    var mnemonic: String?
 
-    init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(onTransactionManagerChanged), name: .transactionManagerDidChanged, object: nil)
-    }
+    // MARK: Private
+
+    private let gdTarget = MultiBackupGoogleDriveTarget()
+    private let iCloudTarget = MultiBackupiCloudTarget()
+    private let phraseTarget = MultiBackupPhraseTarget()
+    private let passkeyTarget = MultiBackupPasskeyTarget()
+    private let password = LocalEnvManager.shared.backupAESKey
 }
 
-// MARK: - Data
+// MARK: MultiBackupManager.StoreItem
 
 extension MultiBackupManager {
     struct StoreItem: Codable {
@@ -63,6 +80,7 @@ extension MultiBackupManager {
         var updatedTime: Double? = Date.now.timeIntervalSince1970
         let deviceInfo: DeviceInfoRequest?
         var code: String?
+
         func showDate() -> String {
             guard let updatedTime = updatedTime else { return "" }
             let date = Date(timeIntervalSince1970: updatedTime)
@@ -102,7 +120,8 @@ extension MultiBackupManager {
             throw BackupError.missingMnemonic
         }
 
-        guard let hdWallet = WalletManager.shared.createHDWallet(), let mnemonicData = hdWallet.mnemonic.data(using: .utf8) else {
+        guard let hdWallet = WalletManager.shared.createHDWallet(),
+              let mnemonicData = hdWallet.mnemonic.data(using: .utf8) else {
             HUD.error(title: "empty_wallet_key".localized)
             throw BackupError.missingMnemonic
         }
@@ -114,7 +133,10 @@ extension MultiBackupManager {
             throw BackupError.hexStringToDataFailed
         }
 
-        let dataHexString = try encryptMnemonic(mnemonicData, password: type.needPin ? pinCode : password)
+        let dataHexString = try encryptMnemonic(
+            mnemonicData,
+            password: type.needPin ? pinCode : password
+        )
         let publicKey = hdWallet.flowAccountP256Key.publicKey.description
 
         let result = try await addKeyToFlow(key: publicKey)
@@ -129,9 +151,22 @@ extension MultiBackupManager {
         }
 
         let flowPublicKey = Flow.PublicKey(hex: publicKey)
-        let flowKey = Flow.AccountKey(publicKey: flowPublicKey, signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 500)
+        let flowKey = Flow.AccountKey(
+            publicKey: flowPublicKey,
+            signAlgo: .ECDSA_P256,
+            hashAlgo: .SHA2_256,
+            weight: 500
+        )
         let backupName = type.showName()
-        let deviceInfo = SyncInfo.DeviceInfo(accountKey: flowKey.toCodableModel(), deviceInfo: IPManager.shared.toParams(), backupInfo: BackupInfoModel(createTime: nil, name: backupName, type: type.toBackupType().rawValue))
+        let deviceInfo = SyncInfo.DeviceInfo(
+            accountKey: flowKey.toCodableModel(),
+            deviceInfo: IPManager.shared.toParams(),
+            backupInfo: BackupInfoModel(
+                createTime: nil,
+                name: backupName,
+                type: type.toBackupType().rawValue
+            )
+        )
 
         let item = MultiBackupManager.StoreItem(
             address: address,
@@ -172,9 +207,13 @@ extension MultiBackupManager {
             return
         }
         do {
-            let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.syncDevice(model))
+            let response: Network.EmptyResponse = try await Network
+                .requestWithRawModel(FRWAPI.User.syncDevice(model))
             if response.httpCode != 200 {
-                log.info("[MultiBackup] add device failed. publicKey: \(model.accountKey.publicKey)")
+                log
+                    .info(
+                        "[MultiBackup] add device failed. publicKey: \(model.accountKey.publicKey)"
+                    )
             }
         } catch {
             log.error("[sync account] error \(error.localizedDescription)")
@@ -198,7 +237,11 @@ extension MultiBackupManager {
         }
     }
 
-    private func updateTarget(on type: MultiBackupType, item: MultiBackupManager.StoreItem, deviceInfo: SyncInfo.DeviceInfo) {
+    private func updateTarget(
+        on type: MultiBackupType,
+        item: MultiBackupManager.StoreItem,
+        deviceInfo: SyncInfo.DeviceInfo
+    ) {
         switch type {
         case .google:
             gdTarget.uploadedItem = item
@@ -217,7 +260,8 @@ extension MultiBackupManager {
 }
 
 extension MultiBackupManager {
-    func getCloudDriveItems(from type: MultiBackupType) async throws -> [MultiBackupManager.StoreItem] {
+    func getCloudDriveItems(from type: MultiBackupType) async throws
+        -> [MultiBackupManager.StoreItem] {
         switch type {
         case .google:
             try await login(from: type)
@@ -237,7 +281,6 @@ extension MultiBackupManager {
             try await gdTarget.loginCloud()
         case .passkey:
             log.info("not finished")
-
         case .icloud:
             try await iCloudTarget.loginCloud()
             log.info("not finished")
@@ -266,7 +309,11 @@ extension MultiBackupManager {
 
 extension MultiBackupManager {
     /// append current user mnemonic to list
-    func addNewMnemonic(on type: MultiBackupType, list: [MultiBackupManager.StoreItem], password _: String) async throws -> [MultiBackupManager.StoreItem] {
+    func addNewMnemonic(
+        on type: MultiBackupType,
+        list: [MultiBackupManager.StoreItem],
+        password _: String
+    ) async throws -> [MultiBackupManager.StoreItem] {
         guard let uid = UserManager.shared.activatedUID, !uid.isEmpty else {
             throw BackupError.missingUid
         }
@@ -282,7 +329,10 @@ extension MultiBackupManager {
         return newList
     }
 
-    func removeCurrent(_ list: [MultiBackupManager.StoreItem], password _: String) async throws -> [MultiBackupManager.StoreItem] {
+    func removeCurrent(
+        _ list: [MultiBackupManager.StoreItem],
+        password _: String
+    ) async throws -> [MultiBackupManager.StoreItem] {
         guard let username = UserManager.shared.userInfo?.username, !username.isEmpty else {
             throw BackupError.missingUserName
         }
@@ -309,7 +359,11 @@ extension MultiBackupManager {
     func encryptList(_ list: [MultiBackupManager.StoreItem]) throws -> String {
         let jsonData = try JSONEncoder().encode(list)
         let iv = iv()
-        let encrypedData = try WalletManager.encryptionAES(key: LocalEnvManager.shared.backupAESKey, iv: iv, data: jsonData)
+        let encrypedData = try WalletManager.encryptionAES(
+            key: LocalEnvManager.shared.backupAESKey,
+            iv: iv,
+            data: jsonData
+        )
         return encrypedData.hexString
     }
 
@@ -324,7 +378,11 @@ extension MultiBackupManager {
 
     private func decryptData(_ data: Data) throws -> [MultiBackupManager.StoreItem] {
         let iv = iv()
-        let jsonData = try WalletManager.decryptionAES(key: LocalEnvManager.shared.backupAESKey, iv: iv, data: data)
+        let jsonData = try WalletManager.decryptionAES(
+            key: LocalEnvManager.shared.backupAESKey,
+            iv: iv,
+            data: data
+        )
         let list = try JSONDecoder().decode([MultiBackupManager.StoreItem].self, from: jsonData)
         return list
     }
@@ -334,7 +392,11 @@ extension MultiBackupManager {
         guard let iv = password.toPassword() else {
             throw BackupError.decryptMnemonicFailed
         }
-        let dataHexString = try WalletManager.encryptionAES(key: password, iv: iv, data: mnemonicData).hexString
+        let dataHexString = try WalletManager.encryptionAES(
+            key: password,
+            iv: iv,
+            data: mnemonicData
+        ).hexString
         return dataHexString
     }
 
@@ -346,7 +408,11 @@ extension MultiBackupManager {
         guard let iv = password.toPassword() else {
             throw BackupError.decryptMnemonicFailed
         }
-        let decryptedData = try WalletManager.decryptionAES(key: password, iv: iv, data: encryptData)
+        let decryptedData = try WalletManager.decryptionAES(
+            key: password,
+            iv: iv,
+            data: encryptData
+        )
         guard let mm = String(data: decryptedData, encoding: .utf8), !mm.isEmpty else {
             throw BackupError.decryptMnemonicFailed
         }
@@ -356,7 +422,8 @@ extension MultiBackupManager {
 }
 
 extension MultiBackupManager {
-    @objc private func onTransactionManagerChanged() {
+    @objc
+    private func onTransactionManagerChanged() {
         if TransactionManager.shared.holders.isEmpty {
             return
         }
@@ -364,8 +431,17 @@ extension MultiBackupManager {
 
     private func addKeyToFlow(key: String) async throws -> Bool {
         let address = WalletManager.shared.address
-        let accountKey = Flow.AccountKey(publicKey: Flow.PublicKey(hex: key), signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 500)
-        let flowId = try await FlowNetwork.addKeyToAccount(address: address, accountKey: accountKey, signers: WalletManager.shared.defaultSigners)
+        let accountKey = Flow.AccountKey(
+            publicKey: Flow.PublicKey(hex: key),
+            signAlgo: .ECDSA_P256,
+            hashAlgo: .SHA2_256,
+            weight: 500
+        )
+        let flowId = try await FlowNetwork.addKeyToAccount(
+            address: address,
+            accountKey: accountKey,
+            signers: WalletManager.shared.defaultSigners
+        )
         guard let data = try? JSONEncoder().encode(key) else {
             return false
         }
@@ -401,7 +477,7 @@ extension MultiBackupManager {
 
         let account = try await FlowNetwork.getAccountAtLatestBlock(address: addressDes)
         var sequenNum: Int64 = 0
-        account.keys.forEach { accountKey in
+        for accountKey in account.keys {
             let publicKey = accountKey.publicKey.description
             if publicKey == firstItem.publicKey {
                 sequenNum = accountKey.sequenceNumber
@@ -424,7 +500,13 @@ extension MultiBackupManager {
         let key = try sec.accountKey()
         do {
             HUD.loading()
-            let tx = try await FlowNetwork.addKeyWithMulti(address: address, keyIndex: firstItem.keyIndex, sequenceNum: sequenNum, accountKey: key, signers: [firstSigner, secondSigner, RemoteConfigManager.shared])
+            let tx = try await FlowNetwork.addKeyWithMulti(
+                address: address,
+                keyIndex: firstItem.keyIndex,
+                sequenceNum: sequenNum,
+                accountKey: key,
+                signers: [firstSigner, secondSigner, RemoteConfigManager.shared]
+            )
             let result = try await tx.onceSealed()
             if result.isComplete {
                 let userId = firstSigner.provider.userId
@@ -449,18 +531,27 @@ extension MultiBackupManager {
                     signature: secondSignature,
                     weight: secondSigner.weight
                 )
-                let request = SignedRequest(accountKey: AccountKey(hashAlgo: key.hashAlgo.index,
-                                                                   publicKey: key.publicKey.description,
-                                                                   signAlgo: key.signAlgo.index,
-                                                                   weight: key.weight),
-                                            signatures: [firstKeySignature, secondKeySignature])
-                let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.addSigned(request))
+                let request = SignedRequest(
+                    accountKey: AccountKey(
+                        hashAlgo: key.hashAlgo.index,
+                        publicKey: key.publicKey
+                            .description,
+                        signAlgo: key.signAlgo.index,
+                        weight: key.weight
+                    ),
+                    signatures: [firstKeySignature, secondKeySignature]
+                )
+                let response: Network.EmptyResponse = try await Network
+                    .requestWithRawModel(FRWAPI.User.addSigned(request))
                 if response.httpCode != 200 {
                     log.info("[Multi-backup] sync failed")
                 } else {
                     print("")
                     if let privateKey = sec.key.privateKey {
-                        try WallectSecureEnclave.Store.store(key: firstItem.userId, value: privateKey.dataRepresentation)
+                        try WallectSecureEnclave.Store.store(
+                            key: firstItem.userId,
+                            value: privateKey.dataRepresentation
+                        )
                     }
 
                     try await UserManager.shared.restoreLogin(userId: firstItem.userId)
@@ -479,20 +570,20 @@ extension MultiBackupManager {
     }
 }
 
-// MARK: - Signer
+// MARK: MultiBackupManager.Signer
 
 extension MultiBackupManager {
     class Signer: FlowSigner {
-        let provider: MultiBackupManager.StoreItem
-        var signature: Data?
-        var hdWallet: HDWallet?
+        // MARK: Lifecycle
 
         init(provider: MultiBackupManager.StoreItem) {
             self.provider = provider
         }
 
+        // MARK: Public
+
         public var address: Flow.Address {
-            return Flow.Address(hex: provider.address)
+            Flow.Address(hex: provider.address)
         }
 
         public var hashAlgo: Flow.HashAlgorithm {
@@ -517,34 +608,18 @@ extension MultiBackupManager {
             return provider.weight ?? 500
         }
 
-        private func createHDWallet() async throws {
-            if hdWallet != nil {
-                return
-            }
-            var key = LocalEnvManager.shared.backupAESKey
-            if let code = provider.code {
-                guard let pinCode = code.toPassword() else {
-                    throw BackupError.hexStringToDataFailed
-                }
-                key = pinCode
-            }
-
-            let mnemonic = try MultiBackupManager.shared.decryptMnemonic(provider.data, password: key)
-
-            guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) else {
-                throw BackupError.missingMnemonic
-            }
-            self.hdWallet = hdWallet
-        }
-
         public func sign(transaction _: Flow.Transaction, signableData: Data) async throws -> Data {
             _ = try await createHDWallet()
 
             guard let hdWallet = hdWallet else {
                 throw BackupError.missingMnemonic
             }
-            let curve: WalletCore.Curve = hdWallet.mnemonic.words.count == 15 ? .nist256p1 : .secp256k1
-            var privateKey = hdWallet.getKeyByCurve(curve: curve, derivationPath: WalletManager.flowPath)
+            let curve: WalletCore.Curve = hdWallet.mnemonic.words
+                .count == 15 ? .nist256p1 : .secp256k1
+            var privateKey = hdWallet.getKeyByCurve(
+                curve: curve,
+                derivationPath: WalletManager.flowPath
+            )
             let hashedData = Hash.sha256(data: signableData)
 
             defer {
@@ -559,6 +634,12 @@ extension MultiBackupManager {
             return signature
         }
 
+        // MARK: Internal
+
+        let provider: MultiBackupManager.StoreItem
+        var signature: Data?
+        var hdWallet: HDWallet?
+
         func sign(_ text: String) -> String? {
             guard let textData = text.data(using: .utf8) else {
                 return nil
@@ -572,8 +653,12 @@ extension MultiBackupManager {
             guard let hdWallet = hdWallet else {
                 return nil
             }
-            let curve: WalletCore.Curve = hdWallet.mnemonic.words.count == 15 ? .nist256p1 : .secp256k1
-            var privateKey = hdWallet.getKeyByCurve(curve: curve, derivationPath: WalletManager.flowPath)
+            let curve: WalletCore.Curve = hdWallet.mnemonic.words
+                .count == 15 ? .nist256p1 : .secp256k1
+            var privateKey = hdWallet.getKeyByCurve(
+                curve: curve,
+                derivationPath: WalletManager.flowPath
+            )
 
             defer {
                 privateKey = PrivateKey()
@@ -586,6 +671,31 @@ extension MultiBackupManager {
 
             signature.removeLast()
             return signature.hexValue
+        }
+
+        // MARK: Private
+
+        private func createHDWallet() async throws {
+            if hdWallet != nil {
+                return
+            }
+            var key = LocalEnvManager.shared.backupAESKey
+            if let code = provider.code {
+                guard let pinCode = code.toPassword() else {
+                    throw BackupError.hexStringToDataFailed
+                }
+                key = pinCode
+            }
+
+            let mnemonic = try MultiBackupManager.shared.decryptMnemonic(
+                provider.data,
+                password: key
+            )
+
+            guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) else {
+                throw BackupError.missingMnemonic
+            }
+            self.hdWallet = hdWallet
         }
     }
 }

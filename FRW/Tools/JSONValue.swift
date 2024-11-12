@@ -7,6 +7,8 @@
 
 import Foundation
 
+// MARK: - JSONValue
+
 enum JSONValue {
     case string(String)
     case number(Double)
@@ -14,6 +16,8 @@ enum JSONValue {
     case array([JSONValue])
     case bool(Bool)
     case null
+
+    // MARK: Lifecycle
 
     init(_ value: Any) {
         if let stringValue = value as? String {
@@ -37,50 +41,49 @@ enum JSONValue {
 extension JSONValue {
     var rawValue: Any {
         switch self {
-        case .string(let value):
+        case let .string(value):
             return value
-        case .number(let value):
+        case let .number(value):
             return value
-        case .object(let value):
+        case let .object(value):
             return value.mapValues { $0.rawValue }
-        case .array(let value):
+        case let .array(value):
             return value.map { $0.rawValue }
-        case .bool(let value):
+        case let .bool(value):
             return value
         case .null:
             return NSNull()
         }
     }
-    
+
     func toString() -> String {
-            switch self {
-            case .string(let value):
-                return "\(value)"
-            case .number(let value):
-                return "\(value)"
-            case .object(let dictionary):
-                let objectString = dictionary.map { "\($0): \($1.toString())" }
-                    .joined(separator: ", ")
-                return "{ \(objectString) }"
-            case .array(let array):
-                let arrayString = array.map { $0.toString() }.joined(separator: ", ")
-                return "[ \(arrayString) ]"
-            case .bool(let value):
-                return value ? "true" : "false"
-            case .null:
-                return "null"
-            }
+        switch self {
+        case let .string(value):
+            return "\(value)"
+        case let .number(value):
+            return "\(value)"
+        case let .object(dictionary):
+            let objectString = dictionary.map { "\($0): \($1.toString())" }
+                .joined(separator: ", ")
+            return "{ \(objectString) }"
+        case let .array(array):
+            let arrayString = array.map { $0.toString() }.joined(separator: ", ")
+            return "[ \(arrayString) ]"
+        case let .bool(value):
+            return value ? "true" : "false"
+        case .null:
+            return "null"
         }
+    }
 }
 
 extension JSONValue {
-    
     static func parse(jsonString: String) -> JSONValue? {
         guard let jsonData = jsonString.data(using: .utf8) else {
             print("Invalid JSON string")
             return nil
         }
-        
+
         do {
             let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: [])
             return JSONValue(jsonObject)
@@ -90,5 +93,3 @@ extension JSONValue {
         }
     }
 }
-
-

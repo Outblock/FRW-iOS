@@ -1,5 +1,5 @@
 //
-//  RouterMap.swift
+//  RouteMap.swift
 //  Flow Wallet
 //
 //  Created by Selina on 25/7/2022.
@@ -11,12 +11,15 @@ import SwiftUI
 
 import UIKit
 
+// MARK: - RouteMap
+
 enum RouteMap {}
 
 typealias EmptyClosure = () -> Void
 typealias SwitchNetworkClosure = (LocalUserDefaults.FlowNetworkType) -> Void
+typealias BoolClosure = (Bool) -> Void
 
-// MARK: - Restore Login
+// MARK: - RouteMap.RestoreLogin
 
 extension RouteMap {
     enum RestoreLogin {
@@ -39,6 +42,8 @@ extension RouteMap {
     }
 }
 
+// MARK: - RouteMap.RestoreLogin + RouterTarget
+
 extension RouteMap.RestoreLogin: RouterTarget {
     func onPresent(navi: UINavigationController) {
         switch self {
@@ -57,7 +62,6 @@ extension RouteMap.RestoreLogin: RouterTarget {
         case let .syncDevice(vm):
             let vc = CustomHostingController(rootView: SyncAddDeviceView(viewModel: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
-
         case .restoreList:
             navi.push(content: RestoreListView())
         case .restoreMulti:
@@ -76,7 +80,7 @@ extension RouteMap.RestoreLogin: RouterTarget {
     }
 }
 
-// MARK: - Register
+// MARK: - RouteMap.Register
 
 extension RouteMap {
     enum Register {
@@ -84,6 +88,8 @@ extension RouteMap {
         case username(String?)
     }
 }
+
+// MARK: - RouteMap.Register + RouterTarget
 
 extension RouteMap.Register: RouterTarget {
     func onPresent(navi: UINavigationController) {
@@ -96,7 +102,7 @@ extension RouteMap.Register: RouterTarget {
     }
 }
 
-// MARK: - Backup
+// MARK: - RouteMap.Backup
 
 extension RouteMap {
     enum Backup {
@@ -113,7 +119,10 @@ extension RouteMap {
 
         case createPin
         case confirmPin(String)
-        case verityPin(MultiBackupVerifyPinViewModel.From, MultiBackupVerifyPinViewModel.VerifyCallback)
+        case verityPin(
+            MultiBackupVerifyPinViewModel.From,
+            MultiBackupVerifyPinViewModel.VerifyCallback
+        )
 
         case introduction(IntroductionView.Topic, EmptyClosure, Bool)
         case thingsNeedKnowOnBackup
@@ -121,6 +130,8 @@ extension RouteMap {
         case backupCompleted(String)
     }
 }
+
+// MARK: - RouteMap.Backup + RouterTarget
 
 extension RouteMap.Backup: RouterTarget {
     func onPresent(navi: UINavigationController) {
@@ -140,7 +151,6 @@ extension RouteMap.Backup: RouterTarget {
             navi.push(content: BackupPasswordView(backupType: type))
         case .backupManual:
             navi.push(content: ManualBackupView())
-
         case .backupList:
             navi.push(content: BackupListView())
         case let .multiBackup(items):
@@ -173,7 +183,7 @@ extension RouteMap.Backup: RouterTarget {
     }
 }
 
-// MARK: - Wallet
+// MARK: - RouteMap.Wallet
 
 extension RouteMap {
     enum Wallet {
@@ -205,8 +215,11 @@ extension RouteMap {
         case chooseChild(MoveAccountsViewModel)
         case addCustomToken
         case showCustomToken(CustomToken)
+        case addTokenSheet(CustomToken, BoolClosure)
     }
 }
+
+// MARK: - RouteMap.Wallet + RouterTarget
 
 extension RouteMap.Wallet: RouterTarget {
     func onPresent(navi: UINavigationController) {
@@ -239,9 +252,17 @@ extension RouteMap.Wallet: RouterTarget {
             let vc = TransactionListViewController(contractId: contractId)
             navi.pushViewController(vc, animated: true)
         case let .swap(fromToken):
-            navi.present(content: fromToken != nil ? SwapView(defaultFromToken: fromToken) : SwapView())
+            navi
+                .present(
+                    content: fromToken != nil ? SwapView(defaultFromToken: fromToken) :
+                        SwapView()
+                )
         case let .selectToken(selectedToken, disableTokens, callback):
-            let vm = AddTokenViewModel(selectedToken: selectedToken, disableTokens: disableTokens, selectCallback: callback)
+            let vm = AddTokenViewModel(
+                selectedToken: selectedToken,
+                disableTokens: disableTokens,
+                selectCallback: callback
+            )
             navi.present(content: AddTokenView(vm: vm))
         case .stakingList:
             navi.push(content: StakingListView())
@@ -257,7 +278,8 @@ extension RouteMap.Wallet: RouterTarget {
             let vc = CustomHostingController(rootView: StakeAmountView.StakeSetupView(vm: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .backToTokenDetail:
-            if let existVC = navi.viewControllers.first(where: { $0 as? RouteableUIHostingController<TokenDetailView> != nil }) {
+            if let existVC = navi.viewControllers
+                .first(where: { $0 as? RouteableUIHostingController<TokenDetailView> != nil }) {
                 navi.popToViewController(existVC, animated: true)
                 return
             }
@@ -284,23 +306,38 @@ extension RouteMap.Wallet: RouterTarget {
             let vc = PresentHostingController(rootView: MoveAssetsView())
             navi.present(vc, animated: true, completion: nil)
         case let .moveToken(tokenModel):
-            let vc = PresentHostingController(rootView: MoveTokenView(tokenModel: tokenModel, isPresent: .constant(true)))
+            let vc = PresentHostingController(rootView: MoveTokenView(
+                tokenModel: tokenModel,
+                isPresent: .constant(true)
+            ))
             navi.present(vc, animated: true, completion: nil)
         case let .selectMoveToken(token, callback):
-            let vm = AddTokenViewModel(selectedToken: token, disableTokens: [], selectCallback: callback)
+            let vm = AddTokenViewModel(
+                selectedToken: token,
+                disableTokens: [],
+                selectCallback: callback
+            )
             Router.topPresentedController().present(content: AddTokenView(vm: vm))
         case let .chooseChild(model):
             let vc = PresentHostingController(rootView: MoveAccountsView(viewModel: model))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .addCustomToken:
             navi.push(content: AddCustomTokenView())
-        case .showCustomToken(let token):
+        case let .showCustomToken(token):
             navi.push(content: CustomTokenDetailView(token: token))
+        case let .addTokenSheet(token, callback):
+            let vc = PresentHostingController(
+                rootView: AddTokenSheetView(
+                    customToken: token,
+                    callback: callback
+                )
+            )
+            navi.present(vc, completion: nil)
         }
     }
 }
 
-// MARK: - Profile
+// MARK: - RouteMap.Profile
 
 extension RouteMap {
     enum Profile {
@@ -339,6 +376,8 @@ extension RouteMap {
     }
 }
 
+// MARK: - RouteMap.Profile + RouterTarget
+
 extension RouteMap.Profile: RouterTarget {
     func onPresent(navi: UINavigationController) {
         switch self {
@@ -361,22 +400,30 @@ extension RouteMap.Profile: RouterTarget {
 //            navi.push(content: BackupPatternView())
 //            return
             #endif
-            if let existVC = navi.viewControllers.first(where: { $0.navigationItem.title == "backup".localized }) {
+            if let existVC = navi.viewControllers
+                .first(where: { $0.navigationItem.title == "backup".localized }) {
                 navi.popToViewController(existVC, animated: true)
                 return
             }
 
             navi.push(content: ProfileBackupView())
         case let .walletSetting(animated, address):
-            Router.coordinator.rootNavi?.push(content: WalletSettingView(address: address), animated: animated)
+            Router.coordinator.rootNavi?.push(
+                content: WalletSettingView(address: address),
+                animated: animated
+            )
         case .walletConnect:
             navi.push(content: WalletConnectView())
         case let .privateKey(animated):
             Router.coordinator.rootNavi?.push(content: PrivateKeyView(), animated: animated)
         case let .manualBackup(animated):
-            Router.coordinator.rootNavi?.push(content: RecoveryPhraseView(backupMode: true), animated: animated)
+            Router.coordinator.rootNavi?.push(
+                content: RecoveryPhraseView(backupMode: true),
+                animated: animated
+            )
         case let .security(animated):
-            if let existVC = Router.coordinator.rootNavi?.viewControllers.first(where: { $0.navigationItem.title == "security".localized }) {
+            if let existVC = Router.coordinator.rootNavi?.viewControllers
+                .first(where: { $0.navigationItem.title == "security".localized }) {
                 navi.popToViewController(existVC, animated: animated)
                 return
             }
@@ -400,7 +447,8 @@ extension RouteMap.Profile: RouterTarget {
             let vm = ChildAccountDetailEditViewModel(childAccount: childAccount)
             navi.push(content: ChildAccountDetailEditView(vm: vm))
         case .backToAccountSetting:
-            if let existVC = navi.viewControllers.first(where: { $0 as? RouteableUIHostingController<AccountSettingView> != nil }) {
+            if let existVC = navi.viewControllers
+                .first(where: { $0 as? RouteableUIHostingController<AccountSettingView> != nil }) {
                 navi.popToViewController(existVC, animated: true)
                 return
             }
@@ -415,7 +463,6 @@ extension RouteMap.Profile: RouterTarget {
             navi.push(content: DevicesInfoView(info: model))
         case .keychain:
             navi.push(content: KeychainListView())
-
         case .walletList:
             navi.push(content: WalletListView())
         case .wallpaper:
@@ -426,7 +473,7 @@ extension RouteMap.Profile: RouterTarget {
     }
 }
 
-// MARK: - AddressBook
+// MARK: - RouteMap.AddressBook
 
 extension RouteMap {
     enum AddressBook {
@@ -436,6 +483,8 @@ extension RouteMap {
         case pick(WalletSendView.WalletSendViewSelectTargetCallback)
     }
 }
+
+// MARK: - RouteMap.AddressBook + RouterTarget
 
 extension RouteMap.AddressBook: RouterTarget {
     func onPresent(navi: UINavigationController) {
@@ -452,7 +501,7 @@ extension RouteMap.AddressBook: RouterTarget {
     }
 }
 
-// MARK: - PinCode
+// MARK: - RouteMap.PinCode
 
 extension RouteMap {
     enum PinCode {
@@ -462,6 +511,8 @@ extension RouteMap {
         case verify(Bool, Bool, VerifyPinViewModel.VerifyCallback)
     }
 }
+
+// MARK: - RouteMap.PinCode + RouterTarget
 
 extension RouteMap.PinCode: RouterTarget {
     func onPresent(navi: UINavigationController) {
@@ -487,7 +538,7 @@ extension RouteMap.PinCode: RouterTarget {
     }
 }
 
-// MARK: - NFT
+// MARK: - RouteMap.NFT
 
 extension RouteMap {
     enum NFT {
@@ -501,6 +552,8 @@ extension RouteMap {
     }
 }
 
+// MARK: - RouteMap.NFT + RouterTarget
+
 extension RouteMap.NFT: RouterTarget {
     func onPresent(navi: UINavigationController) {
         switch self {
@@ -513,7 +566,11 @@ extension RouteMap.NFT: RouterTarget {
         case .addCollection:
             navi.push(content: NFTAddCollectionView())
         case let .send(nft, contact, childAccount):
-            let vc = CustomHostingController(rootView: NFTTransferView(nft: nft, target: contact, fromChildAccount: childAccount))
+            let vc = CustomHostingController(rootView: NFTTransferView(
+                nft: nft,
+                target: contact,
+                fromChildAccount: childAccount
+            ))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .AR:
             print("")
@@ -523,13 +580,15 @@ extension RouteMap.NFT: RouterTarget {
     }
 }
 
-// MARK: - Transaction
+// MARK: - RouteMap.Transaction
 
 extension RouteMap {
     enum Transaction {
         case detail(Flow.ID)
     }
 }
+
+// MARK: - RouteMap.Transaction + RouterTarget
 
 extension RouteMap.Transaction: RouterTarget {
     func onPresent(navi _: UINavigationController) {
@@ -544,7 +603,7 @@ extension RouteMap.Transaction: RouterTarget {
     }
 }
 
-// MARK: - Explore
+// MARK: - RouteMap.Explore
 
 extension RouteMap {
     enum Explore {
@@ -558,10 +617,16 @@ extension RouteMap {
         case bookmark
         case linkChildAccount(ChildAccountLinkViewModel)
         case dapps
-        case switchNetwork(LocalUserDefaults.FlowNetworkType, LocalUserDefaults.FlowNetworkType, SwitchNetworkClosure?)
+        case switchNetwork(
+            LocalUserDefaults.FlowNetworkType,
+            LocalUserDefaults.FlowNetworkType,
+            SwitchNetworkClosure?
+        )
         case signTypedMessage(BrowserSignTypedMessageViewModel)
     }
 }
+
+// MARK: - RouteMap.Explore + RouterTarget
 
 extension RouteMap.Explore: RouterTarget {
     func onPresent(navi: UINavigationController) {
@@ -574,7 +639,6 @@ extension RouteMap.Explore: RouterTarget {
             } else {
                 UIApplication.shared.open(url)
             }
-
         case let .safariBrowser(url):
             let vc = SFSafariViewController(url: url)
             navi.present(vc, animated: true)
@@ -585,7 +649,10 @@ extension RouteMap.Explore: RouterTarget {
             let vc = CustomHostingController(rootView: BrowserAuthzView(vm: vm), showLarge: true)
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case let .signMessage(vm):
-            let vc = CustomHostingController(rootView: BrowserSignMessageView(vm: vm), showLarge: true)
+            let vc = CustomHostingController(
+                rootView: BrowserSignMessageView(vm: vm),
+                showLarge: true
+            )
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .searchExplore:
             let inputVC = BrowserSearchInputViewController()
@@ -612,8 +679,11 @@ extension RouteMap.Explore: RouterTarget {
         case let .switchNetwork(from, to, callback):
             let vc = CustomHostingController(rootView: NetworkSwitchPopView(from: from, to: to))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
-        case .signTypedMessage(let viewModel):
-            let vc = CustomHostingController(rootView: BrowserSignTypedMessageView(viewModel: viewModel), showLarge: true)
+        case let .signTypedMessage(viewModel):
+            let vc = CustomHostingController(
+                rootView: BrowserSignTypedMessageView(viewModel: viewModel),
+                showLarge: true
+            )
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         }
     }

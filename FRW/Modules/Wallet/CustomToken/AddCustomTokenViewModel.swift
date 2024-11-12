@@ -5,22 +5,25 @@
 //  Created by cat on 10/30/24.
 //
 
+import BigInt
 import Foundation
 import UIKit
-import web3swift
-import BigInt
 import Web3Core
+import web3swift
+
+// MARK: - AddCustomTokenViewModel
 
 class AddCustomTokenViewModel: ObservableObject {
-    @Published var customAddress: String = ""
-    
+    @Published
+    var customAddress: String = ""
+
     func onPaste() {
         guard let address = UIPasteboard.general.string else {
             return
         }
         customAddress = address
     }
-    
+
     func onSearch() {
         guard isValidAddress(address: customAddress) else {
             HUD.error(title: "invalid_address".localized)
@@ -32,12 +35,13 @@ class AddCustomTokenViewModel: ObservableObject {
                 try await fetchInfo(by: customAddress)
                 HUD.dismissLoading()
             } catch {
+                HUD.error(title: "invalid_erc20".localized)
                 log.error("[Add Custom Token] \(error.localizedDescription)")
                 HUD.dismissLoading()
             }
         }
     }
-    
+
     func isValidAddress(address: String) -> Bool {
         let result = address.lowercased().hasPrefix("0x")
         return result
@@ -54,4 +58,3 @@ extension AddCustomTokenViewModel {
         Router.route(to: RouteMap.Wallet.showCustomToken(token))
     }
 }
-

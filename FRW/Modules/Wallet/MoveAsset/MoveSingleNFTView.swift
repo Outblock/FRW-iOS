@@ -10,24 +10,33 @@ import SwiftUI
 import SwiftUIX
 
 struct MoveSingleNFTView: RouteableView, PresentActionDelegate {
-    @StateObject var viewModel: MoveSingleNFTViewModel
+    // MARK: Lifecycle
 
-    
+    init(nft: NFTModel, fromChildAccount: ChildAccount? = nil, callback: @escaping () -> Void) {
+        _viewModel = StateObject(wrappedValue: MoveSingleNFTViewModel(
+            nft: nft,
+            fromChildAccount: fromChildAccount,
+            callback: callback
+        ))
+    }
+
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: MoveSingleNFTViewModel
+
     var changeHeight: (() -> Void)?
+
     var title: String {
         ""
     }
-    
+
     var isNavigationBarHidden: Bool {
         true
     }
-    
-    init(nft: NFTModel, fromChildAccount: ChildAccount? = nil, callback: @escaping () -> Void) {
-        _viewModel = StateObject(wrappedValue: MoveSingleNFTViewModel(nft: nft, fromChildAccount: fromChildAccount, callback: callback))
-    }
 
     var body: some View {
-        GeometryReader { geometry in
+        GeometryReader { _ in
             VStack {
                 HStack {
                     Text("move_single_nft".localized)
@@ -35,7 +44,7 @@ struct MoveSingleNFTView: RouteableView, PresentActionDelegate {
                         .foregroundStyle(Color.LL.Neutrals.text)
                         .frame(height: 28)
                     Spacer()
-                    
+
                     Button {
                         viewModel.closeAction()
                     } label: {
@@ -47,20 +56,26 @@ struct MoveSingleNFTView: RouteableView, PresentActionDelegate {
                     }
                 }
                 .padding(.top, 18)
-                
+
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 8) {
-                        
-                        ContactRelationView(fromContact: viewModel.fromContact, toContact: viewModel.toContact,clickable: .to, clickTo:  { contact in
-                            let model = MoveAccountsViewModel(selected: viewModel.toContact.address ?? "") { contact in
-                                if let contact = contact {
-                                    viewModel.updateToContact(contact)
+                        ContactRelationView(
+                            fromContact: viewModel.fromContact,
+                            toContact: viewModel.toContact,
+                            clickable: .to,
+                            clickTo: { contact in
+                                let model = MoveAccountsViewModel(
+                                    selected: viewModel.toContact
+                                        .address ?? ""
+                                ) { contact in
+                                    if let contact = contact {
+                                        viewModel.updateToContact(contact)
+                                    }
                                 }
+                                Router.route(to: RouteMap.Wallet.chooseChild(model))
                             }
-                            Router.route(to: RouteMap.Wallet.chooseChild(model))
-                        })
-                        
-                        
+                        )
+
                         VStack(spacing: 12) {
                             HStack(spacing: 40) {
                                 KFImage.url(viewModel.nft.imageURL)
@@ -73,13 +88,13 @@ struct MoveSingleNFTView: RouteableView, PresentActionDelegate {
                                     .frame(width: 80, height: 80)
                                     .cornerRadius(8)
                                     .clipped()
-                                
+
                                 VStack(alignment: .leading, spacing: 0) {
                                     Text(viewModel.nft.title)
                                         .font(.inter(size: 16, weight: .bold))
                                         .foregroundColor(.Theme.Text.black)
                                         .frame(height: 26)
-                                    
+
                                     HStack(alignment: .center, spacing: 4) {
                                         KFImage
                                             .url(viewModel.nft.logoUrl)
@@ -101,10 +116,10 @@ struct MoveSingleNFTView: RouteableView, PresentActionDelegate {
                                             .frame(width: 12, height: 12)
                                     }
                                 }
-                                
+
                                 Spacer()
                             }
-                            
+
                             VStack(spacing: 12) {
                                 Divider()
                                     .foregroundStyle(Color.Theme.Line.stroke)
@@ -115,11 +130,8 @@ struct MoveSingleNFTView: RouteableView, PresentActionDelegate {
                         .padding(16)
                         .background(.Theme.BG.bg3)
                         .cornerRadius(16)
-                        
                     }
-                    
                 }
-                
             }
             .padding(.horizontal, 18)
             .hideKeyboardWhenTappedAround()
@@ -127,13 +139,15 @@ struct MoveSingleNFTView: RouteableView, PresentActionDelegate {
             .cornerRadius([.topLeading, .topTrailing], 16)
             .edgesIgnoringSafeArea(.bottom)
             .overlay(alignment: .bottom) {
-                VPrimaryButton(model: ButtonStyle.primary,
-                               state: viewModel.buttonState,
-                               action: {
-                    viewModel.moveAction()
-                }, title: "move".localized)
+                VPrimaryButton(
+                    model: ButtonStyle.primary,
+                    state: viewModel.buttonState,
+                    action: {
+                        viewModel.moveAction()
+                    },
+                    title: "move".localized
+                )
                 .padding(.horizontal, 18)
-                
             }
         }
         .applyRouteable(self)
@@ -141,5 +155,26 @@ struct MoveSingleNFTView: RouteableView, PresentActionDelegate {
 }
 
 #Preview {
-    MoveSingleNFTView(nft: NFTModel(NFTResponse(id: "", name: "", description: "", thumbnail: "", externalURL: "", contractAddress: "", evmAddress: "", address: "", collectionID: "", collectionName: "", collectionDescription: "", collectionSquareImage: "", collectionExternalURL: "", collectionContractName: "", collectionBannerImage: "", traits: [], postMedia: NFTPostMedia(title: "", description: "", video: "", isSvg: false)), in: nil), callback: {})
+    MoveSingleNFTView(
+        nft: NFTModel(NFTResponse(
+            id: "",
+            name: "",
+            description: "",
+            thumbnail: "",
+            externalURL: "",
+            contractAddress: "",
+            evmAddress: "",
+            address: "",
+            collectionID: "",
+            collectionName: "",
+            collectionDescription: "",
+            collectionSquareImage: "",
+            collectionExternalURL: "",
+            collectionContractName: "",
+            collectionBannerImage: "",
+            traits: [],
+            postMedia: NFTPostMedia(title: "", description: "", video: "", isSvg: false)
+        ), in: nil),
+        callback: {}
+    )
 }

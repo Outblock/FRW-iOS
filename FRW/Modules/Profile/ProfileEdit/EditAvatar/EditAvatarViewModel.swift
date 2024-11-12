@@ -16,6 +16,16 @@ extension EditAvatarView {
     }
 
     struct AvatarItemModel: Identifiable {
+        // MARK: Lifecycle
+
+        init(type: ItemType, avatarString: String? = nil, nft: NFTModel? = nil) {
+            self.type = type
+            self.avatarString = avatarString
+            self.nft = nft
+        }
+
+        // MARK: Internal
+
         enum ItemType {
             case string
             case nft
@@ -25,12 +35,6 @@ extension EditAvatarView {
         var avatarString: String?
         var nft: NFTModel?
 
-        init(type: ItemType, avatarString: String? = nil, nft: NFTModel? = nil) {
-            self.type = type
-            self.avatarString = avatarString
-            self.nft = nft
-        }
-
         var id: String {
             if let avatarString = avatarString {
                 return avatarString
@@ -39,10 +43,10 @@ extension EditAvatarView {
             if let tokenID = nft?.id {
                 return tokenID
             } else {
-                assert(false, "tokenID should not be nil")
+                assertionFailure("tokenID should not be nil")
             }
 
-            assert(false, "AvatarItemModel id should not be nil")
+            assertionFailure("AvatarItemModel id should not be nil")
             return ""
         }
 
@@ -68,40 +72,51 @@ extension EditAvatarView {
     }
 }
 
+// MARK: - EditAvatarView.EditAvatarViewModel
+
 extension EditAvatarView {
     class EditAvatarViewModel: ObservableObject {
-        @Published var mode: Mode = .preview
-        @Published var items: [AvatarItemModel] = []
-        @Published var selectedItemId: String?
-
-        private var oldAvatarItem: AvatarItemModel?
-
-        private var isEnd: Bool = false
-        private var isRequesting: Bool = false
+        // MARK: Lifecycle
 
         init() {
             var cachedItems = [AvatarItemModel]()
 
             if let currentAvatar = UserManager.shared.userInfo?.avatar {
-                cachedItems.append(EditAvatarView.AvatarItemModel(type: .string, avatarString: currentAvatar))
+                cachedItems.append(EditAvatarView.AvatarItemModel(
+                    type: .string,
+                    avatarString: currentAvatar
+                ))
             }
 
             if let cachedNFTs = NFTUIKitCache.cache.getGridNFTs() {
                 for nft in cachedNFTs {
                     let model = NFTModel(nft, in: nil)
-                    cachedItems.append(EditAvatarView.AvatarItemModel(type: .nft, avatarString: nil, nft: model))
+                    cachedItems.append(EditAvatarView.AvatarItemModel(
+                        type: .nft,
+                        avatarString: nil,
+                        nft: model
+                    ))
                 }
             }
 
-            items = cachedItems
+            self.items = cachedItems
 
             if let first = items.first, first.type == .string {
-                selectedItemId = first.id
-                oldAvatarItem = first
+                self.selectedItemId = first.id
+                self.oldAvatarItem = first
             }
 
             loadMoreAvatarIfNeededAction()
         }
+
+        // MARK: Internal
+
+        @Published
+        var mode: Mode = .preview
+        @Published
+        var items: [AvatarItemModel] = []
+        @Published
+        var selectedItemId: String?
 
         func currentSelectModel() -> AvatarItemModel? {
             for item in items {
@@ -160,7 +175,9 @@ extension EditAvatarView {
             KingfisherManager.shared.retrieveImage(with: url) { result in
                 switch result {
                 case let .success(r):
-                    debugPrint("EditAvatarViewModel -> save action, did get image from: \(r.cacheType)")
+                    debugPrint(
+                        "EditAvatarViewModel -> save action, did get image from: \(r.cacheType)"
+                    )
                     success(r.image)
                 case let .failure(e):
                     debugPrint("EditAvatarViewModel -> save action, did failed get image: \(e)")
@@ -169,6 +186,13 @@ extension EditAvatarView {
             }
         }
 
+        // MARK: Private
+
+        private var oldAvatarItem: AvatarItemModel?
+
+        private var isEnd: Bool = false
+        private var isRequesting: Bool = false
+
         private func uploadAvatarURL(_ url: String) async -> Bool {
             guard let nickname = UserManager.shared.userInfo?.nickname else {
                 return false
@@ -176,7 +200,8 @@ extension EditAvatarView {
 
             let request = UserInfoUpdateRequest(nickname: nickname, avatar: url)
             do {
-                let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.Profile.updateInfo(request))
+                let response: Network.EmptyResponse = try await Network
+                    .requestWithRawModel(FRWAPI.Profile.updateInfo(request))
                 if response.httpCode != 200 {
                     return false
                 }
@@ -191,7 +216,8 @@ extension EditAvatarView {
 
 extension EditAvatarView.EditAvatarViewModel {
     func loadMoreAvatarIfNeededAction() {
-        if let lastItem = items.last, let selectId = selectedItemId, lastItem.id == selectId, isRequesting == false, isEnd == false {
+        if let lastItem = items.last, let selectId = selectedItemId, lastItem.id == selectId,
+           isRequesting == false, isEnd == false {
             isRequesting = true
 
             Task {
@@ -206,7 +232,9 @@ extension EditAvatarView.EditAvatarViewModel {
                         self.isRequesting = false
                     }
                 } catch {
-                    debugPrint("EditAvatarViewModel -> loadMoreAvatarIfNeededAction request failed: \(error)")
+                    debugPrint(
+                        "EditAvatarViewModel -> loadMoreAvatarIfNeededAction request failed: \(error)"
+                    )
                     DispatchQueue.main.async {
                         self.isRequesting = false
                     }
@@ -226,10 +254,15 @@ extension EditAvatarView.EditAvatarViewModel {
     }
 
     private func requestGrid(offset: Int, limit: Int = 24) async throws -> [NFTModel] {
-        let address = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? ""
+        let address = WalletManager.shared
+            .getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? ""
         let request = NFTGridDetailListRequest(address: address, offset: offset, limit: limit)
         let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount != nil ? .evm : .main
-        let response: Network.Response<NFTListResponse> = try await Network.requestWithRawModel(FRWAPI.NFT.gridDetailList(request, from))
+        let response: Network.Response<NFTListResponse> = try await Network
+            .requestWithRawModel(FRWAPI.NFT.gridDetailList(
+                request,
+                from
+            ))
 
         guard let nfts = response.data?.nfts else {
             return []
@@ -244,7 +277,11 @@ extension EditAvatarView.EditAvatarViewModel {
             let exist = items.first { $0.type == .nft && $0.nft?.id == nft.id }
 
             if exist == nil {
-                items.append(EditAvatarView.AvatarItemModel(type: .nft, avatarString: nil, nft: nft))
+                items.append(EditAvatarView.AvatarItemModel(
+                    type: .nft,
+                    avatarString: nil,
+                    nft: nft
+                ))
             }
         }
     }

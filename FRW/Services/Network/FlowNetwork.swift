@@ -11,6 +11,8 @@ import Flow
 import Foundation
 import Web3Core
 
+// MARK: - FlowNetwork
+
 enum FlowNetwork {
     static func setup() {
         let type = LocalUserDefaults.shared.flowNetwork.toFlowType()
@@ -60,35 +62,45 @@ extension FlowNetwork {
         }
     }
 
-    static func transferToken(to address: Flow.Address, amount: Decimal, token: TokenModel) async throws -> Flow.ID {
+    static func transferToken(
+        to address: Flow.Address,
+        amount: Decimal,
+        token: TokenModel
+    ) async throws -> Flow.ID {
         let cadenceString = TokenCadence.tokenTransfer(token: token, at: flow.chainID)
         let currentAdd = WalletManager.shared.getPrimaryWalletAddress() ?? ""
         let keyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
-            cadence {
-                cadenceString
-            }
+        return try await flow.sendTransaction(
+            signers: WalletManager.shared.defaultSigners,
+            builder: {
+                cadence {
+                    cadenceString
+                }
 
-            payer {
-                RemoteConfigManager.shared.payer
-            }
+                payer {
+                    RemoteConfigManager.shared.payer
+                }
 
-            proposer {
-                Flow.TransactionProposalKey(address: Flow.Address(hex: currentAdd), keyIndex: keyIndex)
-            }
+                proposer {
+                    Flow.TransactionProposalKey(
+                        address: Flow.Address(hex: currentAdd),
+                        keyIndex: keyIndex
+                    )
+                }
 
-            authorizers {
-                Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
-            }
+                authorizers {
+                    Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
+                }
 
-            arguments {
-                [.ufix64(amount), .address(address)]
-            }
+                arguments {
+                    [.ufix64(amount), .address(address)]
+                }
 
-            gasLimit {
-                9999
+                gasLimit {
+                    9999
+                }
             }
-        })
+        )
     }
 
     static func minFlowBalance() async throws -> Double {
@@ -96,7 +108,10 @@ extension FlowNetwork {
             throw LLError.invalidAddress
         }
         let cadenceString = CadenceManager.shared.current.basic?.getAccountMinFlow?.toFunc() ?? ""
-        let result: Decimal = try await fetch(cadence: cadenceString, arguments: [.address(Flow.Address(hex: fromAddress))])
+        let result: Decimal = try await fetch(
+            cadence: cadenceString,
+            arguments: [.address(Flow.Address(hex: fromAddress))]
+        )
         return result.doubleValue
     }
 }
@@ -112,37 +127,45 @@ extension FlowNetwork {
         return result
     }
 
-    static func addCollection(at address: Flow.Address, collection: NFTCollectionInfo) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.collection?.enableNFTStorage?.toFunc() ?? ""
+    static func addCollection(
+        at address: Flow.Address,
+        collection: NFTCollectionInfo
+    ) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.collection?.enableNFTStorage?
+            .toFunc() ?? ""
         let cadenceString = collection.formatCadence(script: originCadence)
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
-            cadence {
-                cadenceString
-            }
+        return try await flow.sendTransaction(
+            signers: WalletManager.shared.defaultSigners,
+            builder: {
+                cadence {
+                    cadenceString
+                }
 
-            payer {
-                RemoteConfigManager.shared.payer
-            }
+                payer {
+                    RemoteConfigManager.shared.payer
+                }
 
-            proposer {
-                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
-            }
+                proposer {
+                    Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
+                }
 
-            authorizers {
-                address
-            }
+                authorizers {
+                    address
+                }
 
-            gasLimit {
-                9999
+                gasLimit {
+                    9999
+                }
             }
-        })
+        )
     }
 
     static func transferNFT(to address: Flow.Address, nft: NFTModel) async throws -> Flow.ID {
         var nftCollection = nft.collection
         if nftCollection == nil {
-            nftCollection = await NFTCollectionConfig.share.get(from: nft.response.contractAddress ?? "")
+            nftCollection = await NFTCollectionConfig.share
+                .get(from: nft.response.contractAddress ?? "")
         }
 
         guard let collection = nftCollection else {
@@ -164,33 +187,40 @@ extension FlowNetwork {
             nftTransfer = CadenceManager.shared.current.collection?.sendNFT?.toFunc() ?? ""
         }
 
-        let cadenceString = collection.formatCadence(script: nft.isNBA ? nbaNFTTransfer : nftTransfer)
+        let cadenceString = collection
+            .formatCadence(script: nft.isNBA ? nbaNFTTransfer : nftTransfer)
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
-            cadence {
-                cadenceString
-            }
+        return try await flow.sendTransaction(
+            signers: WalletManager.shared.defaultSigners,
+            builder: {
+                cadence {
+                    cadenceString
+                }
 
-            payer {
-                RemoteConfigManager.shared.payer
-            }
+                payer {
+                    RemoteConfigManager.shared.payer
+                }
 
-            proposer {
-                Flow.TransactionProposalKey(address: Flow.Address(hex: fromAddress), keyIndex: fromKeyIndex)
-            }
+                proposer {
+                    Flow.TransactionProposalKey(
+                        address: Flow.Address(hex: fromAddress),
+                        keyIndex: fromKeyIndex
+                    )
+                }
 
-            authorizers {
-                Flow.Address(hex: fromAddress)
-            }
+                authorizers {
+                    Flow.Address(hex: fromAddress)
+                }
 
-            arguments {
-                [.address(address), .uint64(tokenIdInt)]
-            }
+                arguments {
+                    [.address(address), .uint64(tokenIdInt)]
+                }
 
-            gasLimit {
-                9999
+                gasLimit {
+                    9999
+                }
             }
-        })
+        )
     }
 }
 
@@ -202,7 +232,10 @@ extension FlowNetwork {
         return try await fetch(cadence: cadence, arguments: [.string(domain)])
     }
 
-    static func queryAddressByDomainFlowns(domain: String, root: String = "fn") async throws -> String {
+    static func queryAddressByDomainFlowns(
+        domain: String,
+        root: String = "fn"
+    ) async throws -> String {
         let cadence = CadenceManager.shared.current.basic?.getFlownsAddress?.toFunc() ?? ""
 
         let realDomain = domain
@@ -215,77 +248,121 @@ extension FlowNetwork {
 // MARK: - Inbox
 
 extension FlowNetwork {
-    static func claimInboxToken(domain: String, key: String, coin: TokenModel, amount: Decimal, root: String = Contact.DomainType.meow.domain) async throws -> Flow.ID {
+    static func claimInboxToken(
+        domain: String,
+        key: String,
+        coin: TokenModel,
+        amount: Decimal,
+        root: String = Contact.DomainType.meow.domain
+    ) async throws -> Flow.ID {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
         }
-        let cadenceString = coin.formatCadence(cadence: CadenceManager.shared.current.domain?.claimFTFromInbox?.toFunc() ?? "")
+        let cadenceString = coin
+            .formatCadence(
+                cadence: CadenceManager.shared.current.domain?.claimFTFromInbox?
+                    .toFunc() ?? ""
+            )
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
-            cadence {
-                cadenceString
-            }
+        return try await flow.sendTransaction(
+            signers: WalletManager.shared.defaultSigners,
+            builder: {
+                cadence {
+                    cadenceString
+                }
 
-            payer {
-                RemoteConfigManager.shared.payer
-            }
+                payer {
+                    RemoteConfigManager.shared.payer
+                }
 
-            proposer {
-                Flow.TransactionProposalKey(address: Flow.Address(hex: address), keyIndex: fromKeyIndex)
-            }
+                proposer {
+                    Flow.TransactionProposalKey(
+                        address: Flow.Address(hex: address),
+                        keyIndex: fromKeyIndex
+                    )
+                }
 
-            authorizers {
-                Flow.Address(hex: address)
-            }
+                authorizers {
+                    Flow.Address(hex: address)
+                }
 
-            arguments {
-                [.string(domain), .string(root), .string(key), .ufix64(amount)]
-            }
+                arguments {
+                    [.string(domain), .string(root), .string(key), .ufix64(amount)]
+                }
 
-            gasLimit {
-                9999
+                gasLimit {
+                    9999
+                }
             }
-        })
+        )
     }
 
-    static func claimInboxNFT(domain: String, key: String, collection: NFTCollectionInfo, itemId: UInt64, root: String = Contact.DomainType.meow.domain) async throws -> Flow.ID {
+    static func claimInboxNFT(
+        domain: String,
+        key: String,
+        collection: NFTCollectionInfo,
+        itemId: UInt64,
+        root: String = Contact.DomainType.meow.domain
+    ) async throws -> Flow.ID {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
         }
-        let cadenceString = collection.formatCadence(script: CadenceManager.shared.current.domain?.claimNFTFromInbox?.toFunc() ?? "")
+        let cadenceString = collection
+            .formatCadence(
+                script: CadenceManager.shared.current.domain?.claimNFTFromInbox?
+                    .toFunc() ?? ""
+            )
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
-            cadence {
-                cadenceString
-            }
+        return try await flow.sendTransaction(
+            signers: WalletManager.shared.defaultSigners,
+            builder: {
+                cadence {
+                    cadenceString
+                }
 
-            payer {
-                RemoteConfigManager.shared.payer
-            }
+                payer {
+                    RemoteConfigManager.shared.payer
+                }
 
-            proposer {
-                Flow.TransactionProposalKey(address: Flow.Address(hex: address), keyIndex: fromKeyIndex)
-            }
+                proposer {
+                    Flow.TransactionProposalKey(
+                        address: Flow.Address(hex: address),
+                        keyIndex: fromKeyIndex
+                    )
+                }
 
-            authorizers {
-                Flow.Address(hex: address)
-            }
+                authorizers {
+                    Flow.Address(hex: address)
+                }
 
-            arguments {
-                [.string(domain), .string(root), .string(key), .uint64(itemId)]
-            }
+                arguments {
+                    [.string(domain), .string(root), .string(key), .uint64(itemId)]
+                }
 
-            gasLimit {
-                9999
+                gasLimit {
+                    9999
+                }
             }
-        })
+        )
     }
 }
 
 // MARK: - Swap
 
 extension FlowNetwork {
-    static func swapToken(swapPaths: [String], tokenInMax: Decimal, tokenOutMin: Decimal, tokenInVaultPath: String, tokenOutSplit: [Decimal], tokenInSplit: [Decimal], tokenOutVaultPath: String, tokenOutReceiverPath: String, tokenOutBalancePath: String, deadline: Decimal, isFrom: Bool) async throws -> Flow.ID {
+    static func swapToken(
+        swapPaths: [String],
+        tokenInMax: Decimal,
+        tokenOutMin: Decimal,
+        tokenInVaultPath: String,
+        tokenOutSplit: [Decimal],
+        tokenInSplit: [Decimal],
+        tokenOutVaultPath: String,
+        tokenOutReceiverPath: String,
+        tokenOutBalancePath: String,
+        deadline: Decimal,
+        isFrom: Bool
+    ) async throws -> Flow.ID {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
         }
@@ -293,7 +370,8 @@ extension FlowNetwork {
         let tokenName = String(swapPaths.last?.split(separator: ".").last ?? "")
         let tokenAddress = String(swapPaths.last?.split(separator: ".")[1] ?? "").addHexPrefix()
 
-        let fromCadence = CadenceManager.shared.current.swap?.SwapExactTokensForTokens?.toFunc() ?? ""
+        let fromCadence = CadenceManager.shared.current.swap?.SwapExactTokensForTokens?
+            .toFunc() ?? ""
         let toCadence = CadenceManager.shared.current.swap?.SwapTokensForExactTokens?.toFunc() ?? ""
         var cadenceString = isFrom ? fromCadence : toCadence
         cadenceString = cadenceString
@@ -317,35 +395,41 @@ extension FlowNetwork {
         args.append(.path(Flow.Argument.Path(domain: "public", identifier: tokenOutReceiverPath)))
         args.append(.path(Flow.Argument.Path(domain: "public", identifier: tokenOutBalancePath)))
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
-            cadence {
-                cadenceString
-            }
+        return try await flow.sendTransaction(
+            signers: WalletManager.shared.defaultSigners,
+            builder: {
+                cadence {
+                    cadenceString
+                }
 
-            payer {
-                RemoteConfigManager.shared.payer
-            }
+                payer {
+                    RemoteConfigManager.shared.payer
+                }
 
-            proposer {
-                Flow.TransactionProposalKey(address: Flow.Address(hex: address), keyIndex: fromKeyIndex)
-            }
+                proposer {
+                    Flow.TransactionProposalKey(
+                        address: Flow.Address(hex: address),
+                        keyIndex: fromKeyIndex
+                    )
+                }
 
-            authorizers {
-                Flow.Address(hex: address)
-            }
+                authorizers {
+                    Flow.Address(hex: address)
+                }
 
-            arguments {
-                args
-            }
+                arguments {
+                    args
+                }
 
-            gasLimit {
-                9999
+                gasLimit {
+                    9999
+                }
             }
-        })
+        )
     }
 }
 
-// MARK: - Stake
+// MARK: - LilicoError
 
 enum LilicoError: Error {
     case emptyWallet
@@ -364,7 +448,8 @@ extension FlowNetwork {
         return try await fetch(cadence: cadence, arguments: [.address(address)])
     }
 
-    static func claimUnstake(nodeID: String, delegatorId: Int, amount: Decimal) async throws -> Flow.ID {
+    static func claimUnstake(nodeID: String, delegatorId: Int, amount: Decimal) async throws -> Flow
+        .ID {
         guard let walletAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LilicoError.emptyWallet
         }
@@ -395,7 +480,11 @@ extension FlowNetwork {
         }
     }
 
-    static func reStakeUnstake(nodeID: String, delegatorId: Int, amount: Decimal) async throws -> Flow.ID {
+    static func reStakeUnstake(
+        nodeID: String,
+        delegatorId: Int,
+        amount: Decimal
+    ) async throws -> Flow.ID {
         guard let walletAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LilicoError.emptyWallet
         }
@@ -426,7 +515,8 @@ extension FlowNetwork {
         }
     }
 
-    static func claimReward(nodeID: String, delegatorId: Int, amount: Decimal) async throws -> Flow.ID {
+    static func claimReward(nodeID: String, delegatorId: Int, amount: Decimal) async throws -> Flow
+        .ID {
         guard let walletAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LilicoError.emptyWallet
         }
@@ -457,7 +547,11 @@ extension FlowNetwork {
         }
     }
 
-    static func reStakeReward(nodeID: String, delegatorId: Int, amount: Decimal) async throws -> Flow.ID {
+    static func reStakeReward(
+        nodeID: String,
+        delegatorId: Int,
+        amount: Decimal
+    ) async throws -> Flow.ID {
         guard let walletAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LilicoError.emptyWallet
         }
@@ -497,23 +591,26 @@ extension FlowNetwork {
         }
         let address = Flow.Address(hex: walletAddress)
         let fromKeyIndex = WalletManager.shared.keyIndex
-        let txId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
-            cadence {
-                cadenceString
-            }
+        let txId = try await flow.sendTransaction(
+            signers: WalletManager.shared.defaultSigners,
+            builder: {
+                cadence {
+                    cadenceString
+                }
 
-            payer {
-                RemoteConfigManager.shared.payer
-            }
+                payer {
+                    RemoteConfigManager.shared.payer
+                }
 
-            proposer {
-                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
-            }
+                proposer {
+                    Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
+                }
 
-            authorizers {
-                address
+                authorizers {
+                    address
+                }
             }
-        })
+        )
 
         let result = try await txId.onceSealed()
 
@@ -530,98 +627,112 @@ extension FlowNetwork {
         let cadenceString = cadenceOrigin.replace(by: ScriptAddress.addressMap())
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
-        let txId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
-            cadence {
-                cadenceString
-            }
+        let txId = try await flow.sendTransaction(
+            signers: WalletManager.shared.defaultSigners,
+            builder: {
+                cadence {
+                    cadenceString
+                }
 
-            payer {
-                RemoteConfigManager.shared.payer
-            }
+                payer {
+                    RemoteConfigManager.shared.payer
+                }
 
-            proposer {
-                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
-            }
+                proposer {
+                    Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
+                }
 
-            authorizers {
-                address
-            }
+                authorizers {
+                    address
+                }
 
-            arguments {
-                [.string(providerId), .ufix64(Decimal(amount))]
-            }
+                arguments {
+                    [.string(providerId), .ufix64(Decimal(amount))]
+                }
 
-            gasLimit {
-                9999
+                gasLimit {
+                    9999
+                }
             }
-        })
+        )
         return txId
     }
 
-    static func stakeFlow(providerId: String, delegatorId: Int, amount: Double) async throws -> Flow.ID {
+    static func stakeFlow(providerId: String, delegatorId: Int, amount: Double) async throws -> Flow
+        .ID {
         let cadenceOrigin = CadenceManager.shared.current.staking?.createStake?.toFunc() ?? ""
         let cadenceString = cadenceOrigin.replace(by: ScriptAddress.addressMap())
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
-        let txId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
-            cadence {
-                cadenceString
-            }
+        let txId = try await flow.sendTransaction(
+            signers: WalletManager.shared.defaultSigners,
+            builder: {
+                cadence {
+                    cadenceString
+                }
 
-            payer {
-                RemoteConfigManager.shared.payer
-            }
+                payer {
+                    RemoteConfigManager.shared.payer
+                }
 
-            proposer {
-                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
-            }
+                proposer {
+                    Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
+                }
 
-            authorizers {
-                address
-            }
+                authorizers {
+                    address
+                }
 
-            arguments {
-                [.string(providerId), .uint32(UInt32(delegatorId)), .ufix64(Decimal(amount))]
-            }
+                arguments {
+                    [.string(providerId), .uint32(UInt32(delegatorId)), .ufix64(Decimal(amount))]
+                }
 
-            gasLimit {
-                9999
+                gasLimit {
+                    9999
+                }
             }
-        })
+        )
 
         return txId
     }
 
-    static func unstakeFlow(providerId: String, delegatorId: Int, amount: Double) async throws -> Flow.ID {
+    static func unstakeFlow(
+        providerId: String,
+        delegatorId: Int,
+        amount: Double
+    ) async throws -> Flow.ID {
         let cadenceOrigin = CadenceManager.shared.current.staking?.unstake?.toFunc() ?? ""
         let cadenceString = cadenceOrigin.replace(by: ScriptAddress.addressMap())
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
-        let txId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
-            cadence {
-                cadenceString
-            }
+        let txId = try await flow.sendTransaction(
+            signers: WalletManager.shared.defaultSigners,
+            builder: {
+                cadence {
+                    cadenceString
+                }
 
-            payer {
-                RemoteConfigManager.shared.payer
-            }
+                payer {
+                    RemoteConfigManager.shared.payer
+                }
 
-            proposer {
-                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
-            }
+                proposer {
+                    Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
+                }
 
-            authorizers {
-                address
-            }
+                authorizers {
+                    address
+                }
 
-            arguments {
-                [.string(providerId), .uint32(UInt32(delegatorId)), .ufix64(Decimal(amount))]
-            }
+                arguments {
+                    [.string(providerId), .uint32(UInt32(delegatorId)), .ufix64(Decimal(amount))]
+                }
 
-            gasLimit {
-                9999
+                gasLimit {
+                    9999
+                }
             }
-        })
+        )
 
         return txId
     }
@@ -652,8 +763,10 @@ extension FlowNetwork {
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let cadence = CadenceManager.shared.current.staking?.getDelegatesIndo?.toFunc() ?? ""
         let replacedCadence = cadence.replace(by: ScriptAddress.addressMap())
-        let rawResponse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: replacedCadence),
-                                                                              arguments: [.address(address)])
+        let rawResponse = try await flow.accessAPI.executeScriptAtLatestBlock(
+            script: Flow.Script(text: replacedCadence),
+            arguments: [.address(address)]
+        )
 
         let response = try JSONDecoder().decode(StakingDelegatorInner.self, from: rawResponse.data)
         debugPrint("FlowNetwork -> getDelegatorInfo, response = \(response)")
@@ -687,45 +800,52 @@ extension FlowNetwork {
     }
 
     static func unlinkChildAccount(_ address: String) async throws -> Flow.ID {
-        let cadenceOrigin = CadenceManager.shared.current.hybridCustody?.unlinkChildAccount?.toFunc() ?? ""
+        let cadenceOrigin = CadenceManager.shared.current.hybridCustody?.unlinkChildAccount?
+            .toFunc() ?? ""
         let cadenceString = cadenceOrigin.replace(by: ScriptAddress.addressMap())
         let walletAddress = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
-        let txId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
-            cadence {
-                cadenceString
-            }
+        let txId = try await flow.sendTransaction(
+            signers: WalletManager.shared.defaultSigners,
+            builder: {
+                cadence {
+                    cadenceString
+                }
 
-            payer {
-                RemoteConfigManager.shared.payer
-            }
+                payer {
+                    RemoteConfigManager.shared.payer
+                }
 
-            proposer {
-                Flow.TransactionProposalKey(address: walletAddress, keyIndex: fromKeyIndex)
-            }
+                proposer {
+                    Flow.TransactionProposalKey(address: walletAddress, keyIndex: fromKeyIndex)
+                }
 
-            authorizers {
-                walletAddress
-            }
+                authorizers {
+                    walletAddress
+                }
 
-            arguments {
-                [.address(Flow.Address(hex: address))]
-            }
+                arguments {
+                    [.address(Flow.Address(hex: address))]
+                }
 
-            gasLimit {
-                9999
+                gasLimit {
+                    9999
+                }
             }
-        })
+        )
 
         return txId
     }
 
     static func queryChildAccountMeta(_ address: String) async throws -> [ChildAccount] {
         let address = Flow.Address(hex: address)
-        let cadence = CadenceManager.shared.current.hybridCustody?.getChildAccountMeta?.toFunc() ?? ""
+        let cadence = CadenceManager.shared.current.hybridCustody?.getChildAccountMeta?
+            .toFunc() ?? ""
         let replacedCadence = cadence.replace(by: ScriptAddress.addressMap())
-        let rawResponse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: replacedCadence),
-                                                                              arguments: [.address(address)])
+        let rawResponse = try await flow.accessAPI.executeScriptAtLatestBlock(
+            script: Flow.Script(text: replacedCadence),
+            arguments: [.address(address)]
+        )
 
         guard let decode = rawResponse.decode() as? [String: Any?] else {
             return []
@@ -747,146 +867,259 @@ extension FlowNetwork {
         return result
     }
 
-    static func editChildAccountMeta(_ address: String, name: String, desc: String, thumbnail: String) async throws -> Flow.ID {
-        let editChildAccount = CadenceManager.shared.current.hybridCustody?.editChildAccount?.toFunc() ?? ""
+    static func editChildAccountMeta(
+        _ address: String,
+        name: String,
+        desc: String,
+        thumbnail: String
+    ) async throws -> Flow.ID {
+        let editChildAccount = CadenceManager.shared.current.hybridCustody?.editChildAccount?
+            .toFunc() ?? ""
         let cadenceString = editChildAccount.replace(by: ScriptAddress.addressMap())
         let walletAddress = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let fromKeyIndex = WalletManager.shared.keyIndex
-        let txId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
-            cadence {
-                cadenceString
-            }
+        let txId = try await flow.sendTransaction(
+            signers: WalletManager.shared.defaultSigners,
+            builder: {
+                cadence {
+                    cadenceString
+                }
 
-            payer {
-                RemoteConfigManager.shared.payer
-            }
+                payer {
+                    RemoteConfigManager.shared.payer
+                }
 
-            proposer {
-                Flow.TransactionProposalKey(address: walletAddress, keyIndex: fromKeyIndex)
-            }
+                proposer {
+                    Flow.TransactionProposalKey(address: walletAddress, keyIndex: fromKeyIndex)
+                }
 
-            authorizers {
-                walletAddress
-            }
+                authorizers {
+                    walletAddress
+                }
 
-            arguments {
-                [.address(Flow.Address(hex: address)), .string(name), .string(desc), .string(thumbnail)]
-            }
+                arguments {
+                    [
+                        .address(Flow.Address(hex: address)),
+                        .string(name),
+                        .string(desc),
+                        .string(thumbnail),
+                    ]
+                }
 
-            gasLimit {
-                9999
+                gasLimit {
+                    9999
+                }
             }
-        })
+        )
 
         return txId
     }
 
     static func fetchAccessibleCollection(parent: String, child: String) async throws -> [String] {
-        let cadence = CadenceManager.shared.current.hybridCustody?.getChildAccountAllowTypes?.toFunc() ?? ""
+        let cadence = CadenceManager.shared.current.hybridCustody?.getChildAccountAllowTypes?
+            .toFunc() ?? ""
         let cadenceString = cadence.replace(by: ScriptAddress.addressMap())
         let parentAddress = Flow.Address(hex: parent)
         let childAddress = Flow.Address(hex: child)
         let response = try await flow.accessAPI
-            .executeScriptAtLatestBlock(script: Flow.Script(text: cadenceString), arguments: [.address(parentAddress), .address(childAddress)])
+            .executeScriptAtLatestBlock(
+                script: Flow.Script(text: cadenceString),
+                arguments: [.address(parentAddress), .address(childAddress)]
+            )
         let result = try response.decode([String].self)
         return result
     }
 
-    static func fetchAccessibleFT(parent: String, child: String) async throws -> [FlowModel.TokenInfo] {
-        let accessible = CadenceManager.shared.current.hybridCustody?.getAccessibleCoinInfo?.toFunc() ?? ""
+    static func fetchAccessibleFT(
+        parent: String,
+        child: String
+    ) async throws -> [FlowModel.TokenInfo] {
+        let accessible = CadenceManager.shared.current.hybridCustody?.getAccessibleCoinInfo?
+            .toFunc() ?? ""
         let cadenceString = accessible.replace(by: ScriptAddress.addressMap())
         let parentAddress = Flow.Address(hex: parent)
         let childAddress = Flow.Address(hex: child)
         let response = try await flow.accessAPI
-            .executeScriptAtLatestBlock(script: Flow.Script(text: cadenceString), arguments: [.address(parentAddress), .address(childAddress)])
+            .executeScriptAtLatestBlock(
+                script: Flow.Script(text: cadenceString),
+                arguments: [.address(parentAddress), .address(childAddress)]
+            )
             .decode([FlowModel.TokenInfo].self)
         return response
     }
 
     // on child, move nft to parent
-    static func moveNFTToParent(nftId: UInt64, childAddress: String, identifier: String, collection: NFTCollectionInfo) async throws -> Flow.ID {
-        let accessible = CadenceManager.shared.current.hybridCustody?.transferChildNFT?.toFunc() ?? ""
+    static func moveNFTToParent(
+        nftId: UInt64,
+        childAddress: String,
+        identifier: String,
+        collection: NFTCollectionInfo
+    ) async throws -> Flow.ID {
+        let accessible = CadenceManager.shared.current.hybridCustody?.transferChildNFT?
+            .toFunc() ?? ""
         let cadenceString = collection.formatCadence(script: accessible)
         let childAddress = Flow.Address(hex: childAddress)
-        return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(childAddress), .string(identifier), .uint64(nftId)])
+        return try await sendTransaction(
+            cadenceStr: cadenceString,
+            argumentList: [.address(childAddress), .string(identifier), .uint64(nftId)]
+        )
     }
 
     // on parent， move nft to child
-    static func moveNFTToChild(nftId: UInt64, childAddress: String, identifier: String, collection: NFTCollectionInfo) async throws -> Flow.ID {
-        let accessible = CadenceManager.shared.current.hybridCustody?.transferNFTToChild?.toFunc() ?? ""
+    static func moveNFTToChild(
+        nftId: UInt64,
+        childAddress: String,
+        identifier: String,
+        collection: NFTCollectionInfo
+    ) async throws -> Flow.ID {
+        let accessible = CadenceManager.shared.current.hybridCustody?.transferNFTToChild?
+            .toFunc() ?? ""
         let cadenceString = collection.formatCadence(script: accessible)
-        return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(Flow.Address(hex: childAddress)), .string(identifier), .uint64(nftId)])
+        return try await sendTransaction(
+            cadenceStr: cadenceString,
+            argumentList: [
+                .address(Flow.Address(hex: childAddress)),
+                .string(identifier),
+                .uint64(nftId),
+            ]
+        )
     }
 
     // send NFT from child to other wallet
-    static func sendChildNFT(nftId: UInt64, childAddress: String, toAddress: String, identifier: String, collection: NFTCollectionInfo) async throws -> Flow.ID {
+    static func sendChildNFT(
+        nftId: UInt64,
+        childAddress: String,
+        toAddress: String,
+        identifier: String,
+        collection: NFTCollectionInfo
+    ) async throws -> Flow.ID {
         let accessible = CadenceManager.shared.current.hybridCustody?.sendChildNFT?.toFunc() ?? ""
         let cadenceString = collection.formatCadence(script: accessible)
         let childAddr = Flow.Address(hex: childAddress)
         let toAddr = Flow.Address(hex: toAddress)
-        return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(childAddr), .address(toAddr), .string(identifier), .uint64(nftId)])
+        return try await sendTransaction(
+            cadenceStr: cadenceString,
+            argumentList: [
+                .address(childAddr),
+                .address(toAddr),
+                .string(identifier),
+                .uint64(nftId),
+            ]
+        )
     }
 
     // Send NFT from child to child
-    static func sendChildNFTToChild(nftId: UInt64, childAddress: String, toAddress: String, identifier: String, collection: NFTCollectionInfo) async throws -> Flow.ID {
-        let accessible = CadenceManager.shared.current.hybridCustody?.sendChildNFTToChild?.toFunc() ?? ""
+    static func sendChildNFTToChild(
+        nftId: UInt64,
+        childAddress: String,
+        toAddress: String,
+        identifier: String,
+        collection: NFTCollectionInfo
+    ) async throws -> Flow.ID {
+        let accessible = CadenceManager.shared.current.hybridCustody?.sendChildNFTToChild?
+            .toFunc() ?? ""
         let cadenceString = collection.formatCadence(script: accessible)
         let childAddr = Flow.Address(hex: childAddress)
         let toAddr = Flow.Address(hex: toAddress)
-        return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(childAddr), .address(toAddr), .string(identifier), .uint64(nftId)])
+        return try await sendTransaction(
+            cadenceStr: cadenceString,
+            argumentList: [
+                .address(childAddr),
+                .address(toAddr),
+                .string(identifier),
+                .uint64(nftId),
+            ]
+        )
     }
 
     static func linkedAccountEnabledTokenList(address: String) async throws -> [String: Bool] {
-        let cadence = CadenceManager.shared.current.ft?.isLinkedAccountTokenListEnabled?.toFunc() ?? ""
+        let cadence = CadenceManager.shared.current.ft?.isLinkedAccountTokenListEnabled?
+            .toFunc() ?? ""
         return try await fetch(at: Flow.Address(hex: address), by: cadence)
     }
 
-    static func checkChildLinkedCollections(parent: String, child: String, identifier: String, collection _: NFTCollectionInfo) async throws -> Bool {
-        let cadence = CadenceManager.shared.current.hybridCustody?.checkChildLinkedCollections?.toFunc() ?? ""
+    static func checkChildLinkedCollections(
+        parent: String,
+        child: String,
+        identifier: String,
+        collection _: NFTCollectionInfo
+    ) async throws -> Bool {
+        let cadence = CadenceManager.shared.current.hybridCustody?.checkChildLinkedCollections?
+            .toFunc() ?? ""
         let cadenceString = cadence.replace(by: ScriptAddress.addressMap())
         let parentAddress = Flow.Address(hex: parent)
         let childAddress = Flow.Address(hex: child)
         let response = try await flow.accessAPI
-            .executeScriptAtLatestBlock(script: Flow.Script(text: cadenceString),
-                                        arguments: [
-                                            .address(parentAddress),
-                                            .address(childAddress),
-                                            .string(identifier),
-                                        ])
+            .executeScriptAtLatestBlock(
+                script: Flow.Script(text: cadenceString),
+                arguments: [
+                    .address(parentAddress),
+                    .address(childAddress),
+                    .string(identifier),
+                ]
+            )
         let result = try response.decode(Bool.self)
         return result
     }
 
-    static func batchMoveNFTToParent(childAddr address: String, identifier: String, ids: [UInt64], collection: NFTCollectionInfo) async throws -> Flow.ID {
-        let accessible = CadenceManager.shared.current.hybridCustody?.batchTransferChildNFT?.toFunc() ?? ""
+    static func batchMoveNFTToParent(
+        childAddr address: String,
+        identifier: String,
+        ids: [UInt64],
+        collection: NFTCollectionInfo
+    ) async throws -> Flow.ID {
+        let accessible = CadenceManager.shared.current.hybridCustody?.batchTransferChildNFT?
+            .toFunc() ?? ""
         let cadenceString = collection.formatCadence(script: accessible)
         let childAddress = Flow.Address(hex: address)
         let idMaped = ids.map { Flow.Cadence.FValue.uint64($0) }
 
         let ident = identifier.split(separator: "/").last.map { String($0) } ?? identifier
 
-        return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(childAddress), .string(ident), .array(idMaped)])
+        return try await sendTransaction(
+            cadenceStr: cadenceString,
+            argumentList: [.address(childAddress), .string(ident), .array(idMaped)]
+        )
     }
 
-    static func batchMoveNFTToChild(childAddr address: String, identifier: String, ids: [UInt64], collection: NFTCollectionInfo) async throws -> Flow.ID {
-        let accessible = CadenceManager.shared.current.hybridCustody?.batchTransferNFTToChild?.toFunc() ?? ""
+    static func batchMoveNFTToChild(
+        childAddr address: String,
+        identifier: String,
+        ids: [UInt64],
+        collection: NFTCollectionInfo
+    ) async throws -> Flow.ID {
+        let accessible = CadenceManager.shared.current.hybridCustody?.batchTransferNFTToChild?
+            .toFunc() ?? ""
         let cadenceString = collection.formatCadence(script: accessible)
         let childAddress = Flow.Address(hex: address)
         let idMaped = ids.map { Flow.Cadence.FValue.uint64($0) }
         let ident = identifier.split(separator: "/").last.map { String($0) } ?? identifier
 
-        return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(childAddress), .string(ident), .array(idMaped)])
+        return try await sendTransaction(
+            cadenceStr: cadenceString,
+            argumentList: [.address(childAddress), .string(ident), .array(idMaped)]
+        )
     }
 
-    static func batchSendChildNFTToChild(fromAddress: String, toAddress: String, identifier: String, ids: [UInt64], collection: NFTCollectionInfo) async throws -> Flow.ID {
-        let accessible = CadenceManager.shared.current.hybridCustody?.batchSendChildNFTToChild?.toFunc() ?? ""
+    static func batchSendChildNFTToChild(
+        fromAddress: String,
+        toAddress: String,
+        identifier: String,
+        ids: [UInt64],
+        collection: NFTCollectionInfo
+    ) async throws -> Flow.ID {
+        let accessible = CadenceManager.shared.current.hybridCustody?.batchSendChildNFTToChild?
+            .toFunc() ?? ""
         let cadenceString = collection.formatCadence(script: accessible)
         let fromAddr = Flow.Address(hex: fromAddress)
         let toAddr = Flow.Address(hex: toAddress)
         let idMaped = ids.map { Flow.Cadence.FValue.uint64($0) }
         let ident = identifier.split(separator: "/").last.map { String($0) } ?? identifier
 
-        return try await sendTransaction(cadenceStr: cadenceString, argumentList: [.address(fromAddr), .address(toAddr), .string(ident), .array(idMaped)])
+        return try await sendTransaction(
+            cadenceStr: cadenceString,
+            argumentList: [.address(fromAddr), .address(toAddr), .string(ident), .array(idMaped)]
+        )
     }
 }
 
@@ -914,7 +1147,7 @@ extension FlowNetwork {
     }
 
     static func getAccountAtLatestBlock(address: String) async throws -> Flow.Account {
-        return try await flow.accessAPI.getAccountAtLatestBlock(address: Flow.Address(hex: address))
+        try await flow.accessAPI.getAccountAtLatestBlock(address: Flow.Address(hex: address))
     }
 
     static func getLastBlockAccountKeyId(address: String) async throws -> Int {
@@ -925,7 +1158,10 @@ extension FlowNetwork {
     static func checkStorageInfo() async throws -> Flow.StorageInfo {
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let cadence = CadenceManager.shared.current.basic?.getStorageInfo?.toFunc() ?? ""
-        let response = try await flow.accessAPI.executeScriptAtLatestBlock(cadence: cadence, arguments: [.address(address)]).decode(Flow.StorageInfo.self)
+        let response = try await flow.accessAPI.executeScriptAtLatestBlock(
+            cadence: cadence,
+            arguments: [.address(address)]
+        ).decode(Flow.StorageInfo.self)
         return response
     }
 }
@@ -933,19 +1169,30 @@ extension FlowNetwork {
 // MARK: - Base
 
 extension FlowNetwork {
-    private static func fetch<T: Decodable>(at address: Flow.Address, by cadence: String) async throws -> T {
+    private static func fetch<T: Decodable>(
+        at address: Flow.Address,
+        by cadence: String
+    ) async throws -> T {
         let replacedCadence = cadence.replace(by: ScriptAddress.addressMap())
 
-        let response = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: replacedCadence),
-                                                                           arguments: [.address(address)])
+        let response = try await flow.accessAPI.executeScriptAtLatestBlock(
+            script: Flow.Script(text: replacedCadence),
+            arguments: [.address(address)]
+        )
         let model: T = try response.decode()
         return model
     }
 
-    private static func fetch<T: Decodable>(cadence: String, arguments: [Flow.Cadence.FValue]) async throws -> T {
+    private static func fetch<T: Decodable>(
+        cadence: String,
+        arguments: [Flow.Cadence.FValue]
+    ) async throws -> T {
         let replacedCadence = cadence.replace(by: ScriptAddress.addressMap())
 
-        let response = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: replacedCadence), arguments: arguments)
+        let response = try await flow.accessAPI.executeScriptAtLatestBlock(
+            script: Flow.Script(text: replacedCadence),
+            arguments: arguments
+        )
         let model: T = try response.decode()
         return model
     }
@@ -987,30 +1234,37 @@ extension Flow.TransactionResult {
 extension FlowNetwork {
     static func revokeAccountKey(by index: Int, at address: Flow.Address) async throws -> Flow.ID {
         let fromKeyIndex = WalletManager.shared.keyIndex
-        return try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners, builder: {
-            cadence {
-                CadenceManager.shared.current.basic?.revokeKey?.toFunc() ?? ""
-            }
+        return try await flow.sendTransaction(
+            signers: WalletManager.shared.defaultSigners,
+            builder: {
+                cadence {
+                    CadenceManager.shared.current.basic?.revokeKey?.toFunc() ?? ""
+                }
 
-            payer {
-                RemoteConfigManager.shared.payer
-            }
+                payer {
+                    RemoteConfigManager.shared.payer
+                }
 
-            proposer {
-                Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
-            }
+                proposer {
+                    Flow.TransactionProposalKey(address: address, keyIndex: fromKeyIndex)
+                }
 
-            authorizers {
-                address
-            }
+                authorizers {
+                    address
+                }
 
-            arguments {
-                [.int(index)]
+                arguments {
+                    [.int(index)]
+                }
             }
-        })
+        )
     }
 
-    static func addKeyToAccount(address: Flow.Address, accountKey: Flow.AccountKey, signers: [FlowSigner]) async throws -> Flow.ID {
+    static func addKeyToAccount(
+        address: Flow.Address,
+        accountKey: Flow.AccountKey,
+        signers: [FlowSigner]
+    ) async throws -> Flow.ID {
         let originCadence = CadenceManager.shared.current.basic?.addKey?.toFunc() ?? ""
         let fromKeyIndex = WalletManager.shared.keyIndex
         return try await flow.sendTransaction(signers: signers) {
@@ -1039,7 +1293,13 @@ extension FlowNetwork {
         }
     }
 
-    static func addKeyWithMulti(address: Flow.Address, keyIndex: Int, sequenceNum: Int64, accountKey: Flow.AccountKey, signers: [FlowSigner]) async throws -> Flow.ID {
+    static func addKeyWithMulti(
+        address: Flow.Address,
+        keyIndex: Int,
+        sequenceNum: Int64,
+        accountKey: Flow.AccountKey,
+        signers: [FlowSigner]
+    ) async throws -> Flow.ID {
         let originCadence = CadenceManager.shared.current.basic?.addKey?.toFunc() ?? ""
         return try await flow.sendTransaction(signers: signers) {
             cadence {
@@ -1059,7 +1319,11 @@ extension FlowNetwork {
             }
 
             proposer {
-                Flow.TransactionProposalKey(address: address, keyIndex: keyIndex, sequenceNumber: sequenceNum)
+                Flow.TransactionProposalKey(
+                    address: address,
+                    keyIndex: keyIndex,
+                    sequenceNumber: sequenceNum
+                )
             }
             authorizers {
                 address
@@ -1089,7 +1353,10 @@ extension FlowNetwork {
             }
 
             proposer {
-                Flow.TransactionProposalKey(address: Flow.Address(hex: fromAddress), keyIndex: fromKeyIndex)
+                Flow.TransactionProposalKey(
+                    address: Flow.Address(hex: fromAddress),
+                    keyIndex: fromKeyIndex
+                )
             }
 
             authorizers {
@@ -1108,7 +1375,10 @@ extension FlowNetwork {
         }
         let originCadence = CadenceManager.shared.current.evm?.getCoaAddr?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
-        let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: cadenceStr), arguments: [.address(Flow.Address(hex: fromAddress))]).decode(String.self)
+        let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(
+            script: Flow.Script(text: cadenceStr),
+            arguments: [.address(Flow.Address(hex: fromAddress))]
+        ).decode(String.self)
         return resonpse
     }
 
@@ -1119,7 +1389,10 @@ extension FlowNetwork {
         let originCadence = CadenceManager.shared.current.evm?.getCoaBalance?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
 
-        let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: cadenceStr), arguments: [.address(Flow.Address(hex: fromAddress))])
+        let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(
+            script: Flow.Script(text: cadenceStr),
+            arguments: [.address(Flow.Address(hex: fromAddress))]
+        )
         let result = try resonpse.decode(Decimal.self)
         return result
     }
@@ -1148,7 +1421,12 @@ extension FlowNetwork {
     }
 
     /// coa -> eoa
-    static func sendTransaction(amount: String, data: Data?, toAddress: String, gas: UInt64) async throws -> Flow.ID {
+    static func sendTransaction(
+        amount: String,
+        data: Data?,
+        toAddress: String,
+        gas: UInt64
+    ) async throws -> Flow.ID {
         guard let amountParse = Decimal(string: amount) else {
             throw WalletError.insufficientBalance
         }
@@ -1181,8 +1459,10 @@ extension FlowNetwork {
     }
 
     // transferFlowToEvmAddress
-    static func sendFlowToEvm(evmAddress: String, amount: Decimal, gas: UInt64) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.evm?.transferFlowToEvmAddress?.toFunc() ?? ""
+    static func sendFlowToEvm(evmAddress: String, amount: Decimal, gas: UInt64) async throws -> Flow
+        .ID {
+        let originCadence = CadenceManager.shared.current.evm?.transferFlowToEvmAddress?
+            .toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
             .string(evmAddress),
@@ -1192,8 +1472,10 @@ extension FlowNetwork {
     }
 
     /// transferFlowFromCoaToFlow
-    static func sendFlowTokenFromCoaToFlow(amount: Decimal, address: String) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.evm?.transferFlowFromCoaToFlow?.toFunc() ?? ""
+    static func sendFlowTokenFromCoaToFlow(amount: Decimal, address: String) async throws -> Flow
+        .ID {
+        let originCadence = CadenceManager.shared.current.evm?.transferFlowFromCoaToFlow?
+            .toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
             .ufix64(amount),
@@ -1201,8 +1483,13 @@ extension FlowNetwork {
         ])
     }
 
-    static func sendNoFlowTokenToEVM(vaultIdentifier: String, amount: Decimal, recipient: String) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.bridge?.bridgeTokensToEvmAddressV2?.toFunc() ?? ""
+    static func sendNoFlowTokenToEVM(
+        vaultIdentifier: String,
+        amount: Decimal,
+        recipient: String
+    ) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.bridge?.bridgeTokensToEvmAddressV2?
+            .toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         let amountValue = Flow.Cadence.FValue.ufix64(amount)
 
@@ -1213,9 +1500,17 @@ extension FlowNetwork {
         ])
     }
 
-    static func bridgeToken(vaultIdentifier: String, amount: Decimal, fromEvm: Bool, decimals: Int) async throws -> Flow.ID {
-        let originCadence = (fromEvm ? CadenceManager.shared.current.bridge?.bridgeTokensFromEvmV2?.toFunc()
-            : CadenceManager.shared.current.bridge?.bridgeTokensToEvmV2?.toFunc()) ?? ""
+    static func bridgeToken(
+        vaultIdentifier: String,
+        amount: Decimal,
+        fromEvm: Bool,
+        decimals: Int
+    ) async throws -> Flow.ID {
+        let originCadence = (
+            fromEvm ? CadenceManager.shared.current.bridge?.bridgeTokensFromEvmV2?
+                .toFunc()
+                : CadenceManager.shared.current.bridge?.bridgeTokensToEvmV2?.toFunc()
+        ) ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         var amountValue = Flow.Cadence.FValue.ufix64(amount)
         if let result = Utilities.parseToBigUInt(amount.description, decimals: decimals), fromEvm {
@@ -1227,8 +1522,13 @@ extension FlowNetwork {
         ])
     }
 
-    static func bridgeTokensFromEvmToFlow(identifier: String, amount: BigUInt, receiver: String) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.bridge?.bridgeTokensFromEvmToFlowV2?.toFunc() ?? ""
+    static func bridgeTokensFromEvmToFlow(
+        identifier: String,
+        amount: BigUInt,
+        receiver: String
+    ) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.bridge?.bridgeTokensFromEvmToFlowV2?
+            .toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         let amountValue = Flow.Cadence.FValue.uint256(amount)
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
@@ -1240,11 +1540,19 @@ extension FlowNetwork {
 
     //
 
-    static func bridgeNFTToEVM(identifier: String, ids: [UInt64], fromEvm: Bool) async throws -> Flow.ID {
-        let originCadence = (fromEvm ? CadenceManager.shared.current.bridge?.batchBridgeNFTFromEvmV2?.toFunc()
-            : CadenceManager.shared.current.bridge?.batchBridgeNFTToEvmV2?.toFunc()) ?? ""
+    static func bridgeNFTToEVM(
+        identifier: String,
+        ids: [UInt64],
+        fromEvm: Bool
+    ) async throws -> Flow.ID {
+        let originCadence = (
+            fromEvm ? CadenceManager.shared.current.bridge?
+                .batchBridgeNFTFromEvmV2?.toFunc()
+                : CadenceManager.shared.current.bridge?.batchBridgeNFTToEvmV2?.toFunc()
+        ) ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
-        let idMaped = fromEvm ? ids.map { Flow.Cadence.FValue.uint256(BigUInt($0)) } : ids.map { Flow.Cadence.FValue.uint64($0) }
+        let idMaped = fromEvm ? ids.map { Flow.Cadence.FValue.uint256(BigUInt($0)) } : ids
+            .map { Flow.Cadence.FValue.uint64($0) }
 
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
             .string(identifier),
@@ -1252,8 +1560,13 @@ extension FlowNetwork {
         ])
     }
 
-    static func bridgeNFTToAnyEVM(identifier: String, id: String, toAddress: String) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.bridge?.bridgeNFTToEvmAddressV2?.toFunc() ?? ""
+    static func bridgeNFTToAnyEVM(
+        identifier: String,
+        id: String,
+        toAddress: String
+    ) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.bridge?.bridgeNFTToEvmAddressV2?
+            .toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         guard let nftId = UInt64(id) else {
             throw NFTError.invalidTokenId
@@ -1266,8 +1579,13 @@ extension FlowNetwork {
         ])
     }
 
-    static func bridgeNFTFromEVMToAnyFlow(identifier: String, id: String, receiver: String) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.bridge?.bridgeNFTFromEvmToFlowV2?.toFunc() ?? ""
+    static func bridgeNFTFromEVMToAnyFlow(
+        identifier: String,
+        id: String,
+        receiver: String
+    ) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.bridge?.bridgeNFTFromEvmToFlowV2?
+            .toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
 
         guard let nftId = BigUInt(id) else {
@@ -1280,37 +1598,51 @@ extension FlowNetwork {
             .address(Flow.Address(hex: receiver)),
         ])
     }
-    
-    static func checkCoaLink(address: String) async throws -> Bool? {
+
+    static func checkCoaLink(address _: String) async throws -> Bool? {
         guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
         }
         let originCadence = CadenceManager.shared.current.evm?.checkCoaLink?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
-        let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: cadenceStr), arguments: [.address(Flow.Address(hex: fromAddress))]).decode(Bool?.self)
+        let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(
+            script: Flow.Script(text: cadenceStr),
+            arguments: [.address(Flow.Address(hex: fromAddress))]
+        ).decode(Bool?.self)
         return resonpse
     }
-    
+
     static func coaLink() async throws -> Flow.ID {
         let originCadence = CadenceManager.shared.current.evm?.coaLink?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [])
     }
+
     /// evm contract address, eg. 0x7f27352D5F83Db87a5A3E00f4B07Cc2138D8ee52
     static func getAssociatedFlowIdentifier(address: String) async throws -> String? {
-        let originCadence = CadenceManager.shared.current.bridge?.getAssociatedFlowIdentifier?.toFunc() ?? ""
+        let originCadence = CadenceManager.shared.current.bridge?.getAssociatedFlowIdentifier?
+            .toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
-        let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: cadenceStr), arguments: [.string(address)]).decode(
+        let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(
+            script: Flow.Script(text: cadenceStr),
+            arguments: [.string(address)]
+        ).decode(
             String?.self
         )
         return resonpse
     }
 }
 
-//MARK: Bridge between Child and EVM
+// MARK: Bridge between Child and EVM
+
 extension FlowNetwork {
-    static func bridgeChildNFTToEvm(nft identifier: String, id: UInt64, child: String) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildNFTToEvm?.toFunc() ?? ""
+    static func bridgeChildNFTToEvm(
+        nft identifier: String,
+        id: UInt64,
+        child: String
+    ) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildNFTToEvm?
+            .toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
             .string(identifier),
@@ -1318,48 +1650,68 @@ extension FlowNetwork {
             .address(Flow.Address(hex: child)),
         ])
     }
-    
-    static func bridgeChildNFTFromEvm(nft identifier: String, id: UInt64, child: String) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildNFTFromEvm?.toFunc() ?? ""
+
+    static func bridgeChildNFTFromEvm(
+        nft identifier: String,
+        id: UInt64,
+        child: String
+    ) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildNFTFromEvm?
+            .toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
-        
+
         let nftId = BigUInt(id)
-        
+
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
             .string(identifier),
             .address(Flow.Address(hex: child)),
             .uint256(nftId),
         ])
     }
-    
-    static func batchBridgeChildNFTToCoa(nft identifier: String, ids: [UInt64], child: String) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.hybridCustody?.batchBridgeChildNFTToEvm?.toFunc() ?? ""
+
+    static func batchBridgeChildNFTToCoa(
+        nft identifier: String,
+        ids: [UInt64],
+        child: String
+    ) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.hybridCustody?.batchBridgeChildNFTToEvm?
+            .toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
-        
+
         let idMaped = ids.map { Flow.Cadence.FValue.uint64($0) }
-        
+
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
             .string(identifier),
             .address(Flow.Address(hex: child)),
             .array(idMaped),
         ])
     }
-    
-    static func batchBridgeChildNFTFromCoa(nft identifier: String, ids: [UInt64], child: String) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.hybridCustody?.batchBridgeChildNFTFromEvm?.toFunc() ?? ""
+
+    static func batchBridgeChildNFTFromCoa(
+        nft identifier: String,
+        ids: [UInt64],
+        child: String
+    ) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.hybridCustody?.batchBridgeChildNFTFromEvm?
+            .toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
-        
+
         let idMaped = ids.map { Flow.Cadence.FValue.uint64($0) }
-        
+
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
             .string(identifier),
             .address(Flow.Address(hex: child)),
             .array(idMaped),
         ])
     }
-    
-    static func bridgeChildTokenToCoa(vaultIdentifier: String, child:String, amount: Decimal) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildFTToEvm?.toFunc() ?? ""
+
+    static func bridgeChildTokenToCoa(
+        vaultIdentifier: String,
+        child: String,
+        amount: Decimal
+    ) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildFTToEvm?
+            .toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         let amountValue = Flow.Cadence.FValue.ufix64(amount)
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
@@ -1368,9 +1720,14 @@ extension FlowNetwork {
             amountValue,
         ])
     }
-    
-    static func bridgeChildTokenFromCoa(vaultIdentifier: String, child:String, amount: Decimal) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildFTFromEvm?.toFunc() ?? ""
+
+    static func bridgeChildTokenFromCoa(
+        vaultIdentifier: String,
+        child: String,
+        amount: Decimal
+    ) async throws -> Flow.ID {
+        let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildFTFromEvm?
+            .toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         let amountValue = Flow.Cadence.FValue.ufix64(amount)
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
@@ -1382,7 +1739,10 @@ extension FlowNetwork {
 }
 
 extension FlowNetwork {
-    private static func sendTransaction(cadenceStr: String, argumentList: [Flow.Cadence.FValue]) async throws -> Flow.ID {
+    private static func sendTransaction(
+        cadenceStr: String,
+        argumentList: [Flow.Cadence.FValue]
+    ) async throws -> Flow.ID {
         let fromKeyIndex = WalletManager.shared.keyIndex
         guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
             throw LLError.invalidAddress
@@ -1399,7 +1759,10 @@ extension FlowNetwork {
                 argumentList
             }
             proposer {
-                Flow.TransactionProposalKey(address: Flow.Address(hex: fromAddress), keyIndex: fromKeyIndex)
+                Flow.TransactionProposalKey(
+                    address: Flow.Address(hex: fromAddress),
+                    keyIndex: fromKeyIndex
+                )
             }
 
             authorizers {
@@ -1429,6 +1792,6 @@ extension UInt8 {
 
 extension String {
     func compareVersion(to version: String) -> ComparisonResult {
-        return compare(version, options: .numeric)
+        compare(version, options: .numeric)
     }
 }

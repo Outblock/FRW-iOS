@@ -8,22 +8,27 @@
 import Foundation
 import SwiftUI
 
+// MARK: - WalletNewsHandler
+
 class WalletNewsHandler: ObservableObject {
+    // MARK: Lifecycle
+
+    private init() {
+        self.removeIds = LocalUserDefaults.shared.removedNewsIds
+    }
+
+    // MARK: Internal
+
     static let shared = WalletNewsHandler()
 
-    private let accessQueue = DispatchQueue(label: "SynchronizedArrayAccess", attributes: .concurrent)
-
     // TODO: Change it to Set
-    @Published var list: [RemoteConfigManager.News] = []
+    @Published
+    var list: [RemoteConfigManager.News] = []
 
     var removeIds: [String] = [] {
         didSet {
             LocalUserDefaults.shared.removedNewsIds = removeIds
         }
-    }
-
-    private init() {
-        removeIds = LocalUserDefaults.shared.removedNewsIds
     }
 
     /// Call only once when receive Firebase Config
@@ -78,9 +83,25 @@ class WalletNewsHandler: ObservableObject {
         }
     }
 
+    /// Call only once when view appear
+    func checkFirstNews() {
+        accessQueue.async(flags: .barrier) { [weak self] in
+            guard let self else { return }
+            if let item = list.first {
+                markItemIfNeed(item.id, displatyType: [.once])
+            }
+        }
+    }
+
+    // MARK: Private
+
+    private let accessQueue = DispatchQueue(
+        label: "SynchronizedArrayAccess",
+        attributes: .concurrent
+    )
+
     private func removeExpiryNew() {
         accessQueue.sync {
-            
             let currentData = Date()
             list = list.filter { $0.expiryTime > currentData }
             log.debug("[NEWS] removeExpiryNew count:\(list.count)")
@@ -111,7 +132,10 @@ class WalletNewsHandler: ObservableObject {
     }
 
     @discardableResult
-    private func markItemIfNeed(_ itemId: String, displatyType: [RemoteConfigManager.NewDisplayType] = [.once]) -> Bool {
+    private func markItemIfNeed(
+        _ itemId: String,
+        displatyType: [RemoteConfigManager.NewDisplayType] = [.once]
+    ) -> Bool {
         let item = list.first { $0.id == itemId }
         guard let type = item?.displayType, displatyType.contains(type) else {
             return false
@@ -121,16 +145,6 @@ class WalletNewsHandler: ObservableObject {
             removeIds.append(itemId)
         }
         return true
-    }
-
-    /// Call only once when view appear
-    func checkFirstNews() {
-        accessQueue.async(flags: .barrier) { [weak self] in
-            guard let self else { return }
-            if let item = list.first {
-                markItemIfNeed(item.id, displatyType: [.once])
-            }
-        }
     }
 }
 
@@ -161,7 +175,9 @@ extension WalletNewsHandler {
             }
         }
 
-        if item.flag == .walletconnect, let request = WalletConnectManager.shared.pendingRequests.first(where: { $0.topic == item.id }) {
+        if item.flag == .walletconnect,
+           let request = WalletConnectManager.shared.pendingRequests
+           .first(where: { $0.topic == item.id }) {
             WalletConnectManager.shared.handleRequest(request)
         }
 

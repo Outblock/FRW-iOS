@@ -8,19 +8,16 @@
 import SwiftUI
 
 struct KeychainListView: RouteableView {
-    
-    @ObservedObject
-    private var viewModel = KeychainListViewModel()
-    
+    // MARK: Internal
+
     var title: String {
-        return "All Keys on Local"
+        "All Keys on Local"
     }
 
     var body: some View {
         ScrollView {
-            
             Section {
-                ForEach(0 ..< viewModel.seList.count, id: \.self) { index in
+                ForEach(0..<viewModel.seList.count, id: \.self) { index in
                     let item = viewModel.seList[index]
                     seItemView(key: item.keys.first ?? "", value: item.values.first ?? "")
                         .onTapGesture {
@@ -33,12 +30,11 @@ struct KeychainListView: RouteableView {
                     Spacer()
                 }
                 .frame(height: 52)
-                
             }
-            .visibility(viewModel.localList.count > 0 ? .visible : .gone)
-            
+            .visibility(!viewModel.localList.isEmpty ? .visible : .gone)
+
             Section {
-                ForEach(0 ..< viewModel.localList.count, id: \.self) { index in
+                ForEach(0..<viewModel.localList.count, id: \.self) { index in
                     let item = viewModel.localList[index]
                     itemView(item)
                 }
@@ -48,48 +44,42 @@ struct KeychainListView: RouteableView {
                     Spacer()
                 }
                 .frame(height: 52)
-                
             }
-            .visibility(viewModel.localList.count > 0 ? .visible : .gone)
+            .visibility(!viewModel.localList.isEmpty ? .visible : .gone)
 
             Section {
-                ForEach(0 ..< viewModel.remoteList.count, id: \.self) { index in
+                ForEach(0..<viewModel.remoteList.count, id: \.self) { index in
                     let item = viewModel.remoteList[index]
                     itemView(item)
                 }
             } header: {
-                
                 HStack {
                     Text("Remote(\(viewModel.remoteList.count))")
                     Spacer()
                 }
                 .frame(height: 52)
             }
-            .visibility(viewModel.remoteList.count > 0 ? .visible : .gone)
-            
-            
+            .visibility(!viewModel.remoteList.isEmpty ? .visible : .gone)
+
             Section {
-                ForEach(0 ..< $viewModel.multiICloudBackUpList.count, id: \.self) { index in
+                ForEach(0..<$viewModel.multiICloudBackUpList.count, id: \.self) { index in
                     let item = viewModel.multiICloudBackUpList[index]
                     seItemView(key: item.keys.first ?? "", value: item.values.first ?? "")
                 }
             } header: {
-                
                 HStack {
                     Text("iCloud Multiple Backup(\($viewModel.multiICloudBackUpList.count))")
                     Spacer()
                 }
                 .frame(height: 52)
             }
-            .visibility($viewModel.remoteList.count > 0 ? .visible : .gone)
-            
-            
+            .visibility(!$viewModel.remoteList.isEmpty ? .visible : .gone)
         }
         .applyRouteable(self)
     }
 
     func itemView(_ item: [String: Any]) -> some View {
-        return HStack {
+        HStack {
             VStack(alignment: .leading) {
                 Text(viewModel.getKey(item: item))
                     .font(.inter(size: 16))
@@ -114,9 +104,9 @@ struct KeychainListView: RouteableView {
         .frame(height: 80)
         .background(Color.Theme.Background.silver)
     }
-    
+
     func seItemView(key: String, value: String) -> some View {
-        return HStack {
+        HStack {
             VStack(alignment: .leading) {
                 Text("userId:\(key)")
                     .font(.inter(size: 16))
@@ -124,7 +114,10 @@ struct KeychainListView: RouteableView {
                     .lineLimit(2)
                 Text("publickKey: \(value)")
                     .font(.inter(size: 16))
-                    .foregroundStyle( isCurrentKey(key: key) ? Color.Theme.Text.black8 : Color.Theme.evm)
+                    .foregroundStyle(
+                        isCurrentKey(key: key) ? Color.Theme.Text.black8 : Color.Theme
+                            .evm
+                    )
                     .lineLimit(2)
             }
             Spacer()
@@ -140,10 +133,15 @@ struct KeychainListView: RouteableView {
         .frame(height: 80)
         .background(Color.Theme.Background.silver)
     }
-    
+
     func isCurrentKey(key: String) -> Bool {
         UserManager.shared.activatedUID == key
     }
+
+    // MARK: Private
+
+    @ObservedObject
+    private var viewModel = KeychainListViewModel()
 }
 
 #Preview {

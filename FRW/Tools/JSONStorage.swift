@@ -1,5 +1,5 @@
 //
-//  FileStorage.swift
+//  JSONStorage.swift
 //  Flow Wallet
 //
 //  Created by cat on 2022/5/13.
@@ -8,23 +8,24 @@
 import Foundation
 import Haneke
 
+// MARK: - JSONStorage
+
 @propertyWrapper
 struct JSONStorage<T: Codable> {
-    var value: T?
-    let key: String
+    // MARK: Lifecycle
 
     init(key: String) {
         self.key = key
         if let jsonData = UserDefaults.standard.data(forKey: theKey) {
             let decoder = JSONDecoder()
-            value = try? decoder.decode(T.self, from: jsonData)
+            self.value = try? decoder.decode(T.self, from: jsonData)
         }
     }
 
-    private var theKey: String {
-        // TODO: fileName: {userId_filename}
-        return key
-    }
+    // MARK: Internal
+
+    var value: T?
+    let key: String
 
     var wrappedValue: T? {
         set {
@@ -37,12 +38,21 @@ struct JSONStorage<T: Codable> {
             value
         }
     }
+
+    // MARK: Private
+
+    private var theKey: String {
+        // TODO: fileName: {userId_filename}
+        key
+    }
 }
+
+// MARK: - JSONTestReader
 
 @propertyWrapper
 struct JSONTestReader<T: Codable> {
-    var value: T?
-    let fileName: String
+    // MARK: Lifecycle
+
     init(fileName: String) {
         self.fileName = fileName
         if let path = Bundle.main.path(forResource: fileName, ofType: "json") {
@@ -50,10 +60,15 @@ struct JSONTestReader<T: Codable> {
                 let url = URL(fileURLWithPath: path)
                 let jsonData = try Data(contentsOf: url)
                 let decoder = JSONDecoder()
-                value = try? decoder.decode(T.self, from: jsonData)
+                self.value = try? decoder.decode(T.self, from: jsonData)
             } catch {}
         }
     }
+
+    // MARK: Internal
+
+    var value: T?
+    let fileName: String
 
     var wrappedValue: T? {
         set {

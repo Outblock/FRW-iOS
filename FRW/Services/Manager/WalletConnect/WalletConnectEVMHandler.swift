@@ -14,6 +14,8 @@ import Web3Core
 import web3swift
 import Web3Wallet
 
+// MARK: - WalletConnectEVMMethod
+
 enum WalletConnectEVMMethod: String, Codable, CaseIterable {
     case personalSign = "personal_sign"
     case sendTransaction = "eth_sendTransaction"
@@ -22,6 +24,7 @@ enum WalletConnectEVMMethod: String, Codable, CaseIterable {
     case signTypedDataV3 = "eth_signTypedData_v3"
     case signTypedDataV4 = "eth_signTypedData_v4"
     case switchEthereumChain = "wallet_switchEthereumChain"
+    case watchAsset = "wallet_watchAsset"
 }
 
 extension Flow.ChainID {
@@ -43,16 +46,18 @@ extension Flow.ChainID {
     }
 }
 
+// MARK: - WalletConnectEVMHandler
+
 struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
+    let supportNetwork: [Flow.ChainID] = [.mainnet, .testnet]
+
     var type: WalletConnectHandlerType {
-        return .evm
+        .evm
     }
 
     var nameTag: String {
-        return "eip155"
+        "eip155"
     }
-
-    let supportNetwork: [Flow.ChainID] = [.mainnet, .testnet]
 
     var suppportEVMChainID: [String] {
         supportNetwork.compactMap { $0.evmChainID }.map { String($0) }
@@ -64,7 +69,9 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
             reference = chains.first(where: { $0.namespace == nameTag })?.reference
         }
         if let chains = sessionProposal.optionalNamespaces?[nameTag]?.chains {
-            reference = chains.filter { $0.namespace == nameTag && suppportEVMChainID.contains($0.reference) }.compactMap { $0.reference }.sorted().last
+            reference = chains
+                .filter { $0.namespace == nameTag && suppportEVMChainID.contains($0.reference) }
+                .compactMap { $0.reference }.sorted().last
         }
         switch reference {
         case "646":
@@ -78,17 +85,30 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         }
     }
 
-    func approveSessionNamespaces(sessionProposal: Session.Proposal) throws -> [String: SessionNamespace] {
+    func approveSessionNamespaces(
+        sessionProposal: Session
+            .Proposal
+    ) throws -> [String: SessionNamespace] {
         guard let account = EVMAccountManager.shared.accounts.first?.address.addHexPrefix() else {
             return [:]
         }
         // Following properties are used to support all the required and optional namespaces for the testing purposes
         let supportedMethods = WalletConnectEVMMethod.allCases.map(\.rawValue)
-        let supportedEvents = Set(sessionProposal.requiredNamespaces.flatMap { $0.value.events } + (sessionProposal.optionalNamespaces?.flatMap { $0.value.events } ?? []))
+        let supportedEvents = Set(
+            sessionProposal.requiredNamespaces
+                .flatMap { $0.value.events } +
+                (sessionProposal.optionalNamespaces?.flatMap { $0.value.events } ?? [])
+        )
 
-        let supportedChains = supportNetwork.compactMap(\.evmChainIDString).compactMap { Blockchain(namespace: nameTag, reference: $0) }
+        let supportedChains = supportNetwork.compactMap(\.evmChainIDString).compactMap { Blockchain(
+            namespace: nameTag,
+            reference: $0
+        ) }
 
-        let supportedAccounts = Array(supportedChains).map { WalletConnectSign.Account(blockchain: $0, address: account)! }
+        let supportedAccounts = Array(supportedChains).map { WalletConnectSign.Account(
+            blockchain: $0,
+            address: account
+        )! }
 
         let sessionNamespaces: [String: SessionNamespace] = try AutoNamespaces.build(
             sessionProposal: sessionProposal,
@@ -100,7 +120,11 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         return sessionNamespaces
     }
 
-    func handlePersonalSignRequest(request: Request, confirm: @escaping (String) -> Void, cancel: @escaping () -> Void) {
+    func handlePersonalSignRequest(
+        request: Request,
+        confirm: @escaping (String) -> Void,
+        cancel: @escaping () -> Void
+    ) {
         guard let data = message(sessionRequest: request) else {
             cancel()
             return
@@ -109,10 +133,12 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         let title = pair?.peer?.name ?? "unknown"
         let url = pair?.peer?.url ?? "unknown"
         let logo = pair?.peer?.icons.first
-        let vm = BrowserSignMessageViewModel(title: title,
-                                             url: url,
-                                             logo: logo,
-                                             cadence: data.hexString) { result in
+        let vm = BrowserSignMessageViewModel(
+            title: title,
+            url: url,
+            logo: logo,
+            cadence: data.hexString
+        ) { result in
             if result {
                 guard let addrStr = WalletManager.shared.getPrimaryWalletAddress() else {
                     HUD.error(title: "invalid_address".localized)
@@ -127,7 +153,12 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                     return
                 }
                 let keyIndex = BigUInt(WalletManager.shared.keyIndex)
-                let proof = COAOwnershipProof(keyIninces: [keyIndex], address: address.data, capabilityPath: "evm", signatures: [sig])
+                let proof = COAOwnershipProof(
+                    keyIninces: [keyIndex],
+                    address: address.data,
+                    capabilityPath: "evm",
+                    signatures: [sig]
+                )
                 guard let encoded = RLP.encode(proof.rlpList) else {
                     return
                 }
@@ -140,7 +171,11 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         Router.route(to: RouteMap.Explore.signMessage(vm))
     }
 
-    func handleSendTransactionRequest(request: WalletConnectSign.Request, confirm: @escaping (String) -> Void, cancel: @escaping () -> Void) {
+    func handleSendTransactionRequest(
+        request: WalletConnectSign.Request,
+        confirm: @escaping (String) -> Void,
+        cancel: @escaping () -> Void
+    ) {
         let pair = try? Pair.instance.getPairing(for: request.topic)
         let title = pair?.peer?.name ?? "unknown"
         let url = pair?.peer?.url ?? "unknown"
@@ -162,17 +197,24 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                 .uint64(receiveModel.gasValue),
             ]
 
-            let vm = BrowserAuthzViewModel(title: title,
-                                           url: url,
-                                           logo: logo,
-                                           cadence: originCadence,
-                                           arguments: args.toArguments()) { result in
+            let vm = BrowserAuthzViewModel(
+                title: title,
+                url: url,
+                logo: logo,
+                cadence: originCadence,
+                arguments: args.toArguments()
+            ) { result in
                 Task {
                     if !result {
                         cancel()
                     }
 
-                    let txid = try await FlowNetwork.sendTransaction(amount: receiveModel.amount, data: receiveModel.dataValue, toAddress: toAddr, gas: receiveModel.gasValue)
+                    let txid = try await FlowNetwork.sendTransaction(
+                        amount: receiveModel.amount,
+                        data: receiveModel.dataValue,
+                        toAddress: toAddr,
+                        gas: receiveModel.gasValue
+                    )
                     let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                     TransactionManager.shared.newTransaction(holder: holder)
                     let tixResult = try await txid.onceSealed()
@@ -194,30 +236,39 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
             cancel()
         }
     }
-    
-    func handleSignTypedDataV4(request: WalletConnectSign.Request, confirm: @escaping (String) -> Void, cancel: @escaping () -> Void) {
+
+    func handleSignTypedDataV4(
+        request: WalletConnectSign.Request,
+        confirm: @escaping (String) -> Void,
+        cancel: @escaping () -> Void
+    ) {
         let pair = try? Pair.instance.getPairing(for: request.topic)
         let title = pair?.peer?.name ?? "unknown"
         let url = pair?.peer?.url ?? "unknown"
         let logo = pair?.peer?.icons.first
-        
+
         do {
             let list = try request.params.get([String].self)
             let evmAddress = EVMAccountManager.shared.accounts.first?.showAddress.lowercased()
-            
+
             if list.count != 2 {
                 cancel()
                 return
             }
-            
-            var dataStr: String = ""
+
+            var dataStr = ""
             if list[0].lowercased() == evmAddress {
                 dataStr = list[1]
-            }else {
+            } else {
                 dataStr = list[0]
             }
-            
-            let vm = BrowserSignTypedMessageViewModel(title: title, urlString: url, logo: logo, rawString: dataStr) { result in
+
+            let vm = BrowserSignTypedMessageViewModel(
+                title: title,
+                urlString: url,
+                logo: logo,
+                rawString: dataStr
+            ) { result in
 
                 if result {
                     do {
@@ -234,25 +285,60 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                             return
                         }
                         let keyIndex = BigUInt(WalletManager.shared.keyIndex)
-                        let proof = COAOwnershipProof(keyIninces: [keyIndex], address: address.data, capabilityPath: "evm", signatures: [sig])
+                        let proof = COAOwnershipProof(
+                            keyIninces: [keyIndex],
+                            address: address.data,
+                            capabilityPath: "evm",
+                            signatures: [sig]
+                        )
                         guard let encoded = RLP.encode(proof.rlpList) else {
                             return
                         }
-                         confirm(encoded.hexString.addHexPrefix())
-                    }catch {
+                        confirm(encoded.hexString.addHexPrefix())
+                    } catch {
                         cancel()
                     }
-                    
+
                 } else {
                     cancel()
                 }
             }
 
             Router.route(to: RouteMap.Explore.signTypedMessage(vm))
-            
-        }catch {
+
+        } catch {
             log.error("[EVM] handleSignTypedDataV4 \(error)", context: error)
             cancel()
+        }
+    }
+
+    func handleWatchAsset(
+        request: Request,
+        confirm: @escaping (String) -> Void,
+        cancel: @escaping () -> Void
+    ) {
+        guard let model = try? request.params.get(WalletConnectEVMHandler.WatchAsset.self),
+              let address = model.options?.address else {
+            cancel()
+            return
+        }
+        Task {
+            HUD.loading()
+            let manager = WalletManager.shared.customTokenManager
+            guard let token = try await manager.findToken(evmAddress: address) else {
+                HUD.dismissLoading()
+                DispatchQueue.main.async {
+                    confirm("false")
+                }
+                return
+            }
+            HUD.dismissLoading()
+            let callback: BoolClosure = { result in
+                DispatchQueue.main.async {
+                    confirm(result ? "true" : "false")
+                }
+            }
+            Router.route(to: RouteMap.Wallet.addTokenSheet(token, callback))
         }
     }
 }
@@ -265,6 +351,23 @@ extension WalletConnectEVMHandler {
     }
 
     private func signWithMessage(data: Data) -> Data? {
-        return WalletManager.shared.signSync(signableData: data)
+        WalletManager.shared.signSync(signableData: data)
+    }
+}
+
+// MARK: WalletConnectEVMHandler.WatchAsset
+
+extension WalletConnectEVMHandler {
+    private struct WatchAsset: Codable {
+        struct Info: Codable {
+            let address: String?
+        }
+
+        let options: WatchAsset.Info?
+        let type: String?
+
+        var isERC20: Bool {
+            type?.lowercased() == "ERC20".lowercased()
+        }
     }
 }

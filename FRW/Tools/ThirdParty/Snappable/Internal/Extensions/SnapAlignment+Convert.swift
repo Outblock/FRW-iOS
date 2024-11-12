@@ -1,6 +1,6 @@
 import SwiftUI
 
-internal extension SnapAlignment {
+extension SnapAlignment {
     var unitPoint: UnitPoint {
         switch self {
         case .topLeading:

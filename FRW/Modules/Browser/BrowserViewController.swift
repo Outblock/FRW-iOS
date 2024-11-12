@@ -13,26 +13,22 @@ import TrustWeb3Provider
 import UIKit
 import WebKit
 
+// MARK: - BrowserViewController
+
 class BrowserViewController: UIViewController {
-    private var observation: NSKeyValueObservation?
-    private var actionBarIsHiddenFlag: Bool = false
+    // MARK: Lifecycle
+
+    deinit {
+        observation = nil
+    }
+
+    // MARK: Public
+
     public var shouldHideActionBar: Bool = false
-    private var cancelSets = Set<AnyCancellable>()
+
+    // MARK: Internal
 
     let trustProvider = TrustWeb3Provider.flowConfig()
-
-    private var commonColor: UIColor? = UIColor(named: "bg.silver")
-
-    private lazy var contentView: UIView = {
-        let view = UIView()
-        view.backgroundColor = commonColor
-        return view
-    }()
-
-    private lazy var bgMaskLayer: CAShapeLayer = {
-        let layer = CAShapeLayer()
-        return layer
-    }()
 
     lazy var webView: WKWebView = {
         let view = WKWebView(frame: .zero, configuration: generateWebViewConfiguration())
@@ -44,9 +40,9 @@ class BrowserViewController: UIViewController {
         view.allowsLinkPreview = true
         view.layer.masksToBounds = true
         #if DEBUG
-            if #available(iOS 16.4, *) {
-                view.isInspectable = true
-            }
+        if #available(iOS 16.4, *) {
+            view.isInspectable = true
+        }
         #endif
         return view
     }()
@@ -61,6 +57,46 @@ class BrowserViewController: UIViewController {
         let obj = TrustJSMessageHandler()
         obj.webVC = self
         return obj
+    }()
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        .lightContent
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setup()
+        setupObserver()
+        hero.isEnabled = true
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        reloadBgPaths()
+    }
+
+    // MARK: Private
+
+    private var observation: NSKeyValueObservation?
+    private var actionBarIsHiddenFlag: Bool = false
+    private var cancelSets = Set<AnyCancellable>()
+
+    private var commonColor: UIColor? = UIColor(named: "bg.silver")
+
+    private lazy var contentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = commonColor
+        return view
+    }()
+
+    private lazy var bgMaskLayer: CAShapeLayer = {
+        let layer = CAShapeLayer()
+        return layer
     }()
 
     private lazy var actionBarView: BrowserActionBarView = {
@@ -85,31 +121,6 @@ class BrowserViewController: UIViewController {
 
         return view
     }()
-
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-
-    deinit {
-        observation = nil
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setup()
-        setupObserver()
-        hero.isEnabled = true
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: true)
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        reloadBgPaths()
-    }
 
     private func setup() {
         view.backgroundColor = commonColor
@@ -146,11 +157,15 @@ class BrowserViewController: UIViewController {
     }
 
     private func setupObserver() {
-        observation = webView.observe(\.estimatedProgress, options: .new, changeHandler: { [weak self] _, _ in
-            DispatchQueue.main.async {
-                self?.reloadActionBarView()
+        observation = webView.observe(
+            \.estimatedProgress,
+            options: .new,
+            changeHandler: { [weak self] _, _ in
+                DispatchQueue.main.async {
+                    self?.reloadActionBarView()
+                }
             }
-        })
+        )
 
         NotificationCenter.default.publisher(for: .networkChange)
             .receive(on: DispatchQueue.main)
@@ -162,7 +177,11 @@ class BrowserViewController: UIViewController {
     private func reloadBgPaths() {
         bgMaskLayer.frame = contentView.bounds
 
-        let path = UIBezierPath(roundedRect: contentView.bounds, byRoundingCorners: [.topLeft, .topRight], cornerRadii: CGSize(width: 20.0, height: 20.0))
+        let path = UIBezierPath(
+            roundedRect: contentView.bounds,
+            byRoundingCorners: [.topLeft, .topRight],
+            cornerRadii: CGSize(width: 20.0, height: 20.0)
+        )
         bgMaskLayer.path = path.cgPath
     }
 }
@@ -219,7 +238,8 @@ extension BrowserViewController {
 //        }
     }
 
-    @objc private func onBackBtnClick() {
+    @objc
+    private func onBackBtnClick() {
         if webView.canGoBack {
             webView.goBack()
             return
@@ -228,15 +248,18 @@ extension BrowserViewController {
         onHomeBtnClick()
     }
 
-    @objc private func onHomeBtnClick() {
+    @objc
+    private func onHomeBtnClick() {
         Router.pop()
     }
 
-    @objc private func onReloadBtnClick() {
+    @objc
+    private func onReloadBtnClick() {
         webView.reload()
     }
 
-    @objc private func onMoveAssets() {
+    @objc
+    private func onMoveAssets() {
         if MoveAssetsAction.shared.allowMoveAssets {
             let vc = PresentHostingController(rootView: MoveAssetsView())
             navigationController?.present(vc, completion: nil)
@@ -245,7 +268,8 @@ extension BrowserViewController {
         }
     }
 
-    @objc private func onAddressBarClick() {
+    @objc
+    private func onAddressBarClick() {
         showSearchInputView()
     }
 
@@ -273,6 +297,25 @@ extension BrowserViewController {
     private func onClearCookie() {
         BrowserViewController.deleteCookie()
     }
+
+    private func handleNavigationAction(navigationAction: WKNavigationAction) {
+        guard let url = navigationAction.request.url else {
+            return
+        }
+
+        if !url.absoluteString.hasPrefixes(AppExternalLinks.allLinks) {
+            if navigationAction.targetFrame == nil {
+                UIApplication.shared.open(url)
+            }
+            return
+        }
+
+        let uri = AppExternalLinks.exactWCLink(link: url.absoluteString)
+        WalletConnectManager.shared.onClientConnected = {
+            WalletConnectManager.shared.connect(link: uri)
+        }
+        WalletConnectManager.shared.connect(link: uri)
+    }
 }
 
 // MARK: - Search Recommend
@@ -293,7 +336,7 @@ extension BrowserViewController {
     }
 }
 
-// MARK: - Delegate
+// MARK: WKNavigationDelegate
 
 extension BrowserViewController: WKNavigationDelegate {
     func webView(_: WKWebView, didStartProvisionalNavigation _: WKNavigation!) {
@@ -319,47 +362,31 @@ extension BrowserViewController: WKNavigationDelegate {
         reloadActionBarView()
     }
 
-    func webView(_: WKWebView, decidePolicyFor _: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        decisionHandler(.allow)
+    func webView(
+        _: WKWebView,
+        decidePolicyFor navigationAction: WKNavigationAction
+    ) async -> WKNavigationActionPolicy {
+        handleNavigationAction(navigationAction: navigationAction)
         reloadActionBarView()
+        return .allow
     }
 }
 
-extension BrowserViewController: WKUIDelegate {
-    func webView(_: WKWebView, createWebViewWith _: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures _: WKWindowFeatures) -> WKWebView? {
-        if navigationAction.targetFrame == nil, let url = navigationAction.request.url {
-            if url.absoluteString.hasPrefix("https://fcw-link.lilico.app") {
-                var uri = url.absoluteString.deletingPrefix("https://fcw-link.lilico.app/wc?uri=")
-                uri = uri.deletingPrefix("fcw://")
-                WalletConnectManager.shared.onClientConnected = {
-                    WalletConnectManager.shared.connect(link: uri)
-                }
-                WalletConnectManager.shared.connect(link: uri)
-            } else if url.absoluteString.hasPrefix("https://frw-link.lilico.app") {
-                var uri = url.absoluteString.deletingPrefix("https://frw-link.lilico.app/wc?uri=")
-                uri = uri.deletingPrefix("frw://")
-                WalletConnectManager.shared.onClientConnected = {
-                    WalletConnectManager.shared.connect(link: uri)
-                }
-                WalletConnectManager.shared.connect(link: uri)
-            } else if url.absoluteString.hasPrefix("https://link.lilico.app") {
-                var uri = url.absoluteString.deletingPrefix("https://link.lilico.app/wc?uri=")
-                uri = uri.deletingPrefix("lilico://")
-                WalletConnectManager.shared.onClientConnected = {
-                    WalletConnectManager.shared.connect(link: uri)
-                }
-                WalletConnectManager.shared.connect(link: uri)
-            } else if url.description.lowercased().range(of: "http://") != nil ||
-                url.description.lowercased().range(of: "https://") != nil ||
-                url.description.lowercased().range(of: "mailto:") != nil
-            {
-                UIApplication.shared.openURL(url)
-            }
-        }
+// MARK: WKUIDelegate
 
+extension BrowserViewController: WKUIDelegate {
+    func webView(
+        _: WKWebView,
+        createWebViewWith _: WKWebViewConfiguration,
+        for navigationAction: WKNavigationAction,
+        windowFeatures _: WKWindowFeatures
+    ) -> WKWebView? {
+        handleNavigationAction(navigationAction: navigationAction)
         return nil
     }
 }
+
+// MARK: UIScrollViewDelegate
 
 extension BrowserViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -376,17 +403,22 @@ extension BrowserViewController {
     static func deleteCookie() {
         HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
         let dispatch_group = DispatchGroup()
-        WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
-            records.forEach { record in
-                dispatch_group.enter()
-                WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {
-                    dispatch_group.leave()
-                })
-                #if DEBUG
+        WKWebsiteDataStore.default()
+            .fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+                for record in records {
+                    dispatch_group.enter()
+                    WKWebsiteDataStore.default().removeData(
+                        ofTypes: record.dataTypes,
+                        for: [record],
+                        completionHandler: {
+                            dispatch_group.leave()
+                        }
+                    )
+                    #if DEBUG
                     print("WKWebsiteDataStore record deleted:", record)
-                #endif
+                    #endif
+                }
+                dispatch_group.notify(queue: DispatchQueue.main) {}
             }
-            dispatch_group.notify(queue: DispatchQueue.main) {}
-        }
     }
 }

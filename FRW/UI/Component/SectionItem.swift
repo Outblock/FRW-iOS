@@ -1,17 +1,19 @@
 //
-//  ImportTitleHeader.swift
+//  SectionItem.swift
 //  FRW
 //
 //  Created by cat on 10/30/24.
 //
 
-import SwiftUI
 import Introspect
+import SwiftUI
+
+// MARK: - TitleView
 
 struct TitleView: View {
     let title: String
     let isStar: Bool
-    
+
     var body: some View {
         HStack(spacing: 0) {
             Text(title)
@@ -27,29 +29,33 @@ struct TitleView: View {
     }
 }
 
+// MARK: - SingleInputView
+
 struct SingleInputView: View {
-    
     enum FocusField: Hashable {
         case field
     }
-    
-    @Binding var content: String
+
+    @Binding
+    var content: String
     var placeholder: String? = "add_custom_token_place".localized
-    @FocusState private var focusedField: FocusField?
+    @FocusState
+    private var focusedField: FocusField?
     var onSubmit: EmptyClosure? = nil
-    var onChange: ((String)->())? = nil
-    
+    var onChange: ((String) -> Void)? = nil
+
     var body: some View {
         ZStack(alignment: .center) {
-            
             TextField("", text: $content)
                 .keyboardType(.alphabet)
                 .submitLabel(.search)
                 .disableAutocorrection(true)
-                .modifier(PlaceholderStyle(showPlaceHolder: content.isEmpty,
-                                           placeholder: placeholder ?? "",
-                                           font: .inter(size: 14, weight: .medium),
-                                           color: Color.LL.Neutrals.note))
+                .modifier(PlaceholderStyle(
+                    showPlaceHolder: content.isEmpty,
+                    placeholder: placeholder ?? "",
+                    font: .inter(size: 14, weight: .medium),
+                    color: Color.LL.Neutrals.note
+                ))
                 .font(.inter(size: 14))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .onSubmit {
@@ -74,40 +80,36 @@ struct SingleInputView: View {
     }
 }
 
-
-
-
-
+// MARK: - AnimatedSecureTextField
 
 public struct AnimatedSecureTextField: View {
-    private enum FocusedField: Int, Hashable {
-        case password
-    }
+    // MARK: Lifecycle
 
-    @State var isSecure = false
-    @FocusState private var field: FocusedField?
-    public let placeholder: String
-    @Binding var text: String
-
-    var textDidChange:(String)->()
-    
-    public init(placeholder: String, text: Binding<String>, textDidChange: @escaping (String)->()) {
+    public init(
+        placeholder: String,
+        text: Binding<String>,
+        textDidChange: @escaping (String) -> Void
+    ) {
         self.placeholder = placeholder
-        self._text = text
+        _text = text
         self.textDidChange = textDidChange
         self.field = .password
     }
 
+    // MARK: Public
+
+    public let placeholder: String
+
     public var body: some View {
         ZStack(alignment: .leading) {
-            if  text.isEmpty {
+            if text.isEmpty {
                 HStack {
                     Text(placeholder)
                         .font(.inter(size: 14))
                         .foregroundStyle(Color.Theme.Text.black3)
                     Spacer()
                 }
-    //            .padding(.horizontal, 16.0)
+                //            .padding(.horizontal, 16.0)
                 .frame(maxWidth: .infinity)
                 .layoutPriority(1)
                 .onTapGesture {
@@ -116,7 +118,6 @@ public struct AnimatedSecureTextField: View {
                     }
                 }
             }
-            
 
             if isSecure {
                 SecureField("", text: $text)
@@ -130,7 +131,7 @@ public struct AnimatedSecureTextField: View {
                     .onChange(of: text) { text in
                         textDidChange(text)
                     }
-                    
+
             } else {
                 TextField("", text: $text)
                     .disableAutocorrection(true)
@@ -143,12 +144,11 @@ public struct AnimatedSecureTextField: View {
                     .onChange(of: text) { text in
                         textDidChange(text)
                     }
-                    
             }
 
             HStack {
                 Spacer()
-                    
+
                 if !text.isEmpty {
                     Button {
                         isSecure.toggle()
@@ -168,20 +168,36 @@ public struct AnimatedSecureTextField: View {
                 }
             }
         }
-        .padding(.horizontal,20)
+        .padding(.horizontal, 20)
         .frame(height: 64)
         .background {
             RoundedRectangle(cornerRadius: 16.0)
                 .foregroundColor(.Theme.Background.bg2)
         }
     }
-}
 
+    // MARK: Internal
+
+    @State
+    var isSecure = false
+    @Binding
+    var text: String
+
+    var textDidChange: (String) -> Void
+
+    // MARK: Private
+
+    private enum FocusedField: Int, Hashable {
+        case password
+    }
+
+    @FocusState
+    private var field: FocusedField?
+}
 
 #Preview {
     TitleView(title: "Hello", isStar: false)
-    
-    SingleInputView(content: .constant("abc")) { str in
-    
+
+    SingleInputView(content: .constant("abc")) { _ in
     }
 }

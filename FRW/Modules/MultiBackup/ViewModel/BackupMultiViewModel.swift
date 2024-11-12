@@ -1,5 +1,5 @@
 //
-//  BackupSelectOptionsViewModel.swift
+//  BackupMultiViewModel.swift
 //  FRW
 //
 //  Created by cat on 2023/12/7.
@@ -7,20 +7,28 @@
 
 import Foundation
 
+// MARK: - BackupMultiViewModel
+
 class BackupMultiViewModel: ObservableObject {
-    @Published var list: [BackupMultiViewModel.MultiItem] = []
-    @Published var nextable: Bool = false
-    let selectedList: [MultiBackupType]
+    // MARK: Lifecycle
 
     init(backups: [MultiBackupType]) {
-        list = []
-        selectedList = backups
+        self.list = []
+        self.selectedList = backups
         for type in MultiBackupType.allCases {
             if type != .passkey {
                 list.append(MultiItem(type: type, isBackup: backups.contains(type)))
             }
         }
     }
+
+    // MARK: Internal
+
+    @Published
+    var list: [BackupMultiViewModel.MultiItem] = []
+    @Published
+    var nextable: Bool = false
+    let selectedList: [MultiBackupType]
 
     func onClick(item: BackupMultiViewModel.MultiItem) {
         let existItem = selectedList.first { $0 == item.type }
@@ -47,7 +55,7 @@ class BackupMultiViewModel: ObservableObject {
         let needPin = list.filter { $0.needPin }
         let hasPin = SecurityManager.shared.currentPinCode.count > 0
         MultiBackupManager.shared.backupList = list
-        if needPin.count > 0 {
+        if !needPin.isEmpty {
             if hasPin {
                 Router.route(to: RouteMap.Backup.verityPin(.backup) { allow, _ in
                     if allow {
@@ -70,13 +78,15 @@ class BackupMultiViewModel: ObservableObject {
     }
 }
 
-// MARK: - MultiItem
+// MARK: - MultiBackupType
 
 enum MultiBackupType: Int, CaseIterable {
     case google = 0
     case passkey = 1
     case icloud = 2
     case phrase = 3
+
+    // MARK: Internal
 
     var title: String {
         switch self {
@@ -88,19 +98,6 @@ enum MultiBackupType: Int, CaseIterable {
             return "iCloud"
         case .phrase:
             return "Recovery Phrase"
-        }
-    }
-
-    func iconName() -> String {
-        switch self {
-        case .google:
-            return "icon.google.drive"
-        case .passkey:
-            return "icon.passkey"
-        case .icloud:
-            return "Icloud"
-        case .phrase:
-            return "icon.recovery"
         }
     }
 
@@ -142,7 +139,22 @@ enum MultiBackupType: Int, CaseIterable {
             return false
         }
     }
+
+    func iconName() -> String {
+        switch self {
+        case .google:
+            return "icon.google.drive"
+        case .passkey:
+            return "icon.passkey"
+        case .icloud:
+            return "Icloud"
+        case .phrase:
+            return "icon.recovery"
+        }
+    }
 }
+
+// MARK: - BackupMultiViewModel.MultiItem
 
 extension BackupMultiViewModel {
     struct MultiItem: Hashable {
@@ -154,7 +166,7 @@ extension BackupMultiViewModel {
         }
 
         var icon: String {
-            return type.iconName()
+            type.iconName()
         }
     }
 }

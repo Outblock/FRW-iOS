@@ -13,6 +13,8 @@ import Flow
 import FlowWalletCore
 import Foundation
 
+// MARK: - UserManager.UserType
+
 extension UserManager {
     enum UserType: Codable {
         case phrase
@@ -20,10 +22,37 @@ extension UserManager {
     }
 }
 
+// MARK: - UserManager
+
 class UserManager: ObservableObject {
+    // MARK: Lifecycle
+
+    init() {
+        checkIfHasOldAccount()
+
+        self.loginUIDList = LocalUserDefaults.shared.loginUIDList
+
+        if let activatedUID = activatedUID {
+            self.userInfo = MultiAccountStorage.shared.getUserInfo(activatedUID)
+            uploadUserNameIfNeeded()
+            initRefreshUserInfo()
+            verifyUserType(by: activatedUID)
+        }
+
+        loginAnonymousIfNeeded()
+    }
+
+    // MARK: Internal
+
     static let shared = UserManager()
 
-    @Published var activatedUID: String? = LocalUserDefaults.shared.activatedUID {
+    @Published
+    var isMeowDomainEnabled: Bool = false
+
+    var userType: UserManager.UserType = .secure
+
+    @Published
+    var activatedUID: String? = LocalUserDefaults.shared.activatedUID {
         didSet {
             LocalUserDefaults.shared.activatedUID = activatedUID
             if oldValue != activatedUID {
@@ -32,7 +61,8 @@ class UserManager: ObservableObject {
         }
     }
 
-    @Published var userInfo: UserInfo? {
+    @Published
+    var userInfo: UserInfo? {
         didSet {
             do {
                 guard let uid = activatedUID else { return }
@@ -43,34 +73,31 @@ class UserManager: ObservableObject {
         }
     }
 
-    @Published var loginUIDList: [String] = [] {
+    @Published
+    var loginUIDList: [String] = [] {
         didSet {
             LocalUserDefaults.shared.loginUIDList = loginUIDList
         }
     }
 
-    @Published var isMeowDomainEnabled: Bool = false
-
-    var userType: UserManager.UserType = .secure
-
     var isLoggedIn: Bool {
-        return activatedUID != nil
+        activatedUID != nil
     }
 
-    init() {
-        checkIfHasOldAccount()
-
-        loginUIDList = LocalUserDefaults.shared.loginUIDList
-
-        if let activatedUID = activatedUID {
-            userInfo = MultiAccountStorage.shared.getUserInfo(activatedUID)
-            uploadUserNameIfNeeded()
-            initRefreshUserInfo()
-            verifyUserType(by: activatedUID)
+    func verifyUserType(by _: String) {
+        Task {
+            do {
+                userType = try await checkUserType()
+                if let uid = activatedUID {
+                    WalletManager.shared.warningIfKeyIsInvalid(userId: uid)
+                }
+            } catch {
+                log.error("[User] check user type:\(error)")
+            }
         }
-
-        loginAnonymousIfNeeded()
     }
+
+    // MARK: Private
 
     private func initRefreshUserInfo() {
         if !isLoggedIn {
@@ -103,27 +130,17 @@ class UserManager: ObservableObject {
         }
     }
 
-    func verifyUserType(by _: String) {
-        Task {
-            do {
-                userType = try await checkUserType()
-                if let uid = activatedUID {
-                    WalletManager.shared.warningIfKeyIsInvalid(userId: uid)
-                }
-            } catch {
-                log.error("[User] check user type:\(error)")
-            }
-        }
-    }
-
     private func checkUserType() async throws -> UserManager.UserType {
-        guard let address = WalletManager.shared.getPrimaryWalletAddress(), let uid = activatedUID else { return .secure }
+        guard let address = WalletManager.shared.getPrimaryWalletAddress(),
+              let uid = activatedUID else { return .secure }
 
         let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
 
-        if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid), !mnemonic.isEmpty {
+        if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid),
+           !mnemonic.isEmpty {
             let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic)
-            let accountKeys = account.keys.first { $0.publicKey.description == hdWallet?.getPublicKey() }
+            let accountKeys = account.keys
+                .first { $0.publicKey.description == hdWallet?.getPublicKey() }
             if accountKeys != nil {
                 return .phrase
             }
@@ -181,14 +198,21 @@ extension UserManager {
         if IPManager.shared.info == nil {
             await IPManager.shared.fetch()
         }
-        let request = RegisterRequest(username: username, accountKey: key.toCodableModel(), deviceInfo: IPManager.shared.toParams())
+        let request = RegisterRequest(
+            username: username,
+            accountKey: key.toCodableModel(),
+            deviceInfo: IPManager.shared.toParams()
+        )
         let model: RegisterResponse = try await Network.request(FRWAPI.User.register(request))
 
         try await finishLogin(mnemonic: "", customToken: model.customToken, isRegiter: true)
         WalletManager.shared.asyncCreateWalletAddressFromServer()
         userType = .secure
         if let privateKey = sec.key.privateKey {
-            try WallectSecureEnclave.Store.store(key: model.id, value: privateKey.dataRepresentation)
+            try WallectSecureEnclave.Store.store(
+                key: model.id,
+                value: privateKey.dataRepresentation
+            )
         } else {
             log.error("store public key on iPhone failed")
         }
@@ -213,14 +237,16 @@ extension UserManager {
         Task {
             do {
                 var list = try WallectSecureEnclave.Store.fetch()
-                list = list.filter({ $0.isShow ?? true })
+                list = list.filter { $0.isShow ?? true }
                 var addressList: [String: String] = [:]
                 for item in list {
                     do {
                         let sec = try WallectSecureEnclave(privateKey: item.publicKey)
                         guard let publicKey = sec.key.publickeyValue else { continue }
-                        let response: AccountResponse = try await Network.requestWithRawModel(FRWAPI.Utils.flowAddress(publicKey))
-                        let account = response.accounts?.filter { ($0.weight ?? 0) >= 1000 && $0.address != nil }.first
+                        let response: AccountResponse = try await Network
+                            .requestWithRawModel(FRWAPI.Utils.flowAddress(publicKey))
+                        let account = response.accounts?
+                            .filter { ($0.weight ?? 0) >= 1000 && $0.address != nil }.first
                         if let model = account {
                             addressList[item.uniq] = model.address ?? "0x"
                         }
@@ -228,7 +254,7 @@ extension UserManager {
                         log.error("[Launch] first login check failed:\(item.uniq)", context: error)
                     }
                 }
-                
+
                 let uidList = addressList.map { $0.key }
                 let userAddress = addressList
                 DispatchQueue.main.async {
@@ -250,7 +276,8 @@ extension UserManager {
 
     func restoreLogin(withMnemonic mnemonic: String, userId: String? = nil) async throws {
         if let uid = userId {
-            if let address = MultiAccountStorage.shared.getWalletInfo(uid)?.currentNetworkWalletModel?.getAddress {
+            if let address = MultiAccountStorage.shared.getWalletInfo(uid)?
+                .currentNetworkWalletModel?.getAddress {
                 try? await WalletManager.shared.findFlowAccount(with: uid, at: address)
             }
         }
@@ -283,12 +310,19 @@ extension UserManager {
         await IPManager.shared.fetch()
         let hashAlgo = Flow.HashAlgorithm.SHA2_256.index
         let signAlgo = Flow.SignatureAlgorithm.ECDSA_SECP256k1.index
-        let key = AccountKey(hashAlgo: hashAlgo,
-                             publicKey: publicKey,
-                             signAlgo: signAlgo)
+        let key = AccountKey(
+            hashAlgo: hashAlgo,
+            publicKey: publicKey,
+            signAlgo: signAlgo
+        )
 
-        let request = LoginRequest(signature: signature, accountKey: key, deviceInfo: IPManager.shared.toParams())
-        let response: Network.Response<LoginResponse> = try await Network.requestWithRawModel(FRWAPI.User.login(request))
+        let request = LoginRequest(
+            signature: signature,
+            accountKey: key,
+            deviceInfo: IPManager.shared.toParams()
+        )
+        let response: Network.Response<LoginResponse> = try await Network
+            .requestWithRawModel(FRWAPI.User.login(request))
         if response.httpCode == 404 {
             throw LLError.accountNotFound
         }
@@ -314,7 +348,8 @@ extension UserManager {
             throw LLError.restoreLoginFailed
         }
 
-        guard let publicData = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey, !publicData.isEmpty else {
+        guard let publicData = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey,
+              !publicData.isEmpty else {
             throw LLError.restoreLoginFailed
         }
 
@@ -329,12 +364,19 @@ extension UserManager {
         let signature = try sec.sign(data: signData).hexValue
         await IPManager.shared.fetch()
         // TODO: hash & sign algo
-        let key = AccountKey(hashAlgo: Flow.HashAlgorithm.SHA2_256.index,
-                             publicKey: publicKey,
-                             signAlgo: Flow.SignatureAlgorithm.ECDSA_P256.index)
+        let key = AccountKey(
+            hashAlgo: Flow.HashAlgorithm.SHA2_256.index,
+            publicKey: publicKey,
+            signAlgo: Flow.SignatureAlgorithm.ECDSA_P256.index
+        )
 
-        let request = LoginRequest(signature: signature, accountKey: key, deviceInfo: IPManager.shared.toParams())
-        let response: Network.Response<LoginResponse> = try await Network.requestWithRawModel(FRWAPI.User.login(request))
+        let request = LoginRequest(
+            signature: signature,
+            accountKey: key,
+            deviceInfo: IPManager.shared.toParams()
+        )
+        let response: Network.Response<LoginResponse> = try await Network
+            .requestWithRawModel(FRWAPI.User.login(request))
         if response.httpCode == 404 {
             throw LLError.accountNotFound
         }
@@ -360,10 +402,12 @@ extension UserManager {
             return
         }
 
-        if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid), !mnemonic.isEmpty {
+        if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid),
+           !mnemonic.isEmpty {
             var addressStr = LocalUserDefaults.shared.userAddressOfDeletedApp[uid]
             if addressStr == nil {
-                addressStr = MultiAccountStorage.shared.getWalletInfo(uid)?.getNetworkWalletModel(network: .mainnet)?.getAddress
+                addressStr = MultiAccountStorage.shared.getWalletInfo(uid)?
+                    .getNetworkWalletModel(network: .mainnet)?.getAddress
             }
             guard let address = addressStr else {
                 throw LLError.invalidAddress
@@ -371,7 +415,8 @@ extension UserManager {
             var accountKeys: Flow.AccountKey?
             let account = try? await FlowNetwork.getAccountAtLatestBlock(address: address)
             let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic)
-            accountKeys = account?.keys.first { $0.publicKey.description == hdWallet?.getPublicKey() }
+            accountKeys = account?.keys
+                .first { $0.publicKey.description == hdWallet?.getPublicKey() }
             if accountKeys != nil {
                 try await restoreLogin(withMnemonic: mnemonic, userId: uid)
                 return
@@ -379,12 +424,12 @@ extension UserManager {
         }
         let allModel = try WallectSecureEnclave.Store.fetchAllModel(by: uid)
         let model = try WallectSecureEnclave.Store.fetchModel(by: uid)
-        
+
         if model != nil {
             try await restoreLogin(userId: uid)
             return
         }
-        if model == nil && allModel.count > 0 {
+        if model == nil, !allModel.isEmpty {
             WalletManager.shared.warningIfKeyIsInvalid(userId: uid, markHide: true)
             return
         }
@@ -396,7 +441,11 @@ extension UserManager {
 // MARK: - Internal Login Logic
 
 extension UserManager {
-    private func finishLogin(mnemonic: String, customToken: String, isRegiter: Bool = false) async throws {
+    private func finishLogin(
+        mnemonic: String,
+        customToken: String,
+        isRegiter: Bool = false
+    ) async throws {
         try await firebaseLogin(customToken: customToken)
         var info = try await fetchUserInfo()
         info.type = userType
@@ -410,7 +459,7 @@ extension UserManager {
             try WalletManager.shared.storeAndActiveMnemonicToKeychain(mnemonic, uid: uid)
         }
 
-        if !loginUIDList.contains(uid) && !isRegiter {
+        if !loginUIDList.contains(uid), !isRegiter {
             ConfettiManager.show()
         }
         DispatchQueue.main.async {
@@ -445,7 +494,13 @@ extension UserManager {
 
     private func fetchUserInfo() async throws -> UserInfo {
         let response: UserInfoResponse = try await Network.request(FRWAPI.User.userInfo)
-        let info = UserInfo(avatar: response.avatar, nickname: response.nickname, username: response.username, private: response.private, address: nil)
+        let info = UserInfo(
+            avatar: response.avatar,
+            nickname: response.nickname,
+            username: response.username,
+            private: response.private,
+            address: nil
+        )
 
         if info.username.isEmpty {
             throw LLError.fetchUserInfoFailed
@@ -457,7 +512,10 @@ extension UserManager {
     private func fetchMeowDomainStatus(_ username: String) {
         Task {
             do {
-                _ = try await FlowNetwork.queryAddressByDomainFlowns(domain: username, root: Contact.DomainType.meow.domain)
+                _ = try await FlowNetwork.queryAddressByDomainFlowns(
+                    domain: username,
+                    root: Contact.DomainType.meow.domain
+                )
                 if userInfo?.username == username {
                     DispatchQueue.main.async {
                         self.isMeowDomainEnabled = true
@@ -490,11 +548,11 @@ extension UserManager {
     }
 
     private func getFirebaseUID() -> String? {
-        return Auth.auth().currentUser?.uid
+        Auth.auth().currentUser?.uid
     }
 
     func getIDToken() async throws -> String? {
-        return try await Auth.auth().currentUser?.getIDToken()
+        try await Auth.auth().currentUser?.getIDToken()
     }
 }
 
@@ -534,7 +592,13 @@ extension UserManager {
             return
         }
 
-        let newUserInfo = UserInfo(avatar: current.avatar, nickname: name, username: current.username, private: current.private, address: nil)
+        let newUserInfo = UserInfo(
+            avatar: current.avatar,
+            nickname: name,
+            username: current.username,
+            private: current.private,
+            address: nil
+        )
         userInfo = newUserInfo
     }
 
@@ -543,7 +607,13 @@ extension UserManager {
             return
         }
 
-        let newUserInfo = UserInfo(avatar: current.avatar, nickname: current.nickname, username: current.username, private: isPrivate ? 2 : 1, address: nil)
+        let newUserInfo = UserInfo(
+            avatar: current.avatar,
+            nickname: current.nickname,
+            username: current.username,
+            private: isPrivate ? 2 : 1,
+            address: nil
+        )
         userInfo = newUserInfo
     }
 
@@ -552,7 +622,13 @@ extension UserManager {
             return
         }
 
-        let newUserInfo = UserInfo(avatar: avatar, nickname: current.nickname, username: current.username, private: current.private, address: nil)
+        let newUserInfo = UserInfo(
+            avatar: avatar,
+            nickname: current.nickname,
+            username: current.username,
+            private: current.private,
+            address: nil
+        )
         userInfo = newUserInfo
     }
 }

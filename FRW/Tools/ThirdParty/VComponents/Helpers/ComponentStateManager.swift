@@ -1,5 +1,5 @@
 //
-//  ComponentStateManagement.swift
+//  ComponentStateManager.swift
 //  VComponents
 //
 //  Created by Vakhtang Kontridze on 2/3/21.
