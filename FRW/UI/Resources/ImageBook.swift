@@ -7,9 +7,17 @@
 
 import SwiftUI
 
-// MARK: - Image Book
+// MARK: - ImageBook
 
 struct ImageBook {
+    // MARK: Lifecycle
+
+    // MARK: Initializers
+
+    private init() {}
+
+    // MARK: Internal
+
     // MARK: Properties
 
     static var checkBoxOn: Image { .init(componentAsset: "CheckBox.On") }
@@ -26,10 +34,6 @@ struct ImageBook {
     static var visibilityOn: Image { .init(componentAsset: "Visibility.on") }
 
     static var xMark: Image { .init(componentAsset: "XMark") }
-
-    // MARK: Initializers
-
-    private init() {}
 }
 
 // MARK: - Helpers
@@ -37,8 +41,7 @@ struct ImageBook {
 extension Image {
     /// Initializes color from library's local assets library from a name.
     init(componentAsset name: String) {
-        guard
-            let bundle: Bundle = .init(identifier: "com.vakhtang-kontridze.vcomponents")
+        guard let bundle: Bundle = .init(identifier: "com.vakhtang-kontridze.vcomponents")
         else {
             fatalError()
         }

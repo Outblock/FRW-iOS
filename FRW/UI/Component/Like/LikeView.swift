@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// MARK: - LikeView
+
 struct LikeView: View {
     let likeColor: Color
 
@@ -15,10 +17,14 @@ struct LikeView: View {
 
     let animationDuration: Double = 0.25
 
-    @State var isAnimating: Bool = false
-    @State var shrinkIcon: Bool = false
-    @State var floatLike: Bool = false
-    @State var showFlare: Bool = false
+    @State
+    var isAnimating: Bool = false
+    @State
+    var shrinkIcon: Bool = false
+    @State
+    var floatLike: Bool = false
+    @State
+    var showFlare: Bool = false
 
     // MARK: - views
 
@@ -32,13 +38,19 @@ struct LikeView: View {
                         .offset(y: -0)
                         .scaleEffect(self.showFlare ? 1.25 : 0.8)
                         .opacity(self.floatLike ? 1 : 0)
-                        .animation(Animation.spring().delay(animationDuration / 2), value: floatLike)
+                        .animation(
+                            Animation.spring().delay(animationDuration / 2),
+                            value: floatLike
+                        )
                 }
                 Circle()
                     .stroke(likeColor, lineWidth: 2)
                     .foregroundColor(self.isAnimating ? likeColor.opacity(0.2) : .clear)
                     .foregroundColor(self.floatLike ? likeColor.opacity(0.5) : .clear)
-                    .animation(Animation.easeOut(duration: animationDuration * 2).delay(animationDuration))
+                    .animation(
+                        Animation.easeOut(duration: animationDuration * 2)
+                            .delay(animationDuration)
+                    )
 
                 HeartImageView(isLike: $floatLike)
                     .foregroundColor(likeColor)
@@ -52,11 +64,18 @@ struct LikeView: View {
                             .scaleEffect(self.isAnimating ? 1.35 : 0)
                             .animation(Animation.easeIn(duration: animationDuration))
                             .opacity(self.isAnimating ? 0 : 1)
-                            .animation(Animation.easeIn(duration: animationDuration).delay(animationDuration))
+                            .animation(
+                                Animation.easeIn(duration: animationDuration)
+                                    .delay(animationDuration)
+                            )
                     )
             }.frame(width: 44, height: 44)
                 .scaleEffect(self.shrinkIcon ? 0.35 : 1)
-                .animation(Animation.spring(response: animationDuration, dampingFraction: 1, blendDuration: 1))
+                .animation(Animation.spring(
+                    response: animationDuration,
+                    dampingFraction: 1,
+                    blendDuration: 1
+                ))
             if floatLike {
                 FloatingLike(likeColor: likeColor, isAnimating: $floatLike)
                     .offset(y: -40)
@@ -79,6 +98,8 @@ struct LikeView: View {
         }
     }
 }
+
+// MARK: - LikeButton_Previews
 
 struct LikeButton_Previews: PreviewProvider {
     static var previews: some View {

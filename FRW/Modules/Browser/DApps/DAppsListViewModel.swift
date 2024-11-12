@@ -9,9 +9,20 @@ import Combine
 import SwiftUI
 
 class DAppsListViewModel: ObservableObject {
-    @Published var dAppsList: [DAppModel] = []
-    @Published var categoryList: [String] = []
-    @Published var selectedCategory: String = "all"
+    // MARK: Lifecycle
+
+    init() {
+        fetchAction()
+    }
+
+    // MARK: Internal
+
+    @Published
+    var dAppsList: [DAppModel] = []
+    @Published
+    var categoryList: [String] = []
+    @Published
+    var selectedCategory: String = "all"
 
     var filterdList: [DAppModel] {
         if selectedCategory == "all" {
@@ -21,14 +32,11 @@ class DAppsListViewModel: ObservableObject {
         return dAppsList.filter { $0.category.lowercased() == selectedCategory }
     }
 
-    init() {
-        fetchAction()
-    }
-
     func fetchAction() {
         Task {
             do {
-                let config: RemoteConfigManager.Config = try await FirebaseConfig.config.fetch(decoder: JSONDecoder())
+                let config: RemoteConfigManager.Config = try await FirebaseConfig.config
+                    .fetch(decoder: JSONDecoder())
 
                 guard config.features.appList ?? false else {
                     return
@@ -37,11 +45,12 @@ class DAppsListViewModel: ObservableObject {
                 let list: [DAppModel] = try await FirebaseConfig.dapp.fetch(decoder: JSONDecoder())
                 let filterdList = list.filter { $0.networkURL != nil }
 
-                let categories = filterdList.map { $0.category.lowercased() }.reduce(into: [String]()) { result, category in
-                    if !result.contains(where: { $0 == category }) {
-                        result.append(category)
-                    }
-                }.sorted()
+                let categories = filterdList.map { $0.category.lowercased() }
+                    .reduce(into: [String]()) { result, category in
+                        if !result.contains(where: { $0 == category }) {
+                            result.append(category)
+                        }
+                    }.sorted()
 
                 DispatchQueue.main.async {
                     self.dAppsList = filterdList

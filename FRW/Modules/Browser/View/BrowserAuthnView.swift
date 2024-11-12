@@ -9,12 +9,19 @@ import Flow
 import Kingfisher
 import SwiftUI
 
+// MARK: - BrowserAuthnView
+
 struct BrowserAuthnView: View {
-    @StateObject var vm: BrowserAuthnViewModel
+    // MARK: Lifecycle
 
     init(vm: BrowserAuthnViewModel) {
         _vm = StateObject(wrappedValue: vm)
     }
+
+    // MARK: Internal
+
+    @StateObject
+    var vm: BrowserAuthnViewModel
 
     var body: some View {
         VStack(spacing: 12) {
@@ -217,6 +224,8 @@ struct BrowserAuthnView: View {
         }
     }
 }
+
+// MARK: - BrowserAuthnView_Previews
 
 struct BrowserAuthnView_Previews: PreviewProvider {
     static let vm = BrowserAuthnViewModel(

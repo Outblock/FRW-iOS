@@ -7,7 +7,11 @@
 
 import SwiftUI
 
+// MARK: - SheetHeaderView
+
 struct SheetHeaderView: View {
+    // MARK: Internal
+
     let title: String
     var closeAction: (() -> Void)? = nil
 
@@ -49,6 +53,8 @@ struct SheetHeaderView: View {
         .padding(.top, 10)
     }
 
+    // MARK: Private
+
     private func defaultCloseAction() {
         Router.dismiss()
     }
@@ -57,10 +63,14 @@ struct SheetHeaderView: View {
 // Custom Half Sheet Modifier....
 extension View {
     // Binding Show Variable...
-    func halfSheet<SheetView: View>(showSheet: Binding<Bool>, @ViewBuilder sheetView: @escaping () -> SheetView, onEnd: (() -> Void)? = nil) -> some View {
+    func halfSheet<SheetView: View>(
+        showSheet: Binding<Bool>,
+        @ViewBuilder sheetView: @escaping () -> SheetView,
+        onEnd: (() -> Void)? = nil
+    ) -> some View {
         // why we using overlay or background...
         // bcz it will automatically use the swiftui frame Size only....
-        return background(
+        background(
             HalfSheetHelper(sheetView: sheetView(), showSheet: showSheet)
         )
         .onChange(of: showSheet.wrappedValue) { newValue in
@@ -71,15 +81,35 @@ extension View {
     }
 }
 
+// MARK: - HalfSheetHelper
+
 // UIKit Integration...
 struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
+    // On Dismiss...
+    class Coordinator: NSObject, UISheetPresentationControllerDelegate {
+        // MARK: Lifecycle
+
+        init(parent: HalfSheetHelper) {
+            self.parent = parent
+        }
+
+        // MARK: Internal
+
+        var parent: HalfSheetHelper
+
+        func presentationControllerDidDismiss(_: UIPresentationController) {
+            parent.showSheet = false
+        }
+    }
+
     var sheetView: SheetView
-    @Binding var showSheet: Bool
+    @Binding
+    var showSheet: Bool
 
     let controller = UIViewController()
 
     func makeCoordinator() -> Coordinator {
-        return Coordinator(parent: self)
+        Coordinator(parent: self)
     }
 
     func makeUIViewController(context _: Context) -> UIViewController {
@@ -98,33 +128,26 @@ struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
             }
         } else {
             if uiViewController.view.tag == 1 {
-                uiViewController.presentedViewController?.presentingViewController?.dismiss(animated: true)
+                uiViewController.presentedViewController?.presentingViewController?
+                    .dismiss(animated: true)
                 uiViewController.view.tag = 0
             }
         }
     }
-
-    // On Dismiss...
-    class Coordinator: NSObject, UISheetPresentationControllerDelegate {
-        var parent: HalfSheetHelper
-
-        init(parent: HalfSheetHelper) {
-            self.parent = parent
-        }
-
-        func presentationControllerDidDismiss(_: UIPresentationController) {
-            parent.showSheet = false
-        }
-    }
 }
+
+// MARK: - CustomHostingController
 
 // Custom UIHostingController for halfSheet....
 class CustomHostingController<Content: View>: UIHostingController<Content> {
-    var showLarge: Bool = false
-    var showGrabber: Bool = true
-    var onlyLarge: Bool = false
+    // MARK: Lifecycle
 
-    public init(rootView: Content, showLarge: Bool = false, showGrabber: Bool = true, onlyLarge: Bool = false) {
+    public init(
+        rootView: Content,
+        showLarge: Bool = false,
+        showGrabber: Bool = true,
+        onlyLarge: Bool = false
+    ) {
         super.init(rootView: rootView)
         self.showLarge = showLarge
         self.showGrabber = showGrabber
@@ -133,9 +156,16 @@ class CustomHostingController<Content: View>: UIHostingController<Content> {
     }
 
     @available(*, unavailable)
-    @MainActor dynamic required init?(coder _: NSCoder) {
+    @MainActor
+    dynamic required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    var showLarge: Bool = false
+    var showGrabber: Bool = true
+    var onlyLarge: Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()

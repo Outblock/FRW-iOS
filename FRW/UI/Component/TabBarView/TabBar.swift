@@ -7,20 +7,24 @@
 
 import SwiftUI
 
+// MARK: - TabBarView.TabBar
+
 extension TabBarView {
     struct TabBar<T: Hashable>: View {
+        // MARK: Internal
+
         var pages: [TabBarPageModel<T>]
         var indicatorColor: Color
-        @Binding var offsetX: CGFloat
-        @Binding var selected: T
-
-        private let indicatorWidth: CGFloat = 20
+        @Binding
+        var offsetX: CGFloat
+        @Binding
+        var selected: T
 
         var body: some View {
             GeometryReader { proxy in
                 ZStack(alignment: .topLeading) {
                     HStack(spacing: 0) {
-                        ForEach(0 ..< pages.count, id: \.self) { index in
+                        ForEach(0..<pages.count, id: \.self) { index in
                             let pm = pages[index]
                             TabBarItemView(pageModel: pm, selected: $selected) {
                                 resetOffset(index: index, maxWidth: proxy.size.width)
@@ -36,7 +40,12 @@ extension TabBarView {
             .frame(height: 46)
         }
 
-        @ViewBuilder private func indicator(_ parentMaxWidth: CGFloat) -> some View {
+        // MARK: Private
+
+        private let indicatorWidth: CGFloat = 20
+
+        @ViewBuilder
+        private func indicator(_ parentMaxWidth: CGFloat) -> some View {
             let pageCount = CGFloat(pages.count)
             let scrollMaxOffsetX = parentMaxWidth * (pageCount - 1)
             let scrollPercent = max(0, min(1, offsetX / scrollMaxOffsetX))
@@ -58,7 +67,7 @@ extension TabBarView {
     }
 }
 
-// MARK: - Helper
+// MARK: - TranslateEffect
 
 private struct TranslateEffect: GeometryEffect {
     var offsetX: CGFloat
@@ -73,6 +82,6 @@ private struct TranslateEffect: GeometryEffect {
     }
 }
 
-private extension Animation {
-    static let tabSelect = Animation.spring(response: 0.3, dampingFraction: 0.7)
+extension Animation {
+    fileprivate static let tabSelect = Animation.spring(response: 0.3, dampingFraction: 0.7)
 }

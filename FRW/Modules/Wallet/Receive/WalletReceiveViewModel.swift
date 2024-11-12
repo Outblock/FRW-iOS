@@ -8,11 +8,16 @@
 import SwiftUI
 
 class WalletReceiveViewModel: ObservableObject {
-    @Published var address: String
+    // MARK: Lifecycle
 
     init() {
-        address = WalletManager.shared.selectedAccountAddress
+        self.address = WalletManager.shared.selectedAccountAddress
     }
+
+    // MARK: Internal
+
+    @Published
+    var address: String
 
     func copyAddressAction() {
         UIPasteboard.general.string = address

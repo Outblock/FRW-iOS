@@ -16,11 +16,11 @@ class WebBookmark: Codable {
     var updateTime: TimeInterval = 0
 
     var createTimeDate: Date {
-        return Date(timeIntervalSince1970: createTime)
+        Date(timeIntervalSince1970: createTime)
     }
 
     var updateTimeDate: Date {
-        return Date(timeIntervalSince1970: updateTime)
+        Date(timeIntervalSince1970: updateTime)
     }
 
     var host: String {
@@ -32,7 +32,7 @@ class WebBookmark: Codable {
     }
 
     var dbValues: [Any] {
-        return [url, title, isFav, createTime, updateTime]
+        [url, title, isFav, createTime, updateTime]
     }
 
     class func build(fromDBMap map: [AnyHashable: Any]) -> WebBookmark? {

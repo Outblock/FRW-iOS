@@ -8,16 +8,15 @@
 import Foundation
 import KeychainAccess
 
-public extension WallectSecureEnclave {
-    enum StoreError: Error {
+extension WallectSecureEnclave {
+    public enum StoreError: Error {
         case unowned
         case encode
         case decode
     }
 
-    enum Store {
-        private static var service: String = "io.outblock.lilico.securekey"
-        private static var userKey: String = "user"
+    public enum Store {
+        // MARK: Public
 
         public static func store(user: StoreUser) throws {
             let list = try? loginedUser()
@@ -44,9 +43,14 @@ public extension WallectSecureEnclave {
             }
             return users
         }
+
+        // MARK: Private
+
+        private static var service: String = "io.outblock.lilico.securekey"
+        private static var userKey: String = "user"
     }
 
-    struct StoreUser: Codable {
+    public struct StoreUser: Codable {
         let uid: String
         var avatar: String?
         var username: String?

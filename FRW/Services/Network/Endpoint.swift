@@ -7,10 +7,14 @@
 
 import Foundation
 
+// MARK: - HTTPMethod
+
 enum HTTPMethod {
     case get
     case post
 }
+
+// MARK: - Endpoint
 
 protocol Endpoint {
     var baseURL: URL { get }

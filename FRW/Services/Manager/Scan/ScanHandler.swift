@@ -10,7 +10,7 @@ import UIKit
 
 class ScanHandler {
     static func handler() -> SPQRCodeCallback {
-        return { data, vc in
+        { data, vc in
             switch data {
             case let .walletConnect(string):
                 vc.stopRunning()
@@ -26,7 +26,16 @@ class ScanHandler {
                     guard let token = WalletManager.shared.getToken(bySymbol: symbol) else {
                         return
                     }
-                    let contract = Contact(address: address, avatar: nil, contactName: "-", contactType: .none, domain: nil, id: -1, username: nil, user: nil)
+                    let contract = Contact(
+                        address: address,
+                        avatar: nil,
+                        contactName: "-",
+                        contactType: .none,
+                        domain: nil,
+                        id: -1,
+                        username: nil,
+                        user: nil
+                    )
                     Router.route(to: RouteMap.Wallet.sendAmount(contract, token, isPush: false))
                 })
             case let .ethWallet(address):
@@ -36,7 +45,16 @@ class ScanHandler {
                     guard let token = WalletManager.shared.getToken(bySymbol: symbol) else {
                         return
                     }
-                    let contract = Contact(address: address, avatar: nil, contactName: "-", contactType: .none, domain: nil, id: -1, username: nil, user: nil)
+                    let contract = Contact(
+                        address: address,
+                        avatar: nil,
+                        contactName: "-",
+                        contactType: .none,
+                        domain: nil,
+                        id: -1,
+                        username: nil,
+                        user: nil
+                    )
                     Router.route(to: RouteMap.Wallet.sendAmount(contract, token, isPush: false))
                 })
             default:
@@ -46,7 +64,7 @@ class ScanHandler {
     }
 
     static func clickHandler() -> SPQRCodeCallback {
-        return { data, vc in
+        { data, vc in
             switch data {
             case let .walletConnect(string):
                 vc.stopRunning()
@@ -62,7 +80,16 @@ class ScanHandler {
                     guard let token = WalletManager.shared.getToken(bySymbol: symbol) else {
                         return
                     }
-                    let contract = Contact(address: address, avatar: nil, contactName: "-", contactType: .none, domain: nil, id: -1, username: nil, user: nil)
+                    let contract = Contact(
+                        address: address,
+                        avatar: nil,
+                        contactName: "-",
+                        contactType: .none,
+                        domain: nil,
+                        id: -1,
+                        username: nil,
+                        user: nil
+                    )
                     Router.route(to: RouteMap.Wallet.sendAmount(contract, token, isPush: false))
                 })
             case let .text(text):
@@ -81,6 +108,9 @@ class ScanHandler {
     }
 
     static func scan() {
-        Router.route(to: RouteMap.Wallet.scan(ScanHandler.handler(), click: ScanHandler.clickHandler()))
+        Router.route(to: RouteMap.Wallet.scan(
+            ScanHandler.handler(),
+            click: ScanHandler.clickHandler()
+        ))
     }
 }

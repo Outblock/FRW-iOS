@@ -9,7 +9,8 @@ import SwiftUI
 import UIKit
 
 extension View {
-    @ViewBuilder func applyRouteable(_ config: RouterContentDelegate) -> some View {
+    @ViewBuilder
+    func applyRouteable(_ config: RouterContentDelegate) -> some View {
         navigationBarBackButtonHidden(true)
             .navigationBarHidden(config.isNavigationBarHidden)
             .navigationTitle(config.title)

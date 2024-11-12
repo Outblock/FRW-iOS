@@ -7,32 +7,38 @@
 
 import SwiftUI
 
+// MARK: - PaginatedScrollViewKey
+
 private enum PaginatedScrollViewKey {
     enum Direction {
         case top, bottom
     }
 
     struct PreData: Equatable {
+        // MARK: Internal
+
         static var fraction = CGFloat(0.001)
 
         let top: CGFloat
         let bottom: CGFloat
 
-        private var abTop: CGFloat { abs(min(0, top)) }
-        private var abBottom: CGFloat { abs(max(0, bottom)) }
-
         var position: Direction {
-            return abTop > abBottom ? .bottom : .top
+            abTop > abBottom ? .bottom : .top
         }
 
         var isAtTop: Bool {
-            return top > PreData.fraction
+            top > PreData.fraction
         }
 
         var isAtBottom: Bool {
             let percentage = (bottom / contentHeight)
             return percentage < PreData.fraction
         }
+
+        // MARK: Private
+
+        private var abTop: CGFloat { abs(min(0, top)) }
+        private var abBottom: CGFloat { abs(max(0, bottom)) }
 
         private var contentHeight: CGFloat {
             abs(top - bottom)
@@ -41,14 +47,40 @@ private enum PaginatedScrollViewKey {
 
     struct PreKey: PreferenceKey {
         static var defaultValue: PreData? = nil
+
         static func reduce(value _: inout PreData?, nextValue _: () -> PreData?) {}
     }
 }
 
 private let RefreshOffset: CGFloat = 70
 
+// MARK: - OffsetScrollView
+
 struct OffsetScrollView<Content: View>: View {
-    @Binding var offset: CGFloat
+    // MARK: Lifecycle
+
+    init(
+        offset: Binding<CGFloat>,
+        refreshEnabled: Bool = false,
+        loadMoreEnabled: Bool = false,
+        refreshCallback: (() -> Void)? = nil,
+        loadMoreCallback: (() -> Void)? = nil,
+        isNoData: Bool = false,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.content = content()
+        self.refreshEnabled = refreshEnabled
+        self.refreshCallback = refreshCallback
+        self.loadMoreEnabled = loadMoreEnabled
+        self.loadMoreCallback = loadMoreCallback
+        self.isNoData = isNoData
+        _offset = offset
+    }
+
+    // MARK: Internal
+
+    @Binding
+    var offset: CGFloat
 
     let refreshEnabled: Bool
     let loadMoreEnabled: Bool
@@ -62,24 +94,16 @@ struct OffsetScrollView<Content: View>: View {
 
     let content: Content
 
-    init(offset: Binding<CGFloat>, refreshEnabled: Bool = false, loadMoreEnabled: Bool = false, refreshCallback: (() -> Void)? = nil, loadMoreCallback: (() -> Void)? = nil, isNoData: Bool = false, @ViewBuilder content: () -> Content) {
-        self.content = content()
-        self.refreshEnabled = refreshEnabled
-        self.refreshCallback = refreshCallback
-        self.loadMoreEnabled = loadMoreEnabled
-        self.loadMoreCallback = loadMoreCallback
-        self.isNoData = isNoData
-        _offset = offset
-    }
-
     var body: some View {
         ZStack {
             GeometryReader { geometry in
                 ScrollView(showsIndicators: false) {
                     GeometryReader { geo in
                         Color.clear
-                            .preference(key: NavigationScrollPreferenKey.self,
-                                        value: geo.frame(in: .named("ScrollView")).minY)
+                            .preference(
+                                key: NavigationScrollPreferenKey.self,
+                                value: geo.frame(in: .named("ScrollView")).minY
+                            )
                     }
                     .frame(width: 0, height: 0)
 
@@ -146,16 +170,21 @@ struct OffsetScrollView<Content: View>: View {
     }
 }
 
+// MARK: - NavigationScrollPreferenKey
+
 private class NavigationScrollPreferenKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
+
     static func reduce(value _: inout CGFloat, nextValue _: () -> CGFloat) {}
 }
+
+// MARK: - NavigationScrollView_Previews
 
 struct NavigationScrollView_Previews: PreviewProvider {
     static var previews: some View {
         OffsetScrollView(offset: .constant(1)) {
             LazyVStack {
-                ForEach(0 ..< 200) { index in
+                ForEach(0..<200) { index in
                     Text("Row number \(index)")
                         .padding()
                 }

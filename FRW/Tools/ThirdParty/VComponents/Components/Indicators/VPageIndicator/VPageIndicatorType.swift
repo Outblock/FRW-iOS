@@ -41,6 +41,8 @@ public enum VPageIndicatorType {
     /// Switches from `finite` to `infinite` after a `finiteLimit`.
     case auto(visible: Int = 7, center: Int = 3, finiteLimit: Int = 10)
 
+    // MARK: Public
+
     // MARK: Initailizers
 
     /// Default value. Set to `auto`.

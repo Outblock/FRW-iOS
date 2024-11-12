@@ -7,9 +7,15 @@
 
 import SwiftUI
 
+// MARK: - LLSegmenControl
+
 struct LLSegmenControl: View {
-    @State var titles: [String]
-    @State var selectedIndex: Int = 0
+    // MARK: Internal
+
+    @State
+    var titles: [String]
+    @State
+    var selectedIndex: Int = 0
     var onAction: ((Int) -> Void)?
 
     var body: some View {
@@ -41,6 +47,8 @@ struct LLSegmenControl: View {
         }
     }
 
+    // MARK: Private
+
     private func textColor(at index: Int) -> Color {
         isSelected(at: index) ? Color.LL.Secondary.navyWallet : Color.LL.Neutrals.text3
     }
@@ -50,14 +58,15 @@ struct LLSegmenControl: View {
     }
 
     private func isSelected(at index: Int) -> Bool {
-        return selectedIndex == index
+        selectedIndex == index
     }
 }
 
+// MARK: - LLSegmenControl_Previews
+
 struct LLSegmenControl_Previews: PreviewProvider {
-    fileprivate static var list: [String] = [
-        "Hi", "Hello", "world", "name", "age",
-    ]
+    // MARK: Internal
+
     static var previews: some View {
         VStack {
             LLSegmenControl(titles: list) { idx in
@@ -65,4 +74,10 @@ struct LLSegmenControl_Previews: PreviewProvider {
             }
         }
     }
+
+    // MARK: Fileprivate
+
+    fileprivate static var list: [String] = [
+        "Hi", "Hello", "world", "name", "age",
+    ]
 }

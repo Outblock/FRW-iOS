@@ -11,19 +11,7 @@ import SwiftUI
 
 /// Color group containing enabled, pressed, loading, and disabled values.
 public struct StateColors_EPLD: Equatable {
-    // MARK: Properties
-
-    /// Enabled color.
-    public var enabled: Color
-
-    /// Pressed color.
-    public var pressed: Color
-
-    /// Loading color.
-    public var loading: Color
-
-    /// Disabled color.
-    public var disabled: Color
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -42,12 +30,28 @@ public struct StateColors_EPLD: Equatable {
 
     /// Initializes group with clear values.
     public init() {
-        enabled = .clear
-        pressed = .clear
-        loading = .clear
-        disabled = .clear
+        self.enabled = .clear
+        self.pressed = .clear
+        self.loading = .clear
+        self.disabled = .clear
     }
+
+    // MARK: Public
 
     /// Initializes group with clear values.
     public static var clear: Self { .init() }
+
+    // MARK: Properties
+
+    /// Enabled color.
+    public var enabled: Color
+
+    /// Pressed color.
+    public var pressed: Color
+
+    /// Loading color.
+    public var loading: Color
+
+    /// Disabled color.
+    public var disabled: Color
 }

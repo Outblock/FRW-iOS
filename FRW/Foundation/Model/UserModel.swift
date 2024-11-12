@@ -19,19 +19,27 @@ struct UserInfo: Codable {
     let address: String?
 
     var isPrivate: Bool {
-        return self.private == 2
+        self.private == 2
     }
 
     var meowDomain: String {
-        return "\(username).\(Contact.DomainType.meow.domain)"
+        "\(username).\(Contact.DomainType.meow.domain)"
     }
 
     var meowDomainHost: String {
-        return username
+        username
     }
 
     func toContact() -> Contact {
-        let contact = Contact(address: address, avatar: avatar, contactName: nickname, contactType: .user, domain: nil, id: UUID().hashValue, username: username)
+        let contact = Contact(
+            address: address,
+            avatar: avatar,
+            contactName: nickname,
+            contactType: .user,
+            domain: nil,
+            id: UUID().hashValue,
+            username: username
+        )
         return contact
     }
 
@@ -42,7 +50,16 @@ struct UserInfo: Codable {
             user = WalletManager.shared.walletAccount.readInfo(at: addr)
         }
 
-        let contact = Contact(address: address, avatar: avatar, contactName: nickname, contactType: .user, domain: nil, id: UUID().hashValue, username: username, user: user)
+        let contact = Contact(
+            address: address,
+            avatar: avatar,
+            contactName: nickname,
+            contactType: .user,
+            domain: nil,
+            id: UUID().hashValue,
+            username: username,
+            user: user
+        )
         return contact
     }
 }

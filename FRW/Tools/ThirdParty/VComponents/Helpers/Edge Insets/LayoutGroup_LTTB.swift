@@ -11,19 +11,7 @@ import SwiftUI
 
 /// Group of layout values containing `leading`, `trailing`, `top` and `bottom` values.
 public struct LayoutGroup_LTTB: Equatable {
-    // MARK: Properties
-
-    /// Leading value.
-    public var leading: CGFloat
-
-    /// Trailing value.
-    public var trailing: CGFloat
-
-    /// Top value.
-    public var top: CGFloat
-
-    /// Bottom value.
-    public var bottom: CGFloat
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -42,12 +30,28 @@ public struct LayoutGroup_LTTB: Equatable {
 
     /// Initializes group with zero values.
     public init() {
-        leading = 0
-        trailing = 0
-        top = 0
-        bottom = 0
+        self.leading = 0
+        self.trailing = 0
+        self.top = 0
+        self.bottom = 0
     }
+
+    // MARK: Public
 
     /// Initializes group with zero values.
     public static var zero: Self { self.init() }
+
+    // MARK: Properties
+
+    /// Leading value.
+    public var leading: CGFloat
+
+    /// Trailing value.
+    public var trailing: CGFloat
+
+    /// Top value.
+    public var top: CGFloat
+
+    /// Bottom value.
+    public var bottom: CGFloat
 }

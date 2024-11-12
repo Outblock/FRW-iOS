@@ -7,11 +7,15 @@
 
 import SwiftUI
 
+// MARK: - NFTSegmentControl
+
 struct NFTSegmentControl: View {
-    @Binding var currentTab: NFTTabScreen.ViewStyle
+    @Binding
+    var currentTab: NFTTabScreen.ViewStyle
     var styles: [NFTTabScreen.ViewStyle]
 
-    @Namespace var animation
+    @Namespace
+    var animation
 
     var body: some View {
         HStack(spacing: 0) {
@@ -25,11 +29,14 @@ struct NFTSegmentControl: View {
     }
 }
 
+// MARK: - NFTSegmentItem
+
 struct NFTSegmentItem: View {
     var thisStyle: NFTTabScreen.ViewStyle
     let animation: Namespace.ID
 
-    @Binding var current: NFTTabScreen.ViewStyle
+    @Binding
+    var current: NFTTabScreen.ViewStyle
 
     var body: some View {
         Text(thisStyle.desc)
@@ -50,7 +57,11 @@ struct NFTSegmentItem: View {
             )
             .animation(.easeInOut, value: current)
             .onTapGesture {
-                withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.6, blendDuration: 0.6)) {
+                withAnimation(.interactiveSpring(
+                    response: 0.5,
+                    dampingFraction: 0.6,
+                    blendDuration: 0.6
+                )) {
                     current = thisStyle
                 }
             }

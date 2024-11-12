@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct RestoreMultiBackupOptionView: RouteableView {
-    @StateObject var viewModel: RestoreMultiBackupOptionViewModel = .init()
+    @StateObject
+    var viewModel: RestoreMultiBackupOptionViewModel = .init()
 
     var title: String {
-        return ""
+        ""
     }
 
     var body: some View {
@@ -52,13 +53,16 @@ struct RestoreMultiBackupOptionView: RouteableView {
 
             Spacer()
 
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: viewModel.nextable ? .enabled : .disabled,
-                           action: {
-                               onNext()
-                           }, title: "next".localized)
-                .padding(.horizontal, 18)
-                .padding(.bottom)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: viewModel.nextable ? .enabled : .disabled,
+                action: {
+                    onNext()
+                },
+                title: "next".localized
+            )
+            .padding(.horizontal, 18)
+            .padding(.bottom)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 28)
@@ -68,8 +72,10 @@ struct RestoreMultiBackupOptionView: RouteableView {
 
     func columns() -> [GridItem] {
         let width = (screenWidth - 64 * 2) / 2
-        return [GridItem(.adaptive(minimum: width)),
-                GridItem(.adaptive(minimum: width))]
+        return [
+            GridItem(.adaptive(minimum: width)),
+            GridItem(.adaptive(minimum: width)),
+        ]
     }
 
     func onClick(item: BackupMultiViewModel.MultiItem) {

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Range Slider
+// MARK: - VRangeSlider
 
 /// Value picker component that selects values from a bounded linear range of values to represent a range.
 ///
@@ -29,33 +29,14 @@ import SwiftUI
 ///     }
 ///
 public struct VRangeSlider: View {
-    // MARK: Properties
-
-    private let model: VRangeSliderModel
-
-    private let min, max: Double
-    private var range: ClosedRange<Double> { min ... max }
-    private let difference: Double
-    private let step: Double?
-
-    private let state: VRangeSliderState
-
-    @Binding private var valueLow: Double
-    @Binding private var valueHigh: Double
-    @State private var animatableValueLow: Double?
-    @State private var animatableValueHigh: Double?
-
-    private let actionLow: ((Bool) -> Void)?
-    private let actionHigh: ((Bool) -> Void)?
-
-    private let isLayoutValid: Bool
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes component with diffrene, and low and high values.
     public init<V>(
         model: VRangeSliderModel = .init(),
-        range: ClosedRange<V> = 0 ... 1,
+        range: ClosedRange<V> = 0...1,
         difference: V,
         step: V? = nil,
         state: VRangeSliderState = .enabled,
@@ -66,8 +47,7 @@ public struct VRangeSlider: View {
     )
         where
         V: BinaryFloatingPoint,
-        V.Stride: BinaryFloatingPoint
-    {
+        V.Stride: BinaryFloatingPoint {
         self.model = model
         self.min = .init(range.lowerBound)
         self.max = .init(range.upperBound)
@@ -79,8 +59,10 @@ public struct VRangeSlider: View {
         self.actionLow = actionLow
         self.actionHigh = actionHigh
 
-        isLayoutValid = valueLow.wrappedValue <= valueHigh.wrappedValue - difference
+        self.isLayoutValid = valueLow.wrappedValue <= valueHigh.wrappedValue - difference
     }
+
+    // MARK: Public
 
     // MARK: Body
 
@@ -96,6 +78,39 @@ public struct VRangeSlider: View {
         .padding(.horizontal, model.layout.thumbDimension / 2)
     }
 
+    // MARK: Fileprivate
+
+    // MARK: Thumb
+
+    fileprivate enum Thumb { case low, high }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VRangeSliderModel
+
+    private let min, max: Double
+    private let difference: Double
+    private let step: Double?
+
+    private let state: VRangeSliderState
+
+    @Binding
+    private var valueLow: Double
+    @Binding
+    private var valueHigh: Double
+    @State
+    private var animatableValueLow: Double?
+    @State
+    private var animatableValueHigh: Double?
+
+    private let actionLow: ((Bool) -> Void)?
+    private let actionHigh: ((Bool) -> Void)?
+
+    private let isLayoutValid: Bool
+
+    private var range: ClosedRange<Double> { min...max }
     private var invalidBody: some View {
         track
             .mask(RoundedRectangle(cornerRadius: model.layout.cornerRadius))
@@ -133,15 +148,24 @@ public struct VRangeSlider: View {
             ZStack(content: {
                 RoundedRectangle(cornerRadius: model.layout.thumbCornerRadius)
                     .foregroundColor(model.colors.thumb.for(state))
-                    .shadow(color: model.colors.thumbShadow.for(state), radius: model.layout.thumbShadowRadius)
+                    .shadow(
+                        color: model.colors.thumbShadow.for(state),
+                        radius: model.layout.thumbShadowRadius
+                    )
 
                 RoundedRectangle(cornerRadius: model.layout.thumbCornerRadius)
-                    .strokeBorder(model.colors.thumbBorder.for(state), lineWidth: model.layout.thumbBorderWidth)
+                    .strokeBorder(
+                        model.colors.thumbBorder.for(state),
+                        lineWidth: model.layout.thumbBorderWidth
+                    )
             })
             .frame(dimension: model.layout.thumbDimension)
             .offset(x: thumbOffset(in: proxy, thumb: thumb))
         })
-        .frame(maxWidth: .infinity, alignment: .leading) // Must be put into group, as content already has frame
+        .frame(
+            maxWidth: .infinity,
+            alignment: .leading
+        ) // Must be put into group, as content already has frame
         .gesture(
             DragGesture(minimumDistance: 0)
                 .onChanged { dragChanged(drag: $0, in: proxy, thumb: thumb) }
@@ -162,10 +186,6 @@ public struct VRangeSlider: View {
             }
         }
     }
-
-    // MARK: Thumb
-
-    fileprivate enum Thumb { case low, high }
 
     // MARK: Drag
 
@@ -258,29 +278,35 @@ public struct VRangeSlider: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - VRangeSlider_Previews
 
 struct VRangeSlider_Previews: PreviewProvider {
-    @State private static var valueLow: Double = 0.1
-    @State private static var valueHigh: Double = 0.8
+    // MARK: Internal
 
     static var previews: some View {
         VRangeSlider(difference: 0.1, valueLow: $valueLow, valueHigh: $valueHigh)
             .padding()
     }
+
+    // MARK: Private
+
+    @State
+    private static var valueLow: Double = 0.1
+    @State
+    private static var valueHigh: Double = 0.8
 }
 
 // MARK: - Helpers
 
-private extension Double {
-    func roundedUpWithStep(
+extension Double {
+    fileprivate func roundedUpWithStep(
         _ step: Double?
     ) -> Double {
         guard let step = step else { return self }
         return ceil(self / step) * step
     }
 
-    func roundedDownWithStep(
+    fileprivate func roundedDownWithStep(
         _ step: Double?
     ) -> Double {
         guard let step = step else { return self }

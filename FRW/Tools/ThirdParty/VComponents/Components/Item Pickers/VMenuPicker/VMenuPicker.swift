@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Menu Picker
+// MARK: - VMenuPicker
 
 /// Item picker component that selects from a set of mutually exclusive values, and displays their representative content in a menu.
 ///
@@ -57,19 +57,8 @@ public struct VMenuPicker<Label, Data>: View
     where
     Label: View,
     Data: RandomAccessCollection,
-    Data.Index == Int
-{
-    // MARK: Properties
-
-    private let menuPickerButtonType: VMenuPickerButtonType
-
-    private let state: VMenuPickerState
-
-    @Binding private var selectedIndex: Int
-
-    private let label: () -> Label
-    private let data: Data
-    private let rowContent: (Data.Element) -> VMenuPickerRow
+    Data.Index == Int {
+    // MARK: Lifecycle
 
     // MARK: Initializers - View Builder and Preset
 
@@ -82,7 +71,7 @@ public struct VMenuPicker<Label, Data>: View
         data: Data,
         rowContent: @escaping (Data.Element) -> VMenuPickerRow
     ) {
-        menuPickerButtonType = menuPickerButtonPreset.buttonType
+        self.menuPickerButtonType = menuPickerButtonPreset.buttonType
         self.state = state
         _selectedIndex = selectedIndex
         self.label = label
@@ -99,8 +88,7 @@ public struct VMenuPicker<Label, Data>: View
         data: Data,
         rowContent: @escaping (Data.Element) -> VMenuPickerRow
     )
-        where Label == VText
-    {
+        where Label == VText {
         self.init(
             preset: menuPickerButtonPreset,
             state: state,
@@ -121,7 +109,7 @@ public struct VMenuPicker<Label, Data>: View
         data: Data,
         rowContent: @escaping (Data.Element) -> VMenuPickerRow
     ) {
-        menuPickerButtonType = .custom
+        self.menuPickerButtonType = .custom
         self.state = state
         _selectedIndex = selectedIndex
         self.label = label
@@ -139,14 +127,13 @@ public struct VMenuPicker<Label, Data>: View
         @ViewBuilder label: @escaping () -> Label,
         rowTitles: [String]
     )
-        where Data == [String]
-    {
-        menuPickerButtonType = menuPickerButtonPreset.buttonType
+        where Data == [String] {
+        self.menuPickerButtonType = menuPickerButtonPreset.buttonType
         self.state = state
         _selectedIndex = selectedIndex
         self.label = label
-        data = rowTitles
-        rowContent = { title in .titled(title: title) }
+        self.data = rowTitles
+        self.rowContent = { title in .titled(title: title) }
     }
 
     /// Initializes component with preset, selected index, title, and row titles.
@@ -159,8 +146,7 @@ public struct VMenuPicker<Label, Data>: View
     )
         where
         Label == VText,
-        Data == [String]
-    {
+        Data == [String] {
         self.init(
             preset: menuPickerButtonPreset,
             state: state,
@@ -179,8 +165,7 @@ public struct VMenuPicker<Label, Data>: View
         @ViewBuilder label: @escaping () -> Label,
         rowTitles: [String]
     )
-        where Data == [String]
-    {
+        where Data == [String] {
         self.init(
             state: state,
             selectedIndex: selectedIndex,
@@ -202,8 +187,7 @@ public struct VMenuPicker<Label, Data>: View
     )
         where
         Data == [Item],
-        Item: VPickableItem
-    {
+        Item: VPickableItem {
         self.init(
             preset: menuPickerButtonPreset,
             state: state,
@@ -228,8 +212,7 @@ public struct VMenuPicker<Label, Data>: View
         where
         Label == VText,
         Data == [Item],
-        Item: VPickableItem
-    {
+        Item: VPickableItem {
         self.init(
             preset: menuPickerButtonPreset,
             state: state,
@@ -250,8 +233,7 @@ public struct VMenuPicker<Label, Data>: View
     )
         where
         Data == [Item],
-        Item: VPickableItem
-    {
+        Item: VPickableItem {
         self.init(
             state: state,
             selectedIndex: .init(
@@ -275,8 +257,7 @@ public struct VMenuPicker<Label, Data>: View
     )
         where
         Data == [Item],
-        Item: VPickableTitledItem
-    {
+        Item: VPickableTitledItem {
         self.init(
             preset: menuPickerButtonPreset,
             state: state,
@@ -300,8 +281,7 @@ public struct VMenuPicker<Label, Data>: View
         where
         Label == VText,
         Data == [Item],
-        Item: VPickableTitledItem
-    {
+        Item: VPickableTitledItem {
         self.init(
             preset: menuPickerButtonPreset,
             state: state,
@@ -325,8 +305,7 @@ public struct VMenuPicker<Label, Data>: View
     )
         where
         Data == [Item],
-        Item: VPickableTitledItem
-    {
+        Item: VPickableTitledItem {
         self.init(
             state: state,
             selectedIndex: .init(
@@ -338,6 +317,8 @@ public struct VMenuPicker<Label, Data>: View
             rowContent: { item in .titled(title: item.pickerTitle) }
         )
     }
+
+    // MARK: Public
 
     // MARK: Body
 
@@ -352,6 +333,21 @@ public struct VMenuPicker<Label, Data>: View
         .disabled(!state.isEnabled) // Luckily, doesn't affect colors
     }
 
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let menuPickerButtonType: VMenuPickerButtonType
+
+    private let state: VMenuPickerState
+
+    @Binding
+    private var selectedIndex: Int
+
+    private let label: () -> Label
+    private let data: Data
+    private let rowContent: (Data.Element) -> VMenuPickerRow
+
     private var labelView: some View {
         VMenuPickerButtonType.menuPickerButton(
             buttonType: menuPickerButtonType,
@@ -360,7 +356,8 @@ public struct VMenuPicker<Label, Data>: View
         )
     }
 
-    @ViewBuilder private func rowView(_ row: VMenuPickerRow) -> some View {
+    @ViewBuilder
+    private func rowView(_ row: VMenuPickerRow) -> some View {
         switch row {
         case let .titled(title):
             Text(title)
@@ -380,10 +377,10 @@ public struct VMenuPicker<Label, Data>: View
     }
 }
 
-// MARK: - Preview
+// MARK: - VMenuPicker_Previews
 
 struct VMenuPicker_Previews: PreviewProvider {
-    @State private static var selection: VSegmentedPicker_Previews.PickerRow = .red
+    // MARK: Internal
 
     static var previews: some View {
         VMenuPicker(
@@ -392,4 +389,9 @@ struct VMenuPicker_Previews: PreviewProvider {
             title: "Lorem ipsum"
         )
     }
+
+    // MARK: Private
+
+    @State
+    private static var selection: VSegmentedPicker_Previews.PickerRow = .red
 }

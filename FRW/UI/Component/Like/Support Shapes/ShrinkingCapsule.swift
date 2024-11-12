@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// MARK: - ShrinkingCapsule
+
 struct ShrinkingCapsule: View {
     let likeColor: Color
 
@@ -17,8 +19,10 @@ struct ShrinkingCapsule: View {
     let rotationAngle: Angle
     let offset: CGSize
 
-    @Binding var isAnimating: Bool
-    @State var hideCapsule: Bool = false
+    @Binding
+    var isAnimating: Bool
+    @State
+    var hideCapsule: Bool = false
 
     var body: some View {
         ZStack {
@@ -32,9 +36,13 @@ struct ShrinkingCapsule: View {
             .onAppear {
                 Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
                     if self.isAnimating {
-                        Timer.scheduledTimer(withTimeInterval: animationDuration, repeats: false) { _ in
-                            self.hideCapsule.toggle()
-                        }
+                        Timer
+                            .scheduledTimer(
+                                withTimeInterval: animationDuration,
+                                repeats: false
+                            ) { _ in
+                                self.hideCapsule.toggle()
+                            }
                         timer.invalidate()
                     }
                 }
@@ -42,11 +50,15 @@ struct ShrinkingCapsule: View {
     }
 }
 
+// MARK: - ShrinkingCapsule_Previews
+
 struct ShrinkingCapsule_Previews: PreviewProvider {
     static var previews: some View {
-        ShrinkingCapsule(likeColor: .LL.Primary.salmonPrimary,
-                         rotationAngle: .degrees(35),
-                         offset: CGSize(width: 10, height: 10),
-                         isAnimating: .constant(false))
+        ShrinkingCapsule(
+            likeColor: .LL.Primary.salmonPrimary,
+            rotationAngle: .degrees(35),
+            offset: CGSize(width: 10, height: 10),
+            isAnimating: .constant(false)
+        )
     }
 }

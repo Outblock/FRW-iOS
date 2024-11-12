@@ -8,22 +8,27 @@
 import Kingfisher
 import SwiftUI
 
+// MARK: - SwapView
+
 struct SwapView: RouteableView {
-    @StateObject var vm: SwapViewModel
+    // MARK: Lifecycle
+
+    init(defaultFromToken: TokenModel? = WalletManager.shared.getToken(bySymbol: "flow")) {
+        _vm = StateObject(wrappedValue: SwapViewModel(defaultFromToken: defaultFromToken))
+    }
+
+    // MARK: Internal
 
     enum Field: Hashable {
         case fromToken
         case toToken
     }
 
-    @FocusState private var focusedField: Field?
+    @StateObject
+    var vm: SwapViewModel
 
     var title: String {
-        return "swap_title".localized
-    }
-
-    init(defaultFromToken: TokenModel? = WalletManager.shared.getToken(bySymbol: "flow")) {
-        _vm = StateObject(wrappedValue: SwapViewModel(defaultFromToken: defaultFromToken))
+        "swap_title".localized
     }
 
     var body: some View {
@@ -100,6 +105,11 @@ struct SwapView: RouteableView {
             .foregroundColor(Color.LL.Neutrals.text2)
             .lineLimit(1)
     }
+
+    // MARK: Private
+
+    @FocusState
+    private var focusedField: Field?
 }
 
 extension SwapView {
@@ -123,10 +133,12 @@ extension SwapView {
             TextField("", text: $vm.inputFromText)
                 .keyboardType(.decimalPad)
                 .disableAutocorrection(true)
-                .modifier(PlaceholderStyle(showPlaceHolder: vm.inputFromText.isEmpty,
-                                           placeholder: "0.00",
-                                           font: .inter(size: 32, weight: .medium),
-                                           color: Color.LL.Neutrals.note))
+                .modifier(PlaceholderStyle(
+                    showPlaceHolder: vm.inputFromText.isEmpty,
+                    placeholder: "0.00",
+                    font: .inter(size: 32, weight: .medium),
+                    color: Color.LL.Neutrals.note
+                ))
                 .font(.inter(size: 32, weight: .medium))
                 .foregroundColor(Color.LL.Neutrals.text)
                 .onChange(of: vm.inputFromText) { text in
@@ -206,10 +218,12 @@ extension SwapView {
             TextField("", text: $vm.inputToText)
                 .keyboardType(.decimalPad)
                 .disableAutocorrection(true)
-                .modifier(PlaceholderStyle(showPlaceHolder: vm.inputToText.isEmpty,
-                                           placeholder: "0.00",
-                                           font: .inter(size: 32, weight: .medium),
-                                           color: Color.LL.Neutrals.note))
+                .modifier(PlaceholderStyle(
+                    showPlaceHolder: vm.inputToText.isEmpty,
+                    placeholder: "0.00",
+                    font: .inter(size: 32, weight: .medium),
+                    color: Color.LL.Neutrals.note
+                ))
                 .font(.inter(size: 32, weight: .medium))
                 .foregroundColor(Color.LL.Neutrals.text)
                 .onChange(of: vm.inputToText) { text in
@@ -258,7 +272,12 @@ extension SwapView {
             }
             .frame(height: 48)
             .padding(.horizontal, 8)
-            .roundedBg(cornerRadius: 16, fillColor: Color.LL.Neutrals.neutrals4, strokeColor: Color.LL.Primary.salmonPrimary, strokeLineWidth: 1)
+            .roundedBg(
+                cornerRadius: 16,
+                fillColor: Color.LL.Neutrals.neutrals4,
+                strokeColor: Color.LL.Primary.salmonPrimary,
+                strokeLineWidth: 1
+            )
         }
     }
 }

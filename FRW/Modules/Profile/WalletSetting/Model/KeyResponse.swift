@@ -7,15 +7,21 @@
 
 import Foundation
 
+// MARK: - KeyResponse
+
 struct KeyResponse: Codable {
     let result: [KeyDeviceModel]?
 }
+
+// MARK: - KeyDeviceModel
 
 struct KeyDeviceModel: Codable {
     let device: DeviceInfoModel
     let pubkey: PubkeyModel
     var backupInfo: BackupInfoModel?
 }
+
+// MARK: - PubkeyModel
 
 struct PubkeyModel: Codable {
     let hashAlgo: Int
@@ -24,6 +30,8 @@ struct PubkeyModel: Codable {
     var weight: Int = 1000
     var name: String?
 }
+
+// MARK: - BackupInfoModel
 
 struct BackupInfoModel: Codable {
     let createTime: String?
@@ -60,6 +68,8 @@ struct BackupInfoModel: Codable {
     }
 }
 
+// MARK: - BackupType
+
 enum BackupType: Int, Codable {
     case undefined = -1
     case google = 0
@@ -67,6 +77,8 @@ enum BackupType: Int, Codable {
     case manual = 2
     case passkey = 3
     case fullWeightSeedPhrase = 4
+
+    // MARK: Internal
 
     var title: String {
         switch self {

@@ -8,12 +8,16 @@
 import Flow
 import SwiftUI
 
+// MARK: - StakeAmountViewModel.ErrorType
+
 extension StakeAmountViewModel {
     enum ErrorType {
         case none
         case insufficientBalance
         case belowMinimumBalance
         case belowMinimumAmount
+
+        // MARK: Internal
 
         var desc: String {
             switch self {
@@ -31,17 +35,38 @@ extension StakeAmountViewModel {
     }
 }
 
+// MARK: - StakeAmountViewModel
+
 class StakeAmountViewModel: ObservableObject {
-    @Published var provider: StakingProvider
-    @Published var isUnstake: Bool
+    // MARK: Lifecycle
 
-    @Published var inputText: String = ""
-    @Published var inputTextNum: Double = 0
-    @Published var balance: Double = 0
-    @Published var showConfirmView: Bool = false
-    @Published var errorType: StakeAmountViewModel.ErrorType = .none
+    init(provider: StakingProvider, isUnstake: Bool) {
+        self.provider = provider
+        self.isUnstake = isUnstake
+        self.balance = isUnstake ? (provider.currentNode?.stakingCount ?? 0) : WalletManager.shared
+            .getBalance(bySymbol: "flow")
+    }
 
-    @Published var isRequesting: Bool = false
+    // MARK: Internal
+
+    @Published
+    var provider: StakingProvider
+    @Published
+    var isUnstake: Bool
+
+    @Published
+    var inputText: String = ""
+    @Published
+    var inputTextNum: Double = 0
+    @Published
+    var balance: Double = 0
+    @Published
+    var showConfirmView: Bool = false
+    @Published
+    var errorType: StakeAmountViewModel.ErrorType = .none
+
+    @Published
+    var isRequesting: Bool = false
 
     var buttonState: VPrimaryButtonState {
         if isRequesting {
@@ -56,11 +81,11 @@ class StakeAmountViewModel: ObservableObject {
     }
 
     var inputNumAsCurrencyString: String {
-        return "\(CurrencyCache.cache.currencySymbol)\(inputNumAsUSD.formatCurrencyString(considerCustomCurrency: true)) \(CurrencyCache.cache.currentCurrency.rawValue)"
+        "\(CurrencyCache.cache.currencySymbol)\(inputNumAsUSD.formatCurrencyString(considerCustomCurrency: true)) \(CurrencyCache.cache.currentCurrency.rawValue)"
     }
 
     var inputNumAsCurrencyStringInConfirmSheet: String {
-        return "\(CurrencyCache.cache.currencySymbol)\(inputNumAsUSD.formatCurrencyString(considerCustomCurrency: true))"
+        "\(CurrencyCache.cache.currencySymbol)\(inputNumAsUSD.formatCurrencyString(considerCustomCurrency: true))"
     }
 
     var yearReward: Double {
@@ -72,19 +97,16 @@ class StakeAmountViewModel: ObservableObject {
     }
 
     var yearRewardWithCurrencyString: String {
-        let numString = (inputNumAsUSD * provider.rate).formatCurrencyString(considerCustomCurrency: true)
+        let numString = (inputNumAsUSD * provider.rate)
+            .formatCurrencyString(considerCustomCurrency: true)
         return "\(CurrencyCache.cache.currencySymbol)\(numString) \(CurrencyCache.cache.currentCurrency.rawValue)"
     }
 
     var isReadyForStake: Bool {
-        return errorType == .none && inputTextNum > 0
+        errorType == .none && inputTextNum > 0
     }
 
-    init(provider: StakingProvider, isUnstake: Bool) {
-        self.provider = provider
-        self.isUnstake = isUnstake
-        balance = isUnstake ? (provider.currentNode?.stakingCount ?? 0) : WalletManager.shared.getBalance(bySymbol: "flow")
-    }
+    // MARK: Private
 
     private func refreshState() {
         if inputTextNum > balance {
@@ -161,35 +183,54 @@ extension StakeAmountViewModel {
         }
 
         if provider.delegatorId == nil {
-            debugPrint("StakeAmountViewModel: provider.delegatorId is nil, will create delegator id")
+            debugPrint(
+                "StakeAmountViewModel: provider.delegatorId is nil, will create delegator id"
+            )
             // create delegator id to stake (only first time)
-            return try await FlowNetwork.createDelegatorId(providerId: provider.id, amount: inputTextNum)
+            return try await FlowNetwork.createDelegatorId(
+                providerId: provider.id,
+                amount: inputTextNum
+            )
         }
 
         guard let delegatorId = provider.delegatorId else {
             // can not be nil, something went wrong.
-            debugPrint("StakeAmountViewModel: delegatorId is still nil after fetch delegatorIds, something went wrong")
+            debugPrint(
+                "StakeAmountViewModel: delegatorId is still nil after fetch delegatorIds, something went wrong"
+            )
             throw StakingError.unknown
         }
 
         debugPrint("StakeAmountViewModel: provider.delegatorId now get, will stake flow")
-        return try await FlowNetwork.stakeFlow(providerId: provider.id, delegatorId: delegatorId, amount: inputTextNum)
+        return try await FlowNetwork.stakeFlow(
+            providerId: provider.id,
+            delegatorId: delegatorId,
+            amount: inputTextNum
+        )
     }
 
     private func unstake() async throws -> Flow.ID {
         if provider.delegatorId == nil {
-            debugPrint("StakeAmountViewModel: provider.delegatorId is nil, will create delegator id")
+            debugPrint(
+                "StakeAmountViewModel: provider.delegatorId is nil, will create delegator id"
+            )
         }
 
         guard let delegatorId = provider.delegatorId else {
             // can not be nil, something went wrong.
-            debugPrint("StakeAmountViewModel: delegatorId is still nil after fetch delegatorIds, something went wrong")
+            debugPrint(
+                "StakeAmountViewModel: delegatorId is still nil after fetch delegatorIds, something went wrong"
+            )
             throw StakingError.unknown
         }
 
         debugPrint("StakeAmountViewModel: provider.delegatorId now get, will unstake flow")
 
-        let txId = try await FlowNetwork.unstakeFlow(providerId: provider.id, delegatorId: delegatorId, amount: inputTextNum)
+        let txId = try await FlowNetwork.unstakeFlow(
+            providerId: provider.id,
+            delegatorId: delegatorId,
+            amount: inputTextNum
+        )
         return txId
     }
 
@@ -211,7 +252,11 @@ extension StakeAmountViewModel {
             DispatchQueue.main.async {
                 self.isRequesting = false
                 self.showConfirmView = false
-                let holder = TransactionManager.TransactionHolder(id: txId, type: .stakeFlow, data: Data())
+                let holder = TransactionManager.TransactionHolder(
+                    id: txId,
+                    type: .stakeFlow,
+                    data: Data()
+                )
                 TransactionManager.shared.newTransaction(holder: holder)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     Router.route(to: RouteMap.Wallet.backToTokenDetail)

@@ -9,15 +9,44 @@ import CollectionViewPagingLayout
 import Kingfisher
 import SwiftUI
 
+// MARK: - NFTFavoriteView
+
 struct NFTFavoriteView: View {
-    @Binding var favoriteId: String?
+    @Binding
+    var favoriteId: String?
 
     var favoriteNFTs: [NFTModel]
     var onClick: () -> Void
 
+    var options = StackTransformViewOptions(
+        scaleFactor: 0.10,
+        minScale: 0.20,
+        maxScale: 0.95,
+        maxStackSize: 6,
+        spacingFactor: 0.1,
+        maxSpacing: nil,
+        alphaFactor: 0.00,
+        bottomStackAlphaSpeedFactor: 0.90,
+        topStackAlphaSpeedFactor: 0.30,
+        perspectiveRatio: 0.30,
+        shadowEnabled: true,
+        shadowColor: Color.LL.rebackground.toUIColor()!,
+        shadowOpacity: 0.10,
+        shadowOffset: .zero,
+        shadowRadius: 5.00,
+        stackRotateAngel: 0.00,
+        popAngle: 0.31,
+        popOffsetRatio: .init(width: -1.45, height: 0.30),
+        stackPosition: .init(x: 1.00, y: 0.00),
+        reverse: false,
+        blurEffectEnabled: false,
+        maxBlurEffectRadius: 0.00,
+        blurEffectStyle: .light
+    )
+
     var body: some View {
         VStack {
-            if favoriteNFTs.count > 0 {
+            if !favoriteNFTs.isEmpty {
                 VStack(alignment: .center, spacing: 0) {
                     HStack {
                         Image(systemName: "star.fill")
@@ -59,49 +88,34 @@ struct NFTFavoriteView: View {
                         bottom: .absolute(18),
                         right: .fractionalWidth(0.22)
                     )
-                    .frame(width: screenWidth,
-                           height: screenHeight * 0.4, alignment: .center)
+                    .frame(
+                        width: screenWidth,
+                        height: screenHeight * 0.4,
+                        alignment: .center
+                    )
                 }
-                .background(LinearGradient(colors: [.clear, .LL.background],
-                                           startPoint: .top, endPoint: .bottom))
+                .background(LinearGradient(
+                    colors: [.clear, .LL.background],
+                    startPoint: .top,
+                    endPoint: .bottom
+                ))
             }
         }
     }
-
-    var options = StackTransformViewOptions(
-        scaleFactor: 0.10,
-        minScale: 0.20,
-        maxScale: 0.95,
-        maxStackSize: 6,
-        spacingFactor: 0.1,
-        maxSpacing: nil,
-        alphaFactor: 0.00,
-        bottomStackAlphaSpeedFactor: 0.90,
-        topStackAlphaSpeedFactor: 0.30,
-        perspectiveRatio: 0.30,
-        shadowEnabled: true,
-        shadowColor: Color.LL.rebackground.toUIColor()!,
-        shadowOpacity: 0.10,
-        shadowOffset: .zero,
-        shadowRadius: 5.00,
-        stackRotateAngel: 0.00,
-        popAngle: 0.31,
-        popOffsetRatio: .init(width: -1.45, height: 0.30),
-        stackPosition: .init(x: 1.00, y: 0.00),
-        reverse: false,
-        blurEffectEnabled: false,
-        maxBlurEffectRadius: 0.00,
-        blurEffectStyle: .light
-    )
 
     func onTapNFT() {
         onClick()
     }
 }
 
+// MARK: - NFTFavoriteView_Previews
+
 struct NFTFavoriteView_Previews: PreviewProvider {
-    @State static var list: [NFTModel] = []
-    @State static var favoriteId: String?
+    @State
+    static var list: [NFTModel] = []
+    @State
+    static var favoriteId: String?
+
     static var previews: some View {
         NFTFavoriteView(favoriteId: $favoriteId, favoriteNFTs: list) {}
     }

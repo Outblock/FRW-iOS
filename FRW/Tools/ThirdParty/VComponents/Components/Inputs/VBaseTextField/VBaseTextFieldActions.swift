@@ -22,6 +22,8 @@ public enum VBaseTextFieldReturnButtonAction {
     /// Returns and resigns responder, and custom action.
     case returnAndCustom(_ action: () -> Void)
 
+    // MARK: Public
+
     // MARK: Initailizers
 
     /// Default value. Set to `return`.

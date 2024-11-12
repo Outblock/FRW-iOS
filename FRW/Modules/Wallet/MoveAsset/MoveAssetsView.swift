@@ -9,13 +9,16 @@ import SwiftUI
 import SwiftUIX
 
 struct MoveAssetsView: RouteableView, PresentActionDelegate {
+    // MARK: Internal
+
     var changeHeight: (() -> Void)?
 
+    var token: TokenModel?
+
     var title: String {
-        return ""
+        ""
     }
 
-    var token: TokenModel?
     var showCheck: Bool {
         MoveAssetsAction.shared.showCheckOnMoveAsset
     }
@@ -25,12 +28,6 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
             return note
         }
         return "move_assets_note".localized
-    }
-
-    @State private var notAsk: Bool = LocalUserDefaults.shared.showMoveAssetOnBrowser {
-        didSet {
-            LocalUserDefaults.shared.showMoveAssetOnBrowser = notAsk
-        }
     }
 
     var body: some View {
@@ -74,15 +71,17 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
                 .padding(.top, 32)
 
                 if showCheck {
-                    VPrimaryButton(model: ButtonStyle.primary,
-                                   state: .enabled,
-                                   action: {
-                                       Router.dismiss(animated: true, completion: {
-                                           MoveAssetsAction.shared.endBrowser()
-                                       })
-                                   },
-                                   title: "skip".localized)
-                        .padding(.top, 24)
+                    VPrimaryButton(
+                        model: ButtonStyle.primary,
+                        state: .enabled,
+                        action: {
+                            Router.dismiss(animated: true, completion: {
+                                MoveAssetsAction.shared.endBrowser()
+                            })
+                        },
+                        title: "skip".localized
+                    )
+                    .padding(.top, 24)
 
                     HStack {
                         Spacer()
@@ -130,7 +129,10 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
             Image(cardHead(isNFT: isNFT))
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-                .frame(width: isNFT ? (showCheck ? 128 : 134) : (showCheck ? 96 : 140), height: showCheck ? 56 : 96)
+                .frame(
+                    width: isNFT ? (showCheck ? 128 : 134) : (showCheck ? 96 : 140),
+                    height: showCheck ? 56 : 96
+                )
 
             Text(isNFT ? "move_nft".localized : "move_token".localized)
                 .font(.inter(size: 18, weight: .semibold))
@@ -143,6 +145,19 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 164, height: showCheck ? 120 : 224)
                 .clipped()
+        }
+    }
+
+    func customViewDidDismiss() {
+        MoveAssetsAction.shared.endBrowser()
+    }
+
+    // MARK: Private
+
+    @State
+    private var notAsk: Bool = LocalUserDefaults.shared.showMoveAssetOnBrowser {
+        didSet {
+            LocalUserDefaults.shared.showMoveAssetOnBrowser = notAsk
         }
     }
 
@@ -176,10 +191,6 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
 
     private func onClose() {
         Router.dismiss()
-    }
-
-    func customViewDidDismiss() {
-        MoveAssetsAction.shared.endBrowser()
     }
 }
 

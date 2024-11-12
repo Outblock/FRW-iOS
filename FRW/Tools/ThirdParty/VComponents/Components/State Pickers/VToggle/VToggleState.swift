@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Toggle State
+// MARK: - VToggleState
 
 /// Enum that describes state, such as `off`, `on`, or `disabled`.
 public enum VToggleState: Int, CaseIterable {
@@ -21,6 +21,20 @@ public enum VToggleState: Int, CaseIterable {
 
     /// Disabled.
     case disabled
+
+    // MARK: Lifecycle
+
+    // MARK: Initializers
+
+    init(internalState: VToggleInternalState) {
+        switch internalState {
+        case .off, .pressedOff: self = .off
+        case .on, .pressedOn: self = .on
+        case .disabled: self = .disabled
+        }
+    }
+
+    // MARK: Public
 
     // MARK: Properties
 
@@ -42,16 +56,6 @@ public enum VToggleState: Int, CaseIterable {
         }
     }
 
-    // MARK: Initializers
-
-    init(internalState: VToggleInternalState) {
-        switch internalState {
-        case .off, .pressedOff: self = .off
-        case .on, .pressedOn: self = .on
-        case .disabled: self = .disabled
-        }
-    }
-
     // MARK: Next State
 
     /// Goes to the next state.
@@ -64,7 +68,7 @@ public enum VToggleState: Int, CaseIterable {
     }
 }
 
-// MARK: - V Toggle Internal State
+// MARK: - VToggleInternalState
 
 enum VToggleInternalState {
     // MARK: Cases
@@ -75,17 +79,7 @@ enum VToggleInternalState {
     case pressedOn
     case disabled
 
-    // MARK: Properties
-
-    var isEnabled: Bool {
-        switch self {
-        case .off: return true
-        case .on: return true
-        case .pressedOff: return true
-        case .pressedOn: return true
-        case .disabled: return false
-        }
-    }
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -105,6 +99,20 @@ enum VToggleInternalState {
         case (false, true): self = .pressedOff
         case (true, false): self = .on
         case (true, true): self = .pressedOn
+        }
+    }
+
+    // MARK: Internal
+
+    // MARK: Properties
+
+    var isEnabled: Bool {
+        switch self {
+        case .off: return true
+        case .on: return true
+        case .pressedOff: return true
+        case .pressedOn: return true
+        case .disabled: return false
         }
     }
 
@@ -151,9 +159,9 @@ extension StateOpacities_PD {
 
 // MARK: - Helpers
 
-public extension Binding where Value == VToggleState {
+extension Binding where Value == VToggleState {
     /// Initializes state with bool
-    init(bool: Binding<Bool>) {
+    public init(bool: Binding<Bool>) {
         self.init(
             get: { bool.wrappedValue ? .on : .off },
             set: { bool.wrappedValue = $0.isOn }

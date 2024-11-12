@@ -16,23 +16,28 @@ extension AddressBookView {
         var list: [Contact]
 
         var id: String {
-            return sectionName
+            sectionName
         }
     }
 
     class SectionViewModel: ViewModel, Identifiable, Indexable {
-        @Published var state: SectionState
+        // MARK: Lifecycle
+
+        init(sectionName: String, list: [Contact]) {
+            self.state = SectionState(sectionName: sectionName, list: list)
+        }
+
+        // MARK: Internal
+
+        @Published
+        var state: SectionState
 
         var id: String {
-            return state.id
+            state.id
         }
 
         var index: Index? {
-            return Index(state.sectionName, contentID: state.id)
-        }
-
-        init(sectionName: String, list: [Contact]) {
-            state = SectionState(sectionName: sectionName, list: list)
+            Index(state.sectionName, contentID: state.id)
         }
 
         func trigger(_: Never) {}
@@ -59,21 +64,14 @@ extension AddressBookView {
     }
 }
 
-// MARK: - Implementation
+// MARK: - AddressBookView.AddressBookViewModel
 
 extension AddressBookView {
     class AddressBookViewModel: ViewModel {
-        @Published var state: ListState
-        @Published var searchText: String = ""
-
-        var injectSelectAction: ((Contact) -> Void)?
-
-        private var rawContacts: [Contact]?
-        private var cancelSets = Set<AnyCancellable>()
-        private let cacheKey = "AddressBookViewContacts"
+        // MARK: Lifecycle
 
         init() {
-            state = ListState(sections: [AddressBookView.SectionViewModel]())
+            self.state = ListState(sections: [AddressBookView.SectionViewModel]())
 
             loadFromCache()
             trigger(.load)
@@ -81,19 +79,14 @@ extension AddressBookView {
             registerNotifications()
         }
 
-        private func registerNotifications() {
-            NotificationCenter.default.publisher(for: .addressBookDidAdd).sink { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.trigger(.load)
-                }
-            }.store(in: &cancelSets)
+        // MARK: Internal
 
-            NotificationCenter.default.publisher(for: .addressBookDidEdit).sink { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.trigger(.load)
-                }
-            }.store(in: &cancelSets)
-        }
+        @Published
+        var state: ListState
+        @Published
+        var searchText: String = ""
+
+        var injectSelectAction: ((Contact) -> Void)?
 
         func trigger(_ input: AddressBookView.AddressBookInput) {
             switch input {
@@ -116,14 +109,33 @@ extension AddressBookView {
                        tempContact.address == contact.address,
                        tempContact.contactType == contact.contactType,
                        tempContact.domain?.domainType == contact.domain?.domainType,
-                       tempContact.username == contact.username
-                    {
+                       tempContact.username == contact.username {
                         return true
                     }
                 }
             }
 
             return false
+        }
+
+        // MARK: Private
+
+        private var rawContacts: [Contact]?
+        private var cancelSets = Set<AnyCancellable>()
+        private let cacheKey = "AddressBookViewContacts"
+
+        private func registerNotifications() {
+            NotificationCenter.default.publisher(for: .addressBookDidAdd).sink { [weak self] _ in
+                DispatchQueue.main.async {
+                    self?.trigger(.load)
+                }
+            }.store(in: &cancelSets)
+
+            NotificationCenter.default.publisher(for: .addressBookDidEdit).sink { [weak self] _ in
+                DispatchQueue.main.async {
+                    self?.trigger(.load)
+                }
+            }.store(in: &cancelSets)
         }
 
         private func trimListModels() {
@@ -173,7 +185,8 @@ extension AddressBookView {
 
             Task {
                 do {
-                    let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.AddressBook.delete(contact.id))
+                    let response: Network.EmptyResponse = try await Network
+                        .requestWithRawModel(FRWAPI.AddressBook.delete(contact.id))
 
                     if response.httpCode != 200 {
                         failedAction()
@@ -198,7 +211,8 @@ extension AddressBookView {
 
             Task {
                 do {
-                    let response: AddressListBookResponse = try await Network.request(FRWAPI.AddressBook.fetchList)
+                    let response: AddressListBookResponse = try await Network
+                        .request(FRWAPI.AddressBook.fetchList)
                     DispatchQueue.main.async {
                         self.rawContacts = response.contacts
                         self.saveToCache(contacts: response.contacts)
@@ -226,20 +240,27 @@ extension AddressBookView {
             }
 
             BMChineseSort.share.compareTpye = .fullPinyin
-            BMChineseSort.sortAndGroup(objectArray: rawContacts, key: "contactName") { success, _, sectionTitleArr, sortedObjArr in
-                if !success {
-                    self.state.stateType = .error
-                    return
-                }
+            BMChineseSort
+                .sortAndGroup(
+                    objectArray: rawContacts,
+                    key: "contactName"
+                ) { success, _, sectionTitleArr, sortedObjArr in
+                    if !success {
+                        self.state.stateType = .error
+                        return
+                    }
 
-                var sections = [AddressBookView.SectionViewModel]()
-                for (index, title) in sectionTitleArr.enumerated() {
-                    let svm = AddressBookView.SectionViewModel(sectionName: title, list: sortedObjArr[index])
-                    sections.append(svm)
-                }
+                    var sections = [AddressBookView.SectionViewModel]()
+                    for (index, title) in sectionTitleArr.enumerated() {
+                        let svm = AddressBookView.SectionViewModel(
+                            sectionName: title,
+                            list: sortedObjArr[index]
+                        )
+                        sections.append(svm)
+                    }
 
-                self.state.sections = sections
-            }
+                    self.state.sections = sections
+                }
         }
     }
 }
@@ -257,7 +278,10 @@ extension AddressBookView.AddressBookViewModel {
 
     private func loadFromCache() {
         Task {
-            if let cacheContacts = try? await PageCache.cache.get(forKey: cacheKey, type: [Contact].self), !cacheContacts.isEmpty {
+            if let cacheContacts = try? await PageCache.cache.get(
+                forKey: cacheKey,
+                type: [Contact].self
+            ), !cacheContacts.isEmpty {
                 DispatchQueue.main.async {
                     self.rawContacts = cacheContacts
                     self.regroup(cacheContacts)
@@ -292,24 +316,30 @@ extension AddressBookView.AddressBookViewModel {
             var contacts = [Contact]()
 
             for contact in section.state.list {
-                if let address = contact.address, address.localizedCaseInsensitiveContains(searchText) {
+                if let address = contact.address,
+                   address.localizedCaseInsensitiveContains(searchText) {
                     contacts.append(contact)
                     continue
                 }
 
-                if let contactName = contact.contactName, contactName.localizedCaseInsensitiveContains(searchText) {
+                if let contactName = contact.contactName,
+                   contactName.localizedCaseInsensitiveContains(searchText) {
                     contacts.append(contact)
                     continue
                 }
 
-                if let userName = contact.username, userName.localizedCaseInsensitiveContains(searchText) {
+                if let userName = contact.username,
+                   userName.localizedCaseInsensitiveContains(searchText) {
                     contacts.append(contact)
                     continue
                 }
             }
 
-            if contacts.count > 0 {
-                let newSection = AddressBookView.SectionViewModel(sectionName: section.state.sectionName, list: contacts)
+            if !contacts.isEmpty {
+                let newSection = AddressBookView.SectionViewModel(
+                    sectionName: section.state.sectionName,
+                    list: contacts
+                )
                 searchSections.append(newSection)
             }
         }
@@ -334,19 +364,24 @@ extension AddressBookView.AddressBookViewModel {
                     continue
                 }
 
-                if let contactName = contact.contactName, contactName.localizedCaseInsensitiveContains(text) {
+                if let contactName = contact.contactName,
+                   contactName.localizedCaseInsensitiveContains(text) {
                     contacts.append(contact)
                     continue
                 }
 
-                if let userName = contact.username, userName.localizedCaseInsensitiveContains(text) {
+                if let userName = contact.username,
+                   userName.localizedCaseInsensitiveContains(text) {
                     contacts.append(contact)
                     continue
                 }
             }
 
-            if contacts.count > 0 {
-                let newSection = WalletSendView.SearchSection(title: section.state.sectionName, rows: contacts)
+            if !contacts.isEmpty {
+                let newSection = WalletSendView.SearchSection(
+                    title: section.state.sectionName,
+                    rows: contacts
+                )
                 results.append(newSection)
             }
         }

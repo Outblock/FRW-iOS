@@ -11,6 +11,8 @@ import SwiftUI
 
 typealias PresentActionView = PresentActionDelegate & View
 
+// MARK: - PresentActionDelegate
+
 protocol PresentActionDelegate {
     func customViewDidDismiss()
     var detents: [UISheetPresentationController.Detent] { get }
@@ -21,28 +23,34 @@ protocol PresentActionDelegate {
 
 extension PresentActionDelegate {
     var detents: [UISheetPresentationController.Detent] {
-        return [.medium()]
+        [.medium()]
     }
 
     var prefersGrabberVisible: Bool {
-        return true
+        true
     }
 
     func customViewDidDismiss() {}
 }
 
-// MARK: PresentHostingController
+// MARK: - PresentHostingController
 
-class PresentHostingController<Content: PresentActionView>: UIHostingController<Content>, UISheetPresentationControllerDelegate {
+class PresentHostingController<Content: PresentActionView>: UIHostingController<Content>,
+    UISheetPresentationControllerDelegate {
+    // MARK: Lifecycle
+
     override public init(rootView: Content) {
         super.init(rootView: rootView)
         overrideUserInterfaceStyle = ThemeManager.shared.getUIKitStyle()
     }
 
     @available(*, unavailable)
-    @MainActor dynamic required init?(coder _: NSCoder) {
+    @MainActor
+    dynamic required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,7 +78,8 @@ class PresentHostingController<Content: PresentActionView>: UIHostingController<
         }
     }
 
-    @objc func presentationControllerDidDismiss(_: UIPresentationController) {
+    @objc
+    func presentationControllerDidDismiss(_: UIPresentationController) {
         rootView.customViewDidDismiss()
     }
 }

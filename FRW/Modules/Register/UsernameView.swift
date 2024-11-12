@@ -22,7 +22,7 @@ extension UsernameView {
 
 extension UsernameView {
     var title: String {
-        return ""
+        ""
     }
 
     func backButtonAction() {
@@ -31,14 +31,22 @@ extension UsernameView {
     }
 }
 
+// MARK: - UsernameView
+
 struct UsernameView: RouteableView {
-    @StateObject var viewModel: UsernameViewModel
+    // MARK: Lifecycle
 
     init(mnemonic: String?) {
         _viewModel = StateObject(wrappedValue: UsernameViewModel(mnemonic: mnemonic))
     }
 
-    @State var text: String = ""
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: UsernameViewModel
+
+    @State
+    var text: String = ""
 
     var buttonState: VPrimaryButtonState {
         if viewModel.state.isRegisting {
@@ -94,29 +102,35 @@ struct UsernameView: RouteableView {
             .frame(maxWidth: .infinity, alignment: .leading)
             Spacer()
 
-            VTextField(model: TextFieldStyle.primary,
-                       type: .userName,
-                       highlight: highlight,
-                       placeholder: "username".localized,
-                       footerTitle: footerText,
-                       text: $text,
-                       onChange: {
-                           viewModel.trigger(.onEditingChanged(text))
-                       },
-                       onReturn: .returnAndCustom {
-                           viewModel.trigger(.next)
-                       }, onClear: .clearAndCustom {
-                           viewModel.trigger(.onEditingChanged(text))
-                       })
-                       .disabled(viewModel.state.isRegisting)
-                       .padding(.bottom, 10)
+            VTextField(
+                model: TextFieldStyle.primary,
+                type: .userName,
+                highlight: highlight,
+                placeholder: "username".localized,
+                footerTitle: footerText,
+                text: $text,
+                onChange: {
+                    viewModel.trigger(.onEditingChanged(text))
+                },
+                onReturn: .returnAndCustom {
+                    viewModel.trigger(.next)
+                },
+                onClear: .clearAndCustom {
+                    viewModel.trigger(.onEditingChanged(text))
+                }
+            )
+            .disabled(viewModel.state.isRegisting)
+            .padding(.bottom, 10)
 
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: buttonState,
-                           action: {
-                               viewModel.trigger(.next)
-                           }, title: "next".localized)
-                .padding(.bottom)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: buttonState,
+                action: {
+                    viewModel.trigger(.next)
+                },
+                title: "next".localized
+            )
+            .padding(.bottom)
         }
         .dismissKeyboardOnDrag()
         .padding(.horizontal, 28)
@@ -124,6 +138,8 @@ struct UsernameView: RouteableView {
         .applyRouteable(self)
     }
 }
+
+// MARK: - UsernameView_Previews
 
 struct UsernameView_Previews: PreviewProvider {
     static var previews: some View {

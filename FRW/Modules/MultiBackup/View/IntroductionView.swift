@@ -7,12 +7,14 @@
 
 import SwiftUI
 
+// MARK: - IntroductionView
+
 struct IntroductionView: RouteableView {
     var topic: IntroductionView.Topic
     var confirmClosure: EmptyClosure
 
     var title: String {
-        return ""
+        ""
     }
 
     var body: some View {
@@ -36,11 +38,14 @@ struct IntroductionView: RouteableView {
 
             Spacer()
 
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: .enabled,
-                           action: {
-                               onClick()
-                           }, title: "ok".localized)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: .enabled,
+                action: {
+                    onClick()
+                },
+                title: "ok".localized
+            )
         }
         .padding(.horizontal, 28)
         .applyRouteable(self)
@@ -52,10 +57,14 @@ struct IntroductionView: RouteableView {
     }
 }
 
+// MARK: IntroductionView.Topic
+
 extension IntroductionView {
     enum Topic {
         case whatMultiBackup
         case aboutRecoveryPhrase
+
+        // MARK: Internal
 
         var titleTop: String {
             switch self {

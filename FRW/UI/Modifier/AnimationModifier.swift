@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: - AnimatableGradientModifier
+
 struct AnimatableGradientModifier: AnimatableModifier {
     let fromGradient: Gradient
     let toGradient: Gradient
@@ -20,14 +22,22 @@ struct AnimatableGradientModifier: AnimatableModifier {
     func body(content _: Content) -> some View {
         var gradientColors = [Color]()
 
-        for i in 0 ..< fromGradient.stops.count {
+        for i in 0..<fromGradient.stops.count {
             let fromColor = UIColor(fromGradient.stops[i].color)
             let toColor = UIColor(toGradient.stops[i].color)
 
-            gradientColors.append(colorMixer(fromColor: fromColor, toColor: toColor, progress: progress))
+            gradientColors.append(colorMixer(
+                fromColor: fromColor,
+                toColor: toColor,
+                progress: progress
+            ))
         }
 
-        return LinearGradient(gradient: Gradient(colors: gradientColors), startPoint: .topLeading, endPoint: .bottomTrailing)
+        return LinearGradient(
+            gradient: Gradient(colors: gradientColors),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 
     func colorMixer(fromColor: UIColor, toColor: UIColor, progress: CGFloat) -> Color {
@@ -43,7 +53,15 @@ struct AnimatableGradientModifier: AnimatableModifier {
 }
 
 extension View {
-    func animatableGradient(fromGradient: Gradient, toGradient: Gradient, progress: CGFloat) -> some View {
-        modifier(AnimatableGradientModifier(fromGradient: fromGradient, toGradient: toGradient, progress: progress))
+    func animatableGradient(
+        fromGradient: Gradient,
+        toGradient: Gradient,
+        progress: CGFloat
+    ) -> some View {
+        modifier(AnimatableGradientModifier(
+            fromGradient: fromGradient,
+            toGradient: toGradient,
+            progress: progress
+        ))
     }
 }

@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: - ExploreEmptyScreen
+
 struct ExploreEmptyScreen: View {
     var body: some View {
         VStack(alignment: .center) {
@@ -20,6 +22,8 @@ struct ExploreEmptyScreen: View {
         .background(.LL.Neutrals.background)
     }
 }
+
+// MARK: - ExploreEmptyScreen_Previews
 
 struct ExploreEmptyScreen_Previews: PreviewProvider {
     static var previews: some View {

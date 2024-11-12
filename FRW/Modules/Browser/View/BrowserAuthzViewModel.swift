@@ -9,32 +9,59 @@ import Flow
 import Highlightr
 import SwiftUI
 
+// MARK: - BrowserAuthzViewModel.Callback
+
 extension BrowserAuthzViewModel {
     typealias Callback = (Bool) -> Void
 }
 
+// MARK: - BrowserAuthzViewModel
+
 class BrowserAuthzViewModel: ObservableObject {
-    @Published var title: String
-    @Published var urlString: String
-    @Published var logo: String?
-    @Published var cadence: String
-    @Published var cadenceFormatted: AttributedString?
-    @Published var arguments: [Flow.Argument]? = nil
-    @Published var argumentsFormatted: AttributedString?
-    @Published var isScriptShowing: Bool = false
+    // MARK: Lifecycle
 
-    @Published var template: FlowTransactionTemplate?
-
-    private var callback: BrowserAuthzViewModel.Callback?
-
-    init(title: String, url: String, logo: String?, cadence: String, arguments: [Flow.Argument]? = nil, callback: @escaping BrowserAuthnViewModel.Callback) {
+    init(
+        title: String,
+        url: String,
+        logo: String?,
+        cadence: String,
+        arguments: [Flow.Argument]? = nil,
+        callback: @escaping BrowserAuthnViewModel.Callback
+    ) {
         self.title = title
-        urlString = url
+        self.urlString = url
         self.logo = logo
         self.cadence = cadence
         self.arguments = arguments
         self.callback = callback
     }
+
+    deinit {
+        callback?(false)
+        WalletConnectManager.shared.reloadPendingRequests()
+    }
+
+    // MARK: Internal
+
+    @Published
+    var title: String
+    @Published
+    var urlString: String
+    @Published
+    var logo: String?
+    @Published
+    var cadence: String
+    @Published
+    var cadenceFormatted: AttributedString?
+    @Published
+    var arguments: [Flow.Argument]? = nil
+    @Published
+    var argumentsFormatted: AttributedString?
+    @Published
+    var isScriptShowing: Bool = false
+
+    @Published
+    var template: FlowTransactionTemplate?
 
     func didChooseAction(_ result: Bool) {
         Router.dismiss { [weak self] in
@@ -48,7 +75,10 @@ class BrowserAuthzViewModel: ObservableObject {
         guard let arguments else {
             return
         }
-        argumentsFormatted = AttributedString(arguments.map { $0.value.description }.joined(separator: "\n\n"))
+        argumentsFormatted = AttributedString(
+            arguments.map { $0.value.description }
+                .joined(separator: "\n\n")
+        )
     }
 
     func formatCode() {
@@ -72,7 +102,10 @@ class BrowserAuthzViewModel: ObservableObject {
 
         Task {
             do {
-                let response: FlowTransactionTemplate = try await Network.requestWithRawModel(FlixAuditEndpoint.template(request), decoder: JSONDecoder())
+                let response: FlowTransactionTemplate = try await Network.requestWithRawModel(
+                    FlixAuditEndpoint.template(request),
+                    decoder: JSONDecoder()
+                )
                 await MainActor.run {
                     self.template = response
                 }
@@ -88,8 +121,7 @@ class BrowserAuthzViewModel: ObservableObject {
         }
     }
 
-    deinit {
-        callback?(false)
-        WalletConnectManager.shared.reloadPendingRequests()
-    }
+    // MARK: Private
+
+    private var callback: BrowserAuthzViewModel.Callback?
 }

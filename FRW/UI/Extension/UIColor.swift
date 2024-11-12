@@ -7,37 +7,10 @@
 
 import UIKit
 
+// MARK: - UIColor.LL
+
 extension UIColor {
     enum LL {
-        static let background = UIColor(named: "Background")!
-        static let rebackground = UIColor(named: "Rebacground")!
-//        static let primary = UIColor(named: "Primary")
-        static let orange = UIColor(named: "Orange")!
-        static let blue = UIColor(named: "Blue")!
-        static let yellow = UIColor(named: "Yellow")!
-
-        static let error = UIColor(named: "Error")!
-        static let success = UIColor(named: "Success")!
-        static let outline = UIColor(named: "Outline")!
-        static let disable = UIColor(named: "Disable")!
-        static let note = UIColor(named: "Note")!
-
-        static let frontColor = UIColor(named: "FrontColor")!
-
-        static let text = UIColor(named: "Text")!
-        static let flow = UIColor(named: "Flow")!
-
-        static let warning2 = UIColor(named: "Warning2")!
-        static let warning6 = UIColor(named: "Warning6")!
-
-        static let bgForIcon = UIColor(named: "BgForIcon")!
-
-        static let deepBg = UIColor(named: "DeepBackground")!
-
-        static let neutrals1 = UIColor(named: "Neutrals1")!
-
-        static let stakeMain = UIColor(named: "other.stakingMain")!
-
         /// The primary color palette is used across all the iteractive elemets such as CTA’s(Call to The Action), links, inputs,active states,etc
         enum Primary {
             static let salmon1 = UIColor(named: "primary.salmon1")!
@@ -125,12 +98,42 @@ extension UIColor {
             static let bg3 = UIColor(named: "other.bg3")!
             static let icon1 = UIColor(named: "other.icon1")!
         }
+
+        static let background = UIColor(named: "Background")!
+        static let rebackground = UIColor(named: "Rebacground")!
+//        static let primary = UIColor(named: "Primary")
+        static let orange = UIColor(named: "Orange")!
+        static let blue = UIColor(named: "Blue")!
+        static let yellow = UIColor(named: "Yellow")!
+
+        static let error = UIColor(named: "Error")!
+        static let success = UIColor(named: "Success")!
+        static let outline = UIColor(named: "Outline")!
+        static let disable = UIColor(named: "Disable")!
+        static let note = UIColor(named: "Note")!
+
+        static let frontColor = UIColor(named: "FrontColor")!
+
+        static let text = UIColor(named: "Text")!
+        static let flow = UIColor(named: "Flow")!
+
+        static let warning2 = UIColor(named: "Warning2")!
+        static let warning6 = UIColor(named: "Warning6")!
+
+        static let bgForIcon = UIColor(named: "BgForIcon")!
+
+        static let deepBg = UIColor(named: "DeepBackground")!
+
+        static let neutrals1 = UIColor(named: "Neutrals1")!
+
+        static let stakeMain = UIColor(named: "other.stakingMain")!
     }
 }
 
+// MARK: - UIColor.Theme
+
 extension UIColor {
     enum Theme {
-        static let evm = UIColor(named: "evm")
         enum Accent {
             static let green = UIColor(named: "accent.green")
             static let grey = UIColor(named: "accent.grey")
@@ -167,5 +170,7 @@ extension UIColor {
             static let black8 = UIColor(named: "text.black.8")
             static let white9 = UIColor(named: "text.white.9")
         }
+
+        static let evm = UIColor(named: "evm")
     }
 }

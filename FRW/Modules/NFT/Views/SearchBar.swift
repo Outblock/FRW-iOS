@@ -7,9 +7,13 @@
 
 import SwiftUI
 
+// MARK: - SearchBar
+
 struct SearchBar: View {
-    @Binding var text: String
-    @State private var isEditing = false
+    @Binding
+    var text: String
+    @State
+    private var isEditing = false
     var purpose: String = "Search..."
     var iconColor: Color = .gray
 
@@ -37,7 +41,12 @@ struct SearchBar: View {
                 Button {
                     self.isEditing = false
                     self.text = ""
-                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                    UIApplication.shared.sendAction(
+                        #selector(UIResponder.resignFirstResponder),
+                        to: nil,
+                        from: nil,
+                        for: nil
+                    )
 
                 } label: {
                     Image(systemName: "multiply.circle.fill")
@@ -51,6 +60,8 @@ struct SearchBar: View {
         }
     }
 }
+
+// MARK: - SearchBar_Previews
 
 struct SearchBar_Previews: PreviewProvider {
     static var previews: some View {

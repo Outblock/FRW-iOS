@@ -12,7 +12,18 @@ import SwiftUI
 typealias VoidBlock = () -> Void
 typealias BoolBlock = (Bool) -> Void
 
+// MARK: - UsernameViewModel
+
 class UsernameViewModel: ViewModel {
+    // MARK: Lifecycle
+
+    init(mnemonic: String?) {
+        self.state = .init()
+        self.mnemonic = mnemonic
+    }
+
+    // MARK: Internal
+
     @Published
     private(set) var state: UsernameView.ViewState
 
@@ -20,11 +31,6 @@ class UsernameViewModel: ViewModel {
     var task: DispatchWorkItem?
     var currentText: String = ""
     var mnemonic: String?
-
-    init(mnemonic: String?) {
-        state = .init()
-        self.mnemonic = mnemonic
-    }
 
     func trigger(_ input: UsernameView.Action) {
         switch input {
@@ -45,6 +51,47 @@ class UsernameViewModel: ViewModel {
             }
         }
     }
+
+    func localCheckUserName(_ username: String) -> Bool {
+        if username.count < 3 {
+            state.status = .error("too_short".localized)
+            return false
+        }
+
+        if username.count > 15 {
+            state.status = .error("too_long".localized)
+            return false
+        }
+
+        guard let _ = username.range(of: "^[A-Za-z0-9]{3,15}$", options: .regularExpression) else {
+            state.status = .error("username_valid_tips".localized)
+            return false
+        }
+
+        return true
+    }
+
+    func checkUsername(_ username: String) {
+        Task {
+            do {
+                let model: CheckUserResponse = try await Network
+                    .request(FRWAPI.User.checkUsername(username.lowercased()))
+                await MainActor.run {
+                    if model.username == currentText.lowercased() {
+                        self.state.status = model
+                            .unique ? .success() : .error("has_been_taken".localized)
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    self.state.status = .error()
+                }
+                print(error)
+            }
+        }
+    }
+
+    // MARK: Private
 
     private func registerAction() {
         state.isRegisting = true
@@ -79,42 +126,5 @@ class UsernameViewModel: ViewModel {
 
         guard let uid = UserManager.shared.activatedUID else { return }
         MultiAccountStorage.shared.setBackupType(.manual, uid: uid)
-    }
-
-    func localCheckUserName(_ username: String) -> Bool {
-        if username.count < 3 {
-            state.status = .error("too_short".localized)
-            return false
-        }
-
-        if username.count > 15 {
-            state.status = .error("too_long".localized)
-            return false
-        }
-
-        guard let _ = username.range(of: "^[A-Za-z0-9]{3,15}$", options: .regularExpression) else {
-            state.status = .error("username_valid_tips".localized)
-            return false
-        }
-
-        return true
-    }
-
-    func checkUsername(_ username: String) {
-        Task {
-            do {
-                let model: CheckUserResponse = try await Network.request(FRWAPI.User.checkUsername(username.lowercased()))
-                await MainActor.run {
-                    if model.username == currentText.lowercased() {
-                        self.state.status = model.unique ? .success() : .error("has_been_taken".localized)
-                    }
-                }
-            } catch {
-                await MainActor.run {
-                    self.state.status = .error()
-                }
-                print(error)
-            }
-        }
     }
 }

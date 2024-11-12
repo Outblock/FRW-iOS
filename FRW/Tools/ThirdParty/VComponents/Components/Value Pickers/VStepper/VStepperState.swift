@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Stepper State
+// MARK: - VStepperState
 
 /// Enum that describes state, such as `enabled` or `disabled`.
 public enum VStepperState: Int, CaseIterable {
@@ -18,6 +18,8 @@ public enum VStepperState: Int, CaseIterable {
 
     /// Case disabled.
     case disabled
+
+    // MARK: Public
 
     // MARK: Properties
 
@@ -30,7 +32,7 @@ public enum VStepperState: Int, CaseIterable {
     }
 }
 
-// MARK: - V Stepper Button State
+// MARK: - VStepperButtonState
 
 enum VStepperButtonState {
     // MARK: Cases
@@ -38,6 +40,8 @@ enum VStepperButtonState {
     case enabled
     case pressed
     case disabled
+
+    // MARK: Lifecycle
 
     // MARK: Initializers
 

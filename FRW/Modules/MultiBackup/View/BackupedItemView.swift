@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct BackupedItemView: View {
+    // MARK: Internal
+
     let backupType: MultiBackupType
     var mnemonic: String? = nil
     var deviceInfo: DeviceInfoRequest? = nil
@@ -101,6 +103,8 @@ struct BackupedItemView: View {
         .cornerRadius(16)
     }
 
+    // MARK: Private
+
     private func showApp() -> String {
         if let info = deviceInfo {
             return info.showApp()
@@ -143,7 +147,7 @@ struct BackupedItemView: View {
     }
 
     private func colum() -> Int {
-        return Int(ceil(Double(mnemonicList().count) / 2.0))
+        Int(ceil(Double(mnemonicList().count) / 2.0))
     }
 }
 

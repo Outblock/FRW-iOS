@@ -7,18 +7,40 @@
 
 import SwiftUI
 
+// MARK: - NetworkSwitchPopViewModel
+
 class NetworkSwitchPopViewModel: ObservableObject {
-    @Published var fromNetwork: LocalUserDefaults.FlowNetworkType
-    @Published var toNetwork: LocalUserDefaults.FlowNetworkType
+    // MARK: Lifecycle
+
+    init(
+        fromNetwork: LocalUserDefaults.FlowNetworkType,
+        toNetwork: LocalUserDefaults.FlowNetworkType,
+        callback: SwitchNetworkClosure? = nil
+    ) {
+        self.fromNetwork = fromNetwork
+        self.toNetwork = toNetwork
+        self.callback = callback
+    }
+
+    // MARK: Internal
+
+    @Published
+    var fromNetwork: LocalUserDefaults.FlowNetworkType
+    @Published
+    var toNetwork: LocalUserDefaults.FlowNetworkType
 
     var callback: SwitchNetworkClosure?
 
     var descString: AttributedString {
         let normalDict = [NSAttributedString.Key.foregroundColor: UIColor.LL.Neutrals.text2]
-        let fromHighlightDict = [NSAttributedString.Key.foregroundColor: fromNetwork.color.toUIColor()!]
+        let fromHighlightDict =
+            [NSAttributedString.Key.foregroundColor: fromNetwork.color.toUIColor()!]
         let toHighlightDict = [NSAttributedString.Key.foregroundColor: toNetwork.color.toUIColor()!]
 
-        let str = NSMutableAttributedString(string: "switch_network_tips_msg_slice_0".localized, attributes: normalDict)
+        let str = NSMutableAttributedString(
+            string: "switch_network_tips_msg_slice_0".localized,
+            attributes: normalDict
+        )
         str.append(NSAttributedString(string: " ", attributes: normalDict))
         str.append(NSAttributedString(string: fromNetwork.rawValue, attributes: fromHighlightDict))
         str.append(NSAttributedString(string: " ", attributes: normalDict))
@@ -26,12 +48,6 @@ class NetworkSwitchPopViewModel: ObservableObject {
         str.append(NSAttributedString(string: " ", attributes: normalDict))
         str.append(NSAttributedString(string: toNetwork.rawValue, attributes: toHighlightDict))
         return AttributedString(str)
-    }
-
-    init(fromNetwork: LocalUserDefaults.FlowNetworkType, toNetwork: LocalUserDefaults.FlowNetworkType, callback: SwitchNetworkClosure? = nil) {
-        self.fromNetwork = fromNetwork
-        self.toNetwork = toNetwork
-        self.callback = callback
     }
 
     func switchAction() {
@@ -45,12 +61,24 @@ class NetworkSwitchPopViewModel: ObservableObject {
     }
 }
 
-struct NetworkSwitchPopView: View {
-    @StateObject private var vm: NetworkSwitchPopViewModel
+// MARK: - NetworkSwitchPopView
 
-    init(from: LocalUserDefaults.FlowNetworkType, to: LocalUserDefaults.FlowNetworkType, callback: SwitchNetworkClosure? = nil) {
-        _vm = StateObject(wrappedValue: NetworkSwitchPopViewModel(fromNetwork: from, toNetwork: to, callback: callback))
+struct NetworkSwitchPopView: View {
+    // MARK: Lifecycle
+
+    init(
+        from: LocalUserDefaults.FlowNetworkType,
+        to: LocalUserDefaults.FlowNetworkType,
+        callback: SwitchNetworkClosure? = nil
+    ) {
+        _vm = StateObject(wrappedValue: NetworkSwitchPopViewModel(
+            fromNetwork: from,
+            toNetwork: to,
+            callback: callback
+        ))
     }
+
+    // MARK: Internal
 
     var body: some View {
         VStack {
@@ -104,12 +132,21 @@ struct NetworkSwitchPopView: View {
                 .cornerRadius(12)
         }
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm: NetworkSwitchPopViewModel
 }
+
+// MARK: NetworkSwitchPopView.TargetView
 
 extension NetworkSwitchPopView {
     struct TargetView: View {
-        @State var color: Color
-        @State var name: String
+        @State
+        var color: Color
+        @State
+        var name: String
 
         var body: some View {
             VStack(spacing: 10) {

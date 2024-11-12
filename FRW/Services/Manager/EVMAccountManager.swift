@@ -9,33 +9,10 @@ import Combine
 import Foundation
 import SwiftUI
 
+// MARK: - EVMAccountManager
+
 class EVMAccountManager: ObservableObject {
-    static let shared = EVMAccountManager()
-
-    @Published var hasAccount: Bool = false
-    @Published var showEVM: Bool = false
-    @Published var accounts: [EVMAccountManager.Account] = [] {
-        didSet {
-            checkValid()
-        }
-    }
-
-    private var cacheAccounts: [String: [String]] = LocalUserDefaults.shared.EVMAddress
-
-    var openEVM: Bool {
-        return (CadenceManager.shared.current.evm?.createCoaEmpty) != nil
-    }
-
-    var balance: Decimal = 0
-
-    private var cancelSets = Set<AnyCancellable>()
-
-    @Published var selectedAccount: EVMAccountManager.Account? = LocalUserDefaults.shared.selectedEVMAccount {
-        didSet {
-            LocalUserDefaults.shared.selectedEVMAccount = selectedAccount
-            NotificationCenter.default.post(name: .watchAddressDidChanged, object: nil)
-        }
-    }
+    // MARK: Lifecycle
 
     init() {
         UserManager.shared.$activatedUID
@@ -68,7 +45,12 @@ class EVMAccountManager: ObservableObject {
 //                self.clean()
 //            }.store(in: &cancelSets)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(willReset),
+            name: .willResetWallet,
+            object: nil
+        )
 
         NotificationCenter.default.publisher(for: .transactionStatusDidChanged)
             .receive(on: DispatchQueue.main)
@@ -77,6 +59,42 @@ class EVMAccountManager: ObservableObject {
                 self?.onTransactionStatusChanged(noti)
             }.store(in: &cancelSets)
     }
+
+    // MARK: Internal
+
+    static let shared = EVMAccountManager()
+
+    @Published
+    var hasAccount: Bool = false
+    @Published
+    var showEVM: Bool = false
+    var balance: Decimal = 0
+
+    @Published
+    var accounts: [EVMAccountManager.Account] = [] {
+        didSet {
+            checkValid()
+        }
+    }
+
+    var openEVM: Bool {
+        (CadenceManager.shared.current.evm?.createCoaEmpty) != nil
+    }
+
+    @Published
+    var selectedAccount: EVMAccountManager.Account? = LocalUserDefaults.shared
+        .selectedEVMAccount {
+        didSet {
+            LocalUserDefaults.shared.selectedEVMAccount = selectedAccount
+            NotificationCenter.default.post(name: .watchAddressDidChanged, object: nil)
+        }
+    }
+
+    // MARK: Private
+
+    private var cacheAccounts: [String: [String]] = LocalUserDefaults.shared.EVMAddress
+
+    private var cancelSets = Set<AnyCancellable>()
 
     private func clean() {
         log.debug("cleaned")
@@ -108,12 +126,15 @@ class EVMAccountManager: ObservableObject {
         }
     }
 
-    @objc private func willReset() {
+    @objc
+    private func willReset() {
         clean()
     }
 
-    @objc private func onTransactionStatusChanged(_ noti: Notification) {
-        guard let obj = noti.object as? TransactionManager.TransactionHolder, obj.type == .editChildAccount else {
+    @objc
+    private func onTransactionStatusChanged(_ noti: Notification) {
+        guard let obj = noti.object as? TransactionManager.TransactionHolder,
+              obj.type == .editChildAccount else {
             return
         }
 
@@ -209,7 +230,7 @@ extension EVMAccountManager {
     }
 
     func fetchBalance(_ address: String) async throws -> Decimal {
-        return try await FlowNetwork.fetchEVMBalance(address: address)
+        try await FlowNetwork.fetchEVMBalance(address: address)
     }
 
     func fetchTokens() async throws -> [EVMTokenResponse] {
@@ -220,6 +241,8 @@ extension EVMAccountManager {
         return response
     }
 }
+
+// MARK: EVMAccountManager.Account
 
 extension EVMAccountManager {
     struct Account: ChildAccountSideCellItem, Codable {
@@ -246,8 +269,7 @@ extension EVMAccountManager {
 
         var isSelected: Bool {
             if let selectedAccount = EVMAccountManager.shared.selectedAccount,
-               selectedAccount.address.lowercased() == address.lowercased(), !address.isEmpty
-            {
+               selectedAccount.address.lowercased() == address.lowercased(), !address.isEmpty {
                 return true
             }
             return false

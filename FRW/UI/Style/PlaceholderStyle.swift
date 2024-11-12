@@ -8,10 +8,7 @@
 import SwiftUI
 
 public struct PlaceholderStyle: ViewModifier {
-    var showPlaceHolder: Bool
-    var placeholder: String
-    var font: Font
-    var color: Color
+    // MARK: Public
 
     public func body(content: Content) -> some View {
         ZStack(alignment: .leading) {
@@ -25,4 +22,11 @@ public struct PlaceholderStyle: ViewModifier {
             content
         }
     }
+
+    // MARK: Internal
+
+    var showPlaceHolder: Bool
+    var placeholder: String
+    var font: Font
+    var color: Color
 }

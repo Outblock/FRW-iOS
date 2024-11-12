@@ -8,9 +8,12 @@
 import SwiftUI
 
 class ProfileSecureViewModel: ObservableObject {
-    @Published var isBionicEnabled: Bool = SecurityManager.shared.isBionicEnabled
-    @Published var isPinCodeEnabled: Bool = SecurityManager.shared.isPinCodeEnabled
-    @Published var isLockOnExit: Bool = SecurityManager.shared.isLockOnExitEnabled
+    @Published
+    var isBionicEnabled: Bool = SecurityManager.shared.isBionicEnabled
+    @Published
+    var isPinCodeEnabled: Bool = SecurityManager.shared.isPinCodeEnabled
+    @Published
+    var isLockOnExit: Bool = SecurityManager.shared.isLockOnExitEnabled
 
     func changeBionicAction(_ isEnabled: Bool) {
         if SecurityManager.shared.isBionicEnabled == isEnabled {

@@ -9,11 +9,7 @@ import SwiftUI
 
 struct PushAlertView: RouteableView {
     var title: String {
-        return ""
-    }
-
-    func backButtonAction() {
-        Router.dismiss()
+        ""
     }
 
     var body: some View {
@@ -68,5 +64,9 @@ struct PushAlertView: RouteableView {
                 .foregroundColor(Color.LL.Neutrals.text2)
                 .font(.inter(size: 14, weight: .medium))
         }
+    }
+
+    func backButtonAction() {
+        Router.dismiss()
     }
 }

@@ -16,6 +16,8 @@ extension NFTTabScreen {
         case normal
         case grid
 
+        // MARK: Internal
+
         var desc: String {
             switch self {
             case .normal:
@@ -40,8 +42,10 @@ extension NFTTabScreen {
     }
 }
 
+// MARK: - NFTTabViewModel
+
 class NFTTabViewModel: ViewModel {
-    @Published var state: NFTTabScreen.ViewState = .init()
+    // MARK: Lifecycle
 
     /*
      0x2b06c41f44a05656
@@ -54,6 +58,11 @@ class NFTTabViewModel: ViewModel {
 //    private var owner: String = "0x95601dba5c2506eb"
 
     init() {}
+
+    // MARK: Internal
+
+    @Published
+    var state: NFTTabScreen.ViewState = .init()
 
     func trigger(_ input: NFTTabScreen.Action) {
         switch input {
@@ -83,13 +92,19 @@ extension NFTTabViewModel {
     }
 }
 
+// MARK: - NullEncodable
+
 @propertyWrapper
 struct NullEncodable<T>: Encodable where T: Encodable {
-    var wrappedValue: T?
+    // MARK: Lifecycle
 
     init(wrappedValue: T?) {
         self.wrappedValue = wrappedValue
     }
+
+    // MARK: Internal
+
+    var wrappedValue: T?
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()

@@ -11,13 +11,7 @@ import SwiftUI
 
 /// Group of layout values containing `horizotal` and `vertical` values.
 public struct LayoutGroup_HV: Equatable {
-    // MARK: Properties
-
-    /// Horizontal value.
-    public var horizontal: CGFloat
-
-    /// Vertical value.
-    public var vertical: CGFloat
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -32,10 +26,20 @@ public struct LayoutGroup_HV: Equatable {
 
     /// Initializes group with zero values.
     public init() {
-        horizontal = 0
-        vertical = 0
+        self.horizontal = 0
+        self.vertical = 0
     }
+
+    // MARK: Public
 
     /// Initializes group with zero values.
     public static var zero: Self { .init() }
+
+    // MARK: Properties
+
+    /// Horizontal value.
+    public var horizontal: CGFloat
+
+    /// Vertical value.
+    public var vertical: CGFloat
 }

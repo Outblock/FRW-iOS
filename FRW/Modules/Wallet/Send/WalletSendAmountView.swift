@@ -10,6 +10,8 @@ import Kingfisher
 import SwiftUI
 import SwiftUIX
 
+// MARK: - WalletSendAmountView
+
 // struct WalletSendAmountView_Previews: PreviewProvider {
 //    static var previews: some View {
 ////        WalletSendAmountView()
@@ -18,20 +20,20 @@ import SwiftUIX
 // }
 
 struct WalletSendAmountView: RouteableView {
-    @StateObject private var vm: WalletSendAmountViewModel
-
-    @FocusState private var isAmountFocused: Bool
-
-    var title: String {
-        return "send_to".localized
-    }
-
-    var navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
-        return .large
-    }
+    // MARK: Lifecycle
 
     init(target: Contact, token: TokenModel) {
         _vm = StateObject(wrappedValue: WalletSendAmountViewModel(target: target, token: token))
+    }
+
+    // MARK: Internal
+
+    var title: String {
+        "send_to".localized
+    }
+
+    var navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
+        .large
     }
 
     var body: some View {
@@ -71,7 +73,8 @@ struct WalletSendAmountView: RouteableView {
                 ZStack {
                     if vm.targetContact.user?.emoji != nil {
                         vm.targetContact.user?.emoji.icon(size: 44)
-                    } else if let avatar = vm.targetContact.avatar?.convertedAvatarString(), avatar.isEmpty == false {
+                    } else if let avatar = vm.targetContact.avatar?.convertedAvatarString(),
+                              avatar.isEmpty == false {
                         KFImage.url(URL(string: avatar))
                             .placeholder {
                                 Image("placeholder")
@@ -93,7 +96,9 @@ struct WalletSendAmountView: RouteableView {
                         }
 
                     } else {
-                        if let contactType = vm.targetContact.contactType, let contactName = vm.targetContact.contactName, contactType == .external, contactName.isFlowOrEVMAddress {
+                        if let contactType = vm.targetContact.contactType,
+                           let contactName = vm.targetContact.contactName, contactType == .external,
+                           contactName.isFlowOrEVMAddress {
                             Text("0x")
                                 .foregroundColor(.Theme.Accent.grey)
                                 .font(.inter(size: 24, weight: .semibold))
@@ -136,10 +141,13 @@ struct WalletSendAmountView: RouteableView {
             .background(.LL.bgForIcon)
             .cornerRadius(16)
             .padding(.horizontal, 18)
-            CalloutView(corners: [.bottomLeading, .bottomTrailing], content: "wallet_send_token_empty".localized)
-                .padding(.horizontal, 30)
-                .visibility(vm.isValidToken ? .gone : .visible)
-                .transition(.move(edge: .top))
+            CalloutView(
+                corners: [.bottomLeading, .bottomTrailing],
+                content: "wallet_send_token_empty".localized
+            )
+            .padding(.horizontal, 30)
+            .visibility(vm.isValidToken ? .gone : .visible)
+            .transition(.move(edge: .top))
         }
     }
 
@@ -165,10 +173,12 @@ struct WalletSendAmountView: RouteableView {
                     TextField("", text: $vm.inputText)
                         .keyboardType(.decimalPad)
                         .disableAutocorrection(true)
-                        .modifier(PlaceholderStyle(showPlaceHolder: vm.inputText.isEmpty,
-                                                   placeholder: "enter_amount".localized,
-                                                   font: .inter(size: 14, weight: .medium),
-                                                   color: Color.LL.Neutrals.note))
+                        .modifier(PlaceholderStyle(
+                            showPlaceHolder: vm.inputText.isEmpty,
+                            placeholder: "enter_amount".localized,
+                            font: .inter(size: 14, weight: .medium),
+                            color: Color.LL.Neutrals.note
+                        ))
                         .font(.inter(size: 20, weight: .medium))
                         .onChange(of: vm.inputText) { text in
                             withAnimation {
@@ -213,15 +223,19 @@ struct WalletSendAmountView: RouteableView {
                         .clipShape(Circle())
                         .visibility(vm.exchangeType == .dollar ? .visible : .gone)
 
-                    Text(vm.exchangeType == .token ? vm.inputDollarNum.formatCurrencyString() : vm.inputTokenNum.formatCurrencyString())
-                        .foregroundColor(.LL.Neutrals.note)
-                        .font(.inter(size: 16, weight: .medium))
-                        .lineLimit(1)
+                    Text(
+                        vm.exchangeType == .token ? vm.inputDollarNum.formatCurrencyString() : vm
+                            .inputTokenNum.formatCurrencyString()
+                    )
+                    .foregroundColor(.LL.Neutrals.note)
+                    .font(.inter(size: 16, weight: .medium))
+                    .lineLimit(1)
 
                     Button {
                         vm.toggleExchangeTypeAction()
                     } label: {
-                        Image("icon-exchange").renderingMode(.template).foregroundColor(.LL.Neutrals.text)
+                        Image("icon-exchange").renderingMode(.template)
+                            .foregroundColor(.LL.Neutrals.text)
                     }
 
                     Spacer()
@@ -317,13 +331,17 @@ struct WalletSendAmountView: RouteableView {
                     .frame(width: 32, height: 32)
                     .clipShape(Circle())
 
-                Text("\(vm.amountBalance.formatCurrencyString()) \(vm.token.symbol?.uppercased() ?? "?")")
-                    .foregroundColor(.LL.Neutrals.text)
-                    .font(.inter(size: 14, weight: .medium))
+                Text(
+                    "\(vm.amountBalance.formatCurrencyString()) \(vm.token.symbol?.uppercased() ?? "?")"
+                )
+                .foregroundColor(.LL.Neutrals.text)
+                .font(.inter(size: 14, weight: .medium))
 
-                Text("≈ \(CurrencyCache.cache.currencySymbol) \(vm.amountBalanceAsDollar.formatCurrencyString(considerCustomCurrency: true))")
-                    .foregroundColor(.LL.Neutrals.text)
-                    .font(.inter(size: 14, weight: .medium))
+                Text(
+                    "≈ \(CurrencyCache.cache.currencySymbol) \(vm.amountBalanceAsDollar.formatCurrencyString(considerCustomCurrency: true))"
+                )
+                .foregroundColor(.LL.Neutrals.text)
+                .font(.inter(size: 14, weight: .medium))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -348,19 +366,45 @@ struct WalletSendAmountView: RouteableView {
         }
         .disabled(!vm.isReadyForSend)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm: WalletSendAmountViewModel
+
+    @FocusState
+    private var isAmountFocused: Bool
 }
 
 extension WalletSendAmountView {
     struct SendConfirmView: View {
-        @EnvironmentObject var vm: WalletSendAmountViewModel
+        @EnvironmentObject
+        var vm: WalletSendAmountViewModel
 
         var fromTargetContent: Contact {
             if let account = EVMAccountManager.shared.selectedAccount {
                 let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
-                let contact = Contact(address: account.showAddress, avatar: nil, contactName: user.name, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName, user: user)
+                let contact = Contact(
+                    address: account.showAddress,
+                    avatar: nil,
+                    contactName: user.name,
+                    contactType: .user,
+                    domain: nil,
+                    id: UUID().hashValue,
+                    username: account.showName,
+                    user: user
+                )
                 return contact
             } else if let account = ChildAccountManager.shared.selectedChildAccount {
-                let contact = Contact(address: account.showAddress, avatar: account.icon, contactName: account.aName, contactType: .user, domain: nil, id: UUID().hashValue, username: account.showName)
+                let contact = Contact(
+                    address: account.showAddress,
+                    avatar: account.icon,
+                    contactName: account.aName,
+                    contactType: .user,
+                    domain: nil,
+                    id: UUID().hashValue,
+                    username: account.showName
+                )
                 return contact
             } else {
                 return UserManager.shared.userInfo!.toContactWithCurrentUserAddress()
@@ -401,64 +445,6 @@ extension WalletSendAmountView {
             }
         }
 
-        func contactView(contact: Contact) -> some View {
-            VStack(spacing: 5) {
-                // avatar
-                ZStack {
-                    if contact.user?.emoji != nil {
-                        contact.user?.emoji.icon(size: 44)
-                    } else if let avatar = contact.avatar?.convertedAvatarString(), avatar.isEmpty == false {
-                        KFImage.url(URL(string: avatar))
-                            .placeholder {
-                                Image("placeholder")
-                                    .resizable()
-                            }
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 44, height: 44)
-                    } else if contact.needShowLocalAvatar {
-                        if let localAvatar = contact.localAvatar {
-                            Image(localAvatar)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 44, height: 44)
-                        } else {
-                            Text(String((contact.contactName?.first ?? "A").uppercased()))
-                                .foregroundColor(.Theme.Accent.grey)
-                                .font(.inter(size: 24, weight: .semibold))
-                        }
-
-                    } else {
-                        if let contactType = vm.targetContact.contactType, let contactName = vm.targetContact.contactName, contactType == .external, contactName.isFlowOrEVMAddress {
-                            Text("0x")
-                                .foregroundColor(.Theme.Accent.grey)
-                                .font(.inter(size: 24, weight: .semibold))
-                        } else {
-                            Text(String((vm.targetContact.contactName?.first ?? "A").uppercased()))
-                                .foregroundColor(.Theme.Accent.grey)
-                                .font(.inter(size: 24, weight: .semibold))
-                        }
-                    }
-                }
-                .frame(width: 44, height: 44)
-                .background(.Theme.Accent.grey.opacity(0.16))
-                .clipShape(Circle())
-
-                // contact name
-                Text(contact.displayName)
-                    .foregroundColor(.LL.Neutrals.neutrals1)
-                    .font(.inter(size: 14, weight: .semibold))
-                    .lineLimit(1)
-
-                // address
-                Text(contact.address ?? "0x")
-                    .foregroundColor(.LL.Neutrals.note)
-                    .font(.inter(size: 12, weight: .regular))
-                    .lineLimit(1)
-            }
-            .frame(maxWidth: .infinity)
-        }
-
         var amountDetailView: some View {
             VStack(alignment: .leading, spacing: 0) {
                 Text("amount_confirmation".localized)
@@ -495,9 +481,11 @@ extension WalletSendAmountView {
                 HStack {
                     Spacer()
 
-                    Text("\(CurrencyCache.cache.currentCurrency.rawValue) \(CurrencyCache.cache.currencySymbol) \(vm.inputDollarNum.formatCurrencyString())")
-                        .foregroundColor(.LL.Neutrals.neutrals8)
-                        .font(.inter(size: 14, weight: .medium))
+                    Text(
+                        "\(CurrencyCache.cache.currentCurrency.rawValue) \(CurrencyCache.cache.currencySymbol) \(vm.inputDollarNum.formatCurrencyString())"
+                    )
+                    .foregroundColor(.LL.Neutrals.neutrals8)
+                    .font(.inter(size: 14, weight: .medium))
                 }
                 .padding(.top, 14)
             }
@@ -514,16 +502,75 @@ extension WalletSendAmountView {
                 }
             }
         }
+
+        func contactView(contact: Contact) -> some View {
+            VStack(spacing: 5) {
+                // avatar
+                ZStack {
+                    if contact.user?.emoji != nil {
+                        contact.user?.emoji.icon(size: 44)
+                    } else if let avatar = contact.avatar?.convertedAvatarString(),
+                              avatar.isEmpty == false {
+                        KFImage.url(URL(string: avatar))
+                            .placeholder {
+                                Image("placeholder")
+                                    .resizable()
+                            }
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 44, height: 44)
+                    } else if contact.needShowLocalAvatar {
+                        if let localAvatar = contact.localAvatar {
+                            Image(localAvatar)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 44, height: 44)
+                        } else {
+                            Text(String((contact.contactName?.first ?? "A").uppercased()))
+                                .foregroundColor(.Theme.Accent.grey)
+                                .font(.inter(size: 24, weight: .semibold))
+                        }
+
+                    } else {
+                        if let contactType = vm.targetContact.contactType,
+                           let contactName = vm.targetContact.contactName, contactType == .external,
+                           contactName.isFlowOrEVMAddress {
+                            Text("0x")
+                                .foregroundColor(.Theme.Accent.grey)
+                                .font(.inter(size: 24, weight: .semibold))
+                        } else {
+                            Text(String((vm.targetContact.contactName?.first ?? "A").uppercased()))
+                                .foregroundColor(.Theme.Accent.grey)
+                                .font(.inter(size: 24, weight: .semibold))
+                        }
+                    }
+                }
+                .frame(width: 44, height: 44)
+                .background(.Theme.Accent.grey.opacity(0.16))
+                .clipShape(Circle())
+
+                // contact name
+                Text(contact.displayName)
+                    .foregroundColor(.LL.Neutrals.neutrals1)
+                    .font(.inter(size: 14, weight: .semibold))
+                    .lineLimit(1)
+
+                // address
+                Text(contact.address ?? "0x")
+                    .foregroundColor(.LL.Neutrals.note)
+                    .font(.inter(size: 12, weight: .regular))
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity)
+        }
     }
 
     struct SendConfirmProgressView: View {
-        private let totalNum: Int = 7
-        @State private var step: Int = 0
-        private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+        // MARK: Internal
 
         var body: some View {
             HStack(spacing: 12) {
-                ForEach(0 ..< totalNum, id: \.self) { index in
+                ForEach(0..<totalNum, id: \.self) { index in
                     if step == index {
                         Image("icon-right-arrow-1")
                             .renderingMode(.template)
@@ -572,5 +619,12 @@ extension WalletSendAmountView {
                 }
             }
         }
+
+        // MARK: Private
+
+        private let totalNum: Int = 7
+        @State
+        private var step: Int = 0
+        private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     }
 }

@@ -29,6 +29,8 @@ public enum SPQRCodeData {
     case flowWallet(String)
     case walletConnect(String)
 
+    // MARK: Internal
+
     var prefix: String {
         switch self {
         case .url:

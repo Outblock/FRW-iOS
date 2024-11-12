@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CreateDeviceBackupView: RouteableView {
     var title: String {
-        return "create_device_backup_title".localized
+        "create_device_backup_title".localized
     }
 
     var body: some View {
