@@ -8,14 +8,14 @@
 import Foundation
 import KeychainAccess
 
-extension WallectSecureEnclave {
-    public enum StoreError: Error {
+public extension WallectSecureEnclave {
+    enum StoreError: Error {
         case unowned
         case encode
         case decode
     }
 
-    public enum Store {
+    enum Store {
         // MARK: Public
 
         public static func store(user: StoreUser) throws {
@@ -50,7 +50,7 @@ extension WallectSecureEnclave {
         private static var userKey: String = "user"
     }
 
-    public struct StoreUser: Codable {
+    struct StoreUser: Codable {
         let uid: String
         var avatar: String?
         var username: String?

@@ -24,7 +24,7 @@ extension AddressBookView {
         // MARK: Lifecycle
 
         init(sectionName: String, list: [Contact]) {
-            self.state = SectionState(sectionName: sectionName, list: list)
+            state = SectionState(sectionName: sectionName, list: list)
         }
 
         // MARK: Internal
@@ -71,7 +71,7 @@ extension AddressBookView {
         // MARK: Lifecycle
 
         init() {
-            self.state = ListState(sections: [AddressBookView.SectionViewModel]())
+            state = ListState(sections: [AddressBookView.SectionViewModel]())
 
             loadFromCache()
             trigger(.load)
@@ -109,7 +109,8 @@ extension AddressBookView {
                        tempContact.address == contact.address,
                        tempContact.contactType == contact.contactType,
                        tempContact.domain?.domainType == contact.domain?.domainType,
-                       tempContact.username == contact.username {
+                       tempContact.username == contact.username
+                    {
                         return true
                     }
                 }
@@ -317,19 +318,22 @@ extension AddressBookView.AddressBookViewModel {
 
             for contact in section.state.list {
                 if let address = contact.address,
-                   address.localizedCaseInsensitiveContains(searchText) {
+                   address.localizedCaseInsensitiveContains(searchText)
+                {
                     contacts.append(contact)
                     continue
                 }
 
                 if let contactName = contact.contactName,
-                   contactName.localizedCaseInsensitiveContains(searchText) {
+                   contactName.localizedCaseInsensitiveContains(searchText)
+                {
                     contacts.append(contact)
                     continue
                 }
 
                 if let userName = contact.username,
-                   userName.localizedCaseInsensitiveContains(searchText) {
+                   userName.localizedCaseInsensitiveContains(searchText)
+                {
                     contacts.append(contact)
                     continue
                 }
@@ -365,13 +369,15 @@ extension AddressBookView.AddressBookViewModel {
                 }
 
                 if let contactName = contact.contactName,
-                   contactName.localizedCaseInsensitiveContains(text) {
+                   contactName.localizedCaseInsensitiveContains(text)
+                {
                     contacts.append(contact)
                     continue
                 }
 
                 if let userName = contact.username,
-                   userName.localizedCaseInsensitiveContains(text) {
+                   userName.localizedCaseInsensitiveContains(text)
+                {
                     contacts.append(contact)
                     continue
                 }

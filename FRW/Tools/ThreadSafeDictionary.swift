@@ -10,7 +10,7 @@ class ThreadSafeDictionary<V: Hashable, T>: Collection {
     // MARK: Lifecycle
 
     init(dict: [V: T] = [V: T]()) {
-        self.dictionary = dict
+        dictionary = dict
     }
 
     // MARK: Internal

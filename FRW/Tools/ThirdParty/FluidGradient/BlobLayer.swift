@@ -16,7 +16,7 @@ public class BlobLayer: CAGradientLayer {
 
         type = .radial
         #if os(OSX)
-        autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+            autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         #endif
 
         // Set color
@@ -46,17 +46,17 @@ public class BlobLayer: CAGradientLayer {
     /// Generate a random point on the canvas
     func newPosition() -> CGPoint {
         CGPoint(
-            x: CGFloat.random(in: 0.0...1.0),
-            y: CGFloat.random(in: 0.0...1.0)
+            x: CGFloat.random(in: 0.0 ... 1.0),
+            y: CGFloat.random(in: 0.0 ... 1.0)
         ).capped()
     }
 
     /// Generate a random radius for the blob
     func newRadius() -> CGPoint {
-        let size = CGFloat.random(in: 0.15...0.75)
+        let size = CGFloat.random(in: 0.15 ... 0.75)
         let viewRatio = frame.width / frame.height
         let safeRatio = max(viewRatio.isNaN ? 1 : viewRatio, 1)
-        let ratio = safeRatio * CGFloat.random(in: 0.25...1.75)
+        let ratio = safeRatio * CGFloat.random(in: 0.25 ... 1.75)
         return CGPoint(
             x: size,
             y: size * ratio
@@ -97,7 +97,7 @@ public class BlobLayer: CAGradientLayer {
         endPoint = position.displace(by: radius)
 
         // Opacity
-        let value = Float.random(in: 0.5...1)
+        let value = Float.random(in: 0.5 ... 1)
         let opacity = animation.copy() as! CASpringAnimation
         opacity.fromValue = self.opacity
         opacity.toValue = value

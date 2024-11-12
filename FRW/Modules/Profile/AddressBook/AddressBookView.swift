@@ -91,7 +91,8 @@ struct AddressBookView: RouteableView {
                     .alert("contact_delete_alert".localized, isPresented: $showAlert) {
                         Button("delete".localized, role: .destructive) {
                             if let sectionVM = self.pendingDeleteModel.sectionVM,
-                               let contact = self.pendingDeleteModel.contact {
+                               let contact = self.pendingDeleteModel.contact
+                            {
                                 self.vm.trigger(.delete(sectionVM, contact))
                             }
                         }
@@ -130,7 +131,7 @@ extension AddressBookView {
     var loadingView: some View {
         ScrollView {
             LazyVStack {
-                ForEach(0..<5, id: \.self) { _ in
+                ForEach(0 ..< 5, id: \.self) { _ in
                     loadingItemPlaceHolder
                 }
             }
@@ -211,16 +212,16 @@ extension AddressBookView {
         }
 
         #if compiler(>=5.7)
-        if #available(iOS 16.0, *) {
+            if #available(iOS 16.0, *) {
 //            return anyView.scrollContentBackground(.hidden)
-            return anyView
-                .backgroundFill(.LL.background)
-        } else {
-            return anyView
-                .backgroundFill(.LL.background)
-        }
+                return anyView
+                    .backgroundFill(.LL.background)
+            } else {
+                return anyView
+                    .backgroundFill(.LL.background)
+            }
         #else
-        return anyView
+            return anyView
         #endif
     }
 

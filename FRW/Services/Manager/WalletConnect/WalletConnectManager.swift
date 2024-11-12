@@ -108,7 +108,8 @@ class WalletConnectManager: ObservableObject {
         Task {
             do {
                 if let removedLink = link.removingPercentEncoding,
-                   let uri = WalletConnectURI(string: removedLink) {
+                   let uri = WalletConnectURI(string: removedLink)
+                {
                     // TODO: commit
                     #if DEBUG
 //                    if Pair.instance.getPairings().contains(where: { $0.topic == uri.topic }) {
@@ -399,7 +400,8 @@ extension WalletConnectManager {
                            nonce: nonce,
                            appIdentifier: appIdentifier
                        ),
-                       let signedData = try? await WalletManager.shared.sign(signableData: data) {
+                       let signedData = try? await WalletManager.shared.sign(signableData: data)
+                    {
                         services.append(accountProofServiceDefinition(
                             address: address,
                             keyId: keyId,
@@ -494,7 +496,8 @@ extension WalletConnectManager {
                 var model: Signable?
                 if let data = Data(base64Encoded: json),
                    data.isGzipped,
-                   let uncompressData = try? data.gunzipped() {
+                   let uncompressData = try? data.gunzipped()
+                {
                     model = try JSONDecoder().decode(Signable.self, from: uncompressData)
                 } else if let data = json.data(using: .utf8) {
                     model = try JSONDecoder().decode(Signable.self, from: data)
@@ -568,7 +571,8 @@ extension WalletConnectManager {
                 var model: SignableMessage?
                 if let data = Data(base64Encoded: json),
                    data.isGzipped,
-                   let uncompressData = try? data.gunzipped() {
+                   let uncompressData = try? data.gunzipped()
+                {
                     model = try JSONDecoder().decode(SignableMessage.self, from: uncompressData)
                 } else if let data = json.data(using: .utf8) {
                     model = try JSONDecoder().decode(SignableMessage.self, from: data)

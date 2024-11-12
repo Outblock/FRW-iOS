@@ -76,7 +76,8 @@ class NFTUIKitCollectionHContainerView: UIView {
 // MARK: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource
 
 extension NFTUIKitCollectionHContainerView: UICollectionViewDelegateFlowLayout,
-    UICollectionViewDataSource {
+    UICollectionViewDataSource
+{
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         items.count
     }

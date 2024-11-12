@@ -22,7 +22,8 @@ class StakingDetailViewModel: ObservableObject {
 
             DispatchQueue.main.async {
                 if let newNode = nodes
-                    .first(where: { $0.id == self.node.id && $0.nodeID == self.node.nodeID }) {
+                    .first(where: { $0.id == self.node.id && $0.nodeID == self.node.nodeID })
+                {
                     self.node = newNode
                 }
             }

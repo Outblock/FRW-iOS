@@ -394,13 +394,13 @@ extension CadenceModel {
     }
 }
 
-extension String {
-    public func fromBase64() -> String? {
+public extension String {
+    func fromBase64() -> String? {
         guard let data = Data(base64Encoded: self) else { return nil }
         return String(data: data, encoding: .utf8)
     }
 
-    public func toFunc() -> String {
+    func toFunc() -> String {
         guard let decodeStr = fromBase64() else {
             log.error("[Cadence] base decode failed")
             return ""

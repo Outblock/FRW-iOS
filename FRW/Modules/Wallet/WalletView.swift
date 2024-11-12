@@ -297,7 +297,8 @@ struct WalletView: View {
 
                 if currentNetwork.isMainnet || currentNetwork == .testnet {
                     if let swapStatus = RemoteConfigManager.shared.config?.features.swap,
-                       swapStatus == true {
+                       swapStatus == true
+                    {
                         Spacer()
                         actionButton(imageName: "wallet-swap-stroke") {
                             Router.route(to: RouteMap.Wallet.swap(nil))
@@ -329,7 +330,8 @@ struct WalletView: View {
             Spacer()
 
             if RemoteConfigManager.shared.config?.features.onRamp ?? false == true && flow
-                .chainID == .mainnet {
+                .chainID == .mainnet
+            {
                 Button {
                     UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                     Router.route(to: RouteMap.Wallet.buyCrypto)

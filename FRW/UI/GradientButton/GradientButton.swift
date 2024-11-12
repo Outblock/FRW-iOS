@@ -91,8 +91,8 @@ struct GradientText: View {
     }
 }
 
-extension View {
-    public func gradientForeground(colors: [Color]) -> some View {
+public extension View {
+    func gradientForeground(colors: [Color]) -> some View {
         overlay(LinearGradient(
             gradient: .init(colors: colors),
             startPoint: .topLeading,

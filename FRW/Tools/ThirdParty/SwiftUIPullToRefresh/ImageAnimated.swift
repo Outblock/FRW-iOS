@@ -11,7 +11,7 @@ import SwiftUI
 extension ImageAnimated {
     static func appRefreshImageNames() -> [String] {
         var images: [String] = []
-        for i in 0...95 {
+        for i in 0 ... 95 {
             images.append("refresh-header-seq-\(i)")
         }
 

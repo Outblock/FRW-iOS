@@ -62,7 +62,8 @@ enum SecureEnclaveMigration {
         var finishCount = 0
         for item in users {
             if let privateKey = try? SecureEnclave.P256.Signing
-                .PrivateKey(dataRepresentation: item.publicKey) {
+                .PrivateKey(dataRepresentation: item.publicKey)
+            {
                 let secureKey = SecureEnclaveKey(
                     key: privateKey,
                     storage: SecureEnclaveKey.KeychainStorage

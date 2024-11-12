@@ -205,20 +205,20 @@ struct NFTTrait: Codable, Hashable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.name = try container.decode(String?.self, forKey: .name)
-        self.displayType = try container.decode(String?.self, forKey: .displayType)
+        name = try container.decode(String?.self, forKey: .name)
+        displayType = try container.decode(String?.self, forKey: .displayType)
         do {
-            self.value = try String(container.decode(Int.self, forKey: .value))
+            value = try String(container.decode(Int.self, forKey: .value))
         } catch DecodingError.typeMismatch {
             do {
-                self.value = try String(container.decode(Bool.self, forKey: .value))
+                value = try String(container.decode(Bool.self, forKey: .value))
             } catch DecodingError.typeMismatch {
-                self.value = try container.decode(String?.self, forKey: .value)
+                value = try container.decode(String?.self, forKey: .value)
             } catch {
-                self.value = ""
+                value = ""
             }
         } catch {
-            self.value = ""
+            value = ""
         }
     }
 

@@ -36,7 +36,8 @@ extension PresentActionDelegate {
 // MARK: - PresentHostingController
 
 class PresentHostingController<Content: PresentActionView>: UIHostingController<Content>,
-    UISheetPresentationControllerDelegate {
+    UISheetPresentationControllerDelegate
+{
     // MARK: Lifecycle
 
     override public init(rootView: Content) {

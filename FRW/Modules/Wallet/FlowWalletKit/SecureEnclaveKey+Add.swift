@@ -73,8 +73,8 @@ extension String {
     }
 }
 
-extension Data {
-    public func signUserMessage() -> Data {
+public extension Data {
+    func signUserMessage() -> Data {
         Flow.DomainTag.user.normalize + self
     }
 }

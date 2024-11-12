@@ -142,12 +142,12 @@ struct NFTModel: Codable, Hashable, Identifiable {
     ) {
         if let imgUrl = response.postMedia?.image, let url = URL(string: imgUrl) {
             if response.postMedia?.isSvg == true {
-                self.image = URL(string: imgUrl) ?? URL(string: placeholder)!
-                self.isSVG = true
+                image = URL(string: imgUrl) ?? URL(string: placeholder)!
+                isSVG = true
             } else if let svgStr = imgUrl.parseBase64ToSVG() {
-                self.imageSVGStr = svgStr.decodeBase64WithFixed()
-                self.isSVG = true
-                self.image = URL(string: placeholder)!
+                imageSVGStr = svgStr.decodeBase64WithFixed()
+                isSVG = true
+                image = URL(string: placeholder)!
             } else {
                 if imgUrl.hasPrefix("https://lilico.infura-ipfs.io/ipfs/") {
                     let newImgURL = imgUrl
@@ -156,23 +156,23 @@ struct NFTModel: Codable, Hashable, Identifiable {
                                 "https://lilico.infura-ipfs.io/ipfs/": "https://lilico.app/api/ipfs/",
                             ]
                         )
-                    self.image = URL(string: newImgURL)!
+                    image = URL(string: newImgURL)!
                 } else {
-                    self.image = url
+                    image = url
                 }
 
-                self.isSVG = false
+                isSVG = false
             }
         } else {
-            self.image = URL(string: placeholder)!
+            image = URL(string: placeholder)!
         }
 
         if let videoUrl = response.postMedia?.video {
-            self.video = URL(string: videoUrl)
+            video = URL(string: videoUrl)
         }
 
-        self.subtitle = response.postMedia?.description ?? ""
-        self.title = response.postMedia?.title ?? response.collectionName ?? ""
+        subtitle = response.postMedia?.description ?? ""
+        title = response.postMedia?.title ?? response.collectionName ?? ""
         self.collection = collection
         self.response = response
     }

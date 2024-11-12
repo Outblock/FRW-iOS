@@ -14,16 +14,16 @@ class RequestSecureViewModel: ViewModel {
     init() {
         if BioMetricAuthenticator.shared.faceIDAvailable() {
             // device supports face id recognition.
-            self.state = .init(biometric: .faceId)
+            state = .init(biometric: .faceId)
         }
 
         if BioMetricAuthenticator.shared.touchIDAvailable() {
             // device supports touch id authentication
-            self.state = .init(biometric: .touchId)
+            state = .init(biometric: .touchId)
         }
 
         if !BioMetricAuthenticator.canAuthenticate() {
-            self.state = .init(biometric: .none)
+            state = .init(biometric: .none)
         }
     }
 

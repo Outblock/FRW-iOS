@@ -32,7 +32,7 @@ struct SelectCollectionView: RouteableView {
             }
 
             ScrollView {
-                ForEach(0..<viewModel.list.count, id: \.self) { index in
+                ForEach(0 ..< viewModel.list.count, id: \.self) { index in
                     card(item: viewModel.list[index])
                 }
             }

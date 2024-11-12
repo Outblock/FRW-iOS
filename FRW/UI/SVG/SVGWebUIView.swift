@@ -68,12 +68,12 @@ class SVGWebUIView: UIView {
     /// A hacky way to patch the size in the SVG root tag.
     private func rewriteSVGSize(_ string: String) -> String {
         guard let startRange = string.range(of: "<svg") else { return string }
-        let remainder = startRange.upperBound..<string.endIndex
+        let remainder = startRange.upperBound ..< string.endIndex
         guard let endRange = string.range(of: ">", range: remainder) else {
             return string
         }
 
-        let tagRange = startRange.lowerBound..<endRange.upperBound
+        let tagRange = startRange.lowerBound ..< endRange.upperBound
         let oldTag = string[tagRange]
 
         var attrs: [String: String] = {
@@ -99,7 +99,8 @@ class SVGWebUIView: UIView {
         }()
 
         if attrs["viewBox"] == nil,
-           attrs["width"] != nil || attrs["height"] != nil { // convert to viewBox
+           attrs["width"] != nil || attrs["height"] != nil
+        { // convert to viewBox
             let w = attrs.removeValue(forKey: "width") ?? "100%"
             let h = attrs.removeValue(forKey: "height") ?? "100%"
             let x = attrs.removeValue(forKey: "x") ?? "0"

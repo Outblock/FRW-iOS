@@ -76,7 +76,8 @@ class ClaimDomainViewModel: ObservableObject {
     // MARK: Private
 
     private func buildPayerSignableRequest(response: ClaimDomainPrepareResponse) async throws
-        -> SignPayerRequest {
+        -> SignPayerRequest
+    {
         let address = WalletManager.shared.getPrimaryWalletAddress() ?? ""
         let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
 
