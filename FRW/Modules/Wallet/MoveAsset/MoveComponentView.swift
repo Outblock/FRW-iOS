@@ -104,7 +104,6 @@ struct ContactRelationView: View {
     }
 }
 
-
 struct MoveFeeView: View {
     var isFree = false
     var body: some View {

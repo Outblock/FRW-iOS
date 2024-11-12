@@ -344,15 +344,33 @@ struct TokenDetailView: RouteableView {
     var storageView: some View {
         HStack(spacing: 0) {
             StorageUsageView(
-                title: "storage_usage".localized,
                 usage: $vm.storageUsageDesc,
                 usagePercentValue: $vm.storageUsagePercent
             )
-            .titleFont(.inter(size: 16, weight: .semibold))
+            .headerView(
+                HStack {
+                    Text("storage_usage".localized)
+                        .font(.inter(size: 16, weight: .semibold))
+                    
+                    Spacer()
+                    
+                    Text(String(format: "%.3f FLOW", vm.storageFlow))
+                }
+            )
+            .footerView(
+                HStack {
+                    Text("total_balance".localized)
+                        .font(.inter(size: 16, weight: .semibold))
+                    
+                    Spacer()
+                    
+                    Text(String(format: "%.3f FLOW", vm.totalBalance))
+                }
+            )
             .padding(16)
-        }
-        .background {
-            Color.LL.Neutrals.background.cornerRadius(16)
+            .background {
+                Color.LL.Neutrals.background.cornerRadius(16)
+            }
         }
         .padding(.bottom, 12)
     }

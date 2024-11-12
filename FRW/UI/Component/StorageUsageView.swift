@@ -8,13 +8,15 @@
 import SwiftUI
 
 struct StorageUsageView: View {
-    private let title: String
+    private let title: String?
     private var titleFont: Font?
+    private var headerView: AnyView?
+    private var footerView: AnyView?
     
     @Binding private var usage: String
     @Binding private var usagePercentValue: Double
     
-    init(title: String, usage: Binding<String>, usagePercentValue: Binding<Double>) {
+    init(title: String? = nil, usage: Binding<String>, usagePercentValue: Binding<Double>) {
         self.title = title
         self._usage = usage
         self._usagePercentValue = usagePercentValue
@@ -22,10 +24,16 @@ struct StorageUsageView: View {
     
     var body: some View {
         VStack {
-            Text(.init(self.title))
-                .font(self.titleFont)
-                .foregroundColor(Color.LL.Neutrals.text)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            if let headerView {
+                headerView
+            }
+            
+            if let title {
+                Text(.init(title))
+                    .font(self.titleFont)
+                    .foregroundColor(Color.LL.Neutrals.text)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
             
             HStack {
                 Text(String(format: "%.2f%%", self.usagePercentValue * 100))
@@ -42,6 +50,10 @@ struct StorageUsageView: View {
             
             ProgressView(value: self.usagePercentValue, total: 1.0)
                 .tint(Color.LL.Primary.salmonPrimary)
+            
+            if let footerView {
+                footerView
+            }
         }
     }
     
@@ -50,6 +62,19 @@ struct StorageUsageView: View {
         view.titleFont = font
         return view
     }
+        
+    func headerView<V: View>(_ header: V) -> Self {
+        var view = self
+        view.headerView = AnyView(header)
+        return view
+    }
+
+    func footerView<V: View>(_ footer: V) -> Self {
+        var view = self
+        view.footerView = AnyView(footer)
+        return view
+    }
+
 }
 
 #Preview {

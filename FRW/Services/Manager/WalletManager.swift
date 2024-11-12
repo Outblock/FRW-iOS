@@ -25,7 +25,7 @@ extension WalletManager {
     static let mnemonicStrength: Int32 = 160
     static let defaultGas: UInt64 = 30_000_000
     static let moveFee = 0.001
-    static let minDefaultBlance = 0.001
+    static let minDefaultBlance: Decimal = 0.001
     private static let defaultBundleID = "com.flowfoundation.wallet"
     private static let mnemonicStoreKeyPrefix = "lilico.mnemonic"
     private static let walletFetchInterval: TimeInterval = 5
@@ -739,12 +739,28 @@ extension WalletManager {
             throw error
         }
     }
-
-    var isStorageInsufficient:  Bool {
-        guard let accountInfo else { return false }
-        return accountInfo.availableBalance < 0.001
+    
+    var minimumStorageBalance: Decimal {
+        guard let accountInfo else { return Self.minDefaultBlance }
+        return accountInfo.storageFlow * Self.minDefaultBlance;
+    }
+    
+//    var usedStoragePercentage: Double {
+//        // TODO: Verify that the calculation is correct
+//        guard let accountInfo else { return 0 }
+//        return 100 * accountInfo.storageUsed.description.doubleValue / accountInfo.storageCapacity.description.doubleValue
+//    }
+        
+    var isStorageInsufficient: Bool {
+        return isStorageInsufficient(for: 0)
     }
 
+    func isStorageInsufficient(for amount: Decimal) -> Bool {
+        guard let accountInfo else { return false }
+        // TODO: Remove the equality comparison - used for development/testing only
+        return accountInfo.availableBalance - amount <= Self.minDefaultBlance
+    }
+    
     func fetchBalance() async throws {
         let address = selectedAccountAddress
         if address.isEmpty {
@@ -761,7 +777,7 @@ extension WalletManager {
 
         var newBalanceMap: [String: Double] = [:]
 
-        for (_, value) in activatedCoins.enumerated() {
+        for value in activatedCoins {
             guard let symbol = value.symbol else {
                 continue
             }

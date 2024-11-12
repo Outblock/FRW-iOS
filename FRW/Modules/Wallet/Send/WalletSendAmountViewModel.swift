@@ -25,6 +25,8 @@ extension WalletSendAmountView {
         case formatError
         case invalidAddress
         case belowMinimum
+        case insufficientStorage
+        case insufficientStorageAfterTransfer
 
         var desc: String {
             switch self {
@@ -38,6 +40,10 @@ extension WalletSendAmountView {
                 return "invalid_address".localized
             case .belowMinimum:
                 return "below_minimum_error".localized
+            case .insufficientStorage:
+                return "insufficient_storage".localized
+            case .insufficientStorageAfterTransfer:
+                return "insufficient_storage_after_transfer".localized
             }
         }
     }

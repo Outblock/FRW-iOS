@@ -224,6 +224,14 @@ extension TransactionManager {
                             self.errorMsg = result.errorMessage
                             self.internalStatus = .failed
                             debugPrint("TransactionHolder -> onCheck result failed: \(result.errorMessage)")
+                            
+                            switch result.errorCode {
+                            case .storageCapacityExceeded:
+                                let data = InsufficientStorageTransactionFailureData(minimumBalance: WalletManager.shared.minimumStorageBalance)
+                                NotificationCenter.default.post(name: .insufficientStorageTransactionFailure, object: data)
+                            default:
+                                break
+                            }
                         } else if result.isComplete {
                             self.internalStatus = .success
                         } else {

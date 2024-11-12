@@ -20,6 +20,7 @@ public extension Notification.Name {
 
     static let transactionManagerDidChanged = Notification.Name("transactionManagerDidChanged")
     static let transactionStatusDidChanged = Notification.Name("transactionStatusDidChanged")
+    static let insufficientStorageTransactionFailure = Notification.Name("insufficientStorageTransactionFailure")
 
     static let transactionCountDidChanged = Notification.Name("transactionCountDidChanged")
 
@@ -43,4 +44,12 @@ public extension Notification.Name {
     static let nftDidChangedByMoving = Notification.Name("nftDidChangedByMoving")
 
     static let remoteConfigDidUpdate = Notification.Name("remoteConfigDidUpdate")
+}
+
+struct InsufficientStorageTransactionFailureData {
+    let minimumBalance: Decimal
+    
+    init(minimumBalance: Decimal = 0) {
+        self.minimumBalance = minimumBalance
+    }
 }

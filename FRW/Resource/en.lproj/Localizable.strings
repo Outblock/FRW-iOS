@@ -499,6 +499,12 @@
 "max" = "Max";
 "Coinbase::message" = "Coinbase";
 "insufficient_balance" = "Insufficient Balance";
+"insufficient_storage" = "Insufficient storage.";
+"insufficient_storage_after_transfer" = "Insufficient storage after this action.";
+"insufficient_storage::error::title" = "Insufficient Storage Error";
+"insufficient_storage::error::content::first" = "Your transaction failed because it caused your account to fall below the minimum balance of FLOW for your account’s storage usage.";
+"insufficient_storage::error::content::second" = "You must have least %.3f FLOW in your account to cover your storage usage.";
+"insufficient_storage::error::content::third" = "[Learn More](https://developers.flow.com/build/basics/fees#storage)";
 "Kucoin::message" = "Kucoin";
 "amount_balance" = "Amount Balance";
 "Huobi::message" = "Huobi";
@@ -526,6 +532,7 @@
 "USD::message" = "USD";
 "transaction_list_transaction_x" = "Transaction (%d)";
 "Deposit::message" = "Deposit";
+"buy_flow" = "Buy FLOW";
 "transaction_list_transfer_x" = "Transfer";
 "Enable_token::message" = "Enable token";
 "transaction_exec" = "Exec Transaction";
@@ -729,7 +736,7 @@
 "stake_guide_desc_1_3" = " per year.";
 "stake_guide_desc_2_1" = "When you stake ";
 "stake_guide_desc_2_2" = "Flow";
-"stake_guide_desc_2_3" = " you receive";
+"stake_guide_desc_2_3" = " you receive ";
 "stake_guide_desc_2_4" = "Flow";
 "stake_guide_desc_2_5" = ".\n";
 "stake_guide_desc_2_6" = "The amount of Flow will be";
@@ -739,7 +746,7 @@
 "stake_guide_desc_3_2" = "next epoch";
 "stake_guide_desc_3_3" = ".";
 "stake_guide_desc_4_1" = "Rewards are automatically credited to your\n";
-"stake_guide_desc_4_2" = "deposit";
+"stake_guide_desc_4_2" = "deposit ";
 "stake_guide_desc_4_3" = "every week";
 "stake_guide_desc_4_4" = ".";
 "stake_amount" = "Stake Amount";
@@ -786,6 +793,7 @@
 "scan" = "Scan";
 "storage" = "Storage";
 "storage_usage" = "Storage Usage";
+"total_balance" = "Total Balance";
 "sdk_test" = "SDKTesT";
 "skip" = "Skip";
 "start" = "Start";

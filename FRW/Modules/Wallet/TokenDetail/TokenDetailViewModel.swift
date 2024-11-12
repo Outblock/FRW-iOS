@@ -105,6 +105,8 @@ extension TokenDetailViewModel {
 class TokenDetailViewModel: ObservableObject {
     @Published var storageUsagePercent: Double = 0
     @Published var storageUsageDesc: String = ""
+    @Published var storageFlow: Double = 0
+    @Published var totalBalance: Double = 0
 
     @Published var token: TokenModel
     @Published var market: QuoteMarket = LocalUserDefaults.shared.market
@@ -265,18 +267,30 @@ extension TokenDetailViewModel {
     private func fetchAllData() {
         Task {
             await withTaskGroup(of: Void.self) { group in
-                group.addTask { try? await WalletManager.shared.fetchBalance() }
-
                 group.addTask {
-                    let info = try? await FlowNetwork.checkStorageInfo()
-                    if let info {
-                        DispatchQueue.main.async {
-                            self.storageUsagePercent = info.usedPercent
-                            self.storageUsageDesc = info.usedString
+                    try? await WalletManager.shared.fetchBalance()
+                }
+                
+                group.addTask {
+                    let storageInfo = try? await FlowNetwork.checkStorageInfo()
+                    if let storageInfo {
+                        await MainActor.run {
+                            self.storageUsagePercent = storageInfo.usedPercent
+                            self.storageUsageDesc = storageInfo.usedString
                         }
                     }
                 }
-
+                
+                group.addTask {
+                    let accountInfo = try? await FlowNetwork.checkAccountInfo()
+                    if let accountInfo {
+                        await MainActor.run {
+                            self.storageFlow = accountInfo.storageFlow.doubleValue
+                            self.totalBalance = accountInfo.balance.doubleValue
+                        }
+                    }
+                }
+                
                 await group.waitForAll()
             }
         }
