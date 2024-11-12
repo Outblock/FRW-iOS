@@ -8,18 +8,25 @@
 import SwiftUI
 
 class ReceiveQRViewModel: ObservableObject {
-    @Published var name: String = ""
-    @Published var address: String = ""
-
-    @Published var isEVM: Bool = false
+    // MARK: Lifecycle
 
     init() {
-        address = flowAddr()
-        name = flowName()
+        self.address = flowAddr()
+        self.name = flowName()
     }
 
+    // MARK: Internal
+
+    @Published
+    var name: String = ""
+    @Published
+    var address: String = ""
+
+    @Published
+    var isEVM: Bool = false
+
     var hasEVM: Bool {
-        return EVMAccountManager.shared.hasAccount
+        EVMAccountManager.shared.hasAccount
     }
 
     func onClickCopy() {
@@ -32,6 +39,8 @@ class ReceiveQRViewModel: ObservableObject {
         address = isEvm ? EVMAddr() : flowAddr()
         name = isEvm ? EVMName() : flowName()
     }
+
+    // MARK: Private
 
     private func flowName() -> String {
         var name = UserManager.shared.userInfo?.nickname ?? "lilico".localized

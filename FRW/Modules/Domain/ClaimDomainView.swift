@@ -7,11 +7,13 @@
 
 import SwiftUI
 
+// MARK: - ClaimDomainView
+
 struct ClaimDomainView: RouteableView {
-    @StateObject private var vm = ClaimDomainViewModel()
+    // MARK: Internal
 
     var title: String {
-        return "free_domain".localized
+        "free_domain".localized
     }
 
     var buttonState: VPrimaryButtonState {
@@ -38,6 +40,11 @@ struct ClaimDomainView: RouteableView {
         .background(Color.LL.Neutrals.background)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = ClaimDomainViewModel()
 }
 
 extension ClaimDomainView {
@@ -144,6 +151,11 @@ extension ClaimDomainView {
         .frame(maxWidth: .infinity)
         .frame(height: 64)
         .padding(.horizontal, 18)
-        .roundedBg(cornerRadius: 16, fillColor: Color.LL.Neutrals.background, strokeColor: Color.LL.Primary.salmonPrimary, strokeLineWidth: 1)
+        .roundedBg(
+            cornerRadius: 16,
+            fillColor: Color.LL.Neutrals.background,
+            strokeColor: Color.LL.Primary.salmonPrimary,
+            strokeLineWidth: 1
+        )
     }
 }

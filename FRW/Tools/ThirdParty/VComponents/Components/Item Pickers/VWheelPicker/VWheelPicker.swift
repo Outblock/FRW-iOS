@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Wheel Picker
+// MARK: - VWheelPicker
 
 /// Item picker component that selects from a set of mutually exclusive values, and displays their representative content in a scrollable wheel.
 ///
@@ -42,23 +42,8 @@ public struct VWheelPicker<Data, RowContent>: View
     where
     Data: RandomAccessCollection,
     Data.Index == Int,
-    RowContent: View
-{
-    // MARK: Properties
-
-    private let model: VWheelPickerModel
-
-    private let state: VWheelPickerState
-
-    @Binding private var selectedIndex: Int
-
-    private let headerTitle: String?
-    private let footerTitle: String?
-
-    private let data: Data
-    private let rowContent: (Data.Element) -> RowContent
-
-    @State private var rowWidth: CGFloat = .zero
+    RowContent: View {
+    // MARK: Lifecycle
 
     // MARK: Initializers - View Builder
 
@@ -94,8 +79,7 @@ public struct VWheelPicker<Data, RowContent>: View
     )
         where
         Data == [String],
-        RowContent == VText
-    {
+        RowContent == VText {
         self.init(
             model: model,
             state: state,
@@ -127,8 +111,7 @@ public struct VWheelPicker<Data, RowContent>: View
     )
         where
         Data == [Item],
-        Item: VPickableItem
-    {
+        Item: VPickableItem {
         self.init(
             model: model,
             state: state,
@@ -156,8 +139,7 @@ public struct VWheelPicker<Data, RowContent>: View
         where
         Data == [Item],
         RowContent == VText,
-        Item: VPickableTitledItem
-    {
+        Item: VPickableTitledItem {
         self.init(
             model: model,
             state: state,
@@ -179,6 +161,8 @@ public struct VWheelPicker<Data, RowContent>: View
         )
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -189,9 +173,29 @@ public struct VWheelPicker<Data, RowContent>: View
         })
     }
 
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VWheelPickerModel
+
+    private let state: VWheelPickerState
+
+    @Binding
+    private var selectedIndex: Int
+
+    private let headerTitle: String?
+    private let footerTitle: String?
+
+    private let data: Data
+    private let rowContent: (Data.Element) -> RowContent
+
+    @State
+    private var rowWidth: CGFloat = .zero
+
     private var pickerView: some View {
         Picker(selection: $selectedIndex, label: EmptyView(), content: {
-            ForEach(0 ..< data.count, content: { i in
+            ForEach(0..<data.count, content: { i in
                 rowContent(data[i])
                     .tag(i)
             })
@@ -203,7 +207,8 @@ public struct VWheelPicker<Data, RowContent>: View
         .background(model.colors.background.for(state).cornerRadius(model.layout.cornerRadius))
     }
 
-    @ViewBuilder private var headerView: some View {
+    @ViewBuilder
+    private var headerView: some View {
         if let headerTitle = headerTitle, !headerTitle.isEmpty {
             VText(
                 type: .oneLine,
@@ -216,7 +221,8 @@ public struct VWheelPicker<Data, RowContent>: View
         }
     }
 
-    @ViewBuilder private var footerView: some View {
+    @ViewBuilder
+    private var footerView: some View {
         if let footerTitle = footerTitle, !footerTitle.isEmpty {
             VText(
                 type: .multiLine(limit: nil, alignment: .leading),
@@ -230,19 +236,10 @@ public struct VWheelPicker<Data, RowContent>: View
     }
 }
 
-// MARK: - Preview
+// MARK: - VWheelPicker_Previews
 
 struct VWheelPicker_Previews: PreviewProvider {
-    @State private static var selectedIndex: Int = 7
-
-    private static var rowTitles: [String] {
-        [
-            "January", "February", "March",
-            "April", "May", "June",
-            "July", "August", "September",
-            "October", "November", "December",
-        ]
-    }
+    // MARK: Internal
 
     static var previews: some View {
         VWheelPicker(
@@ -252,5 +249,19 @@ struct VWheelPicker_Previews: PreviewProvider {
             rowTitles: rowTitles
         )
         .padding(20)
+    }
+
+    // MARK: Private
+
+    @State
+    private static var selectedIndex: Int = 7
+
+    private static var rowTitles: [String] {
+        [
+            "January", "February", "March",
+            "April", "May", "June",
+            "July", "August", "September",
+            "October", "November", "December",
+        ]
     }
 }

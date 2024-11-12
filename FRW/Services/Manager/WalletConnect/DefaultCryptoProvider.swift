@@ -16,7 +16,8 @@ import WalletConnectSigner
 
 struct DefaultCryptoProvider: CryptoProvider {
     public func recoverPubKey(signature: EthereumSignature, message: Data) throws -> Data {
-        guard let data = SECP256K1.recoverPublicKey(hash: message, signature: signature.serialized) else {
+        guard let data = SECP256K1.recoverPublicKey(hash: message, signature: signature.serialized)
+        else {
             throw WalletError.emptyPublicKey
         }
         return data

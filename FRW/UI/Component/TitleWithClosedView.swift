@@ -10,6 +10,7 @@ import SwiftUI
 struct TitleWithClosedView: View {
     var title: String
     var closeAction: () -> Void
+
     var body: some View {
         HStack {
             Color.clear

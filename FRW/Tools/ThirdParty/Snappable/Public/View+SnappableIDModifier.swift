@@ -1,6 +1,6 @@
 import SwiftUI
 
-public extension View {
+extension View {
     /// Make the View a snap target.
     ///
     /// `snapID(_:)` applies [id(\_:)](https://developer.apple.com/documentation/swiftui/view/id(_:))
@@ -8,7 +8,7 @@ public extension View {
     /// an unexpected behavior of snapping.
     ///
     /// - Returns: A View, set as a snap target.
-    func snapID<ID>(_ id: ID) -> some View where ID: Hashable {
+    public func snapID<ID>(_ id: ID) -> some View where ID: Hashable {
         modifier(SnapIDModifier(id: id))
     }
 }

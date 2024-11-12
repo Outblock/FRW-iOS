@@ -21,13 +21,13 @@ public typealias VMenuPickerButtonPreset = DerivedButtonPreset
 // MARK: - Button
 
 extension VMenuPickerButtonType {
-    @ViewBuilder static func menuPickerButton<Content>(
+    @ViewBuilder
+    static func menuPickerButton<Content>(
         buttonType: VMenuPickerButtonType,
         isEnabled: Bool,
         @ViewBuilder label: @escaping () -> Content
     ) -> some View
-        where Content: View
-    {
+        where Content: View {
         menuButton(
             buttonType: buttonType,
             isEnabled: isEnabled,

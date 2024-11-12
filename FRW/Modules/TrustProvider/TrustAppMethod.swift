@@ -8,6 +8,8 @@
 import BigInt
 import Foundation
 
+// MARK: - TrustAppMethod
+
 enum TrustAppMethod: String, Decodable, CaseIterable {
     case signRawTransaction
     case signTransaction
@@ -23,6 +25,8 @@ enum TrustAppMethod: String, Decodable, CaseIterable {
     case switchChain
 }
 
+// MARK: - RLPEncodable
+
 protocol RLPEncodable {
     var rlpList: [Any] { get }
 }
@@ -33,6 +37,8 @@ extension RLPEncodable {
         return mirror.children.compactMap { $0.value }
     }
 }
+
+// MARK: - COAOwnershipProof
 
 struct COAOwnershipProof: RLPEncodable {
     let keyIninces: [BigUInt]

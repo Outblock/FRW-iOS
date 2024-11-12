@@ -9,6 +9,8 @@ import Kingfisher
 import SwiftUI
 
 struct AccountSideCell: View {
+    // MARK: Internal
+
     enum Action {
         case card
         case arrow
@@ -20,28 +22,6 @@ struct AccountSideCell: View {
     var logo: String? = nil
     var detail: String? = nil
     var onClick: (String, AccountSideCell.Action) -> Void
-
-    private var network: LocalUserDefaults.FlowNetworkType {
-        LocalUserDefaults.shared.flowNetwork
-    }
-
-    private var user: WalletAccount.User {
-        WalletManager.shared.walletAccount.readInfo(at: address)
-    }
-
-    private var isSelected: Bool {
-        if address == currentAddress {
-            return true
-        }
-        return false
-    }
-
-    private var isEVM: Bool {
-        if let evmAddress = EVMAccountManager.shared.accounts.first?.showAddress {
-            return evmAddress.lowercased() == address.lowercased()
-        }
-        return false
-    }
 
     var body: some View {
         Button {
@@ -125,8 +105,14 @@ struct AccountSideCell: View {
                 if isSelected {
                     LinearGradient(
                         stops: [
-                            Gradient.Stop(color: Color.Theme.Accent.green.opacity(0), location: 0.00),
-                            Gradient.Stop(color: Color.Theme.Accent.green.opacity(0.08), location: 1.00),
+                            Gradient.Stop(
+                                color: Color.Theme.Accent.green.opacity(0),
+                                location: 0.00
+                            ),
+                            Gradient.Stop(
+                                color: Color.Theme.Accent.green.opacity(0.08),
+                                location: 1.00
+                            ),
                         ],
                         startPoint: UnitPoint(x: 1.11, y: 0.4),
                         endPoint: UnitPoint(x: 0, y: 0.4)
@@ -136,8 +122,36 @@ struct AccountSideCell: View {
             .cornerRadius(12)
         }
     }
+
+    // MARK: Private
+
+    private var network: LocalUserDefaults.FlowNetworkType {
+        LocalUserDefaults.shared.flowNetwork
+    }
+
+    private var user: WalletAccount.User {
+        WalletManager.shared.walletAccount.readInfo(at: address)
+    }
+
+    private var isSelected: Bool {
+        if address == currentAddress {
+            return true
+        }
+        return false
+    }
+
+    private var isEVM: Bool {
+        if let evmAddress = EVMAccountManager.shared.accounts.first?.showAddress {
+            return evmAddress.lowercased() == address.lowercased()
+        }
+        return false
+    }
 }
 
 #Preview {
-    AccountSideCell(address: WalletManager.shared.getFlowNetworkTypeAddress(network: .mainnet) ?? "", currentAddress: "", onClick: { _, _ in })
+    AccountSideCell(
+        address: WalletManager.shared.getFlowNetworkTypeAddress(network: .mainnet) ?? "",
+        currentAddress: "",
+        onClick: { _, _ in }
+    )
 }

@@ -7,24 +7,13 @@
 
 import SwiftUI
 
-// MARK: - _ V Modal
+// MARK: - _VModal
 
 struct _VModal<Content, HeaderContent>: View
     where
     Content: View,
-    HeaderContent: View
-{
-    // MARK: Properties
-
-    private let model: VModalModel
-
-    @Binding private var isHCPresented: Bool
-    @State private var isViewPresented: Bool = false
-
-    private let headerContent: (() -> HeaderContent)?
-    private let content: () -> Content
-
-    private var headerExists: Bool { headerContent != nil || model.misc.dismissType.hasButton }
+    HeaderContent: View {
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -40,6 +29,8 @@ struct _VModal<Content, HeaderContent>: View
         self.content = content
     }
 
+    // MARK: Internal
+
     // MARK: Body
 
     var body: some View {
@@ -51,6 +42,22 @@ struct _VModal<Content, HeaderContent>: View
         .ignoresSafeArea(.keyboard, edges: model.layout.ignoredKeybordSafeAreaEdges)
         .onAppear(perform: animateIn)
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VModalModel
+
+    @Binding
+    private var isHCPresented: Bool
+    @State
+    private var isViewPresented: Bool = false
+
+    private let headerContent: (() -> HeaderContent)?
+    private let content: () -> Content
+
+    private var headerExists: Bool { headerContent != nil || model.misc.dismissType.hasButton }
 
     private var blinding: some View {
         model.colors.blinding
@@ -75,7 +82,8 @@ struct _VModal<Content, HeaderContent>: View
         .blur(radius: isViewPresented ? 0 : model.animations.blur)
     }
 
-    @ViewBuilder private var headerView: some View {
+    @ViewBuilder
+    private var headerView: some View {
         if headerExists {
             HStack(spacing: model.layout.headerSpacing, content: {
                 if model.misc.dismissType.contains(.leadingButton) {
@@ -100,7 +108,8 @@ struct _VModal<Content, HeaderContent>: View
         }
     }
 
-    @ViewBuilder private var dividerView: some View {
+    @ViewBuilder
+    private var dividerView: some View {
         if headerExists && model.layout.hasDivider {
             Rectangle()
                 .frame(height: model.layout.headerDividerHeight)
@@ -132,7 +141,10 @@ struct _VModal<Content, HeaderContent>: View
 
     private func animateOut() {
         withAnimation(model.animations.disappear?.asSwiftUIAnimation) { isViewPresented = false }
-        DispatchQueue.main.asyncAfter(deadline: .now() + (model.animations.disappear?.duration ?? 0)) { isHCPresented = false }
+        DispatchQueue.main
+            .asyncAfter(deadline: .now() + (model.animations.disappear?.duration ?? 0)) {
+                isHCPresented = false
+            }
     }
 
     private func animateOutFromTap() {
@@ -140,7 +152,7 @@ struct _VModal<Content, HeaderContent>: View
     }
 }
 
-// MARK: - Previews
+// MARK: - VModal_Previews
 
 struct VModal_Previews: PreviewProvider {
     static var previews: some View {

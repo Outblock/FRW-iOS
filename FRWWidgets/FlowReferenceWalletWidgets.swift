@@ -16,7 +16,8 @@ extension String {
             return value
         }
 
-        guard let path = Bundle.main.path(forResource: "en", ofType: "lproj"), let bundle = Bundle(path: path) else {
+        guard let path = Bundle.main.path(forResource: "en", ofType: "lproj"),
+              let bundle = Bundle(path: path) else {
             return value
         }
 
@@ -24,9 +25,11 @@ extension String {
     }
 
     func localized(_ args: CVarArg...) -> String {
-        return String.localizedStringWithFormat(localized, args)
+        String.localizedStringWithFormat(localized, args)
     }
 }
+
+// MARK: - Provider
 
 struct Provider: TimelineProvider {
     func placeholder(in _: Context) -> SimpleEntry {
@@ -39,7 +42,8 @@ struct Provider: TimelineProvider {
     }
 
     func getTimeline(in _: Context, completion: @escaping (Timeline<Entry>) -> Void) {
-        guard let userDefaults = groupUserDefaults(), let url = userDefaults.url(forKey: FirstFavNFTImageURL) else {
+        guard let userDefaults = groupUserDefaults(),
+              let url = userDefaults.url(forKey: FirstFavNFTImageURL) else {
             let entry = SimpleEntry(date: Date(), image: nil)
             completion(Timeline(entries: [entry], policy: .never))
             return
@@ -59,10 +63,14 @@ struct Provider: TimelineProvider {
     }
 }
 
+// MARK: - SimpleEntry
+
 struct SimpleEntry: TimelineEntry {
     let date: Date
     let image: UIImage?
 }
+
+// MARK: - LilicoWidgetsEntryView
 
 struct LilicoWidgetsEntryView: View {
     var entry: Provider.Entry
@@ -76,6 +84,8 @@ struct LilicoWidgetsEntryView: View {
     }
 }
 
+// MARK: - PlaceholderView
+
 struct PlaceholderView: View {
     var body: some View {
         Image("logo-new")
@@ -84,6 +94,8 @@ struct PlaceholderView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+
+// MARK: - SmallView
 
 struct SmallView: View {
     let image: UIImage
@@ -95,6 +107,8 @@ struct SmallView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+
+// MARK: - FlowReferenceWalletWidgets
 
 struct FlowReferenceWalletWidgets: Widget {
     let kind: String = "FlowReferenceWallet"

@@ -8,17 +8,31 @@
 import Flow
 import SwiftUI
 
-class WalletSettingViewModel: ObservableObject {
-    @Published var storageUsagePercent: Double = 0
-    @Published var storageUsageDesc: String = ""
+// MARK: - WalletSettingViewModel
 
-    var usagePercentString: String {
-        return String(format: "%.2f%%", storageUsagePercent * 100)
-    }
+class WalletSettingViewModel: ObservableObject {
+    // MARK: Lifecycle
 
     init() {
         fetchStorageInfo()
     }
+
+    // MARK: Internal
+
+    @Published
+    var storageUsagePercent: Double = 0
+    @Published
+    var storageUsageDesc: String = ""
+
+    var usagePercentString: String {
+        String(format: "%.2f%%", storageUsagePercent * 100)
+    }
+
+    func resetWalletAction() {
+        Router.route(to: RouteMap.Profile.resetWalletConfirm)
+    }
+
+    // MARK: Private
 
     private func fetchStorageInfo() {
         Task {
@@ -30,10 +44,6 @@ class WalletSettingViewModel: ObservableObject {
                 }
             } catch {}
         }
-    }
-
-    func resetWalletAction() {
-        Router.route(to: RouteMap.Profile.resetWalletConfirm)
     }
 }
 

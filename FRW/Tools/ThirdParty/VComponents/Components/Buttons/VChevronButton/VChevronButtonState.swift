@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Chevron Button State
+// MARK: - VChevronButtonState
 
 /// Enum that describes state, such as `enabled` or `disabled`.
 public enum VChevronButtonState: Int, CaseIterable {
@@ -19,15 +19,7 @@ public enum VChevronButtonState: Int, CaseIterable {
     /// Disabled.
     case disabled
 
-    // MARK: Properties
-
-    /// Indicates if state is enabled.
-    public var isEnabled: Bool {
-        switch self {
-        case .enabled: return true
-        case .disabled: return false
-        }
-    }
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -38,9 +30,21 @@ public enum VChevronButtonState: Int, CaseIterable {
         case .disabled: self = .disabled
         }
     }
+
+    // MARK: Public
+
+    // MARK: Properties
+
+    /// Indicates if state is enabled.
+    public var isEnabled: Bool {
+        switch self {
+        case .enabled: return true
+        case .disabled: return false
+        }
+    }
 }
 
-// MARK: - V Chevron Button Internal State
+// MARK: - VChevronButtonInternalState
 
 enum VChevronButtonInternalState {
     // MARK: Cases
@@ -49,15 +53,7 @@ enum VChevronButtonInternalState {
     case pressed
     case disabled
 
-    // MARK: Properties
-
-    var isEnabled: Bool {
-        switch self {
-        case .enabled: return true
-        case .pressed: return true
-        case .disabled: return false
-        }
-    }
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -66,6 +62,18 @@ enum VChevronButtonInternalState {
         case (.enabled, false): self = .enabled
         case (.enabled, true): self = .pressed
         case (.disabled, _): self = .disabled
+        }
+    }
+
+    // MARK: Internal
+
+    // MARK: Properties
+
+    var isEnabled: Bool {
+        switch self {
+        case .enabled: return true
+        case .pressed: return true
+        case .disabled: return false
         }
     }
 

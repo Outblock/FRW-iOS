@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Dialog
+// MARK: - VDialog
 
 /// Modal component that presents dialog when condition is true.
 ///
@@ -47,13 +47,7 @@ import SwiftUI
 ///     }
 ///
 public struct VDialog<Content> where Content: View {
-    // MARK: Properties
-
-    fileprivate let model: VDialogModel
-    fileprivate let dialogButtons: VDialogButtons
-    fileprivate let title: String?
-    fileprivate let description: String?
-    fileprivate let content: (() -> Content)?
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -79,26 +73,34 @@ public struct VDialog<Content> where Content: View {
         title: String?,
         description: String?
     )
-        where Content == Never
-    {
+        where Content == Never {
         self.model = model
         self.dialogButtons = dialogButtons
         self.title = title
         self.description = description
-        content = nil
+        self.content = nil
     }
+
+    // MARK: Fileprivate
+
+    // MARK: Properties
+
+    fileprivate let model: VDialogModel
+    fileprivate let dialogButtons: VDialogButtons
+    fileprivate let title: String?
+    fileprivate let description: String?
+    fileprivate let content: (() -> Content)?
 }
 
 // MARK: - Extension
 
-public extension View {
+extension View {
     /// Presents `VDialog`.
-    func vDialog<Content>(
+    public func vDialog<Content>(
         isPresented: Binding<Bool>,
         dialog: @escaping () -> VDialog<Content>
     ) -> some View
-        where Content: View
-    {
+        where Content: View {
         let dialog = dialog()
 
         return overlay(Group(content: {

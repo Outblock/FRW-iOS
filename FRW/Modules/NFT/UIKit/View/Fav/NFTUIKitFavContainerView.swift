@@ -8,14 +8,45 @@
 import CollectionViewPagingLayout
 import UIKit
 
-class NFTUIKitFavContainerView: UIView {
-    var vm: NFTTabViewModel?
+// MARK: - NFTUIKitFavContainerView
 
-    var currentIndex: Int {
-        return layout.currentPage
+class NFTUIKitFavContainerView: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onDataSourceChanged),
+            name: .nftFavDidChanged,
+            object: nil
+        )
+        setupView()
     }
 
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("")
+    }
+
+    // MARK: Internal
+
+    var vm: NFTTabViewModel?
+
     var pageChangeCallback: ((Int) -> Void)?
+
+    var currentIndex: Int {
+        layout.currentPage
+    }
+
+    static func calculateViewHeight() -> CGFloat {
+        let maxWidth = CGFloat(Router.coordinator.window.bounds.size.width - 18 * 2)
+        let itemWidth = floor(264.0 / 339.0 * maxWidth)
+
+        return itemWidth + 40
+    }
+
+    // MARK: Private
 
     private lazy var headerView: NFTUIKitTopSelectionHeaderView = {
         let view = NFTUIKitTopSelectionHeaderView()
@@ -39,28 +70,11 @@ class NFTUIKitFavContainerView: UIView {
         view.register(NFTUIKitFavItemCell.self, forCellWithReuseIdentifier: "NFTUIKitFavItemCell")
         return view
     }()
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        NotificationCenter.default.addObserver(self, selector: #selector(onDataSourceChanged), name: .nftFavDidChanged, object: nil)
-        setupView()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("")
-    }
-
-    static func calculateViewHeight() -> CGFloat {
-        let maxWidth = CGFloat(Router.coordinator.window.bounds.size.width - 18 * 2)
-        let itemWidth = floor(264.0 / 339.0 * maxWidth)
-
-        return itemWidth + 40
-    }
 }
 
 extension NFTUIKitFavContainerView {
-    @objc private func onDataSourceChanged() {
+    @objc
+    private func onDataSourceChanged() {
         layout.invalidateLayoutInBatchUpdate(invalidateOffset: true)
         collectionView.reloadData()
     }
@@ -81,13 +95,22 @@ extension NFTUIKitFavContainerView {
     }
 }
 
-extension NFTUIKitFavContainerView: UICollectionViewDataSource, UICollectionViewDelegate, CollectionViewPagingLayoutDelegate {
+// MARK: UICollectionViewDataSource, UICollectionViewDelegate, CollectionViewPagingLayoutDelegate
+
+extension NFTUIKitFavContainerView: UICollectionViewDataSource, UICollectionViewDelegate,
+    CollectionViewPagingLayoutDelegate {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return NFTUIKitCache.cache.favList.count
+        NFTUIKitCache.cache.favList.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NFTUIKitFavItemCell", for: indexPath) as! NFTUIKitFavItemCell
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: "NFTUIKitFavItemCell",
+            for: indexPath
+        ) as! NFTUIKitFavItemCell
         let item = NFTUIKitCache.cache.favList[indexPath.item]
         cell.config(item)
         return cell

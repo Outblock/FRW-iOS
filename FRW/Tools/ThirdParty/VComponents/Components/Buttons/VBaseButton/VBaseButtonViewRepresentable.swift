@@ -10,12 +10,7 @@ import SwiftUI
 // MARK: - V Base Button View Representable
 
 struct VBaseButtonViewRepresentable: UIViewRepresentable {
-    // MARK: Properties
-
-    private let isEnabled: Bool
-    private let gestureHandler: (VBaseButtonGestureState) -> Void
-
-    @State private var gestureRecognizer: VBaseButtonTapGestureRecognizer?
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -26,6 +21,8 @@ struct VBaseButtonViewRepresentable: UIViewRepresentable {
         self.isEnabled = isEnabled
         self.gestureHandler = gestureHandler
     }
+
+    // MARK: Internal
 
     // MARK: Representable
 
@@ -47,6 +44,16 @@ struct VBaseButtonViewRepresentable: UIViewRepresentable {
     func updateUIView(_ uiView: UIView, context: Context) {
         setBindedValues(uiView, context: context)
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let isEnabled: Bool
+    private let gestureHandler: (VBaseButtonGestureState) -> Void
+
+    @State
+    private var gestureRecognizer: VBaseButtonTapGestureRecognizer?
 
     private func setBindedValues(_ view: UIView, context _: Context) {
         view.isUserInteractionEnabled = isEnabled

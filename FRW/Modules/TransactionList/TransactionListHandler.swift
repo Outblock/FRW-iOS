@@ -14,7 +14,29 @@ private let FooterHeight: CGFloat = 44
 private let AllTransactionsListCacheKey = "AllTransactionListCacheKey"
 private let AllTransactionListCountKey = "AllTransactionListCountKey"
 
+// MARK: - TransactionListHandler
+
 class TransactionListHandler: TransactionListBaseHandler {
+    // MARK: Lifecycle
+
+    override init(contractId: String? = nil) {
+        super.init(contractId: contractId)
+        setup()
+        loadCache()
+    }
+
+    // MARK: Internal
+
+    var countChangeCallback: (() -> Void)?
+
+    var totalCount: Int = 0 {
+        didSet {
+            countChangeCallback?()
+        }
+    }
+
+    // MARK: Private
+
     private lazy var layout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -30,8 +52,15 @@ class TransactionListHandler: TransactionListBaseHandler {
         view.alwaysBounceVertical = true
         view.dataSource = self
         view.delegate = self
-        view.register(FlowTransactionItemCell.self, forCellWithReuseIdentifier: "FlowTransactionItemCell")
-        view.register(FlowTransactionViewMoreFooter.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "FlowTransactionViewMoreFooter")
+        view.register(
+            FlowTransactionItemCell.self,
+            forCellWithReuseIdentifier: "FlowTransactionItemCell"
+        )
+        view.register(
+            FlowTransactionViewMoreFooter.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: "FlowTransactionViewMoreFooter"
+        )
 
         view.setRefreshingAction { [weak self] in
             guard let self = self else {
@@ -44,22 +73,8 @@ class TransactionListHandler: TransactionListBaseHandler {
     }()
 
     private var dataList: [FlowScanTransaction] = []
-    var totalCount: Int = 0 {
-        didSet {
-            countChangeCallback?()
-        }
-    }
-
     private var isRequesting: Bool = false
     private var needShowLoadMoreView: Bool = false
-
-    var countChangeCallback: (() -> Void)?
-
-    override init(contractId: String? = nil) {
-        super.init(contractId: contractId)
-        setup()
-        loadCache()
-    }
 
     private func setup() {
         containerView.addSubview(collectionView)
@@ -74,7 +89,10 @@ class TransactionListHandler: TransactionListBaseHandler {
         totalCount = UserDefaults.standard.integer(forKey: AllTransactionListCountKey)
 
         Task {
-            if let cacheList = try? await PageCache.cache.get(forKey: AllTransactionsListCacheKey, type: [FlowScanTransaction].self) {
+            if let cacheList = try? await PageCache.cache.get(
+                forKey: AllTransactionsListCacheKey,
+                type: [FlowScanTransaction].self
+            ) {
                 DispatchQueue.main.async {
                     self.dataList = cacheList
                     self.collectionView.reloadData()
@@ -94,7 +112,8 @@ extension TransactionListHandler {
         Task {
             do {
                 if let contractId = self.contractId {
-                    let results = try await FRWAPI.Account.fetchTokenTransfers(contractId: contractId)
+                    let results = try await FRWAPI.Account
+                        .fetchTokenTransfers(contractId: contractId)
                     DispatchQueue.main.async {
                         self.isRequesting = false
                         self.requestSuccess(results, totalCount: results.count)
@@ -139,23 +158,39 @@ extension TransactionListHandler {
     }
 }
 
+// MARK: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource
+
 extension TransactionListHandler: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return dataList.count
+        dataList.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let item = dataList[indexPath.item]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FlowTransactionItemCell", for: indexPath) as! FlowTransactionItemCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: "FlowTransactionItemCell",
+            for: indexPath
+        ) as! FlowTransactionItemCell
         cell.config(item)
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: CellHeight)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout _: UICollectionViewLayout,
+        sizeForItemAt _: IndexPath
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: CellHeight)
     }
 
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForFooterInSection _: Int) -> CGSize {
+    func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        referenceSizeForFooterInSection _: Int
+    ) -> CGSize {
         if needShowLoadMoreView {
             return CGSize(width: 0, height: FooterHeight)
         }
@@ -163,8 +198,16 @@ extension TransactionListHandler: UICollectionViewDelegateFlowLayout, UICollecti
         return .zero
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "FlowTransactionViewMoreFooter", for: indexPath)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: "FlowTransactionViewMoreFooter",
+            for: indexPath
+        )
     }
 
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {

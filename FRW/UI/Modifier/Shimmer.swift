@@ -7,13 +7,11 @@
 
 import SwiftUI
 
+// MARK: - Shimmer
+
 /// A view modifier that applies an animated "shimmer" to any view, typically to show that an operation is in progress.
 public struct Shimmer: ViewModifier {
-    private let animation: Animation
-    private let gradient: Gradient
-    private let min, max: CGFloat
-    @State private var isInitialState = true
-    @Environment(\.layoutDirection) private var layoutDirection
+    // MARK: Lifecycle
 
     /// Initializes his modifier with a custom animation,
     /// - Parameters:
@@ -33,8 +31,11 @@ public struct Shimmer: ViewModifier {
         self.max = 1 + bandSize
     }
 
+    // MARK: Public
+
     /// The default animation effect.
-    public static let defaultAnimation = Animation.linear(duration: 1.5).delay(0.25).repeatForever(autoreverses: false)
+    public static let defaultAnimation = Animation.linear(duration: 1.5).delay(0.25)
+        .repeatForever(autoreverses: false)
 
     // A default gradient for the animated mask.
     public static let defaultGradient = Gradient(colors: [
@@ -42,6 +43,17 @@ public struct Shimmer: ViewModifier {
         .black, // opaque
         .black.opacity(0.3), // translucent
     ])
+
+    public func body(content: Content) -> some View {
+        content
+            .mask(LinearGradient(gradient: gradient, startPoint: startPoint, endPoint: endPoint))
+            .animation(animation, value: isInitialState)
+            .onAppear {
+                isInitialState = false
+            }
+    }
+
+    // MARK: Internal
 
     /*
      Calculating the gradient's animated start and end unit points:
@@ -81,17 +93,18 @@ public struct Shimmer: ViewModifier {
         }
     }
 
-    public func body(content: Content) -> some View {
-        content
-            .mask(LinearGradient(gradient: gradient, startPoint: startPoint, endPoint: endPoint))
-            .animation(animation, value: isInitialState)
-            .onAppear {
-                isInitialState = false
-            }
-    }
+    // MARK: Private
+
+    private let animation: Animation
+    private let gradient: Gradient
+    private let min, max: CGFloat
+    @State
+    private var isInitialState = true
+    @Environment(\.layoutDirection)
+    private var layoutDirection
 }
 
-public extension View {
+extension View {
     /// Adds an animated shimmering effect to any view, typically to show that an operation is in progress.
     /// - Parameters:
     ///   - active: Convenience parameter to conditionally enable the effect. Defaults to `true`.
@@ -99,7 +112,8 @@ public extension View {
     ///   - gradient: A custom gradient. Defaults to ``Shimmer/defaultGradient``.
     ///   - bandSize: The size of the animated mask's "band". Defaults to 0.3 unit points, which corresponds to
     /// 20% of the extent of the gradient.
-    @ViewBuilder func shimmering(
+    @ViewBuilder
+    public func shimmering(
         active: Bool = true,
         animation: Animation = Shimmer.defaultAnimation,
         gradient: Gradient = Shimmer.defaultGradient,
@@ -118,8 +132,13 @@ public extension View {
     ///   - duration: The duration of a shimmer cycle in seconds.
     ///   - bounce: Whether to bounce (reverse) the animation back and forth. Defaults to `false`.
     ///   - delay:A delay in seconds. Defaults to `0.25`.
-    @available(*, deprecated, message: "Use shimmering(active:animation:gradient:bandSize:) instead.")
-    @ViewBuilder func shimmering(
+    @available(
+        *,
+        deprecated,
+        message: "Use shimmering(active:animation:gradient:bandSize:) instead."
+    )
+    @ViewBuilder
+    public func shimmering(
         active: Bool = true, duration: Double, bounce: Bool = false, delay: Double = 0.25
     ) -> some View {
         shimmering(
@@ -129,6 +148,8 @@ public extension View {
     }
 }
 
+// MARK: - PlaceholderShimmer
+
 public struct PlaceholderShimmer: ViewModifier {
     public func body(content: Content) -> some View {
         content.redacted(reason: .placeholder)
@@ -137,8 +158,9 @@ public struct PlaceholderShimmer: ViewModifier {
     }
 }
 
-public extension View {
-    @ViewBuilder func mockPlaceholder(_ active: Bool = true) -> some View {
+extension View {
+    @ViewBuilder
+    public func mockPlaceholder(_ active: Bool = true) -> some View {
         if active {
             modifier(PlaceholderShimmer())
         } else {
@@ -148,32 +170,32 @@ public extension View {
 }
 
 #if DEBUG
-    struct Shimmer_Previews: PreviewProvider {
-        static var previews: some View {
-            Group {
-                Text("SwiftUI Shimmer")
-                if #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) {
-                    Text("SwiftUI Shimmer").preferredColorScheme(.light)
-                    Text("SwiftUI Shimmer").preferredColorScheme(.dark)
-                    VStack(alignment: .leading) {
-                        Text("Loading...").font(.title)
-                        Text(String(repeating: "Shimmer", count: 12))
-                            .redacted(reason: .placeholder)
-                    }.frame(maxWidth: 200)
-                }
+struct Shimmer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            Text("SwiftUI Shimmer")
+            if #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) {
+                Text("SwiftUI Shimmer").preferredColorScheme(.light)
+                Text("SwiftUI Shimmer").preferredColorScheme(.dark)
+                VStack(alignment: .leading) {
+                    Text("Loading...").font(.title)
+                    Text(String(repeating: "Shimmer", count: 12))
+                        .redacted(reason: .placeholder)
+                }.frame(maxWidth: 200)
             }
-            .padding()
-            .shimmering()
-            .previewLayout(.sizeThatFits)
-
-            VStack(alignment: .leading) {
-                Text("مرحبًا")
-                Text("← Right-to-left layout direction").font(.body)
-                Text("שלום")
-            }
-            .font(.largeTitle)
-            .shimmering()
-            .environment(\.layoutDirection, .rightToLeft)
         }
+        .padding()
+        .shimmering()
+        .previewLayout(.sizeThatFits)
+
+        VStack(alignment: .leading) {
+            Text("مرحبًا")
+            Text("← Right-to-left layout direction").font(.body)
+            Text("שלום")
+        }
+        .font(.largeTitle)
+        .shimmering()
+        .environment(\.layoutDirection, .rightToLeft)
     }
+}
 #endif

@@ -9,14 +9,10 @@ import Kingfisher
 import SwiftUI
 
 struct BrowserBookmarkView: RouteableView {
-    @StateObject private var vm = BrowserBookmarkViewModel()
+    // MARK: Internal
 
     var title: String {
-        return "browser_bookmark".localized
-    }
-
-    func backButtonAction() {
-        Router.dismiss()
+        "browser_bookmark".localized
     }
 
     var body: some View {
@@ -48,6 +44,10 @@ struct BrowserBookmarkView: RouteableView {
         .applyRouteable(self)
     }
 
+    func backButtonAction() {
+        Router.dismiss()
+    }
+
     func createCell(_ bookmark: WebBookmark) -> some View {
         HStack(spacing: 24) {
             KFImage.url(bookmark.url.toFavIcon())
@@ -74,4 +74,9 @@ struct BrowserBookmarkView: RouteableView {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = BrowserBookmarkViewModel()
 }

@@ -6,11 +6,15 @@
 
 import SwiftUI
 
-public extension View {
-    func indexBarBackground<Content>(contentMode: ContentMode = .fit,
-                                     @ViewBuilder content: @escaping () -> Content) -> some View
-        where Content: View
-    {
-        environment(\.indexBarBackground, IndexBarBackground(contentMode: contentMode, view: { AnyView(content()) }))
+extension View {
+    public func indexBarBackground<Content>(
+        contentMode: ContentMode = .fit,
+        @ViewBuilder content: @escaping () -> Content
+    ) -> some View
+        where Content: View {
+        environment(
+            \.indexBarBackground,
+            IndexBarBackground(contentMode: contentMode, view: { AnyView(content()) })
+        )
     }
 }

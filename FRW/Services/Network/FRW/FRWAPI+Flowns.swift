@@ -8,6 +8,8 @@
 import Foundation
 import Moya
 
+// MARK: - FRWAPI.Flowns
+
 extension FRWAPI {
     enum Flowns {
         case domainPrepare
@@ -16,15 +18,19 @@ extension FRWAPI {
     }
 }
 
+// MARK: - FRWAPI.Flowns + TargetType, AccessTokenAuthorizable
+
 extension FRWAPI.Flowns: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
-        return .bearer
+        .bearer
     }
 
     var baseURL: URL {
         switch self {
         case .queryInbox:
-            return LocalUserDefaults.shared.flowNetwork == .testnet ? .init(string: "https://testnet.flowns.io")! : .init(string: "https://flowns.io")!
+            return LocalUserDefaults.shared
+                .flowNetwork == .testnet ? .init(string: "https://testnet.flowns.io")! :
+                .init(string: "https://flowns.io")!
         default:
             return Config.get(.lilico)
         }
@@ -64,6 +70,6 @@ extension FRWAPI.Flowns: TargetType, AccessTokenAuthorizable {
     }
 
     var headers: [String: String]? {
-        return FRWAPI.commonHeaders
+        FRWAPI.commonHeaders
     }
 }

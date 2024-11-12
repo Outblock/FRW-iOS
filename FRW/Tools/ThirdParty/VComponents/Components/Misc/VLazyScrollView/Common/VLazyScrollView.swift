@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Lazy Scroll View
+// MARK: - VLazyScrollView
 
 /// Core component that is used throughout the library as a lazy structure that either hosts content, or computes views on demad from an underlying collection of identified data.
 ///
@@ -44,10 +44,7 @@ import SwiftUI
 ///
 /// Component can also be initialized with content.
 public struct VLazyScrollView<Content>: View where Content: View {
-    // MARK: Properties
-
-    private let listType: VLazyScrollViewType
-    private let content: () -> Content
+    // MARK: Lifecycle
 
     // MARK: Initializers - View Builder
 
@@ -62,8 +59,7 @@ public struct VLazyScrollView<Content>: View where Content: View {
         Content == ForEach<Data, ID, RowContent>,
         Data: RandomAccessCollection,
         ID: Hashable,
-        RowContent: View
-    {
+        RowContent: View {
         self.init(
             type: listType,
             content: {
@@ -87,8 +83,7 @@ public struct VLazyScrollView<Content>: View where Content: View {
         Data: RandomAccessCollection,
         Data.Element: Identifiable,
         ID == Data.Element.ID,
-        RowContent: View
-    {
+        RowContent: View {
         self.init(
             type: listType,
             data: data,
@@ -105,8 +100,7 @@ public struct VLazyScrollView<Content>: View where Content: View {
         range: Range<Int>,
         content rowContent: @escaping (Int) -> RowContent
     )
-        where Content == ForEach<Range<Int>, Int, RowContent>
-    {
+        where Content == ForEach<Range<Int>, Int, RowContent> {
         self.init(
             type: listType,
             content: {
@@ -126,20 +120,30 @@ public struct VLazyScrollView<Content>: View where Content: View {
         self.content = content
     }
 
+    // MARK: Public
+
     // MARK: Body
 
-    @ViewBuilder public var body: some View {
+    @ViewBuilder
+    public var body: some View {
         switch listType {
         case let .vertical(model): VLazyScrollViewVertical(model: model, content: content)
         case let .horizontal(model): VLazyScrollViewHorizontal(model: model, content: content)
         }
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let listType: VLazyScrollViewType
+    private let content: () -> Content
 }
 
-// MARK: - Preview
+// MARK: - VLazyScrollViewView_Previews
 
 struct VLazyScrollViewView_Previews: PreviewProvider {
-    private static var range: Range<Int> { 1 ..< 101 }
+    // MARK: Internal
 
     static var previews: some View {
         VStack(content: {
@@ -153,4 +157,8 @@ struct VLazyScrollViewView_Previews: PreviewProvider {
         })
         .padding()
     }
+
+    // MARK: Private
+
+    private static var range: Range<Int> { 1..<101 }
 }

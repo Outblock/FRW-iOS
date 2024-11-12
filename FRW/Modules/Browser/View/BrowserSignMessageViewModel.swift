@@ -7,16 +7,50 @@
 
 import SwiftUI
 
+// MARK: - BrowserSignMessageViewModel.Callback
+
 extension BrowserSignMessageViewModel {
     typealias Callback = (Bool) -> Void
 }
 
+// MARK: - BrowserSignMessageViewModel
+
 class BrowserSignMessageViewModel: ObservableObject {
-    @Published var title: String
-    @Published var urlString: String
-    @Published var logo: String?
-    @Published var cadence: String
-    @Published var isScriptShowing: Bool = false
+    // MARK: Lifecycle
+
+    init(
+        title: String,
+        url: String,
+        logo: String?,
+        cadence: String,
+        useRawMessage: Bool = false,
+        callback: @escaping BrowserSignMessageViewModel.Callback
+    ) {
+        self.title = title
+        self.urlString = url
+        self.logo = logo
+        self.cadence = cadence
+        self.callback = callback
+        self.useRawMessage = useRawMessage
+    }
+
+    deinit {
+        callback?(false)
+        WalletConnectManager.shared.reloadPendingRequests()
+    }
+
+    // MARK: Internal
+
+    @Published
+    var title: String
+    @Published
+    var urlString: String
+    @Published
+    var logo: String?
+    @Published
+    var cadence: String
+    @Published
+    var isScriptShowing: Bool = false
     var useRawMessage: Bool = false
 
     var message: String {
@@ -25,17 +59,6 @@ class BrowserSignMessageViewModel: ObservableObject {
         }
         let data = Data(hex: cadence)
         return String(data: data, encoding: .utf8) ?? ""
-    }
-
-    private var callback: BrowserSignMessageViewModel.Callback?
-
-    init(title: String, url: String, logo: String?, cadence: String, useRawMessage: Bool = false, callback: @escaping BrowserSignMessageViewModel.Callback) {
-        self.title = title
-        urlString = url
-        self.logo = logo
-        self.cadence = cadence
-        self.callback = callback
-        self.useRawMessage = useRawMessage
     }
 
     func didChooseAction(_ result: Bool) {
@@ -52,8 +75,7 @@ class BrowserSignMessageViewModel: ObservableObject {
         }
     }
 
-    deinit {
-        callback?(false)
-        WalletConnectManager.shared.reloadPendingRequests()
-    }
+    // MARK: Private
+
+    private var callback: BrowserSignMessageViewModel.Callback?
 }

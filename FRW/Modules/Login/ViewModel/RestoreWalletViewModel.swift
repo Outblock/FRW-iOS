@@ -7,6 +7,8 @@
 
 import Foundation
 
+// MARK: - RestoreWalletViewModel
+
 class RestoreWalletViewModel {}
 
 // MARK: - Action

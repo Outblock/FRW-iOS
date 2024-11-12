@@ -7,23 +7,10 @@
 
 import SwiftUI
 
-// MARK: UIKit Text Field Representable
+// MARK: - UIKitTextFieldRepresentable
 
 struct UIKitTextFieldRepresentable: UIViewRepresentable {
-    // MARK: Properties
-
-    private let model: VBaseTextFieldModel
-
-    @Binding private var state: VBaseTextFieldState
-
-    private let placeholder: String?
-    @Binding private var text: String
-
-    let beginHandler: (() -> Void)?
-    let changeHandler: (() -> Void)?
-    let endHandler: (() -> Void)?
-
-    let returnAction: VBaseTextFieldReturnButtonAction
+    // MARK: Lifecycle
 
     // MARK: Initialiers
 
@@ -47,6 +34,14 @@ struct UIKitTextFieldRepresentable: UIViewRepresentable {
         self.returnAction = returnAction
     }
 
+    // MARK: Internal
+
+    let beginHandler: (() -> Void)?
+    let changeHandler: (() -> Void)?
+    let endHandler: (() -> Void)?
+
+    let returnAction: VBaseTextFieldReturnButtonAction
+
     // MARK: Representable
 
     func makeCoordinator() -> Coordinator {
@@ -63,7 +58,11 @@ struct UIKitTextFieldRepresentable: UIViewRepresentable {
         setBindedValues(textField, context: context)
 
         textField.delegate = context.coordinator
-        textField.addTarget(context.coordinator, action: #selector(context.coordinator.textFieldDidChange), for: .editingChanged)
+        textField.addTarget(
+            context.coordinator,
+            action: #selector(context.coordinator.textFieldDidChange),
+            for: .editingChanged
+        )
 
         return textField
     }
@@ -71,6 +70,33 @@ struct UIKitTextFieldRepresentable: UIViewRepresentable {
     func updateUIView(_ uiView: FocusableTextField, context: Context) {
         setBindedValues(uiView, context: context)
     }
+
+    // MARK: Focus and Commit
+
+    func textFieldReturned(_: UITextField) {
+        setBindedFocus(to: false)
+    }
+
+    func commitText(_ text: String?) {
+        self.text = text ?? ""
+    }
+
+    func setBindedFocus(to state: Bool) {
+        DispatchQueue.main.async { self.state.setFocus(from: state) }
+    }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VBaseTextFieldModel
+
+    @Binding
+    private var state: VBaseTextFieldState
+
+    private let placeholder: String?
+    @Binding
+    private var text: String
 
     private func setBindedValues(_ textField: FocusableTextField, context: Context) {
         textField.isUserInteractionEnabled = state.isEnabled
@@ -97,7 +123,8 @@ struct UIKitTextFieldRepresentable: UIViewRepresentable {
         textField.autocorrectionType = model.misc.autoCorrect
         if autocorrectChanged { textField.reloadInputViews() }
 
-        let autoCapitalizationChanged: Bool = textField.autocapitalizationType != model.misc.autoCapitalization
+        let autoCapitalizationChanged: Bool = textField.autocapitalizationType != model.misc
+            .autoCapitalization
         textField.autocapitalizationType = model.misc.autoCapitalization
         if autoCapitalizationChanged { textField.reloadInputViews() }
 
@@ -122,11 +149,10 @@ struct UIKitTextFieldRepresentable: UIViewRepresentable {
             _ = textField.resignFirstResponder()
 
         case true:
-            guard
-                !textField.isFirstResponder,
-                state.isEnabled,
-                textField.canBecomeFirstResponder,
-                context.environment.isEnabled
+            guard !textField.isFirstResponder,
+                  state.isEnabled,
+                  textField.canBecomeFirstResponder,
+                  context.environment.isEnabled
             else {
                 return
             }
@@ -134,23 +160,9 @@ struct UIKitTextFieldRepresentable: UIViewRepresentable {
             _ = textField.becomeFirstResponder()
         }
     }
-
-    // MARK: Focus and Commit
-
-    func textFieldReturned(_: UITextField) {
-        setBindedFocus(to: false)
-    }
-
-    func commitText(_ text: String?) {
-        self.text = text ?? ""
-    }
-
-    func setBindedFocus(to state: Bool) {
-        DispatchQueue.main.async { self.state.setFocus(from: state) }
-    }
 }
 
-// MARK: - Preview
+// MARK: - UIKitTextFieldRepresentable_Previews
 
 struct UIKitTextFieldRepresentable_Previews: PreviewProvider {
     static var previews: some View {

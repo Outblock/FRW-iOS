@@ -8,21 +8,28 @@
 import SwiftUI
 
 struct AddAddressView: RouteableView {
-    @StateObject var vm: AddAddressViewModel
-    private let confirmedTitle: String
+    // MARK: Lifecycle
 
     init(addressBookVM: AddressBookView.AddressBookViewModel) {
         _vm = StateObject(wrappedValue: AddAddressViewModel(addressBookVM: addressBookVM))
-        confirmedTitle = "add_contact".localized
+        self.confirmedTitle = "add_contact".localized
     }
 
     init(editingContact: Contact, addressBookVM: AddressBookView.AddressBookViewModel) {
-        _vm = StateObject(wrappedValue: AddAddressViewModel(contact: editingContact, addressBookVM: addressBookVM))
-        confirmedTitle = "edit_contact".localized
+        _vm = StateObject(wrappedValue: AddAddressViewModel(
+            contact: editingContact,
+            addressBookVM: addressBookVM
+        ))
+        self.confirmedTitle = "edit_contact".localized
     }
 
+    // MARK: Internal
+
+    @StateObject
+    var vm: AddAddressViewModel
+
     var title: String {
-        return confirmedTitle
+        confirmedTitle
     }
 
     var body: some View {
@@ -57,7 +64,8 @@ struct AddAddressView: RouteableView {
             .padding(.horizontal, 10)
             .border(Color.LL.Neutrals.text, cornerRadius: 6)
 
-            Text("enter_a_name".localized).foregroundColor(.LL.Neutrals.text).font(.inter(size: 14, weight: .regular))
+            Text("enter_a_name".localized).foregroundColor(.LL.Neutrals.text)
+                .font(.inter(size: 14, weight: .regular))
         }
     }
 
@@ -86,7 +94,11 @@ struct AddAddressView: RouteableView {
             let addressErrorView =
                 HStack(spacing: 5) {
                     Image(systemName: .error).foregroundColor(.red)
-                    Text(vm.state.addressStateType.desc).foregroundColor(.LL.Neutrals.text).font(.inter(size: 14, weight: .regular))
+                    Text(vm.state.addressStateType.desc).foregroundColor(.LL.Neutrals.text)
+                        .font(.inter(
+                            size: 14,
+                            weight: .regular
+                        ))
                 }
 
             switch vm.state.addressStateType {
@@ -97,6 +109,10 @@ struct AddAddressView: RouteableView {
             }
         }
     }
+
+    // MARK: Private
+
+    private let confirmedTitle: String
 }
 
 // struct AddAddressView_Previews: PreviewProvider {

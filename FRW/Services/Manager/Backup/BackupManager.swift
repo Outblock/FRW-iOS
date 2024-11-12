@@ -13,6 +13,8 @@ import GoogleSignIn
 import GTMSessionFetcherCore
 import WalletCore
 
+// MARK: - BackupTarget
+
 protocol BackupTarget {
     func uploadMnemonic(password: String) async throws
     func getCurrentDriveItems() async throws -> [BackupManager.DriveItem]
@@ -25,6 +27,9 @@ extension BackupManager {
         case googleDrive
         case manual
         case multi
+
+        // MARK: Internal
+
         var descLocalizedString: String {
             switch self {
             case .none:
@@ -44,20 +49,26 @@ extension BackupManager {
     static let backupFileName = "outblock_backup"
 }
 
+// MARK: - BackupManager.DriveItem
+
 extension BackupManager {
     class DriveItem: Codable {
+        // MARK: Lifecycle
+
+        init() {
+            self.username = ""
+            self.uid = ""
+            self.data = ""
+            self.version = ""
+        }
+
+        // MARK: Internal
+
         var username: String?
         var uid: String?
         var data: String
         var version: String?
         var time: String?
-
-        init() {
-            username = ""
-            uid = ""
-            data = ""
-            version = ""
-        }
     }
 }
 
@@ -75,7 +86,10 @@ extension BackupManager {
         }
     }
 
-    func getCloudDriveItems(from type: BackupManager.BackupType) async throws -> [BackupManager.DriveItem] {
+    func getCloudDriveItems(
+        from type: BackupManager
+            .BackupType
+    ) async throws -> [BackupManager.DriveItem] {
         switch type {
         case .googleDrive:
             try await gdTarget.relogin()
@@ -103,8 +117,14 @@ extension BackupManager {
     }
 }
 
+// MARK: - BackupManager
+
 class BackupManager: ObservableObject {
+    // MARK: Internal
+
     static let shared = BackupManager()
+
+    // MARK: Private
 
     private let gdTarget = BackupGDTarget()
     private let iCloudTarget = BackupiCloudTarget()
@@ -114,12 +134,16 @@ class BackupManager: ObservableObject {
 
 extension BackupManager {
     /// append current user mnemonic to list with encrypt
-    func addCurrentMnemonicToList(_ list: [BackupManager.DriveItem], password: String) throws -> [BackupManager.DriveItem] {
+    func addCurrentMnemonicToList(
+        _ list: [BackupManager.DriveItem],
+        password: String
+    ) throws -> [BackupManager.DriveItem] {
         guard let username = UserManager.shared.userInfo?.username, !username.isEmpty else {
             throw BackupError.missingUserName
         }
 
-        guard let mnemonic = WalletManager.shared.getCurrentMnemonic(), !mnemonic.isEmpty, let mnemonicData = mnemonic.data(using: .utf8) else {
+        guard let mnemonic = WalletManager.shared.getCurrentMnemonic(), !mnemonic.isEmpty,
+              let mnemonicData = mnemonic.data(using: .utf8) else {
             throw BackupError.missingMnemonic
         }
 
@@ -153,7 +177,10 @@ extension BackupManager {
     /// encrypt list to hex string
     func encryptList(_ list: [BackupManager.DriveItem]) throws -> String {
         let jsonData = try JSONEncoder().encode(list)
-        let encrypedData = try WalletManager.encryptionAES(key: LocalEnvManager.shared.backupAESKey, data: jsonData)
+        let encrypedData = try WalletManager.encryptionAES(
+            key: LocalEnvManager.shared.backupAESKey,
+            data: jsonData
+        )
         return encrypedData.hexString
     }
 
@@ -167,14 +194,18 @@ extension BackupManager {
     }
 
     private func decryptData(_ data: Data) throws -> [BackupManager.DriveItem] {
-        let jsonData = try WalletManager.decryptionAES(key: LocalEnvManager.shared.backupAESKey, data: data)
+        let jsonData = try WalletManager.decryptionAES(
+            key: LocalEnvManager.shared.backupAESKey,
+            data: data
+        )
         let list = try JSONDecoder().decode([BackupManager.DriveItem].self, from: jsonData)
         return list
     }
 
     /// encrypt mnemonic data to hex string
     func encryptMnemonic(_ mnemonicData: Data, password: String) throws -> String {
-        let dataHexString = try WalletManager.encryptionAES(key: password, data: mnemonicData).hexString
+        let dataHexString = try WalletManager.encryptionAES(key: password, data: mnemonicData)
+            .hexString
         return dataHexString
     }
 

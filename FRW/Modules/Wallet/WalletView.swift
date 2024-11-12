@@ -17,9 +17,11 @@ private let CardViewHeight: CGFloat = 214
 private let CoinCellHeight: CGFloat = 73
 private let CoinIconHeight: CGFloat = 43
 
+// MARK: - WalletView + AppTabBarPageProtocol
+
 extension WalletView: AppTabBarPageProtocol {
     static func tabTag() -> AppTabType {
-        return .wallet
+        .wallet
     }
 
     static func iconName() -> String {
@@ -27,15 +29,21 @@ extension WalletView: AppTabBarPageProtocol {
     }
 
     static func color() -> Color {
-        return .Flow.accessory
+        .Flow.accessory
     }
 }
 
+// MARK: - WalletView
+
 struct WalletView: View {
-    @StateObject var um = UserManager.shared
-    @StateObject var wm = WalletManager.shared
-    @StateObject private var vm = WalletViewModel()
-    @State var isRefreshing: Bool = false
+    @StateObject
+    var um = UserManager.shared
+    @StateObject
+    var wm = WalletManager.shared
+    @StateObject
+    private var vm = WalletViewModel()
+    @State
+    var isRefreshing: Bool = false
 
     var errorView: some View {
         Text("error")
@@ -67,12 +75,20 @@ struct WalletView: View {
                         isRefreshing = false
                     }
                 }, progress: { state in
-                    ImageAnimated(imageSize: CGSize(width: 60, height: 60), imageNames: ImageAnimated.appRefreshImageNames(), duration: 1.6, isAnimating: state == .loading || state == .primed)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 60)
-                        .transition(AnyTransition.move(edge: .top).combined(with: .scale).combined(with: .opacity))
-                        .visibility(state == .waiting ? .gone : .visible)
-                        .zIndex(10)
+                    ImageAnimated(
+                        imageSize: CGSize(width: 60, height: 60),
+                        imageNames: ImageAnimated.appRefreshImageNames(),
+                        duration: 1.6,
+                        isAnimating: state == .loading || state == .primed
+                    )
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 60)
+                    .transition(
+                        AnyTransition.move(edge: .top).combined(with: .scale)
+                            .combined(with: .opacity)
+                    )
+                    .visibility(state == .waiting ? .gone : .visible)
+                    .zIndex(10)
                 }) {
                     LazyVStack {
                         Spacer(minLength: 10)
@@ -100,7 +116,11 @@ struct WalletView: View {
                             coinSectionView
                             ForEach(vm.mCoinItems, id: \.token.symbol) { coin in
                                 Button {
-                                    Router.route(to: RouteMap.Wallet.tokenDetail(coin.token, WalletManager.shared.accessibleManager.isAccessible(coin.token)))
+                                    Router.route(to: RouteMap.Wallet.tokenDetail(
+                                        coin.token,
+                                        WalletManager.shared.accessibleManager
+                                            .isAccessible(coin.token)
+                                    ))
                                 } label: {
                                     CoinCell(coin: coin)
                                         .contentShape(Rectangle())
@@ -112,7 +132,10 @@ struct WalletView: View {
                         .listRowInsets(.zero)
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.LL.Neutrals.background)
-                        .visibility(vm.walletState == .idle || vm.needShowPlaceholder ? .visible : .gone)
+                        .visibility(
+                            vm.walletState == .idle || vm
+                                .needShowPlaceholder ? .visible : .gone
+                        )
                     }
                 }
                 .listStyle(.plain)
@@ -229,8 +252,12 @@ struct WalletView: View {
         }
     }
 
-    func actionButton(imageName: String, text: String? = nil, action: @escaping () -> Void) -> some View {
-        return Button {
+    func actionButton(
+        imageName: String,
+        text: String? = nil,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button {
             action()
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         } label: {
@@ -269,7 +296,8 @@ struct WalletView: View {
                 }
 
                 if currentNetwork.isMainnet || currentNetwork == .testnet {
-                    if let swapStatus = RemoteConfigManager.shared.config?.features.swap, swapStatus == true {
+                    if let swapStatus = RemoteConfigManager.shared.config?.features.swap,
+                       swapStatus == true {
                         Spacer()
                         actionButton(imageName: "wallet-swap-stroke") {
                             Router.route(to: RouteMap.Wallet.swap(nil))
@@ -291,13 +319,17 @@ struct WalletView: View {
 
     var coinSectionView: some View {
         HStack(spacing: 12) {
-            Text(vm.coinItems.count == 1 ? "x_coin".localized(vm.coinItems.count) : "x_coins".localized(vm.coinItems.count))
-                .foregroundColor(.LL.Neutrals.text)
-                .font(.inter(size: 18, weight: .bold))
+            Text(
+                vm.coinItems.count == 1 ? "x_coin".localized(vm.coinItems.count) : "x_coins"
+                    .localized(vm.coinItems.count)
+            )
+            .foregroundColor(.LL.Neutrals.text)
+            .font(.inter(size: 18, weight: .bold))
 
             Spacer()
 
-            if RemoteConfigManager.shared.config?.features.onRamp ?? false == true && flow.chainID == .mainnet {
+            if RemoteConfigManager.shared.config?.features.onRamp ?? false == true && flow
+                .chainID == .mainnet {
                 Button {
                     UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                     Router.route(to: RouteMap.Wallet.buyCrypto)
@@ -365,10 +397,10 @@ struct WalletView: View {
 
 extension WalletView {
     struct CardView: View {
-        @EnvironmentObject var vm: WalletViewModel
+        // MARK: Internal
 
-        @AppStorage("WalletCardBackrgound")
-        private var walletCardBackrgound: String = "fade:0"
+        @EnvironmentObject
+        var vm: WalletViewModel
 
         var body: some View {
             VStack(spacing: 0) {
@@ -377,8 +409,12 @@ extension WalletView {
                         .frame(maxWidth: .infinity)
                         .frame(height: CardViewHeight)
                         .padding(.horizontal, 18)
-                        .shadow(color: CardBackground(value: walletCardBackrgound).color.opacity(0.1),
-                                radius: 20, x: 0, y: 8)
+                        .shadow(
+                            color: CardBackground(value: walletCardBackrgound).color.opacity(0.1),
+                            radius: 20,
+                            x: 0,
+                            y: 8
+                        )
 
                     cardView
                         .padding(.horizontal, 18)
@@ -454,10 +490,14 @@ extension WalletView {
 
                     Spacer()
 
-                    Text(vm.isHidden ? "****" : "\(CurrencyCache.cache.currencySymbol) \(vm.balance.formatCurrencyString(considerCustomCurrency: true))")
-                        .foregroundColor(.white)
-                        .font(.inter(size: 28, weight: .bold))
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text(
+                        vm
+                            .isHidden ? "****" :
+                            "\(CurrencyCache.cache.currencySymbol) \(vm.balance.formatCurrencyString(considerCustomCurrency: true))"
+                    )
+                    .foregroundColor(.white)
+                    .font(.inter(size: 28, weight: .bold))
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                     Spacer()
 
@@ -466,11 +506,14 @@ extension WalletView {
                             vm.copyAddressAction()
                         } label: {
                             HStack(spacing: 8) {
-                                Text(vm.isHidden ? "******************" : WalletManager.shared.selectedAccountAddress)
-                                    .foregroundColor(Color(hex: "#FDFBF9"))
-                                    .font(.inter(size: 15, weight: .bold))
-                                    .lineLimit(1)
-                                    .truncationMode(.middle)
+                                Text(
+                                    vm.isHidden ? "******************" : WalletManager.shared
+                                        .selectedAccountAddress
+                                )
+                                .foregroundColor(Color(hex: "#FDFBF9"))
+                                .font(.inter(size: 15, weight: .bold))
+                                .lineLimit(1)
+                                .truncationMode(.middle)
                                 Image("icon-address-copy")
                                     .frame(width: 25, height: 25)
                             }
@@ -512,7 +555,8 @@ extension WalletView {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .blur(radius: 6)
 
-                LinearGradient(colors:
+                LinearGradient(
+                    colors:
                     [
                         Color(hex: "#333333"),
                         Color(hex: "#333333"),
@@ -520,15 +564,23 @@ extension WalletView {
                         Color(hex: "#333333").opacity(0.32),
                     ],
                     startPoint: .leading,
-                    endPoint: .trailing)
+                    endPoint: .trailing
+                )
             }
         }
+
+        // MARK: Private
+
+        @AppStorage("WalletCardBackrgound")
+        private var walletCardBackrgound: String = "fade:0"
     }
 
     struct CoinCell: View {
         let coin: WalletViewModel.WalletCoinItemModel
-        @EnvironmentObject var vm: WalletViewModel
-        @StateObject var stakingManager = StakingManager.shared
+        @EnvironmentObject
+        var vm: WalletViewModel
+        @StateObject
+        var stakingManager = StakingManager.shared
 
         var body: some View {
             VStack(spacing: 0) {
@@ -551,9 +603,11 @@ extension WalletView {
 
                             Spacer()
 
-                            Text("\(vm.isHidden ? "****" : coin.balance.formatCurrencyString()) \(coin.token.symbol?.uppercased() ?? "?")")
-                                .foregroundColor(.LL.Neutrals.text)
-                                .font(.inter(size: 14, weight: .medium))
+                            Text(
+                                "\(vm.isHidden ? "****" : coin.balance.formatCurrencyString()) \(coin.token.symbol?.uppercased() ?? "?")"
+                            )
+                            .foregroundColor(.LL.Neutrals.text)
+                            .font(.inter(size: 14, weight: .medium))
                         }
 
                         HStack {
@@ -570,7 +624,10 @@ extension WalletView {
                                     .background(coin.changeBG)
                                     .cornerRadius(11, style: .continuous)
                             }
-                            .visibility(WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .visible : .gone)
+                            .visibility(
+                                WalletManager.shared.accessibleManager
+                                    .isAccessible(coin.token) ? .visible : .gone
+                            )
 
                             Text("Inaccessible".localized)
                                 .foregroundStyle(Color.Flow.Font.inaccessible)
@@ -579,13 +636,20 @@ extension WalletView {
                                 .padding(.vertical, 5)
                                 .background(.Flow.Font.inaccessible.opacity(0.16))
                                 .cornerRadius(4, style: .continuous)
-                                .visibility(WalletManager.shared.accessibleManager.isAccessible(coin.token) ? .gone : .visible)
+                                .visibility(
+                                    WalletManager.shared.accessibleManager
+                                        .isAccessible(coin.token) ? .gone : .visible
+                                )
 
                             Spacer()
 
-                            Text(vm.isHidden ? "****" : "\(CurrencyCache.cache.currencySymbol)\(coin.balanceAsCurrentCurrency)")
-                                .foregroundColor(.LL.Neutrals.neutrals7)
-                                .font(.inter(size: 14, weight: .regular))
+                            Text(
+                                vm
+                                    .isHidden ? "****" :
+                                    "\(CurrencyCache.cache.currencySymbol)\(coin.balanceAsCurrentCurrency)"
+                            )
+                            .foregroundColor(.LL.Neutrals.neutrals7)
+                            .font(.inter(size: 14, weight: .regular))
                         }
                     }
                     .frame(maxWidth: .infinity)
@@ -618,9 +682,11 @@ extension WalletView {
 
                         Spacer()
 
-                        Text("\(vm.isHidden ? "****" : stakingManager.stakingCount.formatCurrencyString()) FLOW")
-                            .foregroundColor(.LL.Neutrals.text)
-                            .font(.inter(size: 14, weight: .medium))
+                        Text(
+                            "\(vm.isHidden ? "****" : stakingManager.stakingCount.formatCurrencyString()) FLOW"
+                        )
+                        .foregroundColor(.LL.Neutrals.text)
+                        .font(.inter(size: 14, weight: .medium))
                     }
                 }
                 .padding(.leading, 19)
@@ -630,10 +696,11 @@ extension WalletView {
     }
 }
 
-// MARK: - Helper
+// MARK: - ViewOffsetKey
 
 private struct ViewOffsetKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
+
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = nextValue()
     }

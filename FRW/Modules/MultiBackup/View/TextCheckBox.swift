@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct TextCheckBox: View {
+    // MARK: Internal
+
     var text: String
     var callback: (String, Bool) -> Void
-
-    @State private var isCheck: Bool = false
 
     var body: some View {
         HStack(alignment: .center, spacing: 18) {
@@ -39,9 +39,16 @@ struct TextCheckBox: View {
             callback(text, isCheck)
         }
     }
+
+    // MARK: Private
+
+    @State
+    private var isCheck: Bool = false
 }
 
 #Preview {
-    TextCheckBox(text: "I understand if I lose my recovery phrase, I may not be able to recover my account.") { _, _ in
+    TextCheckBox(
+        text: "I understand if I lose my recovery phrase, I may not be able to recover my account."
+    ) { _, _ in
     }
 }

@@ -9,12 +9,16 @@ import Combine
 import SwiftUI
 import SwiftUIPager
 
+// MARK: - OnBoardingViewModel.PageType
+
 extension OnBoardingViewModel {
     enum PageType: String, CaseIterable {
         case nft
         case token
 //        case domain
         case site
+
+        // MARK: Internal
 
         /// Basically only used in the text color of skip button
         var needLightContent: Bool {
@@ -40,18 +44,34 @@ extension OnBoardingViewModel {
         }
 
         var imageName: String {
-            return "onboarding-img-\(rawValue)"
+            "onboarding-img-\(rawValue)"
         }
 
         var title: String {
-            return "onboarding_title_\(rawValue)".localized
+            "onboarding_title_\(rawValue)".localized
         }
     }
 }
 
+// MARK: - OnBoardingViewModel
+
 class OnBoardingViewModel: ObservableObject {
-    @Published var currentPageIndex: Int = 0
-    @Published var page: Page = .first()
+    @Published
+    var currentPageIndex: Int = 0
+    @Published
+    var page: Page = .first()
+
+    var totalPages: Int {
+        PageType.count
+    }
+
+    var currentPageType: PageType {
+        PageType.allCases[currentPageIndex]
+    }
+
+    var isLastPage: Bool {
+        currentPageIndex == totalPages - 1
+    }
 
     static func installPage() -> [OnBoardingViewModel.PageType] {
         let pages = [
@@ -60,18 +80,6 @@ class OnBoardingViewModel: ObservableObject {
             OnBoardingViewModel.PageType.site,
         ]
         return pages
-    }
-
-    var totalPages: Int {
-        return PageType.count
-    }
-
-    var currentPageType: PageType {
-        return PageType.allCases[currentPageIndex]
-    }
-
-    var isLastPage: Bool {
-        return currentPageIndex == totalPages - 1
     }
 
     func onSkipBtnAction() {

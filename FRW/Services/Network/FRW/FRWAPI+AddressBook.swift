@@ -8,6 +8,8 @@
 import Foundation
 import Moya
 
+// MARK: - FRWAPI.AddressBook
+
 extension FRWAPI {
     enum AddressBook {
         case addExternal(AddressBookAddRequest)
@@ -17,13 +19,15 @@ extension FRWAPI {
     }
 }
 
+// MARK: - FRWAPI.AddressBook + TargetType, AccessTokenAuthorizable
+
 extension FRWAPI.AddressBook: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
-        return .bearer
+        .bearer
     }
 
     var baseURL: URL {
-        return Config.get(.lilico)
+        Config.get(.lilico)
     }
 
     var path: String {
@@ -55,13 +59,16 @@ extension FRWAPI.AddressBook: TargetType, AccessTokenAuthorizable {
         case let .addExternal(request):
             return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         case let .delete(contactId):
-            return .requestParameters(parameters: ["id": contactId], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: ["id": contactId],
+                encoding: URLEncoding.queryString
+            )
         case let .edit(request):
             return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         }
     }
 
     var headers: [String: String]? {
-        return FRWAPI.commonHeaders
+        FRWAPI.commonHeaders
     }
 }

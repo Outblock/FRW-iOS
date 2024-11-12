@@ -8,22 +8,50 @@
 
 import SwiftUI
 
+// MARK: - CapusuleGroupView
+
 struct CapusuleGroupView: View {
     let likeColor: Color
 
     // MARK: - variables
 
-    @Binding var isAnimating: Bool
+    @Binding
+    var isAnimating: Bool
 
     // MARK: - views
 
     var body: some View {
         ZStack {
-            ShrinkingCapsule(likeColor: likeColor, rotationAngle: .zero, offset: CGSize(width: 0, height: -15), isAnimating: $isAnimating)
-            ShrinkingCapsule(likeColor: likeColor, rotationAngle: .degrees(-33), offset: CGSize(width: -40, height: 7.5), isAnimating: $isAnimating)
-            ShrinkingCapsule(likeColor: likeColor, rotationAngle: .degrees(33), offset: CGSize(width: 40, height: 7.5), isAnimating: $isAnimating)
-            ShrinkingCapsule(likeColor: likeColor, rotationAngle: .degrees(-65), offset: CGSize(width: -67, height: 35), isAnimating: $isAnimating)
-            ShrinkingCapsule(likeColor: likeColor, rotationAngle: .degrees(65), offset: CGSize(width: 67, height: 35), isAnimating: $isAnimating)
+            ShrinkingCapsule(
+                likeColor: likeColor,
+                rotationAngle: .zero,
+                offset: CGSize(width: 0, height: -15),
+                isAnimating: $isAnimating
+            )
+            ShrinkingCapsule(
+                likeColor: likeColor,
+                rotationAngle: .degrees(-33),
+                offset: CGSize(width: -40, height: 7.5),
+                isAnimating: $isAnimating
+            )
+            ShrinkingCapsule(
+                likeColor: likeColor,
+                rotationAngle: .degrees(33),
+                offset: CGSize(width: 40, height: 7.5),
+                isAnimating: $isAnimating
+            )
+            ShrinkingCapsule(
+                likeColor: likeColor,
+                rotationAngle: .degrees(-65),
+                offset: CGSize(width: -67, height: 35),
+                isAnimating: $isAnimating
+            )
+            ShrinkingCapsule(
+                likeColor: likeColor,
+                rotationAngle: .degrees(65),
+                offset: CGSize(width: 67, height: 35),
+                isAnimating: $isAnimating
+            )
             LowerCapsuleView(likeColor: likeColor, isAnimating: $isAnimating)
         }
         .onTapGesture {
@@ -31,6 +59,8 @@ struct CapusuleGroupView: View {
         }
     }
 }
+
+// MARK: - UpperCapsuleView_Previews
 
 struct UpperCapsuleView_Previews: PreviewProvider {
     static var previews: some View {

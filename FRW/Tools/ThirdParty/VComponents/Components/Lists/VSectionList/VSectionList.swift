@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Section List
+// MARK: - VSectionList
 
 /// Sectioned container component that draws a background, and computes views on demad from an underlying collection of identified data.
 ///
@@ -75,20 +75,8 @@ public struct VSectionList<Section, Row, HeaderContent, FooterContent, RowConten
     Row == Section.VSectionListRowViewModelable,
     HeaderContent: View,
     FooterContent: View,
-    RowContent: View
-{
-    // MARK: Properties
-
-    private let model: VSectionListModel
-
-    private let layoutType: VSectionListLayoutType
-
-    private let sections: [Section]
-
-    private let headerContent: ((Section) -> HeaderContent)?
-    private let footerContent: ((Section) -> FooterContent)?
-
-    private let rowContent: (Row) -> RowContent
+    RowContent: View {
+    // MARK: Lifecycle
 
     // MARK: Initializers - Header and Footer
 
@@ -118,8 +106,7 @@ public struct VSectionList<Section, Row, HeaderContent, FooterContent, RowConten
         footerContent: @escaping (Section) -> FooterContent,
         @ViewBuilder rowContent: @escaping (Row) -> RowContent
     )
-        where HeaderContent == VBaseHeaderFooter
-    {
+        where HeaderContent == VBaseHeaderFooter {
         self.init(
             model: model,
             layout: layoutType,
@@ -146,8 +133,7 @@ public struct VSectionList<Section, Row, HeaderContent, FooterContent, RowConten
         footerTitle: @escaping (Section) -> String,
         @ViewBuilder rowContent: @escaping (Row) -> RowContent
     )
-        where FooterContent == VBaseHeaderFooter
-    {
+        where FooterContent == VBaseHeaderFooter {
         self.init(
             model: model,
             layout: layoutType,
@@ -176,8 +162,7 @@ public struct VSectionList<Section, Row, HeaderContent, FooterContent, RowConten
     )
         where
         HeaderContent == VBaseHeaderFooter,
-        FooterContent == VBaseHeaderFooter
-    {
+        FooterContent == VBaseHeaderFooter {
         self.init(
             model: model,
             layout: layoutType,
@@ -212,13 +197,12 @@ public struct VSectionList<Section, Row, HeaderContent, FooterContent, RowConten
         headerContent: @escaping (Section) -> HeaderContent,
         @ViewBuilder rowContent: @escaping (Row) -> RowContent
     )
-        where FooterContent == Never
-    {
+        where FooterContent == Never {
         self.model = model
         self.layoutType = layoutType
         self.sections = sections
         self.headerContent = headerContent
-        footerContent = nil
+        self.footerContent = nil
         self.rowContent = rowContent
     }
 
@@ -232,8 +216,7 @@ public struct VSectionList<Section, Row, HeaderContent, FooterContent, RowConten
     )
         where
         HeaderContent == VBaseHeaderFooter,
-        FooterContent == Never
-    {
+        FooterContent == Never {
         self.init(
             model: model,
             layout: layoutType,
@@ -260,12 +243,11 @@ public struct VSectionList<Section, Row, HeaderContent, FooterContent, RowConten
         footerContent: @escaping (Section) -> FooterContent,
         @ViewBuilder rowContent: @escaping (Row) -> RowContent
     )
-        where HeaderContent == Never
-    {
+        where HeaderContent == Never {
         self.model = model
         self.layoutType = layoutType
         self.sections = sections
-        headerContent = nil
+        self.headerContent = nil
         self.footerContent = footerContent
         self.rowContent = rowContent
     }
@@ -280,8 +262,7 @@ public struct VSectionList<Section, Row, HeaderContent, FooterContent, RowConten
     )
         where
         HeaderContent == Never,
-        FooterContent == VBaseHeaderFooter
-    {
+        FooterContent == VBaseHeaderFooter {
         self.init(
             model: model,
             layout: layoutType,
@@ -309,15 +290,16 @@ public struct VSectionList<Section, Row, HeaderContent, FooterContent, RowConten
     )
         where
         HeaderContent == Never,
-        FooterContent == Never
-    {
+        FooterContent == Never {
         self.model = model
         self.layoutType = layoutType
         self.sections = sections
-        headerContent = nil
-        footerContent = nil
+        self.headerContent = nil
+        self.footerContent = nil
         self.rowContent = rowContent
     }
+
+    // MARK: Public
 
     // MARK: Body
 
@@ -333,6 +315,21 @@ public struct VSectionList<Section, Row, HeaderContent, FooterContent, RowConten
             .frame(maxWidth: .infinity)
         })
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VSectionListModel
+
+    private let layoutType: VSectionListLayoutType
+
+    private let sections: [Section]
+
+    private let headerContent: ((Section) -> HeaderContent)?
+    private let footerContent: ((Section) -> FooterContent)?
+
+    private let rowContent: (Row) -> RowContent
 
     private var contentView: some View {
         ForEach(sections.enumeratedArray(), id: \.element.id, content: { i, section in
@@ -363,7 +360,8 @@ public struct VSectionList<Section, Row, HeaderContent, FooterContent, RowConten
             .padding(.top, model.layout.footerMarginTop)
     }
 
-    @ViewBuilder private func padding(i: Int) -> some View {
+    @ViewBuilder
+    private func padding(i: Int) -> some View {
         if showSectionSpacing(for: i) {
             Spacer()
                 .frame(height: model.layout.sectionSpacing)
@@ -377,49 +375,10 @@ public struct VSectionList<Section, Row, HeaderContent, FooterContent, RowConten
     }
 }
 
-// MARK: - Preview
+// MARK: - VSectionList_Previews
 
 struct VSectionList_Previews: PreviewProvider {
-    private struct Section: VSectionListSectionViewModelable {
-        let id: Int
-        let title: String
-        let rows: [Row]
-
-        static var count: Int { 2 }
-    }
-
-    private struct Row: Identifiable {
-        let id: Int
-        let color: Color
-        let title: String
-
-        static var count: Int { 3 }
-    }
-
-    private static var sections: [Section] {
-        (0 ..< Section.count).map { i in
-            .init(
-                id: i,
-
-                title: spellOut(i + 1),
-
-                rows: (0 ..< Row.count).map { ii in
-                    let num: Int = i * Row.count + ii + 1
-                    return .init(
-                        id: num,
-                        color: [.red, .green, .blue][ii],
-                        title: spellOut(num)
-                    )
-                }
-            )
-        }
-    }
-
-    private static func spellOut(_ i: Int) -> String {
-        let formatter: NumberFormatter = .init()
-        formatter.numberStyle = .spellOut
-        return formatter.string(from: .init(value: i))?.capitalized ?? ""
-    }
+    // MARK: Internal
 
     static var previews: some View {
         ZStack(alignment: .top, content: {
@@ -439,5 +398,48 @@ struct VSectionList_Previews: PreviewProvider {
             )
             .padding(20)
         })
+    }
+
+    // MARK: Private
+
+    private struct Section: VSectionListSectionViewModelable {
+        static var count: Int { 2 }
+
+        let id: Int
+        let title: String
+        let rows: [Row]
+    }
+
+    private struct Row: Identifiable {
+        static var count: Int { 3 }
+
+        let id: Int
+        let color: Color
+        let title: String
+    }
+
+    private static var sections: [Section] {
+        (0..<Section.count).map { i in
+            .init(
+                id: i,
+
+                title: spellOut(i + 1),
+
+                rows: (0..<Row.count).map { ii in
+                    let num: Int = i * Row.count + ii + 1
+                    return .init(
+                        id: num,
+                        color: [.red, .green, .blue][ii],
+                        title: spellOut(num)
+                    )
+                }
+            )
+        }
+    }
+
+    private static func spellOut(_ i: Int) -> String {
+        let formatter: NumberFormatter = .init()
+        formatter.numberStyle = .spellOut
+        return formatter.string(from: .init(value: i))?.capitalized ?? ""
     }
 }

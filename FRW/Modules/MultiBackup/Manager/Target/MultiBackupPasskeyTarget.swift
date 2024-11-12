@@ -17,7 +17,7 @@ class MultiBackupPasskeyTarget: MultiBackupTarget {
     func upload(password _: String) async throws {}
 
     func getCurrentDriveItems() async throws -> [MultiBackupManager.StoreItem] {
-        return []
+        []
     }
 
     func removeItem(password _: String) async throws {}

@@ -10,12 +10,7 @@ import Haneke
 import SwiftUI
 
 class RecentListCache: ObservableObject {
-    static let cache = RecentListCache()
-    private let recentListKey = "recent_list_cache"
-
-    @Published var list: [Contact] = []
-
-    private var cancelSet = Set<AnyCancellable>()
+    // MARK: Lifecycle
 
     init() {
         UserManager.shared.$activatedUID
@@ -30,6 +25,40 @@ class RecentListCache: ObservableObject {
 
         loadFromCache()
     }
+
+    // MARK: Internal
+
+    static let cache = RecentListCache()
+
+    @Published
+    var list: [Contact] = []
+
+    func append(contact: Contact) {
+        var existIndex = -1
+        var existContact: Contact?
+        for (index, tempContact) in list.enumerated() {
+            if tempContact.uniqueId == contact.uniqueId {
+                existIndex = index
+                existContact = tempContact
+                break
+            }
+        }
+
+        if let existContact = existContact {
+            list.remove(at: existIndex)
+            list.insert(existContact, at: 0)
+        } else {
+            list.insert(contact, at: 0)
+        }
+
+        saveToCache()
+    }
+
+    // MARK: Private
+
+    private let recentListKey = "recent_list_cache"
+
+    private var cancelSet = Set<AnyCancellable>()
 
     private func loadFromCache() {
         Shared.dataCache.fetch(key: recentListKey).onSuccess { data in
@@ -55,27 +84,6 @@ class RecentListCache: ObservableObject {
 
     private func clear() {
         list.removeAll()
-        saveToCache()
-    }
-
-    func append(contact: Contact) {
-        var existIndex = -1
-        var existContact: Contact?
-        for (index, tempContact) in list.enumerated() {
-            if tempContact.uniqueId == contact.uniqueId {
-                existIndex = index
-                existContact = tempContact
-                break
-            }
-        }
-
-        if let existContact = existContact {
-            list.remove(at: existIndex)
-            list.insert(existContact, at: 0)
-        } else {
-            list.insert(contact, at: 0)
-        }
-
         saveToCache()
     }
 }

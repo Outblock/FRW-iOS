@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Square Button
+// MARK: - VSquareButton
 
 /// Squared colored button component that performs action when triggered.
 ///
@@ -27,17 +27,7 @@ import SwiftUI
 ///     }
 ///
 public struct VSquareButton<Content>: View where Content: View {
-    // MARK: Properties
-
-    private let model: VSquareButtonModel
-
-    private let state: VSquareButtonState
-    @State private var internalStateRaw: VSquareButtonInternalState?
-    private var internalState: VSquareButtonInternalState { internalStateRaw ?? .default(state: state) }
-
-    private let action: () -> Void
-
-    private let content: () -> Content
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -61,8 +51,7 @@ public struct VSquareButton<Content>: View where Content: View {
         action: @escaping () -> Void,
         title: String
     )
-        where Content == VText
-    {
+        where Content == VText {
         self.init(
             model: model,
             state: state,
@@ -78,6 +67,8 @@ public struct VSquareButton<Content>: View where Content: View {
         )
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -88,6 +79,23 @@ public struct VSquareButton<Content>: View where Content: View {
             gesture: gestureHandler,
             content: { hitBoxButtonView }
         )
+    }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VSquareButtonModel
+
+    private let state: VSquareButtonState
+    @State
+    private var internalStateRaw: VSquareButtonInternalState?
+    private let action: () -> Void
+
+    private let content: () -> Content
+
+    private var internalState: VSquareButtonInternalState {
+        internalStateRaw ?? .default(state: state)
     }
 
     private var hitBoxButtonView: some View {
@@ -115,10 +123,14 @@ public struct VSquareButton<Content>: View where Content: View {
             .foregroundColor(model.colors.background.for(internalState))
     }
 
-    @ViewBuilder private var border: some View {
+    @ViewBuilder
+    private var border: some View {
         if model.layout.hasBorder {
             RoundedRectangle(cornerRadius: model.layout.cornerRadius)
-                .strokeBorder(model.colors.border.for(internalState), lineWidth: model.layout.borderWidth)
+                .strokeBorder(
+                    model.colors.border.for(internalState),
+                    lineWidth: model.layout.borderWidth
+                )
         }
     }
 
@@ -126,10 +138,8 @@ public struct VSquareButton<Content>: View where Content: View {
 
     private func syncInternalStateWithState() {
         DispatchQueue.main.async {
-            if
-                internalStateRaw == nil ||
-                .init(internalState: internalState) != state
-            {
+            if internalStateRaw == nil ||
+                .init(internalState: internalState) != state {
                 internalStateRaw = .default(state: state)
             }
         }
@@ -143,7 +153,7 @@ public struct VSquareButton<Content>: View where Content: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - VSquareButton_Previews
 
 struct VSquareButton_Previews: PreviewProvider {
     static var previews: some View {

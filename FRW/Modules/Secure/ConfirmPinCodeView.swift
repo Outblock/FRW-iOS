@@ -19,16 +19,22 @@ extension ConfirmPinCodeView {
     }
 }
 
+// MARK: - ConfirmPinCodeView
+
 struct ConfirmPinCodeView: RouteableView {
-    @StateObject var viewModel: ConfirmPinCodeViewModel
-    @FocusState private var pinCodeViewIsFocus: Bool
+    // MARK: Lifecycle
 
     init(lastPin: String) {
         _viewModel = StateObject(wrappedValue: ConfirmPinCodeViewModel(pin: lastPin))
     }
 
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: ConfirmPinCodeViewModel
+
     var title: String {
-        return ""
+        ""
     }
 
     var body: some View {
@@ -80,7 +86,14 @@ struct ConfirmPinCodeView: RouteableView {
         .background(Color.LL.background, ignoresSafeAreaEdges: .all)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    @FocusState
+    private var pinCodeViewIsFocus: Bool
 }
+
+// MARK: - ConfirmPinCodeView_Previews
 
 struct ConfirmPinCodeView_Previews: PreviewProvider {
     static var previews: some View {

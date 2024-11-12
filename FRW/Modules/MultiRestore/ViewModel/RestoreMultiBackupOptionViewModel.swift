@@ -8,8 +8,7 @@
 import Foundation
 
 class RestoreMultiBackupOptionViewModel: ObservableObject {
-    @Published var list: [BackupMultiViewModel.MultiItem] = []
-    @Published var nextable: Bool = false
+    // MARK: Lifecycle
 
     init() {
         for type in MultiBackupType.allCases {
@@ -18,6 +17,13 @@ class RestoreMultiBackupOptionViewModel: ObservableObject {
             }
         }
     }
+
+    // MARK: Internal
+
+    @Published
+    var list: [BackupMultiViewModel.MultiItem] = []
+    @Published
+    var nextable: Bool = false
 
     func onClick(item: BackupMultiViewModel.MultiItem) {
         list = list.map { model in

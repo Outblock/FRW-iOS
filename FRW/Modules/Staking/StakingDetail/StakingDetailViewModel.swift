@@ -9,10 +9,7 @@ import Combine
 import SwiftUI
 
 class StakingDetailViewModel: ObservableObject {
-    @Published var provider: StakingProvider
-    @Published var node: StakingNode
-
-    private var cancelSets = Set<AnyCancellable>()
+    // MARK: Lifecycle
 
     init(provider: StakingProvider, node: StakingNode) {
         self.provider = provider
@@ -24,12 +21,20 @@ class StakingDetailViewModel: ObservableObject {
             }
 
             DispatchQueue.main.async {
-                if let newNode = nodes.first(where: { $0.id == self.node.id && $0.nodeID == self.node.nodeID }) {
+                if let newNode = nodes
+                    .first(where: { $0.id == self.node.id && $0.nodeID == self.node.nodeID }) {
                     self.node = newNode
                 }
             }
         }.store(in: &cancelSets)
     }
+
+    // MARK: Internal
+
+    @Published
+    var provider: StakingProvider
+    @Published
+    var node: StakingNode
 
     var availableAmount: Double {
         let balance = WalletManager.shared.getBalance(bySymbol: "flow")
@@ -44,7 +49,8 @@ class StakingDetailViewModel: ObservableObject {
         }
 
         let daySeconds = Double(24 * 60 * 60)
-        let progressIndex = Int((now.timeIntervalSince1970 - startDate.timeIntervalSince1970) / daySeconds) + 1
+        let progressIndex =
+            Int((now.timeIntervalSince1970 - startDate.timeIntervalSince1970) / daySeconds) + 1
         return min(progressIndex, 7)
     }
 
@@ -65,7 +71,11 @@ class StakingDetailViewModel: ObservableObject {
         Task {
             do {
                 HUD.loading("staking_claim_rewards".localized)
-                _ = try await StakingManager.shared.claimReward(nodeID: node.nodeID, delegatorId: delegatorId, amount: node.tokensRewarded.decimalValue)
+                _ = try await StakingManager.shared.claimReward(
+                    nodeID: node.nodeID,
+                    delegatorId: delegatorId,
+                    amount: node.tokensRewarded.decimalValue
+                )
                 HUD.dismissLoading()
             } catch {
                 debugPrint(error)
@@ -88,7 +98,11 @@ class StakingDetailViewModel: ObservableObject {
         Task {
             do {
                 HUD.loading("staking_reStake_rewards".localized)
-                _ = try await StakingManager.shared.reStakeReward(nodeID: node.nodeID, delegatorId: delegatorId, amount: node.tokensRewarded.decimalValue)
+                _ = try await StakingManager.shared.reStakeReward(
+                    nodeID: node.nodeID,
+                    delegatorId: delegatorId,
+                    amount: node.tokensRewarded.decimalValue
+                )
                 HUD.dismissLoading()
             } catch {
                 debugPrint(error)
@@ -111,7 +125,11 @@ class StakingDetailViewModel: ObservableObject {
         Task {
             do {
                 HUD.loading()
-                _ = try await StakingManager.shared.claimUnstake(nodeID: node.nodeID, delegatorId: delegatorId, amount: node.tokensUnstaked.decimalValue)
+                _ = try await StakingManager.shared.claimUnstake(
+                    nodeID: node.nodeID,
+                    delegatorId: delegatorId,
+                    amount: node.tokensUnstaked.decimalValue
+                )
                 HUD.dismissLoading()
             } catch {
                 debugPrint(error)
@@ -134,7 +152,11 @@ class StakingDetailViewModel: ObservableObject {
         Task {
             do {
                 HUD.loading()
-                _ = try await StakingManager.shared.reStakeUnstake(nodeID: node.nodeID, delegatorId: delegatorId, amount: node.tokensUnstaked.decimalValue)
+                _ = try await StakingManager.shared.reStakeUnstake(
+                    nodeID: node.nodeID,
+                    delegatorId: delegatorId,
+                    amount: node.tokensUnstaked.decimalValue
+                )
                 HUD.dismissLoading()
             } catch {
                 debugPrint(error)
@@ -147,4 +169,8 @@ class StakingDetailViewModel: ObservableObject {
     func unstakeAction() {
         Router.route(to: RouteMap.Wallet.stakeAmount(provider, isUnstake: true))
     }
+
+    // MARK: Private
+
+    private var cancelSets = Set<AnyCancellable>()
 }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Spinner
+// MARK: - VSpinner
 
 /// Indicator component that indicates activity.
 ///
@@ -20,9 +20,7 @@ import SwiftUI
 ///     }
 ///
 public struct VSpinner: View {
-    // MARK: Proeprties
-
-    private let spinnerType: VSpinnerType
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -33,17 +31,26 @@ public struct VSpinner: View {
         self.spinnerType = spinnerType
     }
 
+    // MARK: Public
+
     // MARK: Body
 
-    @ViewBuilder public var body: some View {
+    @ViewBuilder
+    public var body: some View {
         switch spinnerType {
         case let .continous(model): VSpinnerContinous(model: model)
         case let .dashed(model): VSpinnerDashed(model: model)
         }
     }
+
+    // MARK: Private
+
+    // MARK: Proeprties
+
+    private let spinnerType: VSpinnerType
 }
 
-// MARK: - Preview
+// MARK: - VSpinner_Previews
 
 struct VSpinner_Previews: PreviewProvider {
     static var previews: some View {

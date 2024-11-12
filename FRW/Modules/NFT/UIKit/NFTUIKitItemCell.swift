@@ -12,6 +12,82 @@ import SwiftUI
 import UIKit
 
 class NFTUIKitItemCell: UICollectionViewCell {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    static func calculateSize() -> CGSize {
+        let width = itemWidth()
+        return CGSize(width: width, height: width + 8 + 20 + 2 + 20 + 8)
+    }
+
+    func config(_ item: NFTModel) {
+        self.item = item
+        if let svgStr = item.imageSVGStr {
+            svgView.alpha = 1
+            svgView.loadSVG(svg: svgStr)
+            iconImageView.image = nil
+//            if let img = generateSVGImage(svgString: svgStr) {
+//                iconImageView.image = img
+//            }else {
+//                iconImageView.image = UIImage(named: "placeholder")
+//            }
+
+        } else {
+            svgView.alpha = 0
+            iconImageView.kf.setImage(
+                with: item.isSVG ? item.image.absoluteString.convertedSVGURL() : item.image,
+                placeholder: UIImage(named: "placeholder")
+            )
+        }
+
+        titleLabel.text = item.title
+        descLabel.text = item.subtitle
+        if let info = item.collection, !WalletManager.shared.accessibleManager.isAccessible(info) {
+            descLabel.isHidden = true
+            inaccessibleLabel.isHidden = false
+        } else {
+            descLabel.isHidden = false
+            inaccessibleLabel.isHidden = true
+        }
+    }
+
+    func generateSVGImage(svgString: String) -> UIImage? {
+        let width = NFTUIKitItemCell.itemWidth()
+
+        let svgLayer = SVGLayer()
+        svgLayer.paths = SVGBezierPath.paths(fromSVGString: svgString)
+        let originRect = SVGBoundingRectForPaths(svgLayer.paths)
+        svgLayer.frame = CGRect(
+            x: 0,
+            y: 0,
+            width: width,
+            height: width * originRect.height / originRect.width
+        )
+        return snapshotImage(for: svgLayer)
+    }
+
+    func snapshotImage(for layer: CALayer) -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(layer.bounds.size, false, UIScreen.main.scale)
+        guard let context = UIGraphicsGetCurrentContext() else { return nil }
+        layer.render(in: context)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image
+    }
+
+    // MARK: Private
+
     private var item: NFTModel?
 
     private lazy var iconImageView: UIImageView = {
@@ -77,14 +153,9 @@ class NFTUIKitItemCell: UICollectionViewCell {
         return stackView
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    private static func itemWidth() -> CGFloat {
+        let width = Router.coordinator.window.bounds.size.width
+        return (width - 18 * 3) / 2.0
     }
 
     private func setup() {
@@ -106,63 +177,5 @@ class NFTUIKitItemCell: UICollectionViewCell {
             make.left.right.equalTo(iconImageView)
             make.top.equalTo(iconImageView.snp.bottom).offset(8)
         }
-    }
-
-    func config(_ item: NFTModel) {
-        self.item = item
-        if let svgStr = item.imageSVGStr {
-            svgView.alpha = 1
-            svgView.loadSVG(svg: svgStr)
-            iconImageView.image = nil
-//            if let img = generateSVGImage(svgString: svgStr) {
-//                iconImageView.image = img
-//            }else {
-//                iconImageView.image = UIImage(named: "placeholder")
-//            }
-
-        } else {
-            svgView.alpha = 0
-            iconImageView.kf.setImage(with: item.isSVG ? item.image.absoluteString.convertedSVGURL() : item.image,
-                                      placeholder: UIImage(named: "placeholder"))
-        }
-
-        titleLabel.text = item.title
-        descLabel.text = item.subtitle
-        if let info = item.collection, !WalletManager.shared.accessibleManager.isAccessible(info) {
-            descLabel.isHidden = true
-            inaccessibleLabel.isHidden = false
-        } else {
-            descLabel.isHidden = false
-            inaccessibleLabel.isHidden = true
-        }
-    }
-
-    func generateSVGImage(svgString: String) -> UIImage? {
-        let width = NFTUIKitItemCell.itemWidth()
-
-        let svgLayer = SVGLayer()
-        svgLayer.paths = SVGBezierPath.paths(fromSVGString: svgString)
-        let originRect = SVGBoundingRectForPaths(svgLayer.paths)
-        svgLayer.frame = CGRect(x: 0, y: 0, width: width, height: width * originRect.height / originRect.width)
-        return snapshotImage(for: svgLayer)
-    }
-
-    func snapshotImage(for layer: CALayer) -> UIImage? {
-        UIGraphicsBeginImageContextWithOptions(layer.bounds.size, false, UIScreen.main.scale)
-        guard let context = UIGraphicsGetCurrentContext() else { return nil }
-        layer.render(in: context)
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return image
-    }
-
-    static func calculateSize() -> CGSize {
-        let width = itemWidth()
-        return CGSize(width: width, height: width + 8 + 20 + 2 + 20 + 8)
-    }
-
-    private static func itemWidth() -> CGFloat {
-        let width = Router.coordinator.window.bounds.size.width
-        return (width - 18 * 3) / 2.0
     }
 }

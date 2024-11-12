@@ -7,10 +7,14 @@
 
 import Foundation
 
+// MARK: - CryptoSummaryRequest
+
 struct CryptoSummaryRequest: Codable {
     let provider: String
     let pair: String
 }
+
+// MARK: - CryptoHistoryRequest
 
 struct CryptoHistoryRequest: Codable {
     let provider: String
