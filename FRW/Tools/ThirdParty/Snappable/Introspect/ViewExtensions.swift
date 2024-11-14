@@ -21,6 +21,6 @@ extension View {
 
     /// Finds a `UIScrollView` from a `SwiftUI.ScrollView`, or `SwiftUI.ScrollView` child.
     func sn_introspectScrollView(customize: @escaping (UIScrollView) -> Void) -> some View {
-        return sn_introspect(selector: TargetViewSelector.siblingOfTypeOrAncestor, customize: customize)
+        sn_introspect(selector: TargetViewSelector.siblingOfTypeOrAncestor, customize: customize)
     }
 }

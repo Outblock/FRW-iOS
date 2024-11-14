@@ -7,9 +7,11 @@
 
 import Foundation
 
+// MARK: - FlowModel
+
 struct FlowModel {}
 
-// MARK: struct MetadataViews and substruct
+// MARK: FlowModel.Media
 
 extension FlowModel {
     struct Media: Codable {
@@ -34,14 +36,14 @@ extension FlowModel {
             var squareImage: String?
         }
 
-        static func mock() -> FlowModel.NFTCollection {
-            return FlowModel.NFTCollection(id: "", path: "", display: nil, idList: [])
-        }
-
         var id: String
         var path: String?
         var display: FlowModel.NFTCollection.CollectionDislay?
         var idList: [UInt64]
+
+        static func mock() -> FlowModel.NFTCollection {
+            FlowModel.NFTCollection(id: "", path: "", display: nil, idList: [])
+        }
     }
 
     struct NFTInfo: Codable {
@@ -56,7 +58,7 @@ extension FlowModel {
         let balance: UInt64
 
         static func mock() -> FlowModel.TokenInfo {
-            return TokenInfo(id: " ", balance: 0)
+            TokenInfo(id: " ", balance: 0)
         }
     }
 

@@ -8,9 +8,38 @@
 import Lottie
 import SwiftUI
 
+// MARK: - SyncStatusView
+
 struct SyncStatusView: View {
-    @Binding var syncStatus: SyncAccountStatus
-    @Binding var isPresented: Bool
+    // MARK: Public
+
+    public static let syncModel: VPrimaryButtonModel = {
+        var model: VPrimaryButtonModel = .init()
+
+        model.fonts.title = Font.LL.body.bold()
+        model.colors.textContent = .init(
+            enabled: Color.Theme.Text.black,
+            pressed: Color.Theme.Text.black.opacity(0.5),
+            loading: Color.Theme.Text.black,
+            disabled: Color.Theme.Text.black
+        )
+
+        model.colors.background = .init(
+            enabled: Color.Theme.Accent.green,
+            pressed: Color.Theme.Accent.green.opacity(0.5),
+            loading: Color.Theme.Accent.green,
+            disabled: Color.Theme.Accent.green
+        )
+        model.layout.cornerRadius = 16
+        return model
+    }()
+
+    // MARK: Internal
+
+    @Binding
+    var syncStatus: SyncAccountStatus
+    @Binding
+    var isPresented: Bool
     let animationView = LottieAnimationView(name: "Loading_animation", bundle: .main)
 
     var textColor = Color.white.opacity(0.8)
@@ -36,15 +65,18 @@ struct SyncStatusView: View {
 
             Spacer()
 
-            VPrimaryButton(model: SyncStatusView.syncModel,
-                           action: {
-                               isPresented = false
-                               syncStatus = .idle
-                               Router.popToRoot()
-                           }, title: "start_now".localized)
-                .padding(.bottom, 56)
-                .padding(.horizontal, 18)
-                .visibility(self.syncStatus != SyncAccountStatus.loading ? .visible : .invisible)
+            VPrimaryButton(
+                model: SyncStatusView.syncModel,
+                action: {
+                    isPresented = false
+                    syncStatus = .idle
+                    Router.popToRoot()
+                },
+                title: "start_now".localized
+            )
+            .padding(.bottom, 56)
+            .padding(.horizontal, 18)
+            .visibility(self.syncStatus != SyncAccountStatus.loading ? .visible : .invisible)
         }
         .frame(width: screenWidth, height: screenHeight)
         .ignoresSafeArea()
@@ -95,28 +127,13 @@ struct SyncStatusView: View {
                 .multilineTextAlignment(.center)
         }
     }
-
-    public static let syncModel: VPrimaryButtonModel = {
-        var model: VPrimaryButtonModel = .init()
-
-        model.fonts.title = Font.LL.body.bold()
-        model.colors.textContent = .init(enabled: Color.Theme.Text.black,
-                                         pressed: Color.Theme.Text.black.opacity(0.5),
-                                         loading: Color.Theme.Text.black,
-                                         disabled: Color.Theme.Text.black)
-
-        model.colors.background = .init(enabled: Color.Theme.Accent.green,
-                                        pressed: Color.Theme.Accent.green.opacity(0.5),
-                                        loading: Color.Theme.Accent.green,
-                                        disabled: Color.Theme.Accent.green)
-        model.layout.cornerRadius = 16
-        return model
-    }()
 }
 
 #Preview {
     SyncStatusView(syncStatus: .constant(SyncAccountStatus.loading), isPresented: .constant(true))
 }
+
+// MARK: - FlowLottieView
 
 struct FlowLottieView: UIViewRepresentable {
     var lottieView: LottieAnimationView

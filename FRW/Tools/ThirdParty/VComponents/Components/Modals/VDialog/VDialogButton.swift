@@ -11,12 +11,7 @@ import Foundation
 
 /// ViewModel that creates `VDialog` buttons.
 public struct VDialogButton {
-    // MARK: Properties
-
-    public var model: VDialogButtonModel
-    public var isEnabled: Bool
-    public var title: String
-    public var action: () -> Void
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -32,4 +27,13 @@ public struct VDialogButton {
         self.title = title
         self.action = action
     }
+
+    // MARK: Public
+
+    // MARK: Properties
+
+    public var model: VDialogButtonModel
+    public var isEnabled: Bool
+    public var title: String
+    public var action: () -> Void
 }

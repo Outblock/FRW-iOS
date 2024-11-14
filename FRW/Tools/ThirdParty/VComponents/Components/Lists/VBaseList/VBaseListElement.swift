@@ -10,10 +10,7 @@ import Foundation
 // MARK: - V Base List Element
 
 struct VBaseListElement<ID, Value>: Identifiable where ID: Hashable {
-    // MARK: Properties
-
-    let id: ID
-    let value: Value
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -21,4 +18,11 @@ struct VBaseListElement<ID, Value>: Identifiable where ID: Hashable {
         self.id = id
         self.value = value
     }
+
+    // MARK: Internal
+
+    // MARK: Properties
+
+    let id: ID
+    let value: Value
 }

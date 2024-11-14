@@ -8,6 +8,8 @@
 import SwiftUI
 import UIKit
 
+// MARK: - FlowScanTransfer.TransferType
+
 extension FlowScanTransfer {
     enum TransferType: Int, Codable {
         case unknown = 0
@@ -15,6 +17,8 @@ extension FlowScanTransfer {
         case receive = 2
     }
 }
+
+// MARK: - FlowScanTransfer
 
 struct FlowScanTransfer: Codable {
     let additional_message: String?

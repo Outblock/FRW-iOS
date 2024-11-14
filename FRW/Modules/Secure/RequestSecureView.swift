@@ -18,6 +18,8 @@ extension RequestSecureView {
     }
 }
 
+// MARK: - RequestSecureView
+
 struct RequestSecureView: RouteableView {
     enum Biometric {
         case none
@@ -25,14 +27,17 @@ struct RequestSecureView: RouteableView {
         case touchId
     }
 
-    @StateObject var viewModel = RequestSecureViewModel()
+    @StateObject
+    var viewModel = RequestSecureViewModel()
 
     var model: VPrimaryButtonModel = {
         var model = ButtonStyle.border
-        model.colors.border = .init(enabled: Color.LL.outline,
-                                    pressed: Color.LL.outline,
-                                    loading: Color.LL.outline,
-                                    disabled: Color.LL.outline)
+        model.colors.border = .init(
+            enabled: Color.LL.outline,
+            pressed: Color.LL.outline,
+            loading: Color.LL.outline,
+            disabled: Color.LL.outline
+        )
         model.layout.height = 64
         return model
     }()
@@ -44,7 +49,7 @@ struct RequestSecureView: RouteableView {
     }()
 
     var title: String {
-        return ""
+        ""
     }
 
     var body: some View {
@@ -85,15 +90,21 @@ struct RequestSecureView: RouteableView {
                     viewModel.trigger(.faceID)
                 } content: {
                     HStack(spacing: 15) {
-                        Image(systemName: viewModel.state.biometric == .faceId ? "faceid" : "touchid")
-                            .font(.title2)
-                            .aspectRatio(1, contentMode: .fill)
-                            .frame(width: 30, alignment: .leading)
-                            .foregroundColor(Color.LL.orange)
+                        Image(
+                            systemName: viewModel.state
+                                .biometric == .faceId ? "faceid" : "touchid"
+                        )
+                        .font(.title2)
+                        .aspectRatio(1, contentMode: .fill)
+                        .frame(width: 30, alignment: .leading)
+                        .foregroundColor(Color.LL.orange)
                         VStack(alignment: .leading) {
-                            Text(viewModel.state.biometric == .faceId ? "face_id".localized : "touch_id".localized)
-                                .font(.LL.body)
-                                .fontWeight(.semibold)
+                            Text(
+                                viewModel.state.biometric == .faceId ? "face_id"
+                                    .localized : "touch_id".localized
+                            )
+                            .font(.LL.body)
+                            .fontWeight(.semibold)
                             Text("recommend".localized)
                                 .foregroundColor(Color.LL.orange)
                                 .font(.LL.footnote)
@@ -132,6 +143,8 @@ struct RequestSecureView: RouteableView {
         .applyRouteable(self)
     }
 }
+
+// MARK: - RequestSecureView_Previews
 
 struct RequestSecureView_Previews: PreviewProvider {
     static var previews: some View {

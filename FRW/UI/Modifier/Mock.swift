@@ -7,6 +7,8 @@
 
 import Foundation
 
+// MARK: - Mockable
+
 protocol Mockable {
     static func mock() -> Self
 }
@@ -14,7 +16,7 @@ protocol Mockable {
 extension Array where Element: Mockable {
     static func mock(_ num: Int = 3) -> Self {
         var array = [Element]()
-        for _ in 0 ..< num {
+        for _ in 0..<num {
             array.append(Element.mock())
         }
 
@@ -25,7 +27,7 @@ extension Array where Element: Mockable {
 func randomString(_ num: Int = 6) -> String {
     let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     var randomString = ""
-    for _ in 0 ..< num {
+    for _ in 0..<num {
         let randomValue = arc4random_uniform(UInt32(letters.count))
         let randomIndex = letters.index(letters.startIndex, offsetBy: Int(randomValue))
         let randomLetter = letters[randomIndex]

@@ -28,9 +28,17 @@ extension SPQRCodeData {
 
         static var qr_code_data_text_prefix: String { "qr_code_data_text_prefix".localized }
         static var qr_code_data_url_prefix: String { "qr_code_data_url_prefix".localized }
-        static var qr_code_data_eth_wallet_prefix: String { "qr_code_data_eth_wallet_prefix".localized }
-        static var qr_code_data_flow_wallet_prefix: String { "qr_code_data_flow_wallet_prefix".localized }
-        static var qr_code_data_wallet_connect_prefix: String { "qr_code_data_wallet_connect_prefix".localized }
+        static var qr_code_data_eth_wallet_prefix: String {
+            "qr_code_data_eth_wallet_prefix".localized
+        }
+
+        static var qr_code_data_flow_wallet_prefix: String {
+            "qr_code_data_flow_wallet_prefix".localized
+        }
+
+        static var qr_code_data_wallet_connect_prefix: String {
+            "qr_code_data_wallet_connect_prefix".localized
+        }
 
 //    // MARK: - Internal
 //

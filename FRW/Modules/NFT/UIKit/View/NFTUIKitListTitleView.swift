@@ -10,26 +10,7 @@ import SwiftUI
 import UIKit
 
 class NFTUIKitListTitleView: UIView {
-    private lazy var iconImageView: UIImageView = {
-        let view = UIImageView()
-        view.image = UIImage(named: "nft_logo_collection")?.withRenderingMode(.alwaysTemplate)
-        view.tintColor = UIColor.LL.neutrals1
-        return view
-    }()
-
-    private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .montserratBold(size: 22)
-        label.textColor = UIColor.LL.neutrals1
-        label.text = "collections".localized
-        return label
-    }()
-
-    lazy var switchButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage(named: "nft_logo_grid_layout"), for: .normal)
-        return button
-    }()
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -59,4 +40,29 @@ class NFTUIKitListTitleView: UIView {
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
+
+    lazy var switchButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(named: "nft_logo_grid_layout"), for: .normal)
+        return button
+    }()
+
+    // MARK: Private
+
+    private lazy var iconImageView: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "nft_logo_collection")?.withRenderingMode(.alwaysTemplate)
+        view.tintColor = UIColor.LL.neutrals1
+        return view
+    }()
+
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .montserratBold(size: 22)
+        label.textColor = UIColor.LL.neutrals1
+        label.text = "collections".localized
+        return label
+    }()
 }

@@ -8,15 +8,12 @@
 import Combine
 import UIKit
 
-class iCloudAPI: UIDocument {
-    private(set) var data: Data?
-    private lazy var workingQueue: OperationQueue = {
-        let queue = OperationQueue()
-        queue.maxConcurrentOperationCount = 1
-        return queue
-    }()
+// MARK: - iCloudAPI
 
-    private var cancelSets = Set<AnyCancellable>()
+class iCloudAPI: UIDocument {
+    // MARK: Internal
+
+    private(set) var data: Data?
 
     override func load(fromContents contents: Any, ofType _: String?) throws {
         debugPrint("iCloudAPI -> load")
@@ -47,7 +44,11 @@ class iCloudAPI: UIDocument {
 
         let query = NSMetadataQuery()
         query.operationQueue = workingQueue
-        query.predicate = NSPredicate(format: "%K == %@", NSMetadataItemFSNameKey, BackupManager.backupFileName)
+        query.predicate = NSPredicate(
+            format: "%K == %@",
+            NSMetadataItemFSNameKey,
+            BackupManager.backupFileName
+        )
         query.searchScopes = [
             NSMetadataQueryUbiquitousDocumentsScope,
         ]
@@ -60,27 +61,33 @@ class iCloudAPI: UIDocument {
         }
 
         return try await withCheckedThrowingContinuation { config in
-            NotificationCenter.default.publisher(for: .NSMetadataQueryDidFinishGathering).sink { [weak self] _ in
-                debugPrint("iCloudAPI -> isExist: query callback, resultCount = \(query.resultCount)")
-                query.disableUpdates()
-                query.stop()
-                self?.cancelSets.removeAll()
+            NotificationCenter.default.publisher(for: .NSMetadataQueryDidFinishGathering)
+                .sink { [weak self] _ in
+                    debugPrint(
+                        "iCloudAPI -> isExist: query callback, resultCount = \(query.resultCount)"
+                    )
+                    query.disableUpdates()
+                    query.stop()
+                    self?.cancelSets.removeAll()
 
-                guard let results = query.results as? [NSMetadataItem], let item = results.first else {
-                    debugPrint("iCloudAPI -> isExist: results or item is nil")
-                    config.resume(returning: false)
-                    return
-                }
+                    guard let results = query.results as? [NSMetadataItem],
+                          let item = results.first else {
+                        debugPrint("iCloudAPI -> isExist: results or item is nil")
+                        config.resume(returning: false)
+                        return
+                    }
 
-                guard let isUploaded = item.value(forAttribute: NSMetadataUbiquitousItemIsUploadedKey) as? Bool else {
-                    debugPrint("iCloudAPI -> isExist: checkFileUploadedStatusError")
-                    config.resume(throwing: iCloudBackupError.checkFileUploadedStatusError)
-                    return
-                }
+                    guard let isUploaded = item
+                        .value(forAttribute: NSMetadataUbiquitousItemIsUploadedKey) as? Bool
+                    else {
+                        debugPrint("iCloudAPI -> isExist: checkFileUploadedStatusError")
+                        config.resume(throwing: iCloudBackupError.checkFileUploadedStatusError)
+                        return
+                    }
 
-                debugPrint("iCloudAPI -> isExist: isUploaded = \(isUploaded)")
-                config.resume(returning: isUploaded)
-            }.store(in: &cancelSets)
+                    debugPrint("iCloudAPI -> isExist: isUploaded = \(isUploaded)")
+                    config.resume(returning: isUploaded)
+                }.store(in: &cancelSets)
         }
     }
 
@@ -102,29 +109,45 @@ class iCloudAPI: UIDocument {
         }
 
         return try await withCheckedThrowingContinuation { config in
-            NotificationCenter.default.publisher(for: .NSMetadataQueryDidFinishGathering).sink { [weak self] _ in
-                debugPrint("iCloudAPI -> isExist: query callback, resultCount = \(query.resultCount)")
-                query.disableUpdates()
-                query.stop()
-                self?.cancelSets.removeAll()
+            NotificationCenter.default.publisher(for: .NSMetadataQueryDidFinishGathering)
+                .sink { [weak self] _ in
+                    debugPrint(
+                        "iCloudAPI -> isExist: query callback, resultCount = \(query.resultCount)"
+                    )
+                    query.disableUpdates()
+                    query.stop()
+                    self?.cancelSets.removeAll()
 
-                guard let results = query.results as? [NSMetadataItem], let item = results.first else {
-                    debugPrint("iCloudAPI -> isExist: results or item is nil")
-                    config.resume(returning: false)
-                    return
-                }
+                    guard let results = query.results as? [NSMetadataItem],
+                          let item = results.first else {
+                        debugPrint("iCloudAPI -> isExist: results or item is nil")
+                        config.resume(returning: false)
+                        return
+                    }
 
-                guard let isUploaded = item.value(forAttribute: NSMetadataUbiquitousItemIsUploadedKey) as? Bool else {
-                    debugPrint("iCloudAPI -> isExist: checkFileUploadedStatusError")
-                    config.resume(throwing: iCloudBackupError.checkFileUploadedStatusError)
-                    return
-                }
+                    guard let isUploaded = item
+                        .value(forAttribute: NSMetadataUbiquitousItemIsUploadedKey) as? Bool
+                    else {
+                        debugPrint("iCloudAPI -> isExist: checkFileUploadedStatusError")
+                        config.resume(throwing: iCloudBackupError.checkFileUploadedStatusError)
+                        return
+                    }
 
-                debugPrint("iCloudAPI -> isExist: isUploaded = \(isUploaded)")
-                config.resume(returning: isUploaded)
-            }.store(in: &cancelSets)
+                    debugPrint("iCloudAPI -> isExist: isUploaded = \(isUploaded)")
+                    config.resume(returning: isUploaded)
+                }.store(in: &cancelSets)
         }
     }
+
+    // MARK: Private
+
+    private lazy var workingQueue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = 1
+        return queue
+    }()
+
+    private var cancelSets = Set<AnyCancellable>()
 }
 
 extension iCloudAPI {

@@ -7,9 +7,10 @@
 
 import Foundation
 
+// MARK: - CappedCollection
+
 struct CappedCollection<T> {
-    private var elements: [T]
-    var maxCount: Int
+    // MARK: Lifecycle
 
     init(
         elements: [T], maxCount: Int
@@ -17,7 +18,17 @@ struct CappedCollection<T> {
         self.elements = elements
         self.maxCount = maxCount
     }
+
+    // MARK: Internal
+
+    var maxCount: Int
+
+    // MARK: Private
+
+    private var elements: [T]
 }
+
+// MARK: Collection, ExpressibleByArrayLiteral
 
 extension CappedCollection: Collection, ExpressibleByArrayLiteral {
     typealias Index = Int
@@ -27,16 +38,16 @@ extension CappedCollection: Collection, ExpressibleByArrayLiteral {
         arrayLiteral elements: Element...
     ) {
         self.elements = elements
-        maxCount = elements.count
+        self.maxCount = elements.count
     }
 
-    var startIndex: Index { return elements.startIndex }
-    var endIndex: Index { return elements.endIndex }
+    var startIndex: Index { elements.startIndex }
+    var endIndex: Index { elements.endIndex }
 
-    subscript(index: Index) -> Element { return elements[index] }
+    subscript(index: Index) -> Element { elements[index] }
 
     func index(after i: Index) -> Index {
-        return elements.index(after: i)
+        elements.index(after: i)
     }
 
     @discardableResult
@@ -46,7 +57,8 @@ extension CappedCollection: Collection, ExpressibleByArrayLiteral {
     }
 
     @discardableResult
-    mutating func append<C>(contentsOf newElements: C) -> [Element] where C: Collection, CappedCollection.Element == C.Element {
+    mutating func append<C>(contentsOf newElements: C) -> [Element] where C: Collection,
+        CappedCollection.Element == C.Element {
         insert(contentsOf: newElements, at: 0)
         return removeExtraElements()
     }
@@ -58,7 +70,8 @@ extension CappedCollection: Collection, ExpressibleByArrayLiteral {
     }
 
     @discardableResult
-    mutating func insert<C>(contentsOf newElements: C, at i: Int) -> [Element] where C: Collection, CappedCollection.Element == C.Element {
+    mutating func insert<C>(contentsOf newElements: C, at i: Int) -> [Element] where C: Collection,
+        CappedCollection.Element == C.Element {
         elements.insert(contentsOf: newElements, at: i)
         return removeExtraElements()
     }
@@ -67,7 +80,7 @@ extension CappedCollection: Collection, ExpressibleByArrayLiteral {
         guard elements.count > maxCount else { return [] }
 
         var poppedElements: [Element] = []
-        poppedElements.append(contentsOf: elements[maxCount ..< elements.count])
+        poppedElements.append(contentsOf: elements[maxCount..<elements.count])
         elements.removeLast(elements.count - maxCount)
         return poppedElements
     }

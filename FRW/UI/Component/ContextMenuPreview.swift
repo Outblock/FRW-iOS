@@ -7,36 +7,51 @@
 
 import SwiftUI
 
+// MARK: - ContextMenuPreview
+
 struct ContextMenuPreview<Content: View, Preview: View>: View {
-    var content: Content
-    var preview: Preview
+    // MARK: Lifecycle
 
-    var menu: UIMenu
-    var onEnd: () -> Void
-
-    init(@ViewBuilder content: @escaping () -> Content, preview: @escaping () -> Preview, menu: @escaping () -> UIMenu, onEnd: @escaping () -> Void) {
+    init(
+        @ViewBuilder content: @escaping () -> Content,
+        preview: @escaping () -> Preview,
+        menu: @escaping () -> UIMenu,
+        onEnd: @escaping () -> Void
+    ) {
         self.content = content()
         self.preview = preview()
         self.menu = menu()
         self.onEnd = onEnd
     }
 
+    // MARK: Internal
+
+    var content: Content
+    var preview: Preview
+
+    var menu: UIMenu
+    var onEnd: () -> Void
+
     var body: some View {
         ZStack {
             content
                 .hidden()
                 .overlay {
-                    ContextMenuHelper(content: content, preview: preview, actions: menu, onEnd: onEnd)
+                    ContextMenuHelper(
+                        content: content,
+                        preview: preview,
+                        actions: menu,
+                        onEnd: onEnd
+                    )
                 }
         }
     }
 }
 
+// MARK: - ContextMenuHelper
+
 struct ContextMenuHelper<Content: View, Preview: View>: UIViewRepresentable {
-    var content: Content
-    var preview: Preview
-    var actions: UIMenu
-    var onEnd: () -> Void
+    // MARK: Lifecycle
 
     init(content: Content, preview: Preview, actions: UIMenu, onEnd: @escaping () -> Void) {
         self.content = content
@@ -44,6 +59,49 @@ struct ContextMenuHelper<Content: View, Preview: View>: UIViewRepresentable {
         self.actions = actions
         self.onEnd = onEnd
     }
+
+    // MARK: Internal
+
+    class Coordinator: NSObject, UIContextMenuInteractionDelegate {
+        // MARK: Lifecycle
+
+        init(parent: ContextMenuHelper) {
+            self.parent = parent
+        }
+
+        // MARK: Internal
+
+        var parent: ContextMenuHelper
+
+        func contextMenuInteraction(
+            _: UIContextMenuInteraction,
+            configurationForMenuAtLocation _: CGPoint
+        ) -> UIContextMenuConfiguration? {
+            UIContextMenuConfiguration(identifier: nil) {
+                let previewController = UIHostingController(rootView: self.parent.preview)
+                previewController.view.backgroundColor = .clear
+                previewController.view.frame = CGRect(x: 0, y: 0, width: 200, height: 60)
+                return previewController
+            } actionProvider: { _ in
+                self.parent.actions
+            }
+        }
+
+        func contextMenuInteraction(
+            _: UIContextMenuInteraction,
+            willPerformPreviewActionForMenuWith _: UIContextMenuConfiguration,
+            animator: UIContextMenuInteractionCommitAnimating
+        ) {
+            animator.addCompletion {
+                self.parent.onEnd()
+            }
+        }
+    }
+
+    var content: Content
+    var preview: Preview
+    var actions: UIMenu
+    var onEnd: () -> Void
 
     func makeUIView(context: Context) -> some UIView {
         let view = UIView()
@@ -69,35 +127,13 @@ struct ContextMenuHelper<Content: View, Preview: View>: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        return Coordinator(parent: self)
+        Coordinator(parent: self)
     }
 
     func updateUIView(_: UIViewType, context _: Context) {}
-
-    class Coordinator: NSObject, UIContextMenuInteractionDelegate {
-        var parent: ContextMenuHelper
-        init(parent: ContextMenuHelper) {
-            self.parent = parent
-        }
-
-        func contextMenuInteraction(_: UIContextMenuInteraction, configurationForMenuAtLocation _: CGPoint) -> UIContextMenuConfiguration? {
-            return UIContextMenuConfiguration(identifier: nil) {
-                let previewController = UIHostingController(rootView: self.parent.preview)
-                previewController.view.backgroundColor = .clear
-                previewController.view.frame = CGRect(x: 0, y: 0, width: 200, height: 60)
-                return previewController
-            } actionProvider: { _ in
-                self.parent.actions
-            }
-        }
-
-        func contextMenuInteraction(_: UIContextMenuInteraction, willPerformPreviewActionForMenuWith _: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
-            animator.addCompletion {
-                self.parent.onEnd()
-            }
-        }
-    }
 }
+
+// MARK: - ContextMenuPreview_Previews
 
 struct ContextMenuPreview_Previews: PreviewProvider {
     static let children = [
@@ -105,6 +141,7 @@ struct ContextMenuPreview_Previews: PreviewProvider {
             print("Like ")
         },
     ]
+
     static var previews: some View {
         ContextMenuPreview {
             Text("Hello")
@@ -114,15 +151,24 @@ struct ContextMenuPreview_Previews: PreviewProvider {
                 .frame(width: 200, height: 60)
                 .background(Color.purple)
         } menu: {
-            let like = UIAction(title: "top_selection".localized, image: UIImage(named: "nft_logo_star")) { _ in
+            let like = UIAction(
+                title: "top_selection".localized,
+                image: UIImage(named: "nft_logo_star")
+            ) { _ in
                 print("Like ")
             }
 
-            let share = UIAction(title: "share".localized, image: UIImage(systemName: "square.adn.arrow.up.fill")) { _ in
+            let share = UIAction(
+                title: "share".localized,
+                image: UIImage(systemName: "square.adn.arrow.up.fill")
+            ) { _ in
                 print("Share")
             }
 
-            let send = UIAction(title: "send".localized, image: UIImage(systemName: "paperplane")) { _ in
+            let send = UIAction(
+                title: "send".localized,
+                image: UIImage(systemName: "paperplane")
+            ) { _ in
                 print("Share")
             }
 

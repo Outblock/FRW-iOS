@@ -9,6 +9,8 @@ import SwiftUI
 import SwiftUIPager
 import SwiftUIX
 
+// MARK: - WalletSendView.WalletSendViewSelectTargetCallback
+
 // struct WalletSendView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        NavigationView {
@@ -21,9 +23,10 @@ extension WalletSendView {
     typealias WalletSendViewSelectTargetCallback = (Contact) -> Void
 }
 
+// MARK: - WalletSendView
+
 struct WalletSendView: RouteableView {
-    @StateObject private var vm: WalletSendViewModel
-    @FocusState private var searchIsFocused: Bool
+    // MARK: Lifecycle
 
     init(address: String = "", callback: WalletSendView.WalletSendViewSelectTargetCallback? = nil) {
         let vm = WalletSendViewModel(selectCallback: callback)
@@ -31,16 +34,14 @@ struct WalletSendView: RouteableView {
         _vm = StateObject(wrappedValue: vm)
     }
 
+    // MARK: Internal
+
     var title: String {
-        return "send_to".localized
+        "send_to".localized
     }
 
     var navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
-        return .large
-    }
-
-    func backButtonAction() {
-        Router.dismiss()
+        .large
     }
 
     var body: some View {
@@ -70,22 +71,34 @@ struct WalletSendView: RouteableView {
                     Button {
                         vm.changeTabTypeAction(type: .recent)
                     } label: {
-                        SwitchButton(icon: "icon-recent", title: "recent".localized, isSelected: vm.tabType == .recent)
-                            .contentShape(Rectangle())
+                        SwitchButton(
+                            icon: "icon-recent",
+                            title: "recent".localized,
+                            isSelected: vm.tabType == .recent
+                        )
+                        .contentShape(Rectangle())
                     }
 
                     Button {
                         vm.changeTabTypeAction(type: .addressBook)
                     } label: {
-                        SwitchButton(icon: "icon-addressbook", title: "address_book".localized, isSelected: vm.tabType == .addressBook)
-                            .contentShape(Rectangle())
+                        SwitchButton(
+                            icon: "icon-addressbook",
+                            title: "address_book".localized,
+                            isSelected: vm.tabType == .addressBook
+                        )
+                        .contentShape(Rectangle())
                     }
 
                     Button {
                         vm.changeTabTypeAction(type: .accounts)
                     } label: {
-                        SwitchButton(icon: "profile-tab", title: "my_accounts".localized, isSelected: vm.tabType == .accounts)
-                            .contentShape(Rectangle())
+                        SwitchButton(
+                            icon: "profile-tab",
+                            title: "my_accounts".localized,
+                            isSelected: vm.tabType == .accounts
+                        )
+                        .contentShape(Rectangle())
                     }
                 }
 
@@ -117,6 +130,17 @@ struct WalletSendView: RouteableView {
             }
         }
     }
+
+    func backButtonAction() {
+        Router.dismiss()
+    }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm: WalletSendViewModel
+    @FocusState
+    private var searchIsFocused: Bool
 }
 
 // MARK: - Search
@@ -129,10 +153,12 @@ extension WalletSendView {
                 .foregroundStyle(Color.Theme.Text.black8)
             TextField("", text: $vm.searchText)
                 .disableAutocorrection(true)
-                .modifier(PlaceholderStyle(showPlaceHolder: vm.searchText.isEmpty,
-                                           placeholder: "send_search_placeholder".localized,
-                                           font: .inter(size: 14, weight: .medium),
-                                           color: Color.Theme.Text.black3))
+                .modifier(PlaceholderStyle(
+                    showPlaceHolder: vm.searchText.isEmpty,
+                    placeholder: "send_search_placeholder".localized,
+                    font: .inter(size: 14, weight: .medium),
+                    color: Color.Theme.Text.black3
+                ))
                 .submitLabel(.search)
                 .onChange(of: vm.searchText) { st in
                     vm.searchTextDidChangeAction(text: st)
@@ -216,22 +242,24 @@ extension WalletSendView {
     }
 
     var localSearchListView: some View {
-        return VSectionList(model: searchSectionListConfig,
-                            sections: vm.localSearchResults,
-                            headerContent: { section in
-                                searchResultSectionHeader(title: section.title)
-                            },
-                            footerContent: { _ in
-                                Color.clear
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 20)
-                            },
-                            rowContent: { row in
-                                AddressBookView.ContactCell(contact: row)
-                                    .onTapGestureOnBackground {
-                                        vm.sendToTargetAction(target: row)
-                                    }
-                            })
+        VSectionList(
+            model: searchSectionListConfig,
+            sections: vm.localSearchResults,
+            headerContent: { section in
+                searchResultSectionHeader(title: section.title)
+            },
+            footerContent: { _ in
+                Color.clear
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 20)
+            },
+            rowContent: { row in
+                AddressBookView.ContactCell(contact: row)
+                    .onTapGestureOnBackground {
+                        vm.sendToTargetAction(target: row)
+                    }
+            }
+        )
     }
 
     var searchingView: some View {
@@ -254,23 +282,28 @@ extension WalletSendView {
     }
 
     var remoteSearchListView: some View {
-        return VSectionList(model: searchSectionListConfig,
-                            sections: vm.remoteSearchResults,
-                            headerContent: { section in
-                                searchResultSectionHeader(title: section.title)
-                            },
-                            footerContent: { _ in
-                                Color.clear
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 20)
-                            },
-                            rowContent: { row in
-                                AddressBookView.ContactCell(contact: row, showAddBtn: !vm.addressBookVM.isFriend(contact: row)) {
-                                    vm.addContactAction(contact: row)
-                                }.onTapGestureOnBackground {
-                                    vm.sendToTargetAction(target: row)
-                                }
-                            })
+        VSectionList(
+            model: searchSectionListConfig,
+            sections: vm.remoteSearchResults,
+            headerContent: { section in
+                searchResultSectionHeader(title: section.title)
+            },
+            footerContent: { _ in
+                Color.clear
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 20)
+            },
+            rowContent: { row in
+                AddressBookView.ContactCell(
+                    contact: row,
+                    showAddBtn: !vm.addressBookVM.isFriend(contact: row)
+                ) {
+                    vm.addContactAction(contact: row)
+                }.onTapGestureOnBackground {
+                    vm.sendToTargetAction(target: row)
+                }
+            }
+        )
     }
 
     var searchSectionListConfig: VSectionListModel {
@@ -352,7 +385,7 @@ extension WalletSendView {
                         }
                     }
 
-                    if vm.linkedWalletList.count > 0 {
+                    if !vm.linkedWalletList.isEmpty {
                         HStack {
                             Text("linked_account".localized)
                                 .font(.inter(size: 16, weight: .bold))
@@ -377,7 +410,7 @@ extension WalletSendView {
     }
 }
 
-// MARK: - Component
+// MARK: WalletSendView.SwitchButton
 
 extension WalletSendView {
     struct SwitchButton: View {
@@ -407,6 +440,6 @@ extension WalletSendView {
 
 extension WalletSendView {
     var tabCount: Int {
-        return TabType.allCases.count
+        TabType.allCases.count
     }
 }

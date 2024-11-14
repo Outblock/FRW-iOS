@@ -7,11 +7,13 @@
 
 import SwiftUI
 
+// MARK: - ProfileSecureView
+
 struct ProfileSecureView: RouteableView {
-    @StateObject private var vm = ProfileSecureViewModel()
+    // MARK: Internal
 
     var title: String {
-        return "security".localized
+        "security".localized
     }
 
     var body: some View {
@@ -20,23 +22,38 @@ struct ProfileSecureView: RouteableView {
                 Button {
                     vm.resetPinCodeAction()
                 } label: {
-                    ProfileSecureView.ItemCell(title: vm.isPinCodeEnabled ? "disable_pin_code".localized : "enable_pin_code".localized, style: .arrow, isOn: false, toggleAction: nil)
-                        .contentShape(Rectangle())
-                        .onAppear {
-                            vm.refreshPinCodeStatusAction()
-                        }
+                    ProfileSecureView.ItemCell(
+                        title: vm.isPinCodeEnabled ? "disable_pin_code"
+                            .localized : "enable_pin_code".localized,
+                        style: .arrow,
+                        isOn: false,
+                        toggleAction: nil
+                    )
+                    .contentShape(Rectangle())
+                    .onAppear {
+                        vm.refreshPinCodeStatusAction()
+                    }
                 }
 
                 Divider().foregroundColor(.LL.Neutrals.background)
 
-                ProfileSecureView.ItemCell(title: SecurityManager.shared.supportedBionic == .touchid ? "touch_id".localized : "face_id".localized, style: .toggle, isOn: vm.isBionicEnabled) { value in
+                ProfileSecureView.ItemCell(
+                    title: SecurityManager.shared.supportedBionic == .touchid ? "touch_id"
+                        .localized : "face_id".localized,
+                    style: .toggle,
+                    isOn: vm.isBionicEnabled
+                ) { value in
                     vm.changeBionicAction(value)
                 }
                 .disabled(SecurityManager.shared.supportedBionic == .none)
 
                 Divider().foregroundColor(.LL.Neutrals.background)
 
-                ProfileSecureView.ItemCell(title: "lock_on_exit".localized, style: .toggle, isOn: vm.isLockOnExit) { value in
+                ProfileSecureView.ItemCell(
+                    title: "lock_on_exit".localized,
+                    style: .toggle,
+                    isOn: vm.isLockOnExit
+                ) { value in
                     vm.changeLockOnExitAction(value)
                 }
             }
@@ -48,13 +65,19 @@ struct ProfileSecureView: RouteableView {
         .backgroundFill(Color.LL.Neutrals.background)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = ProfileSecureViewModel()
 }
 
 extension ProfileSecureView {
     struct ItemCell: View {
         let title: String
         let style: ProfileSecureView.ItemCell.Style
-        @State var isOn: Bool = false
+        @State
+        var isOn: Bool = false
         let toggleAction: ((Bool) -> Void)?
 
         var body: some View {
@@ -111,12 +134,16 @@ extension ProfileSecureView {
     }
 }
 
+// MARK: - ProfileSecureView.ItemCell.Style
+
 extension ProfileSecureView.ItemCell {
     enum Style {
         case arrow
         case toggle
     }
 }
+
+// MARK: - Previews_ProfileSecureView_Previews
 
 struct Previews_ProfileSecureView_Previews: PreviewProvider {
     static var previews: some View {

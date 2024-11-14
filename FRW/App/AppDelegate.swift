@@ -20,25 +20,30 @@ import WalletCore
 import Web3Wallet
 
 #if DEBUG
-    import Atlantis
+import Atlantis
 #endif
 
 let log = FlowLog.shared
 
+// MARK: - AppDelegate
+
 @main
 class AppDelegate: NSObject, UIApplicationDelegate {
-    var window: UIWindow?
-    lazy var coordinator = Coordinator(window: window!)
-
     static var isUnitTest: Bool {
         #if DEBUG
-            return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+        return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
         #else
-            return false
+        return false
         #endif
     }
 
-    func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+    var window: UIWindow?
+    lazy var coordinator = Coordinator(window: window!)
+
+    func application(
+        _: UIApplication,
+        didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
         _ = LocalEnvManager.shared
 
         FirebaseApp.configure()
@@ -61,11 +66,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         let migration = Migration()
         migration.start()
         #if DEBUG
-            Atlantis.start()
+        Atlantis.start()
         #endif
 
-        let crowdinProviderConfig = CrowdinProviderConfig(hashString: "f4bff0f0e2ed98c2ba53a29qzvm",
-                                                          sourceLanguage: "en")
+        let crowdinProviderConfig = CrowdinProviderConfig(
+            hashString: "f4bff0f0e2ed98c2ba53a29qzvm",
+            sourceLanguage: "en"
+        )
         let crowdinSDKConfig = CrowdinSDKConfig
             .config()
             .with(crowdinProviderConfig: crowdinProviderConfig)
@@ -83,7 +90,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
 
-    func application(_: UIApplication, open url: URL, options _: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    func application(
+        _: UIApplication,
+        open url: URL,
+        options _: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
         var parameters: [String: String] = [:]
         URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.forEach {
             parameters[$0.name] = $0.value
@@ -91,8 +102,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         if let filtered = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?
             .filter({ $0.name == "uri" && $0.value?.starts(with: "wc") ?? false }),
-            let item = filtered.first, let uri = item.value
-        {
+            let item = filtered.first, let uri = item.value {
             WalletConnectManager.shared.onClientConnected = {
                 WalletConnectManager.shared.connect(link: uri)
             }
@@ -101,7 +111,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return GIDSignIn.sharedInstance.handle(url)
     }
 
-    func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+    func application(
+        _: UIApplication,
+        continue userActivity: NSUserActivity,
+        restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void
+    ) -> Bool {
         if let url = userActivity.webpageURL {
             let uri = AppExternalLinks.exactWCLink(link: url.absoluteString)
             WalletConnectManager.shared.onClientConnected = {
@@ -121,7 +135,10 @@ extension AppDelegate {
         let largeFont = UIFont(name: "Inter", size: 24)?.bold
         let color = UIColor(named: "neutrals.text")!
         UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: color, .font: font!]
-        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: color, .font: largeFont!]
+        UINavigationBar.appearance().largeTitleTextAttributes = [
+            .foregroundColor: color,
+            .font: largeFont!,
+        ]
     }
 
     private func appConfig() {
@@ -169,7 +186,12 @@ extension AppDelegate {
 
 extension AppDelegate {
     private func setupUI() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkChange), name: .networkChange, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleNetworkChange),
+            name: .networkChange,
+            object: nil
+        )
 
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.backgroundColor = UIColor.LL.Neutrals.background
@@ -187,20 +209,26 @@ extension AppDelegate {
 
         delay(.seconds(5)) {
             UIView.animate(withDuration: 0.2) {
-                self.window?.backgroundColor = currentNetwork.isMainnet ? UIColor.LL.Neutrals.background : UIColor(currentNetwork.color)
+                self.window?.backgroundColor = currentNetwork.isMainnet ? UIColor.LL.Neutrals
+                    .background : UIColor(currentNetwork.color)
             }
         }
     }
 
-    @objc func handleNetworkChange() {
-        window?.backgroundColor = currentNetwork.isMainnet ? UIColor.LL.Neutrals.background : UIColor(currentNetwork.color)
+    @objc
+    func handleNetworkChange() {
+        window?.backgroundColor = currentNetwork.isMainnet ? UIColor.LL.Neutrals
+            .background : UIColor(currentNetwork.color)
     }
 }
 
 // MARK: Delegate
 
 extension AppDelegate {
-    func application(_: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    func application(
+        _: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
         Task(priority: .high) {
             let deviceTokenString = deviceToken.map { data in String(format: "%02.2hhx", data) }
             UserDefaults.standard.set(deviceTokenString.joined(), forKey: "deviceToken")
@@ -213,9 +241,9 @@ extension AppDelegate {
 //            }
         }
         #if DEBUG
-            Messaging.messaging().setAPNSToken(deviceToken, type: .sandbox)
+        Messaging.messaging().setAPNSToken(deviceToken, type: .sandbox)
         #else
-            Messaging.messaging().setAPNSToken(deviceToken, type: .prod)
+        Messaging.messaging().setAPNSToken(deviceToken, type: .prod)
         #endif
     }
 }

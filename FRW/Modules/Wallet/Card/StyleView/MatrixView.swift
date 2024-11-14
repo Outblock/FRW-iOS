@@ -7,19 +7,16 @@
 
 import SwiftUI
 
+// MARK: - DigitalRain
+
 // Author: SwiftUI-Lab (www.swiftui-lab.com)
 // Description: This code is part of the "Advanced SwiftUI Animations - Part 5"
 // Article: https://swiftui-lab.com/swiftui-animations-part5/
 
 struct DigitalRain: View {
-    var body: some View {
-        TimelineView(.periodic(from: .now, by: 0.1)) { timeline in
-            DigitalRainCanvas(date: timeline.date)
-        }
-    }
-
     struct DigitalRainCanvas: View {
-        @StateObject var core = MatrixCore(columnCount: 0)
+        @StateObject
+        var core = MatrixCore(columnCount: 0)
         let date: Date
 
         var body: some View {
@@ -33,13 +30,13 @@ struct DigitalRain: View {
             .onChange(of: date) { (date: Date) in
                 // Add columns progressively, every `addColumnRate` seconds, up to a maximum of `maxColumns`
                 if core.columns.count < MatrixCore.maxColumns,
-                   Date().timeIntervalSinceReferenceDate > core.lastAddDate.addingTimeInterval(MatrixCore.addColumnRate).timeIntervalSinceReferenceDate
-                {
+                   Date().timeIntervalSinceReferenceDate > core.lastAddDate
+                   .addingTimeInterval(MatrixCore.addColumnRate).timeIntervalSinceReferenceDate {
                     core.addColumn()
                 }
 
                 // update columns data (e.g., position, depth, character count, etc)
-                for idx in 0 ..< core.columns.count {
+                for idx in 0..<core.columns.count {
                     core.columns[idx].fallDown(date: date)
                 }
             }
@@ -53,8 +50,10 @@ struct DigitalRain: View {
 
                     if let resolved = context.resolveSymbol(id: column.id) {
                         // Column location
-                        let pt = CGPoint(x: column.origin.x * size.width,
-                                         y: column.origin.y * size.height + column.offset)
+                        let pt = CGPoint(
+                            x: column.origin.x * size.width,
+                            y: column.origin.y * size.height + column.offset
+                        )
 
                         // Blur and scale effect, based on column's depth
                         context.addFilter(.blur(radius: column.z * 3))
@@ -67,10 +66,19 @@ struct DigitalRain: View {
             }
         }
     }
+
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: 0.1)) { timeline in
+            DigitalRainCanvas(date: timeline.date)
+        }
+    }
 }
 
+// MARK: - DigitalRainColumn
+
 struct DigitalRainColumn: View {
-    @EnvironmentObject var core: MatrixCore
+    @EnvironmentObject
+    var core: MatrixCore
 
     let id: Int
     let date: Date
@@ -81,43 +89,64 @@ struct DigitalRainColumn: View {
         VStack(alignment: .center) {
             column.concatenatedTexts
                 .font(Font.custom("Menlo", size: 24))
-                .foregroundStyle(.linearGradient(colors: [.green, .clear],
-                                                 startPoint: .top, endPoint: .bottom))
+                .foregroundStyle(.linearGradient(
+                    colors: [.green, .clear],
+                    startPoint: .top,
+                    endPoint: .bottom
+                ))
                 .multilineTextAlignment(.center)
         }
         .scaleEffect(x: -0.8) // mirror the text, with a little bit of compression
     }
 }
 
+// MARK: - MatrixCore
+
 class MatrixCore: ObservableObject {
+    // MARK: Lifecycle
+
+    init(columnCount: Int) {
+        for idx in 0..<columnCount {
+            columns.append(MatrixColumn(
+                id: idx,
+                origin: Self.randomOrigin,
+                z: CGFloat.random(in: 0...1)
+            ))
+        }
+    }
+
+    // MARK: Internal
+
     static var maxColumns = 50
     static var addColumnRate: TimeInterval = 0.2
+
+    static var randomOrigin: UnitPoint {
+        UnitPoint(x: .random(in: -0.25...1.25), y: .random(in: 0...0.25))
+    }
 
     var lastAddDate = Date(timeIntervalSinceReferenceDate: 0)
 
     var columns = [MatrixColumn]()
-
-    init(columnCount: Int) {
-        for idx in 0 ..< columnCount {
-            columns.append(MatrixColumn(id: idx, origin: Self.randomOrigin, z: CGFloat.random(in: 0 ... 1)))
-        }
-    }
-
-    static var randomOrigin: UnitPoint {
-        UnitPoint(x: .random(in: -0.25 ... 1.25), y: .random(in: 0 ... 0.25))
-    }
 
     func addColumn() {
         columns.append(MatrixColumn(id: columns.count))
     }
 }
 
+// MARK: - MatrixColumn
+
 struct MatrixColumn: Identifiable {
     static var matrixCharacters = "イウエオカキクケコサシスセソタチツテトナニヌノハヒフヘホマミムメモヤユヨラリルレロワヰヲンーヽヿ0123456789"
 
+    static var randomMatrixCharacter: String {
+        let idx = Int.random(in: 0..<matrixCharacters.count)
+        let index = matrixCharacters.index(matrixCharacters.startIndex, offsetBy: idx)
+        return String(matrixCharacters[index])
+    }
+
     let id: Int
     var origin: UnitPoint = MatrixCore.randomOrigin
-    var z = CGFloat.random(in: 0 ... 1)
+    var z = CGFloat.random(in: 0...1)
     var offset: CGFloat = 0
 
     var texts = [String]()
@@ -126,24 +155,12 @@ struct MatrixColumn: Identifiable {
 
     var lastUpdate: TimeInterval = Date().timeIntervalSinceReferenceDate
 
-    static var randomMatrixCharacter: String {
-        let idx = Int.random(in: 0 ..< matrixCharacters.count)
-        let index = matrixCharacters.index(matrixCharacters.startIndex, offsetBy: idx)
-        return String(matrixCharacters[index])
-    }
-
     var stepSize: CGFloat { max(0, 1 / CGFloat(texts.count)) }
-
-    mutating func addCharacter(_ count: Int = 1) {
-        for _ in 0 ..< count {
-            texts.append(Self.randomMatrixCharacter)
-        }
-    }
 
     var concatenatedTexts: Text {
         var t = ""
 
-        for k in 0 ..< texts.count {
+        for k in 0..<texts.count {
             if k == 0 {
                 t = t + texts[k]
             } else {
@@ -152,6 +169,12 @@ struct MatrixColumn: Identifiable {
         }
 
         return Text(t)
+    }
+
+    mutating func addCharacter(_ count: Int = 1) {
+        for _ in 0..<count {
+            texts.append(Self.randomMatrixCharacter)
+        }
     }
 
     mutating func removeFromTop() {
@@ -189,9 +212,11 @@ struct MatrixColumn: Identifiable {
         removed = 0
         texts = []
         origin = MatrixCore.randomOrigin
-        z = CGFloat.random(in: 0 ... 1)
+        z = CGFloat.random(in: 0...1)
     }
 }
+
+// MARK: - MatrixView_Previews
 
 struct MatrixView_Previews: PreviewProvider {
     static var previews: some View {

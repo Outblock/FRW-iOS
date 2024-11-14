@@ -7,15 +7,10 @@
 
 import SwiftUI
 
-// MARK: - V Page Indicator Finite
+// MARK: - VPageIndicatorFinite
 
 struct VPageIndicatorFinite: View {
-    // MARK: Properties
-
-    private let model: VPageIndicatorModel
-
-    private let total: Int
-    private let selectedIndex: Int
+    // MARK: Lifecycle
 
     // MARK: Intializers
 
@@ -29,21 +24,35 @@ struct VPageIndicatorFinite: View {
         self.selectedIndex = selectedIndex
     }
 
+    // MARK: Internal
+
     // MARK: Body
 
     var body: some View {
         HStack(spacing: model.layout.spacing, content: {
-            ForEach(0 ..< total, content: { i in
+            ForEach(0..<total, content: { i in
                 Circle()
-                    .foregroundColor(selectedIndex == i ? model.colors.selectedDot : model.colors.dot)
+                    .foregroundColor(
+                        selectedIndex == i ? model.colors.selectedDot : model.colors
+                            .dot
+                    )
                     .frame(dimension: model.layout.dotDimension)
                     .scaleEffect(selectedIndex == i ? 1 : model.layout.finiteDotScale)
             })
         })
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VPageIndicatorModel
+
+    private let total: Int
+    private let selectedIndex: Int
 }
 
-// MARK: - Preview
+// MARK: - VPageIndicatorFinite_Previews
 
 struct VPageIndicatorFinite_Previews: PreviewProvider {
     static var previews: some View {

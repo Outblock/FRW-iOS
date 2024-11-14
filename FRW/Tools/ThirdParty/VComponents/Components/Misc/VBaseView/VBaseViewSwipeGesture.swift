@@ -15,15 +15,10 @@ extension View {
     }
 }
 
-// MARK: - V Base View Swipe Gesture
+// MARK: - VBaseViewSwipeGesture
 
 struct VBaseViewSwipeGesture: ViewModifier {
-    // MARK: Properties
-
-    private let completion: () -> Void
-
-    private let edgeOffset: CGFloat = 20
-    private let distanceToSwipe: CGFloat = 100
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -33,21 +28,32 @@ struct VBaseViewSwipeGesture: ViewModifier {
         self.completion = completion
     }
 
+    // MARK: Internal
+
     // MARK: Body
 
     func body(content: Content) -> some View {
         content
-            .gesture(DragGesture()
-                .onEnded { value in
-                    guard
-                        value.startLocation.x <= edgeOffset,
-                        value.translation.width >= distanceToSwipe
-                    else {
-                        return
-                    }
+            .gesture(
+                DragGesture()
+                    .onEnded { value in
+                        guard value.startLocation.x <= edgeOffset,
+                              value.translation.width >= distanceToSwipe
+                        else {
+                            return
+                        }
 
-                    completion()
-                }
+                        completion()
+                    }
             )
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let completion: () -> Void
+
+    private let edgeOffset: CGFloat = 20
+    private let distanceToSwipe: CGFloat = 100
 }

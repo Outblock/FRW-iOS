@@ -10,14 +10,10 @@ import LogView
 import OSLog
 import SwiftyBeaver
 
+// MARK: - FlowLog
+
 class FlowLog {
-    static let shared = FlowLog()
-
-    private let file = FileDestination()
-
-    var path: URL? {
-        return file.logFileURL
-    }
+    // MARK: Lifecycle
 
     private init() {
         let console = ConsoleDestination()
@@ -37,15 +33,29 @@ class FlowLog {
         }
         LogView.filterEntries = filter
     }
+
+    // MARK: Internal
+
+    static let shared = FlowLog()
+
+    var path: URL? {
+        file.logFileURL
+    }
+
+    // MARK: Private
+
+    private let file = FileDestination()
 }
 
-public extension NSPredicate {
+extension NSPredicate {
     /// Predicate for fetching from OSLogStore, allow to condition subsystem, and set if empty subsystem should be filtered.
-    static func library(_ values: [String]) -> NSPredicate {
+    public static func library(_ values: [String]) -> NSPredicate {
         NSPredicate(format: "library in $LIST")
             .withSubstitutionVariables(["LIST": values])
     }
 }
+
+// MARK: - FlowLog.Category
 
 extension FlowLog {
     enum Category: String {
@@ -57,38 +67,88 @@ extension FlowLog {
 
 extension FlowLog {
     /// log something which help during debugging (low priority)
-    func debug(_ message: @autoclosure () -> Any,
-               file: String = #file, function: String = #function, line: Int = #line, context: Any? = nil)
-    {
-        SwiftyBeaver.custom(level: .debug, message: message(), file: file, function: function, line: line, context: context)
+    func debug(
+        _ message: @autoclosure () -> Any,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        context: Any? = nil
+    ) {
+        SwiftyBeaver.custom(
+            level: .debug,
+            message: message(),
+            file: file,
+            function: function,
+            line: line,
+            context: context
+        )
 
         addLogModel(category: .debug, viewModel: DebugViewModel(name: "\(message())", detail: " "))
     }
 
     /// log something which you are really interested but which is not an issue or error (normal priority)
-    func info(_ message: @autoclosure () -> Any,
-              file: String = #file, function: String = #function, line: Int = #line, context: Any? = nil)
-    {
-        SwiftyBeaver.custom(level: .info, message: message(), file: file, function: function, line: line, context: context)
+    func info(
+        _ message: @autoclosure () -> Any,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        context: Any? = nil
+    ) {
+        SwiftyBeaver.custom(
+            level: .info,
+            message: message(),
+            file: file,
+            function: function,
+            line: line,
+            context: context
+        )
         addLogModel(category: .info, viewModel: DebugViewModel(name: "\(message())", detail: " "))
     }
 
     /// log something which may cause big trouble soon (high priority)
-    func warning(_ message: @autoclosure () -> Any,
-                 file: String = #file, function: String = #function, line: Int = #line, context: Any? = nil)
-    {
-        SwiftyBeaver.custom(level: .warning, message: message(), file: file, function: function, line: line, context: context)
+    func warning(
+        _ message: @autoclosure () -> Any,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        context: Any? = nil
+    ) {
+        SwiftyBeaver.custom(
+            level: .warning,
+            message: message(),
+            file: file,
+            function: function,
+            line: line,
+            context: context
+        )
 
-        addLogModel(category: .warning, viewModel: DebugViewModel(name: "\(message())", detail: " "))
+        addLogModel(
+            category: .warning,
+            viewModel: DebugViewModel(name: "\(message())", detail: " ")
+        )
     }
 
     /// log something which will keep you awake at night (highest priority)
-    func error(_ message: @autoclosure () -> Any,
-               file: String = #file, function: String = #function, line: Int = #line, context: Any? = nil)
-    {
-        SwiftyBeaver.custom(level: .error, message: message(), file: file, function: function, line: line, context: context)
-        addLogModel(category: .error, viewModel: DebugViewModel(name: "\(message())",
-                                                                detail: (context as? Error)?.localizedDescription ?? ""))
+    func error(
+        _ message: @autoclosure () -> Any,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        context: Any? = nil
+    ) {
+        SwiftyBeaver.custom(
+            level: .error,
+            message: message(),
+            file: file,
+            function: function,
+            line: line,
+            context: context
+        )
+        addLogModel(category: .error, viewModel: DebugViewModel(
+            name: "\(message())",
+            detail: (context as? Error)?
+                .localizedDescription ?? ""
+        ))
     }
 
     private func addLogModel(category: FlowLog.Category, viewModel: DebugViewModel) {

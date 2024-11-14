@@ -8,6 +8,8 @@
 import Flow
 import Foundation
 
+// MARK: - FCLScripts
+
 class FCLScripts {
     private static let PreAuthzReplacement = "$PRE_AUTHZ_REPLACEMENT"
     private static let AddressReplacement = "$ADDRESS_REPLACEMENT"
@@ -224,8 +226,18 @@ extension FCLScripts {
         }
     }
 
-    private static func generateAuthnAccountProof(accountProofSign: String, address: String, nonce: String, keyId: Int = 0) -> String {
-        let dict = [AddressReplacement: address, SignatureReplacement: accountProofSign, NonceReplacement: nonce, KeyIDReplacement: "\(keyId)"]
+    private static func generateAuthnAccountProof(
+        accountProofSign: String,
+        address: String,
+        nonce: String,
+        keyId: Int = 0
+    ) -> String {
+        let dict = [
+            AddressReplacement: address,
+            SignatureReplacement: accountProofSign,
+            NonceReplacement: nonce,
+            KeyIDReplacement: "\(keyId)",
+        ]
         return FCLScripts.authnResponseAccountProof.replace(by: dict)
     }
 }
@@ -240,35 +252,63 @@ extension FCLScripts {
         return FCLScripts.preAuthzResponse.replace(by: dict)
     }
 
-    static func generateSignMessageResponse(message: String, address: String, keyId: Int = 0) -> String? {
+    static func generateSignMessageResponse(
+        message: String,
+        address: String,
+        keyId: Int = 0
+    ) -> String? {
         let data = Flow.DomainTag.user.normalize + Data(hex: message)
         guard let signedData = WalletManager.shared.signSync(signableData: data) else {
             return nil
         }
 
         let hex = signedData.hexString
-        let dict = [AddressReplacement: address, SignatureReplacement: hex, KeyIDReplacement: "\(keyId)"]
+        let dict = [
+            AddressReplacement: address,
+            SignatureReplacement: hex,
+            KeyIDReplacement: "\(keyId)",
+        ]
         return FCLScripts.signMessageResponse.replace(by: dict)
     }
 
-    static func generateAuthnResponse(accountProofSign: String = "", nonce: String = "", address: String, keyId: Int = 0) async throws -> String {
+    static func generateAuthnResponse(
+        accountProofSign: String = "",
+        nonce: String = "",
+        address: String,
+        keyId: Int = 0
+    ) async throws -> String {
         let authz = try await generateAuthnPreAuthz()
 
         var confirmedAccountProofSign = accountProofSign
         if !accountProofSign.isEmpty {
-            confirmedAccountProofSign = generateAuthnAccountProof(accountProofSign: accountProofSign, address: address, nonce: nonce, keyId: keyId)
+            confirmedAccountProofSign = generateAuthnAccountProof(
+                accountProofSign: accountProofSign,
+                address: address,
+                nonce: nonce,
+                keyId: keyId
+            )
         }
 
-        let dict = [AddressReplacement: address,
-                    PreAuthzReplacement: authz,
-                    UserSignatureReplacement: authnResponseUserSignature,
-                    AccountProofReplacement: confirmedAccountProofSign,
-                    KeyIDReplacement: "\(keyId)"]
+        let dict = [
+            AddressReplacement: address,
+            PreAuthzReplacement: authz,
+            UserSignatureReplacement: authnResponseUserSignature,
+            AccountProofReplacement: confirmedAccountProofSign,
+            KeyIDReplacement: "\(keyId)",
+        ]
         return FCLScripts.authnResponse.replace(by: dict)
     }
 
-    static func generateAuthzResponse(address: String, signature: String, keyId: Int = 0) -> String {
-        let dict = [AddressReplacement: address, SignatureReplacement: signature, KeyIDReplacement: "\(keyId)"]
+    static func generateAuthzResponse(
+        address: String,
+        signature: String,
+        keyId: Int = 0
+    ) -> String {
+        let dict = [
+            AddressReplacement: address,
+            SignatureReplacement: signature,
+            KeyIDReplacement: "\(keyId)",
+        ]
         return FCLScripts.authzResponse.replace(by: dict)
     }
 }

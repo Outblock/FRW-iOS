@@ -8,14 +8,16 @@
 import Foundation
 import SwiftUI
 
+// MARK: - SelectCollectionViewModel
+
 class SelectCollectionViewModel: ObservableObject {
-    @Published var list: [CollectionMask] = []
-    @Published var selectedItem: CollectionMask?
-    @Published var isMock = false
+    // MARK: Lifecycle
 
-    var callback: (CollectionMask) -> Void?
-
-    init(selectedItem: CollectionMask?, list: [CollectionMask]?, callback: @escaping (CollectionMask) -> Void?) {
+    init(
+        selectedItem: CollectionMask?,
+        list: [CollectionMask]?,
+        callback: @escaping (CollectionMask) -> Void?
+    ) {
         self.selectedItem = selectedItem
         self.callback = callback
 
@@ -29,13 +31,30 @@ class SelectCollectionViewModel: ObservableObject {
         }
     }
 
+    // MARK: Internal
+
+    @Published
+    var list: [CollectionMask] = []
+    @Published
+    var selectedItem: CollectionMask?
+    @Published
+    var isMock = false
+
+    var callback: (CollectionMask) -> Void?
+
     func fetchList() {
         Task {
             do {
                 let address = WalletManager.shared.selectedAccountAddress
                 let offset = FRWAPI.Offset(start: 0, length: 100)
-                let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount != nil ? .evm : .main
-                let response: Network.Response<[NFTCollection]> = try await Network.requestWithRawModel(FRWAPI.NFT.userCollection(address, offset, from))
+                let from: FRWAPI.From = EVMAccountManager.shared
+                    .selectedAccount != nil ? .evm : .main
+                let response: Network.Response<[NFTCollection]> = try await Network
+                    .requestWithRawModel(FRWAPI.NFT.userCollection(
+                        address,
+                        offset,
+                        from
+                    ))
                 DispatchQueue.main.async {
                     self.list = response.data ?? []
                     if self.selectedItem == nil {
@@ -72,6 +91,7 @@ extension SelectCollectionViewModel {
     }
 
     func isSelected(_ item: CollectionMask) -> Bool {
-        return item.maskContractName == selectedItem?.maskContractName && item.maskName == selectedItem?.maskName
+        item.maskContractName == selectedItem?.maskContractName && item.maskName == selectedItem?
+            .maskName
     }
 }

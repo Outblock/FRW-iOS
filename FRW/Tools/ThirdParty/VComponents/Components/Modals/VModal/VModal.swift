@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Modal
+// MARK: - VModal
 
 /// Modal component that draws a background, hosts content, and is present when condition is true.
 ///
@@ -35,14 +35,8 @@ import SwiftUI
 public struct VModal<Content, HeaderContent>
     where
     Content: View,
-    HeaderContent: View
-{
-    // MARK: Properties
-
-    fileprivate let model: VModalModel
-
-    fileprivate let headerContent: (() -> HeaderContent)?
-    fileprivate let content: () -> Content
+    HeaderContent: View {
+    // MARK: Lifecycle
 
     // MARK: Initializers - Header
 
@@ -63,8 +57,7 @@ public struct VModal<Content, HeaderContent>
         headerTitle: String,
         @ViewBuilder content: @escaping () -> Content
     )
-        where HeaderContent == VBaseHeaderFooter
-    {
+        where HeaderContent == VBaseHeaderFooter {
         self.init(
             model: model,
             headerContent: {
@@ -86,26 +79,33 @@ public struct VModal<Content, HeaderContent>
         model: VModalModel = .init(),
         @ViewBuilder content: @escaping () -> Content
     )
-        where HeaderContent == Never
-    {
+        where HeaderContent == Never {
         self.model = model
-        headerContent = nil
+        self.headerContent = nil
         self.content = content
     }
+
+    // MARK: Fileprivate
+
+    // MARK: Properties
+
+    fileprivate let model: VModalModel
+
+    fileprivate let headerContent: (() -> HeaderContent)?
+    fileprivate let content: () -> Content
 }
 
 // MARK: - Extension
 
-public extension View {
+extension View {
     /// Presents `VModal`.
-    func vModal<Content, headerContent>(
+    public func vModal<Content, headerContent>(
         isPresented: Binding<Bool>,
         modal: @escaping () -> VModal<Content, headerContent>
     ) -> some View
         where
         Content: View,
-        headerContent: View
-    {
+        headerContent: View {
         let modal = modal()
 
         return overlay(Group(content: {

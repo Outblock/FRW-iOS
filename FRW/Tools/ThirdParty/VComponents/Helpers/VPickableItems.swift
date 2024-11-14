@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-// MARK: - V Pickable Item
+// MARK: - VPickableItem
 
 /// Allows enum to represent picker items in components.
 public protocol VPickableItem: RawRepresentable, CaseIterable where RawValue == Int {}
 
-// MARK: - V Pickable Titled Item
+// MARK: - VPickableTitledItem
 
 /// Allows enum to represent picker items in components.
 public protocol VPickableTitledItem: VPickableItem {

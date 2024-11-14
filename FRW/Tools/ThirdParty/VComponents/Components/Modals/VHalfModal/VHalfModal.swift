@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Half Modal
+// MARK: - VHalfModal
 
 /// Modal component that draws a background, hosts pull-up content on the bottom of the screen, and is present when condition is true.
 ///
@@ -96,14 +96,8 @@ import SwiftUI
 public struct VHalfModal<Content, HeaderContent>
     where
     Content: View,
-    HeaderContent: View
-{
-    // MARK: Properties
-
-    fileprivate let model: VHalfModalModel
-
-    fileprivate let headerContent: (() -> HeaderContent)?
-    fileprivate let content: () -> Content
+    HeaderContent: View {
+    // MARK: Lifecycle
 
     // MARK: Initializers - Header
 
@@ -124,8 +118,7 @@ public struct VHalfModal<Content, HeaderContent>
         headerTitle: String,
         @ViewBuilder content: @escaping () -> Content
     )
-        where HeaderContent == VBaseHeaderFooter
-    {
+        where HeaderContent == VBaseHeaderFooter {
         self.init(
             model: model,
             headerContent: {
@@ -147,26 +140,33 @@ public struct VHalfModal<Content, HeaderContent>
         model: VHalfModalModel = .init(),
         @ViewBuilder content: @escaping () -> Content
     )
-        where HeaderContent == Never
-    {
+        where HeaderContent == Never {
         self.model = model
-        headerContent = nil
+        self.headerContent = nil
         self.content = content
     }
+
+    // MARK: Fileprivate
+
+    // MARK: Properties
+
+    fileprivate let model: VHalfModalModel
+
+    fileprivate let headerContent: (() -> HeaderContent)?
+    fileprivate let content: () -> Content
 }
 
 // MARK: - Extension
 
-public extension View {
+extension View {
     /// Presents `VHalfModal`.
-    func vHalfModal<Content, HeaderContent>(
+    public func vHalfModal<Content, HeaderContent>(
         isPresented: Binding<Bool>,
         halfModal: @escaping () -> VHalfModal<Content, HeaderContent>
     ) -> some View
         where
         Content: View,
-        HeaderContent: View
-    {
+        HeaderContent: View {
         let halfModal = halfModal()
 
         return overlay(Group(content: {
@@ -180,7 +180,10 @@ public extension View {
                         headerContent: halfModal.headerContent,
                         content: halfModal.content
                     )
-                    .environment(\.vHalfModalNavigationViewCloseButton, halfModal.model.misc.dismissType.contains(.navigationViewCloseButton))
+                    .environment(
+                        \.vHalfModalNavigationViewCloseButton,
+                        halfModal.model.misc.dismissType.contains(.navigationViewCloseButton)
+                    )
                 )
             }
         }))

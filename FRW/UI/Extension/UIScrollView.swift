@@ -8,14 +8,14 @@
 import MJRefresh
 import UIKit
 
-public extension UIScrollView {
+extension UIScrollView {
     // refreshing
 
-    func setRefreshingAction(_ action: @escaping () -> Void) {
+    public func setRefreshingAction(_ action: @escaping () -> Void) {
         let header = MJRefreshGifHeader(refreshingBlock: action)
 
         var images: [UIImage] = []
-        for i in 0 ... 95 {
+        for i in 0...95 {
             let image = UIImage(named: "refresh-header-seq-\(i)")!
             images.append(image)
         }
@@ -31,23 +31,26 @@ public extension UIScrollView {
         mj_header = header
     }
 
-    func beginRefreshing() {
+    public func beginRefreshing() {
         mj_header?.beginRefreshing()
     }
 
-    func stopRefreshing() {
+    public func stopRefreshing() {
         if isRefreshing() {
             mj_header?.endRefreshing()
         }
     }
 
-    func isRefreshing() -> Bool {
-        return mj_header?.isRefreshing ?? false
+    public func isRefreshing() -> Bool {
+        mj_header?.isRefreshing ?? false
     }
 
     // loading
 
-    func setLoadingAction(_ action: @escaping () -> Void, noMoreDataLabelEnabled: Bool = true) {
+    public func setLoadingAction(
+        _ action: @escaping () -> Void,
+        noMoreDataLabelEnabled: Bool = true
+    ) {
         let footer = MJRefreshAutoStateFooter(refreshingBlock: action)
         footer.stateLabel?.textColor = UIColor(hex: "#888888")
         footer.stateLabel?.font = UIFont.systemFont(ofSize: 14)
@@ -60,25 +63,25 @@ public extension UIScrollView {
         mj_footer = footer
     }
 
-    func removeLoadingAction() {
+    public func removeLoadingAction() {
         mj_footer = nil
     }
 
-    func beginLoading() {
+    public func beginLoading() {
         mj_footer?.beginRefreshing()
     }
 
-    func stopLoading() {
+    public func stopLoading() {
         if isLoading() {
             mj_footer?.endRefreshing()
         }
     }
 
-    func isLoading() -> Bool {
-        return mj_footer?.isRefreshing ?? false
+    public func isLoading() -> Bool {
+        mj_footer?.isRefreshing ?? false
     }
 
-    func setNoMoreData(_ noMore: Bool) {
+    public func setNoMoreData(_ noMore: Bool) {
         if noMore {
             mj_footer?.endRefreshingWithNoMoreData()
             return
@@ -88,8 +91,8 @@ public extension UIScrollView {
     }
 }
 
-public extension UIScrollView {
-    func scrollToTop(animated: Bool = true) {
+extension UIScrollView {
+    public func scrollToTop(animated: Bool = true) {
         var off = contentOffset
         off.y = 0 - contentInset.top
         setContentOffset(off, animated: animated)

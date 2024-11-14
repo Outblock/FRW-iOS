@@ -15,6 +15,8 @@ enum VStepperButton {
     case minus
     case plus
 
+    // MARK: Internal
+
     // MARK: Properties
 
     var icon: Image {

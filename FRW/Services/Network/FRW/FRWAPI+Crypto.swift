@@ -8,6 +8,8 @@
 import Foundation
 import Moya
 
+// MARK: - FRWAPI.Crypto
+
 extension FRWAPI {
     enum Crypto {
         case summary(CryptoSummaryRequest)
@@ -16,9 +18,11 @@ extension FRWAPI {
     }
 }
 
+// MARK: - FRWAPI.Crypto + TargetType, AccessTokenAuthorizable
+
 extension FRWAPI.Crypto: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
-        return .bearer
+        .bearer
     }
 
     var baseURL: URL {
@@ -51,15 +55,21 @@ extension FRWAPI.Crypto: TargetType, AccessTokenAuthorizable {
     var task: Task {
         switch self {
         case let .summary(request):
-            return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding())
+            return .requestParameters(
+                parameters: request.dictionary ?? [:],
+                encoding: URLEncoding()
+            )
         case let .history(request):
-            return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding())
+            return .requestParameters(
+                parameters: request.dictionary ?? [:],
+                encoding: URLEncoding()
+            )
         case .prices:
             return .requestPlain
         }
     }
 
     var headers: [String: String]? {
-        return FRWAPI.commonHeaders
+        FRWAPI.commonHeaders
     }
 }

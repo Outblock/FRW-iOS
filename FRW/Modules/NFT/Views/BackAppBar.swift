@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: - BackAppBar
+
 struct BackAppBar: View {
     var title: String?
     var showShare = false
@@ -46,6 +48,8 @@ struct BackAppBar: View {
         .frame(maxHeight: .infinity, alignment: .top)
     }
 }
+
+// MARK: - NFTNavigationBar_Previews
 
 struct NFTNavigationBar_Previews: PreviewProvider {
     static var previews: some View {

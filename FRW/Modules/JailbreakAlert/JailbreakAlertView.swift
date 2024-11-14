@@ -46,20 +46,6 @@ struct JailbreakAlertView: View {
         .cornerRadius(12)
     }
 
-    func createNoticeDetailView(text: String) -> some View {
-        HStack(spacing: 12) {
-            Image("icon-warning-mark")
-                .renderingMode(.template)
-                .foregroundColor(Color.LL.Warning.warning2)
-
-            Text(text)
-                .font(.inter(size: 14, weight: .medium))
-                .foregroundColor(Color.LL.Neutrals.text)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .lineLimit(1)
-        }
-    }
-
     var buttonView: some View {
         Button {
             Router.dismiss()
@@ -71,6 +57,20 @@ struct JailbreakAlertView: View {
                 .frame(maxWidth: .infinity)
                 .background(Color.LL.Button.color)
                 .cornerRadius(12)
+        }
+    }
+
+    func createNoticeDetailView(text: String) -> some View {
+        HStack(spacing: 12) {
+            Image("icon-warning-mark")
+                .renderingMode(.template)
+                .foregroundColor(Color.LL.Warning.warning2)
+
+            Text(text)
+                .font(.inter(size: 14, weight: .medium))
+                .foregroundColor(Color.LL.Neutrals.text)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .lineLimit(1)
         }
     }
 }

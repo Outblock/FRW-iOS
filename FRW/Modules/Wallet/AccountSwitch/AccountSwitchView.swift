@@ -9,15 +9,12 @@ import Combine
 import Kingfisher
 import SwiftUI
 
+// MARK: - AccountSwitchView
+
 struct AccountSwitchView: PresentActionView {
+    // MARK: Internal
+
     var changeHeight: (() -> Void)?
-
-    @StateObject private var vm = AccountSwitchViewModel()
-    @State private var showAlert = false
-    @State private var showSwitchUserAlert = false
-
-    @State private var offset: CGFloat = 0
-    @State private var contentHeight: CGFloat = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -161,6 +158,25 @@ struct AccountSwitchView: PresentActionView {
         }
     }
 
+    var moreView: some View {
+        Button {
+            self.changeHeight?()
+        } label: {
+            HStack {
+                Text("view_more".localized)
+                    .font(.inter(size: 14))
+                    .foregroundStyle(Color.Theme.Accent.grey)
+                Image("icon_arrow_double_down")
+                    .resizable()
+                    .frame(width: 16, height: 16)
+            }
+            .padding(.horizontal, 16)
+            .frame(height: 32)
+            .background(.Theme.Background.grey)
+            .cornerRadius(16)
+        }
+    }
+
     func createAccountCell(_ placeholder: AccountSwitchViewModel.Placeholder) -> some View {
         HStack(spacing: 16) {
             KFImage.url(URL(string: placeholder.avatar.convertedAvatarString()))
@@ -185,41 +201,40 @@ struct AccountSwitchView: PresentActionView {
 
             Spacer()
             Image("icon-backup-success")
-                .visibility(placeholder.uid == UserManager.shared.activatedUID ? .visible : .invisible)
+                .visibility(
+                    placeholder.uid == UserManager.shared
+                        .activatedUID ? .visible : .invisible
+                )
         }
         .frame(height: 42)
         .contentShape(Rectangle())
     }
 
-    var moreView: some View {
-        Button {
-            self.changeHeight?()
-        } label: {
-            HStack {
-                Text("view_more".localized)
-                    .font(.inter(size: 14))
-                    .foregroundStyle(Color.Theme.Accent.grey)
-                Image("icon_arrow_double_down")
-                    .resizable()
-                    .frame(width: 16, height: 16)
-            }
-            .padding(.horizontal, 16)
-            .frame(height: 32)
-            .background(.Theme.Background.grey)
-            .cornerRadius(16)
-        }
-    }
+    // MARK: Private
+
+    @StateObject
+    private var vm = AccountSwitchViewModel()
+    @State
+    private var showAlert = false
+    @State
+    private var showSwitchUserAlert = false
+
+    @State
+    private var offset: CGFloat = 0
+    @State
+    private var contentHeight: CGFloat = 0
 }
 
 extension AccountSwitchView {
     var detents: [UISheetPresentationController.Detent] {
-        return [.medium(), .large()]
+        [.medium(), .large()]
     }
 }
 
+// MARK: - ScrollViewOffset
+
 struct ScrollViewOffset<Content: View>: View {
-    let onOffsetChange: (CGFloat) -> Void
-    let content: () -> Content
+    // MARK: Lifecycle
 
     init(
         onOffsetChange: @escaping (CGFloat) -> Void,
@@ -228,6 +243,11 @@ struct ScrollViewOffset<Content: View>: View {
         self.onOffsetChange = onOffsetChange
         self.content = content
     }
+
+    // MARK: Internal
+
+    let onOffsetChange: (CGFloat) -> Void
+    let content: () -> Content
 
     var body: some View {
         ScrollView {
@@ -251,6 +271,8 @@ struct ScrollViewOffset<Content: View>: View {
     }
 }
 
+// MARK: - SizePreferenceKey
+
 private struct SizePreferenceKey: PreferenceKey {
     static var defaultValue: CGSize = .zero
 
@@ -259,7 +281,10 @@ private struct SizePreferenceKey: PreferenceKey {
     }
 }
 
+// MARK: - OffsetPreferenceKey
+
 private struct OffsetPreferenceKey: PreferenceKey {
     static var defaultValue: CGFloat = .zero
+
     static func reduce(value _: inout CGFloat, nextValue _: () -> CGFloat) {}
 }

@@ -8,15 +8,19 @@
 import Foundation
 import Moya
 
+// MARK: - FRWAPI.Browser
+
 extension FRWAPI {
     enum Browser {
         case recommend(String)
     }
 }
 
+// MARK: - FRWAPI.Browser + TargetType
+
 extension FRWAPI.Browser: TargetType {
     var baseURL: URL {
-        return .init(string: "https://ac.duckduckgo.com")!
+        .init(string: "https://ac.duckduckgo.com")!
     }
 
     var path: String {
@@ -36,11 +40,14 @@ extension FRWAPI.Browser: TargetType {
     var task: Task {
         switch self {
         case let .recommend(text):
-            return .requestParameters(parameters: ["q": text, "type": "json"], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: ["q": text, "type": "json"],
+                encoding: URLEncoding.queryString
+            )
         }
     }
 
     var headers: [String: String]? {
-        return nil
+        nil
     }
 }

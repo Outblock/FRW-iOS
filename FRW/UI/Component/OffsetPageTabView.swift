@@ -9,24 +9,53 @@ import SwiftUI
 
 // Custom View that will return offset for Paging Control....
 struct OffsetPageTabView<Content: View>: UIViewRepresentable {
+    // MARK: Lifecycle
+
+    init(
+        offset: Binding<CGFloat>,
+        scrollTo: Binding<CGFloat>,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.content = content()
+        _offset = offset
+        _scrollTo = scrollTo
+    }
+
+    // MARK: Internal
+
+    // Pager Offset...
+    class Coordinator: NSObject, UIScrollViewDelegate {
+        // MARK: Lifecycle
+
+        init(parent: OffsetPageTabView) {
+            self.parent = parent
+        }
+
+        // MARK: Internal
+
+        var parent: OffsetPageTabView
+
+        func scrollViewDidScroll(_ scrollView: UIScrollView) {
+            let offset = scrollView.contentOffset.x
+            parent.offset = offset
+            parent.scrollTo = -1
+        }
+
+        func scrollViewDidEndScrollingAnimation(_: UIScrollView) {
+            parent.scrollTo = -1
+        }
+    }
+
     var content: Content
 
     @Binding
     var offset: CGFloat
 
-    @Binding var scrollTo: CGFloat
+    @Binding
+    var scrollTo: CGFloat
 
     func makeCoordinator() -> Coordinator {
         OffsetPageTabView.Coordinator(parent: self)
-    }
-
-    init(offset: Binding<CGFloat>,
-         scrollTo: Binding<CGFloat>,
-         @ViewBuilder content: @escaping () -> Content)
-    {
-        self.content = content()
-        _offset = offset
-        _scrollTo = scrollTo
     }
 
     func makeUIView(context: Context) -> UIScrollView {
@@ -78,25 +107,6 @@ struct OffsetPageTabView<Content: View>: UIViewRepresentable {
 
         if scrollTo != -1 {
             uiView.setContentOffset(CGPoint(x: scrollTo, y: 0), animated: false)
-        }
-    }
-
-    // Pager Offset...
-    class Coordinator: NSObject, UIScrollViewDelegate {
-        var parent: OffsetPageTabView
-
-        init(parent: OffsetPageTabView) {
-            self.parent = parent
-        }
-
-        func scrollViewDidScroll(_ scrollView: UIScrollView) {
-            let offset = scrollView.contentOffset.x
-            parent.offset = offset
-            parent.scrollTo = -1
-        }
-
-        func scrollViewDidEndScrollingAnimation(_: UIScrollView) {
-            parent.scrollTo = -1
         }
     }
 }

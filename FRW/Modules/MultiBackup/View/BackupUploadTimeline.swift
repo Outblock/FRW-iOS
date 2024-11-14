@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: - BackupUploadTimeline
+
 struct BackupUploadTimeline: View {
     var backupType: MultiBackupType
     var isError: Bool
@@ -23,26 +25,33 @@ struct BackupUploadTimeline: View {
             .layoutPriority(-1)
 
             VStack(alignment: .leading, spacing: 0) {
-                BackupUploadTimeline.Item(title: "backup.upload.key.x".localized(backupType.title),
-                                          backupType: backupType,
-                                          isError: isError,
-                                          process: .upload,
-                                          currentProcess: process)
+                BackupUploadTimeline.Item(
+                    title: "backup.upload.key.x".localized(backupType.title),
+                    backupType: backupType,
+                    isError: isError,
+                    process: .upload,
+                    currentProcess: process
+                )
                 Spacer()
-                BackupUploadTimeline.Item(title: "backup.register.key".localized,
-                                          backupType: backupType,
-                                          isError: isError,
-                                          process: .regist,
-                                          currentProcess: process)
+                BackupUploadTimeline.Item(
+                    title: "backup.register.key".localized,
+                    backupType: backupType,
+                    isError: isError,
+                    process: .regist,
+                    currentProcess: process
+                )
             }
         }
         .frame(height: 120)
     }
 
     var lineColor: Color {
-        (process == .regist || process == .finish) ? Color.Theme.Text.black8 : Color.Theme.Text.black3
+        (process == .regist || process == .finish) ? Color.Theme.Text.black8 : Color.Theme.Text
+            .black3
     }
 }
+
+// MARK: BackupUploadTimeline.Item
 
 extension BackupUploadTimeline {
     struct Item: View {
@@ -63,8 +72,11 @@ extension BackupUploadTimeline {
                     .font(.inter(size: 14))
                     .lineLimit(1)
                     .foregroundColor(themeColor())
-                Image(isError && process == currentProcess ? "backup.status.error" : "backup.status.finish")
-                    .visibility(showIcon() ? .visible : .gone)
+                Image(
+                    isError && process == currentProcess ? "backup.status.error" :
+                        "backup.status.finish"
+                )
+                .visibility(showIcon() ? .visible : .gone)
             }
         }
 

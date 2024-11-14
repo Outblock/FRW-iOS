@@ -11,13 +11,7 @@ import SwiftUI
 
 /// Group of layout values containing `top` and `bottom` values.
 public struct LayoutGroup_TB: Equatable {
-    // MARK: Properties
-
-    /// Top value.
-    public var top: CGFloat
-
-    /// Bottom value.
-    public var bottom: CGFloat
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -32,10 +26,20 @@ public struct LayoutGroup_TB: Equatable {
 
     /// Initializes group with zero values.
     public init() {
-        top = 0
-        bottom = 0
+        self.top = 0
+        self.bottom = 0
     }
+
+    // MARK: Public
 
     /// Initializes group with zero values.
     public static var zero: Self { .init() }
+
+    // MARK: Properties
+
+    /// Top value.
+    public var top: CGFloat
+
+    /// Bottom value.
+    public var bottom: CGFloat
 }

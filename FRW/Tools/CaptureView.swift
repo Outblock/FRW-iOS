@@ -39,8 +39,11 @@ extension View {
     }
 }
 
+// MARK: - GetRect
+
 struct GetRect: ViewModifier {
-    @Binding var rect: CGRect
+    @Binding
+    var rect: CGRect
 
     var measureRect: some View {
         GeometryReader { proxy in
@@ -60,15 +63,17 @@ struct GetRect: ViewModifier {
     }
 }
 
+// MARK: GetRect.RectPreferenceKey
+
 extension GetRect {
     struct RectPreferenceKey: PreferenceKey {
-        static func reduce(value _: inout CGRect?, nextValue _: () -> CGRect?) {
-//            value = nextValue()
-        }
-
         typealias Value = CGRect?
 
         static var defaultValue: CGRect? = nil
+
+        static func reduce(value _: inout CGRect?, nextValue _: () -> CGRect?) {
+//            value = nextValue()
+        }
     }
 }
 

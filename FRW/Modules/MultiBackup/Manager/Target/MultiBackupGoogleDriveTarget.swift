@@ -12,15 +12,10 @@ import GTMSessionFetcherCore
 import SwiftUI
 import UIKit
 
+// MARK: - MultiBackupGoogleDriveTarget
+
 class MultiBackupGoogleDriveTarget: MultiBackupTarget {
-    var uploadedItem: MultiBackupManager.StoreItem?
-
-    var registeredDeviceInfo: SyncInfo.DeviceInfo?
-
-    private var clientID = ""
-    private lazy var config: GIDConfiguration = .init(clientID: clientID)
-
-    private var api: GoogleDriveAPI?
+    // MARK: Lifecycle
 
     init() {
         guard let filePath = Bundle.main.path(forResource: "GoogleOAuth2", ofType: "plist") else {
@@ -32,8 +27,14 @@ class MultiBackupGoogleDriveTarget: MultiBackupTarget {
         }
     }
 
+    // MARK: Internal
+
+    var uploadedItem: MultiBackupManager.StoreItem?
+
+    var registeredDeviceInfo: SyncInfo.DeviceInfo?
+
     var isPrepared: Bool {
-        return api != nil
+        api != nil
     }
 
     func loginCloud() async throws {
@@ -52,6 +53,13 @@ class MultiBackupGoogleDriveTarget: MultiBackupTarget {
 
         try await api?.write(content: data, to: MultiBackupManager.backupFileName)
     }
+
+    // MARK: Private
+
+    private var clientID = ""
+    private lazy var config: GIDConfiguration = .init(clientID: clientID)
+
+    private var api: GoogleDriveAPI?
 }
 
 extension MultiBackupGoogleDriveTarget {
@@ -59,7 +67,11 @@ extension MultiBackupGoogleDriveTarget {
         try await prepare()
 
         let list = try await getCurrentDriveItems()
-        let newList = try await MultiBackupManager.shared.addNewMnemonic(on: .google, list: list, password: password)
+        let newList = try await MultiBackupManager.shared.addNewMnemonic(
+            on: .google,
+            list: list,
+            password: password
+        )
         let encrypedString = try MultiBackupManager.shared.encryptList(newList)
         guard let data = encrypedString.data(using: .utf8), !data.isEmpty else {
             throw BackupError.hexStringToDataFailed
@@ -71,7 +83,8 @@ extension MultiBackupGoogleDriveTarget {
     func getCurrentDriveItems() async throws -> [MultiBackupManager.StoreItem] {
         try await prepare()
 
-        guard let fileId = try await api?.getFileId(fileName: MultiBackupManager.backupFileName) else {
+        guard let fileId = try await api?.getFileId(fileName: MultiBackupManager.backupFileName)
+        else {
             log.error("[Google] Multiple backup file not found.")
             return []
         }
@@ -116,7 +129,7 @@ extension MultiBackupGoogleDriveTarget {
     }
 
     private func googleRestoreLogin() async throws -> GIDGoogleUser {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.main.async {
                 GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
                     guard let signInUser = user else {
@@ -131,17 +144,19 @@ extension MultiBackupGoogleDriveTarget {
     }
 
     private func googleUserLogin() async throws -> GIDGoogleUser {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.main.async {
                 let topVC = Router.topPresentedController()
-                GIDSignIn.sharedInstance.signIn(with: self.config, presenting: topVC) { user, error in
-                    guard let signInUser = user else {
-                        continuation.resume(throwing: error ?? GoogleBackupError.missingLoginUser)
-                        return
-                    }
+                GIDSignIn.sharedInstance
+                    .signIn(with: self.config, presenting: topVC) { user, error in
+                        guard let signInUser = user else {
+                            continuation
+                                .resume(throwing: error ?? GoogleBackupError.missingLoginUser)
+                            return
+                        }
 
-                    continuation.resume(returning: signInUser)
-                }
+                        continuation.resume(returning: signInUser)
+                    }
             }
         }
     }
@@ -168,19 +183,22 @@ extension MultiBackupGoogleDriveTarget {
 
         return try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.main.async {
-                GIDSignIn.sharedInstance.addScopes([driveScope], presenting: topVC) { grantedUser, error in
-                    guard let grantedUser = grantedUser else {
-                        continuation.resume(throwing: error ?? GoogleBackupError.missingLoginUser)
-                        return
-                    }
+                GIDSignIn.sharedInstance
+                    .addScopes([driveScope], presenting: topVC) { grantedUser, error in
+                        guard let grantedUser = grantedUser else {
+                            continuation
+                                .resume(throwing: error ?? GoogleBackupError.missingLoginUser)
+                            return
+                        }
 
-                    guard let scopes = grantedUser.grantedScopes, scopes.contains(driveScope) else {
-                        continuation.resume(throwing: GoogleBackupError.noDriveScope)
-                        return
-                    }
+                        guard let scopes = grantedUser.grantedScopes,
+                              scopes.contains(driveScope) else {
+                            continuation.resume(throwing: GoogleBackupError.noDriveScope)
+                            return
+                        }
 
-                    continuation.resume(returning: grantedUser)
-                }
+                        continuation.resume(returning: grantedUser)
+                    }
             }
         }
     }

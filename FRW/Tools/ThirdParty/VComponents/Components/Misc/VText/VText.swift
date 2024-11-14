@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Base Title
+// MARK: - VText
 
 /// Core component that is used throughout the library as text.
 ///
@@ -23,12 +23,7 @@ import SwiftUI
 ///     }
 ///
 public struct VText: View {
-    // MARK: Properties
-
-    private let textType: VTextType
-    private let font: Font
-    private let color: Color
-    private let title: String
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -45,9 +40,12 @@ public struct VText: View {
         self.title = title
     }
 
+    // MARK: Public
+
     // MARK: Body
 
-    @ViewBuilder public var body: some View {
+    @ViewBuilder
+    public var body: some View {
         switch textType {
         case .oneLine:
             Text(title)
@@ -67,9 +65,18 @@ public struct VText: View {
                 .minimumScaleFactor(0.5)
         }
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let textType: VTextType
+    private let font: Font
+    private let color: Color
+    private let title: String
 }
 
-// MARK: - Preview
+// MARK: - VText_Previews
 
 struct VText_Previews: PreviewProvider {
     static var previews: some View {

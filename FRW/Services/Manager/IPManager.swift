@@ -10,10 +10,14 @@ import DeviceGuru
 import Foundation
 import UIKit
 
+// MARK: - DeviceType
+
 enum DeviceType: String {
     case other = ""
     case iOS = "1"
     case chrome = "2"
+
+    // MARK: Lifecycle
 
     init(value: Int?) {
         switch value {
@@ -25,6 +29,8 @@ enum DeviceType: String {
             self = .other
         }
     }
+
+    // MARK: Internal
 
     var smallIcon: String {
         switch self {
@@ -38,8 +44,13 @@ enum DeviceType: String {
     }
 }
 
+// MARK: - IPManager
+
 class IPManager {
+    // MARK: Internal
+
     static let shared = IPManager()
+
     var info: IPResponse?
 
     func fetch() async {
@@ -51,28 +62,63 @@ class IPManager {
     }
 
     func toParams() -> DeviceInfoRequest {
-        let info = DeviceInfoRequest(deviceId: UUIDManager.appUUID(),
-                                     ip: ip,
-                                     name: name,
-                                     type: deviceType,
-                                     userAgent: userAgent,
-                                     continent: info?.continent,
-                                     continentCode: info?.continentCode,
-                                     country: info?.country,
-                                     countryCode: info?.countryCode,
-                                     regionName: info?.regionName,
-                                     city: info?.city,
-                                     district: info?.district,
-                                     zip: info?.zip,
-                                     lat: info?.lat,
-                                     lon: info?.lon,
-                                     timezone: info?.timezone,
-                                     currency: info?.currency,
-                                     isp: info?.isp,
-                                     org: info?.org)
+        let info = DeviceInfoRequest(
+            deviceId: UUIDManager.appUUID(),
+            ip: ip,
+            name: name,
+            type: deviceType,
+            userAgent: userAgent,
+            continent: info?.continent,
+            continentCode: info?.continentCode,
+            country: info?.country,
+            countryCode: info?.countryCode,
+            regionName: info?.regionName,
+            city: info?.city,
+            district: info?.district,
+            zip: info?.zip,
+            lat: info?.lat,
+            lon: info?.lon,
+            timezone: info?.timezone,
+            currency: info?.currency,
+            isp: info?.isp,
+            org: info?.org
+        )
 
         return info
     }
+
+    // MARK: Private
+
+    private let osNameVersion: String = {
+        let version = ProcessInfo.processInfo.operatingSystemVersion
+        let versionString =
+            "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+        let osName: String = {
+            #if os(iOS)
+            #if targetEnvironment(macCatalyst)
+            return "macOS(Catalyst)"
+            #else
+            return "iOS"
+            #endif
+            #elseif os(watchOS)
+            return "watchOS"
+            #elseif os(tvOS)
+            return "tvOS"
+            #elseif os(macOS)
+            return "macOS"
+            #elseif os(Linux)
+            return "Linux"
+            #elseif os(Windows)
+            return "Windows"
+            #elseif os(Android)
+            return "Android"
+            #else
+            return "Unknown"
+            #endif
+        }()
+
+        return "\(osName) \(versionString)"
+    }()
 
     private var ip: String {
         guard let str = info?.query else {
@@ -94,40 +140,10 @@ class IPManager {
     }
 
     private var userAgent: String {
-        return "Flow Wallet \(osNameVersion)"
+        "Flow Wallet \(osNameVersion)"
     }
 
     private var deviceType: String {
-        return DeviceType.iOS.rawValue
+        DeviceType.iOS.rawValue
     }
-
-    private let osNameVersion: String = {
-        let version = ProcessInfo.processInfo.operatingSystemVersion
-        let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
-        let osName: String = {
-            #if os(iOS)
-                #if targetEnvironment(macCatalyst)
-                    return "macOS(Catalyst)"
-                #else
-                    return "iOS"
-                #endif
-            #elseif os(watchOS)
-                return "watchOS"
-            #elseif os(tvOS)
-                return "tvOS"
-            #elseif os(macOS)
-                return "macOS"
-            #elseif os(Linux)
-                return "Linux"
-            #elseif os(Windows)
-                return "Windows"
-            #elseif os(Android)
-                return "Android"
-            #else
-                return "Unknown"
-            #endif
-        }()
-
-        return "\(osName) \(versionString)"
-    }()
 }

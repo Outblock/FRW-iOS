@@ -9,9 +9,9 @@ import SwiftUI
 
 // MARK: - Read Size
 
-public extension View {
+extension View {
     /// Reads `View` size and calls an on-change block.
-    func readSize(
+    public func readSize(
         onChange completion: @escaping (CGSize) -> Void
     ) -> some View {
         background(
@@ -24,9 +24,10 @@ public extension View {
     }
 }
 
-// MARK: - Size Preference Key
+// MARK: - SizePreferenceKey
 
 private struct SizePreferenceKey: PreferenceKey {
     static var defaultValue: CGSize = .zero
+
     static func reduce(value _: inout CGSize, nextValue _: () -> CGSize) {}
 }

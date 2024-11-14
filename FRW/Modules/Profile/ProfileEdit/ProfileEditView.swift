@@ -8,17 +8,21 @@
 import Kingfisher
 import SwiftUI
 
+// MARK: - ProfileEditView_Previews
+
 struct ProfileEditView_Previews: PreviewProvider {
     static var previews: some View {
         ProfileEditView()
     }
 }
 
+// MARK: - ProfileEditView
+
 struct ProfileEditView: RouteableView {
-    @StateObject private var vm = ProfileEditViewModel()
+    // MARK: Internal
 
     var title: String {
-        return "edit_account".localized
+        "edit_account".localized
     }
 
     var body: some View {
@@ -113,6 +117,11 @@ struct ProfileEditView: RouteableView {
         }
         .visibility(UserManager.shared.isMeowDomainEnabled ? .gone : .visible)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = ProfileEditViewModel()
 }
 
 extension ProfileEditView {
@@ -165,9 +174,12 @@ extension ProfileEditView {
                     .font(titleFont)
                     .foregroundColor(titleColor)
 
-                Text(vm.state.isPrivate ? "private_on_desc".localized : "private_off_desc".localized)
-                    .font(.inter(size: 12))
-                    .foregroundColor(.LL.Neutrals.note)
+                Text(
+                    vm.state.isPrivate ? "private_on_desc".localized : "private_off_desc"
+                        .localized
+                )
+                .font(.inter(size: 12))
+                .foregroundColor(.LL.Neutrals.note)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -178,7 +190,8 @@ extension ProfileEditView {
                     VStack {
                         ZStack(alignment: .bottomTrailing) {
                             Image("icon-visible")
-                            Image("icon-selected-small").visibility(vm.state.isPrivate ? .gone : .visible)
+                            Image("icon-selected-small")
+                                .visibility(vm.state.isPrivate ? .gone : .visible)
                                 .padding(.trailing, -3)
                                 .padding(.bottom, -3)
                         }
@@ -195,7 +208,8 @@ extension ProfileEditView {
                     VStack {
                         ZStack(alignment: .bottomTrailing) {
                             Image("icon-unvisible")
-                            Image("icon-selected-small").visibility(vm.state.isPrivate ? .visible : .gone)
+                            Image("icon-selected-small")
+                                .visibility(vm.state.isPrivate ? .visible : .gone)
                                 .padding(.trailing, -3)
                                 .padding(.bottom, -3)
                         }
@@ -214,10 +228,10 @@ extension ProfileEditView {
 
 extension ProfileEditView {
     var titleColor: Color {
-        return .LL.Neutrals.text
+        .LL.Neutrals.text
     }
 
     var titleFont: Font {
-        return .inter(size: 17, weight: .medium)
+        .inter(size: 17, weight: .medium)
     }
 }

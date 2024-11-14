@@ -9,18 +9,16 @@ import Flow
 import Foundation
 
 class DeviceManager: ObservableObject {
-    static let shared = DeviceManager()
+    // MARK: Internal
 
-    private var validAccounts: [Flow.AccountKey] = []
-    private var validKeys: [KeyDeviceModel] = []
-    private var validDevice: [DeviceInfoModel] = []
-    private var currentDevice: DeviceInfoModel?
+    static let shared = DeviceManager()
 
     func updateDevice() {
         Task {
             do {
                 let uuid = UUIDManager.appUUID()
-                let _: Network.EmptyResponse = try await Network.request(FRWAPI.User.updateDevice(uuid))
+                let _: Network.EmptyResponse = try await Network
+                    .request(FRWAPI.User.updateDevice(uuid))
             } catch {
                 log.error("[Start] upload device")
             }
@@ -41,8 +39,9 @@ class DeviceManager: ObservableObject {
         let validAccount = account.keys.filter { !$0.revoked }
         // filter valid key
         let validUserKeys = keyList.filter { keyModel in
-            let result = validAccount.filter { $0.publicKey.description == keyModel.pubkey.publicKey }
-            return result.count > 0
+            let result = validAccount
+                .filter { $0.publicKey.description == keyModel.pubkey.publicKey }
+            return !result.isEmpty
         }
         // filter device backup
         let validKeys = validUserKeys.filter { keyModel in
@@ -55,7 +54,7 @@ class DeviceManager: ObservableObject {
             let validDevices = validKeys.filter { deviceModel in
                 deviceModel.device.id == infoModel.id
             }
-            return validDevices.count > 0
+            return !validDevices.isEmpty
         }
 
         var seenNames = Set<String>()
@@ -110,4 +109,11 @@ class DeviceManager: ObservableObject {
         }
         return false
     }
+
+    // MARK: Private
+
+    private var validAccounts: [Flow.AccountKey] = []
+    private var validKeys: [KeyDeviceModel] = []
+    private var validDevice: [DeviceInfoModel] = []
+    private var currentDevice: DeviceInfoModel?
 }

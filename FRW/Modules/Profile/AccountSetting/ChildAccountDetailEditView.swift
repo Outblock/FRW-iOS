@@ -11,34 +11,46 @@ import SwiftUI
 import SwiftUIX
 import UIKit
 
+// MARK: - ChildAccountDetailEditViewModel.NewAccountInfo
+
 extension ChildAccountDetailEditViewModel {
     class NewAccountInfo {
+        var imageURL: String?
+        var name: String = ""
+        var desc: String = ""
+
         var newImage: UIImage? {
             didSet {
                 imageURL = nil
             }
         }
-
-        var imageURL: String?
-        var name: String = ""
-        var desc: String = ""
     }
 }
 
+// MARK: - ChildAccountDetailEditViewModel
+
 class ChildAccountDetailEditViewModel: ObservableObject {
-    @Published var childAccount: ChildAccount
-    @Published var imagePickerShowFlag = false
-    @Published var newInfo: NewAccountInfo
+    // MARK: Lifecycle
 
     init(childAccount: ChildAccount) {
         self.childAccount = childAccount
-        newInfo = NewAccountInfo()
+        self.newInfo = NewAccountInfo()
         newInfo.name = childAccount.name ?? ""
         newInfo.desc = childAccount.description ?? ""
         newInfo.imageURL = childAccount.icon
     }
 
-    @objc func saveAction() {
+    // MARK: Internal
+
+    @Published
+    var childAccount: ChildAccount
+    @Published
+    var imagePickerShowFlag = false
+    @Published
+    var newInfo: NewAccountInfo
+
+    @objc
+    func saveAction() {
         if newInfo.name.trim.count > 100 {
             HUD.error(title: "name must be less than 100 characters")
             return
@@ -54,7 +66,10 @@ class ChildAccountDetailEditViewModel: ObservableObject {
         Task {
             do {
                 if let image = newInfo.newImage, newInfo.imageURL == nil {
-                    let newURL = await FirebaseStorageUtils.upload(avatar: image, removeQuery: false)
+                    let newURL = await FirebaseStorageUtils.upload(
+                        avatar: image,
+                        removeQuery: false
+                    )
                     if newURL == nil {
                         HUD.dismissLoading()
                         HUD.error(title: "upload avatar failed")
@@ -64,7 +79,12 @@ class ChildAccountDetailEditViewModel: ObservableObject {
                     newInfo.imageURL = newURL
                 }
 
-                let txId = try await FlowNetwork.editChildAccountMeta(childAccount.addr ?? "", name: newInfo.name.trim, desc: newInfo.desc.trim, thumbnail: newInfo.imageURL?.trim ?? "")
+                let txId = try await FlowNetwork.editChildAccountMeta(
+                    childAccount.addr ?? "",
+                    name: newInfo.name.trim,
+                    desc: newInfo.desc.trim,
+                    thumbnail: newInfo.imageURL?.trim ?? ""
+                )
                 let holder = TransactionManager.TransactionHolder(id: txId, type: .editChildAccount)
 
                 DispatchQueue.main.async {
@@ -88,33 +108,22 @@ class ChildAccountDetailEditViewModel: ObservableObject {
     }
 }
 
+// MARK: - ChildAccountDetailEditView
+
 struct ChildAccountDetailEditView: RouteableView {
-    @StateObject var vm: ChildAccountDetailEditViewModel
+    // MARK: Lifecycle
 
     init(vm: ChildAccountDetailEditViewModel) {
         _vm = StateObject(wrappedValue: vm)
     }
 
+    // MARK: Internal
+
+    @StateObject
+    var vm: ChildAccountDetailEditViewModel
+
     var title: String {
         "edit".localized
-    }
-
-    func configNavigationItem(_ navigationItem: UINavigationItem) {
-        let saveBtn = UIButton(type: .custom)
-        let bgImage = UIImage.image(withColor: UIColor(named: "button.color")!)
-        let textColor = UIColor(named: "button.text")
-        saveBtn.setBackgroundImage(bgImage, for: .normal)
-        saveBtn.setTitleColor(textColor, for: .normal)
-        saveBtn.setTitle("save".localized)
-        saveBtn.titleLabel?.font = .interSemiBold(size: 14)
-        saveBtn.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
-        saveBtn.sizeToFit()
-        saveBtn.clipsToBounds = true
-        saveBtn.layer.cornerRadius = saveBtn.bounds.height / 2
-        saveBtn.addTarget(vm, action: Selector("saveAction"), for: .touchUpInside)
-
-        let saveItem = UIBarButtonItem(customView: saveBtn)
-        navigationItem.rightBarButtonItem = saveItem
     }
 
     var body: some View {
@@ -242,5 +251,23 @@ struct ChildAccountDetailEditView: RouteableView {
         Divider()
             .foregroundColor(.LL.Neutrals.background)
             .padding(.horizontal, 16)
+    }
+
+    func configNavigationItem(_ navigationItem: UINavigationItem) {
+        let saveBtn = UIButton(type: .custom)
+        let bgImage = UIImage.image(withColor: UIColor(named: "button.color")!)
+        let textColor = UIColor(named: "button.text")
+        saveBtn.setBackgroundImage(bgImage, for: .normal)
+        saveBtn.setTitleColor(textColor, for: .normal)
+        saveBtn.setTitle("save".localized)
+        saveBtn.titleLabel?.font = .interSemiBold(size: 14)
+        saveBtn.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
+        saveBtn.sizeToFit()
+        saveBtn.clipsToBounds = true
+        saveBtn.layer.cornerRadius = saveBtn.bounds.height / 2
+        saveBtn.addTarget(vm, action: Selector("saveAction"), for: .touchUpInside)
+
+        let saveItem = UIBarButtonItem(customView: saveBtn)
+        navigationItem.rightBarButtonItem = saveItem
     }
 }

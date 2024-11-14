@@ -11,16 +11,7 @@ import SwiftUI
 
 /// Color group containing `enabled`, `focused`, and `disabled` values.
 public struct StateColors_EFD: Equatable {
-    // MARK: Properties
-
-    /// Enabled color.
-    public var enabled: Color
-
-    /// Focused color.
-    public var focused: Color
-
-    /// Disabled color.
-    public var disabled: Color
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -37,11 +28,24 @@ public struct StateColors_EFD: Equatable {
 
     /// Initializes group with clear values.
     public init() {
-        enabled = .clear
-        focused = .clear
-        disabled = .clear
+        self.enabled = .clear
+        self.focused = .clear
+        self.disabled = .clear
     }
+
+    // MARK: Public
 
     /// Initializes group with clear values.
     public static var clear: Self { .init() }
+
+    // MARK: Properties
+
+    /// Enabled color.
+    public var enabled: Color
+
+    /// Focused color.
+    public var focused: Color
+
+    /// Disabled color.
+    public var disabled: Color
 }

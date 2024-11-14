@@ -11,6 +11,8 @@ import Foundation
 /// Enum that describes action performed when pressing `return` button.
 public typealias VTextFieldReturnButtonAction = VBaseTextFieldReturnButtonAction
 
+// MARK: - VTextFieldClearButtonAction
+
 /// Enum that describes action performed when pressing `clear` button.
 public enum VTextFieldClearButtonAction {
     // MARK: Cases
@@ -24,11 +26,15 @@ public enum VTextFieldClearButtonAction {
     /// Clear text and custom action.
     case clearAndCustom(_ action: () -> Void)
 
+    // MARK: Public
+
     // MARK: Initailizers
 
     /// Default value. Set to `clear`.
     public static var `default`: Self { .clear }
 }
+
+// MARK: - VTextFieldCancelButtonAction
 
 /// Enum that describes action performed when pressing `cancel` button.
 public enum VTextFieldCancelButtonAction {
@@ -42,6 +48,8 @@ public enum VTextFieldCancelButtonAction {
 
     /// Clear text and custom action.
     case clearAndCustom(_ action: () -> Void)
+
+    // MARK: Public
 
     // MARK: Initailizers
 

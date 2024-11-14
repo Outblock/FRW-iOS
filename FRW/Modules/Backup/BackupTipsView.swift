@@ -7,10 +7,13 @@
 
 import SwiftUI
 
+// MARK: - BackupTipsView
+
 struct BackupTipsView: View {
     var closeAction: () -> Void
 
-    @State var isChecked = false
+    @State
+    var isChecked = false
 
     var body: some View {
         VStack(spacing: 0) {

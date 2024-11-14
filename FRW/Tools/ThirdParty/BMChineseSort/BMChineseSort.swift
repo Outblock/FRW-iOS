@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: - BMChineseSortProtocol
+
 /// 开放的两个方法
 public protocol BMChineseSortProtocol {
     /// 中文对应拼音  eg:"Ad钙奶" -> "Ad gai nai"  结果英文不变 拼音小写
@@ -22,10 +24,19 @@ public protocol BMChineseSortProtocol {
     ///   - objectArray: 需要排序的数组
     ///   - key: 需要排序的字段，字符串数组传nil
     ///   - finish: 排序后回调
-    static func sortAndGroup<T>(objectArray: [T]?,
-                                key: String?,
-                                finish: @escaping (_ success: Bool, _ unGroupedArr: [T], _ sectionTitleArr: [String], _ sortedObjArr: [[T]]) -> Void)
+    static func sortAndGroup<T>(
+        objectArray: [T]?,
+        key: String?,
+        finish: @escaping (
+            _ success: Bool,
+            _ unGroupedArr: [T],
+            _ sectionTitleArr: [String],
+            _ sortedObjArr: [[T]]
+        ) -> Void
+    )
 }
+
+// MARK: - BMChineseSortType
 
 /// 排序的拼音比较类型枚举
 public enum BMChineseSortType {
@@ -35,8 +46,14 @@ public enum BMChineseSortType {
     case initial
 }
 
+// MARK: - BMChineseSort
+
 /// 默认属性修改 通过BMChineseSort.share().property = ** 修改
 public class BMChineseSort {
+    // MARK: Public
+
+    public static var share = BMChineseSort()
+
     //    sortMode = 1 使用原生CFStringTransform 方法转换，比较耗时。全拼音必须使用此设置！
     //    sortMode = 2 使用汉字码表对应的首字母码表 通过编码顺序查找 比较快
     //    码表来源于网络 不保证准确性（除了多音字没发现有错误），可以码表配合polyphoneMapping手动修改想要的映射
@@ -60,12 +77,14 @@ public class BMChineseSort {
     public var ignoreModelWithPrefix: String = ""
 
     /// 手动映射多音字，key = 中文，value = 对应首字母
-    public var polyphoneMapping = ["重庆": "CQ",
-                                   "厦门": "XM",
-                                   "长": "C",
-                                   "沈": "S"]
+    public var polyphoneMapping = [
+        "重庆": "CQ",
+        "厦门": "XM",
+        "长": "C",
+        "沈": "S",
+    ]
 
-    public static var share = BMChineseSort()
+    // MARK: Internal
 
     // 信号量
     var semaphore = DispatchSemaphore(value: 1)

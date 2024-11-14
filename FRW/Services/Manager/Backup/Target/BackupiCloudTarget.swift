@@ -8,11 +8,13 @@
 import SwiftUI
 import UIKit
 
+// MARK: - BackupiCloudTarget
+
 actor BackupiCloudTarget: BackupTarget {
-    private var api: iCloudAPI?
+    // MARK: Internal
 
     var isPrepared: Bool {
-        return api != nil
+        api != nil
     }
 
     func uploadMnemonic(password: String) async throws {
@@ -53,6 +55,10 @@ actor BackupiCloudTarget: BackupTarget {
 
         return try BackupManager.shared.decryptHexString(hexString)
     }
+
+    // MARK: Private
+
+    private var api: iCloudAPI?
 }
 
 extension BackupiCloudTarget {
@@ -61,11 +67,13 @@ extension BackupiCloudTarget {
             return
         }
 
-        guard let id = containerID, let url = FileManager.default.url(forUbiquityContainerIdentifier: id) else {
+        guard let id = containerID,
+              let url = FileManager.default.url(forUbiquityContainerIdentifier: id) else {
             throw iCloudBackupError.initError
         }
 
-        let fileURL = url.appendingPathComponent("Documents").appendingPathComponent(BackupManager.backupFileName)
+        let fileURL = url.appendingPathComponent("Documents")
+            .appendingPathComponent(BackupManager.backupFileName)
         api = await iCloudAPI(fileURL: fileURL)
 
         // double check if prepared

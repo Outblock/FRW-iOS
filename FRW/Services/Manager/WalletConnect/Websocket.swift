@@ -9,10 +9,15 @@ import Foundation
 import Starscream
 import WalletConnectRelay
 
+// MARK: - WebSocket + WebSocketConnecting
+
 extension WebSocket: WebSocketConnecting {}
+
+// MARK: - SocketFactory
 
 class SocketFactory: WebSocketFactory {
     var socket: WebSocket?
+
     func create(with url: URL) -> WebSocketConnecting {
         let socket = WebSocket(url: url)
         self.socket = socket

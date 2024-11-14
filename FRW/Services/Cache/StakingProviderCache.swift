@@ -7,15 +7,10 @@
 
 import Foundation
 
+// MARK: - StakingProviderCache
+
 class StakingProviderCache {
-    static let cache = StakingProviderCache()
-
-    private(set) var providers: [StakingProvider] = []
-
-    private lazy var rootFolder = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("staking")
-    private lazy var providerCacheFile = rootFolder.appendingPathComponent("providers")
-
-    private var isRefreshing: Bool = false
+    // MARK: Lifecycle
 
     init() {
         createFolderIfNeeded()
@@ -24,10 +19,29 @@ class StakingProviderCache {
         refresh()
     }
 
+    // MARK: Internal
+
+    static let cache = StakingProviderCache()
+
+    private(set) var providers: [StakingProvider] = []
+
+    // MARK: Private
+
+    private lazy var rootFolder = FileManager.default.urls(
+        for: .applicationSupportDirectory,
+        in: .userDomainMask
+    ).first!.appendingPathComponent("staking")
+    private lazy var providerCacheFile = rootFolder.appendingPathComponent("providers")
+
+    private var isRefreshing: Bool = false
+
     private func createFolderIfNeeded() {
         do {
             if !FileManager.default.fileExists(atPath: rootFolder.relativePath) {
-                try FileManager.default.createDirectory(at: rootFolder, withIntermediateDirectories: true)
+                try FileManager.default.createDirectory(
+                    at: rootFolder,
+                    withIntermediateDirectories: true
+                )
             }
         } catch {
             debugPrint("StakingProviderCache -> createFolderIfNeeded error: \(error)")
@@ -59,7 +73,8 @@ class StakingProviderCache {
 
     private func loadFromLocalFile() {
         do {
-            guard let filePath = Bundle.main.path(forResource: "staking_provider", ofType: "json") else {
+            guard let filePath = Bundle.main.path(forResource: "staking_provider", ofType: "json")
+            else {
                 debugPrint("StakingProviderCache -> loadFromLocalFile error: no local file")
                 return
             }
@@ -98,7 +113,10 @@ extension StakingProviderCache {
         }
 
         isRefreshing = true
-        let url = URL(string: "https://raw.githubusercontent.com/Outblock/Assets/main/staking/staking.json")!
+        let url =
+            URL(
+                string: "https://raw.githubusercontent.com/Outblock/Assets/main/staking/staking.json"
+            )!
         let task = URLSession.shared.dataTask(with: url) { data, _, _ in
             DispatchQueue.main.async {
                 self.isRefreshing = false

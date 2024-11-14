@@ -15,6 +15,8 @@ extension AddAddressView {
         case invalidFormat
         case notFound
 
+        // MARK: Internal
+
         var desc: String {
             switch self {
             case .invalidFormat:
@@ -62,7 +64,8 @@ extension AddAddressView {
             }
 
             if isEditingMode {
-                if finalName == editingContact?.contactName, finalAddress == editingContact?.address {
+                if finalName == editingContact?.contactName,
+                   finalAddress == editingContact?.address {
                     isReadyForSave = false
                     return
                 }
@@ -78,20 +81,17 @@ extension AddAddressView {
     }
 
     class AddAddressViewModel: ViewModel {
-        @Published var state: AddAddressState
-        private var addressBookVM: AddressBookView.AddressBookViewModel
-
-        private var addressCheckTask: DispatchWorkItem?
+        // MARK: Lifecycle
 
         init(addressBookVM: AddressBookView.AddressBookViewModel) {
-            state = AddAddressState()
+            self.state = AddAddressState()
             self.addressBookVM = addressBookVM
         }
 
         init(contact: Contact, addressBookVM: AddressBookView.AddressBookViewModel) {
             self.addressBookVM = addressBookVM
 
-            state = AddAddressState()
+            self.state = AddAddressState()
             state.isEditingMode = true
             state.editingContact = contact
             state.name = contact.contactName ?? ""
@@ -99,6 +99,11 @@ extension AddAddressView {
 
             trigger(.checkAddress)
         }
+
+        // MARK: Internal
+
+        @Published
+        var state: AddAddressState
 
         func trigger(_ input: AddAddressInput) {
             switch input {
@@ -108,6 +113,12 @@ extension AddAddressView {
                 saveAction()
             }
         }
+
+        // MARK: Private
+
+        private var addressBookVM: AddressBookView.AddressBookViewModel
+
+        private var addressCheckTask: DispatchWorkItem?
 
         private func saveAction() {
             if checkContactExists() == true {
@@ -146,8 +157,15 @@ extension AddAddressView {
 
             Task {
                 do {
-                    let request = AddressBookAddRequest(contactName: contactName, address: address, domain: "", domainType: .unknown, username: "")
-                    let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.AddressBook.addExternal(request))
+                    let request = AddressBookAddRequest(
+                        contactName: contactName,
+                        address: address,
+                        domain: "",
+                        domainType: .unknown,
+                        username: ""
+                    )
+                    let response: Network.EmptyResponse = try await Network
+                        .requestWithRawModel(FRWAPI.AddressBook.addExternal(request))
 
                     if response.httpCode != 200 {
                         errorAction()
@@ -184,13 +202,22 @@ extension AddAddressView {
 
             Task {
                 do {
-                    guard let id = state.editingContact?.id, let domainType = state.editingContact?.domain?.domainType else {
+                    guard let id = state.editingContact?.id,
+                          let domainType = state.editingContact?.domain?.domainType else {
                         errorAction()
                         return
                     }
 
-                    let request = AddressBookEditRequest(id: id, contactName: contactName, address: address, domain: "", domainType: domainType, username: "")
-                    let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.AddressBook.edit(request))
+                    let request = AddressBookEditRequest(
+                        id: id,
+                        contactName: contactName,
+                        address: address,
+                        domain: "",
+                        domainType: domainType,
+                        username: ""
+                    )
+                    let response: Network.EmptyResponse = try await Network
+                        .requestWithRawModel(FRWAPI.AddressBook.edit(request))
 
                     if response.httpCode != 200 {
                         errorAction()
@@ -208,7 +235,15 @@ extension AddAddressView {
             let contactName = state.name.trim()
             let address = state.address.trim().lowercased()
             let domain = Contact.Domain(domainType: .unknown, value: "")
-            let contact = Contact(address: address, avatar: nil, contactName: contactName, contactType: .external, domain: domain, id: 0, username: "")
+            let contact = Contact(
+                address: address,
+                avatar: nil,
+                contactName: contactName,
+                contactType: .external,
+                domain: domain,
+                id: 0,
+                username: ""
+            )
 
             return addressBookVM.contactIsExists(contact)
         }
@@ -240,7 +275,7 @@ extension AddAddressView {
 
 extension AddAddressView.AddAddressViewModel {
     private func checkAddressFormat(_ address: String) -> Bool {
-        return address.matchRegex("^0x[a-fA-F0-9]{16}$")
+        address.matchRegex("^0x[a-fA-F0-9]{16}$")
     }
 
     private func delayCheckAddressIsExist(_ address: String) {

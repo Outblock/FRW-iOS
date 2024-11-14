@@ -10,15 +10,20 @@ import Foundation
 import SwiftUI
 
 #if canImport(UIKit)
-    extension View {
-        func dismissKeyboard() {
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-        }
+extension View {
+    func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
     }
+}
 #endif
 
-public extension View {
-    func dismissKeyboardOnDrag() -> some View {
+extension View {
+    public func dismissKeyboardOnDrag() -> some View {
         gesture(DragGesture().onChanged { _ in self.dismissKeyboard() })
     }
 }
@@ -29,12 +34,16 @@ extension View {
     }
 }
 
+// MARK: - NumberOnlyViewModifier
+
 public struct NumberOnlyViewModifier: ViewModifier {
-    @Binding var text: String
+    // MARK: Lifecycle
 
     public init(text: Binding<String>) {
         _text = text
     }
+
+    // MARK: Public
 
     public func body(content: Content) -> some View {
         content
@@ -46,4 +55,9 @@ public struct NumberOnlyViewModifier: ViewModifier {
                 }
             }
     }
+
+    // MARK: Internal
+
+    @Binding
+    var text: String
 }

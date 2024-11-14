@@ -10,9 +10,7 @@ import UIKit
 // MARK: - Focusable Text Field
 
 final class FocusableTextField: UITextField {
-    // MARK: Proeprties
-
-    private let representable: UIKitTextFieldRepresentable
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -26,6 +24,8 @@ final class FocusableTextField: UITextField {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
     // MARK: First Responder
 
     override func becomeFirstResponder() -> Bool {
@@ -37,4 +37,10 @@ final class FocusableTextField: UITextField {
         representable.setBindedFocus(to: false)
         return super.resignFirstResponder()
     }
+
+    // MARK: Private
+
+    // MARK: Proeprties
+
+    private let representable: UIKitTextFieldRepresentable
 }

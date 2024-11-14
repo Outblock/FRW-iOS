@@ -7,20 +7,18 @@
 
 import SwiftUI
 
-// MARK: - V Spinner Continous
+// MARK: - VSpinnerContinous
 
 struct VSpinnerContinous: View {
-    // MARK: Properties
-
-    private let model: VSpinnerModelContinous
-
-    @State private var isAnimating: Bool = false
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     init(model: VSpinnerModelContinous) {
         self.model = model
     }
+
+    // MARK: Internal
 
     // MARK: Body
 
@@ -41,7 +39,18 @@ struct VSpinnerContinous: View {
                 }
             })
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VSpinnerModelContinous
+
+    @State
+    private var isAnimating: Bool = false
 }
+
+// MARK: - VSpinnerContinous_Previews
 
 struct VSpinnerContinous_Previews: PreviewProvider {
     static var previews: some View {
