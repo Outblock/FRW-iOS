@@ -1,20 +1,22 @@
 //
-//  TokenModel.swift
+//  WalletModels.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 30/4/2022.
 //
 
+import BigInt
 import Flow
 import Foundation
-import BigInt
 
-// MARK: - Coin
+// MARK: - QuoteMarket
 
 enum QuoteMarket: String {
     case binance
     case kraken
     case huobi
+
+    // MARK: Internal
 
     var flowPricePair: String {
         switch self {
@@ -35,9 +37,11 @@ enum QuoteMarket: String {
     }
 
     var iconName: String {
-        return rawValue
+        rawValue
     }
 }
+
+// MARK: - ListedToken
 
 enum ListedToken: String, CaseIterable {
     case flow
@@ -45,6 +49,19 @@ enum ListedToken: String, CaseIterable {
     case stFlow
     case usdc
     case other
+
+    // MARK: Lifecycle
+
+    init?(rawValue: String) {
+        if let item = ListedToken.allCases
+            .first(where: { $0.rawValue.lowercased() == rawValue.lowercased() }) {
+            self = item
+        } else {
+            self = .other
+        }
+    }
+
+    // MARK: Internal
 
     enum PriceAction {
         case fixed(price: Decimal)
@@ -66,15 +83,9 @@ enum ListedToken: String, CaseIterable {
             return .fixed(price: 0.0)
         }
     }
-
-    init?(rawValue: String) {
-        if let item = ListedToken.allCases.first(where: { $0.rawValue.lowercased() == rawValue.lowercased() }) {
-            self = item
-        } else {
-            self = .other
-        }
-    }
 }
+
+// MARK: - TokenModel
 
 struct TokenModel: Codable, Identifiable, Mockable {
     let name: String
@@ -94,7 +105,7 @@ struct TokenModel: Codable, Identifiable, Mockable {
     }
 
     var isFlowCoin: Bool {
-        return symbol?.lowercased() ?? "" == ListedToken.flow.rawValue
+        symbol?.lowercased() ?? "" == ListedToken.flow.rawValue
     }
 
     var contractId: String {
@@ -126,22 +137,7 @@ struct TokenModel: Codable, Identifiable, Mockable {
     }
 
     var id: String {
-        return symbol ?? ""
-    }
-
-    func getAddress() -> String? {
-        return address.addressByNetwork(LocalUserDefaults.shared.flowNetwork.toFlowType())
-    }
-
-    func getPricePair(market: QuoteMarket) -> String {
-        switch listedToken {
-        case .flow:
-            return market.flowPricePair
-        case .usdc:
-            return market.usdcPricePair
-        default:
-            return market.flowPricePair // TODO: #six Need to confirm
-        }
+        symbol ?? ""
     }
 
     var isActivated: Bool {
@@ -153,16 +149,38 @@ struct TokenModel: Codable, Identifiable, Mockable {
     }
 
     static func mock() -> TokenModel {
-        return TokenModel(name: "mockname",
-                          address: FlowNetworkModel(mainnet: nil, testnet: nil, crescendo: nil, previewnet: nil),
-                          contractName: "contractname",
-                          storagePath: FlowTokenStoragePath(balance: "", vault: "", receiver: ""),
-                          decimal: 999,
-                          icon: nil,
-                          symbol: randomString(),
-                          website: nil,
-                          evmAddress: nil,
-                          flowIdentifier: nil)
+        TokenModel(
+            name: "mockname",
+            address: FlowNetworkModel(
+                mainnet: nil,
+                testnet: nil,
+                crescendo: nil,
+                previewnet: nil
+            ),
+            contractName: "contractname",
+            storagePath: FlowTokenStoragePath(balance: "", vault: "", receiver: ""),
+            decimal: 999,
+            icon: nil,
+            symbol: randomString(),
+            website: nil,
+            evmAddress: nil,
+            flowIdentifier: nil
+        )
+    }
+
+    func getAddress() -> String? {
+        address.addressByNetwork(LocalUserDefaults.shared.flowNetwork.toFlowType())
+    }
+
+    func getPricePair(market: QuoteMarket) -> String {
+        switch listedToken {
+        case .flow:
+            return market.flowPricePair
+        case .usdc:
+            return market.usdcPricePair
+        default:
+            return market.flowPricePair // TODO: #six Need to confirm
+        }
     }
 }
 
@@ -181,6 +199,8 @@ extension TokenModel {
         return String(name)
     }
 }
+
+// MARK: - FlowNetworkModel
 
 struct FlowNetworkModel: Codable {
     let mainnet: String?
@@ -202,11 +222,15 @@ struct FlowNetworkModel: Codable {
     }
 }
 
+// MARK: - FlowTokenStoragePath
+
 struct FlowTokenStoragePath: Codable {
     let balance: String
     let vault: String
     let receiver: String
 }
+
+// MARK: - SingleTokenResponse
 
 struct SingleTokenResponse: Codable {
     let name: String
@@ -220,6 +244,8 @@ struct SingleTokenResponse: Codable {
         return result
     }
 }
+
+// MARK: - SingleToken
 
 struct SingleToken: Codable {
     let chainId: Int
@@ -237,17 +263,41 @@ struct SingleToken: Codable {
     func toTokenModel(network: LocalUserDefaults.FlowNetworkType) -> TokenModel {
         let logo = URL(string: logoURI ?? "")
 
-        let model = TokenModel(name: name,
-                               address: FlowNetworkModel(mainnet: network == .mainnet ? address : nil, testnet: network == .testnet ? address : nil, crescendo: nil, previewnet: network == .previewnet ? address : nil),
-                               contractName: contractName ?? "", storagePath: path ?? FlowTokenStoragePath(balance: "", vault: "", receiver: ""), decimal: decimals, icon: logo, symbol: symbol, website: extensions?.website, evmAddress: evmAddress, flowIdentifier: flowIdentifier)
+        let model = TokenModel(
+            name: name,
+            address: FlowNetworkModel(
+                mainnet: network == .mainnet ? address : nil,
+                testnet: network == .testnet ? address : nil,
+                crescendo: nil,
+                previewnet: network == .previewnet ? address : nil
+            ),
+            contractName: contractName ?? "",
+            storagePath: path ??
+                FlowTokenStoragePath(balance: "", vault: "", receiver: ""),
+            decimal: decimals,
+            icon: logo,
+            symbol: symbol,
+            website: extensions?.website,
+            evmAddress: evmAddress,
+            flowIdentifier: flowIdentifier
+        )
         return model
     }
 }
 
+// MARK: - TokenExtension
+
 struct TokenExtension: Codable {
-    let website: URL?
-    let twitter: URL?
-    let discord: URL?
+    // MARK: Lifecycle
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.website = try? container.decode(URL.self, forKey: .website)
+        self.twitter = try? container.decode(URL.self, forKey: .twitter)
+        self.discord = try? container.decode(URL.self, forKey: .discord)
+    }
+
+    // MARK: Internal
 
     enum CodingKeys: String, CodingKey {
         case website
@@ -255,10 +305,7 @@ struct TokenExtension: Codable {
         case discord
     }
 
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        website = try? container.decode(URL.self, forKey: .website)
-        twitter = try? container.decode(URL.self, forKey: .twitter)
-        discord = try? container.decode(URL.self, forKey: .discord)
-    }
+    let website: URL?
+    let twitter: URL?
+    let discord: URL?
 }

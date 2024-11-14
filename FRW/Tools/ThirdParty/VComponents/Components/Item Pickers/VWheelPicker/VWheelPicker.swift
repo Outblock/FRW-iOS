@@ -198,10 +198,8 @@ public struct VWheelPicker<Data, RowContent>: View
         })
         .pickerStyle(WheelPickerStyle())
         .labelsHidden()
-
         .disabled(!state.isEnabled) // Luckily, doesn't affect colors
         .opacity(model.colors.content.for(state))
-
         .background(model.colors.background.for(state).cornerRadius(model.layout.cornerRadius))
     }
 

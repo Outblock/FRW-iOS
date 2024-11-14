@@ -21,15 +21,15 @@ public typealias VWebLinkPreset = DerivedButtonPreset
 // MARK: - Button
 
 extension VWebLinkType {
-    @ViewBuilder static func webLinkButton<Content>(
+    @ViewBuilder
+    static func webLinkButton<Content>(
         buttonType: VWebLinkType,
         isEnabled: Bool,
         action: @escaping () -> Void,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View
-        where Content: View
-    {
-        Self.navLinkButton(
+        where Content: View {
+        navLinkButton(
             buttonType: buttonType,
             isEnabled: isEnabled,
             action: action,

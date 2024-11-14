@@ -7,11 +7,13 @@
 
 import SwiftUI
 
+// MARK: - TermsAndPolicy
+
 struct TermsAndPolicy: RouteableView {
     let mnemonic: String?
 
     var title: String {
-        return ""
+        ""
     }
 
     var body: some View {
@@ -57,25 +59,31 @@ struct TermsAndPolicy: RouteableView {
                 }.padding()
             }
             .foregroundColor(Color.LL.text)
-
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.LL.outline,
-                            lineWidth: 1)
+                    .stroke(
+                        Color.LL.outline,
+                        lineWidth: 1
+                    )
             )
             .padding(.bottom, 40)
 
-            VPrimaryButton(model: ButtonStyle.primary,
-                           action: {
-                               Router.route(to: RouteMap.Register.username(mnemonic))
-                           }, title: "i_accept".localized)
-                .padding(.bottom, 20)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                action: {
+                    Router.route(to: RouteMap.Register.username(mnemonic))
+                },
+                title: "i_accept".localized
+            )
+            .padding(.bottom, 20)
         }
         .padding(.horizontal, 28)
         .background(Color.LL.background, ignoresSafeAreaEdges: .all)
         .applyRouteable(self)
     }
 }
+
+// MARK: - TermsAndPolicy_Previews
 
 struct TermsAndPolicy_Previews: PreviewProvider {
     static var previews: some View {

@@ -7,10 +7,10 @@
 
 import Combine
 import Flow
+import FlowWalletCore
 import Foundation
 import SwiftUI
 import SwiftUIPager
-import FlowWalletCore
 
 extension WalletViewModel {
     enum WalletState {
@@ -27,7 +27,7 @@ extension WalletViewModel {
         let changePercentage: Double
 
         var changeIsNegative: Bool {
-            return changePercentage < 0
+            changePercentage < 0
         }
 
         var priceValue: String {
@@ -47,75 +47,36 @@ extension WalletViewModel {
         }
 
         var changeColor: Color {
-            return changeIsNegative ? Color.Flow.Font.descend : Color.Flow.Font.ascend
+            changeIsNegative ? Color.Flow.Font.descend : Color.Flow.Font.ascend
         }
 
         var changeBG: Color {
             if changePercentage == 0 {
                 return Color.Theme.Background.grey.opacity(0.16)
             }
-            return changeIsNegative ? Color.Flow.Font.descend.opacity(0.16) : Color.Flow.Font.ascend.opacity(0.16)
+            return changeIsNegative ? Color.Flow.Font.descend.opacity(0.16) : Color.Flow.Font.ascend
+                .opacity(0.16)
         }
 
         var balanceAsCurrentCurrency: String {
-            return (balance * last).formatCurrencyString(considerCustomCurrency: true)
+            (balance * last).formatCurrencyString(considerCustomCurrency: true)
         }
 
         static func mock() -> WalletViewModel.WalletCoinItemModel {
-            return WalletCoinItemModel(token: TokenModel.mock(), balance: 999, last: 10, changePercentage: 50)
+            WalletCoinItemModel(
+                token: TokenModel.mock(),
+                balance: 999,
+                last: 10,
+                changePercentage: 50
+            )
         }
     }
 }
 
+// MARK: - WalletViewModel
+
 class WalletViewModel: ObservableObject {
-    @Published var isHidden: Bool = LocalUserDefaults.shared.walletHidden
-    @Published var balance: Double = 0
-    @Published var coinItems: [WalletCoinItemModel] = []
-    @Published var walletState: WalletState = .noAddress
-    @Published var transactionCount: Int = LocalUserDefaults.shared.transactionCount
-    @Published var pendingRequestCount: Int = 0
-    @Published var backupTipsPresent: Bool = false
-
-    @Published var isMock: Bool = false
-
-    @Published var moveAssetsPresent: Bool = false
-    @Published var moveTokenPresent: Bool = false
-
-    @Published var currentPage: Int = 0
-    @Published var page: Page = .first()
-
-    @Published var showHeaderMask = false
-
-    @Published var showAddTokenButton: Bool = true
-    @Published var showSwapButton: Bool = true
-    @Published var showStakeButton: Bool = true
-    @Published var showHorLayout: Bool = false
-
-    @Published var showBuyButton: Bool = true
-
-    @Published var showMoveAsset: Bool = false
-
-    var needShowPlaceholder: Bool {
-        return isMock || walletState == .noAddress
-    }
-
-    var mCoinItems: [WalletCoinItemModel] {
-        if needShowPlaceholder {
-            return [WalletCoinItemModel].mock()
-        } else {
-            return coinItems
-        }
-    }
-
-    private var lastRefreshTS: TimeInterval = 0
-    private let autoRefreshInterval: TimeInterval = 30
-
-    private var isReloading: Bool = false
-
-    /// If the current account is not backed up, each time start app, backup tips will be displayed.
-    private var backupTipsShown: Bool = false
-
-    private var cancelSets = Set<AnyCancellable>()
+    // MARK: Lifecycle
 
     init() {
         WalletManager.shared.$walletInfo
@@ -174,14 +135,30 @@ class WalletViewModel: ObservableObject {
                     return
                 }
 
-                if abs(self.lastRefreshTS - Date().timeIntervalSince1970) > self.autoRefreshInterval {
+                if abs(self.lastRefreshTS - Date().timeIntervalSince1970) > self
+                    .autoRefreshInterval {
                     self.reloadWalletData()
                 }
             }.store(in: &cancelSets)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(transactionCountDidChanged), name: .transactionCountDidChanged, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(didReset), name: .didResetWallet, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(transactionCountDidChanged),
+            name: .transactionCountDidChanged,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(willReset),
+            name: .willResetWallet,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didReset),
+            name: .didResetWallet,
+            object: nil
+        )
 
         refreshButtonState()
 
@@ -198,6 +175,78 @@ class WalletViewModel: ObservableObject {
                 self?.updateMoveAsset()
             }.store(in: &cancelSets)
     }
+
+    // MARK: Internal
+
+    @Published
+    var isHidden: Bool = LocalUserDefaults.shared.walletHidden
+    @Published
+    var balance: Double = 0
+    @Published
+    var coinItems: [WalletCoinItemModel] = []
+    @Published
+    var walletState: WalletState = .noAddress
+    @Published
+    var transactionCount: Int = LocalUserDefaults.shared.transactionCount
+    @Published
+    var pendingRequestCount: Int = 0
+    @Published
+    var backupTipsPresent: Bool = false
+
+    @Published
+    var isMock: Bool = false
+
+    @Published
+    var moveAssetsPresent: Bool = false
+    @Published
+    var moveTokenPresent: Bool = false
+
+    @Published
+    var currentPage: Int = 0
+    @Published
+    var page: Page = .first()
+
+    @Published
+    var showHeaderMask = false
+
+    @Published
+    var showAddTokenButton: Bool = true
+    @Published
+    var showSwapButton: Bool = true
+    @Published
+    var showStakeButton: Bool = true
+    @Published
+    var showHorLayout: Bool = false
+
+    @Published
+    var showBuyButton: Bool = true
+
+    @Published
+    var showMoveAsset: Bool = false
+
+    var needShowPlaceholder: Bool {
+        isMock || walletState == .noAddress
+    }
+
+    var mCoinItems: [WalletCoinItemModel] {
+        if needShowPlaceholder {
+            return [WalletCoinItemModel].mock()
+        } else {
+            return coinItems
+        }
+    }
+
+    // MARK: Private
+
+    private var lastRefreshTS: TimeInterval = 0
+    private let autoRefreshInterval: TimeInterval = 30
+
+    private var isReloading: Bool = false
+
+    /// If the current account is not backed up, each time start app, backup tips will be displayed.
+    private var backupTipsShown: Bool = false
+
+    private var cancelSets = Set<AnyCancellable>()
 
     private func updateTheme() {
         showHeaderMask = false
@@ -220,10 +269,13 @@ class WalletViewModel: ObservableObject {
             }
 
             let summary = CoinRateCache.cache.getSummary(for: symbol)
-            let item = WalletCoinItemModel(token: token,
-                                           balance: WalletManager.shared.getBalance(bySymbol: symbol),
-                                           last: summary?.getLastRate() ?? 0,
-                                           changePercentage: summary?.getChangePercentage() ?? 0)
+            let item = WalletCoinItemModel(
+                token: token,
+                balance: WalletManager.shared
+                    .getBalance(bySymbol: symbol),
+                last: summary?.getLastRate() ?? 0,
+                changePercentage: summary?.getChangePercentage() ?? 0
+            )
             list.append(item)
         }
         list.sort { first, second in
@@ -287,7 +339,7 @@ class WalletViewModel: ObservableObject {
             return false
         }
 
-        if result.count == 0, LocalUserDefaults.shared.nftCount == 0 {
+        if result.isEmpty, LocalUserDefaults.shared.nftCount == 0 {
             return
         }
 
@@ -314,30 +366,35 @@ class WalletViewModel: ObservableObject {
                     LocalUserDefaults.shared.transactionCount = finalCount
                 }
             } catch {
-                debugPrint("WalletViewModel -> reloadTransactionCount, fetch transaction count failed: \(error)")
+                debugPrint(
+                    "WalletViewModel -> reloadTransactionCount, fetch transaction count failed: \(error)"
+                )
             }
         }
     }
 
-    @objc private func transactionCountDidChanged() {
+    @objc
+    private func transactionCountDidChanged() {
         DispatchQueue.syncOnMain {
             self.transactionCount = LocalUserDefaults.shared.transactionCount
         }
     }
 
-    @objc private func willReset() {
+    @objc
+    private func willReset() {
         LocalUserDefaults.shared.transactionCount = 0
     }
 
-    @objc private func didReset() {
+    @objc
+    private func didReset() {
         backupTipsShown = false
     }
 
     private func updateMoveAsset() {
         log.info("[Home] update move asset status")
-        showMoveAsset = EVMAccountManager.shared.accounts.count > 0 || ChildAccountManager.shared.childAccounts.count > 0
+        showMoveAsset = EVMAccountManager.shared.accounts.count > 0 || !ChildAccountManager.shared
+            .childAccounts.isEmpty
     }
-    
 }
 
 // MARK: - Action
@@ -404,7 +461,7 @@ extension WalletViewModel {
     }
 
     func stakingAction() {
-        if !LocalUserDefaults.shared.stakingGuideDisplayed && !StakingManager.shared.isStaked {
+        if !LocalUserDefaults.shared.stakingGuideDisplayed, !StakingManager.shared.isStaked {
             Router.route(to: RouteMap.Wallet.stakeGuide)
             return
         }
@@ -421,9 +478,8 @@ extension WalletViewModel {
         } else {
             Router.route(to: RouteMap.Wallet.addToken)
         }
-        
     }
-    
+
     func sideToggleAction() {
         NotificationCenter.default.post(name: .toggleSideMenu, object: nil)
     }
@@ -440,14 +496,16 @@ extension WalletViewModel {
 
 extension WalletViewModel {
     func refreshButtonState() {
-        let canAddToken = ChildAccountManager.shared.selectedChildAccount == nil // && EVMAccountManager.shared.selectedAccount == nil
+        let canAddToken = ChildAccountManager.shared
+            .selectedChildAccount == nil // && EVMAccountManager.shared.selectedAccount == nil
         if canAddToken {
             showAddTokenButton = true
         } else {
             showAddTokenButton = false
         }
 
-        let isNotPrimary = ChildAccountManager.shared.selectedChildAccount != nil || EVMAccountManager.shared.selectedAccount != nil
+        let isNotPrimary = ChildAccountManager.shared
+            .selectedChildAccount != nil || EVMAccountManager.shared.selectedAccount != nil
         // Swap
         if (RemoteConfigManager.shared.config?.features.swap ?? false) == true {
             // don't show when current is Linked account
@@ -474,7 +532,8 @@ extension WalletViewModel {
         showHorLayout = (showSwapButton == false && showStakeButton == false)
 
         // buy
-        if RemoteConfigManager.shared.config?.features.onRamp ?? false == true, flow.chainID == .mainnet {
+        if RemoteConfigManager.shared.config?.features.onRamp ?? false == true,
+           flow.chainID == .mainnet {
             if isNotPrimary {
                 showBuyButton = false
             } else {

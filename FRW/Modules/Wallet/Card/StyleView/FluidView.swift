@@ -1,5 +1,5 @@
 //
-//  WebView.swift
+//  FluidView.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 21/8/2022.
@@ -18,9 +18,10 @@ struct FluidView: UIViewRepresentable {
     }
 
     func updateUIView(_ webView: WKWebView, context _: Context) {
-        if let indexURL = Bundle.main.url(forResource: "index",
-                                          withExtension: "html")
-        {
+        if let indexURL = Bundle.main.url(
+            forResource: "index",
+            withExtension: "html"
+        ) {
             webView.loadFileURL(indexURL, allowingReadAccessTo: indexURL)
         }
     }

@@ -1,5 +1,5 @@
 //
-//  PrivateKeyScreen.swift
+//  PrivateKeyView.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 7/9/2022.
@@ -7,13 +7,15 @@
 
 import SwiftUI
 
+// MARK: - PrivateKeyView
+
 struct PrivateKeyView: RouteableView {
+    @State
+    var isBlur: Bool = true
+
     var title: String {
         "Private Key".localized.capitalized
     }
-
-    @State
-    var isBlur: Bool = true
 
     var body: some View {
         ScrollView {
@@ -45,7 +47,8 @@ struct PrivateKeyView: RouteableView {
                         Spacer()
 
                         Button {
-                            UIPasteboard.general.string = WalletManager.shared.getCurrentPrivateKey() ?? ""
+                            UIPasteboard.general.string = WalletManager.shared
+                                .getCurrentPrivateKey() ?? ""
                             HUD.success(title: "copied".localized)
                         } label: {
                             Label(LocalizedStringKey("Copy".localized), colorImage: "Copy")
@@ -69,7 +72,8 @@ struct PrivateKeyView: RouteableView {
                         Spacer()
 
                         Button {
-                            UIPasteboard.general.string = WalletManager.shared.getCurrentPublicKey() ?? ""
+                            UIPasteboard.general.string = WalletManager.shared
+                                .getCurrentPublicKey() ?? ""
                             HUD.success(title: "copied".localized)
 
                         } label: {
@@ -131,6 +135,8 @@ struct PrivateKeyView: RouteableView {
         .applyRouteable(self)
     }
 }
+
+// MARK: - PrivateKeyScreen_Previews
 
 struct PrivateKeyScreen_Previews: PreviewProvider {
     static var previews: some View {

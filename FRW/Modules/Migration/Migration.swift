@@ -5,32 +5,40 @@
 //  Created by cat on 2024/4/26.
 //
 
+import FlowWalletCore
 import Foundation
 import KeychainAccess
-import FlowWalletCore
+
+// MARK: - Migration
 
 struct Migration {
-    private let remoteKeychain: Keychain
-    private let localKeychain: Keychain
-    private let mnemonicPrefix = "lilico.mnemonic."
+    // MARK: Lifecycle
 
     init() {
         let remoteService = (Bundle.main.bundleIdentifier ?? "com.flowfoundation.wallet")
-        remoteKeychain = Keychain(service: remoteService)
+        self.remoteKeychain = Keychain(service: remoteService)
             .label("Lilico app backup")
             .accessibility(.whenUnlocked)
 
         let localService = remoteService + ".local"
-        localKeychain = Keychain(service: localService)
+        self.localKeychain = Keychain(service: localService)
             .label("Flow Wallet Backup")
             .accessibility(.whenUnlocked)
     }
+
+    // MARK: Internal
 
     func start() {
         fetchiCloudRemoteList()
         WallectSecureEnclave.Store.migrationFromLilicoTag()
         try? WallectSecureEnclave.Store.twoBackupIfNeed()
     }
+
+    // MARK: Private
+
+    private let remoteKeychain: Keychain
+    private let localKeychain: Keychain
+    private let mnemonicPrefix = "lilico.mnemonic."
 }
 
 // MARK: iCloud Migration
@@ -44,7 +52,7 @@ extension Migration {
         defer {
             data = Data()
         }
-        UserManager.shared.loginUIDList.forEach { uid in
+        for uid in UserManager.shared.loginUIDList {
             do {
                 var encodedData = try WalletManager.encryptionChaChaPoly(key: uid, data: data)
                 let newKey = "lilico.pinCode.\(uid)"
@@ -78,7 +86,10 @@ extension Migration {
                     continue
                 }
                 let uid = key.removePrefix(mnemonicPrefix)
-                if let decryptedData = try? WalletManager.decryptionChaChaPoly(key: uid, data: value), let mnemonic = String(data: decryptedData, encoding: .utf8), !mnemonic.isEmpty {
+                if let decryptedData = try? WalletManager.decryptionChaChaPoly(
+                    key: uid,
+                    data: value
+                ), let mnemonic = String(data: decryptedData, encoding: .utf8), !mnemonic.isEmpty {
                     do {
                         try localKeychain.comment("Lilico user uid: \(uid)").set(value, key: key)
                         try remoteKeychain.remove(key)

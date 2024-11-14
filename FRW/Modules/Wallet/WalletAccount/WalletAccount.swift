@@ -8,18 +8,26 @@
 import Foundation
 import SwiftUI
 
+// MARK: - WalletAccount
+
 struct WalletAccount {
+    // MARK: Lifecycle
+
+    init() {
+        self.storedAccount = LocalUserDefaults.shared.walletAccount ?? [:]
+    }
+
+    // MARK: Internal
+
     var storedAccount: [String: [WalletAccount.User]]
+
+    // MARK: Private
 
     private var key: String {
         guard let userId = UserManager.shared.activatedUID else {
             return "empty"
         }
         return "\(userId)"
-    }
-
-    init() {
-        storedAccount = LocalUserDefaults.shared.walletAccount ?? [:]
     }
 
     private func saveCache() {
@@ -58,7 +66,8 @@ extension WalletAccount {
     mutating func update(at address: String, emoji: WalletAccount.Emoji, name: String? = nil) {
         let currentNetwork = LocalUserDefaults.shared.flowNetwork
         if var list = storedAccount[key] {
-            if var index = list.lastIndex(where: { $0.network == currentNetwork && $0.address == address }) {
+            if var index = list
+                .lastIndex(where: { $0.network == currentNetwork && $0.address == address }) {
                 var user = list[index]
                 user.emoji = emoji
                 user.name = name ?? emoji.name
@@ -93,6 +102,8 @@ extension WalletAccount {
         case lemon = "🍋"
         case avocado = "🥑"
 
+        // MARK: Internal
+
         var name: String {
             switch self {
             case .koala: return "Koala"
@@ -100,7 +111,6 @@ extension WalletAccount {
             case .panda: return "Panda"
             case .butterfly: return "Butterfly"
             case .penguin: return "Penguin"
-
             case .cherry: return "Cherry"
             case .chestnut: return "Chestnut"
             case .peach: return "Peach"
@@ -141,7 +151,7 @@ extension WalletAccount {
         }
 
         func icon(size: CGFloat = 24) -> some View {
-            return VStack {
+            VStack {
                 Text(self.rawValue)
                     .font(.system(size: size / 2 + 2))
             }
@@ -152,30 +162,47 @@ extension WalletAccount {
     }
 
     struct User: Codable {
+        // MARK: Lifecycle
+
+        init(emoji: WalletAccount.Emoji, address: String) {
+            self.emoji = emoji
+            self.name = emoji.name
+            self.address = address
+            self.network = LocalUserDefaults.shared.flowNetwork
+        }
+
+        init(from decoder: any Decoder) throws {
+            let container: KeyedDecodingContainer<WalletAccount.User.CodingKeys> = try decoder
+                .container(keyedBy: WalletAccount.User.CodingKeys.self)
+            do {
+                self.emoji = try container.decode(
+                    WalletAccount.Emoji.self,
+                    forKey: WalletAccount.User.CodingKeys.emoji
+                )
+            } catch {
+                self.emoji = WalletAccount.Emoji.avocado
+            }
+
+            self.name = try container.decode(
+                String.self,
+                forKey: WalletAccount.User.CodingKeys.name
+            )
+            self.address = try container.decode(
+                String.self,
+                forKey: WalletAccount.User.CodingKeys.address
+            )
+            self.network = try container.decode(
+                LocalUserDefaults.FlowNetworkType.self,
+                forKey: WalletAccount.User.CodingKeys.network
+            )
+        }
+
+        // MARK: Internal
+
         var emoji: WalletAccount.Emoji
         var name: String
         var address: String
         var network: LocalUserDefaults.FlowNetworkType
-
-        init(emoji: WalletAccount.Emoji, address: String) {
-            self.emoji = emoji
-            name = emoji.name
-            self.address = address
-            network = LocalUserDefaults.shared.flowNetwork
-        }
-
-        init(from decoder: any Decoder) throws {
-            let container: KeyedDecodingContainer<WalletAccount.User.CodingKeys> = try decoder.container(keyedBy: WalletAccount.User.CodingKeys.self)
-            do {
-                emoji = try container.decode(WalletAccount.Emoji.self, forKey: WalletAccount.User.CodingKeys.emoji)
-            } catch {
-                emoji = WalletAccount.Emoji.avocado
-            }
-
-            name = try container.decode(String.self, forKey: WalletAccount.User.CodingKeys.name)
-            address = try container.decode(String.self, forKey: WalletAccount.User.CodingKeys.address)
-            network = try container.decode(LocalUserDefaults.FlowNetworkType.self, forKey: WalletAccount.User.CodingKeys.network)
-        }
     }
 }
 
@@ -188,7 +215,7 @@ extension Array where Element: Equatable {
         var selectedElements: [Element] = []
 
         var num = count * 36
-        for i in 0 ..< num {
+        for i in 0..<num {
             let element = randomElement()!
             if !selectedElements.contains(element), !excluded.contains(element) {
                 selectedElements.append(element)

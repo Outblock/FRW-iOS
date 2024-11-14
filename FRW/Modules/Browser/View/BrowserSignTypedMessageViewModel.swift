@@ -7,22 +7,18 @@
 
 import Foundation
 
+// MARK: - BrowserSignTypedMessageViewModel
+
 class BrowserSignTypedMessageViewModel: ObservableObject {
-    
-    typealias Callback = (Bool) -> Void
-    
-    @Published var title: String
-    @Published var urlString: String
-    @Published var logo: String?
-    @Published var rawString: String
-    
-    @Published var sections: [BrowserSignTypedMessageViewModel.Section] = []
-    
-    @Published var list: [JSONValue] = []
-    
-    private var callback: BrowserSignTypedMessageViewModel.Callback?
-    
-    init(title: String, urlString: String, logo: String? = nil, rawString: String, callback: BrowserSignTypedMessageViewModel.Callback? = nil) {
+    // MARK: Lifecycle
+
+    init(
+        title: String,
+        urlString: String,
+        logo: String? = nil,
+        rawString: String,
+        callback: BrowserSignTypedMessageViewModel.Callback? = nil
+    ) {
         self.title = title
         self.urlString = urlString
         self.logo = logo
@@ -30,7 +26,51 @@ class BrowserSignTypedMessageViewModel: ObservableObject {
         self.callback = callback
         parseRawString()
     }
-    
+
+    deinit {
+        callback?(false)
+        WalletConnectManager.shared.reloadPendingRequests()
+    }
+
+    // MARK: Internal
+
+    typealias Callback = (Bool) -> Void
+
+    @Published
+    var title: String
+    @Published
+    var urlString: String
+    @Published
+    var logo: String?
+    @Published
+    var rawString: String
+
+    @Published
+    var sections: [BrowserSignTypedMessageViewModel.Section] = []
+
+    @Published
+    var list: [JSONValue] = []
+
+    func didChooseAction(_ result: Bool) {
+        Router.dismiss { [weak self] in
+            guard let self else { return }
+            callback?(result)
+            callback = nil
+        }
+    }
+
+    func onCloseAction() {
+        Router.dismiss { [weak self] in
+            guard let self else { return }
+            callback?(false)
+            callback = nil
+        }
+    }
+
+    // MARK: Private
+
+    private var callback: BrowserSignTypedMessageViewModel.Callback?
+
     private func parseRawString() {
         guard let data = rawString.data(using: .utf8),
               let object = try? JSONSerialization.jsonObject(with: data, options: []),
@@ -39,34 +79,40 @@ class BrowserSignTypedMessageViewModel: ObservableObject {
             return
         }
         let primaryType = (dict["primaryType"] as? String) ?? ""
-        let headerSection = Section(title: "Message", content: nil, items: [.init(tag: "Primary Type", content: primaryType)])
-        self.sections.append(headerSection)
-        
+        let headerSection = Section(
+            title: "Message",
+            content: nil,
+            items: [.init(tag: "Primary Type", content: primaryType)]
+        )
+        sections.append(headerSection)
+
         guard let message = dict["message"] as? [String: Any] else {
             return
         }
         var tmpSection: [Section] = []
-        
+
         let result = JSONValue.parse(jsonString: rawString)
         switch result {
-        case .object(let dictionary):
+        case let .object(dictionary):
             for (key, value) in dictionary {
                 if key.lowercased() == "primaryType".lowercased() {
-                    list.insert(JSONValue.object( ["Message": JSONValue.object([key: value])]), at: 0)
-                }else if key.lowercased() == "message" {
-                    if case .object(let mDic) = value {
+                    list.insert(
+                        JSONValue.object(["Message": JSONValue.object([key: value])]),
+                        at: 0
+                    )
+                } else if key.lowercased() == "message" {
+                    if case let .object(mDic) = value {
                         for (mKey, mValue) in mDic {
-                            list.append(JSONValue.object([mKey : mValue]))
+                            list.append(JSONValue.object([mKey: mValue]))
                         }
                     }
                 }
             }
         default:
             break
-        
         }
         log.debug(result ?? "")
-        
+
         for (key, value) in message {
             if let item = value as? [String: String] {
                 var items: [Section.Item] = []
@@ -76,36 +122,16 @@ class BrowserSignTypedMessageViewModel: ObservableObject {
                 }
                 let section = Section(title: key, content: nil, items: items)
                 tmpSection.append(section)
-            }
-            else if let item = value as? String {
+            } else if let item = value as? String {
                 let section = Section(title: key, content: item, items: [])
                 tmpSection.append(section)
             }
         }
-        self.sections.append(contentsOf: tmpSection)
-    }
-    
-    func didChooseAction(_ result: Bool) {
-        Router.dismiss { [weak self] in
-            guard let self else { return }
-            callback?(result)
-            callback = nil
-        }
-    }
-    
-    func onCloseAction() {
-        Router.dismiss { [weak self] in
-            guard let self else { return }
-            callback?(false)
-            callback = nil
-        }
-    }
-    
-    deinit {
-        callback?(false)
-        WalletConnectManager.shared.reloadPendingRequests()
+        sections.append(contentsOf: tmpSection)
     }
 }
+
+// MARK: BrowserSignTypedMessageViewModel.Section
 
 extension BrowserSignTypedMessageViewModel {
     struct Section {
@@ -113,11 +139,11 @@ extension BrowserSignTypedMessageViewModel {
             let tag: String
             let content: String
         }
-        
+
         let title: String
         let content: String?
         let items: [Section.Item]
-        
+
         func showTitle() -> String {
             let tit = title.uppercasedFirstLetter()
             if !tit.hasPrefix(":") {
@@ -126,5 +152,4 @@ extension BrowserSignTypedMessageViewModel {
             return tit
         }
     }
-    
 }

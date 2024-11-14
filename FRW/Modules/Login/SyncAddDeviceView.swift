@@ -1,5 +1,5 @@
 //
-//  AddSyncDeviceView.swift
+//  SyncAddDeviceView.swift
 //  FRW
 //
 //  Created by cat on 2023/11/29.
@@ -11,11 +11,16 @@ import SwiftUI
 import SwiftUIX
 
 struct SyncAddDeviceView: View {
-    @StateObject var viewModel: SyncAddDeviceViewModel
+    // MARK: Lifecycle
 
     init(viewModel: SyncAddDeviceViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
+
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: SyncAddDeviceViewModel
 
     var body: some View {
         VStack {
@@ -53,10 +58,16 @@ struct SyncAddDeviceView: View {
                 .frame(height: 6)
 
             VStack(spacing: 8) {
-                DeviceInfoItem(title: "application_tag".localized, detail: viewModel.model.deviceInfo.userAgent ?? "")
-                    .frame(height: 24)
-                DeviceInfoItem(title: "ip_address_tag".localized, detail: viewModel.model.deviceInfo.ip ?? "")
-                    .frame(height: 24)
+                DeviceInfoItem(
+                    title: "application_tag".localized,
+                    detail: viewModel.model.deviceInfo.userAgent ?? ""
+                )
+                .frame(height: 24)
+                DeviceInfoItem(
+                    title: "ip_address_tag".localized,
+                    detail: viewModel.model.deviceInfo.ip ?? ""
+                )
+                .frame(height: 24)
                 DeviceInfoItem(title: "location".localized, detail: location)
                     .frame(height: 24)
             }
@@ -64,7 +75,10 @@ struct SyncAddDeviceView: View {
 
             Spacer()
 
-            WalletSendButtonView(allowEnable: .constant(true), buttonText: "hold_to_sync".localized) {
+            WalletSendButtonView(
+                allowEnable: .constant(true),
+                buttonText: "hold_to_sync".localized
+            ) {
                 viewModel.addDevice()
             }
         }
@@ -79,25 +93,30 @@ struct SyncAddDeviceView: View {
         if viewModel.model.deviceInfo.city != nil && !viewModel.model.deviceInfo.city!.isEmpty {
             res += viewModel.model.deviceInfo.city!
         }
-        if viewModel.model.deviceInfo.country != nil && !viewModel.model.deviceInfo.country!.isEmpty {
+        if viewModel.model.deviceInfo.country != nil && !viewModel.model.deviceInfo.country!
+            .isEmpty {
             res += ",\(viewModel.model.deviceInfo.country!)"
         }
         return res
     }
 
     func region() -> MKCoordinateRegion {
-        let region = MKCoordinateRegion(center: coordinate(), span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+        let region = MKCoordinateRegion(
+            center: coordinate(),
+            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+        )
         return region
     }
 
     func annotations() -> [CLLocationCoordinate2D] {
-        return [
+        [
             coordinate(),
         ]
     }
 
     func coordinate() -> CLLocationCoordinate2D {
-        guard let latitude = viewModel.model.deviceInfo.lat, let longitude = viewModel.model.deviceInfo.lon else {
+        guard let latitude = viewModel.model.deviceInfo.lat,
+              let longitude = viewModel.model.deviceInfo.lon else {
             return CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
         }
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)

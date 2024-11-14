@@ -11,6 +11,8 @@ import SwiftUI
 
 private let SideOffset: CGFloat = 65
 
+// MARK: - SideMenuViewModel.AccountPlaceholder
+
 extension SideMenuViewModel {
     struct AccountPlaceholder {
         let uid: String
@@ -18,19 +20,10 @@ extension SideMenuViewModel {
     }
 }
 
+// MARK: - SideMenuViewModel
+
 class SideMenuViewModel: ObservableObject {
-    @Published var nftCount: Int = 0
-    @Published var accountPlaceholders: [AccountPlaceholder] = []
-    @Published var isSwitchOpen = false
-    @Published var userInfoBackgroudColor = Color.LL.Neutrals.neutrals6
-    @Published var walletBalance: [String: String] = [:]
-
-    var colorsMap: [String: Color] = [:]
-
-    private var cancelSets = Set<AnyCancellable>()
-    var currentAddress: String {
-        WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? ""
-    }
+    // MARK: Lifecycle
 
     init() {
         UserManager.shared.$loginUIDList
@@ -40,7 +33,8 @@ class SideMenuViewModel: ObservableObject {
                 guard let self = self else { return }
 
                 self.accountPlaceholders = Array(uidList.dropFirst().prefix(2)).map { uid in
-                    let avatar = MultiAccountStorage.shared.getUserInfo(uid)?.avatar.convertedAvatarString() ?? ""
+                    let avatar = MultiAccountStorage.shared.getUserInfo(uid)?.avatar
+                        .convertedAvatarString() ?? ""
                     return AccountPlaceholder(uid: uid, avatar: avatar)
                 }
             }.store(in: &cancelSets)
@@ -51,10 +45,35 @@ class SideMenuViewModel: ObservableObject {
             .sink { [weak self] balances in
                 self?.walletBalance = balances
             }.store(in: &cancelSets)
-        NotificationCenter.default.addObserver(self, selector: #selector(onToggle), name: .toggleSideMenu, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onToggle),
+            name: .toggleSideMenu,
+            object: nil
+        )
     }
 
-    @objc func onToggle() {
+    // MARK: Internal
+
+    @Published
+    var nftCount: Int = 0
+    @Published
+    var accountPlaceholders: [AccountPlaceholder] = []
+    @Published
+    var isSwitchOpen = false
+    @Published
+    var userInfoBackgroudColor = Color.LL.Neutrals.neutrals6
+    @Published
+    var walletBalance: [String: String] = [:]
+
+    var colorsMap: [String: Color] = [:]
+
+    var currentAddress: String {
+        WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? ""
+    }
+
+    @objc
+    func onToggle() {
         isSwitchOpen = false
     }
 
@@ -116,18 +135,16 @@ class SideMenuViewModel: ObservableObject {
     func switchProfile() {
         LocalUserDefaults.shared.recentToken = nil
     }
+
+    // MARK: Private
+
+    private var cancelSets = Set<AnyCancellable>()
 }
 
-struct SideMenuView: View {
-    @StateObject private var vm = SideMenuViewModel()
-    @StateObject private var um = UserManager.shared
-    @StateObject private var wm = WalletManager.shared
-    @StateObject private var cm = ChildAccountManager.shared
-    @StateObject private var evmManager = EVMAccountManager.shared
-    @AppStorage("isDeveloperMode") private var isDeveloperMode = false
-    @State private var showSwitchUserAlert = false
+// MARK: - SideMenuView
 
-    private let cPadding = 12.0
+struct SideMenuView: View {
+    // MARK: Internal
 
     var body: some View {
         GeometryReader { proxy in
@@ -212,7 +229,7 @@ struct SideMenuView: View {
     }
 
     var enableEVMView: some View {
-        return VStack {
+        VStack {
             ZStack(alignment: .topLeading) {
                 Image("icon_planet")
                     .resizable()
@@ -264,12 +281,19 @@ struct SideMenuView: View {
         VStack(spacing: 0) {
             Section {
                 VStack(spacing: 0) {
-                    AccountSideCell(address: WalletManager.shared.getPrimaryWalletAddress() ?? "",
-                                    currentAddress: vm.currentAddress,
-                                    detail: vm.balanceValue(at: WalletManager.shared.getPrimaryWalletAddress() ?? "")) { _, action in
+                    AccountSideCell(
+                        address: WalletManager.shared.getPrimaryWalletAddress() ?? "",
+                        currentAddress: vm.currentAddress,
+                        detail: vm
+                            .balanceValue(
+                                at: WalletManager.shared
+                                    .getPrimaryWalletAddress() ?? ""
+                            )
+                    ) { _, action in
                         if action == .card {
                             vm.switchProfile()
-                            WalletManager.shared.changeNetwork(LocalUserDefaults.shared.flowNetwork)
+                            WalletManager.shared
+                                .changeNetwork(LocalUserDefaults.shared.flowNetwork)
                         }
                     }
                 }
@@ -292,9 +316,11 @@ struct SideMenuView: View {
                 VStack(spacing: 0) {
                     ForEach(evmManager.accounts, id: \.address) { account in
                         let address = account.showAddress
-                        AccountSideCell(address: address,
-                                        currentAddress: vm.currentAddress,
-                                        detail: vm.balanceValue(at: address)) { _, action in
+                        AccountSideCell(
+                            address: address,
+                            currentAddress: vm.currentAddress,
+                            detail: vm.balanceValue(at: address)
+                        ) { _, action in
                             if action == .card {
                                 vm.switchProfile()
                                 ChildAccountManager.shared.select(nil)
@@ -305,10 +331,12 @@ struct SideMenuView: View {
 
                     ForEach(cm.childAccounts, id: \.addr) { childAccount in
                         if let address = childAccount.addr {
-                            AccountSideCell(address: address,
-                                            currentAddress: vm.currentAddress,
-                                            name: childAccount.aName,
-                                            logo: childAccount.icon) { _, action in
+                            AccountSideCell(
+                                address: address,
+                                currentAddress: vm.currentAddress,
+                                name: childAccount.aName,
+                                logo: childAccount.icon
+                            ) { _, action in
                                 if action == .card {
                                     vm.switchProfile()
                                     EVMAccountManager.shared.select(nil)
@@ -326,7 +354,10 @@ struct SideMenuView: View {
                         .padding(.vertical, 8)
                     Spacer()
                 }
-                .visibility(evmManager.accounts.count > 0 || cm.childAccounts.count > 0 ? .visible : .gone)
+                .visibility(
+                    !evmManager.accounts.isEmpty || !cm.childAccounts
+                        .isEmpty ? .visible : .gone
+                )
             }
         }
     }
@@ -359,7 +390,10 @@ struct SideMenuView: View {
                                 WalletManager.shared.changeNetwork(.mainnet)
 
                             } label: {
-                                NetworkMenuItem(network: .mainnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
+                                NetworkMenuItem(
+                                    network: .mainnet,
+                                    currentNetwork: LocalUserDefaults.shared.flowNetwork
+                                )
                             }
 
                             Button {
@@ -367,7 +401,10 @@ struct SideMenuView: View {
                                 WalletManager.shared.changeNetwork(.testnet)
 
                             } label: {
-                                NetworkMenuItem(network: .testnet, currentNetwork: LocalUserDefaults.shared.flowNetwork)
+                                NetworkMenuItem(
+                                    network: .testnet,
+                                    currentNetwork: LocalUserDefaults.shared.flowNetwork
+                                )
                             }
                         }
 
@@ -404,23 +441,53 @@ struct SideMenuView: View {
             }
         }
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = SideMenuViewModel()
+    @StateObject
+    private var um = UserManager.shared
+    @StateObject
+    private var wm = WalletManager.shared
+    @StateObject
+    private var cm = ChildAccountManager.shared
+    @StateObject
+    private var evmManager = EVMAccountManager.shared
+    @AppStorage("isDeveloperMode")
+    private var isDeveloperMode = false
+    @State
+    private var showSwitchUserAlert = false
+
+    private let cPadding = 12.0
 }
 
-class SideContainerViewModel: ObservableObject {
-    @Published var isOpen: Bool = false
-    @Published var isLinkedAccount: Bool = false
-    @Published var hideBrowser: Bool = false
-    @Published @MainActor var isInsufficientStorageTransactionFailurePopupVisible = false
-    var insufficientStorageTransactionFailurePopupData = InsufficientStorageTransactionFailureData()
+// MARK: - SideContainerViewModel
 
-    private var cancellableSet = Set<AnyCancellable>()
+class SideContainerViewModel: ObservableObject {
+    // MARK: Lifecycle
 
     init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(onToggle), name: .toggleSideMenu, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(onRemoteConfigDidChange), name: .remoteConfigDidUpdate, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(onInsufficientStorageTransactionFailure), name: .insufficientStorageTransactionFailure, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onToggle),
+            name: .toggleSideMenu,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onRemoteConfigDidChange),
+            name: .remoteConfigDidUpdate,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onInsufficientStorageTransactionFailure),
+            name: .insufficientStorageTransactionFailure, object: nil
+        )
 
-        isLinkedAccount = ChildAccountManager.shared.selectedChildAccount != nil
+
+        self.isLinkedAccount = ChildAccountManager.shared.selectedChildAccount != nil
         ChildAccountManager.shared.$selectedChildAccount
             .receive(on: DispatchQueue.main)
             .map { $0 }
@@ -429,18 +496,43 @@ class SideContainerViewModel: ObservableObject {
             }).store(in: &cancellableSet)
     }
 
-    @objc func onToggle() {
+    // MARK: Internal
+
+    @Published
+    var isOpen: Bool = false
+    @Published
+    var isLinkedAccount: Bool = false
+    @Published
+    var hideBrowser: Bool = false
+    @Published @MainActor
+    var isInsufficientStorageTransactionFailurePopupVisible = false
+    var insufficientStorageTransactionFailurePopupData = InsufficientStorageTransactionFailureData()
+
+    @objc
+    func onToggle() {
         withAnimation {
             isOpen.toggle()
         }
     }
 
-    @objc private func onRemoteConfigDidChange() {
+    func routeToBuyFlow() {
+        Router.route(to: RouteMap.Wallet.receive)
+    }
+    
+    func routeToDeposit() {
+        Router.route(to: RouteMap.Wallet.buyCrypto)
+    }
+
+    @objc func onRemoteConfigDidChange() {
         DispatchQueue.main.async {
             self.hideBrowser = RemoteConfigManager.shared.config?.features.hideBrowser ?? true
         }
     }
-    
+
+    // MARK: Private
+
+    private var cancellableSet = Set<AnyCancellable>()
+
     @objc private func onInsufficientStorageTransactionFailure(notification: NSNotification) {
         DispatchQueue.main.async {
             self.isInsufficientStorageTransactionFailurePopupVisible = true
@@ -449,20 +541,12 @@ class SideContainerViewModel: ObservableObject {
             }
         }
     }
-    
-    func routeToBuyFlow() {
-        Router.route(to: RouteMap.Wallet.receive)
-    }
-    
-    func routeToDeposit() {
-        Router.route(to: RouteMap.Wallet.buyCrypto)
-    }
 }
 
+// MARK: - SideContainerView
+
 struct SideContainerView: View {
-    @StateObject private var vm = SideContainerViewModel()
-    @State private var dragOffset: CGSize = .zero
-    @State private var isDragging: Bool = false
+    // MARK: Internal
 
     var drag: some Gesture {
         DragGesture()
@@ -528,30 +612,68 @@ struct SideContainerView: View {
         )
     }
 
-    @ViewBuilder private func makeTabView() -> some View {
-        let wallet = TabBarPageModel<AppTabType>(tag: WalletView.tabTag(), iconName: WalletView.iconName(), color: WalletView.color()) {
+    // MARK: Private
+
+    @StateObject
+    private var vm = SideContainerViewModel()
+    @State
+    private var dragOffset: CGSize = .zero
+    @State
+    private var isDragging: Bool = false
+
+    @ViewBuilder
+    private func makeTabView() -> some View {
+        let wallet = TabBarPageModel<AppTabType>(
+            tag: WalletView.tabTag(),
+            iconName: WalletView.iconName(),
+            color: WalletView.color()
+        ) {
             AnyView(WalletHomeView())
         }
 
-        let nft = TabBarPageModel<AppTabType>(tag: NFTTabScreen.tabTag(), iconName: NFTTabScreen.iconName(), color: NFTTabScreen.color()) {
+        let nft = TabBarPageModel<AppTabType>(
+            tag: NFTTabScreen.tabTag(),
+            iconName: NFTTabScreen.iconName(),
+            color: NFTTabScreen.color()
+        ) {
             AnyView(NFTTabScreen())
         }
 
-        let explore = TabBarPageModel<AppTabType>(tag: ExploreTabScreen.tabTag(), iconName: ExploreTabScreen.iconName(), color: ExploreTabScreen.color()) {
+        let explore = TabBarPageModel<AppTabType>(
+            tag: ExploreTabScreen.tabTag(),
+            iconName: ExploreTabScreen.iconName(),
+            color: ExploreTabScreen.color()
+        ) {
             AnyView(ExploreTabScreen())
         }
 
-        let profile = TabBarPageModel<AppTabType>(tag: ProfileView.tabTag(), iconName: ProfileView.iconName(), color: ProfileView.color()) {
+        let profile = TabBarPageModel<AppTabType>(
+            tag: ProfileView.tabTag(),
+            iconName: ProfileView.iconName(),
+            color: ProfileView.color()
+        ) {
             AnyView(ProfileView())
         }
 
         if vm.isLinkedAccount {
-            TabBarView(current: .wallet, pages: [wallet, nft, profile], maxWidth: UIScreen.main.bounds.width)
+            TabBarView(
+                current: .wallet,
+                pages: [wallet, nft, profile],
+                maxWidth: UIScreen.main.bounds.width
+            )
         } else {
             if vm.hideBrowser {
-                TabBarView(current: .wallet, pages: [wallet, nft, profile], maxWidth: UIScreen.main.bounds.width)
+                TabBarView(
+                    current: .wallet,
+                    pages: [wallet, nft, profile],
+                    maxWidth: UIScreen.main.bounds.width
+                )
             } else {
-                TabBarView(current: .wallet, pages: [wallet, nft, explore, profile], maxWidth: UIScreen.main.bounds.width)
+                TabBarView(
+                    current: .wallet,
+                    pages: [wallet, nft, explore, profile],
+                    maxWidth: UIScreen.main.bounds.width
+                )
             }
         }
     }

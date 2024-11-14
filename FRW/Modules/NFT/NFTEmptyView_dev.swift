@@ -1,11 +1,12 @@
 //
-//  NFTEmptyView.swift
+//  NFTEmptyView_dev.swift
 //  Flow Wallet
 //
 //  Created by cat on 2022/5/13.
 //
 
 import SwiftUI
+
 // import RiveRuntime
 
 struct NFTEmptyView: View {

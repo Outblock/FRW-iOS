@@ -7,9 +7,21 @@
 
 import SwiftUI
 
+// MARK: - CadenceManager
+
 class CadenceManager {
+    // MARK: Lifecycle
+
+    private init() {
+        loadLocalCache()
+        fetchScript()
+
+        log.info("[Cadence] current version is \(String(describing: version))")
+    }
+
+    // MARK: Internal
+
     static let shared = CadenceManager()
-    private let localVersion = "2.13"
 
     var version: String = ""
     var scripts: CadenceScript!
@@ -25,12 +37,9 @@ class CadenceManager {
         }
     }
 
-    private init() {
-        loadLocalCache()
-        fetchScript()
+    // MARK: Private
 
-        log.info("[Cadence] current version is \(String(describing: version))")
-    }
+    private let localVersion = "2.13"
 
     private func loadLocalCache() {
         if let response = loadCache() {
@@ -39,7 +48,8 @@ class CadenceManager {
             log.info("[Cadence] local cache version is \(String(describing: response.version))")
         } else {
             do {
-                guard let filePath = Bundle.main.path(forResource: "cloudfunctions", ofType: "json") else {
+                guard let filePath = Bundle.main
+                    .path(forResource: "cloudfunctions", ofType: "json") else {
                     log.error("CadenceManager -> loadFromLocalFile error: no local file")
                     return
                 }
@@ -58,7 +68,8 @@ class CadenceManager {
     private func fetchScript() {
         Task {
             do {
-                let response: CadenceRemoteResponse = try await Network.requestWithRawModel(FRWAPI.Cadence.list)
+                let response: CadenceRemoteResponse = try await Network
+                    .requestWithRawModel(FRWAPI.Cadence.list)
                 DispatchQueue.main.async {
                     // first call before
                     self.saveCache(response: response.data)
@@ -107,7 +118,8 @@ class CadenceManager {
 
     private func filePath() -> URL? {
         do {
-            let root = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("cadence")
+            let root = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+                .appendingPathComponent("cadence")
             if !FileManager.default.fileExists(atPath: root.relativePath) {
                 try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
             }
@@ -120,20 +132,28 @@ class CadenceManager {
     }
 }
 
+// MARK: - CadenceRemoteResponse
+
 struct CadenceRemoteResponse: Codable {
     let data: CadenceResponse
     let status: Int
 }
+
+// MARK: - CadenceResponse
 
 struct CadenceResponse: Codable {
     let scripts: CadenceScript
     let version: String?
 }
 
+// MARK: - CadenceScript
+
 struct CadenceScript: Codable {
     let testnet: CadenceModel
     let mainnet: CadenceModel
 }
+
+// MARK: - CadenceModel
 
 struct CadenceModel: Codable {
     let version: String?
@@ -243,13 +263,13 @@ extension CadenceModel {
         let batchSendChildNFTToChild: String?
         /// send NFT from child to child
         let sendChildNFTToChild: String?
-        
+
         let bridgeChildNFTToEvm: String?
         let bridgeChildNFTFromEvm: String?
-        
+
         let batchBridgeChildNFTToEvm: String?
         let batchBridgeChildNFTFromEvm: String?
-        
+
         let bridgeChildFTToEvm: String?
         let bridgeChildFTFromEvm: String?
     }
@@ -366,19 +386,19 @@ extension CadenceModel {
         /// nft flow to any evm
         let bridgeNFTToEvmAddressV2: String?
         let bridgeNFTFromEvmToFlowV2: String?
-        
+
         let getAssociatedEvmAddress: String?
         let getAssociatedFlowIdentifier: String?
     }
 }
 
-public extension String {
-    func fromBase64() -> String? {
+extension String {
+    public func fromBase64() -> String? {
         guard let data = Data(base64Encoded: self) else { return nil }
         return String(data: data, encoding: .utf8)
     }
 
-    func toFunc() -> String {
+    public func toFunc() -> String {
         guard let decodeStr = fromBase64() else {
             log.error("[Cadence] base decode failed")
             return ""
@@ -389,7 +409,8 @@ public extension String {
     }
 
     private func platformInfo() -> String {
-        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+        let version = Bundle.main
+            .infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
         let buildVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
         let model = isDevModel ? "(Dev)" : ""
         return "iOS-\(version)-\(buildVersion)\(model)"

@@ -8,14 +8,15 @@
 import SwiftUI
 
 struct ThingsNeedKnowView: RouteableView {
-    @StateObject var viewModel = ThingsNeedKnowViewModel()
+    @StateObject
+    var viewModel = ThingsNeedKnowViewModel()
+
+    @State
+    var allCheck = false
 
     var title: String {
-        return ""
+        ""
     }
-
-    @State var allCheck = false
-
 
     var body: some View {
         VStack(spacing: 0) {
@@ -49,12 +50,15 @@ struct ThingsNeedKnowView: RouteableView {
             }
             .padding(.top, 24)
             Spacer()
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: allCheck ? .enabled : .disabled,
-                           action: {
-                               onConfirm()
-                           }, title: "create_backup".localized)
-                .padding(.bottom)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: allCheck ? .enabled : .disabled,
+                action: {
+                    onConfirm()
+                },
+                title: "create_backup".localized
+            )
+            .padding(.bottom)
         }
         .padding(.horizontal, 28)
         .background(Color.LL.background, ignoresSafeAreaEdges: .all)

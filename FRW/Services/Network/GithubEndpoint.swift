@@ -8,6 +8,8 @@
 import Foundation
 import Moya
 
+// MARK: - GithubEndpoint
+
 enum GithubEndpoint {
     case collections
     case ftTokenList
@@ -15,9 +17,11 @@ enum GithubEndpoint {
     case EVMTokenList
 }
 
+// MARK: TargetType
+
 extension GithubEndpoint: TargetType {
     var baseURL: URL {
-        return URL(string: "https://raw.githubusercontent.com")!
+        URL(string: "https://raw.githubusercontent.com")!
     }
 
     var path: String {
@@ -44,7 +48,6 @@ extension GithubEndpoint: TargetType {
                     return "/Outblock/token-list-jsons/outblock/jsons/previewnet/flow/default.json"
                 }
             }
-
         case .EVMNFTList:
             switch LocalUserDefaults.shared.flowNetwork {
             case .testnet:

@@ -18,6 +18,8 @@ extension Contact {
         case flowns = 2
         case meow = 3
 
+        // MARK: Internal
+
         var domain: String {
             switch self {
             case .unknown:
@@ -38,10 +40,10 @@ extension Contact {
     }
 }
 
-// MARK: - AddressBook
+// MARK: - Contact
 
 struct Contact: Codable, Identifiable {
-    enum WalletType: String,Codable {
+    enum WalletType: String, Codable {
         case flow
         case evm
         case link
@@ -56,7 +58,7 @@ struct Contact: Codable, Identifiable {
     var walletType: WalletType? = .flow
 
     var needShowLocalAvatar: Bool {
-        return contactType == .domain
+        contactType == .domain
     }
 
     var localAvatar: String? {
@@ -99,6 +101,6 @@ struct Contact: Codable, Identifiable {
     }
 
     var uniqueId: String {
-        return "\(address ?? "")-\(domain?.domainType?.rawValue ?? 0)-\(name)-\(contactType?.rawValue ?? 0)"
+        "\(address ?? "")-\(domain?.domainType?.rawValue ?? 0)-\(name)-\(contactType?.rawValue ?? 0)"
     }
 }

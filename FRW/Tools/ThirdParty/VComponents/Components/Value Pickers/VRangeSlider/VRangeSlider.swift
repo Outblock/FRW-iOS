@@ -109,10 +109,8 @@ public struct VRangeSlider: View {
                 progress(in: proxy)
             })
             .mask(RoundedRectangle(cornerRadius: model.layout.cornerRadius))
-
             .overlay(thumb(in: proxy, thumb: .low))
             .overlay(thumb(in: proxy, thumb: .high))
-
             .disabled(!state.isEnabled)
         })
         .frame(height: model.layout.height)
@@ -127,7 +125,6 @@ public struct VRangeSlider: View {
         Rectangle()
             .padding(.leading, progress(in: proxy, thumb: .low))
             .padding(.trailing, progress(in: proxy, thumb: .high))
-
             .foregroundColor(model.colors.progress.for(state))
     }
 
@@ -145,7 +142,6 @@ public struct VRangeSlider: View {
             .offset(x: thumbOffset(in: proxy, thumb: thumb))
         })
         .frame(maxWidth: .infinity, alignment: .leading) // Must be put into group, as content already has frame
-
         .gesture(
             DragGesture(minimumDistance: 0)
                 .onChanged { dragChanged(drag: $0, in: proxy, thumb: thumb) }

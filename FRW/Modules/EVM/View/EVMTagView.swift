@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: - EVMTagView
+
 struct EVMTagView: View {
     var body: some View {
         Text("EVM")
@@ -19,11 +21,13 @@ struct EVMTagView: View {
     }
 }
 
+// MARK: - TagView
+
 struct TagView: View {
     var type: Contact.WalletType = .flow
-    
+
     var body: some View {
-        return HStack {
+        HStack {
             if type != .flow {
                 Text(title)
                     .font(.inter(size: 9))
@@ -35,9 +39,8 @@ struct TagView: View {
                     .cornerRadius(8)
             }
         }
-        
     }
-    
+
     var title: String {
         switch type {
         case .flow:
@@ -48,15 +51,15 @@ struct TagView: View {
             return "Linked"
         }
     }
-    
+
     var BGColor: Color {
         switch type {
         case .flow:
-                .clear
+            .clear
         case .evm:
-                .Theme.evm
+            .Theme.evm
         case .link:
-                .Theme.Accent.blue
+            .Theme.Accent.blue
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-//  GridentButton.swift
+//  GradientButton.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 6/9/2022.
@@ -7,7 +7,11 @@
 
 import SwiftUI
 
+// MARK: - GradientButton
+
 struct GradientButton: View {
+    // MARK: Internal
+
     var buttonTitle: String
     var buttonAction: () -> Void
     var gradient1: [Color] = [
@@ -17,26 +21,28 @@ struct GradientButton: View {
         Color(red: 39 / 255, green: 232 / 255, blue: 1),
     ]
 
-    @State private var angle: Double = 0
-
     var body: some View {
         Button(action: buttonAction, label: {
             GeometryReader { geometry in
                 ZStack {
-                    AngularGradient(gradient: Gradient(colors: gradient1), center: .center, angle: .degrees(angle))
-                        .blendMode(.overlay)
-                        .blur(radius: 8.0)
-                        .mask(
-                            RoundedRectangle(cornerRadius: 16)
-                                .frame(maxWidth: geometry.size.width - 15)
-                                .frame(height: 50)
-                                .blur(radius: 8)
-                        )
-                        .onAppear {
-                            withAnimation(.linear(duration: 7)) {
-                                self.angle += 350
-                            }
+                    AngularGradient(
+                        gradient: Gradient(colors: gradient1),
+                        center: .center,
+                        angle: .degrees(angle)
+                    )
+                    .blendMode(.overlay)
+                    .blur(radius: 8.0)
+                    .mask(
+                        RoundedRectangle(cornerRadius: 16)
+                            .frame(maxWidth: geometry.size.width - 15)
+                            .frame(height: 50)
+                            .blur(radius: 8)
+                    )
+                    .onAppear {
+                        withAnimation(.linear(duration: 7)) {
+                            self.angle += 350
                         }
+                    }
                     GradientText(text: buttonTitle)
                         .font(.headline)
                         .frame(maxWidth: geometry.size.width - 15)
@@ -57,7 +63,14 @@ struct GradientButton: View {
             .frame(height: 50)
         }).buttonStyle(ScaleButtonStyle())
     }
+
+    // MARK: Private
+
+    @State
+    private var angle: Double = 0
 }
+
+// MARK: - GradientButton_Previews
 
 struct GradientButton_Previews: PreviewProvider {
     static var previews: some View {
@@ -66,6 +79,8 @@ struct GradientButton_Previews: PreviewProvider {
         }
     }
 }
+
+// MARK: - GradientText
 
 struct GradientText: View {
     var text: String = "Text here"
@@ -76,11 +91,13 @@ struct GradientText: View {
     }
 }
 
-public extension View {
-    func gradientForeground(colors: [Color]) -> some View {
-        overlay(LinearGradient(gradient: .init(colors: colors),
-                               startPoint: .topLeading,
-                               endPoint: .bottomTrailing))
-            .mask(self)
+extension View {
+    public func gradientForeground(colors: [Color]) -> some View {
+        overlay(LinearGradient(
+            gradient: .init(colors: colors),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        ))
+        .mask(self)
     }
 }

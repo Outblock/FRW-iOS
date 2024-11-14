@@ -1,5 +1,5 @@
 //
-//  VBaseTextFieldCoordinator.swift
+//  UIKitTextFieldCoordinator.swift
 //  VComponents
 //
 //  Created by Vakhtang Kontridze on 1/19/21.
@@ -11,9 +11,7 @@ import SwiftUI
 
 extension UIKitTextFieldRepresentable {
     final class Coordinator: NSObject, UITextFieldDelegate {
-        // MARK: Properties
-
-        private let representable: UIKitTextFieldRepresentable
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
@@ -21,6 +19,8 @@ extension UIKitTextFieldRepresentable {
             self.representable = representable
             super.init()
         }
+
+        // MARK: Internal
 
         // MARK: Text Field Delegate
 
@@ -45,7 +45,8 @@ extension UIKitTextFieldRepresentable {
             representable.beginHandler?()
         }
 
-        @objc func textFieldDidChange(_ textField: UITextField) {
+        @objc
+        func textFieldDidChange(_ textField: UITextField) {
             representable.commitText(textField.text ?? "")
             representable.changeHandler?()
         }
@@ -53,5 +54,11 @@ extension UIKitTextFieldRepresentable {
         func textFieldDidEndEditing(_: UITextField) {
             representable.endHandler?()
         }
+
+        // MARK: Private
+
+        // MARK: Properties
+
+        private let representable: UIKitTextFieldRepresentable
     }
 }

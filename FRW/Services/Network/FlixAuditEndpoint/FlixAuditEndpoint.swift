@@ -1,5 +1,5 @@
 //
-//  FlowAuditotEndpoint.swift
+//  FlixAuditEndpoint.swift
 //  Flow Wallet
 //
 //  Created by Hao Fu on 14/9/2022.
@@ -8,23 +8,29 @@
 import Foundation
 import Moya
 
-struct FlixAuditRequest: Codable {
-    let cadenceBase64: String
-    let network: String
+// MARK: - FlixAuditRequest
 
+struct FlixAuditRequest: Codable {
     enum CodingKeys: String, CodingKey {
         case cadenceBase64 = "cadence_base64"
         case network
     }
+
+    let cadenceBase64: String
+    let network: String
 }
+
+// MARK: - FlixAuditEndpoint
 
 enum FlixAuditEndpoint {
     case template(FlixAuditRequest)
 }
 
+// MARK: TargetType
+
 extension FlixAuditEndpoint: TargetType {
     var baseURL: URL {
-        return URL(string: "https://flix.flow.com")!
+        URL(string: "https://flix.flow.com")!
     }
 
     var path: String {

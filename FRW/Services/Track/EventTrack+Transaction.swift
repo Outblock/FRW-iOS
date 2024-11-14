@@ -8,7 +8,6 @@
 import Foundation
 
 extension EventTrack.Transaction {
-    
     /// cadence decode script ,then SHA256
     static func flowSigned(
         cadence: String,
@@ -25,48 +24,50 @@ extension EventTrack.Transaction {
                 "authorizers": authorizers,
                 "proposer": proposer,
                 "payer": payer,
-                "success": success
+                "success": success,
             ])
     }
-    
+
     static func evmSigned(flowAddress: String, evmAddress: String, txId: String, success: Bool) {
         EventTrack
             .send(event: EventTrack.Transaction.flowSigned, properties: [
                 "flow_address": flowAddress,
                 "evm_address": evmAddress,
                 "id": txId,
-                "success": success
+                "success": success,
             ])
     }
-    
+
     static func ftTransfer(
         from: String,
         to: String,
         type: String,
-        amount: Double
-        , identifier: String) {
-            EventTrack
-                .send(event: EventTrack.Transaction.FTTransfer, properties: [
-                    "from_address": from,
-                    "to_address": to,
-                    "type": type,
-                    "amount": amount,
-                    "ft_identifier": identifier
-                ])
+        amount: Double,
+        identifier: String
+    ) {
+        EventTrack
+            .send(event: EventTrack.Transaction.FTTransfer, properties: [
+                "from_address": from,
+                "to_address": to,
+                "type": type,
+                "amount": amount,
+                "ft_identifier": identifier,
+            ])
     }
-    
+
     static func NFTTransfer(
         from: String,
         to: String,
         type: String,
-        amount: Double
-        , identifier: String) {
-            EventTrack
-                .send(event: EventTrack.Transaction.FTTransfer, properties: [
-                    "from_address": from,
-                    "to_address": to,
-                    "type": type,
-                    "ft_identifier": identifier
-                ])
-        }
+        amount _: Double,
+        identifier: String
+    ) {
+        EventTrack
+            .send(event: EventTrack.Transaction.FTTransfer, properties: [
+                "from_address": from,
+                "to_address": to,
+                "type": type,
+                "ft_identifier": identifier,
+            ])
+    }
 }

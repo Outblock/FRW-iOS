@@ -8,13 +8,20 @@
 import Kingfisher
 import SwiftUI
 
+// MARK: - BrowserSignMessageView
+
 struct BrowserSignMessageView: View {
-    @StateObject var vm: BrowserSignMessageViewModel
+    // MARK: Lifecycle
 
     init(vm: BrowserSignMessageViewModel) {
         _vm = StateObject(wrappedValue: vm)
         UITextView.appearance().backgroundColor = UIColor(hex: "#313131")
     }
+
+    // MARK: Internal
+
+    @StateObject
+    var vm: BrowserSignMessageViewModel
 
     var body: some View {
         normalView
@@ -121,11 +128,15 @@ struct BrowserSignMessageView: View {
     }
 }
 
+// MARK: - BrowserSignMessageView_Previews
+
 struct BrowserSignMessageView_Previews: PreviewProvider {
-    static let vm = BrowserSignMessageViewModel(title: "Test title",
-                                                url: "https://lilico.app",
-                                                logo: "",
-                                                cadence: "464f4f") { _ in
+    static let vm = BrowserSignMessageViewModel(
+        title: "Test title",
+        url: "https://lilico.app",
+        logo: "",
+        cadence: "464f4f"
+    ) { _ in
     }
 
     static var previews: some View {

@@ -39,20 +39,22 @@ extension UIColor {
     }
 
     func lighter(by percentage: CGFloat = 30.0) -> UIColor {
-        return adjust(by: abs(percentage))
+        adjust(by: abs(percentage))
     }
 
     func darker(by percentage: CGFloat = 30.0) -> UIColor {
-        return adjust(by: -1 * abs(percentage))
+        adjust(by: -1 * abs(percentage))
     }
 
     func adjust(by percentage: CGFloat = 30.0) -> UIColor {
         var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
         if getRed(&red, green: &green, blue: &blue, alpha: &alpha) {
-            return UIColor(red: min(red + percentage / 100, 1.0),
-                           green: min(green + percentage / 100, 1.0),
-                           blue: min(blue + percentage / 100, 1.0),
-                           alpha: alpha)
+            return UIColor(
+                red: min(red + percentage / 100, 1.0),
+                green: min(green + percentage / 100, 1.0),
+                blue: min(blue + percentage / 100, 1.0),
+                alpha: alpha
+            )
         } else {
             return self
         }
@@ -61,43 +63,14 @@ extension UIColor {
 
 extension Color {
     func adjustbyTheme(by percentage: CGFloat = 30.0) -> Color {
-        return Color(UIColor(self).adjustbyTheme(by: percentage))
+        Color(UIColor(self).adjustbyTheme(by: percentage))
     }
 }
 
-// MARK: - Custom Color
+// MARK: - Color.LL
 
 extension Color {
     enum LL {
-        static let background = Color("Background")
-        static let rebackground = Color("Rebacground")
-//        static let primary = Color("Primary")
-        static let orange = Color("accent.green")
-        static let blue = Color("Blue")
-        static let yellow = Color("Yellow")
-
-        static let error = Color("Error")
-        static let success = Color("Success")
-        static let outline = Color("Outline")
-        static let disable = Color("Disable")
-        static let note = Color("Note")
-
-        static let frontColor = Color("FrontColor")
-
-        static let text = Color("Text")
-        static let flow = Color("Flow")
-
-        static let warning2 = Color("Warning2")
-        static let warning6 = Color("Warning6")
-
-        static let bgForIcon = Color("BgForIcon")
-
-        static let deepBg = Color("DeepBackground")
-
-        static let neutrals1 = Color("Neutrals1")
-
-        static let stakeMain = Color("other.stakingMain")
-
         /// The primary color palette is used across all the iteractive elemets such as CTA’s(Call to The Action), links, inputs,active states,etc
         enum Primary {
             static let salmon1 = Color("primary.salmon1")
@@ -201,25 +174,58 @@ extension Color {
             static let bg3 = Color("other.bg3")
             static let icon1 = Color("other.icon1")
         }
+
+        static let background = Color("Background")
+        static let rebackground = Color("Rebacground")
+//        static let primary = Color("Primary")
+        static let orange = Color("accent.green")
+        static let blue = Color("Blue")
+        static let yellow = Color("Yellow")
+
+        static let error = Color("Error")
+        static let success = Color("Success")
+        static let outline = Color("Outline")
+        static let disable = Color("Disable")
+        static let note = Color("Note")
+
+        static let frontColor = Color("FrontColor")
+
+        static let text = Color("Text")
+        static let flow = Color("Flow")
+
+        static let warning2 = Color("Warning2")
+        static let warning6 = Color("Warning6")
+
+        static let bgForIcon = Color("BgForIcon")
+
+        static let deepBg = Color("DeepBackground")
+
+        static let neutrals1 = Color("Neutrals1")
+
+        static let stakeMain = Color("other.stakingMain")
     }
 }
+
+// MARK: - Color.Flow
 
 extension Color {
     // 2023-08-21
     enum Flow {
-        static let accessory = Color("accessory")
-        static let blue = Color("tip.blue")
         enum Font {
             static let ascend = Color("font.ascend")
             static let descend = Color("font.descend")
             static let inaccessible = Color("font.inaccessible")
         }
+
+        static let accessory = Color("accessory")
+        static let blue = Color("tip.blue")
     }
 }
 
+// MARK: - Color.Theme
+
 extension Color {
     enum Theme {
-        static let evm = Color("evm")
         enum Accent {
             static let green = Color("accent.green")
             static let grey = Color("accent.grey")
@@ -246,17 +252,14 @@ extension Color {
 
             static let bg2 = Color("BG.2")
             static let bg3 = Color("BG.3")
-            
+
             static let fill1 = Color("bg.fill1")
-            
-            
         }
-        
+
         enum BG {
             static let bg1 = Color("bg1")
             static let bg3 = Color("bg3")
         }
-        
 
         enum Line {
             static let line = Color("line.black")
@@ -271,12 +274,14 @@ extension Color {
             static let black6 = Color("text.black.6")
             static let white9 = Color("text.white.9")
         }
+
+        static let evm = Color("evm")
     }
 }
 
 extension Color {
     /// opacity is 0.16
     func fixedOpacity() -> Color {
-        return opacity(0.16)
+        opacity(0.16)
     }
 }

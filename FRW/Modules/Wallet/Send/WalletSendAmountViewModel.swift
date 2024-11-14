@@ -26,6 +26,8 @@ extension WalletSendAmountView {
         case invalidAddress
         case belowMinimum
 
+        // MARK: Internal
+
         var desc: String {
             switch self {
             case .none:
@@ -43,37 +45,13 @@ extension WalletSendAmountView {
     }
 }
 
+// MARK: - WalletSendAmountViewModel
+
 class WalletSendAmountViewModel: ObservableObject {
-    @Published var targetContact: Contact
-    @Published var token: TokenModel
-    @Published var amountBalance: Double = 0
-    @Published var coinRate: Double = 0
-
-    @Published var inputText: String = ""
-    @Published var inputTokenNum: Double = 0
-    @Published var inputDollarNum: Double = 0
-    var actualBalance: String = ""
-
-    @Published var exchangeType: WalletSendAmountView.ExchangeType = .token
-    @Published var errorType: WalletSendAmountView.ErrorType = .none
-
-    @Published var showConfirmView: Bool = false
-
-    @Published var isValidToken: Bool = true
-
-    @Published var isEmptyTransation = true
-
-    private var isSending = false
-    private var cancelSets = Set<AnyCancellable>()
-
-    private var addressIsValid: Bool?
-
-    private var minBalance: Double = 0.001
-
-    private var _insufficientStorageFailure: InsufficientStorageFailure?
+    // MARK: Lifecycle
 
     init(target: Contact, token: TokenModel) {
-        targetContact = target
+        self.targetContact = target
         self.token = token
 
         WalletManager.shared.$coinBalances.sink { [weak self] _ in
@@ -86,21 +64,69 @@ class WalletSendAmountViewModel: ObservableObject {
         checkTransaction()
         fetchMinFlowBalance()
         checkForInsufficientStorage()
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(onHolderChanged(noti:)), name: .transactionStatusDidChanged, object: nil)
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onHolderChanged(noti:)),
+            name: .transactionStatusDidChanged,
+            object: nil
+        )
     }
 
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
 
+    // MARK: Internal
+
+    @Published
+    var targetContact: Contact
+    @Published
+    var token: TokenModel
+    @Published
+    var amountBalance: Double = 0
+    @Published
+    var coinRate: Double = 0
+
+    @Published
+    var inputText: String = ""
+    @Published
+    var inputTokenNum: Double = 0
+    @Published
+    var inputDollarNum: Double = 0
+    var actualBalance: String = ""
+
+    @Published
+    var exchangeType: WalletSendAmountView.ExchangeType = .token
+    @Published
+    var errorType: WalletSendAmountView.ErrorType = .none
+
+    @Published
+    var showConfirmView: Bool = false
+
+    @Published
+    var isValidToken: Bool = true
+
+    @Published
+    var isEmptyTransation = true
+
     var amountBalanceAsDollar: Double {
-        return coinRate * amountBalance
+        coinRate * amountBalance
     }
 
     var isReadyForSend: Bool {
-        return errorType == .none && inputText.isNumber && addressIsValid == true
+        errorType == .none && inputText.isNumber && addressIsValid == true
     }
+
+    // MARK: Private
+
+    private var isSending = false
+    private var cancelSets = Set<AnyCancellable>()
+
+    private var addressIsValid: Bool?
+
+    private var minBalance: Double = 0.001
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
 }
 
 extension WalletSendAmountViewModel {
@@ -133,7 +159,8 @@ extension WalletSendAmountViewModel {
                     }
                     return
                 }
-                let list = try await FlowNetwork.checkTokensEnable(address: Flow.Address(hex: address))
+                let list = try await FlowNetwork
+                    .checkTokensEnable(address: Flow.Address(hex: address))
                 let model = list.first { $0.key.lowercased() == token.contractId.lowercased() }
                 let isValid = model?.value
                 DispatchQueue.main.async {
@@ -168,7 +195,7 @@ extension WalletSendAmountViewModel {
             errorType = .formatError
             return
         }
-        
+
         if exchangeType == .token {
             inputTokenNum = actualBalance.doubleValue
             inputDollarNum = inputTokenNum * coinRate * CurrencyCache.cache.currentCurrencyRate
@@ -180,7 +207,7 @@ extension WalletSendAmountViewModel {
                 inputTokenNum = inputDollarNum / CurrencyCache.cache.currentCurrencyRate / coinRate
             }
         }
-        
+
         if inputTokenNum > amountBalance {
             errorType = .insufficientBalance
             return
@@ -190,7 +217,7 @@ extension WalletSendAmountViewModel {
             let validBalance = (
                 Decimal(amountBalance) - Decimal(minBalance)
             ).doubleValue
-            if validBalance < inputTokenNum  {
+            if validBalance < inputTokenNum {
                 errorType = .belowMinimum
                 return
             }
@@ -233,8 +260,8 @@ extension WalletSendAmountViewModel {
 
     func maxAction() {
         exchangeType = .token
-        if token.isFlowCoin && WalletManager.shared
-            .isCoa(targetContact.address) && WalletManager.shared.isMain() {
+        if token.isFlowCoin, WalletManager.shared
+            .isCoa(targetContact.address), WalletManager.shared.isMain() {
             Task {
                 do {
                     let topAmount = try await FlowNetwork.minFlowBalance()
@@ -245,7 +272,7 @@ extension WalletSendAmountViewModel {
                     DispatchQueue.main.async {
                         self.inputText = num.formatCurrencyString()
                     }
-                    
+
                     actualBalance = num.formatCurrencyString(digits: token.decimal)
                 } catch {
                     let num = max(amountBalance - minBalance, 0)
@@ -317,7 +344,8 @@ extension WalletSendAmountViewModel {
             return
         }
 
-        guard let address = WalletManager.shared.getPrimaryWalletAddress(), let targetAddress = targetContact.address else {
+        guard let address = WalletManager.shared.getPrimaryWalletAddress(),
+              let targetAddress = targetContact.address else {
             return
         }
 
@@ -338,44 +366,69 @@ extension WalletSendAmountViewModel {
                 var txId: Flow.ID?
                 let amount = inputTokenNum.decimalValue
 
-                let fromAccountType = WalletManager.shared.isSelectedEVMAccount ? AccountType.coa : AccountType.flow
+                let fromAccountType = WalletManager.shared.isSelectedEVMAccount ? AccountType
+                    .coa : AccountType.flow
                 var toAccountType = targetAddress.isEVMAddress ? AccountType.coa : AccountType.flow
-                if toAccountType == .coa, targetAddress != EVMAccountManager.shared.accounts.first?.address {
+                if toAccountType == .coa,
+                   targetAddress != EVMAccountManager.shared.accounts.first?.address {
                     toAccountType = .eoa
                 }
 
                 switch (fromAccountType, toAccountType) {
                 case (.flow, .flow):
-                    txId = try await FlowNetwork.transferToken(to: Flow.Address(hex: targetContact.address ?? "0x"),
-                                                               amount: amount,
-                                                               token: token)
+                    txId = try await FlowNetwork.transferToken(
+                        to: Flow.Address(hex: targetContact.address ?? "0x"),
+                        amount: amount,
+                        token: token
+                    )
                 case (.flow, .coa):
                     txId = try await FlowNetwork.fundCoa(amount: amount)
                 case (.coa, .flow):
                     if token.isFlowCoin {
-                        txId = try await FlowNetwork.sendFlowTokenFromCoaToFlow(amount: amount, address: targetAddress)
+                        txId = try await FlowNetwork.sendFlowTokenFromCoaToFlow(
+                            amount: amount,
+                            address: targetAddress
+                        )
                     } else {
-                        guard let bigUIntValue = Utilities.parseToBigUInt(amount.description, units: .ether),
-                              let flowIdentifier = self.token.flowIdentifier
+                        guard let bigUIntValue = Utilities.parseToBigUInt(
+                            amount.description,
+                            units: .ether
+                        ),
+                            let flowIdentifier = self.token.flowIdentifier
                         else {
                             failureBlock()
                             return
                         }
 
-                        txId = try await FlowNetwork.bridgeTokensFromEvmToFlow(identifier: flowIdentifier, amount: bigUIntValue, receiver: targetAddress)
+                        txId = try await FlowNetwork.bridgeTokensFromEvmToFlow(
+                            identifier: flowIdentifier,
+                            amount: bigUIntValue,
+                            receiver: targetAddress
+                        )
                     }
-
                 case (.coa, .coa):
 
-                    txId = try await FlowNetwork.sendTransaction(amount: amount.description, data: nil, toAddress: targetAddress.stripHexPrefix(), gas: gas)
+                    txId = try await FlowNetwork.sendTransaction(
+                        amount: amount.description,
+                        data: nil,
+                        toAddress: targetAddress.stripHexPrefix(),
+                        gas: gas
+                    )
                 case (.flow, .eoa):
                     if token.isFlowCoin {
-                        txId = try await FlowNetwork.sendFlowToEvm(evmAddress: targetAddress.stripHexPrefix(), amount: amount, gas: gas)
+                        txId = try await FlowNetwork.sendFlowToEvm(
+                            evmAddress: targetAddress.stripHexPrefix(),
+                            amount: amount,
+                            gas: gas
+                        )
                     } else {
                         let flowIdentifier = "\(self.token.contractId).Vault"
-                        txId = try await FlowNetwork.sendNoFlowTokenToEVM(vaultIdentifier: flowIdentifier, amount: amount, recipient: targetAddress)
+                        txId = try await FlowNetwork.sendNoFlowTokenToEVM(
+                            vaultIdentifier: flowIdentifier,
+                            amount: amount,
+                            recipient: targetAddress
+                        )
                     }
-
                 case (.coa, .eoa):
                     if token.isFlowCoin {
                         txId = try await FlowNetwork
@@ -387,11 +440,23 @@ extension WalletSendAmountViewModel {
                             )
                     } else {
                         let erc20Contract = try await FlowProvider.Web3.defaultContract()
-                        let testData = erc20Contract?.contract.method("transfer", parameters: [targetAddress, Utilities.parseToBigUInt(amount.description, units: .ether)!], extraData: nil)
+                        let testData = erc20Contract?.contract.method(
+                            "transfer",
+                            parameters: [
+                                targetAddress,
+                                Utilities.parseToBigUInt(amount.description, units: .ether)!,
+                            ],
+                            extraData: nil
+                        )
                         guard let toAddress = token.getAddress() else {
                             throw LLError.invalidAddress
                         }
-                        txId = try await FlowNetwork.sendTransaction(amount: "0", data: testData, toAddress: toAddress.stripHexPrefix(), gas: gas)
+                        txId = try await FlowNetwork.sendTransaction(
+                            amount: "0",
+                            data: testData,
+                            toAddress: toAddress.stripHexPrefix(),
+                            gas: gas
+                        )
                     }
                 default:
                     failureBlock()
@@ -404,7 +469,12 @@ extension WalletSendAmountViewModel {
                 }
 
                 DispatchQueue.main.async {
-                    let obj = CoinTransferModel(amount: self.inputTokenNum, symbol: self.token.symbol ?? "", target: self.targetContact, from: address)
+                    let obj = CoinTransferModel(
+                        amount: self.inputTokenNum,
+                        symbol: self.token.symbol ?? "",
+                        target: self.targetContact,
+                        from: address
+                    )
                     guard let data = try? JSONEncoder().encode(obj) else {
                         debugPrint("WalletSendAmountViewModel -> obj encode failed")
                         failureBlock()
@@ -421,7 +491,11 @@ extension WalletSendAmountViewModel {
                     let generator = UINotificationFeedbackGenerator()
                     generator.notificationOccurred(.success)
 
-                    let holder = TransactionManager.TransactionHolder(id: id, type: .transferCoin, data: data)
+                    let holder = TransactionManager.TransactionHolder(
+                        id: id,
+                        type: .transferCoin,
+                        data: data
+                    )
                     TransactionManager.shared.newTransaction(holder: holder)
                 }
             } catch {
@@ -446,7 +520,8 @@ extension WalletSendAmountViewModel {
         isEmptyTransation = TransactionManager.shared.holders.count == 0
     }
 
-    @objc private func onHolderChanged(noti _: Notification) {
+    @objc
+    private func onHolderChanged(noti _: Notification) {
         checkTransaction()
     }
 }

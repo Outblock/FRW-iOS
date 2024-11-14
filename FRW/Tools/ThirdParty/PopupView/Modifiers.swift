@@ -1,5 +1,5 @@
 //
-//  Constructors.swift
+//  Modifiers.swift
 //  Pods
 //
 //  Created by Alisa Mylnikova on 11.10.2022.
@@ -7,11 +7,12 @@
 
 import SwiftUI
 
-public extension View {
-    func popup<PopupContent: View>(
+extension View {
+    public func popup<PopupContent: View>(
         isPresented: Binding<Bool>,
         @ViewBuilder view: @escaping () -> PopupContent,
-        customize: @escaping (Popup<PopupContent>.PopupParameters) -> Popup<PopupContent>.PopupParameters
+        customize: @escaping (Popup<PopupContent>.PopupParameters) -> Popup<PopupContent>
+            .PopupParameters
     ) -> some View {
         modifier(
             FullscreenPopup<Int, PopupContent>(
@@ -24,10 +25,11 @@ public extension View {
         )
     }
 
-    func popup<Item: Equatable, PopupContent: View>(
+    public func popup<Item: Equatable, PopupContent: View>(
         item: Binding<Item?>,
         @ViewBuilder itemView: @escaping (Item) -> PopupContent,
-        customize: @escaping (Popup<PopupContent>.PopupParameters) -> Popup<PopupContent>.PopupParameters
+        customize: @escaping (Popup<PopupContent>.PopupParameters) -> Popup<PopupContent>
+            .PopupParameters
     ) -> some View {
         modifier(
             FullscreenPopup<Item, PopupContent>(
@@ -40,7 +42,7 @@ public extension View {
         )
     }
 
-    func popup<PopupContent: View>(
+    public func popup<PopupContent: View>(
         isPresented: Binding<Bool>,
         @ViewBuilder view: @escaping () -> PopupContent
     ) -> some View {
@@ -55,7 +57,7 @@ public extension View {
         )
     }
 
-    func popup<Item: Equatable, PopupContent: View>(
+    public func popup<Item: Equatable, PopupContent: View>(
         item: Binding<Item?>,
         @ViewBuilder itemView: @escaping (Item) -> PopupContent
     ) -> some View {

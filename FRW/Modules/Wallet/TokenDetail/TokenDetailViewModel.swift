@@ -22,7 +22,10 @@ extension TokenDetailView {
 
         var generateChartPoint: LineChartDataPoint {
             let date = Date(timeIntervalSince1970: closeTime)
-            let price = Double(closePrice.formatCurrencyString(digits: 2, considerCustomCurrency: true)) ?? 0
+            let price = Double(closePrice.formatCurrencyString(
+                digits: 2,
+                considerCustomCurrency: true
+            )) ?? 0
             return LineChartDataPoint(value: price, description: date.ymdString, date: date)
         }
     }
@@ -42,6 +45,8 @@ extension TokenDetailView {
         case m3
         case y1
         case all
+
+        // MARK: Internal
 
         var title: String {
             switch self {
@@ -79,21 +84,38 @@ extension TokenDetailView {
             let oneDayInterval: TimeInterval = 24 * 60 * 60
             switch self {
             case .d1:
-                return String(format: "%.0lf", Date(timeIntervalSinceNow: -oneDayInterval).timeIntervalSince1970)
+                return String(
+                    format: "%.0lf",
+                    Date(timeIntervalSinceNow: -oneDayInterval).timeIntervalSince1970
+                )
             case .w1:
-                return String(format: "%.0lf", Date(timeIntervalSinceNow: -oneDayInterval * 7).timeIntervalSince1970)
+                return String(
+                    format: "%.0lf",
+                    Date(timeIntervalSinceNow: -oneDayInterval * 7).timeIntervalSince1970
+                )
             case .m1:
-                return String(format: "%.0lf", Date(timeIntervalSinceNow: -oneDayInterval * 30).timeIntervalSince1970)
+                return String(
+                    format: "%.0lf",
+                    Date(timeIntervalSinceNow: -oneDayInterval * 30).timeIntervalSince1970
+                )
             case .m3:
-                return String(format: "%.0lf", Date(timeIntervalSinceNow: -oneDayInterval * 90).timeIntervalSince1970)
+                return String(
+                    format: "%.0lf",
+                    Date(timeIntervalSinceNow: -oneDayInterval * 90).timeIntervalSince1970
+                )
             case .y1:
-                return String(format: "%.0lf", Date(timeIntervalSinceNow: -oneDayInterval * 365).timeIntervalSince1970)
+                return String(
+                    format: "%.0lf",
+                    Date(timeIntervalSinceNow: -oneDayInterval * 365).timeIntervalSince1970
+                )
             case .all:
                 return ""
             }
         }
     }
 }
+
+// MARK: - TokenDetailViewModel.Action
 
 extension TokenDetailViewModel {
     enum Action {
@@ -102,31 +124,10 @@ extension TokenDetailViewModel {
     }
 }
 
+// MARK: - TokenDetailViewModel
+
 class TokenDetailViewModel: ObservableObject {
-    @Published var storageUsagePercent: Double = 0
-    @Published var storageUsageDesc: String = ""
-    @Published var storageFlow: Double = 0
-    @Published var totalBalance: Double = 0
-
-    @Published var token: TokenModel
-    @Published var market: QuoteMarket = LocalUserDefaults.shared.market
-    @Published var selectedRangeType: TokenDetailView.ChartRangeType = .d1
-    @Published var chartData: LineChartData?
-    @Published var balance: Double = 0
-    @Published var balanceAsUSD: Double = 0
-    @Published var changePercent: Double = 0
-    @Published var rate: Double = 0
-    @Published var recentTransfers: [FlowScanTransfer] = []
-
-    @Published var showSwapButton: Bool = true
-    @Published var showBuyButton: Bool = true
-    @Published var showDeleteToken: Bool = false
-
-    @Published var showSheet: Bool = false
-    var buttonAction: TokenDetailViewModel.Action = .none
-    var showStorageView: Bool { return self.token.isFlowCoin }
-
-    private var cancelSets = Set<AnyCancellable>()
+    // MARK: Lifecycle
 
     init(token: TokenModel) {
         self.token = token
@@ -134,6 +135,51 @@ class TokenDetailViewModel: ObservableObject {
         fetchAllData()
         refreshButtonState()
     }
+
+    // MARK: Internal
+
+    @Published
+    var storageUsagePercent: Double = 0
+    @Published
+    var storageUsageDesc: String = ""
+    @Published
+    var storageFlow: Double = 0
+    @Published
+    var totalBalance: Double = 0
+    @Published
+    var token: TokenModel
+    @Published
+    var market: QuoteMarket = LocalUserDefaults.shared.market
+    @Published
+    var selectedRangeType: TokenDetailView.ChartRangeType = .d1
+    @Published
+    var chartData: LineChartData?
+    @Published
+    var balance: Double = 0
+    @Published
+    var balanceAsUSD: Double = 0
+    @Published
+    var changePercent: Double = 0
+    @Published
+    var rate: Double = 0
+    @Published
+    var recentTransfers: [FlowScanTransfer] = []
+
+    @Published
+    var showSwapButton: Bool = true
+    @Published
+    var showBuyButton: Bool = true
+    @Published
+    var showDeleteToken: Bool = false
+
+    @Published
+    var showSheet: Bool = false
+    var buttonAction: TokenDetailViewModel.Action = .none
+    var showStorageView: Bool { return self.token.isFlowCoin }
+
+    // MARK: Private
+
+    private var cancelSets = Set<AnyCancellable>()
 
     private func setupObserver() {
         NotificationCenter.default.publisher(for: .quoteMarketUpdated).sink { [weak self] _ in
@@ -166,19 +212,19 @@ extension TokenDetailViewModel {
     }
 
     var balanceString: String {
-        return balance.formatCurrencyString()
+        balance.formatCurrencyString()
     }
 
     var balanceAsCurrentCurrencyString: String {
-        return balanceAsUSD.formatCurrencyString(considerCustomCurrency: true)
+        balanceAsUSD.formatCurrencyString(considerCustomCurrency: true)
     }
 
     var changeIsNegative: Bool {
-        return changePercent < 0
+        changePercent < 0
     }
 
     var changeColor: Color {
-        return changeIsNegative ? Color.LL.Warning.warning2 : Color.LL.Success.success2
+        changeIsNegative ? Color.LL.Warning.warning2 : Color.LL.Success.success2
     }
 
     var hasRateAndChartData: Bool {
@@ -191,7 +237,9 @@ extension TokenDetailViewModel {
     }
 
     var movable: Bool {
-        EVMAccountManager.shared.hasAccount && (token.evmAddress != nil || token.flowIdentifier != nil || token.isFlowCoin)
+        EVMAccountManager.shared
+            .hasAccount &&
+            (token.evmAddress != nil || token.flowIdentifier != nil || token.isFlowCoin)
     }
 }
 
@@ -252,7 +300,7 @@ extension TokenDetailViewModel {
             showSheet = true
         }
     }
-    
+
     func deleteCustomToken() {
         guard let customToken = token.findCustomToken() else {
             return
@@ -323,10 +371,16 @@ extension TokenDetailViewModel {
 
             let currentRangeType = selectedRangeType
 
-            let request = CryptoHistoryRequest(provider: market.rawValue, pair: pair, after: currentRangeType.after, period: "\(currentRangeType.frequency.rawValue)")
+            let request = CryptoHistoryRequest(
+                provider: market.rawValue,
+                pair: pair,
+                after: currentRangeType.after,
+                period: "\(currentRangeType.frequency.rawValue)"
+            )
 
             do {
-                let response: CryptoHistoryResponse = try await Network.request(FRWAPI.Crypto.history(request))
+                let response: CryptoHistoryResponse = try await Network
+                    .request(FRWAPI.Crypto.history(request))
 
                 if currentRangeType != self.selectedRangeType {
                     // selectedRangeType is changed, this is an outdated response
@@ -345,17 +399,26 @@ extension TokenDetailViewModel {
     private func generateChartData(response: CryptoHistoryResponse) {
         let quotes = response.parseMarketQuoteData(rangeType: selectedRangeType)
         let linePoints = quotes.map { $0.generateChartPoint }
-        let chartLineStyle = LineStyle(lineColour: ColourStyle(colours: [Color.LL.Primary.salmonPrimary.opacity(0.24), Color.LL.Primary.salmonPrimary.opacity(0)], startPoint: .top, endPoint: .bottom))
+        let chartLineStyle = LineStyle(lineColour: ColourStyle(
+            colours: [
+                Color.LL.Primary.salmonPrimary.opacity(0.24),
+                Color.LL.Primary.salmonPrimary.opacity(0),
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        ))
 
         let set = LineDataSet(dataPoints: linePoints, style: chartLineStyle)
-        let chartStyle = LineChartStyle(infoBoxPlacement: .floating,
-                                        infoBoxBorderColour: .LL.Primary.salmonPrimary,
-                                        infoBoxBorderStyle: StrokeStyle(lineWidth: 1),
-                                        markerType: .vertical(attachment: .point),
-                                        yAxisLabelPosition: .trailing,
-                                        yAxisLabelFont: .inter(size: 12, weight: .regular),
-                                        yAxisLabelColour: Color.LL.Neutrals.neutrals8,
-                                        yAxisNumberOfLabels: 4)
+        let chartStyle = LineChartStyle(
+            infoBoxPlacement: .floating,
+            infoBoxBorderColour: .LL.Primary.salmonPrimary,
+            infoBoxBorderStyle: StrokeStyle(lineWidth: 1),
+            markerType: .vertical(attachment: .point),
+            yAxisLabelPosition: .trailing,
+            yAxisLabelFont: .inter(size: 12, weight: .regular),
+            yAxisLabelColour: Color.LL.Neutrals.neutrals8,
+            yAxisNumberOfLabels: 4
+        )
         let cd = LineChartData(dataSets: set, chartStyle: chartStyle)
         cd.legends = []
 
@@ -363,20 +426,29 @@ extension TokenDetailViewModel {
     }
 
     var transactionsCacheKey: String {
-        return "token_detail_transaction_cache_\(token.contractId)"
+        "token_detail_transaction_cache_\(token.contractId)"
     }
 
     private func fetchTransactionsData() {
         Task {
-            if let cachedTransactions = try? await PageCache.cache.get(forKey: self.transactionsCacheKey, type: [FlowScanTransfer].self), !cachedTransactions.isEmpty {
+            if let cachedTransactions = try? await PageCache.cache.get(
+                forKey: self.transactionsCacheKey,
+                type: [FlowScanTransfer].self
+            ), !cachedTransactions.isEmpty {
                 DispatchQueue.main.async {
                     self.recentTransfers = cachedTransactions
                 }
             }
 
             do {
-                let request = TokenTransfersRequest(address: WalletManager.shared.getPrimaryWalletAddress() ?? "", limit: 3, after: "", token: self.token.contractId)
-                let response: TransfersResponse = try await Network.request(FRWAPI.Account.tokenTransfers(request))
+                let request = TokenTransfersRequest(
+                    address: WalletManager.shared.getPrimaryWalletAddress() ?? "",
+                    limit: 3,
+                    after: "",
+                    token: self.token.contractId
+                )
+                let response: TransfersResponse = try await Network
+                    .request(FRWAPI.Account.tokenTransfers(request))
 
                 let list = response.transactions ?? []
                 PageCache.cache.set(value: list, forKey: self.transactionsCacheKey)
@@ -396,7 +468,8 @@ extension TokenDetailViewModel {
         // Swap
         if (RemoteConfigManager.shared.config?.features.swap ?? false) == true {
             // don't show when current is Linked account
-            if ChildAccountManager.shared.selectedChildAccount != nil || ChildAccountManager.shared.selectedChildAccount != nil {
+            if ChildAccountManager.shared.selectedChildAccount != nil || ChildAccountManager.shared
+                .selectedChildAccount != nil {
                 showSwapButton = false
             } else {
                 showSwapButton = true
@@ -406,7 +479,8 @@ extension TokenDetailViewModel {
         }
 
         // buy
-        if RemoteConfigManager.shared.config?.features.onRamp ?? false == true, flow.chainID == .mainnet {
+        if RemoteConfigManager.shared.config?.features.onRamp ?? false == true,
+           flow.chainID == .mainnet {
             if ChildAccountManager.shared.selectedChildAccount != nil {
                 showBuyButton = false
             } else {
@@ -418,6 +492,5 @@ extension TokenDetailViewModel {
         }
         // delete custom token
         showDeleteToken = token.findCustomToken() != nil
-        
     }
 }

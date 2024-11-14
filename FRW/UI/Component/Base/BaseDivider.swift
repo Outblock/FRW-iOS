@@ -1,5 +1,5 @@
 //
-//  CommonBaseView.swift
+//  BaseDivider.swift
 //  Flow Wallet
 //
 //  Created by Selina on 19/5/2022.

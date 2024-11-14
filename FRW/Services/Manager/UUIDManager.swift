@@ -8,7 +8,7 @@
 import KeychainAccess
 import SwiftUI
 
-struct UUIDManager {
+enum UUIDManager {
     static func appUUID() -> String {
         var service = Bundle.main.bundleIdentifier ?? "com.flowfoundation.wallet"
         service += ".uuid"

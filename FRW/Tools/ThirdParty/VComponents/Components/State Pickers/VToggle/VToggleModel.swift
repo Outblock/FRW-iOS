@@ -1,5 +1,5 @@
 //
-//  VToggleRightContentModel.swift
+//  VToggleModel.swift
 //  VComponents
 //
 //  Created by Vakhtang Kontridze on 12/21/20.

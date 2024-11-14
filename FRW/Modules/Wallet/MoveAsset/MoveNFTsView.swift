@@ -8,27 +8,26 @@
 import Kingfisher
 import SwiftUI
 
+// MARK: - MoveNFTsView
+
 struct MoveNFTsView: RouteableView, PresentActionDelegate {
+    // MARK: Internal
+
     var changeHeight: (() -> Void)?
+    @StateObject
+    var viewModel = MoveNFTsViewModel()
+
     var title: String {
-        return ""
+        ""
     }
 
     var isNavigationBarHidden: Bool {
-        return true
+        true
     }
-
-    func configNavigationItem(_: UINavigationItem) {}
 
     var detents: [UISheetPresentationController.Detent] {
-        return [.large()]
+        [.large()]
     }
-
-    @StateObject var viewModel = MoveNFTsViewModel()
-
-    private let columns = [
-        GridItem(.adaptive(minimum: 110, maximum: 125), spacing: 4),
-    ]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -68,6 +67,24 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
         .background(Color.Theme.Background.grey)
     }
 
+    var hintView: some View {
+        HStack(spacing: 4) {
+            Image("icon_move_waring")
+                .resizable()
+                .frame(width: 20, height: 20)
+            Text("move_nft_limit_x".localized(String(viewModel.limitCount)))
+                .font(.inter(size: 14))
+                .foregroundStyle(Color.Theme.Text.black)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color.Theme.Accent.orange)
+        .cornerRadius(24)
+        .offset(y: -8)
+    }
+
+    func configNavigationItem(_: UINavigationItem) {}
+
     @ViewBuilder
     func accountView() -> some View {
         VStack(spacing: 16) {
@@ -75,16 +92,24 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
                 titleView(title: "account".localized)
                 Spacer()
             }
-            
-            ContactRelationView(fromContact: viewModel.fromContact, toContact: viewModel.toContact,clickable: .to, clickTo:  { contact in
-                let model = MoveAccountsViewModel(selected: viewModel.toContact.address ?? "") { contact in
-                    if let contact = contact {
-                        viewModel.updateToContact(contact)
+
+            ContactRelationView(
+                fromContact: viewModel.fromContact,
+                toContact: viewModel.toContact,
+                clickable: .to,
+                clickTo: { contact in
+                    let model = MoveAccountsViewModel(
+                        selected: viewModel.toContact
+                            .address ?? ""
+                    ) { contact in
+                        if let contact = contact {
+                            viewModel.updateToContact(contact)
+                        }
                     }
+                    Router.route(to: RouteMap.Wallet.chooseChild(model))
                 }
-                Router.route(to: RouteMap.Wallet.chooseChild(model))
-            })
-            
+            )
+
             MoveFeeView(isFree: viewModel.fromContact.walletType == viewModel.toContact.walletType)
                 .visibility(viewModel.showFee ? .visible : .gone)
         }
@@ -175,7 +200,7 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
             }
             .padding(.bottom, 8)
 
-            if viewModel.nfts.count == 0 {
+            if viewModel.nfts.isEmpty {
                 HStack {
                     Spacer()
                     Text("0 NFTs")
@@ -189,7 +214,11 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 4) {
                     ForEach(viewModel.nfts) { nft in
-                        NFTView(nft: nft, reachMax: viewModel.showHint, collection: self.viewModel.selectedCollection) { model in
+                        NFTView(
+                            nft: nft,
+                            reachMax: viewModel.showHint,
+                            collection: self.viewModel.selectedCollection
+                        ) { model in
                             viewModel.toggleSelection(of: model)
                         }
                     }
@@ -205,29 +234,23 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
         }
     }
 
-    var hintView: some View {
-        HStack(spacing: 4) {
-            Image("icon_move_waring")
-                .resizable()
-                .frame(width: 20, height: 20)
-            Text("move_nft_limit_x".localized(String(viewModel.limitCount)))
-                .font(.inter(size: 14))
-                .foregroundStyle(Color.Theme.Text.black)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(Color.Theme.Accent.orange)
-        .cornerRadius(24)
-        .offset(y: -8)
-    }
-
     func customViewDidDismiss() {
         MoveAssetsAction.shared.endBrowser()
     }
+
+    // MARK: Private
+
+    private let columns = [
+        GridItem(.adaptive(minimum: 110, maximum: 125), spacing: 4),
+    ]
 }
+
+// MARK: MoveNFTsView.NFTView
 
 extension MoveNFTsView {
     struct NFTView: View {
+        // MARK: Internal
+
         var nft: MoveNFTsViewModel.NFT
         var reachMax: Bool
         var collection: CollectionMask?
@@ -271,6 +294,8 @@ extension MoveNFTsView {
                 }
             }
         }
+
+        // MARK: Private
 
         private func showMask() -> Bool {
             if nft.isSelected {

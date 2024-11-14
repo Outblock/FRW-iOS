@@ -73,9 +73,7 @@ public struct VSlider: View {
                 progress(in: proxy)
             })
             .mask(RoundedRectangle(cornerRadius: model.layout.cornerRadius))
-
             .overlay(thumb(in: proxy))
-
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { dragChanged(drag: $0, in: proxy) }
@@ -95,7 +93,6 @@ public struct VSlider: View {
     private func progress(in proxy: GeometryProxy) -> some View {
         Rectangle()
             .frame(width: progressWidth(in: proxy))
-
             .foregroundColor(model.colors.progress.for(state))
     }
 
