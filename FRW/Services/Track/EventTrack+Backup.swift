@@ -19,7 +19,7 @@ extension EventTrack.Backup {
             ])
     }
 
-    static func multiCreatedFailed(source: String) {
+    static func multiCreatedFailed(source: String, reason: String) {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             return
         }

@@ -80,7 +80,7 @@ class BackupMultiViewModel: ObservableObject {
 
 // MARK: - MultiBackupType
 
-enum MultiBackupType: Int, CaseIterable {
+enum MultiBackupType: Int, CaseIterable, Codable {
     case google = 0
     case passkey = 1
     case icloud = 2
@@ -150,6 +150,19 @@ enum MultiBackupType: Int, CaseIterable {
             return "Icloud"
         case .phrase:
             return "icon.recovery"
+        }
+    }
+
+    func methodName() -> String {
+        switch self {
+        case .google:
+            return "google_drive"
+        case .passkey:
+            return "passkey"
+        case .icloud:
+            return "icloud"
+        case .phrase:
+            return "seed_phrase"
         }
     }
 }

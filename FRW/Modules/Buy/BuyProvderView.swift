@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: - BuyProvderView
+
 struct BuyProvderView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 15) {
@@ -16,6 +18,7 @@ struct BuyProvderView: View {
             Divider()
 
             Button {
+                EventTrack.General.rampClick(source: "moonpay")
                 Task {
                     await launchMoonPay()
                 }
@@ -35,8 +38,12 @@ struct BuyProvderView: View {
 
             if LocalUserDefaults.shared.flowNetwork == .mainnet {
                 Button {
+                    EventTrack.General.rampClick(source: "coinbase")
                     guard let address = WalletManager.shared.getPrimaryWalletAddress(),
-                          let url = URL(string: "https://pay.coinbase.com/buy/input?appId=d22a56bd-68b7-4321-9b25-aa357fc7f9ce&destinationWallets=%5B%7B%22address%22%3A%22\(address)%22%2C%22blockchains%22%3A%5B%22flow%22%5D%7D%5D")
+                          let url =
+                          URL(
+                              string: "https://pay.coinbase.com/buy/input?appId=d22a56bd-68b7-4321-9b25-aa357fc7f9ce&destinationWallets=%5B%7B%22address%22%3A%22\(address)%22%2C%22blockchains%22%3A%5B%22flow%22%5D%7D%5D"
+                          )
                     else {
                         return
                     }
@@ -72,7 +79,10 @@ struct BuyProvderView: View {
 
         HUD.loading()
 
-        let request = MoonPayRequest(url: "https://buy.moonpay.com?apiKey=pk_live_6YNhgtZH8nyxkJiQRZsotO69G2loIyv0&defaultCurrencyCode=FLOW&colorCode=%23FC814A&walletAddress=\(address)")
+        let request =
+            MoonPayRequest(
+                url: "https://buy.moonpay.com?apiKey=pk_live_6YNhgtZH8nyxkJiQRZsotO69G2loIyv0&defaultCurrencyCode=FLOW&colorCode=%23FC814A&walletAddress=\(address)"
+            )
 
         do {
             let response: MoonPayResponse = try await Network.request(FirebaseAPI.moonPay(request))
@@ -86,6 +96,8 @@ struct BuyProvderView: View {
         }
     }
 }
+
+// MARK: - BuyProvderView_Previews
 
 struct BuyProvderView_Previews: PreviewProvider {
     static var previews: some View {

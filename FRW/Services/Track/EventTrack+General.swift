@@ -15,7 +15,6 @@ extension EventTrack.General {
         ])
     }
 
-    /// StakeAmountViewModel  stake
     static func delegationCreated(
         address: String,
         nodeId: String,
@@ -37,11 +36,35 @@ extension EventTrack.General {
             ])
     }
 
+    static func coaCreation(txId: String, flowAddress: String, message: String) {
+        EventTrack
+            .send(event: EventTrack.General.coaCreation, properties: [
+                "tx_id": txId,
+                "flow_address": flowAddress,
+                "error_message": message,
+            ])
+    }
+
     /// home page buy button clicked
-    static func security(type: String) {
+    static func security(type: SecurityManager.SecurityType) {
         EventTrack
             .send(event: EventTrack.General.securityTool, properties: [
-                "type": type,
+                "type": type.trackLabel(),
             ])
+    }
+}
+
+extension SecurityManager.SecurityType {
+    func trackLabel() -> String {
+        switch self {
+        case .none:
+            "none"
+        case .pin:
+            "pin"
+        case .bionic:
+            "biometric"
+        case .both:
+            "both"
+        }
     }
 }

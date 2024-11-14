@@ -74,6 +74,12 @@ class RestoreMultiAccountViewModel: ObservableObject {
         guard selectedUser.count > 1 else {
             return
         }
+        if let item = selectedUser.first {
+            let methods = selectedUser.map { $0.backupType?.methodName() ?? "" }
+            EventTrack.Account
+                .recovered(address: item.address, mechanism: "multi-backup", methods: methods)
+        }
+
         Task {
             do {
                 HUD.loading()

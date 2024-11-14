@@ -173,6 +173,7 @@ class BackupUploadViewModel: ObservableObject {
                     }
                 } catch {
                     buttonState = .enabled
+                    trackCreatFailed(message: error.localizedDescription)
                 }
             }
         case .upload:
@@ -213,6 +214,7 @@ class BackupUploadViewModel: ObservableObject {
                 }
             }
         case .finish:
+            trackCreatSuccess()
             let nextIndex = currentIndex + 1
             if items.count <= nextIndex {
                 currentIndex = nextIndex
@@ -231,5 +233,31 @@ class BackupUploadViewModel: ObservableObject {
             self.hasError = false
             self.process = process
         }
+    }
+}
+
+extension BackupUploadViewModel {
+    private func trackSource() -> String {
+        var provider = "google_drive"
+        switch currentType {
+        case .google:
+            break
+        case .passkey:
+            provider = ""
+        case .icloud:
+            provider = "icloud"
+        case .phrase:
+            provider = "seed_phrase"
+        }
+        return provider
+    }
+
+    func trackCreatSuccess() {
+        EventTrack.Backup.multiCreated(source: trackSource())
+    }
+
+    func trackCreatFailed(message: String) {
+        EventTrack.Backup
+            .multiCreatedFailed(source: trackSource(), reason: message)
     }
 }

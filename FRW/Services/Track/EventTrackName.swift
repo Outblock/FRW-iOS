@@ -20,6 +20,7 @@ extension EventTrack {
         case rpcError = "script_error"
         case delegationCreated = "delegation_created"
         case rampClicked = "on_ramp_clicked"
+        case coaCreation = "coa_creation"
         case securityTool = "security_tool"
 
         // MARK: Internal
