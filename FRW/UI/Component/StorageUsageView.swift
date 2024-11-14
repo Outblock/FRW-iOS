@@ -74,7 +74,6 @@ struct StorageUsageView: View {
         view.footerView = AnyView(footer)
         return view
     }
-
 }
 
 #Preview {

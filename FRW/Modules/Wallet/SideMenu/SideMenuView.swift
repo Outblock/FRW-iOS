@@ -486,7 +486,6 @@ class SideContainerViewModel: ObservableObject {
             name: .insufficientStorageTransactionFailure, object: nil
         )
 
-
         self.isLinkedAccount = ChildAccountManager.shared.selectedChildAccount != nil
         ChildAccountManager.shared.$selectedChildAccount
             .receive(on: DispatchQueue.main)
@@ -608,7 +607,6 @@ struct SideContainerView: View {
             showCloseButton: true,
             buttonsLayout: .horizontal,
             textAlignment: .center
-
         )
     }
 

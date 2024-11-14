@@ -83,7 +83,6 @@ class WalletManager: ObservableObject {
     @Published
     var accountInfo: Flow.AccountInfo?
 
-
     var accessibleManager: ChildAccountManager.AccessibleManager = .init()
 
     var flowAccountKey: Flow.AccountKey?
@@ -824,8 +823,7 @@ extension WalletManager {
 
     func isStorageInsufficient(for amount: Decimal) -> Bool {
         guard let accountInfo else { return false }
-        // TODO: Remove the equality comparison - used for development/testing only
-        return accountInfo.availableBalance - amount <= Self.minDefaultBlance
+        return accountInfo.availableBalance - amount < Self.minDefaultBlance
     }
     
     var isBalanceInsufficient: Bool {

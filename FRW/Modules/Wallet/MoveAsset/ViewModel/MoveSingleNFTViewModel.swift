@@ -21,7 +21,7 @@ class MoveSingleNFTViewModel: ObservableObject {
         loadUserInfo()
 
         let accountViewModel = MoveAccountsViewModel(selected: "") { _ in }
-        accountCount = accountViewModel.list.count
+        self.accountCount = accountViewModel.list.count
         checkForInsufficientStorage()
     }
 

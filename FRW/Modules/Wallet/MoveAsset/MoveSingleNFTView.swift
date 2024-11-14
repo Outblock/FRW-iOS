@@ -149,7 +149,8 @@ struct MoveSingleNFTView: RouteableView, PresentActionDelegate {
                         state: viewModel.buttonState,
                         action: {
                             viewModel.moveAction()
-                        }, title: "move".localized
+                        }, 
+                        title: "move".localized
                     )
                     .padding(.horizontal, 18)
                 }
