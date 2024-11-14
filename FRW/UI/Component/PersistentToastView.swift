@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// Note: this seems to be a clone of `CalloutView`, but in the opposite vertical direction.
 struct PersistentToastView: View {
     let message: String
     let imageRes: ImageResource
@@ -28,7 +29,7 @@ struct PersistentToastView: View {
         }
         .background(Color.LL.Neutrals.background.opacity(0.95))
         .cornerRadius(8, corners: [.topLeft, .topRight])
-        .padding(.horizontal, 26)
+        .padding(.horizontal, 8)
     }
 }
 

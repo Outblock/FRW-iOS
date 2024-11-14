@@ -19,6 +19,7 @@ class NFTTransferViewModel: ObservableObject {
     @Published var isEmptyTransation = true
 
     private var isRequesting: Bool = false
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
 
     var fromChildAccount: ChildAccount?
 
@@ -27,6 +28,7 @@ class NFTTransferViewModel: ObservableObject {
         self.targetContact = targetContact
         self.fromChildAccount = fromChildAccount
         checkNFTReachable()
+        checkForInsufficientStorage()
         NotificationCenter.default.addObserver(self, selector: #selector(onHolderChanged(noti:)), name: .transactionStatusDidChanged, object: nil)
     }
 
@@ -265,6 +267,16 @@ class NFTTransferViewModel: ObservableObject {
     }
 }
 
+// MARK: - InsufficientStorageToastViewModel
+
+extension NFTTransferViewModel: InsufficientStorageToastViewModel {
+    var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
+    
+    private func checkForInsufficientStorage() {
+        self._insufficientStorageFailure = insufficientStorageCheck()
+    }
+}
+
 struct NFTTransferView: View {
     @StateObject var vm: NFTTransferViewModel
 
@@ -293,8 +305,12 @@ struct NFTTransferView: View {
                     .transition(.move(edge: .top))
 
                 Spacer()
-
-                sendButton
+                VStack(spacing: 0) {
+                    InsufficientStorageToastView<NFTTransferViewModel>()
+                        .environmentObject(self.vm)
+                    
+                    sendButton
+                }
             }
             .padding(.horizontal, 28)
         }

@@ -124,6 +124,7 @@ class TokenDetailViewModel: ObservableObject {
 
     @Published var showSheet: Bool = false
     var buttonAction: TokenDetailViewModel.Action = .none
+    var showStorageView: Bool { return self.token.isFlowCoin }
 
     private var cancelSets = Set<AnyCancellable>()
 

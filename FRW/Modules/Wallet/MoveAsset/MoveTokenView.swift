@@ -53,13 +53,14 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                         VStack(spacing: 8) {
                             ContactRelationView(fromContact: viewModel.fromContact, toContact: viewModel.toContact)
 
-                            MoveTokenView.AccountView(isFree: viewModel.fromContact.walletType == viewModel.toContact.walletType) { _ in
-                            }
+                            MoveTokenView.AccountView(isFree: viewModel.fromContact.walletType == viewModel.toContact.walletType) { _ in }
+                                .padding(.bottom, 36)
                         }
                         .padding(.bottom, 20)
                     }
                     .padding(18)
                 }
+                .padding(.bottom, 36)
                 Spacer()
             }
             .hideKeyboardWhenTappedAround()
@@ -68,15 +69,21 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
             .environmentObject(viewModel)
             .edgesIgnoringSafeArea(.bottom)
             .overlay(alignment: .bottom) {
-                VPrimaryButton(model: ButtonStyle.primary,
-                               state: viewModel.buttonState,
-                               action: {
-                                   log.debug("[Move] click button")
-                                   viewModel.onNext()
-                                   UIApplication.shared.endEditing()
-                               }, title: "move".localized)
+                VStack(spacing: 0) {
+                    InsufficientStorageToastView<MoveTokenViewModel>()
+                        .environmentObject(self.viewModel)
+                        .padding(.horizontal, 22)
+                    
+                    VPrimaryButton(model: ButtonStyle.primary,
+                                   state: viewModel.buttonState,
+                                   action: {
+                        log.debug("[Move] click button")
+                        viewModel.onNext()
+                        UIApplication.shared.endEditing()
+                    }, title: "move".localized)
                     .padding(.horizontal, 18)
                     .padding(.bottom, 8)
+                }
             }
         }
         .applyRouteable(self)
@@ -94,7 +101,7 @@ struct MoveUserView: View {
     var isEVM: Bool = false
     var placeholder: String?
     var allowChoose: Bool = false
-    var onClick: EmptyClosure? = nil
+    var onClick: EmptyClosure?
 
     var address: String {
         contact.address ?? "0x"

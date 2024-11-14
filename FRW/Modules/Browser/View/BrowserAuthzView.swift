@@ -85,7 +85,12 @@ struct BrowserAuthzView: View {
 
             Spacer()
 
-            actionView
+            VStack(spacing: 0) {
+                InsufficientStorageToastView<BrowserAuthzViewModel>()
+                    .environmentObject(self.vm)
+                
+                actionView
+            }
         }
         .if(let: vm.template) {
             $0.animation(.spring(), value: $1)

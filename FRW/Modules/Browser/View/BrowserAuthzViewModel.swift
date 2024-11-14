@@ -19,14 +19,15 @@ class BrowserAuthzViewModel: ObservableObject {
     @Published var logo: String?
     @Published var cadence: String
     @Published var cadenceFormatted: AttributedString?
-    @Published var arguments: [Flow.Argument]? = nil
+    @Published var arguments: [Flow.Argument]?
     @Published var argumentsFormatted: AttributedString?
     @Published var isScriptShowing: Bool = false
 
     @Published var template: FlowTransactionTemplate?
 
     private var callback: BrowserAuthzViewModel.Callback?
-
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
+    
     init(title: String, url: String, logo: String?, cadence: String, arguments: [Flow.Argument]? = nil, callback: @escaping BrowserAuthnViewModel.Callback) {
         self.title = title
         urlString = url
@@ -34,6 +35,7 @@ class BrowserAuthzViewModel: ObservableObject {
         self.cadence = cadence
         self.arguments = arguments
         self.callback = callback
+        checkForInsufficientStorage()
     }
 
     func didChooseAction(_ result: Bool) {
@@ -91,5 +93,15 @@ class BrowserAuthzViewModel: ObservableObject {
     deinit {
         callback?(false)
         WalletConnectManager.shared.reloadPendingRequests()
+    }
+}
+
+// MARK: - InsufficientStorageToastViewModel
+
+extension BrowserAuthzViewModel: InsufficientStorageToastViewModel {
+    var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
+    
+    private func checkForInsufficientStorage() {
+        self._insufficientStorageFailure = insufficientStorageCheck()
     }
 }

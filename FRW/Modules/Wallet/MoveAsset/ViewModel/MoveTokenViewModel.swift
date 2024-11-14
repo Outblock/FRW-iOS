@@ -18,14 +18,13 @@ class MoveTokenViewModel: ObservableObject {
     @Published var amountBalance: Double = 0
     @Published var coinRate: Double = 0
     @Published var errorType: WalletSendAmountView.ErrorType = .none
-
     @Published var buttonState: VPrimaryButtonState = .disabled
-
     @Published var fromContact = Contact(address: "", avatar: "", contactName: "", contactType: nil, domain: nil, id: -1, username: nil)
     @Published var toContact = Contact(address: "", avatar: "", contactName: "", contactType: nil, domain: nil, id: -1, username: nil)
 
-    private var minBalance: Double? = nil
+    private var minBalance: Double?
     private var maxButtonClickedOnce = false
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
     
     var token: TokenModel
     @Binding var isPresent: Bool
@@ -38,6 +37,8 @@ class MoveTokenViewModel: ObservableObject {
         Task {
             await fetchMinFlowBalance()
         }
+        
+        checkForInsufficientStorage()
     }
 
     private func loadUserInfo() {
@@ -125,6 +126,8 @@ class MoveTokenViewModel: ObservableObject {
         
         inputTokenNum = token.balance?.description.doubleValue ?? actualBalance
         inputDollarNum = inputTokenNum * coinRate * CurrencyCache.cache.currentCurrencyRate
+
+        checkForInsufficientStorage()
         
         if inputTokenNum > amountBalance {
             errorType = .insufficientBalance
@@ -174,14 +177,13 @@ class MoveTokenViewModel: ObservableObject {
         // move fee
         let num = max(
             inputAmount - (
-                minBalance ?? WalletManager.minDefaultBlance
+                minBalance ?? WalletManager.minDefaultBlance.doubleValue
             ) - WalletManager.moveFee,
             0
         )
         return num
     }
 
-    
     private func updateState() {
         DispatchQueue.main.async {
             self.buttonState = self.isReadyForSend ? .enabled : .disabled
@@ -195,6 +197,16 @@ class MoveTokenViewModel: ObservableObject {
     var currentBalance: String {
         let totalStr = amountBalance.formatCurrencyString()
         return "Balance: \(totalStr)"
+    }
+}
+
+// MARK: - InsufficientStorageToastViewModel
+
+extension MoveTokenViewModel: InsufficientStorageToastViewModel {
+    var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
+    
+    private func checkForInsufficientStorage() {
+        self._insufficientStorageFailure = insufficientStorageCheck(amount: self.inputTokenNum.decimalValue, from: self.fromContact, to: self.toContact)
     }
 }
 
@@ -252,8 +264,7 @@ extension MoveTokenViewModel {
                         self.closeAction()
                         self.buttonState = .enabled
                     }
-                }
-                catch {
+                } catch {
                     log.error(" Move Token: \(fromContact.walletType?.rawValue ?? "") to  \(toContact.walletType?.rawValue ?? "") failed. \(error)")
                     log.error(error)
                     buttonState = .enabled

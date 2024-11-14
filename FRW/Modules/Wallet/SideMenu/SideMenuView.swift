@@ -427,10 +427,6 @@ class SideContainerViewModel: ObservableObject {
             .sink(receiveValue: { [weak self] newChildAccount in
                 self?.isLinkedAccount = newChildAccount != nil
             }).store(in: &cancellableSet)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            NotificationCenter.default.post(name: .insufficientStorageTransactionFailure, object: InsufficientStorageTransactionFailureData(minimumBalance: 1.2))
-        }
     }
 
     @objc func onToggle() {

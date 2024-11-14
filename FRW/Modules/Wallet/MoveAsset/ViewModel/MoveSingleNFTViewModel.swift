@@ -13,6 +13,7 @@ class MoveSingleNFTViewModel: ObservableObject {
     var nft: NFTModel
     var fromChildAccount: ChildAccount?
     var callback: () -> Void
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
 
     @Published var fromContact = Contact(address: "", avatar: "", contactName: "", contactType: nil, domain: nil, id: -1, username: nil)
     @Published var toContact = Contact(address: "", avatar: "", contactName: "", contactType: nil, domain: nil, id: -1, username: nil)
@@ -28,6 +29,7 @@ class MoveSingleNFTViewModel: ObservableObject {
 
         let accountViewModel = MoveAccountsViewModel(selected: "") { _ in }
         accountCount = accountViewModel.list.count
+        checkForInsufficientStorage()
     }
 
     private func loadUserInfo() {
@@ -158,6 +160,17 @@ class MoveSingleNFTViewModel: ObservableObject {
 
     func updateToContact(_ contact: Contact) {
         toContact = contact
+        checkForInsufficientStorage()
+    }
+}
+
+// MARK: - InsufficientStorageToastViewModel
+
+extension MoveSingleNFTViewModel: InsufficientStorageToastViewModel {
+    var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
+    
+    private func checkForInsufficientStorage() {
+        self._insufficientStorageFailure = insufficientStorageCheck(from: self.fromContact, to: self.toContact)
     }
 }
 

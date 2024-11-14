@@ -25,8 +25,6 @@ extension WalletSendAmountView {
         case formatError
         case invalidAddress
         case belowMinimum
-        case insufficientStorage
-        case insufficientStorageAfterTransfer
 
         var desc: String {
             switch self {
@@ -40,10 +38,6 @@ extension WalletSendAmountView {
                 return "invalid_address".localized
             case .belowMinimum:
                 return "below_minimum_error".localized
-            case .insufficientStorage:
-                return "insufficient_storage".localized
-            case .insufficientStorageAfterTransfer:
-                return "insufficient_storage_after_transfer".localized
             }
         }
     }
@@ -76,6 +70,8 @@ class WalletSendAmountViewModel: ObservableObject {
 
     private var minBalance: Double = 0.001
 
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
+
     init(target: Contact, token: TokenModel) {
         targetContact = target
         self.token = token
@@ -89,6 +85,8 @@ class WalletSendAmountViewModel: ObservableObject {
         checkAddress()
         checkTransaction()
         fetchMinFlowBalance()
+        checkForInsufficientStorage()
+        
         NotificationCenter.default.addObserver(self, selector: #selector(onHolderChanged(noti:)), name: .transactionStatusDidChanged, object: nil)
     }
 
@@ -151,6 +149,10 @@ extension WalletSendAmountViewModel {
     }
 
     private func refreshInput() {
+        defer {
+            checkForInsufficientStorage()
+        }
+        
         if errorType == .invalidAddress {
             return
         }
@@ -210,6 +212,16 @@ extension WalletSendAmountViewModel {
                 self.minBalance = 0.001
             }
         }
+    }
+}
+
+// MARK: - InsufficientStorageToastViewModel
+
+extension WalletSendAmountViewModel: InsufficientStorageToastViewModel {
+    var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
+    
+    private func checkForInsufficientStorage() {
+        self._insufficientStorageFailure = insufficientStorageCheck()
     }
 }
 

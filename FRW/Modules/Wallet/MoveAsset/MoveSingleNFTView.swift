@@ -11,7 +11,6 @@ import SwiftUIX
 
 struct MoveSingleNFTView: RouteableView, PresentActionDelegate {
     @StateObject var viewModel: MoveSingleNFTViewModel
-
     
     var changeHeight: (() -> Void)?
     var title: String {
@@ -127,13 +126,20 @@ struct MoveSingleNFTView: RouteableView, PresentActionDelegate {
             .cornerRadius([.topLeading, .topTrailing], 16)
             .edgesIgnoringSafeArea(.bottom)
             .overlay(alignment: .bottom) {
-                VPrimaryButton(model: ButtonStyle.primary,
-                               state: viewModel.buttonState,
-                               action: {
-                    viewModel.moveAction()
-                }, title: "move".localized)
-                .padding(.horizontal, 18)
-                
+                VStack(spacing: 0) {
+                    InsufficientStorageToastView<MoveSingleNFTViewModel>()
+                        .padding(.horizontal, 22)
+                        .environmentObject(self.viewModel)
+                    
+                    VPrimaryButton(
+                        model: ButtonStyle.primary,
+                        state: viewModel.buttonState,
+                        action: {
+                            viewModel.moveAction()
+                        }, title: "move".localized
+                    )
+                    .padding(.horizontal, 18)
+                }
             }
         }
         .applyRouteable(self)

@@ -745,12 +745,6 @@ extension WalletManager {
         return accountInfo.storageFlow * Self.minDefaultBlance;
     }
     
-//    var usedStoragePercentage: Double {
-//        // TODO: Verify that the calculation is correct
-//        guard let accountInfo else { return 0 }
-//        return 100 * accountInfo.storageUsed.description.doubleValue / accountInfo.storageCapacity.description.doubleValue
-//    }
-        
     var isStorageInsufficient: Bool {
         return isStorageInsufficient(for: 0)
     }
@@ -759,6 +753,15 @@ extension WalletManager {
         guard let accountInfo else { return false }
         // TODO: Remove the equality comparison - used for development/testing only
         return accountInfo.availableBalance - amount <= Self.minDefaultBlance
+    }
+    
+    var isBalanceInsufficient: Bool {
+        return isBalanceInsufficient(for: 0)
+    }
+    
+    func isBalanceInsufficient(for amount: Decimal) -> Bool {
+        guard let accountInfo else { return false }
+        return accountInfo.availableBalance - amount - Self.minDefaultBlance < Self.minDefaultBlance
     }
     
     func fetchBalance() async throws {

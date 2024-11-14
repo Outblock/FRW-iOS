@@ -42,8 +42,14 @@ struct WalletSendAmountView: RouteableView {
                 amountBalanceView
 
                 Spacer()
-
-                nextButton
+                
+                VStack(spacing: 0) {
+                    InsufficientStorageToastView<WalletSendAmountViewModel>()
+                        .environmentObject(self.vm)
+                        .padding(.horizontal, 22)
+                 
+                    nextButton
+                }
             }
         }
         .onAppear {

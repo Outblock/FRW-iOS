@@ -13,6 +13,8 @@ import SwiftUI
 class MoveNFTsViewModel: ObservableObject {
     @Published var selectedCollection: CollectionMask?
     private var collectionList: [CollectionMask] = []
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
+
     // NFTModel
     @Published var nfts: [MoveNFTsViewModel.NFT] = [
         MoveNFTsViewModel.NFT.mock(),
@@ -33,6 +35,7 @@ class MoveNFTsViewModel: ObservableObject {
     init() {
         fetchNFTs(0)
         loadUserInfo()
+        checkForInsufficientStorage()
     }
 
     private func loadUserInfo() {
@@ -68,6 +71,7 @@ class MoveNFTsViewModel: ObservableObject {
     func updateToContact(_ contact: Contact) {
         toContact = contact
         updateFee()
+        checkForInsufficientStorage()
     }
 
     func moveAction() {
@@ -325,6 +329,16 @@ class MoveNFTsViewModel: ObservableObject {
          }
      }
      */
+}
+
+// MARK: - InsufficientStorageToastViewModel
+
+extension MoveNFTsViewModel: InsufficientStorageToastViewModel {
+    var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
+    
+    private func checkForInsufficientStorage() {
+        self._insufficientStorageFailure = insufficientStorageCheck(from: self.fromContact, to: self.toContact)
+    }
 }
 
 extension MoveNFTsViewModel {

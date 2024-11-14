@@ -45,6 +45,7 @@ struct TokenDetailView: RouteableView {
                 activitiesView.visibility(vm.recentTransfers.isEmpty || WalletManager.shared.isSelectedChildAccount ? .gone : .visible)
                 chartContainerView.visibility(vm.hasRateAndChartData ? .visible : .gone)
                 storageView
+                    .visibility(self.vm.showStorageView ? .visible : .gone)
             }
             .padding(.horizontal, 18)
 //            .padding(.top, 12)
