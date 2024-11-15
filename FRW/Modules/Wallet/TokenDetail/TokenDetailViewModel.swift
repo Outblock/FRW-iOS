@@ -139,9 +139,9 @@ class TokenDetailViewModel: ObservableObject {
     // MARK: Internal
 
     @Published
-    var storageUsagePercent: Double = 0
+    var storageUsedRatio: Double = 0
     @Published
-    var storageUsageDesc: String = ""
+    var storageUsedDesc: String = ""
     @Published
     var storageFlow: Double = 0
     @Published
@@ -321,21 +321,13 @@ extension TokenDetailViewModel {
                 }
                 
                 group.addTask {
-                    let storageInfo = try? await FlowNetwork.checkStorageInfo()
-                    if let storageInfo {
-                        await MainActor.run {
-                            self.storageUsagePercent = storageInfo.usedPercent
-                            self.storageUsageDesc = storageInfo.usedString
-                        }
-                    }
-                }
-                
-                group.addTask {
                     let accountInfo = try? await FlowNetwork.checkAccountInfo()
                     if let accountInfo {
                         await MainActor.run {
                             self.storageFlow = accountInfo.storageFlow.doubleValue
                             self.totalBalance = accountInfo.balance.doubleValue
+                            self.storageUsedRatio = accountInfo.storageUsedRatio
+                            self.storageUsedDesc = accountInfo.storageUsedString
                         }
                     }
                 }

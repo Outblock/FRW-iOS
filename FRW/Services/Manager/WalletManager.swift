@@ -23,8 +23,12 @@ extension WalletManager {
     static let flowPath = "m/44'/539'/0'/0/0"
     static let mnemonicStrength: Int32 = 160
     static let defaultGas: UInt64 = 30_000_000
-    static let moveFee = 0.001
+    
     static let minDefaultBlance: Decimal = 0.001
+    static let fixedMoveFee: Decimal = 0.001
+    static let averageTransactionFee: Decimal = 0.001
+    static let mininumStorageThreshold = 10000
+    
     private static let defaultBundleID = "com.flowfoundation.wallet"
     private static let mnemonicStoreKeyPrefix = "lilico.mnemonic"
     private static let walletFetchInterval: TimeInterval = 5
@@ -806,33 +810,31 @@ extension WalletManager {
             await MainActor.run {
                 self.accountInfo = accountInfo
             }
+            
+            NotificationCenter.default.post(name: .accountDataDidUpdate, object: nil)
         } catch let error {
-            log.error("[EVM] fetch account info failed.\(error.localizedDescription)")
+            log.error("[WALLET] fetch account info failed.\(error.localizedDescription)")
             throw error
         }
     }
     
     var minimumStorageBalance: Decimal {
-        guard let accountInfo else { return Self.minDefaultBlance }
-        return accountInfo.storageFlow * Self.minDefaultBlance;
+        guard let accountInfo else { return Self.fixedMoveFee }
+        return accountInfo.storageFlow * Self.fixedMoveFee
     }
     
     var isStorageInsufficient: Bool {
-        return isStorageInsufficient(for: 0)
+        guard let accountInfo else { return false }
+        return accountInfo.storageCapacity - accountInfo.storageUsed < Self.mininumStorageThreshold
     }
 
-    func isStorageInsufficient(for amount: Decimal) -> Bool {
-        guard let accountInfo else { return false }
-        return accountInfo.availableBalance - amount < Self.minDefaultBlance
-    }
-    
     var isBalanceInsufficient: Bool {
         return isBalanceInsufficient(for: 0)
     }
     
     func isBalanceInsufficient(for amount: Decimal) -> Bool {
         guard let accountInfo else { return false }
-        return accountInfo.availableBalance - amount - Self.minDefaultBlance < Self.minDefaultBlance
+        return accountInfo.availableBalance - amount < Self.averageTransactionFee
     }
     
     func fetchBalance() async throws {

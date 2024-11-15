@@ -289,7 +289,7 @@ extension MoveSingleNFTViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
     
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheck(from: self.fromContact, to: self.toContact)
+        self._insufficientStorageFailure = insufficientStorageCheckForMove(from: self.fromContact.walletType, to: self.toContact.walletType)
     }
 }
 

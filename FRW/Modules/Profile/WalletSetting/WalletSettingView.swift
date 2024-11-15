@@ -124,8 +124,8 @@ struct WalletSettingView: RouteableView {
 
                         StorageUsageView(
                             title: "storage".localized,
-                            usage: $vm.storageUsageDesc,
-                            usagePercentValue: $vm.storageUsagePercent
+                            usage: $vm.storageUsedDesc,
+                            usageRatio: $vm.storageUsedRatio
                         )
                         .titleFont(.inter(size: 16, weight: .medium))
                         .padding(.horizontal, 16)

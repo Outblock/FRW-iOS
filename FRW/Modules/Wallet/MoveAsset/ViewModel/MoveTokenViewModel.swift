@@ -282,7 +282,7 @@ class MoveTokenViewModel: ObservableObject {
         let num = max(
             inputAmount - (
                 minBalance ?? WalletManager.minDefaultBlance.doubleValue
-            ) - WalletManager.moveFee,
+            ) - WalletManager.fixedMoveFee.doubleValue,
             0
         )
         return num
@@ -301,7 +301,7 @@ extension MoveTokenViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
     
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheck(amount: self.inputTokenNum.decimalValue, from: self.fromContact, to: self.toContact)
+        self._insufficientStorageFailure = insufficientStorageCheckForMove(amount: self.inputTokenNum.decimalValue, from: self.fromContact.walletType, to: self.toContact.walletType)
     }
 }
 

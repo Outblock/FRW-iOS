@@ -248,7 +248,7 @@ extension WalletSendAmountViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
     
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheck()
+        self._insufficientStorageFailure = insufficientStorageCheckForTransfer(amount: self.inputTokenNum.decimalValue)
     }
 }
 
@@ -266,7 +266,7 @@ extension WalletSendAmountViewModel {
                 do {
                     let topAmount = try await FlowNetwork.minFlowBalance()
                     let num = max(
-                        amountBalance - topAmount - WalletManager.moveFee,
+                        amountBalance - topAmount - WalletManager.fixedMoveFee.doubleValue,
                         0
                     )
                     DispatchQueue.main.async {

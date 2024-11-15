@@ -345,8 +345,8 @@ struct TokenDetailView: RouteableView {
     var storageView: some View {
         HStack(spacing: 0) {
             StorageUsageView(
-                usage: $vm.storageUsageDesc,
-                usagePercentValue: $vm.storageUsagePercent
+                usage: $vm.storageUsedDesc,
+                usageRatio: $vm.storageUsedRatio
             )
             .headerView(
                 HStack {

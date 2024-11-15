@@ -102,6 +102,6 @@ extension BrowserAuthzViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
     
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheck()
+        self._insufficientStorageFailure = insufficientStorageCheckForTransfer()
     }
 }

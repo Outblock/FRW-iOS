@@ -85,12 +85,7 @@ struct BrowserAuthzView: View {
 
             Spacer()
 
-            VStack(spacing: 0) {
-                InsufficientStorageToastView<BrowserAuthzViewModel>()
-                    .environmentObject(self.vm)
-                
-                actionView
-            }
+            actionView
         }
         .if(let: vm.template) {
             $0.animation(.spring(), value: $1)
@@ -198,8 +193,13 @@ struct BrowserAuthzView: View {
     }
 
     var actionView: some View {
-        WalletSendButtonView(allowEnable: .constant(true)) {
-            vm.didChooseAction(true)
+        VStack(spacing: 0) {
+            InsufficientStorageToastView<BrowserAuthzViewModel>()
+                .environmentObject(self.vm)
+            
+            WalletSendButtonView(allowEnable: .constant(true)) {
+                vm.didChooseAction(true)
+            }
         }
     }
 

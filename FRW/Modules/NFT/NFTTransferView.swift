@@ -386,7 +386,7 @@ extension NFTTransferViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
     
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheck()
+        self._insufficientStorageFailure = insufficientStorageCheckForTransfer()
     }
 }
 
@@ -483,12 +483,8 @@ struct NFTTransferView: View {
                 .transition(.move(edge: .top))
 
                 Spacer()
-                VStack(spacing: 0) {
-                    InsufficientStorageToastView<NFTTransferViewModel>()
-                        .environmentObject(self.vm)
-                    
-                    sendButton
-                }
+
+                sendActionView
             }
             .padding(.horizontal, 28)
         }
@@ -550,10 +546,15 @@ struct NFTTransferView: View {
         .cornerRadius(16)
     }
 
-    var sendButton: some View {
-        WalletSendButtonView(allowEnable: $vm.isEmptyTransation) {
-            if vm.isEmptyTransation {
-                vm.sendAction()
+    var sendActionView: some View {
+        VStack(spacing: 0) {
+            InsufficientStorageToastView<NFTTransferViewModel>()
+                .environmentObject(self.vm)
+            
+            WalletSendButtonView(allowEnable: $vm.isEmptyTransation) {
+                if vm.isEmptyTransation {
+                    vm.sendAction()
+                }
             }
         }
     }

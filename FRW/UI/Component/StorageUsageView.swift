@@ -14,12 +14,12 @@ struct StorageUsageView: View {
     private var footerView: AnyView?
     
     @Binding private var usage: String
-    @Binding private var usagePercentValue: Double
+    @Binding private var usageRatio: Double
     
-    init(title: String? = nil, usage: Binding<String>, usagePercentValue: Binding<Double>) {
+    init(title: String? = nil, usage: Binding<String>, usageRatio: Binding<Double>) {
         self.title = title
         self._usage = usage
-        self._usagePercentValue = usagePercentValue
+        self._usageRatio = usageRatio
     }
     
     var body: some View {
@@ -36,7 +36,7 @@ struct StorageUsageView: View {
             }
             
             HStack {
-                Text(String(format: "%.2f%%", self.usagePercentValue * 100))
+                Text(String(format: "%.2f%%", self.usageRatio * 100))
                     .font(.inter(size: 12, weight: .regular))
                     .foregroundColor(Color.LL.Neutrals.neutrals7)
                 
@@ -48,7 +48,7 @@ struct StorageUsageView: View {
             }
             .padding(.top, 5)
             
-            ProgressView(value: self.usagePercentValue, total: 1.0)
+            ProgressView(value: self.usageRatio, total: 1.0)
                 .tint(Color.LL.Primary.salmonPrimary)
             
             if let footerView {
@@ -78,7 +78,7 @@ struct StorageUsageView: View {
 
 #Preview {
     let usage = Binding.constant("2KB / 98KB")
-    let usagePercentValue = Binding.constant(2.01)
-    StorageUsageView(title: "Storage", usage: usage, usagePercentValue: usagePercentValue)
+    let usageRatio = Binding.constant(2.01)
+    StorageUsageView(title: "Storage", usage: usage, usageRatio: usageRatio)
         .padding(.horizontal, 20)
 }
