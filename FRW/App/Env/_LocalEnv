@@ -1,7 +1,0 @@
-{
-    "WalletConnectProjectID": "$WalletConnectProjectID",
-    "BackupAESKey": "$BackupAESKey",
-    "AESIV": "$AESIV",
-    "TranslizedProjectID": "$TranslizedProjectID",
-    "TranslizedOTAToken": "$TranslizedOTAToken"
-}
