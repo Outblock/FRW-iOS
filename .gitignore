@@ -92,7 +92,7 @@ iOSInjectionProject/
 /FRW/App/Env/Dev/GoogleOAuth2.plist
 /FRW/App/Env/Dev/GoogleService-Info.plist
 /FRW/App/Env/Dev/ServiceConfig.plist
-/FRW/App/Env/LocalEnv
+/FRW/App/Env/LocalEnv*
 /FRW/App/Env/Prod/GoogleOAuth2.plist
 /FRW/App/Env/Prod/GoogleService-Info.plist
 /FRW/App/Env/Prod/ServiceConfig.plist
