@@ -20,7 +20,7 @@ extension EventTrack.Transaction {
         EventTrack
             .send(event: EventTrack.Transaction.flowSigned, properties: [
                 "cadence": cadence,
-                "id": txId,
+                "tx_id": txId,
                 "authorizers": authorizers,
                 "proposer": proposer,
                 "payer": payer,
@@ -33,7 +33,7 @@ extension EventTrack.Transaction {
             .send(event: EventTrack.Transaction.flowSigned, properties: [
                 "flow_address": flowAddress,
                 "evm_address": evmAddress,
-                "id": txId,
+                "tx_id": txId,
                 "success": success,
             ])
     }
@@ -58,16 +58,30 @@ extension EventTrack.Transaction {
     static func NFTTransfer(
         from: String,
         to: String,
-        type: String,
-        amount _: Double,
-        identifier: String
+        identifier: String,
+        txId: String,
+        fromType: String,
+        toType: String,
+        isMove: Bool
     ) {
         EventTrack
-            .send(event: EventTrack.Transaction.FTTransfer, properties: [
+            .send(event: EventTrack.Transaction.NFTTransfer, properties: [
                 "from_address": from,
                 "to_address": to,
-                "type": type,
-                "ft_identifier": identifier,
+                "nft_identifier": identifier,
+                "tx_id": txId,
+                "from_type": fromType,
+                "to_type": toType,
+                "isMove": isMove,
+            ])
+    }
+
+    static func transactionResult(txId: String, successful: Bool, message: String) {
+        EventTrack
+            .send(event: EventTrack.Transaction.result, properties: [
+                "tx_id": txId,
+                "is_successful": successful,
+                "error_message": message,
             ])
     }
 }

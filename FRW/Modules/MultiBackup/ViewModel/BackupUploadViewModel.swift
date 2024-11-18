@@ -173,7 +173,7 @@ class BackupUploadViewModel: ObservableObject {
                     }
                 } catch {
                     buttonState = .enabled
-                    trackCreatFailed(message: error.localizedDescription)
+                    trackCreatFailed(message: "idle:" + error.localizedDescription)
                 }
             }
         case .upload:
@@ -190,6 +190,7 @@ class BackupUploadViewModel: ObservableObject {
                     buttonState = .enabled
                     hasError = true
                     log.error(error)
+                    trackCreatFailed(message: "upload:" + error.localizedDescription)
                 }
             }
         case .regist:
@@ -211,6 +212,7 @@ class BackupUploadViewModel: ObservableObject {
                     buttonState = .enabled
                     HUD.dismissLoading()
                     log.error(error)
+                    trackCreatFailed(message: "regist:" + error.localizedDescription)
                 }
             }
         case .finish:

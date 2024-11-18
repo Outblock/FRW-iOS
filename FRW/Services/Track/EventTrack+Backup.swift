@@ -27,6 +27,7 @@ extension EventTrack.Backup {
             .send(event: EventTrack.Backup.multiCreationFailed, properties: [
                 "address": address,
                 "providers": source,
+                "message": reason,
             ])
     }
 }

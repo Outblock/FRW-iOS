@@ -111,7 +111,7 @@ extension EventTrack {
     enum Superkey {
         static let network = "flow_network"
         static let scriptVersion = "cadence_script_version"
-        static let cadenceVersion = "cadence_script_version"
+        static let cadenceVersion = "cadence_version"
         static let deviceId = "fw_device_id"
         static let env = "app_env"
     }

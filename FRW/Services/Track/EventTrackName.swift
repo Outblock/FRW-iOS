@@ -54,6 +54,7 @@ extension EventTrack {
         case evmSigned = "evm_transaction_signed"
         case FTTransfer = "ft_transfer"
         case NFTTransfer = "nft_transfer"
+        case result = "transaction_result"
 
         // MARK: Internal
 

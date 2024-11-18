@@ -413,10 +413,10 @@ extension String {
         return String(data: data, encoding: .utf8)
     }
 
-    public func toFunc() -> String {
+    public func toFunc() -> String? {
         guard let decodeStr = fromBase64() else {
             log.error("[Cadence] base decode failed")
-            return ""
+            return nil
         }
 
         let result = decodeStr.replacingOccurrences(of: "<platform_info>", with: platformInfo())

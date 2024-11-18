@@ -282,7 +282,14 @@ extension TransactionManager {
             }
         }
 
-        private func trackResult(result: Flow.TransactionResult, fromId: String) {}
+        private func trackResult(result: Flow.TransactionResult, fromId: String) {
+            EventTrack.Transaction
+                .transactionResult(
+                    txId: transactionId.hex,
+                    successful: result.isComplete,
+                    message: result.errorMessage
+                )
+        }
 
         private func postNotification() {
             debugPrint("TransactionHolder -> postNotification status: \(status)")
