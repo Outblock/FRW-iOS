@@ -117,7 +117,7 @@ struct MoveFeeView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                Text("Move Fee")
+                Text("move_fee".localized)
                     .font(.inter(size: 12, weight: .bold))
                     .foregroundStyle(Color.Theme.Text.black8)
                 Spacer()
@@ -129,7 +129,6 @@ struct MoveFeeView: View {
             Text(feeHint())
                 .font(.inter(size: 12, weight: .bold))
                 .foregroundStyle(Color.Theme.Text.black6)
-                .frame(height: 16)
         }
     }
 

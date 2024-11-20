@@ -13,7 +13,7 @@ struct SheetHeaderView: View {
     // MARK: Internal
 
     let title: String
-    var closeAction: (() -> Void)? = nil
+    var closeAction: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -60,6 +60,25 @@ struct SheetHeaderView: View {
     }
 }
 
+@available(iOS 16, *)
+struct HalfSheetModifier: ViewModifier {
+    @State var height: CGFloat = 0
+    
+    func body(content: Content) -> some View {
+        content
+            .fixedSize(horizontal: false, vertical: true)
+            .getHeight($height)
+            .presentationDetents([.height(height), .large])
+    }
+}
+
+@available(iOS 16, *)
+extension View {
+    func halfSheet() -> some View {
+        return self.modifier(HalfSheetModifier())
+    }
+}
+
 // Custom Half Sheet Modifier....
 extension View {
     // Binding Show Variable...
@@ -68,14 +87,29 @@ extension View {
         @ViewBuilder sheetView: @escaping () -> SheetView,
         onEnd: (() -> Void)? = nil
     ) -> some View {
-        // why we using overlay or background...
-        // bcz it will automatically use the swiftui frame Size only....
-        background(
-            HalfSheetHelper(sheetView: sheetView(), showSheet: showSheet)
-        )
-        .onChange(of: showSheet.wrappedValue) { newValue in
-            if let onEnd = onEnd, !newValue {
-                onEnd()
+        if #available(iOS 16, *) {
+            return self
+                .sheet(isPresented: showSheet) {
+                    sheetView()
+                        .halfSheet()
+                }
+                .onChange(of: showSheet.wrappedValue) { newValue in
+                    if let onEnd = onEnd, !newValue {
+                        onEnd()
+                    }
+                }
+        } else {
+            // This can be removed once we drop support for iOS 15
+            
+            // why we using overlay or background...
+            // bcz it will automatically use the swiftui frame Size only....
+            return background(
+                HalfSheetHelper(sheetView: sheetView(), showSheet: showSheet)
+            )
+            .onChange(of: showSheet.wrappedValue) { newValue in
+                if let onEnd = onEnd, !newValue {
+                    onEnd()
+                }
             }
         }
     }
@@ -84,6 +118,7 @@ extension View {
 // MARK: - HalfSheetHelper
 
 // UIKit Integration...
+// This can be removed once we drop support for iOS 15
 struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
     // On Dismiss...
     class Coordinator: NSObject, UISheetPresentationControllerDelegate {
@@ -121,21 +156,7 @@ struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         if showSheet {
             if uiViewController.view.tag == 0 {
-                var sheetHeight = CGFloat.zero
-                let view = self.sheetView.readSize { sheetHeight = $0.height }
-                let sheetController = CustomHostingController(rootView: view, showGrabber: false)
-                
-                sheetController.modalPresentationStyle = .pageSheet
-                sheetController.isModalInPresentation = false
-                if #available(iOS 16, *) {
-                    sheetController.sheetPresentationController?.detents = [.custom { _ in 0 }]
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        sheetController.sheetPresentationController?.animateChanges {
-                            sheetController.sheetPresentationController?.detents = [.custom { _ in sheetHeight }]
-                        }
-                    }
-                }
-                
+                let sheetController = CustomHostingController(rootView: sheetView)
                 sheetController.presentationController?.delegate = context.coordinator
                 uiViewController.present(sheetController, animated: true)
                 uiViewController.view.tag = 1
@@ -153,7 +174,7 @@ struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
 // MARK: - CustomHostingController
 
 // Custom UIHostingController for halfSheet....
-class CustomHostingController<Content: View>: UIHostingController<Content> {
+final class CustomHostingController<Content: View>: UIHostingController<Content> {
     // MARK: Lifecycle
 
     public init(
@@ -177,23 +198,23 @@ class CustomHostingController<Content: View>: UIHostingController<Content> {
 
     // MARK: Internal
 
-    var showLarge: Bool = false
-    var showGrabber: Bool = true
-    var onlyLarge: Bool = false
+    private var showLarge: Bool = false
+    private var showGrabber: Bool = true
+    private var onlyLarge: Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
 
         // setting presentation controller properties...
-//        if let presentationController = presentationController as? UISheetPresentationController {
-//            if onlyLarge {
-//                presentationController.detents = [.large()]
-//            } else {
-//                presentationController.detents = showLarge ? [.medium(), .large()] : [.medium()]
-//            }
-//            // to show grab protion...
-//            presentationController.prefersGrabberVisible = true
-//        }
+        if let presentationController = presentationController as? UISheetPresentationController {
+            if onlyLarge {
+                presentationController.detents = [.large()]
+            } else {
+                presentationController.detents = showLarge ? [.medium(), .large()] : [.medium()]
+            }
+            // to show grab protion...
+            presentationController.prefersGrabberVisible = true
+        }
     }
 }
