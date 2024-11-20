@@ -338,18 +338,3 @@ extension String {
         return self
     }
 }
-
-// MARK: - FlowScan
-
-extension String {
-    var toFlowScanAccountDetailURL: URL? {
-        var string = "https://flowscan.org/account/\(self)"
-        if LocalUserDefaults.shared.flowNetwork == .testnet {
-            string = "https://testnet.flowscan.org/account/\(self)"
-        } else if LocalUserDefaults.shared.flowNetwork == .previewnet {
-            string = "https://previewnet.flowscan.org/account/\(self)"
-        }
-
-        return URL(string: string)
-    }
-}

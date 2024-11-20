@@ -21,11 +21,16 @@ enum AccountType {
 
 extension FlowNetworkType {
     func getTransactionHistoryUrl(accountType: AccountType, transactionId: String) -> URL {
-        let baseUrl = getBase(accountType: accountType)
+        let baseUrl = getHistoryBaseUrl(accountType: accountType)
         return URL(string: "\(baseUrl)/tx/\(transactionId)")!
     }
     
-    func getBase(accountType: AccountType) -> String {
+    func getAccountUrl(accountType: AccountType, address: String) -> URL {
+        let baseUrl = getAccountBaseUrl(accountType: accountType)
+        return URL(string: "\(baseUrl)/account/\(address)")!
+    }
+    
+    private func getHistoryBaseUrl(accountType: AccountType) -> String {
         return switch (accountType, self) {
         case (.evm, .testnet): "https://evm-testnet.flowscan.io"
         case (.evm, .mainnet): "https://evm.flowscan.io"
@@ -34,6 +39,14 @@ extension FlowNetworkType {
         case (.flow, .testnet): "https://testnet.flowscan.io"
         case (.flow, .mainnet): "https://www.flowscan.io"
         case (.flow, .previewnet): "https://previewnet.flowscan.io"
+        }
+    }
+    
+    private func getAccountBaseUrl(accountType: AccountType) -> String {
+        return switch (accountType, self) {
+        case (_, .testnet): "https://testnet.flowscan.org"
+        case (_, .mainnet): "https://flowscan.org"
+        case (_, .previewnet): "https://previewnet.flowscan.org"
         }
     }
 }
