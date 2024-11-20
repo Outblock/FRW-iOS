@@ -260,16 +260,21 @@ extension TransactionManager {
                             debugPrint(
                                 "TransactionHolder -> onCheck result failed: \(result.errorMessage)"
                             )
+                            self.trackResult(
+                                result: result,
+                                fromId: self.transactionId.hex
+                            )
                         } else if result.isComplete {
                             self.internalStatus = .success
+                            self.trackResult(
+                                result: result,
+                                fromId: self.transactionId.hex
+                            )
                         } else {
                             self.internalStatus = .pending
                             self.startTimer()
                         }
-                        self.trackResult(
-                            result: result,
-                            fromId: self.transactionId.hex
-                        )
+
                         self.postNotification()
                     }
                 } catch {

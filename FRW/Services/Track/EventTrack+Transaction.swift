@@ -76,12 +76,12 @@ extension EventTrack.Transaction {
             ])
     }
 
-    static func transactionResult(txId: String, successful: Bool, message: String) {
+    static func transactionResult(txId: String, successful: Bool, message: String? = nil) {
         EventTrack
             .send(event: EventTrack.Transaction.result, properties: [
                 "tx_id": txId,
                 "is_successful": successful,
-                "error_message": message,
+                "error_message": message ?? "",
             ])
     }
 }
