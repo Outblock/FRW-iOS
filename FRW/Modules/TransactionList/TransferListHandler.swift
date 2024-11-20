@@ -238,7 +238,11 @@ extension TransferListHandler: UICollectionViewDelegateFlowLayout, UICollectionV
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let item = dataList[indexPath.item]
         UISelectionFeedbackGenerator().selectionChanged()
-        if let txid = item.txid, let url = txid.toFlowScanTransactionDetailURL {
+        if let txid = item.txid {
+            let network = LocalUserDefaults.shared.flowNetwork
+            let accountType = AccountType.current
+            let url = network.getTransactionHistoryUrl(accountType: accountType, transactionId: txid)
+
             Router.route(to: RouteMap.Explore.browser(url))
         }
     }

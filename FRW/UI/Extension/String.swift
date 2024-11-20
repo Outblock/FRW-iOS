@@ -352,15 +352,4 @@ extension String {
 
         return URL(string: string)
     }
-
-    var toFlowScanTransactionDetailURL: URL? {
-        var string = "https://flowscan.io/tx/\(self)"
-        if LocalUserDefaults.shared.flowNetwork == .testnet {
-            string = "https://testnet.flowscan.io/tx/\(self)"
-        } else if LocalUserDefaults.shared.flowNetwork == .previewnet {
-            string = "https://previewnet.flowscan.io/tx/\(self)"
-        }
-
-        return URL(string: string)
-    }
 }

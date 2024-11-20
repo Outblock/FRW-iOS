@@ -260,7 +260,7 @@ struct SingleToken: Codable {
     let evmAddress: String?
     let flowIdentifier: String?
 
-    func toTokenModel(network: LocalUserDefaults.FlowNetworkType) -> TokenModel {
+    func toTokenModel(network: FlowNetworkType) -> TokenModel {
         let logo = URL(string: logoURI ?? "")
 
         let model = TokenModel(

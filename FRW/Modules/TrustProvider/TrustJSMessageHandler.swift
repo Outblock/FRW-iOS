@@ -23,9 +23,9 @@ class TrustJSMessageHandler: NSObject {
     weak var webVC: BrowserViewController?
 
     var supportChainID: [Int: Flow.ChainID] = [
-        LocalUserDefaults.FlowNetworkType.mainnet.networkID: .mainnet,
-        LocalUserDefaults.FlowNetworkType.testnet.networkID: .testnet,
-        LocalUserDefaults.FlowNetworkType.previewnet.networkID: .previewnet,
+        FlowNetworkType.mainnet.networkID: .mainnet,
+        FlowNetworkType.testnet.networkID: .testnet,
+        FlowNetworkType.previewnet.networkID: .previewnet,
     ]
 }
 

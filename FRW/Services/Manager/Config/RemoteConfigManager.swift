@@ -97,7 +97,7 @@ class RemoteConfigManager {
         }
     }
 
-    func getContarctAddress(_ network: LocalUserDefaults.FlowNetworkType) -> [String: String]? {
+    func getContarctAddress(_ network: FlowNetworkType) -> [String: String]? {
         switch network {
         case .mainnet:
             return contractAddress?.mainnet

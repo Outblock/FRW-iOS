@@ -110,7 +110,7 @@ extension DeveloperModeViewModel {
                 )
                 let id: String = try await Network.request(FRWAPI.User.previewnet(request))
                 let txId = Flow.ID(hex: id)
-                flow.configure(chainID: LocalUserDefaults.FlowNetworkType.previewnet.toFlowType())
+                flow.configure(chainID: FlowNetworkType.previewnet.toFlowType())
 
                 let result = try await txId.onceSealed()
                 if result.isFailed {

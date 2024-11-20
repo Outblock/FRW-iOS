@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct NetworkMenuItem: View {
-    var network: LocalUserDefaults.FlowNetworkType
-    var currentNetwork: LocalUserDefaults.FlowNetworkType
+    var network: FlowNetworkType
+    var currentNetwork: FlowNetworkType
 
     var isSelected: Bool {
         network == currentNetwork

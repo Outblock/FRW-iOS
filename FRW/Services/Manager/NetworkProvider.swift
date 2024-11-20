@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension LocalUserDefaults.FlowNetworkType {
+extension FlowNetworkType {
     var networkID: Int {
         switch self {
         case .testnet:

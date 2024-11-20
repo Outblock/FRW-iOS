@@ -325,7 +325,7 @@ extension WalletConnectManager {
         guard network == LocalUserDefaults.shared.flowNetwork.toFlowType() else {
             rejectSession(proposal: sessionProposal)
             let current = LocalUserDefaults.shared.flowNetwork
-            guard let toNetwork = LocalUserDefaults.FlowNetworkType(chainId: network)
+            guard let toNetwork = FlowNetworkType(chainId: network)
             else { return }
             Router.route(to: RouteMap.Explore.switchNetwork(current, toNetwork, nil))
             return

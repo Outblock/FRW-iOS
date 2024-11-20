@@ -16,7 +16,7 @@ import UIKit
 enum RouteMap {}
 
 typealias EmptyClosure = () -> Void
-typealias SwitchNetworkClosure = (LocalUserDefaults.FlowNetworkType) -> Void
+typealias SwitchNetworkClosure = (FlowNetworkType) -> Void
 typealias BoolClosure = (Bool) -> Void
 
 // MARK: - RouteMap.RestoreLogin
@@ -594,11 +594,13 @@ extension RouteMap.Transaction: RouterTarget {
     func onPresent(navi _: UINavigationController) {
         switch self {
         case let .detail(transactionId):
-            if let url = transactionId.transactionFlowScanURL {
-//                UIApplication.shared.open(url)
-                TransactionUIHandler.shared.dismissListView()
-                Router.route(to: RouteMap.Explore.browser(url))
-            }
+            let network = LocalUserDefaults.shared.flowNetwork
+            let accountType = AccountType.current
+            let url = network.getTransactionHistoryUrl(accountType: accountType, transactionId: transactionId.hex)
+
+//            UIApplication.shared.open(url)
+            TransactionUIHandler.shared.dismissListView()
+            Router.route(to: RouteMap.Explore.browser(url))
         }
     }
 }
@@ -618,8 +620,8 @@ extension RouteMap {
         case linkChildAccount(ChildAccountLinkViewModel)
         case dapps
         case switchNetwork(
-            LocalUserDefaults.FlowNetworkType,
-            LocalUserDefaults.FlowNetworkType,
+            FlowNetworkType,
+            FlowNetworkType,
             SwitchNetworkClosure?
         )
         case signTypedMessage(BrowserSignTypedMessageViewModel)
