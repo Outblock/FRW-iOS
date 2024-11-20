@@ -121,7 +121,21 @@ struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         if showSheet {
             if uiViewController.view.tag == 0 {
-                let sheetController = CustomHostingController(rootView: sheetView)
+                var sheetHeight = CGFloat.zero
+                let view = self.sheetView.readSize { sheetHeight = $0.height }
+                let sheetController = CustomHostingController(rootView: view, showGrabber: false)
+                
+                sheetController.modalPresentationStyle = .pageSheet
+                sheetController.isModalInPresentation = false
+                if #available(iOS 16, *) {
+                    sheetController.sheetPresentationController?.detents = [.custom { _ in 0 }]
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        sheetController.sheetPresentationController?.animateChanges {
+                            sheetController.sheetPresentationController?.detents = [.custom { _ in sheetHeight }]
+                        }
+                    }
+                }
+                
                 sheetController.presentationController?.delegate = context.coordinator
                 uiViewController.present(sheetController, animated: true)
                 uiViewController.view.tag = 1
@@ -172,14 +186,14 @@ class CustomHostingController<Content: View>: UIHostingController<Content> {
         view.backgroundColor = .clear
 
         // setting presentation controller properties...
-        if let presentationController = presentationController as? UISheetPresentationController {
-            if onlyLarge {
-                presentationController.detents = [.large()]
-            } else {
-                presentationController.detents = showLarge ? [.medium(), .large()] : [.medium()]
-            }
-            // to show grab protion...
-            presentationController.prefersGrabberVisible = true
-        }
+//        if let presentationController = presentationController as? UISheetPresentationController {
+//            if onlyLarge {
+//                presentationController.detents = [.large()]
+//            } else {
+//                presentationController.detents = showLarge ? [.medium(), .large()] : [.medium()]
+//            }
+//            // to show grab protion...
+//            presentationController.prefersGrabberVisible = true
+//        }
     }
 }
