@@ -168,7 +168,8 @@ extension WalletSendAmountViewModel {
     }
 
     private func refreshTokenData() {
-        amountBalance = WalletManager.shared.getBalance(bySymbol: token.symbol ?? "")
+        amountBalance = WalletManager.shared
+            .getBalance(bySymbol: token.symbol ?? "").doubleValue
         coinRate = CoinRateCache.cache.getSummary(for: token.symbol ?? "")?.getLastRate() ?? 0
     }
 

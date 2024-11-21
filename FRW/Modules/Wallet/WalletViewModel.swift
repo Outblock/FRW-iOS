@@ -269,10 +269,11 @@ class WalletViewModel: ObservableObject {
             }
 
             let summary = CoinRateCache.cache.getSummary(for: symbol)
+            // FIXME:
             let item = WalletCoinItemModel(
                 token: token,
                 balance: WalletManager.shared
-                    .getBalance(bySymbol: symbol),
+                    .getBalance(bySymbol: symbol).doubleValue,
                 last: summary?.getLastRate() ?? 0,
                 changePercentage: summary?.getChangePercentage() ?? 0
             )

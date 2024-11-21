@@ -23,7 +23,8 @@ class EVMEnableViewModel: ObservableObject {
                     .debug(
                         "[EVM] enable check balance: \(WalletManager.shared.getBalance(bySymbol: symbol))"
                     )
-                return WalletManager.shared.getBalance(bySymbol: symbol) >= minBalance
+                return WalletManager.shared
+                    .getBalance(bySymbol: symbol).doubleValue >= minBalance
             }
             return false
         }

@@ -38,7 +38,7 @@ class StakingDetailViewModel: ObservableObject {
 
     var availableAmount: Double {
         let balance = WalletManager.shared.getBalance(bySymbol: "flow")
-        return balance
+        return balance.doubleValue
     }
 
     var currentProgress: Int {

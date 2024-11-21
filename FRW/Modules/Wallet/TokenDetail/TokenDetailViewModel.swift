@@ -321,7 +321,7 @@ extension TokenDetailViewModel {
             return
         }
 
-        balance = WalletManager.shared.getBalance(bySymbol: symbol)
+        balance = WalletManager.shared.getBalance(bySymbol: symbol).doubleValue
         rate = CoinRateCache.cache.getSummary(for: symbol)?.getLastRate() ?? 0
         balanceAsUSD = balance * rate
         changePercent = CoinRateCache.cache.getSummary(for: symbol)?.getChangePercentage() ?? 0

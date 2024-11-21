@@ -245,7 +245,8 @@ extension SwapViewModel {
             return
         }
 
-        if fromAmount > WalletManager.shared.getBalance(bySymbol: fromTokenSymbol) {
+        if fromAmount > WalletManager.shared
+            .getBalance(bySymbol: fromTokenSymbol).doubleValue {
             errorType = .insufficientBalance
         } else {
             errorType = .none
@@ -349,7 +350,9 @@ extension SwapViewModel {
             return
         }
 
-        inputFromText = WalletManager.shared.getBalance(bySymbol: symbol).formatCurrencyString()
+        inputFromText = WalletManager.shared
+            .getBalance(bySymbol: symbol).doubleValue
+            .formatCurrencyString()
     }
 
     func swapAction() {

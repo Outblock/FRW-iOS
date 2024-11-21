@@ -44,7 +44,7 @@ class StakeAmountViewModel: ObservableObject {
         self.provider = provider
         self.isUnstake = isUnstake
         self.balance = isUnstake ? (provider.currentNode?.stakingCount ?? 0) : WalletManager.shared
-            .getBalance(bySymbol: "flow")
+            .getBalance(bySymbol: "flow").doubleValue
     }
 
     // MARK: Internal

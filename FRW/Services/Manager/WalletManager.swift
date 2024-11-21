@@ -33,7 +33,7 @@ extension WalletManager {
         case walletInfo
         case supportedCoins
         case activatedCoins
-        case coinBalances
+        case coinBalancesV2
     }
 }
 
@@ -75,7 +75,7 @@ class WalletManager: ObservableObject {
     @Published
     var activatedCoins: [TokenModel] = []
     @Published
-    var coinBalances: [String: Double] = [:]
+    var coinBalances: [String: Decimal] = [:]
     @Published
     var childAccount: ChildAccount? = nil
     @Published
@@ -180,8 +180,8 @@ class WalletManager: ObservableObject {
                 type: [TokenModel].self
             )
             let cacheBalances = try? await PageCache.cache.get(
-                forKey: CacheKeys.coinBalances.rawValue,
-                type: [String: Double].self
+                forKey: CacheKeys.coinBalancesV2.rawValue,
+                type: [String: Decimal].self
             )
 
             DispatchQueue.main.async {
@@ -451,7 +451,7 @@ extension WalletManager {
         return nil
     }
 
-    func getBalance(bySymbol symbol: String) -> Double {
+    func getBalance(bySymbol symbol: String) -> Decimal {
         coinBalances[symbol] ?? coinBalances[symbol.lowercased()] ??
             coinBalances[symbol.uppercased()] ?? 0
     }
@@ -810,15 +810,14 @@ extension WalletManager {
 
         let balanceList = try await FlowNetwork.fetchBalance(at: Flow.Address(hex: address))
 
-        var newBalanceMap: [String: Double] = [:]
+        var newBalanceMap: [String: Decimal] = [:]
 
         for (_, value) in activatedCoins.enumerated() {
             guard let symbol = value.symbol else {
                 continue
             }
-            let model = balanceList.first { $0.key.lowercased() == value.contractId.lowercased() }
-            if let model = model {
-                newBalanceMap[symbol] = model.value
+            if let balance = balanceList[value.contractId] {
+                newBalanceMap[symbol] = Decimal(balance)
             }
         }
 
@@ -826,7 +825,11 @@ extension WalletManager {
             self.coinBalances = newBalanceMap
         }
 
-        PageCache.cache.set(value: newBalanceMap, forKey: CacheKeys.coinBalances.rawValue)
+        PageCache.cache
+            .set(
+                value: newBalanceMap,
+                forKey: CacheKeys.coinBalancesV2.rawValue
+            )
     }
 
     private func fetchEVMBalance() async throws {
@@ -844,14 +847,15 @@ extension WalletManager {
             log.info("[EVM] load balance success \(balance)")
             tokenModel.flowIdentifier = tokenModel.contractId
             self.activatedCoins = [tokenModel]
-            self.coinBalances = [symbol: balance.doubleValue]
+            self.coinBalances = [symbol: balance]
 
             for item in list {
                 if item.flowBalance > 0 {
                     let result = self.evmSupportedCoins?.first(where: { model in
                         model.getAddress()?.lowercased() == item.address.lowercased()
                     })
-                    if let result = result {
+                    if var result = result {
+                        result.balance = BigUInt(from: item.balance ?? "-1")
                         self.activatedCoins.append(result)
                         self.coinBalances[item.symbol] = item.flowBalance
                     }
@@ -881,8 +885,8 @@ extension WalletManager {
                 balance,
                 units: .custom(token.decimals),
                 formattingDecimals: token.decimals
-            ).doubleValue
-            self.coinBalances[token.symbol] = result
+            )
+            self.coinBalances[token.symbol] = Decimal(string: result)
         }
     }
 
