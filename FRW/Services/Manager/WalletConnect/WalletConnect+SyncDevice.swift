@@ -29,13 +29,12 @@ enum WalletConnectSyncDevice {
     static let nameDomain = "flow"
 
     static func createAndPair() async throws -> WalletConnectURI {
-        let uri = try await Pair.instance.create()
         let methods: Set<String> = [
             FCLWalletConnectMethod.accountInfo.rawValue,
             FCLWalletConnectMethod.addDeviceInfo.rawValue,
         ]
         let namespaces = Sign.FlowWallet.namespaces(methods)
-        try await Sign.instance.connect(requiredNamespaces: namespaces, topic: uri.topic)
+        let uri = try await Sign.instance.connect(requiredNamespaces: namespaces)
         return uri
     }
 
