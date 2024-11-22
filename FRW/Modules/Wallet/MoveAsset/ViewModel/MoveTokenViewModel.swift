@@ -339,7 +339,8 @@ extension MoveTokenViewModel {
                             .bridgeChildTokenFromCoa(
                                 vaultIdentifier: vaultIdentifier,
                                 child: toContact.address ?? "",
-                                amount: amount
+                                amount: amount,
+                                decimals: token.decimal
                             )
                     default:
                         break
