@@ -21,10 +21,12 @@ class EVMEnableViewModel: ObservableObject {
             if tokenModel.isFlowCoin {
                 log
                     .debug(
-                        "[EVM] enable check balance: \(WalletManager.shared.getBalance(byId: tokenModel.contractId))"
+                        "[EVM] enable check balance: \(WalletManager.shared.getBalance(byId: tokenModel.contractId)) "
                     )
                 return WalletManager.shared
-                    .getBalance(byId: tokenModel.contractId) >= minBalance
+                    .getBalance(
+                        byId: tokenModel.contractId
+                    ).doubleValue >= minBalance
             }
             return false
         }

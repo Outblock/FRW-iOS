@@ -249,7 +249,8 @@ extension SwapViewModel {
             return
         }
 
-        if fromAmount > WalletManager.shared.getBalance(byId: contractId) {
+        if fromAmount > WalletManager.shared
+            .getBalance(byId: contractId).doubleValue {
             errorType = .insufficientBalance
         } else {
             errorType = .none
@@ -354,7 +355,7 @@ extension SwapViewModel {
         }
 
         inputFromText = WalletManager.shared
-            .getBalance(byId: contractId)
+            .getBalance(byId: contractId).doubleValue
             .formatCurrencyString()
     }
 

@@ -317,7 +317,8 @@ extension TokenDetailViewModel {
     }
 
     private func refreshSummary() {
-        balance = WalletManager.shared.getBalance(byId: token.contractId)
+        balance = WalletManager.shared
+            .getBalance(byId: token.contractId).doubleValue
         rate = CoinRateCache.cache
             .getSummary(by: token.contractId)?
             .getLastRate() ?? 0

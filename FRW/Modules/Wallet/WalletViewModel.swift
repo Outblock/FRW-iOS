@@ -268,7 +268,7 @@ class WalletViewModel: ObservableObject {
             let item = WalletCoinItemModel(
                 token: token,
                 balance: WalletManager.shared
-                    .getBalance(byId: token.contractId),
+                    .getBalance(byId: token.contractId).doubleValue,
                 last: summary?.getLastRate() ?? 0,
                 changePercentage: summary?.getChangePercentage() ?? 0
             )
