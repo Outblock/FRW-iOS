@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Web3Core
 
 extension AddAddressView {
     enum AddressStateType {
@@ -80,7 +81,11 @@ extension AddAddressView {
         case save
     }
 
-    class AddAddressViewModel: ViewModel {
+    final class AddAddressViewModel: ViewModel {
+        enum AddressType {
+            case flow, evm
+        }
+
         // MARK: Lifecycle
 
         init(addressBookVM: AddressBookView.AddressBookViewModel) {
@@ -256,29 +261,36 @@ extension AddAddressView {
                 return
             }
 
-            var formatedAddress = state.address.trim().lowercased()
-            if !formatedAddress.hasPrefix("0x") {
-                formatedAddress = "0x" + formatedAddress
-            }
+            let formattedAddress = state.address.trim().lowercased().addHexPrefix()
 
-            if !checkAddressFormat(formatedAddress) {
+            switch checkAddressFormat(formattedAddress) {
+            case .some(.flow):
+                delayCheckAddressExists(formattedAddress)
+            case .some(.evm):
+                checkEoaAddressExists(formattedAddress)
+            case .none:
                 state.addressStateType = .invalidFormat
-                return
-            } else {
-                state.addressStateType = .idle
             }
-
-            delayCheckAddressIsExist(formatedAddress)
         }
     }
 }
 
 extension AddAddressView.AddAddressViewModel {
-    private func checkAddressFormat(_ address: String) -> Bool {
-        address.matchRegex("^0x[a-fA-F0-9]{16}$")
+    private func checkAddressFormat(_ address: String) -> AddressType?  {
+        if address.matchRegex("^0x[a-fA-F0-9]{16}$") {
+            return .flow
+        }
+        
+        if address.matchRegex("^0x[0-9a-fA-F]{40}$") {
+            return .evm
+        }
+        
+        return nil
     }
 
-    private func delayCheckAddressIsExist(_ address: String) {
+    private func delayCheckAddressExists(_ address: String) {
+        state.addressStateType = .idle
+
         let task = DispatchWorkItem { [weak self] in
             guard let self = self else {
                 return
@@ -298,6 +310,20 @@ extension AddAddressView.AddAddressViewModel {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: task)
     }
 
+    private func checkEoaAddressExists(_ address: String) {
+        guard let eoa = EthereumAddress(address, type: .normal, ignoreChecksum: true) else {
+            self.state.addressStateType = .invalidFormat
+            return
+        }
+        
+        guard eoa.isValid else {
+            self.state.addressStateType = .invalidFormat
+            return
+        }
+        
+        self.state.addressStateType = .passed
+    }
+    
     private func cancelCurrentAddressCheckTask() {
         if let task = addressCheckTask {
             task.cancel()
