@@ -8,9 +8,9 @@
 import Foundation
 import SwiftUI
 
-public extension View {
+extension View {
     @ViewBuilder
-    func `if`<Content: View>(
+    public func `if`<Content: View>(
         _ condition: @autoclosure @escaping () -> Bool,
         @ViewBuilder content: (Self) -> Content
     ) -> some View {
@@ -22,7 +22,7 @@ public extension View {
     }
 
     @ViewBuilder
-    func `if`<Value, Content: View>(
+    public func `if`<Value, Content: View>(
         `let` value: Value?,
         @ViewBuilder content: (_ view: Self, _ value: Value) -> Content
     ) -> some View {
@@ -34,7 +34,7 @@ public extension View {
     }
 
     @ViewBuilder
-    func ifNot<Content: View>(
+    public func ifNot<Content: View>(
         _ notCondition: @autoclosure @escaping () -> Bool,
         @ViewBuilder content: (Self) -> Content
     ) -> some View {
@@ -46,7 +46,7 @@ public extension View {
     }
 
     @ViewBuilder
-    func then<Content: View>(@ViewBuilder content: (Self) -> Content) -> some View {
+    public func then<Content: View>(@ViewBuilder content: (Self) -> Content) -> some View {
         content(self)
     }
 }

@@ -8,6 +8,8 @@
 import SwiftUI
 import SwiftUIX
 
+// MARK: - FadeAnimationBackground
+
 struct FadeAnimationBackground: View {
     var image: Image
     var itemPerRow = 8
@@ -20,22 +22,25 @@ struct FadeAnimationBackground: View {
         GeometryReader { geometry in
 
             VStack(spacing: 0) {
-                ForEach(0 ..< getNumberOfRows(geometry)) { _ in
+                ForEach(0..<getNumberOfRows(geometry)) { _ in
                     HStack(spacing: 0) {
-                        ForEach(0 ..< itemPerRow + 7) { _ in
+                        ForEach(0..<itemPerRow + 7) { _ in
                             image
                                 .renderingMode(.template)
 //                                .resizable()
                                 .aspectRatio(1, contentMode: .fit)
-                                .frame(width: UIScreen.screenHeight / CGFloat(getNumberOfRows(geometry)),
-                                       height: UIScreen.screenWidth / CGFloat(itemPerRow),
-                                       alignment: .center)
+                                .frame(
+                                    width: UIScreen
+                                        .screenHeight / CGFloat(getNumberOfRows(geometry)),
+                                    height: UIScreen.screenWidth / CGFloat(itemPerRow),
+                                    alignment: .center
+                                )
                                 .opacity(self.isAnimating ? 1 : 0)
                                 .animation(
                                     Animation
-                                        .linear(duration: .random(in: 1.0 ... 2.0))
+                                        .linear(duration: .random(in: 1.0...2.0))
                                         .repeatForever(autoreverses: true)
-                                        .delay(Double.random(in: 0 ... 1.5)),
+                                        .delay(Double.random(in: 0...1.5)),
                                     value: isAnimating
                                 )
                                 .padding(.horizontal, 4)
@@ -66,6 +71,8 @@ struct FadeAnimationBackground: View {
         return Int(height / heightPerItem) + 2
     }
 }
+
+// MARK: - FadeAnimationBackground_Previews
 
 struct FadeAnimationBackground_Previews: PreviewProvider {
     static var previews: some View {

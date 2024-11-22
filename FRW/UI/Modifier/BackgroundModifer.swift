@@ -7,8 +7,11 @@
 
 import SwiftUI
 
+// MARK: - OutlineOverlay
+
 struct OutlineOverlay: ViewModifier {
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.colorScheme)
+    var colorScheme
     var cornerRadius: CGFloat = 20
 
     func body(content: Content) -> some View {
@@ -29,9 +32,12 @@ struct OutlineOverlay: ViewModifier {
     }
 }
 
+// MARK: - BackgroundColor
+
 struct BackgroundColor: ViewModifier {
     var opacity: Double = 0.6
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.colorScheme)
+    var colorScheme
 
     func body(content: Content) -> some View {
         content
@@ -50,10 +56,13 @@ extension View {
     }
 }
 
+// MARK: - BackgroundStyle
+
 struct BackgroundStyle: ViewModifier {
     var cornerRadius: CGFloat = 20
     var opacity: Double = 0.6
-    @AppStorage("isLiteMode") var isLiteMode = true
+    @AppStorage("isLiteMode")
+    var isLiteMode = true
 
     func body(content: Content) -> some View {
         content
@@ -69,6 +78,8 @@ extension View {
         modifier(BackgroundStyle(cornerRadius: cornerRadius, opacity: opacity))
     }
 }
+
+// MARK: - HiddenNavigationBar
 
 struct HiddenNavigationBar: ViewModifier {
     func body(content: Content) -> some View {

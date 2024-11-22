@@ -11,10 +11,7 @@ import SwiftUI
 
 /// Opacity level group containing `disabled` values.
 public struct StateOpacities_D: Equatable {
-    // MARK: Properties
-
-    /// Disabled opacity level.
-    public var disabledOpacity: Double
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -27,8 +24,10 @@ public struct StateOpacities_D: Equatable {
 
     /// Initializes group with clear values.
     public init() {
-        disabledOpacity = 0
+        self.disabledOpacity = 0
     }
+
+    // MARK: Public
 
     /// Initializes group with clear values.
     public static var clear: Self { .init() }
@@ -39,4 +38,9 @@ public struct StateOpacities_D: Equatable {
             disabledOpacity: 1
         )
     }
+
+    // MARK: Properties
+
+    /// Disabled opacity level.
+    public var disabledOpacity: Double
 }

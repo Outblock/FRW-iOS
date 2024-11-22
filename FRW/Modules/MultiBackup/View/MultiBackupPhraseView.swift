@@ -8,24 +8,29 @@
 import SwiftUI
 
 struct MultiBackupPhraseView: RouteableView {
+    // MARK: Lifecycle
+
+    init(mnemonic: String) {
+        self.mnemonic = mnemonic
+        self.dataSource = mnemonic.split(separator: " ").enumerated().map { item in
+            WordListView.WordItem(id: item.offset + 1, word: String(item.element))
+        }
+    }
+
+    // MARK: Internal
+
     enum From {
         case create
         case backup
     }
 
-    @State var isBlur: Bool = false
+    @State
+    var isBlur: Bool = false
     var from: MultiBackupPhraseView.From = .backup
     var mnemonic: String
-    private var dataSource: [WordListView.WordItem]
-    init(mnemonic: String) {
-        self.mnemonic = mnemonic
-        dataSource = mnemonic.split(separator: " ").enumerated().map { item in
-            WordListView.WordItem(id: item.offset + 1, word: String(item.element))
-        }
-    }
 
     var title: String {
-        return ""
+        ""
     }
 
     var copyBtn: some View {
@@ -143,22 +148,30 @@ struct MultiBackupPhraseView: RouteableView {
                 }
             }
             Spacer()
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: .enabled,
-                           action: {
-                               Router.pop(animated: false)
-                           },
-                           title: "next".localized)
-                .padding(.bottom)
-                .visibility(from == .backup ? .gone : .visible)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: .enabled,
+                action: {
+                    Router.pop(animated: false)
+                },
+                title: "next".localized
+            )
+            .padding(.bottom)
+            .visibility(from == .backup ? .gone : .visible)
         }
 
         .padding(.horizontal, 28)
         .backgroundFill(Color.LL.background)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    private var dataSource: [WordListView.WordItem]
 }
 
 #Preview {
-    MultiBackupPhraseView(mnemonic: "tent breeze custom call thought mixed humble dilemma fold share feel food destroy arrive capable")
+    MultiBackupPhraseView(
+        mnemonic: "tent breeze custom call thought mixed humble dilemma fold share feel food destroy arrive capable"
+    )
 }

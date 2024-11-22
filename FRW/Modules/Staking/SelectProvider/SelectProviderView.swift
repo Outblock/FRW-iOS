@@ -9,15 +9,17 @@ import Kingfisher
 import SwiftUI
 
 struct SelectProviderView: RouteableView {
-    @Environment(\.colorScheme) var colorScheme
-    @StateObject private var vm = SelectProviderViewModel()
+    // MARK: Internal
+
+    @Environment(\.colorScheme)
+    var colorScheme
 
     var title: String {
-        return "staking_select_provider".localized
+        "staking_select_provider".localized
     }
 
     var navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
-        return .large
+        .large
     }
 
     var body: some View {
@@ -48,8 +50,12 @@ struct SelectProviderView: RouteableView {
                     .cornerRadius(16)
                     .padding(.top, 12)
 
-                    createProviderView(provider: vm.lilicoProvider, gradientStart: colorScheme == .light ? "#FFD7C6" : "#292929", gradientEnd: colorScheme == .light ? "#FAFAFA" : "#292929")
-                        .padding(.top, -40)
+                    createProviderView(
+                        provider: vm.lilicoProvider,
+                        gradientStart: colorScheme == .light ? "#FFD7C6" : "#292929",
+                        gradientEnd: colorScheme == .light ? "#FAFAFA" : "#292929"
+                    )
+                    .padding(.top, -40)
                 }
                 .visibility(.gone)
 
@@ -61,7 +67,11 @@ struct SelectProviderView: RouteableView {
                 Group {
                     createSectionTitleView("staking_provider_section_title".localized)
                     ForEach(vm.otherProviders, id: \.id) { provider in
-                        createProviderView(provider: provider, gradientStart: colorScheme == .light ? "#F0F0F0" : "#292929", gradientEnd: colorScheme == .light ? "#FAFAFA" : "#292929")
+                        createProviderView(
+                            provider: provider,
+                            gradientStart: colorScheme == .light ? "#F0F0F0" : "#292929",
+                            gradientEnd: colorScheme == .light ? "#FAFAFA" : "#292929"
+                        )
                     }
                 }
                 .visibility(vm.otherProviders.isEmpty ? .gone : .visible)
@@ -85,7 +95,11 @@ struct SelectProviderView: RouteableView {
         .padding(.top, 14)
     }
 
-    func createProviderView(provider: StakingProvider?, gradientStart: String, gradientEnd: String) -> some View {
+    func createProviderView(
+        provider: StakingProvider?,
+        gradientStart: String,
+        gradientEnd: String
+    ) -> some View {
         Button {
             if let provider = provider {
                 Router.route(to: RouteMap.Wallet.stakeAmount(provider))
@@ -161,10 +175,23 @@ struct SelectProviderView: RouteableView {
             .frame(height: 64)
             .background {
                 Rectangle()
-                    .fill(.radialGradient(colors: [Color(hex: gradientStart, alpha: 1), Color(hex: gradientEnd, alpha: 1)], center: .init(x: 0.5, y: -1.9), startRadius: 1, endRadius: 200))
+                    .fill(.radialGradient(
+                        colors: [Color(hex: gradientStart, alpha: 1), Color(
+                            hex: gradientEnd,
+                            alpha: 1
+                        )],
+                        center: .init(x: 0.5, y: -1.9),
+                        startRadius: 1,
+                        endRadius: 200
+                    ))
             }
             .cornerRadius(16)
             .padding(.top, 8)
         }
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = SelectProviderViewModel()
 }

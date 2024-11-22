@@ -23,6 +23,8 @@ enum Currency: String, CaseIterable {
     case MXN
     case BRL
 
+    // MARK: Internal
+
     var symbol: String {
         switch self {
         case .USD:

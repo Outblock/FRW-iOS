@@ -13,24 +13,27 @@ private let ContentViewHeight: CGFloat = 48
 private let DividerWidth: CGFloat = 2
 private let DividerHeight: CGFloat = 8
 
+// MARK: - BrowserSearchInputBar
+
 class BrowserSearchInputBar: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError()
+    }
+
+    // MARK: Internal
+
     var textDidChangedCallback: ((String) -> Void)?
 
     /// tap go button directly
     var textDidReturnCallback: ((String) -> Void)?
-
-    private lazy var contentView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.layer.cornerRadius = 16
-        view.layer.borderColor = UIColor.LL.Primary.salmonPrimary.cgColor
-        view.layer.borderWidth = 2
-        view.heroID = "addressBarContainer"
-        view.snp.makeConstraints { make in
-            make.height.equalTo(ContentViewHeight)
-        }
-        return view
-    }()
 
     lazy var textField: UITextField = {
         let view = UITextField()
@@ -68,6 +71,26 @@ class BrowserSearchInputBar: UIView {
         return btn
     }()
 
+    func reloadView() {
+        let isEmpty = textField.text?.isEmpty ?? true
+        clearBtn.isHidden = isEmpty
+    }
+
+    // MARK: Private
+
+    private lazy var contentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.layer.cornerRadius = 16
+        view.layer.borderColor = UIColor.LL.Primary.salmonPrimary.cgColor
+        view.layer.borderWidth = 2
+        view.heroID = "addressBarContainer"
+        view.snp.makeConstraints { make in
+            make.height.equalTo(ContentViewHeight)
+        }
+        return view
+    }()
+
     private lazy var divider: UIView = {
         let view = UIView()
         view.isUserInteractionEnabled = false
@@ -95,16 +118,6 @@ class BrowserSearchInputBar: UIView {
 
         return btn
     }()
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError()
-    }
 
     private func setup() {
         backgroundColor = .clear
@@ -142,24 +155,28 @@ class BrowserSearchInputBar: UIView {
         }
 
         reloadView()
-        NotificationCenter.default.addObserver(self, selector: #selector(onTextFieldDidChanged(noti:)), name: UITextField.textDidChangeNotification, object: nil)
-    }
-
-    func reloadView() {
-        let isEmpty = textField.text?.isEmpty ?? true
-        clearBtn.isHidden = isEmpty
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onTextFieldDidChanged(noti:)),
+            name: UITextField.textDidChangeNotification,
+            object: nil
+        )
     }
 }
 
+// MARK: UITextFieldDelegate
+
 extension BrowserSearchInputBar: UITextFieldDelegate {
-    @objc private func onTextFieldDidChanged(noti: Notification) {
+    @objc
+    private func onTextFieldDidChanged(noti: Notification) {
         if noti.object as? UITextField == textField {
             reloadView()
             textDidChangedCallback?(textField.text ?? "")
         }
     }
 
-    @objc private func onClearBtnClick() {
+    @objc
+    private func onClearBtnClick() {
         textField.text = ""
         reloadView()
         textDidChangedCallback?("")

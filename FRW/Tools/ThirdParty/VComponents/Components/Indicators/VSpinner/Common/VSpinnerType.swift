@@ -19,6 +19,8 @@ public enum VSpinnerType {
     /// Dashed spinner.
     case dashed(_ model: VSpinnerModelDashed = .init())
 
+    // MARK: Public
+
     // MARK: Initailizers
 
     /// Default value. Set to `continous`.

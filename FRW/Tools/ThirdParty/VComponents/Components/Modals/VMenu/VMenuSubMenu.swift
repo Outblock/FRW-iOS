@@ -7,18 +7,18 @@
 
 import SwiftUI
 
-// MARK: - V Menu Sub Menu
+// MARK: - VMenuSubMenu
 
 struct VMenuSubMenu: View {
-    // MARK: Properties
-
-    private let rows: [VMenuRow]
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     init(rows: [VMenuRow]) {
         self.rows = rows
     }
+
+    // MARK: Internal
 
     // MARK: Body
 
@@ -48,9 +48,15 @@ struct VMenuSubMenu: View {
             }
         })
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let rows: [VMenuRow]
 }
 
-// MARK: - Preview
+// MARK: - VMenuSubMenu_Previews
 
 struct VMenuSubMenu_Previews: PreviewProvider {
     static var previews: some View {

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Tab Navigation View
+// MARK: - VTabNavigationView
 
 /// Navigation component that switches between multiple views using interactive user interface elements.
 ///
@@ -50,20 +50,8 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
     C2: View,
     C3: View,
     C4: View,
-    C5: View
-{
-    // MARK: Properties
-
-    private let model: VTabNavigationViewModel
-
-    @Binding private var selection: Int
-
-    private let pageOne: VTabNavigationViewPage<C0>?
-    private let pageTwo: VTabNavigationViewPage<C1>?
-    private let pageThree: VTabNavigationViewPage<C2>?
-    private let pageFour: VTabNavigationViewPage<C3>?
-    private let pageFive: VTabNavigationViewPage<C4>?
-    private let pageSix: VTabNavigationViewPage<C5>?
+    C5: View {
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -98,8 +86,7 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
         pageFour: VTabNavigationViewPage<C3>,
         pageFive: VTabNavigationViewPage<C4>
     )
-        where C5 == Never
-    {
+        where C5 == Never {
         self.model = model
         _selection = selection
         self.pageOne = pageOne
@@ -107,7 +94,7 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
         self.pageThree = pageThree
         self.pageFour = pageFour
         self.pageFive = pageFive
-        pageSix = nil
+        self.pageSix = nil
     }
 
     /// Initializes component with selected index and four pages.
@@ -121,16 +108,15 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
     )
         where
         C4 == Never,
-        C5 == Never
-    {
+        C5 == Never {
         self.model = model
         _selection = selection
         self.pageOne = pageOne
         self.pageTwo = pageTwo
         self.pageThree = pageThree
         self.pageFour = pageFour
-        pageFive = nil
-        pageSix = nil
+        self.pageFive = nil
+        self.pageSix = nil
     }
 
     /// Initializes component with selected index and three pages.
@@ -144,16 +130,15 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
         where
         C3 == Never,
         C4 == Never,
-        C5 == Never
-    {
+        C5 == Never {
         self.model = model
         _selection = selection
         self.pageOne = pageOne
         self.pageTwo = pageTwo
         self.pageThree = pageThree
-        pageFour = nil
-        pageFive = nil
-        pageSix = nil
+        self.pageFour = nil
+        self.pageFive = nil
+        self.pageSix = nil
     }
 
     /// Initializes component with selected index and four pages.
@@ -167,17 +152,18 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
         C2 == Never,
         C3 == Never,
         C4 == Never,
-        C5 == Never
-    {
+        C5 == Never {
         self.model = model
         _selection = selection
         self.pageOne = pageOne
         self.pageTwo = pageTwo
-        pageThree = nil
-        pageFour = nil
-        pageFive = nil
-        pageSix = nil
+        self.pageThree = nil
+        self.pageFour = nil
+        self.pageFive = nil
+        self.pageSix = nil
     }
+
+    // MARK: Public
 
     // MARK: Body
 
@@ -193,11 +179,26 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
         .setUpTabNavigationViewAppearance(model: model)
     }
 
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VTabNavigationViewModel
+
+    @Binding
+    private var selection: Int
+
+    private let pageOne: VTabNavigationViewPage<C0>?
+    private let pageTwo: VTabNavigationViewPage<C1>?
+    private let pageThree: VTabNavigationViewPage<C2>?
+    private let pageFour: VTabNavigationViewPage<C3>?
+    private let pageFive: VTabNavigationViewPage<C4>?
+    private let pageSix: VTabNavigationViewPage<C5>?
+
     private func pageContent<PageContent>(
         _ page: VTabNavigationViewPage<PageContent>
     ) -> some View
-        where PageContent: View
-    {
+        where PageContent: View {
         let originalAccentColor = Color(UIColor(Color.accentColor).cgColor)
 
         return page.content
@@ -225,12 +226,10 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
     }
 }
 
-// MARK: Preview
+// MARK: - VTabNavigationView_Previews
 
 struct VTabNavigationView_Previews: PreviewProvider {
-    private static var pageOne: VTabNavigationViewPage<Color> { .init(item: .titled(title: "Red"), content: Color.red) }
-    private static var pageTwo: VTabNavigationViewPage<Color> { .init(item: .titled(title: "Green"), content: Color.green) }
-    private static var pageThree: VTabNavigationViewPage<Color> { .init(item: .titled(title: "Blue"), content: Color.blue) }
+    // MARK: Internal
 
     static var previews: some View {
         VTabNavigationView<Color, Color, Color, Never, Never, Never>(
@@ -241,4 +240,19 @@ struct VTabNavigationView_Previews: PreviewProvider {
             pageThree: pageThree
         )
     }
+
+    // MARK: Private
+
+    private static var pageOne: VTabNavigationViewPage<Color> { .init(
+        item: .titled(title: "Red"),
+        content: Color.red
+    ) }
+    private static var pageTwo: VTabNavigationViewPage<Color> { .init(
+        item: .titled(title: "Green"),
+        content: Color.green
+    ) }
+    private static var pageThree: VTabNavigationViewPage<Color> { .init(
+        item: .titled(title: "Blue"),
+        content: Color.blue
+    ) }
 }

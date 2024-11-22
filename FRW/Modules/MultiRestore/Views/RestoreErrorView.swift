@@ -7,11 +7,15 @@
 
 import SwiftUI
 
+// MARK: - RestoreErrorView
+
 struct RestoreErrorView: RouteableView {
+    // MARK: Internal
+
     var error: RestoreErrorView.RestoreError = .notfound
 
     var title: String {
-        return "import_wallet".localized
+        "import_wallet".localized
     }
 
     var body: some View {
@@ -32,17 +36,22 @@ struct RestoreErrorView: RouteableView {
                 .foregroundStyle(Color.Theme.Accent.grey)
                 .padding(.top, 24)
 
-            VPrimaryButton(model: ButtonStyle.blackMini,
-                           state: .enabled,
-                           action: {
-                               onClickButton()
-                           }, title: error.buttonTitle)
-                .frame(height: 40)
-                .padding(.top, 72)
-                .padding(.horizontal, 62)
+            VPrimaryButton(
+                model: ButtonStyle.blackMini,
+                state: .enabled,
+                action: {
+                    onClickButton()
+                },
+                title: error.buttonTitle
+            )
+            .frame(height: 40)
+            .padding(.top, 72)
+            .padding(.horizontal, 62)
         }
         .applyRouteable(self)
     }
+
+    // MARK: Private
 
     private func onClickButton() {
         switch error {
@@ -56,11 +65,15 @@ struct RestoreErrorView: RouteableView {
     }
 }
 
+// MARK: RestoreErrorView.RestoreError
+
 extension RestoreErrorView {
     enum RestoreError: Error {
         case notfound
         case noAccountFound
         case decryption
+
+        // MARK: Internal
 
         var title: String {
             switch self {

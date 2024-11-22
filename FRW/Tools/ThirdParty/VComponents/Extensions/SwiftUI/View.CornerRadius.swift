@@ -9,20 +9,17 @@ import SwiftUI
 
 // MARK: - Corner Radius
 
-public extension View {
+extension View {
     /// Clips this view to its bounding frame, with the specified corners and corner radius.
-    func cornerRadius(radius: CGFloat, corners: UIRectCorner) -> some View {
+    public func cornerRadius(radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape(CornerRadiusShape(radius: radius, corners: corners))
     }
 }
 
-// MARK: - Corner Radius Shape
+// MARK: - CornerRadiusShape
 
 private struct CornerRadiusShape: Shape {
-    // MARK: Properties
-
-    private let radius: CGFloat
-    private let corners: UIRectCorner
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -30,6 +27,8 @@ private struct CornerRadiusShape: Shape {
         self.radius = radius
         self.corners = corners
     }
+
+    // MARK: Internal
 
     // MARK: Shape
 
@@ -40,4 +39,11 @@ private struct CornerRadiusShape: Shape {
             cornerRadii: .init(width: radius, height: radius)
         ).cgPath)
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let radius: CGFloat
+    private let corners: UIRectCorner
 }

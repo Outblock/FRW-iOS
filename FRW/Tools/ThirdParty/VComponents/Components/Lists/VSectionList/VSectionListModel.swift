@@ -11,32 +11,33 @@ import SwiftUI
 
 /// Model that describes UI.
 public struct VSectionListModel {
-    // MARK: Properties
-
-    /// Reference to `VListModel`.
-    public static let listReference: VListModel = .init()
-
-    /// Sub-model containing layout properties.
-    public var layout: Layout = .init()
-
-    /// Sub-model containing color properties.
-    public var colors: Colors = .init()
-
-    /// Sub-model containing font properties.
-    public var fonts: Fonts = .init()
-
-    /// Sub-model containing misc properties.
-    public var misc: Misc = .init()
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes model with default values.
     public init() {}
 
+    // MARK: Public
+
     // MARK: Layout
 
     /// Sub-model containing layout properties.
     public struct Layout {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: Horizontal Margins
+
+        /// Sub-model containing `leading` and `trailing` margins.
+        public typealias HorizontalMargins = VBaseListModel.Layout.HorizontalMargins
+
         // MARK: Properties
 
         /// Table corner radius. Defaults to `15`.
@@ -62,22 +63,21 @@ public struct VSectionListModel {
 
         /// Divider margins. Defaults to `0` leading and `0` trailing.
         public var dividerMargins: HorizontalMargins = listReference.layout.dividerMargins
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: Horizontal Margins
-
-        /// Sub-model containing `leading` and `trailing` margins.
-        public typealias HorizontalMargins = VBaseListModel.Layout.HorizontalMargins
     }
 
     // MARK: Colors
 
     /// Sub-model containing color properties.
     public struct Colors {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Row divider color.
@@ -95,17 +95,21 @@ public struct VSectionListModel {
         ///
         /// Only applicable when using init with title.
         public var footerText: Color = ColorBook.secondary
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
 
     // MARK: Fonts
 
     /// Sub-model containing font properties.
     public struct Fonts {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Header font.
@@ -117,27 +121,45 @@ public struct VSectionListModel {
         ///
         /// Only applicable when using init with title.
         public var footer: Font = .system(size: 13)
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
 
     // MARK: Misc
 
     /// Sub-model containing misc properties.
     public struct Misc {
-        // MARK: Properties
-
-        /// Indicates if scrolling indicator is shown. Defaults to `true`.
-        public var showIndicator: Bool = true
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
         /// Initializes sub-model with default values.
         public init() {}
+
+        // MARK: Public
+
+        // MARK: Properties
+
+        /// Indicates if scrolling indicator is shown. Defaults to `true`.
+        public var showIndicator: Bool = true
     }
+
+    // MARK: Properties
+
+    /// Reference to `VListModel`.
+    public static let listReference: VListModel = .init()
+
+    /// Sub-model containing layout properties.
+    public var layout: Layout = .init()
+
+    /// Sub-model containing color properties.
+    public var colors: Colors = .init()
+
+    /// Sub-model containing font properties.
+    public var fonts: Fonts = .init()
+
+    /// Sub-model containing misc properties.
+    public var misc: Misc = .init()
+
+    // MARK: Internal
 
     // MARK: Sub-Models
 

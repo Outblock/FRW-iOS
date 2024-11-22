@@ -17,69 +17,10 @@ let StakingDefaultNormalApy: Double = 0.09
 private let StakeStartTime: TimeInterval = 1_666_825_200
 private let StakingGapSeconds: TimeInterval = 7 * 24 * 60 * 60
 
+// MARK: - StakingManager
+
 class StakingManager: ObservableObject {
-    static let shared = StakingManager()
-
-    private lazy var rootFolder = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("staking_cache")
-    private lazy var cacheFile = rootFolder.appendingPathComponent("cache_file")
-
-    @Published var nodeInfos: [StakingNode] = []
-    @Published var delegatorIds: [String: Int] = [:]
-    @Published var apy: Double = StakingDefaultApy
-    @Published var isSetup: Bool = false
-
-    private var cancelSet = Set<AnyCancellable>()
-
-    var stakingCount: Double {
-        return nodeInfos.reduce(0.0) { partialResult, node in
-            partialResult + node.tokensCommitted + node.tokensStaked
-        }
-    }
-
-    var dayRewards: Double {
-        let yearTotalRewards = nodeInfos.reduce(0.0) { partialResult, node in
-            let apy = node.isLilico ? apy : StakingDefaultNormalApy
-            return partialResult + (node.stakingCount * apy)
-        }
-
-        return yearTotalRewards / 365.0
-    }
-
-    var monthRewards: Double {
-        return dayRewards * 30
-    }
-
-    var dayRewardsASUSD: Double {
-        let coinRate = CoinRateCache.cache.getSummary(for: "flow")?.getLastRate() ?? 0
-        return dayRewards * coinRate
-    }
-
-    var monthRewardsASUSD: Double {
-        let coinRate = CoinRateCache.cache.getSummary(for: "flow")?.getLastRate() ?? 0
-        return monthRewards * coinRate
-    }
-
-    var isStaked: Bool {
-        return stakingCount > 0
-    }
-
-    var stakingEpochStartTime: Date {
-        let current = Date().timeIntervalSince1970
-        var startTime = StakeStartTime
-        while startTime + StakingGapSeconds < current {
-            startTime += StakingGapSeconds
-        }
-
-        return Date(timeIntervalSince1970: startTime)
-    }
-
-    var stakingEpochEndTime: Date {
-        return stakingEpochStartTime.addingTimeInterval(StakingGapSeconds)
-    }
-
-    func providerForNodeId(_ nodeId: String) -> StakingProvider? {
-        return StakingProviderCache.cache.providers.first { $0.id == nodeId }
-    }
+    // MARK: Lifecycle
 
     init() {
         _ = StakingProviderCache.cache
@@ -115,6 +56,74 @@ class StakingManager: ObservableObject {
                     self.refresh()
                 }
             }.store(in: &cancelSet)
+    }
+
+    // MARK: Internal
+
+    static let shared = StakingManager()
+
+    @Published
+    var nodeInfos: [StakingNode] = []
+    @Published
+    var delegatorIds: [String: Int] = [:]
+    @Published
+    var apy: Double = StakingDefaultApy
+    @Published
+    var isSetup: Bool = false
+
+    var stakingCount: Double {
+        nodeInfos.reduce(0.0) { partialResult, node in
+            partialResult + node.tokensCommitted + node.tokensStaked
+        }
+    }
+
+    var dayRewards: Double {
+        let yearTotalRewards = nodeInfos.reduce(0.0) { partialResult, node in
+            let apy = node.isLilico ? apy : StakingDefaultNormalApy
+            return partialResult + (node.stakingCount * apy)
+        }
+
+        return yearTotalRewards / 365.0
+    }
+
+    var monthRewards: Double {
+        dayRewards * 30
+    }
+
+    var dayRewardsASUSD: Double {
+        let token = WalletManager.shared.flowToken
+        let coinRate = CoinRateCache.cache.getSummary(by: token?.contractId ?? "")?
+            .getLastRate() ?? 0
+        return dayRewards * coinRate
+    }
+
+    var monthRewardsASUSD: Double {
+        let token = WalletManager.shared.flowToken
+        let coinRate = CoinRateCache.cache.getSummary(by: token?.contractId ?? "")?
+            .getLastRate() ?? 0
+        return monthRewards * coinRate
+    }
+
+    var isStaked: Bool {
+        stakingCount > 0
+    }
+
+    var stakingEpochStartTime: Date {
+        let current = Date().timeIntervalSince1970
+        var startTime = StakeStartTime
+        while startTime + StakingGapSeconds < current {
+            startTime += StakingGapSeconds
+        }
+
+        return Date(timeIntervalSince1970: startTime)
+    }
+
+    var stakingEpochEndTime: Date {
+        stakingEpochStartTime.addingTimeInterval(StakingGapSeconds)
+    }
+
+    func providerForNodeId(_ nodeId: String) -> StakingProvider? {
+        StakingProviderCache.cache.providers.first { $0.id == nodeId }
     }
 
     func refresh() {
@@ -162,40 +171,68 @@ class StakingManager: ObservableObject {
     }
 
     func claimReward(nodeID: String, delegatorId: Int, amount: Decimal) async throws -> Flow.ID {
-        let txId = try await FlowNetwork.claimReward(nodeID: nodeID, delegatorId: delegatorId, amount: amount)
+        let txId = try await FlowNetwork.claimReward(
+            nodeID: nodeID,
+            delegatorId: delegatorId,
+            amount: amount
+        )
         let holder = TransactionManager.TransactionHolder(id: txId, type: .stakeFlow)
         TransactionManager.shared.newTransaction(holder: holder)
         return txId
     }
 
     func reStakeReward(nodeID: String, delegatorId: Int, amount: Decimal) async throws -> Flow.ID {
-        let txId = try await FlowNetwork.reStakeReward(nodeID: nodeID, delegatorId: delegatorId, amount: amount)
+        let txId = try await FlowNetwork.reStakeReward(
+            nodeID: nodeID,
+            delegatorId: delegatorId,
+            amount: amount
+        )
         let holder = TransactionManager.TransactionHolder(id: txId, type: .stakeFlow)
         TransactionManager.shared.newTransaction(holder: holder)
         return txId
     }
 
     func claimUnstake(nodeID: String, delegatorId: Int, amount: Decimal) async throws -> Flow.ID {
-        let txId = try await FlowNetwork.claimUnstake(nodeID: nodeID, delegatorId: delegatorId, amount: amount)
+        let txId = try await FlowNetwork.claimUnstake(
+            nodeID: nodeID,
+            delegatorId: delegatorId,
+            amount: amount
+        )
         let holder = TransactionManager.TransactionHolder(id: txId, type: .stakeFlow)
         TransactionManager.shared.newTransaction(holder: holder)
         return txId
     }
 
     func reStakeUnstake(nodeID: String, delegatorId: Int, amount: Decimal) async throws -> Flow.ID {
-        let txId = try await FlowNetwork.reStakeUnstake(nodeID: nodeID, delegatorId: delegatorId, amount: amount)
+        let txId = try await FlowNetwork.reStakeUnstake(
+            nodeID: nodeID,
+            delegatorId: delegatorId,
+            amount: amount
+        )
         let holder = TransactionManager.TransactionHolder(id: txId, type: .stakeFlow)
         TransactionManager.shared.newTransaction(holder: holder)
         return txId
     }
 
     func goStakingAction() {
-        if nodeInfos.count == 1, let node = nodeInfos.first, let provider = StakingProviderCache.cache.providers.first(where: { $0.id == node.nodeID }) {
+        if nodeInfos.count == 1, let node = nodeInfos.first,
+           let provider = StakingProviderCache.cache.providers
+           .first(where: { $0.id == node.nodeID }) {
             Router.route(to: RouteMap.Wallet.stakeDetail(provider, node))
         } else {
             Router.route(to: RouteMap.Wallet.stakingList)
         }
     }
+
+    // MARK: Private
+
+    private lazy var rootFolder = FileManager.default.urls(
+        for: .cachesDirectory,
+        in: .userDomainMask
+    ).first!.appendingPathComponent("staking_cache")
+    private lazy var cacheFile = rootFolder.appendingPathComponent("cache_file")
+
+    private var cancelSet = Set<AnyCancellable>()
 }
 
 extension StakingManager {
@@ -288,7 +325,8 @@ extension StakingManager {
         }
     }
 
-    @objc private func clean() {
+    @objc
+    private func clean() {
         nodeInfos = []
         delegatorIds.removeAll()
         apy = StakingDefaultApy
@@ -308,7 +346,10 @@ extension StakingManager {
     private func createFolderIfNeeded() {
         do {
             if !FileManager.default.fileExists(atPath: rootFolder.relativePath) {
-                try FileManager.default.createDirectory(at: rootFolder, withIntermediateDirectories: true)
+                try FileManager.default.createDirectory(
+                    at: rootFolder,
+                    withIntermediateDirectories: true
+                )
             }
         } catch {
             debugPrint("StakingManager -> createFolderIfNeeded error: \(error)")

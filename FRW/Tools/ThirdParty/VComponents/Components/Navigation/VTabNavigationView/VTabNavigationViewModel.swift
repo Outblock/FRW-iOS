@@ -11,20 +11,28 @@ import SwiftUI
 
 /// Model that describes UI.
 public struct VTabNavigationViewModel {
-    // MARK: Properties
-
-    /// Sub-model containing color properties.
-    public var colors: Colors = .init()
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes model with default values.
     public init() {}
 
+    // MARK: Public
+
     // MARK: Colors
 
     /// Sub-model containing color properties.
     public struct Colors {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Background color.
@@ -35,10 +43,10 @@ public struct VTabNavigationViewModel {
 
         /// Selected tab item color.
         public var selectedItem: Color = ColorBook.accent
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
+
+    // MARK: Properties
+
+    /// Sub-model containing color properties.
+    public var colors: Colors = .init()
 }

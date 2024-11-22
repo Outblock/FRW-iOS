@@ -19,6 +19,8 @@ public enum VMenuState: Int, CaseIterable {
     /// Disabled.
     case disabled
 
+    // MARK: Public
+
     // MARK: Properties
 
     /// Indicates is state is enabled.

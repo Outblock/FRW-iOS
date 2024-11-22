@@ -9,11 +9,15 @@ import SwiftUI
 
 private let TimerDelay: TimeInterval = 0.4
 
+// MARK: - SwapViewModel.ErrorType
+
 extension SwapViewModel {
     enum ErrorType {
         case none
         case notNum
         case insufficientBalance
+
+        // MARK: Internal
 
         var desc: String {
             switch self {
@@ -28,26 +32,38 @@ extension SwapViewModel {
     }
 }
 
+// MARK: - SwapViewModel
+
 class SwapViewModel: ObservableObject {
-    @Published var inputFromText: String = ""
-    @Published var inputToText: String = ""
-    @Published var fromToken: TokenModel?
-    @Published var toToken: TokenModel?
-    @Published var isRequesting: Bool = false
-    @Published var isConfirming: Bool = false
-    @Published var estimateResponse: SwapEstimateResponse?
-    @Published var errorType: SwapViewModel.ErrorType = .none
-    @Published var showConfirmView: Bool = false
+    // MARK: Lifecycle
+
+    init(defaultFromToken: TokenModel?) {
+        self.fromToken = defaultFromToken
+    }
+
+    // MARK: Internal
+
+    @Published
+    var inputFromText: String = ""
+    @Published
+    var inputToText: String = ""
+    @Published
+    var fromToken: TokenModel?
+    @Published
+    var toToken: TokenModel?
+    @Published
+    var isRequesting: Bool = false
+    @Published
+    var isConfirming: Bool = false
+    @Published
+    var estimateResponse: SwapEstimateResponse?
+    @Published
+    var errorType: SwapViewModel.ErrorType = .none
+    @Published
+    var showConfirmView: Bool = false
 
     var oldInputFromText: String = ""
     var oldInputToText: String = ""
-
-    private var timer: Timer?
-    private var requestIsFromInput: Bool = true
-
-    init(defaultFromToken: TokenModel?) {
-        fromToken = defaultFromToken
-    }
 
     var buttonState: VPrimaryButtonState {
         if isRequesting {
@@ -74,11 +90,13 @@ class SwapViewModel: ObservableObject {
     }
 
     var rateText: String {
-        guard let fromToken = fromToken, let toToken = toToken, let response = estimateResponse else {
+        guard let fromToken = fromToken, let toToken = toToken,
+              let response = estimateResponse else {
             return ""
         }
 
-        guard let amountIn = response.routes.first??.routeAmountIn, let amountOut = response.routes.first??.routeAmountOut else {
+        guard let amountIn = response.routes.first??.routeAmountIn,
+              let amountOut = response.routes.first??.routeAmountOut else {
             return ""
         }
 
@@ -86,24 +104,33 @@ class SwapViewModel: ObservableObject {
     }
 
     var fromAmount: Double {
-        return inputFromText.doubleValue
+        inputFromText.doubleValue
     }
 
     var toAmount: Double {
-        return inputToText.doubleValue
+        inputToText.doubleValue
     }
 
     var fromTokenRate: Double {
-        return CoinRateCache.cache.getSummary(for: fromToken?.symbol ?? "")?.getLastRate() ?? 0
+        CoinRateCache.cache
+            .getSummary(by: fromToken?.contractId ?? "")?
+            .getLastRate() ?? 0
     }
 
     var toTokenRate: Double {
-        return CoinRateCache.cache.getSummary(for: toToken?.symbol ?? "")?.getLastRate() ?? 0
+        CoinRateCache.cache
+            .getSummary(by: toToken?.contractId ?? "")?
+            .getLastRate() ?? 0
     }
 
     var fromPriceAmountString: String {
-        return (fromAmount * fromTokenRate).formatCurrencyString(considerCustomCurrency: true)
+        (fromAmount * fromTokenRate).formatCurrencyString(considerCustomCurrency: true)
     }
+
+    // MARK: Private
+
+    private var timer: Timer?
+    private var requestIsFromInput: Bool = true
 }
 
 extension SwapViewModel {
@@ -124,7 +151,8 @@ extension SwapViewModel {
         startTimer()
     }
 
-    @objc private func doRequestEstimate() {
+    @objc
+    private func doRequestEstimate() {
         guard let fromToken = fromToken, let toToken = toToken else {
             return
         }
@@ -141,13 +169,21 @@ extension SwapViewModel {
 
         Task {
             do {
-                let request = SwapEstimateRequest(inToken: fromToken.contractId, outToken: toToken.contractId, inAmount: localIsFromInput ? fromAmount : nil, outAmount: localIsFromInput ? nil : toAmount)
-                let response: SwapEstimateResponse = try await Network.request(FRWWebEndpoint.swapEstimate(request))
+                let request = SwapEstimateRequest(
+                    inToken: fromToken.contractId,
+                    outToken: toToken.contractId,
+                    inAmount: localIsFromInput ? fromAmount : nil,
+                    outAmount: localIsFromInput ? nil : toAmount
+                )
+                let response: SwapEstimateResponse = try await Network
+                    .request(FRWWebEndpoint.swapEstimate(request))
 
                 DispatchQueue.main.async {
                     self.isRequesting = false
 
-                    if fromToken.contractId != self.fromToken?.contractId || toToken.contractId != self.toToken?.contractId || localIsFromInput != self.requestIsFromInput {
+                    if fromToken.contractId != self.fromToken?.contractId || toToken
+                        .contractId != self.toToken?.contractId || localIsFromInput != self
+                        .requestIsFromInput {
                         // invalid response
                         return
                     }
@@ -185,7 +221,13 @@ extension SwapViewModel {
     private func startTimer() {
         stopTimer()
 
-        let timer = Timer(timeInterval: TimerDelay, target: self, selector: #selector(doRequestEstimate), userInfo: nil, repeats: false)
+        let timer = Timer(
+            timeInterval: TimerDelay,
+            target: self,
+            selector: #selector(doRequestEstimate),
+            userInfo: nil,
+            repeats: false
+        )
         RunLoop.main.add(timer, forMode: .common)
         self.timer = timer
     }
@@ -198,7 +240,7 @@ extension SwapViewModel {
     }
 
     private func refreshInput() {
-        guard let fromTokenSymbol = fromToken?.symbol else {
+        guard let contractId = fromToken?.contractId else {
             return
         }
 
@@ -207,7 +249,8 @@ extension SwapViewModel {
             return
         }
 
-        if fromAmount > WalletManager.shared.getBalance(bySymbol: fromTokenSymbol) {
+        if fromAmount > WalletManager.shared
+            .getBalance(byId: contractId).doubleValue {
             errorType = .insufficientBalance
         } else {
             errorType = .none
@@ -277,16 +320,20 @@ extension SwapViewModel {
             disableTokens.append(fromToken)
         }
 
-        Router.route(to: RouteMap.Wallet.selectToken(isFrom ? fromToken : toToken, disableTokens) { selectedToken in
-            if isFrom {
-                self.fromToken = selectedToken
-                self.refreshInput()
-            } else {
-                self.toToken = selectedToken
-            }
+        Router
+            .route(
+                to: RouteMap.Wallet
+                    .selectToken(isFrom ? fromToken : toToken, disableTokens) { selectedToken in
+                        if isFrom {
+                            self.fromToken = selectedToken
+                            self.refreshInput()
+                        } else {
+                            self.toToken = selectedToken
+                        }
 
-            self.requestEstimate(isFromInput: isFrom)
-        })
+                        self.requestEstimate(isFromInput: isFrom)
+                    }
+            )
     }
 
     func switchTokenAction() {
@@ -303,11 +350,13 @@ extension SwapViewModel {
     }
 
     func maxAction() {
-        guard let symbol = fromToken?.symbol else {
+        guard let contractId = fromToken?.contractId else {
             return
         }
 
-        inputFromText = WalletManager.shared.getBalance(bySymbol: symbol).formatCurrencyString()
+        inputFromText = WalletManager.shared
+            .getBalance(byId: contractId).doubleValue
+            .formatCurrencyString()
     }
 
     func swapAction() {
@@ -315,7 +364,8 @@ extension SwapViewModel {
     }
 
     func confirmSwapAction() {
-        guard let response = estimateResponse, let fromToken = fromToken, let toToken = toToken else {
+        guard let response = estimateResponse, let fromToken = fromToken,
+              let toToken = toToken else {
             return
         }
 
@@ -335,10 +385,32 @@ extension SwapViewModel {
                 let estimateIn = response.tokenInAmount
                 let amountInMax = Decimal(Double(estimateIn / (1.0 - slippageRate)))
 
-                let txid = try await FlowNetwork.swapToken(swapPaths: tokenKeyFlatSplitPath, tokenInMax: amountInMax, tokenOutMin: amountOutMin, tokenInVaultPath: String(storageIn.vault.split(separator: "/").last ?? ""), tokenOutSplit: amountOutSplit, tokenInSplit: amountInSplit, tokenOutVaultPath: String(storageOut.vault.split(separator: "/").last ?? ""), tokenOutReceiverPath: String(storageOut.receiver.split(separator: "/").last ?? ""), tokenOutBalancePath: String(storageOut.balance.split(separator: "/").last ?? ""), deadline: deadline, isFrom: self.requestIsFromInput)
+                let txid = try await FlowNetwork.swapToken(
+                    swapPaths: tokenKeyFlatSplitPath,
+                    tokenInMax: amountInMax,
+                    tokenOutMin: amountOutMin,
+                    tokenInVaultPath: String(storageIn.vault.split(separator: "/").last ?? ""),
+                    tokenOutSplit: amountOutSplit,
+                    tokenInSplit: amountInSplit,
+                    tokenOutVaultPath: String(storageOut.vault.split(separator: "/").last ?? ""),
+                    tokenOutReceiverPath: String(
+                        storageOut.receiver.split(separator: "/")
+                            .last ?? ""
+                    ),
+                    tokenOutBalancePath: String(
+                        storageOut.balance.split(separator: "/")
+                            .last ?? ""
+                    ),
+                    deadline: deadline,
+                    isFrom: self.requestIsFromInput
+                )
 
                 let data = try JSONEncoder().encode(response)
-                let holder = TransactionManager.TransactionHolder(id: txid, type: .common, data: data)
+                let holder = TransactionManager.TransactionHolder(
+                    id: txid,
+                    type: .common,
+                    data: data
+                )
 
                 DispatchQueue.main.async {
                     self.isConfirming = false

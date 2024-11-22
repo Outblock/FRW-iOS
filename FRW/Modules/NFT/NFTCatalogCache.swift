@@ -7,20 +7,21 @@
 
 import Foundation
 
+// MARK: - NFTCatalogCache
+
 class NFTCatalogCache {
-    var isLoading: Bool = true
-
-    static let cache = NFTCatalogCache()
-
-    private var collectionList: [NFTCollectionItem] = []
-
-    private lazy var rootFolder = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("nft_catalog")
-    private lazy var file = rootFolder.appendingPathComponent("list")
+    // MARK: Lifecycle
 
     private init() {
         createFolderIfNeed()
         load()
     }
+
+    // MARK: Internal
+
+    static let cache = NFTCatalogCache()
+
+    var isLoading: Bool = true
 
     func fetchIfNeed() {
         let cur = Int(CFAbsoluteTime())
@@ -32,6 +33,23 @@ class NFTCatalogCache {
             }
         }
     }
+
+    func find(by collectionName: String) -> NFTCollectionItem? {
+        let result = collectionList.first { item in
+            item.collection.contractName?.contains(collectionName) ?? false
+        }
+        return result
+    }
+
+    // MARK: Private
+
+    private var collectionList: [NFTCollectionItem] = []
+
+    private lazy var rootFolder = FileManager.default.urls(
+        for: .cachesDirectory,
+        in: .userDomainMask
+    ).first!.appendingPathComponent("nft_catalog")
+    private lazy var file = rootFolder.appendingPathComponent("list")
 
     private func fetch() async {
         isLoading = true
@@ -83,20 +101,16 @@ class NFTCatalogCache {
             debugPrint("NFTUIKitCache -> saveCurrentFavToCache error: \(error)")
         }
     }
-
-    func find(by collectionName: String) -> NFTCollectionItem? {
-        let result = collectionList.first { item in
-            item.collection.contractName?.contains(collectionName) ?? false
-        }
-        return result
-    }
 }
 
 extension NFTCatalogCache {
     private func createFolderIfNeed() {
         do {
             if !FileManager.default.fileExists(atPath: rootFolder.relativePath) {
-                try FileManager.default.createDirectory(at: rootFolder, withIntermediateDirectories: true)
+                try FileManager.default.createDirectory(
+                    at: rootFolder,
+                    withIntermediateDirectories: true
+                )
             }
         } catch {
             debugPrint("NFTCatalog -> createFolderIfNeeded error: \(error)")

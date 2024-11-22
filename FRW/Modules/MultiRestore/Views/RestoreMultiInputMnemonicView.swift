@@ -8,12 +8,15 @@
 import SwiftUI
 
 struct RestoreMultiInputMnemonicView: RouteableView {
-    @StateObject private var viewModel = RestoreMultiInputMnemonicViewModel()
-    var callback: (String) -> Void
+    // MARK: Lifecycle
 
-    var title: String {
-        return ""
+    init(callback: @escaping (String) -> Void) {
+        self.callback = callback
     }
+
+    // MARK: Internal
+
+    var callback: (String) -> Void
 
     var model: VTextFieldModel = {
         var model = TextFieldStyle.primary
@@ -22,19 +25,8 @@ struct RestoreMultiInputMnemonicView: RouteableView {
         return model
     }()
 
-    private var accountNotFoundDesc: NSAttributedString = {
-        let normalDict = [NSAttributedString.Key.foregroundColor: UIColor.LL.Neutrals.text]
-        let highlightDict = [NSAttributedString.Key.foregroundColor: UIColor.LL.Primary.salmonPrimary]
-
-        var str = NSMutableAttributedString(string: "account_not_found_prev".localized, attributes: normalDict)
-        str.append(NSAttributedString(string: "account_not_found_highlight".localized, attributes: highlightDict))
-        str.append(NSAttributedString(string: "account_not_found_suff".localized, attributes: normalDict))
-
-        return str
-    }()
-
-    init(callback: @escaping (String) -> Void) {
-        self.callback = callback
+    var title: String {
+        ""
     }
 
     var body: some View {
@@ -104,13 +96,16 @@ struct RestoreMultiInputMnemonicView: RouteableView {
             .opacity(viewModel.hasError ? 1 : 0)
             .animation(.linear, value: viewModel.hasError)
 
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: viewModel.nextEnable ? .enabled : .disabled,
-                           action: {
-                               callback(viewModel.getRawMnemonic())
-                               Router.pop()
-                           }, title: "confirm_tag".localized)
-                .padding(.horizontal, 28)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: viewModel.nextEnable ? .enabled : .disabled,
+                action: {
+                    callback(viewModel.getRawMnemonic())
+                    Router.pop()
+                },
+                title: "confirm_tag".localized
+            )
+            .padding(.horizontal, 28)
 
             Spacer()
 
@@ -143,8 +138,42 @@ struct RestoreMultiInputMnemonicView: RouteableView {
         }
         .backgroundFill(Color.LL.background)
         .applyRouteable(self)
-        .customAlertView(isPresented: $viewModel.isAlertViewPresented, title: "account_not_found".localized, attributedDesc: accountNotFoundDesc, buttons: [AlertView.ButtonItem(type: .confirm, title: "create_wallet".localized, action: {})])
+        .customAlertView(
+            isPresented: $viewModel.isAlertViewPresented,
+            title: "account_not_found".localized,
+            attributedDesc: accountNotFoundDesc,
+            buttons: [AlertView.ButtonItem(
+                type: .confirm,
+                title: "create_wallet".localized,
+                action: {}
+            )]
+        )
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var viewModel = RestoreMultiInputMnemonicViewModel()
+    private var accountNotFoundDesc: NSAttributedString = {
+        let normalDict = [NSAttributedString.Key.foregroundColor: UIColor.LL.Neutrals.text]
+        let highlightDict =
+            [NSAttributedString.Key.foregroundColor: UIColor.LL.Primary.salmonPrimary]
+
+        var str = NSMutableAttributedString(
+            string: "account_not_found_prev".localized,
+            attributes: normalDict
+        )
+        str.append(NSAttributedString(
+            string: "account_not_found_highlight".localized,
+            attributes: highlightDict
+        ))
+        str.append(NSAttributedString(
+            string: "account_not_found_suff".localized,
+            attributes: normalDict
+        ))
+
+        return str
+    }()
 }
 
 #Preview {

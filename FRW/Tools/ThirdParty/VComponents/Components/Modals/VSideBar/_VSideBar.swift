@@ -7,17 +7,10 @@
 
 import SwiftUI
 
-// MARK: - _ V Side Bar
+// MARK: - _VSideBar
 
 struct _VSideBar<Content>: View where Content: View {
-    // MARK: Properties
-
-    private let model: VSideBarModel
-
-    @Binding private var isHCPresented: Bool
-    @State private var isViewPresented: Bool = false
-
-    private let content: () -> Content
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -31,6 +24,8 @@ struct _VSideBar<Content>: View where Content: View {
         self.content = content
     }
 
+    // MARK: Internal
+
     // MARK: Body
 
     var body: some View {
@@ -41,6 +36,19 @@ struct _VSideBar<Content>: View where Content: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear(perform: animateIn)
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VSideBarModel
+
+    @Binding
+    private var isHCPresented: Bool
+    @State
+    private var isViewPresented: Bool = false
+
+    private let content: () -> Content
 
     private var blinding: some View {
         model.colors.blinding
@@ -76,7 +84,10 @@ struct _VSideBar<Content>: View where Content: View {
 
     private func animateOut() {
         withAnimation(model.animations.disappear?.asSwiftUIAnimation) { isViewPresented = false }
-        DispatchQueue.main.asyncAfter(deadline: .now() + (model.animations.disappear?.duration ?? 0)) { isHCPresented = false }
+        DispatchQueue.main
+            .asyncAfter(deadline: .now() + (model.animations.disappear?.duration ?? 0)) {
+                isHCPresented = false
+            }
     }
 
     // MARK: Gestures
@@ -91,7 +102,7 @@ struct _VSideBar<Content>: View where Content: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - VSideBar_Previews
 
 struct VSideBar_Previews: PreviewProvider {
     static var previews: some View {

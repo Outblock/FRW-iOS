@@ -8,6 +8,8 @@
 import Foundation
 import Moya
 
+// MARK: - FRWAPI.ChildAccount
+
 extension FRWAPI {
     enum ChildAccount {
         case collection(String, String)
@@ -17,13 +19,15 @@ extension FRWAPI {
     }
 }
 
+// MARK: - FRWAPI.ChildAccount + TargetType, AccessTokenAuthorizable
+
 extension FRWAPI.ChildAccount: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
-        return .bearer
+        .bearer
     }
 
     var baseURL: URL {
-        return Config.get(.lilicoWeb)
+        Config.get(.lilicoWeb)
     }
 
     var path: String {
@@ -52,15 +56,24 @@ extension FRWAPI.ChildAccount: TargetType, AccessTokenAuthorizable {
     var task: Task {
         switch self {
         case let .collection(address, childAddress):
-            return .requestParameters(parameters: ["address": address, "childAddress": childAddress], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: ["address": address, "childAddress": childAddress],
+                encoding: URLEncoding.queryString
+            )
         case let .collectionInfo(addr, path):
-            return .requestParameters(parameters: ["address": addr, "path": path], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: ["address": addr, "path": path],
+                encoding: URLEncoding.queryString
+            )
         case let .nftList(addr, path, offset, limit):
-            return .requestParameters(parameters: ["address": addr, "path": path, "offset": offset, "limit": limit], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: ["address": addr, "path": path, "offset": offset, "limit": limit],
+                encoding: URLEncoding.queryString
+            )
         }
     }
 
     var headers: [String: String]? {
-        return FRWAPI.commonHeaders
+        FRWAPI.commonHeaders
     }
 }

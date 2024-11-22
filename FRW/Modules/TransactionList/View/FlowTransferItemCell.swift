@@ -12,7 +12,47 @@ import UIKit
 
 private let IconImageWidth: CGFloat = 32
 
+// MARK: - FlowTransferItemCell
+
 class FlowTransferItemCell: UICollectionViewCell {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError()
+    }
+
+    // MARK: Internal
+
+    func config(_ model: FlowScanTransfer) {
+        iconImageView.kf.setImage(
+            with: URL(string: model.image ?? ""),
+            placeholder: UIImage(named: "placeholder")
+        )
+
+        let config = UIImage.SymbolConfiguration(scale: .large)
+        typeImageView.image = model.transferType == .send ? UIImage(
+            systemName: "arrow.up.right",
+            withConfiguration: config
+        ) : UIImage(systemName: "arrow.down.left", withConfiguration: config)
+        titleLabel.text = model.title ?? ""
+
+        amountlabel.text = model.amountString
+        amountlabel.isHidden = amountlabel.text == "-"
+
+        statusLabel.textColor = model.statusColor
+        statusLabel.text = model.statusText
+
+        descLabel.text = model.transferDesc
+    }
+
+    // MARK: Private
+
     private lazy var iconImageView: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(named: "icon-transaction-default")
@@ -73,16 +113,6 @@ class FlowTransferItemCell: UICollectionViewCell {
         return view
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError()
-    }
-
     private func setup() {
         contentView.backgroundColor = .clear
 
@@ -111,21 +141,5 @@ class FlowTransferItemCell: UICollectionViewCell {
             make.right.equalToSuperview().offset(-18)
             make.width.greaterThanOrEqualTo(60)
         }
-    }
-
-    func config(_ model: FlowScanTransfer) {
-        iconImageView.kf.setImage(with: URL(string: model.image ?? ""), placeholder: UIImage(named: "placeholder"))
-
-        let config = UIImage.SymbolConfiguration(scale: .large)
-        typeImageView.image = model.transferType == .send ? UIImage(systemName: "arrow.up.right", withConfiguration: config) : UIImage(systemName: "arrow.down.left", withConfiguration: config)
-        titleLabel.text = model.title ?? ""
-
-        amountlabel.text = model.amountString
-        amountlabel.isHidden = amountlabel.text == "-"
-
-        statusLabel.textColor = model.statusColor
-        statusLabel.text = model.statusText
-
-        descLabel.text = model.transferDesc
     }
 }

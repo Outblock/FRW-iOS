@@ -8,6 +8,8 @@
 import Foundation
 import Moya
 
+// MARK: - FRWAPI.Utils
+
 extension FRWAPI {
     enum Utils {
         case currencyRate(Currency)
@@ -15,6 +17,8 @@ extension FRWAPI {
         case flowAddress(String)
     }
 }
+
+// MARK: - FRWAPI.Utils + TargetType, AccessTokenAuthorizable
 
 extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
@@ -34,9 +38,9 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
             return Config.get(.lilico)
         case .retoken:
             #if LILICOPROD
-                return .init(string: "https://scanner.lilico.app")!
+            return .init(string: "https://scanner.lilico.app")!
             #else
-                return .init(string: "https://dev-scanner.lilico.app")!
+            return .init(string: "https://dev-scanner.lilico.app")!
             #endif
         case .flowAddress:
             return .init(string: "https://production.key-indexer.flow.com/")!
@@ -67,7 +71,10 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
     var task: Task {
         switch self {
         case let .currencyRate(toCurrency):
-            return .requestParameters(parameters: ["from": "USD", "to": toCurrency.rawValue], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: ["from": "USD", "to": toCurrency.rawValue],
+                encoding: URLEncoding.queryString
+            )
         case let .retoken(token, address):
             return .requestJSONEncodable(["token": token, "address": address])
         case .flowAddress:

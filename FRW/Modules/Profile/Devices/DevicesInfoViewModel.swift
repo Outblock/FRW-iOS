@@ -8,34 +8,42 @@
 import Flow
 import SwiftUI
 
+// MARK: - DevicesInfoViewModel
+
 class DevicesInfoViewModel: ObservableObject {
-    @Published var showRemoveTipView = false
-    @Published var showRevokeButton = false
-    var model: DeviceInfoModel
-    var accountKey: Flow.AccountKey?
-    var userKey: KeyDeviceModel?
+    // MARK: Lifecycle
 
     init(model: DeviceInfoModel) {
         self.model = model
         if let deviceId = self.model.id {
-            accountKey = DeviceManager.shared.findFlowAccount(deviceId: deviceId)
-            userKey = DeviceManager.shared.findUserKey(deviceId: deviceId)
+            self.accountKey = DeviceManager.shared.findFlowAccount(deviceId: deviceId)
+            self.userKey = DeviceManager.shared.findUserKey(deviceId: deviceId)
             let localKey = WalletManager.shared.getCurrentPublicKey()
             if DeviceManager.shared.isCurrent(deviceId: deviceId) {
-                showRevokeButton = false
+                self.showRevokeButton = false
             } else if accountKey != nil {
                 if localKey == accountKey?.publicKey.description {
-                    showRevokeButton = false
+                    self.showRevokeButton = false
                 } else {
-                    showRevokeButton = true
+                    self.showRevokeButton = true
                 }
             } else {
-                showRevokeButton = false
+                self.showRevokeButton = false
             }
         } else {
-            showRevokeButton = false
+            self.showRevokeButton = false
         }
     }
+
+    // MARK: Internal
+
+    @Published
+    var showRemoveTipView = false
+    @Published
+    var showRevokeButton = false
+    var model: DeviceInfoModel
+    var accountKey: Flow.AccountKey?
+    var userKey: KeyDeviceModel?
 
     func onRevoke() {
         if showRemoveTipView {
@@ -75,7 +83,8 @@ class DevicesInfoViewModel: ObservableObject {
             }
             return
         }
-        guard let cur = WalletManager.shared.getCurrentPublicKey(), cur != accountKey.publicKey.description else {
+        guard let cur = WalletManager.shared.getCurrentPublicKey(),
+              cur != accountKey.publicKey.description else {
             HUD.info(title: "account_key_current_tips".localized)
             withAnimation(.easeOut(duration: 0.2)) {
                 showRemoveTipView = false
@@ -113,10 +122,10 @@ extension DevicesInfoViewModel {
     }
 
     var showKeyTitleColor: Color {
-        return isCurrent ? Color.Theme.Accent.blue : Color.Theme.Text.black3
+        isCurrent ? Color.Theme.Accent.blue : Color.Theme.Text.black3
     }
 
     var isCurrent: Bool {
-        return DeviceManager.shared.isCurrent(deviceId: model.id ?? "")
+        DeviceManager.shared.isCurrent(deviceId: model.id ?? "")
     }
 }

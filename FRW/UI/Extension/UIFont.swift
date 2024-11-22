@@ -8,8 +8,8 @@
 import UIKit
 
 extension UIFont {
-    var bold: UIFont { return withWeight(.bold) }
-    var semibold: UIFont { return withWeight(.semibold) }
+    var bold: UIFont { withWeight(.bold) }
+    var semibold: UIFont { withWeight(.semibold) }
 
     private func withWeight(_ weight: UIFont.Weight) -> UIFont {
         var attributes = fontDescriptor.fontAttributes
@@ -33,22 +33,22 @@ extension UIFont {
 
 extension UIFont {
     static func interMedium(size: CGFloat) -> UIFont {
-        return UIFont(name: "e-Ukraine-Medium", size: size)!
+        UIFont(name: "e-Ukraine-Medium", size: size)!
     }
 
     static func interSemiBold(size: CGFloat) -> UIFont {
-        return UIFont(name: "e-Ukraine-Bold", size: size)!
+        UIFont(name: "e-Ukraine-Bold", size: size)!
     }
 
     static func interBold(size: CGFloat) -> UIFont {
-        return UIFont(name: "e-Ukraine-Bold", size: size)!
+        UIFont(name: "e-Ukraine-Bold", size: size)!
     }
 
     static func inter(size: CGFloat) -> UIFont {
-        return UIFont(name: "e-Ukraine-Regular", size: size)!
+        UIFont(name: "e-Ukraine-Regular", size: size)!
     }
 
     static func montserratBold(size: CGFloat) -> UIFont {
-        return UIFont(name: "Montserrat-Bold", size: size)!
+        UIFont(name: "Montserrat-Bold", size: size)!
     }
 }

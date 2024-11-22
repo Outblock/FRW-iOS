@@ -10,14 +10,17 @@ import Kingfisher
 import SwiftUI
 import UIKit
 
+// MARK: - StakingListItemModel
+
 struct StakingListItemModel {
     let provider: StakingProvider
     let nodeInfo: StakingNode
 }
 
+// MARK: - StakingListViewModel
+
 class StakingListViewModel: ObservableObject {
-    @Published var items: [StakingListItemModel] = []
-    private var cancelSet = Set<AnyCancellable>()
+    // MARK: Lifecycle
 
     init() {
         StakingManager.shared.$nodeInfos.sink { [weak self] _ in
@@ -28,8 +31,14 @@ class StakingListViewModel: ObservableObject {
         StakingManager.shared.refresh()
     }
 
+    // MARK: Internal
+
+    @Published
+    var items: [StakingListItemModel] = []
+
     func claimReward(node: StakingNode) {
-        guard let delegatorId = StakingManager.shared.providerForNodeId(node.nodeID)?.delegatorId else {
+        guard let delegatorId = StakingManager.shared.providerForNodeId(node.nodeID)?.delegatorId
+        else {
             return
         }
 
@@ -41,7 +50,11 @@ class StakingListViewModel: ObservableObject {
         Task {
             do {
                 HUD.loading("staking_claim_rewards".localized)
-                _ = try await StakingManager.shared.claimReward(nodeID: node.nodeID, delegatorId: delegatorId, amount: node.tokensRewarded.decimalValue)
+                _ = try await StakingManager.shared.claimReward(
+                    nodeID: node.nodeID,
+                    delegatorId: delegatorId,
+                    amount: node.tokensRewarded.decimalValue
+                )
                 HUD.dismissLoading()
             } catch {
                 debugPrint(error)
@@ -50,6 +63,10 @@ class StakingListViewModel: ObservableObject {
             }
         }
     }
+
+    // MARK: Private
+
+    private var cancelSet = Set<AnyCancellable>()
 
     private func refresh() {
         var items = [StakingListItemModel]()
@@ -62,15 +79,17 @@ class StakingListViewModel: ObservableObject {
     }
 }
 
+// MARK: - StakingListView
+
 struct StakingListView: RouteableView {
-    @StateObject private var vm = StakingListViewModel()
+    // MARK: Internal
 
     var title: String {
-        return "staking_list_title".localized
+        "staking_list_title".localized
     }
 
     var navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
-        return .large
+        .large
     }
 
     var body: some View {
@@ -210,14 +229,28 @@ struct StakingListView: RouteableView {
     }
 
     func numAttributedString(num: Double) -> NSAttributedString {
-        let boldAttrs: [NSAttributedString.Key: Any] = [.font: UIFont.interBold(size: 18), .foregroundColor: UIColor.LL.Neutrals.text]
-        let normalAttrs: [NSAttributedString.Key: Any] = [.font: UIFont.interMedium(size: 12), .foregroundColor: UIColor.LL.Neutrals.text]
+        let boldAttrs: [NSAttributedString.Key: Any] = [
+            .font: UIFont.interBold(size: 18),
+            .foregroundColor: UIColor.LL.Neutrals.text,
+        ]
+        let normalAttrs: [NSAttributedString.Key: Any] = [
+            .font: UIFont.interMedium(size: 12),
+            .foregroundColor: UIColor.LL.Neutrals.text,
+        ]
 
-        let numStr = NSMutableAttributedString(string: "\(num.formatCurrencyString(digits: 3)) ", attributes: boldAttrs)
+        let numStr = NSMutableAttributedString(
+            string: "\(num.formatCurrencyString(digits: 3)) ",
+            attributes: boldAttrs
+        )
         let normalStr = NSAttributedString(string: "Flow", attributes: normalAttrs)
 
         numStr.append(normalStr)
 
         return numStr
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = StakingListViewModel()
 }

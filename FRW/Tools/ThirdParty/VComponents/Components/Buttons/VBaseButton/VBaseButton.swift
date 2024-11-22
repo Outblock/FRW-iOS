@@ -8,7 +8,7 @@
 import SwiftUI
 import UIKit
 
-// MARK: - V Base Button
+// MARK: - VBaseButton
 
 /// Core component that is used throughout the library as button.
 ///
@@ -43,13 +43,7 @@ import UIKit
 ///     }
 ///
 public struct VBaseButton<Content>: View where Content: View {
-    // MARK: Properties
-
-    private let state: VBaseButtonState
-
-    private var gestureHandler: (VBaseButtonGestureState) -> Void
-
-    private let content: () -> Content
+    // MARK: Lifecycle
 
     // MARK: Initializers - State
 
@@ -71,7 +65,7 @@ public struct VBaseButton<Content>: View where Content: View {
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.state = state
-        gestureHandler = { gestureState in if gestureState.isClicked { action() } }
+        self.gestureHandler = { gestureState in if gestureState.isClicked { action() } }
         self.content = content
     }
 
@@ -83,7 +77,7 @@ public struct VBaseButton<Content>: View where Content: View {
         gesture gestureHandler: @escaping (VBaseButtonGestureState) -> Void,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        state = .init(isEnabled: isEnabled)
+        self.state = .init(isEnabled: isEnabled)
         self.gestureHandler = gestureHandler
         self.content = content
     }
@@ -94,10 +88,12 @@ public struct VBaseButton<Content>: View where Content: View {
         action: @escaping () -> Void,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        state = .init(isEnabled: isEnabled)
-        gestureHandler = { gestureState in if gestureState.isClicked { action() } }
+        self.state = .init(isEnabled: isEnabled)
+        self.gestureHandler = { gestureState in if gestureState.isClicked { action() } }
         self.content = content
     }
+
+    // MARK: Public
 
     // MARK: Body
 
@@ -108,12 +104,22 @@ public struct VBaseButton<Content>: View where Content: View {
                 gesture: gestureHandler
             ))
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let state: VBaseButtonState
+
+    private var gestureHandler: (VBaseButtonGestureState) -> Void
+
+    private let content: () -> Content
 }
 
-// MARK: - Preview
+// MARK: - VBaseButton_Previews
 
 struct VBaseButton_Previews: PreviewProvider {
-    @State private static var state: VBaseButtonState = .enabled
+    // MARK: Internal
 
     static var previews: some View {
         VBaseButton(
@@ -128,4 +134,9 @@ struct VBaseButton_Previews: PreviewProvider {
             content: { Text("Lorem ipsum") }
         )
     }
+
+    // MARK: Private
+
+    @State
+    private static var state: VBaseButtonState = .enabled
 }

@@ -21,14 +21,14 @@ public typealias VNavigationLinkPreset = DerivedButtonPreset
 // MARK: - Button
 
 extension VNavigationLinkType {
-    @ViewBuilder static func navLinkButton<Content>(
+    @ViewBuilder
+    static func navLinkButton<Content>(
         buttonType: VNavigationLinkType,
         isEnabled: Bool,
         action: @escaping () -> Void,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View
-        where Content: View
-    {
+        where Content: View {
         switch buttonType {
         case let .primary(model):
             VPrimaryButton(

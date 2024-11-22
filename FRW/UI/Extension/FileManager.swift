@@ -7,9 +7,9 @@
 
 import Foundation
 
-public extension FileManager {
+extension FileManager {
     @discardableResult
-    func createFolder(_ url: URL) -> Bool {
+    public func createFolder(_ url: URL) -> Bool {
         do {
             try createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
             return true

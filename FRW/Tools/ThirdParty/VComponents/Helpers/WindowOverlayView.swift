@@ -7,14 +7,10 @@
 
 import SwiftUI
 
-// MARK: - Window Overlay View
+// MARK: - WindowOverlayView
 
 struct WindowOverlayView<Content>: UIViewControllerRepresentable where Content: View {
-    // MARK: Properties
-
-    private let allowsHitTesting: Bool
-    @Binding private var isPresented: Bool
-    private let content: Content
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -28,27 +24,38 @@ struct WindowOverlayView<Content>: UIViewControllerRepresentable where Content: 
         self.content = content
     }
 
+    // MARK: Internal
+
     // MARK: Representabe
 
     func makeUIViewController(context _: Context) -> WindowOverlayViewController<Content> {
         .init(allowsHitTesting: allowsHitTesting, content: content)
     }
 
-    func updateUIViewController(_ uiViewController: WindowOverlayViewController<Content>, context _: Context) {
+    func updateUIViewController(
+        _ uiViewController: WindowOverlayViewController<Content>,
+        context _: Context
+    ) {
         switch isPresented {
         case false: uiViewController.dismiss()
         case true: uiViewController.update(with: content)
         }
     }
-}
 
-// MARK: - Window Overlay View Controller
+    // MARK: Private
 
-final class WindowOverlayViewController<Content>: UIViewController where Content: View {
     // MARK: Properties
 
-    private let hostedViewTag: Int = 999_999_999
-    private var hostingController: UIHostingController<Content>!
+    private let allowsHitTesting: Bool
+    @Binding
+    private var isPresented: Bool
+    private let content: Content
+}
+
+// MARK: - WindowOverlayViewController
+
+final class WindowOverlayViewController<Content>: UIViewController where Content: View {
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -63,6 +70,28 @@ final class WindowOverlayViewController<Content>: UIViewController where Content
             content: content
         )
     }
+
+    // MARK: Fileprivate
+
+    // MARK: Updating
+
+    fileprivate func update(with content: Content) {
+        hostingController?.rootView = content
+    }
+
+    // MARK: Dismissing
+
+    fileprivate func dismiss() {
+        UIView.appRootView?.subviews.first(where: { $0.tag == hostedViewTag })?
+            .removeFromSuperview()
+    }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let hostedViewTag: Int = 999_999_999
+    private var hostingController: UIHostingController<Content>!
 
     // MARK: Presenting
 
@@ -91,28 +120,15 @@ final class WindowOverlayViewController<Content>: UIViewController where Content
 
         windowView.bringSubviewToFront(hostedView)
     }
-
-    // MARK: Updating
-
-    fileprivate func update(with content: Content) {
-        hostingController?.rootView = content
-    }
-
-    // MARK: Dismissing
-
-    fileprivate func dismiss() {
-        UIView.appRootView?.subviews.first(where: { $0.tag == hostedViewTag })?.removeFromSuperview()
-    }
 }
 
 // MARK: - Helpers
 
-private extension UIView {
-    static var appRootView: UIView? {
-        guard
-            let window: UIWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }),
-            let viewController: UIViewController = window.rootViewController,
-            let view: UIView = viewController.view
+extension UIView {
+    fileprivate static var appRootView: UIView? {
+        guard let window: UIWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }),
+              let viewController: UIViewController = window.rootViewController,
+              let view: UIView = viewController.view
         else {
             return nil
         }

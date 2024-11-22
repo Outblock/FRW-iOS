@@ -10,8 +10,36 @@ import SnapKit
 import SwiftUI
 import UIKit
 
+// MARK: - TransactionListViewController
+
 class TransactionListViewController: UIViewController {
+    // MARK: Lifecycle
+
+    init(contractId: String? = nil) {
+        super.init(nibName: nil, bundle: nil)
+        self.contractId = contractId
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
     private(set) var contractId: String?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setup()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: true)
+    }
+
+    // MARK: Private
 
     private lazy var transferHandler: TransferListHandler = {
         let handler = TransferListHandler(contractId: contractId)
@@ -58,33 +86,18 @@ class TransactionListViewController: UIViewController {
         return view
     }()
 
-    init(contractId: String? = nil) {
-        super.init(nibName: nil, bundle: nil)
-        self.contractId = contractId
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setup()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: true)
-    }
-
     private func setup() {
         view.backgroundColor = UIColor.LL.Neutrals.background
 
         navigationItem.hidesBackButton = true
         navigationItem.title = "wallet_transactions".localized
 
-        let backItem = UIBarButtonItem(image: UIImage(systemName: "arrow.backward"), style: .plain, target: self, action: #selector(onBackButtonAction))
+        let backItem = UIBarButtonItem(
+            image: UIImage(systemName: "arrow.backward"),
+            style: .plain,
+            target: self,
+            action: #selector(onBackButtonAction)
+        )
         backItem.tintColor = UIColor(named: "button.color")
         navigationItem.leftBarButtonItem = backItem
 
@@ -104,7 +117,8 @@ class TransactionListViewController: UIViewController {
         segmentView.listContainer = listContainer
     }
 
-    @objc private func onBackButtonAction() {
+    @objc
+    private func onBackButtonAction() {
         Router.pop()
     }
 }
@@ -116,14 +130,21 @@ extension TransactionListViewController {
     }
 }
 
+// MARK: JXSegmentedListContainerViewDataSource
+
 extension TransactionListViewController: JXSegmentedListContainerViewDataSource {
     func numberOfLists(in _: JXSegmentedListContainerView) -> Int {
-        return 1
+        1
     }
 
-    func listContainerView(_: JXSegmentedListContainerView, initListAt _: Int) -> JXSegmentedListContainerViewListDelegate {
-        return transferHandler
+    func listContainerView(
+        _: JXSegmentedListContainerView,
+        initListAt _: Int
+    ) -> JXSegmentedListContainerViewListDelegate {
+        transferHandler
     }
 }
+
+// MARK: JXSegmentedViewDelegate
 
 extension TransactionListViewController: JXSegmentedViewDelegate {}

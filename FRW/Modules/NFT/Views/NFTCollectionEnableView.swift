@@ -10,13 +10,12 @@ import SwiftUI
 
 extension NFTAddCollectionView {
     struct NFTCollectionEnableView: View {
-        @EnvironmentObject var vm: AddCollectionViewModel
+        // MARK: Internal
+
+        @EnvironmentObject
+        var vm: AddCollectionViewModel
 
         var item: NFTCollectionItem
-
-        @State private var showButton = true
-        @State private var offset: CGFloat = 0
-        @State private var topOpacity: CGFloat = 0.72
 
         var buttonState: VPrimaryButtonState {
             if vm.isAddingCollection {
@@ -93,12 +92,15 @@ extension NFTAddCollectionView {
                                     }
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
-                                    .frame(width: (screenWidth - 38) / 1.4,
-                                           height: (screenWidth - 38) / 1.4)
+                                    .frame(
+                                        width: (screenWidth - 38) / 1.4,
+                                        height: (screenWidth - 38) / 1.4
+                                    )
                                     .padding(-10)
                             }
                             .blur(radius: 6)
-                            LinearGradient(colors:
+                            LinearGradient(
+                                colors:
                                 [
                                     .LL.Shades.front,
                                     .LL.Shades.front,
@@ -106,7 +108,8 @@ extension NFTAddCollectionView {
                                     .LL.Shades.front.opacity(0.32),
                                 ],
                                 startPoint: .leading,
-                                endPoint: .trailing)
+                                endPoint: .trailing
+                            )
                         }
                     )
                     .cornerRadius(16)
@@ -115,18 +118,31 @@ extension NFTAddCollectionView {
                     Spacer()
 
                     if item.status == .idle {
-                        VPrimaryButton(model: ButtonStyle.primary,
-                                       state: buttonState,
-                                       action: {
-                                           vm.addCollectionAction(item: item)
-                                       }, title: buttonState == .loading ? "working_on_it".localized : "enable_collection".localized)
-                            .padding(.bottom)
+                        VPrimaryButton(
+                            model: ButtonStyle.primary,
+                            state: buttonState,
+                            action: {
+                                vm.addCollectionAction(item: item)
+                            },
+                            title: buttonState == .loading ? "working_on_it"
+                                .localized : "enable_collection".localized
+                        )
+                        .padding(.bottom)
                     }
                 }
                 .padding(.horizontal, 18)
             }
             .backgroundFill(Color.LL.Neutrals.background)
         }
+
+        // MARK: Private
+
+        @State
+        private var showButton = true
+        @State
+        private var offset: CGFloat = 0
+        @State
+        private var topOpacity: CGFloat = 0.72
     }
 }
 

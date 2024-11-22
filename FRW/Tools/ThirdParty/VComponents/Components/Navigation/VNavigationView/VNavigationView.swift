@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Navigation View
+// MARK: - VNavigationView
 
 /// Navigation component that presents stack of views with a visible path in a navigation hierarchy.
 ///
@@ -67,10 +67,7 @@ import SwiftUI
 ///
 /// If you decide to use `VNavigationView` inside `VHalfModal`, consider checking out static properties—`navBarCloseButtonMarginTop`, `navBarCloseButtonMarginTrailing`, and `navBarTrailingItemMarginTrailing`—in `VHalfModalModel.Layout`.
 public struct VNavigationView<Content>: View where Content: View {
-    // MARK: Properties
-
-    private let model: VNavigationViewModel
-    private let content: () -> Content
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -82,6 +79,8 @@ public struct VNavigationView<Content>: View where Content: View {
         self.content = content
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -92,9 +91,16 @@ public struct VNavigationView<Content>: View where Content: View {
         .navigationViewStyle(StackNavigationViewStyle())
         .setUpNavigationBarAppearance(model: model)
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VNavigationViewModel
+    private let content: () -> Content
 }
 
-// MARK: - Preview
+// MARK: - VNavigationView_Previews
 
 struct VNavigationView_Previews: PreviewProvider {
     static var previews: some View {

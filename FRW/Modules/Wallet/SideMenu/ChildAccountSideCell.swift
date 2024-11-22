@@ -9,6 +9,8 @@ import Kingfisher
 import SwiftUI
 import SwiftUIX
 
+// MARK: - ChildAccountSideCellItem
+
 protocol ChildAccountSideCellItem {
     var showAddress: String { get }
     var showIcon: String { get }
@@ -16,6 +18,8 @@ protocol ChildAccountSideCellItem {
     var isEVM: Bool { get }
     var isSelected: Bool { get }
 }
+
+// MARK: - ChildAccountSideCell
 
 struct ChildAccountSideCell: View {
     var item: ChildAccountSideCellItem
@@ -80,6 +84,10 @@ struct ChildAccountSideCell: View {
     }
 
     var selectedBg: some View {
-        LinearGradient(colors: [Color(hex: "#00FF38").opacity(0.08), Color(hex: "#00FF38").opacity(0)], startPoint: .leading, endPoint: .trailing)
+        LinearGradient(
+            colors: [Color(hex: "#00FF38").opacity(0.08), Color(hex: "#00FF38").opacity(0)],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
     }
 }

@@ -9,7 +9,11 @@ import SnapKit
 import SwiftUI
 import UIKit
 
+// MARK: - NFTUIKitGridStyleHandler
+
 class NFTUIKitGridStyleHandler: NSObject {
+    // MARK: Internal
+
     var vm: NFTTabViewModel?
     lazy var dataModel: NFTUIKitListGridDataModel = {
         let dm = NFTUIKitListGridDataModel()
@@ -19,9 +23,6 @@ class NFTUIKitGridStyleHandler: NSObject {
 
         return dm
     }()
-
-    private var isInitRequested: Bool = false
-    private var isRequesting: Bool = false
 
     lazy var containerView: UIView = {
         let view = UIView()
@@ -74,18 +75,6 @@ class NFTUIKitGridStyleHandler: NSObject {
         return view
     }()
 
-    private lazy var layout: UICollectionViewFlowLayout = {
-        let viewLayout = UICollectionViewFlowLayout()
-        viewLayout.scrollDirection = .vertical
-        viewLayout.sectionHeadersPinToVisibleBounds = true
-        return viewLayout
-    }()
-
-    private lazy var emptyView: NFTUIKitListStyleHandler.EmptyView = {
-        let view = NFTUIKitListStyleHandler.EmptyView()
-        return view
-    }()
-
     func setup() {
         containerView.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
@@ -102,6 +91,23 @@ class NFTUIKitGridStyleHandler: NSObject {
         }
         emptyView.isHidden = true
     }
+
+    // MARK: Private
+
+    private var isInitRequested: Bool = false
+    private var isRequesting: Bool = false
+
+    private lazy var layout: UICollectionViewFlowLayout = {
+        let viewLayout = UICollectionViewFlowLayout()
+        viewLayout.scrollDirection = .vertical
+        viewLayout.sectionHeadersPinToVisibleBounds = true
+        return viewLayout
+    }()
+
+    private lazy var emptyView: NFTUIKitListStyleHandler.EmptyView = {
+        let view = NFTUIKitListStyleHandler.EmptyView()
+        return view
+    }()
 
     private func reloadViews() {
         if dataModel.nfts.isEmpty {
@@ -128,7 +134,8 @@ extension NFTUIKitGridStyleHandler {
             return
         }
 
-        guard WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() != nil else {
+        guard WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() != nil
+        else {
             showEmptyView()
             return
         }
@@ -208,47 +215,86 @@ extension NFTUIKitGridStyleHandler {
     private func hideErrorView() {}
 }
 
+// MARK: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource
+
 extension NFTUIKitGridStyleHandler: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return dataModel.nfts.count
+        dataModel.nfts.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         if let nft = dataModel.nfts[safe: indexPath.item] {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NFTUIKitItemCell", for: indexPath) as! NFTUIKitItemCell
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "NFTUIKitItemCell",
+                for: indexPath
+            ) as! NFTUIKitItemCell
             cell.config(nft)
             return cell
         }
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UICollectionViewCell", for: indexPath)
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: "UICollectionViewCell",
+            for: indexPath
+        )
         return cell
     }
 
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
-        return NFTUIKitItemCell.calculateSize()
+    func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        sizeForItemAt _: IndexPath
+    ) -> CGSize {
+        NFTUIKitItemCell.calculateSize()
     }
 
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForHeaderInSection _: Int) -> CGSize {
-        return .zero
+    func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        referenceSizeForHeaderInSection _: Int
+    ) -> CGSize {
+        .zero
     }
 
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForFooterInSection _: Int) -> CGSize {
-        return .zero
+    func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        referenceSizeForFooterInSection _: Int
+    ) -> CGSize {
+        .zero
     }
 
-    func collectionView(_: UICollectionView, viewForSupplementaryElementOfKind _: String, at _: IndexPath) -> UICollectionReusableView {
-        return UICollectionReusableView()
+    func collectionView(
+        _: UICollectionView,
+        viewForSupplementaryElementOfKind _: String,
+        at _: IndexPath
+    ) -> UICollectionReusableView {
+        UICollectionReusableView()
     }
 
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumLineSpacingForSectionAt _: Int) -> CGFloat {
-        return 18
+    func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        minimumLineSpacingForSectionAt _: Int
+    ) -> CGFloat {
+        18
     }
 
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumInteritemSpacingForSectionAt _: Int) -> CGFloat {
-        return 18
+    func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        minimumInteritemSpacingForSectionAt _: Int
+    ) -> CGFloat {
+        18
     }
 
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, insetForSectionAt _: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 18, left: 18, bottom: 18, right: 18)
+    func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        insetForSectionAt _: Int
+    ) -> UIEdgeInsets {
+        UIEdgeInsets(top: 18, left: 18, bottom: 18, right: 18)
     }
 
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {

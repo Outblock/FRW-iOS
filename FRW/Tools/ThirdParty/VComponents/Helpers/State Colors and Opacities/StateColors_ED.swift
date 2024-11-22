@@ -11,13 +11,7 @@ import SwiftUI
 
 /// Color group containing `enabled` and `disabled` values.
 public struct StateColors_ED: Equatable {
-    // MARK: Properties
-
-    /// Enabled color.
-    public var enabled: Color
-
-    /// Disabled color.
-    public var disabled: Color
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -32,10 +26,20 @@ public struct StateColors_ED: Equatable {
 
     /// Initializes group with clear values.
     public init() {
-        enabled = .clear
-        disabled = .clear
+        self.enabled = .clear
+        self.disabled = .clear
     }
+
+    // MARK: Public
 
     /// Initializes group with clear values.
     public static var clear: Self { .init() }
+
+    // MARK: Properties
+
+    /// Enabled color.
+    public var enabled: Color
+
+    /// Disabled color.
+    public var disabled: Color
 }

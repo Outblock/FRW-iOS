@@ -27,10 +27,10 @@ let ISO8601Formatter: ISO8601DateFormatter = {
 
 extension Date {
     var ymdString: String {
-        return yyyyMMddFormatter.string(from: self)
+        yyyyMMddFormatter.string(from: self)
     }
 
     var mmmddString: String {
-        return MMMddFormatter.string(from: self)
+        MMMddFormatter.string(from: self)
     }
 }

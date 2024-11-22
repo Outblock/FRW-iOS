@@ -38,7 +38,7 @@ struct TransactionProcessStatusView: View {
 
     var pendingView: some View {
         HStack(spacing: 12) {
-            ForEach(0 ..< totalNum, id: \.self) { index in
+            ForEach(0..<totalNum, id: \.self) { index in
                 switch index {
                 case 0:
                     dot.foregroundColor(.LL.Primary.salmon5)
@@ -57,7 +57,7 @@ struct TransactionProcessStatusView: View {
 
     var successView: some View {
         HStack(spacing: 12) {
-            ForEach(0 ..< totalNum, id: \.self) { index in
+            ForEach(0..<totalNum, id: \.self) { index in
                 switch index {
                 case 0:
                     dot.foregroundColor(.LL.Success.success5)
@@ -74,7 +74,7 @@ struct TransactionProcessStatusView: View {
 
     var failedView: some View {
         HStack(spacing: 12) {
-            ForEach(0 ..< totalNum, id: \.self) { index in
+            ForEach(0..<totalNum, id: \.self) { index in
                 switch index {
                 case 0:
                     dot.foregroundColor(.LL.Warning.warning5)

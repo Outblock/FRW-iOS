@@ -12,28 +12,22 @@ import UIKit
 private let ProgressViewWidth: CGFloat = 32
 private let IconImageViewWidth: CGFloat = 26
 
-class TransactionProgressView: UIView {
-    private lazy var progressBgLayer: CAShapeLayer = {
-        let layer = CAShapeLayer()
-        layer.path = UIBezierPath(arcCenter: CGPoint(x: ProgressViewWidth / 2.0, y: ProgressViewWidth / 2.0), radius: ProgressViewWidth / 2.0, startAngle: 0, endAngle: Double.pi * 2, clockwise: true).cgPath
-        layer.fillColor = UIColor.clear.cgColor
-        layer.strokeColor = UIColor.LL.Primary.salmonPrimary.alpha(0.1).cgColor
-        layer.lineWidth = 4
-        layer.lineCap = .round
-        return layer
-    }()
+// MARK: - TransactionProgressView
 
-    private lazy var progressLayer: CAShapeLayer = {
-        let layer = CAShapeLayer()
-        let startAngle = -Double.pi / 2.0
-        layer.path = UIBezierPath(arcCenter: CGPoint(x: ProgressViewWidth / 2.0, y: ProgressViewWidth / 2.0), radius: ProgressViewWidth / 2.0, startAngle: startAngle, endAngle: Double.pi * 2 + startAngle, clockwise: true).cgPath
-        layer.fillColor = UIColor.clear.cgColor
-        layer.strokeColor = UIColor.LL.Primary.salmonPrimary.alpha(0.9).cgColor
-        layer.lineWidth = 4
-        layer.lineCap = .round
-        layer.strokeEnd = 0.5
-        return layer
-    }()
+class TransactionProgressView: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("")
+    }
+
+    // MARK: Internal
 
     lazy var iconImageView: UIImageView = {
         let imageView = UIImageView()
@@ -55,15 +49,45 @@ class TransactionProgressView: UIView {
         }
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
+    func changeProgressColor(_ color: UIColor) {
+        progressLayer.strokeColor = color.cgColor
     }
 
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("")
-    }
+    // MARK: Private
+
+    private lazy var progressBgLayer: CAShapeLayer = {
+        let layer = CAShapeLayer()
+        layer.path = UIBezierPath(
+            arcCenter: CGPoint(x: ProgressViewWidth / 2.0, y: ProgressViewWidth / 2.0),
+            radius: ProgressViewWidth / 2.0,
+            startAngle: 0,
+            endAngle: Double.pi * 2,
+            clockwise: true
+        ).cgPath
+        layer.fillColor = UIColor.clear.cgColor
+        layer.strokeColor = UIColor.LL.Primary.salmonPrimary.alpha(0.1).cgColor
+        layer.lineWidth = 4
+        layer.lineCap = .round
+        return layer
+    }()
+
+    private lazy var progressLayer: CAShapeLayer = {
+        let layer = CAShapeLayer()
+        let startAngle = -Double.pi / 2.0
+        layer.path = UIBezierPath(
+            arcCenter: CGPoint(x: ProgressViewWidth / 2.0, y: ProgressViewWidth / 2.0),
+            radius: ProgressViewWidth / 2.0,
+            startAngle: startAngle,
+            endAngle: Double.pi * 2 + startAngle,
+            clockwise: true
+        ).cgPath
+        layer.fillColor = UIColor.clear.cgColor
+        layer.strokeColor = UIColor.LL.Primary.salmonPrimary.alpha(0.9).cgColor
+        layer.lineWidth = 4
+        layer.lineCap = .round
+        layer.strokeEnd = 0.5
+        return layer
+    }()
 
     private func setup() {
         backgroundColor = .clear
@@ -83,9 +107,5 @@ class TransactionProgressView: UIView {
 
     private func refreshProgress() {
         progressLayer.strokeEnd = min(1, max(0, progress))
-    }
-
-    func changeProgressColor(_ color: UIColor) {
-        progressLayer.strokeColor = color.cgColor
     }
 }

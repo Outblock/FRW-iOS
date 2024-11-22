@@ -8,23 +8,21 @@
 import Foundation
 import SwiftUI
 
+// MARK: - ThemeChangeView
+
 struct ThemeChangeView: RouteableView {
-    @StateObject private var vm = ThemeChangeViewModel()
-
-    @AppStorage("WalletCardBackrgound")
-    private var walletCardBackrgound: String = "fade:0"
-
-    @State
-    private var cardColor: Color
-
-    var title: String {
-        return "theme".localized
-    }
+    // MARK: Lifecycle
 
     init() {
         let value = UserDefaults.standard.string(forKey: "WalletCardBackrgound") ?? "fade:0"
         let card = CardBackground(value: value)
-        cardColor = card.color
+        self.cardColor = card.color
+    }
+
+    // MARK: Internal
+
+    var title: String {
+        "theme".localized
     }
 
     var body: some View {
@@ -79,7 +77,20 @@ struct ThemeChangeView: RouteableView {
         .backgroundFill(.LL.Neutrals.background)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = ThemeChangeViewModel()
+
+    @AppStorage("WalletCardBackrgound")
+    private var walletCardBackrgound: String = "fade:0"
+
+    @State
+    private var cardColor: Color
 }
+
+// MARK: - Previews_ThemeChangeView_Previews
 
 struct Previews_ThemeChangeView_Previews: PreviewProvider {
     static var previews: some View {
@@ -90,11 +101,19 @@ struct Previews_ThemeChangeView_Previews: PreviewProvider {
 extension ThemeChangeView {
     var themeItemView: some View {
         HStack(spacing: 0) {
-            ThemePreviewItemView(imageName: "preview-theme-light", title: "light".localized, isSelected: $vm.state.isLight) {
+            ThemePreviewItemView(
+                imageName: "preview-theme-light",
+                title: "light".localized,
+                isSelected: $vm.state.isLight
+            ) {
                 vm.trigger(.change(.light))
             }
 
-            ThemePreviewItemView(imageName: "preview-theme-dark", title: "dark".localized, isSelected: $vm.state.isDark) {
+            ThemePreviewItemView(
+                imageName: "preview-theme-dark",
+                title: "dark".localized,
+                isSelected: $vm.state.isDark
+            ) {
                 vm.trigger(.change(.dark))
             }
         }
@@ -104,8 +123,10 @@ extension ThemeChangeView {
         VStack {
             Toggle(isOn: $vm.state.isAuto) {
                 HStack(spacing: 8) {
-                    Image(systemName: .sun).font(.system(size: 25)).foregroundColor(.LL.Secondary.mango4)
-                    Text("auto".localized).foregroundColor(.LL.Neutrals.text).font(.inter(size: 16, weight: .medium))
+                    Image(systemName: .sun).font(.system(size: 25))
+                        .foregroundColor(.LL.Secondary.mango4)
+                    Text("auto".localized).foregroundColor(.LL.Neutrals.text)
+                        .font(.inter(size: 16, weight: .medium))
                 }
             }
             .tint(.Flow.accessory)
@@ -126,11 +147,14 @@ extension ThemeChangeView {
     }
 }
 
+// MARK: - ThemeChangeView.ThemePreviewItemView
+
 extension ThemeChangeView {
     struct ThemePreviewItemView: View {
         let imageName: String
         let title: String
-        @Binding var isSelected: Bool
+        @Binding
+        var isSelected: Bool
         let action: () -> Void
 
         var body: some View {
@@ -139,11 +163,15 @@ extension ThemeChangeView {
             } label: {
                 VStack(spacing: 0) {
                     Image(imageName).padding(.bottom, 16).aspectRatio(contentMode: .fit)
-                    Text(title).foregroundColor(.LL.Neutrals.text).font(.inter(size: 16, weight: .medium)).padding(.bottom, 9)
+                    Text(title).foregroundColor(.LL.Neutrals.text).font(.inter(
+                        size: 16,
+                        weight: .medium
+                    )).padding(.bottom, 9)
                     if isSelected {
                         Image(systemName: .checkmarkSelected).foregroundColor(.Flow.accessory)
                     } else {
-                        Image(systemName: .checkmarkUnselected).foregroundColor(.LL.Neutrals.neutrals1)
+                        Image(systemName: .checkmarkUnselected)
+                            .foregroundColor(.LL.Neutrals.neutrals1)
                     }
                 }
             }
@@ -152,19 +180,27 @@ extension ThemeChangeView {
     }
 }
 
+// MARK: - ThemeChangeView.Cell
+
 extension ThemeChangeView {
     struct Cell<Content>: View where Content: View {
-        let isSelected: Bool
-        let title: String
-        let content: Content
+        // MARK: Lifecycle
 
-        init(isSelected: Bool, title: String,
-             @ViewBuilder content: @escaping () -> Content)
-        {
+        init(
+            isSelected: Bool,
+            title: String,
+            @ViewBuilder content: @escaping () -> Content
+        ) {
             self.isSelected = isSelected
             self.title = title
             self.content = content()
         }
+
+        // MARK: Internal
+
+        let isSelected: Bool
+        let title: String
+        let content: Content
 
         var body: some View {
             HStack {

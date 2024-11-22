@@ -12,16 +12,20 @@ import UIKit
 import WalletCore
 
 class CreateRecoveryPhraseBackupViewModel: ObservableObject {
-    var mnemonic: String
-
-    var dataSource: [WordListView.WordItem] = []
+    // MARK: Lifecycle
 
     init(mnemonic: String) {
         self.mnemonic = mnemonic
-        dataSource = mnemonic.split(separator: " ").enumerated().map { item in
+        self.dataSource = mnemonic.split(separator: " ").enumerated().map { item in
             WordListView.WordItem(id: item.offset + 1, word: String(item.element))
         }
     }
+
+    // MARK: Internal
+
+    var mnemonic: String
+
+    var dataSource: [WordListView.WordItem] = []
 
     func onCreate() {
         Router.route(to: RouteMap.Backup.backupCompleted(mnemonic))

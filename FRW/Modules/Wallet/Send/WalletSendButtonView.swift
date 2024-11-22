@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: - WalletSendButtonView
+
 struct WalletSendButtonView: View {
     @GestureState
     var tap = false
@@ -17,7 +19,8 @@ struct WalletSendButtonView: View {
     @State
     var isLoading: Bool = false
 
-    @Binding var allowEnable: Bool
+    @Binding
+    var allowEnable: Bool
 
     var buttonText: String = "hold_to_send".localized
     var activeColor = Color.LL.Button.color
@@ -58,7 +61,10 @@ struct WalletSendButtonView: View {
                     .rotationEffect(.degrees(-90))
                     .rotation3DEffect(Angle(degrees: -180), axis: (x: 0, y: 1, z: 0))
                     .rotationEffect(Angle(degrees: isLoading ? 360 : 0))
-                    .animation(.linear(duration: 1).repeatForever(autoreverses: false), value: isLoading)
+                    .animation(
+                        .linear(duration: 1).repeatForever(autoreverses: false),
+                        value: isLoading
+                    )
                     .visible(isLoading)
             }
             .frame(width: 25, height: 25)
@@ -103,10 +109,14 @@ struct WalletSendButtonView: View {
     }
 }
 
-class MyAnimations: NSObject, ObservableObject {
-    @Published var progress: Double = 0
+// MARK: - MyAnimations
 
-    private var displaylink: CADisplayLink! // << here !!
+class MyAnimations: NSObject, ObservableObject {
+    // MARK: Internal
+
+    @Published
+    var progress: Double = 0
+
     func createDisplayLink() {
         if displaylink == nil {
             displaylink = CADisplayLink(target: self, selector: #selector(step))
@@ -114,7 +124,8 @@ class MyAnimations: NSObject, ObservableObject {
         }
     }
 
-    @objc func step(link _: CADisplayLink) {
+    @objc
+    func step(link _: CADisplayLink) {
         progress += 0.05
     }
 
@@ -123,7 +134,13 @@ class MyAnimations: NSObject, ObservableObject {
             displaylink.invalidate()
         }
     }
+
+    // MARK: Private
+
+    private var displaylink: CADisplayLink! // << here !!
 }
+
+// MARK: - ScaleButtonStyle
 
 struct ScaleButtonStyle: SwiftUI.ButtonStyle {
     func makeBody(configuration: Self.Configuration) -> some View {
@@ -134,9 +151,14 @@ struct ScaleButtonStyle: SwiftUI.ButtonStyle {
     }
 }
 
+// MARK: - WalletSendButtonView_Previews
+
 struct WalletSendButtonView_Previews: PreviewProvider {
-    @State static var isEnable = true
-    @State static var isNot = false
+    @State
+    static var isEnable = true
+    @State
+    static var isNot = false
+
     static var previews: some View {
         WalletSendButtonView(allowEnable: $isEnable) {}
             .previewLayout(.sizeThatFits)

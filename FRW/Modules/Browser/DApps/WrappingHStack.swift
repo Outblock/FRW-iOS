@@ -2,6 +2,8 @@ import SwiftUI
 
 // Adapted from: https://stackoverflow.com/questions/62102647/swiftui-hstack-with-wrap-and-dynamic-height/62103264#62103264
 struct WrappingHStack<Model, V>: View where Model: Hashable, V: View {
+    // MARK: Internal
+
     typealias ViewGenerator = (Model) -> V
 
     var models: [Model]
@@ -9,8 +11,6 @@ struct WrappingHStack<Model, V>: View where Model: Hashable, V: View {
     var horizontalSpacing: CGFloat = 4
     var verticalSpacing: CGFloat = 4
 
-    @State private var totalHeight
-        = CGFloat.zero // << variant for ScrollView/List
 //        = CGFloat.infinity   // << variant for VStack
 
     var body: some View {
@@ -22,6 +22,12 @@ struct WrappingHStack<Model, V>: View where Model: Hashable, V: View {
         .frame(height: totalHeight) // << variant for ScrollView/List
         // .frame(maxHeight: totalHeight) // << variant for VStack
     }
+
+    // MARK: Private
+
+    @State
+    private var totalHeight
+        = CGFloat.zero // << variant for ScrollView/List
 
     private func generateContent(in geometry: GeometryProxy) -> some View {
         var width = CGFloat.zero
@@ -57,7 +63,7 @@ struct WrappingHStack<Model, V>: View where Model: Hashable, V: View {
     }
 
     private func viewHeightReader(_ binding: Binding<CGFloat>) -> some View {
-        return GeometryReader { geometry -> Color in
+        GeometryReader { geometry -> Color in
             let rect = geometry.frame(in: .local)
             DispatchQueue.main.async {
                 binding.wrappedValue = rect.size.height

@@ -10,19 +10,58 @@ import SnapKit
 import SwiftUI
 import UIKit
 
+// MARK: - DOFavoriteButtonView
+
 struct DOFavoriteButtonView: UIViewRepresentable {
+    class Coordinator: NSObject {
+        // MARK: Lifecycle
+
+        init(_ button: DOFavoriteButtonView) {
+            self.button = button
+        }
+
+        // MARK: Internal
+
+        var button: DOFavoriteButtonView
+
+        @objc
+        func tapped(sender: DOFavoriteButton) {
+            if sender.isSelected {
+                // deselect
+                sender.deselect()
+//                button.callback(false)
+                button.isSelected = false
+            } else {
+                // select with animation
+                sender.select()
+//               button.callback(true)
+                button.isSelected = true
+            }
+
+//            sender.image = UIImage(named: sender.isSelected ? "icon-star-fill" : "icon-star")
+        }
+    }
+
     var isSelected: Bool
     var imageColor: UIColor
     let size: CGFloat = 48
-    let imageColorOff: UIColor = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? UIColor(hex: "#4B4B4B") : UIColor(hex: "#E6E6E6")
+    let imageColorOff: UIColor = UIScreen.main.traitCollection
+        .userInterfaceStyle == .dark ? UIColor(hex: "#4B4B4B") : UIColor(hex: "#E6E6E6")
+
 //    UIColor.LL.outline)
 
     func makeUIView(context _: Self.Context) -> UIView {
-        let containerView = UIView(frame: CGRect(x: 0, y: 0,
-                                                 width: size, height: size))
+        let containerView = UIView(frame: CGRect(
+            x: 0,
+            y: 0,
+            width: size,
+            height: size
+        ))
 
-        let button = DOFavoriteButton(frame: CGRect(x: 0, y: 0, width: size, height: size),
-                                      image: UIImage(named: "icon-star-fill"))
+        let button = DOFavoriteButton(
+            frame: CGRect(x: 0, y: 0, width: size, height: size),
+            image: UIImage(named: "icon-star-fill")
+        )
 
         button.imageColorOff = imageColorOff
         button.imageColorOn = imageColor
@@ -67,31 +106,9 @@ struct DOFavoriteButtonView: UIViewRepresentable {
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-
-    class Coordinator: NSObject {
-        var button: DOFavoriteButtonView
-
-        init(_ button: DOFavoriteButtonView) {
-            self.button = button
-        }
-
-        @objc func tapped(sender: DOFavoriteButton) {
-            if sender.isSelected {
-                // deselect
-                sender.deselect()
-//                button.callback(false)
-                button.isSelected = false
-            } else {
-                // select with animation
-                sender.select()
-//               button.callback(true)
-                button.isSelected = true
-            }
-
-//            sender.image = UIImage(named: sender.isSelected ? "icon-star-fill" : "icon-star")
-        }
-    }
 }
+
+// MARK: - DOFavoriteButtonView_Previews
 
 struct DOFavoriteButtonView_Previews: PreviewProvider {
     static var toggleColor = Action()
@@ -106,9 +123,13 @@ struct DOFavoriteButtonView_Previews: PreviewProvider {
     }
 }
 
+// MARK: - Action
+
 class Action: NSObject {
     var action: (() -> Void)?
-    @objc func perform(sender: DOFavoriteButton) {
+
+    @objc
+    func perform(sender: DOFavoriteButton) {
 //                action?()
 
         if sender.isSelected {
@@ -121,19 +142,26 @@ class Action: NSObject {
     }
 }
 
+// MARK: - Anything
+
 struct Anything<Wrapper: UIView>: UIViewRepresentable {
+    // MARK: Lifecycle
+
+    init(
+        _ makeView: @escaping @autoclosure () -> Wrapper,
+        updater update: @escaping (Wrapper) -> Void
+    ) {
+        self.makeView = makeView
+        self.update = { view, _ in update(view) }
+    }
+
+    // MARK: Internal
+
     typealias Updater = (Wrapper, Context) -> Void
 
     var makeView: () -> Wrapper
     var update: (Wrapper, Context) -> Void
     var action: (() -> Void)?
-
-    init(_ makeView: @escaping @autoclosure () -> Wrapper,
-         updater update: @escaping (Wrapper) -> Void)
-    {
-        self.makeView = makeView
-        self.update = { view, _ in update(view) }
-    }
 
     func makeUIView(context _: Context) -> Wrapper {
         makeView()

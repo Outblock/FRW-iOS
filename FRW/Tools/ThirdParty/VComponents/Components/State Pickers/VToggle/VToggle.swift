@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Toggle
+// MARK: - VToggle
 
 /// State picker component that toggles between off, on, or disabled states, and displays content.
 ///
@@ -27,17 +27,7 @@ import SwiftUI
 ///     }
 ///
 public struct VToggle<Content>: View where Content: View {
-    // MARK: Properties
-
-    private let model: VToggleModel
-
-    @Binding private var state: VToggleState
-    @State private var internalStateRaw: VToggleInternalState?
-    private var internalState: VToggleInternalState { internalStateRaw ?? .default(state: state) }
-
-    private let content: (() -> Content)?
-
-    private var contentIsEnabled: Bool { internalState.isEnabled && model.misc.contentIsClickable }
+    // MARK: Lifecycle
 
     // MARK: Initializers - State
 
@@ -58,8 +48,7 @@ public struct VToggle<Content>: View where Content: View {
         state: Binding<VToggleState>,
         title: String
     )
-        where Content == VText
-    {
+        where Content == VText {
         self.init(
             model: model,
             state: state,
@@ -67,7 +56,10 @@ public struct VToggle<Content>: View where Content: View {
                 VText(
                     type: .multiLine(limit: nil, alignment: .leading),
                     font: model.fonts.title,
-                    color: model.colors.textContent.for(.init(state: state.wrappedValue, isPressed: false)),
+                    color: model.colors.textContent.for(.init(
+                        state: state.wrappedValue,
+                        isPressed: false
+                    )),
                     title: title
                 )
             }
@@ -79,11 +71,10 @@ public struct VToggle<Content>: View where Content: View {
         model: VToggleModel = .init(),
         state: Binding<VToggleState>
     )
-        where Content == Never
-    {
+        where Content == Never {
         self.model = model
         _state = state
-        content = nil
+        self.content = nil
     }
 
     // MARK: Initializers - Bool
@@ -107,8 +98,7 @@ public struct VToggle<Content>: View where Content: View {
         isOn: Binding<Bool>,
         title: String
     )
-        where Content == VText
-    {
+        where Content == VText {
         self.init(
             model: model,
             state: .init(bool: isOn),
@@ -116,7 +106,10 @@ public struct VToggle<Content>: View where Content: View {
                 VText(
                     type: .multiLine(limit: nil, alignment: .leading),
                     font: model.fonts.title,
-                    color: model.colors.textContent.for(VRadioButtonInternalState(bool: isOn.wrappedValue, isPressed: false)),
+                    color: model.colors.textContent.for(VRadioButtonInternalState(
+                        bool: isOn.wrappedValue,
+                        isPressed: false
+                    )),
                     title: title
                 )
             }
@@ -128,12 +121,13 @@ public struct VToggle<Content>: View where Content: View {
         model: VToggleModel = .init(),
         isOn: Binding<Bool>
     )
-        where Content == Never
-    {
+        where Content == Never {
         self.model = model
         _state = .init(bool: isOn)
-        content = nil
+        self.content = nil
     }
+
+    // MARK: Public
 
     // MARK: Body
 
@@ -154,6 +148,22 @@ public struct VToggle<Content>: View where Content: View {
             }
         })
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VToggleModel
+
+    @Binding
+    private var state: VToggleState
+    @State
+    private var internalStateRaw: VToggleInternalState?
+    private let content: (() -> Content)?
+
+    private var internalState: VToggleInternalState { internalStateRaw ?? .default(state: state) }
+
+    private var contentIsEnabled: Bool { internalState.isEnabled && model.misc.contentIsClickable }
 
     private var toggle: some View {
         VBaseButton(
@@ -187,6 +197,20 @@ public struct VToggle<Content>: View where Content: View {
         )
     }
 
+    // MARK: Thumb Position
+
+    private var thumbOffset: CGFloat {
+        let offset: CGFloat = model.layout.animationOffset
+
+        switch internalState {
+        case .off: return -offset
+        case .on: return offset
+        case .pressedOff: return -offset
+        case .pressedOn: return offset
+        case .disabled: return -offset
+        }
+    }
+
     private func contentView(
         @ViewBuilder content: @escaping () -> Content
     ) -> some View {
@@ -204,11 +228,11 @@ public struct VToggle<Content>: View where Content: View {
 
     private func syncInternalStateWithState() {
         DispatchQueue.main.async {
-            if
-                internalStateRaw == nil ||
-                .init(internalState: internalState) != state
-            {
-                withAnimation(model.animations.stateChange) { internalStateRaw = .default(state: state) }
+            if internalStateRaw == nil ||
+                .init(internalState: internalState) != state {
+                withAnimation(model.animations.stateChange) {
+                    internalStateRaw = .default(state: state)
+                }
             }
         }
     }
@@ -225,28 +249,19 @@ public struct VToggle<Content>: View where Content: View {
             withAnimation(model.animations.stateChange) { internalStateRaw?.setNextState() }
         }
     }
-
-    // MARK: Thumb Position
-
-    private var thumbOffset: CGFloat {
-        let offset: CGFloat = model.layout.animationOffset
-
-        switch internalState {
-        case .off: return -offset
-        case .on: return offset
-        case .pressedOff: return -offset
-        case .pressedOn: return offset
-        case .disabled: return -offset
-        }
-    }
 }
 
-// MARK: - Preview
+// MARK: - VToggle_Previews
 
 struct VToggle_Previews: PreviewProvider {
-    @State private static var state: VToggleState = .on
+    // MARK: Internal
 
     static var previews: some View {
         VToggle(state: $state, title: "Lorem ipsum")
     }
+
+    // MARK: Private
+
+    @State
+    private static var state: VToggleState = .on
 }

@@ -7,9 +7,17 @@
 
 import SwiftUI
 
-// MARK: - Image Book
+// MARK: - ImageBook
 
 struct ImageBook {
+    // MARK: Lifecycle
+
+    // MARK: Initializers
+
+    private init() {}
+
+    // MARK: Internal
+
     // MARK: Properties
 
     static var checkBoxOn: Image { .init(componentAsset: "CheckBox.On") }
@@ -31,10 +39,6 @@ struct ImageBook {
     static var icloud: Image { .init(componentAsset: "Icloud") }
 
     static var flow: Image { .init(componentAsset: "Flow") }
-
-    // MARK: Initializers
-
-    private init() {}
 }
 
 // MARK: - Helpers
