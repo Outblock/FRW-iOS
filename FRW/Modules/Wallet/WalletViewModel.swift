@@ -264,15 +264,11 @@ class WalletViewModel: ObservableObject {
     private func refreshCoinItems() {
         var list = [WalletCoinItemModel]()
         for token in WalletManager.shared.activatedCoins {
-            guard let symbol = token.symbol else {
-                continue
-            }
-
-            let summary = CoinRateCache.cache.getSummary(for: symbol)
+            let summary = CoinRateCache.cache.getSummary(by: token.contractId)
             let item = WalletCoinItemModel(
                 token: token,
                 balance: WalletManager.shared
-                    .getBalance(bySymbol: symbol),
+                    .getBalance(byId: token.contractId),
                 last: summary?.getLastRate() ?? 0,
                 changePercentage: summary?.getChangePercentage() ?? 0
             )
@@ -333,8 +329,8 @@ class WalletViewModel: ObservableObject {
         }
 
         let result = WalletManager.shared.activatedCoins.filter { tokenModel in
-            if !tokenModel.isFlowCoin, let symbol = tokenModel.symbol {
-                return WalletManager.shared.getBalance(bySymbol: symbol) > 0.0
+            if !tokenModel.isFlowCoin {
+                return WalletManager.shared.getBalance(byId: tokenModel.contractId) > 0.0
             }
             return false
         }

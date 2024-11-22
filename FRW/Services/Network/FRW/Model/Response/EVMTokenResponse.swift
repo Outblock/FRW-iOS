@@ -35,6 +35,10 @@ struct EVMTokenResponse: Codable {
         return result
     }
 
+    var uniKey: String {
+        address
+    }
+
     func toTokenModel() -> TokenModel {
         let model = TokenModel(
             name: name,
