@@ -1513,7 +1513,8 @@ extension FlowNetwork {
         ) ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         var amountValue = Flow.Cadence.FValue.ufix64(amount)
-        if let result = Utilities.parseToBigUInt(amount.description, decimals: decimals), fromEvm {
+
+        if let result = amount.description.parseToBigUInt(decimals: decimals), fromEvm {
             amountValue = Flow.Cadence.FValue.uint256(result)
         }
         return try await sendTransaction(cadenceStr: cadenceStr, argumentList: [
@@ -1793,5 +1794,28 @@ extension UInt8 {
 extension String {
     func compareVersion(to version: String) -> ComparisonResult {
         compare(version, options: .numeric)
+    }
+
+    public func parseToBigUInt(decimals: Int = 18) -> BigUInt? {
+        let separators = CharacterSet(charactersIn: ".,")
+        let components = trimmingCharacters(in: .whitespacesAndNewlines).components(
+            separatedBy: separators
+        )
+        guard components.count == 1 || components.count == 2 else { return nil }
+        let unitDecimals = decimals
+        guard let beforeDecPoint = BigUInt(components[0], radix: 10) else { return nil }
+        var mainPart = beforeDecPoint * BigUInt(10).power(unitDecimals)
+        if components.count == 2 {
+            var part = components[1]
+            var numDigits = part.count
+            if numDigits > unitDecimals {
+                part = String(part.prefix(unitDecimals))
+                numDigits = part.count
+            }
+            guard let afterDecPoint = BigUInt(part, radix: 10) else { return nil }
+            let extraPart = afterDecPoint * BigUInt(10).power(unitDecimals - numDigits)
+            mainPart += extraPart
+        }
+        return mainPart
     }
 }
