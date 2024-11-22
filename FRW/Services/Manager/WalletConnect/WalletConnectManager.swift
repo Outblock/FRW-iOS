@@ -331,7 +331,8 @@ extension WalletConnectManager {
             return
         }
 
-        if pairings.contains(where: { $0.peer == sessionProposal.proposer }) {
+        if pairings
+            .contains(where: { $0.topic == sessionProposal.pairingTopic }) {
             approveSession(proposal: sessionProposal)
             return
         }
