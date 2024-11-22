@@ -168,6 +168,8 @@ class TokenDetailViewModel: ObservableObject {
     var showSheet: Bool = false
     var buttonAction: TokenDetailViewModel.Action = .none
 
+    var isTokenDetailsButtonEnabled: Bool { self.token.website != nil }
+    
     // MARK: Private
 
     private var cancelSets = Set<AnyCancellable>()
