@@ -83,7 +83,7 @@ extension AddAddressView {
 
     final class AddAddressViewModel: ViewModel {
         enum AddressType {
-            case flow, eoa
+            case flow, evm
         }
 
         // MARK: Lifecycle
@@ -261,15 +261,12 @@ extension AddAddressView {
                 return
             }
 
-            var formattedAddress = state.address.trim().lowercased()
-            if !formattedAddress.hasPrefix("0x") {
-                formattedAddress = "0x" + formattedAddress
-            }
+            let formattedAddress = state.address.trim().lowercased().addHexPrefix()
 
             switch checkAddressFormat(formattedAddress) {
             case .some(.flow):
                 delayCheckAddressExists(formattedAddress)
-            case .some(.eoa):
+            case .some(.evm):
                 checkEoaAddressExists(formattedAddress)
             case .none:
                 state.addressStateType = .invalidFormat
@@ -285,7 +282,7 @@ extension AddAddressView.AddAddressViewModel {
         }
         
         if address.matchRegex("^0x[0-9a-fA-F]{40}$") {
-            return .eoa
+            return .evm
         }
         
         return nil
@@ -314,7 +311,7 @@ extension AddAddressView.AddAddressViewModel {
     }
 
     private func checkEoaAddressExists(_ address: String) {
-        guard let eoa = EthereumAddress(address, type: .normal, ignoreChecksum: false) else {
+        guard let eoa = EthereumAddress(address, type: .normal, ignoreChecksum: true) else {
             self.state.addressStateType = .invalidFormat
             return
         }
