@@ -119,6 +119,10 @@ class WalletManager: ObservableObject {
         return [WalletManager.shared]
     }
 
+    var flowToken: TokenModel? {
+        WalletManager.shared.supportedCoins?.first(where: { $0.isFlowCoin })
+    }
+
     func bindChildAccountManager() {
         ChildAccountManager.shared.$selectedChildAccount
             .receive(on: DispatchQueue.main)
@@ -451,9 +455,9 @@ extension WalletManager {
         return nil
     }
 
-    func getBalance(bySymbol symbol: String) -> Decimal {
-        coinBalances[symbol] ?? coinBalances[symbol.lowercased()] ??
-            coinBalances[symbol.uppercased()] ?? 0
+    func getBalance(byId contactId: String) -> Decimal {
+        coinBalances[contactId] ?? coinBalances[contactId.lowercased()] ??
+            coinBalances[contactId.uppercased()] ?? 0
     }
 
     func currentContact() -> Contact {
@@ -813,11 +817,9 @@ extension WalletManager {
         var newBalanceMap: [String: Decimal] = [:]
 
         for (_, value) in activatedCoins.enumerated() {
-            guard let symbol = value.symbol else {
-                continue
-            }
-            if let balance = balanceList[value.contractId] {
-                newBalanceMap[symbol] = Decimal(balance)
+            let contractId = value.contractId
+            if let balance = balanceList[contractId] {
+                newBalanceMap[contractId] = Decimal(balance)
             }
         }
 
@@ -839,7 +841,10 @@ extension WalletManager {
 
         let tokenModel = supportedCoins?.first { $0.name.lowercased() == "flow" }
         let balance = EVMAccountManager.shared.balance
-        guard var tokenModel = tokenModel, let symbol = tokenModel.symbol else { return }
+        guard var tokenModel = tokenModel else {
+            return
+        }
+        let flowTokenKey = tokenModel.contractId
 
         let list = try await EVMAccountManager.shared.fetchTokens()
 
@@ -847,7 +852,7 @@ extension WalletManager {
             log.info("[EVM] load balance success \(balance)")
             tokenModel.flowIdentifier = tokenModel.contractId
             self.activatedCoins = [tokenModel]
-            self.coinBalances = [symbol: balance]
+            self.coinBalances = [flowTokenKey: balance]
 
             for item in list {
                 if item.flowBalance > 0 {
@@ -857,7 +862,7 @@ extension WalletManager {
                     if var result = result {
                         result.balance = BigUInt(from: item.balance ?? "-1")
                         self.activatedCoins.append(result)
-                        self.coinBalances[item.symbol] = item.flowBalance
+                        self.coinBalances[result.contractId] = item.flowBalance
                     }
                 }
             }
@@ -879,14 +884,15 @@ extension WalletManager {
 
     func addCustomToken(token: CustomToken) {
         DispatchQueue.main.async {
-            self.activatedCoins.append(token.toToken())
+            let model = token.toToken()
+            self.activatedCoins.append(model)
             let balance = token.balance ?? BigUInt(0)
             let result = Utilities.formatToPrecision(
                 balance,
                 units: .custom(token.decimals),
                 formattingDecimals: token.decimals
             )
-            self.coinBalances[token.symbol] = Decimal(string: result)
+            self.coinBalances[model.contractId] = Decimal(string: result)
         }
     }
 
@@ -895,7 +901,8 @@ extension WalletManager {
             self.activatedCoins.removeAll { model in
                 model.getAddress() == token.address && model.name == token.name
             }
-            self.coinBalances[token.symbol] = nil
+            let model = token.toToken()
+            self.coinBalances[model.contractId] = nil
         }
     }
 

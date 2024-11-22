@@ -18,13 +18,15 @@ class EVMEnableViewModel: ObservableObject {
     func onClickEnable() {
         let minBalance = 0.000
         let result = WalletManager.shared.activatedCoins.filter { tokenModel in
-            if tokenModel.isFlowCoin, let symbol = tokenModel.symbol {
+            if tokenModel.isFlowCoin {
                 log
                     .debug(
-                        "[EVM] enable check balance: \(WalletManager.shared.getBalance(bySymbol: symbol))"
+                        "[EVM] enable check balance: \(WalletManager.shared.getBalance(byId: tokenModel.contractId)) "
                     )
                 return WalletManager.shared
-                    .getBalance(bySymbol: symbol).doubleValue >= minBalance
+                    .getBalance(
+                        byId: tokenModel.contractId
+                    ).doubleValue >= minBalance
             }
             return false
         }

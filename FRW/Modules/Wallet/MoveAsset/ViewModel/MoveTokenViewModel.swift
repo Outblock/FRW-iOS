@@ -253,9 +253,10 @@ class MoveTokenViewModel: ObservableObject {
     }
 
     private func refreshTokenData() {
-        let aBalance = WalletManager.shared.getBalance(bySymbol: token.symbol ?? "")
-        amountBalance = aBalance
-        coinRate = CoinRateCache.cache.getSummary(for: token.symbol ?? "")?.getLastRate() ?? 0
+        amountBalance = WalletManager.shared.getBalance(byId: token.contractId)
+        coinRate = CoinRateCache.cache
+            .getSummary(by: token.contractId)?
+            .getLastRate() ?? 0
     }
 
     private func isFromFlowToCoa() -> Bool {
