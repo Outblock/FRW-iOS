@@ -110,17 +110,14 @@ struct StakingListView: RouteableView {
     }
 
     var newNodeBtn: some View {
-        Button {
-            Router.route(to: RouteMap.Wallet.stakingSelectProvider)
-        } label: {
-            Text("stake_new_node".localized)
-                .font(.inter(size: 16, weight: .bold))
-                .foregroundColor(Color.LL.Neutrals.text)
-                .frame(height: 54)
-                .frame(maxWidth: .infinity)
-                .background(Color.LL.Neutrals.neutrals6)
-                .cornerRadius(12)
-        }
+        VPrimaryButton(
+            model: ButtonStyle.primary,
+            state: .enabled,
+            action: {
+                Router.route(to: RouteMap.Wallet.stakingSelectProvider)
+            },
+            title: "stake_new_node".localized
+        )
     }
 
     var emptyListView: some View {
