@@ -1,5 +1,5 @@
 {
-  "originHash" : "8fd1cab2d85cec6846983b7aaa2bf3b3b12e9d4093e563dd3a1d97b800ba1cb7",
+  "originHash" : "770f15c664a4cdff6f33c8a133aa1b318e4e5debe9b97da3e7876e10b005a116",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -648,10 +648,9 @@
     {
       "identity" : "walletconnectswiftv2",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/WalletConnect/WalletConnectSwiftV2",
+      "location" : "https://github.com/Outblock/WalletConnectSwiftV2",
       "state" : {
-        "revision" : "3327c0a8c014b155534b91520554d812e2960077",
-        "version" : "1.20.3"
+        "revision" : "a5d13167da4532c9a95f9df605cb9c3020e99ac7"
       }
     },
     {

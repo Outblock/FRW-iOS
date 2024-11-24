@@ -8471,7 +8471,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2.10;
+				MARKETING_VERSION = 2.2.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -8514,7 +8514,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2.10;
+				MARKETING_VERSION = 2.2.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
@@ -9168,10 +9168,10 @@
 		};
 		158832C82894262B00142B35 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/WalletConnect/WalletConnectSwiftV2";
+			repositoryURL = "https://github.com/Outblock/WalletConnectSwiftV2";
 			requirement = {
-				kind = exactVersion;
-				version = 1.20.3;
+				kind = revision;
+				revision = a5d13167da4532c9a95f9df605cb9c3020e99ac7;
 			};
 		};
 		158832D02894273600142B35 /* XCRemoteSwiftPackageReference "Starscream" */ = {
