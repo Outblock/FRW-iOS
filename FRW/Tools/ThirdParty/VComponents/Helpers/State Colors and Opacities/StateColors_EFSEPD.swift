@@ -11,34 +11,7 @@ import SwiftUI
 
 /// Color group containing `enabled`, `focused`, `success`, `error`, `pressed`, and `disabled` values.
 public struct StateColors_EFSEPD: Equatable {
-    // MARK: Properties
-
-    /// Enabled color.
-    public var enabled: Color
-
-    /// Focused color.
-    public var focused: Color
-
-    /// Success color.
-    public var success: Color
-
-    /// Error color.
-    public var error: Color
-
-    /// Enabled pressed color.
-    public var pressedEnabled: Color
-
-    /// Focused pressed color.
-    public var pressedFocused: Color
-
-    /// Success pressed color.
-    public var pressedSuccess: Color
-
-    /// Error pressed color.
-    public var pressedError: Color
-
-    /// Disabled color.
-    public var disabled: Color
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -67,16 +40,47 @@ public struct StateColors_EFSEPD: Equatable {
 
     /// Initializes group with clear values.
     public init() {
-        enabled = .clear
-        focused = .clear
-        success = .clear
-        error = .clear
-        pressedEnabled = .clear
-        pressedFocused = .clear
-        pressedSuccess = .clear
-        pressedError = .clear
-        disabled = .clear
+        self.enabled = .clear
+        self.focused = .clear
+        self.success = .clear
+        self.error = .clear
+        self.pressedEnabled = .clear
+        self.pressedFocused = .clear
+        self.pressedSuccess = .clear
+        self.pressedError = .clear
+        self.disabled = .clear
     }
+
+    // MARK: Public
+
+    // MARK: Properties
+
+    /// Enabled color.
+    public var enabled: Color
+
+    /// Focused color.
+    public var focused: Color
+
+    /// Success color.
+    public var success: Color
+
+    /// Error color.
+    public var error: Color
+
+    /// Enabled pressed color.
+    public var pressedEnabled: Color
+
+    /// Focused pressed color.
+    public var pressedFocused: Color
+
+    /// Success pressed color.
+    public var pressedSuccess: Color
+
+    /// Error pressed color.
+    public var pressedError: Color
+
+    /// Disabled color.
+    public var disabled: Color
 
     /// Initializes group with clear values.
     public var clear: Self { .init() }

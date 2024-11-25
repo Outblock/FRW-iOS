@@ -5,6 +5,7 @@
 //  Created by cat on 2024/2/27.
 //
 
+import BigInt
 import Flow
 import SwiftUI
 
@@ -32,12 +33,12 @@ class MoveTokenViewModel: ObservableObject {
 
     @Published
     var showBalance: String = ""
-    var actualBalance: Double = 0
+    var actualBalance: Decimal?
 
     @Published
-    var inputTokenNum: Double = 0
+    var inputTokenNum: Decimal = 0
     @Published
-    var amountBalance: Double = 0
+    var amountBalance: Decimal = 0
     @Published
     var coinRate: Double = 0
     @Published
@@ -76,7 +77,7 @@ class MoveTokenViewModel: ObservableObject {
     }
 
     var currentBalance: String {
-        let totalStr = amountBalance.formatCurrencyString()
+        let totalStr = amountBalance.doubleValue.formatCurrencyString()
         return "Balance: \(totalStr)"
     }
 
@@ -92,7 +93,9 @@ class MoveTokenViewModel: ObservableObject {
 
     func inputTextDidChangeAction(text _: String) {
         if !maxButtonClickedOnce {
-            actualBalance = showBalance.doubleValue
+            actualBalance = Decimal(
+                string: showBalance
+            ) // showBalance.doubleValue
         }
         maxButtonClickedOnce = false
         refreshSummary()
@@ -102,21 +105,22 @@ class MoveTokenViewModel: ObservableObject {
     func refreshSummary() {
         log.info("[refreshSummary]")
         if showBalance.isEmpty {
-            inputTokenNum = 0.0
+            inputTokenNum = 0
             inputDollarNum = 0.0
             errorType = .none
             return
         }
 
         if !showBalance.isNumber {
-            inputTokenNum = 0.0
+            inputTokenNum = 0
             inputDollarNum = 0.0
             errorType = .formatError
             return
         }
 
-        inputTokenNum = token.balance?.description.doubleValue ?? actualBalance
-        inputDollarNum = inputTokenNum * coinRate * CurrencyCache.cache.currentCurrencyRate
+        inputTokenNum = actualBalance ?? Decimal(0)
+        inputDollarNum = inputTokenNum.doubleValue * coinRate * CurrencyCache.cache
+            .currentCurrencyRate
 
         checkForInsufficientStorage()
 
@@ -137,7 +141,7 @@ class MoveTokenViewModel: ObservableObject {
         Task {
             let num = await updateAmountIfNeed(inputAmount: amountBalance)
             DispatchQueue.main.async {
-                self.showBalance = num.formatCurrencyString()
+                self.showBalance = num.doubleValue.formatCurrencyString()
                 self.actualBalance = num
                 self.refreshSummary()
                 self.updateState()
@@ -147,7 +151,7 @@ class MoveTokenViewModel: ObservableObject {
 
     // MARK: Private
 
-    private var minBalance: Double? = nil
+    private var minBalance: Decimal? = nil
     private var maxButtonClickedOnce = false
     private var _insufficientStorageFailure: InsufficientStorageFailure?
 
@@ -238,7 +242,7 @@ class MoveTokenViewModel: ObservableObject {
 
     private func fetchMinFlowBalance() async {
         do {
-            minBalance = try await FlowNetwork.minFlowBalance()
+            minBalance = try await FlowNetwork.minFlowBalance().decimalValue
             log.debug("[Flow] min balance:\(minBalance ?? 0.001)")
         } catch {
             minBalance = 0.001
@@ -254,8 +258,10 @@ class MoveTokenViewModel: ObservableObject {
     }
 
     private func refreshTokenData() {
-        amountBalance = WalletManager.shared.getBalance(bySymbol: token.symbol ?? "")
-        coinRate = CoinRateCache.cache.getSummary(for: token.symbol ?? "")?.getLastRate() ?? 0
+        amountBalance = WalletManager.shared.getBalance(byId: token.contractId)
+        coinRate = CoinRateCache.cache
+            .getSummary(by: token.contractId)?
+            .getLastRate() ?? 0
     }
 
     private func isFromFlowToCoa() -> Bool {
@@ -269,7 +275,7 @@ class MoveTokenViewModel: ObservableObject {
         return false
     }
 
-    private func updateAmountIfNeed(inputAmount: Double) async -> Double {
+    private func updateAmountIfNeed(inputAmount: Decimal) async -> Decimal {
         guard isFromFlowToCoa() else {
             return max(inputAmount, 0)
         }
@@ -281,8 +287,8 @@ class MoveTokenViewModel: ObservableObject {
         // move fee
         let num = max(
             inputAmount - (
-                minBalance ?? WalletManager.minDefaultBlance.doubleValue
-            ) - WalletManager.fixedMoveFee.doubleValue,
+                minBalance ?? WalletManager.minDefaultBlance
+            ) - WalletManager.fixedMoveFee,
             0
         )
         return num
@@ -301,7 +307,7 @@ extension MoveTokenViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
     
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheckForMove(amount: self.inputTokenNum.decimalValue, from: self.fromContact.walletType, to: self.toContact.walletType)
+        self._insufficientStorageFailure = insufficientStorageCheckForMove(amount: self.inputTokenNum, from: self.fromContact.walletType, to: self.toContact.walletType)
     }
 }
 
@@ -331,7 +337,7 @@ extension MoveTokenViewModel {
             Task {
                 do {
                     var tid: Flow.ID?
-                    let amount = self.inputTokenNum.decimalValue
+                    let amount = self.inputTokenNum //
                     let vaultIdentifier = (
                         fromIsEVM ? (token.flowIdentifier ?? "") : token
                             .contractId + ".Vault"
@@ -349,7 +355,8 @@ extension MoveTokenViewModel {
                             .bridgeChildTokenFromCoa(
                                 vaultIdentifier: vaultIdentifier,
                                 child: toContact.address ?? "",
-                                amount: amount
+                                amount: amount,
+                                decimals: token.decimal
                             )
                     default:
                         break
@@ -396,7 +403,7 @@ extension MoveTokenViewModel {
                 DispatchQueue.main.async {
                     self.buttonState = .loading
                 }
-                let amount = self.inputTokenNum.decimalValue
+                let amount = self.inputTokenNum // self.inputTokenNum.decimalValue
                 let txid = try await FlowNetwork.withdrawCoa(amount: amount)
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
@@ -430,7 +437,7 @@ extension MoveTokenViewModel {
                 DispatchQueue.main.async {
                     self.buttonState = .loading
                 }
-                let amount = self.inputTokenNum.decimalValue
+                let amount = self.inputTokenNum // self.inputTokenNum.decimalValue
                 log.debug("[amount] move \(self.inputTokenNum)")
                 log.debug("[amount] move \(amount.description)")
                 let txid = try await FlowNetwork.fundCoa(amount: amount)
@@ -460,7 +467,7 @@ extension MoveTokenViewModel {
                     self.buttonState = .loading
                 }
                 log.info("[EVM] bridge token \(fromIsEVM ? "FromEVM" : "ToEVM")")
-                let amount = self.inputTokenNum.decimalValue
+                let amount = self.inputTokenNum // self.inputTokenNum.decimalValue
 
                 let vaultIdentifier = (
                     fromIsEVM ? (token.flowIdentifier ?? "") : token

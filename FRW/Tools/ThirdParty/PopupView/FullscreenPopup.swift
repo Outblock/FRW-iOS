@@ -9,98 +9,28 @@ import Foundation
 import SwiftUI
 
 public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier {
-    // MARK: - Presentaion
+    // MARK: Lifecycle
 
-    @Binding var isPresented: Bool
-    @Binding var item: Item?
-
-    var isBoolMode: Bool
-
-    var sheetPresented: Bool {
-        item != nil || isPresented
-    }
-
-    // MARK: - Parameters
-
-    /// If nil - never hides on its own
-    var autohideIn: Double?
-
-    /// Should close on tap outside - default is `false`
-    var closeOnTapOutside: Bool
-
-    /// Background color for outside area - default is `Color.clear`
-    var backgroundColor: Color
-
-    /// Custom background view for outside area
-    var backgroundView: AnyView?
-
-    /// If opaque - taps do not pass through popup's background color
-    var isOpaque: Bool
-
-    /// called when when dismiss animation starts
-    var userWillDismissCallback: (DismissSource) -> Void
-
-    /// called when when dismiss animation ends
-    var userDismissCallback: (DismissSource) -> Void
-
-    var params: Popup<PopupContent>.PopupParameters
-
-    var view: (() -> PopupContent)!
-    var itemView: ((Item) -> PopupContent)!
-
-    // MARK: - Presentation animation
-
-    /// Trigger popup showing/hiding animations and...
-    @State private var shouldShowContent = false
-
-    /// ... once hiding animation is finished remove popup from the memory using this flag
-    @State private var showContent = false
-
-    /// keep track of closing state to avoid unnecessary showing bug
-    @State private var closingIsInProcess = false
-
-    /// show transparentNonAnimatingFullScreenCover
-    @State private var showSheet = false
-
-    /// opacity of background color
-    @State private var opacity = 0.0
-
-    /// A temporary variable to hold a copy of the `itemView` when the item is nil (to complete `itemView`'s dismiss animation)
-    @State private var tempItemView: PopupContent?
-
-    // MARK: - Autohide
-
-    /// Class reference for capturing a weak reference later in dispatch work holder.
-    private var isPresentedRef: ClassReference<Binding<Bool>>?
-    private var itemRef: ClassReference<Binding<Item?>>?
-
-    /// holder for autohiding dispatch work (to be able to cancel it when needed)
-    @State private var dispatchWorkHolder = DispatchWorkHolder()
-
-    // MARK: - Internal
-
-    /// Set dismiss source to pass to dismiss callback
-    @State private var dismissSource: DismissSource?
-
-    init(isPresented: Binding<Bool> = .constant(false),
-         item: Binding<Item?> = .constant(nil),
-         isBoolMode: Bool,
-         params: Popup<PopupContent>.PopupParameters,
-         view: (() -> PopupContent)?,
-         itemView: ((Item) -> PopupContent)?)
-    {
+    init(
+        isPresented: Binding<Bool> = .constant(false),
+        item: Binding<Item?> = .constant(nil),
+        isBoolMode: Bool,
+        params: Popup<PopupContent>.PopupParameters,
+        view: (() -> PopupContent)?,
+        itemView: ((Item) -> PopupContent)?
+    ) {
         _isPresented = isPresented
         _item = item
         self.isBoolMode = isBoolMode
 
         self.params = params
-        autohideIn = params.autohideIn
-        closeOnTapOutside = params.closeOnTapOutside
-        backgroundColor = params.backgroundColor
-        backgroundView = params.backgroundView
-        isOpaque = params.isOpaque
-        userDismissCallback = params.dismissCallback
-        userWillDismissCallback = params.willDismissCallback
+        self.autohideIn = params.autohideIn
+        self.closeOnTapOutside = params.closeOnTapOutside
+        self.backgroundColor = params.backgroundColor
+        self.backgroundView = params.backgroundView
+        self.isOpaque = params.isOpaque
+        self.userDismissCallback = params.dismissCallback
+        self.userWillDismissCallback = params.willDismissCallback
 
         if let view = view {
             self.view = view
@@ -109,9 +39,11 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
             self.itemView = itemView
         }
 
-        isPresentedRef = ClassReference($isPresented)
-        itemRef = ClassReference($item)
+        self.isPresentedRef = ClassReference($isPresented)
+        self.itemRef = ClassReference($item)
     }
+
+    // MARK: Public
 
     public func body(content: Content) -> some View {
         if isBoolMode {
@@ -153,14 +85,18 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
     public func main(content: Content) -> some View {
         if isOpaque {
             #if os(iOS)
-                content.transparentNonAnimatingFullScreenCover(isPresented: $showSheet, dismissSource: dismissSource, userDismissCallback: userDismissCallback) {
-                    constructPopup()
-                }
+            content.transparentNonAnimatingFullScreenCover(
+                isPresented: $showSheet,
+                dismissSource: dismissSource,
+                userDismissCallback: userDismissCallback
+            ) {
+                constructPopup()
+            }
             #else
-                ZStack {
-                    content
-                    constructPopup()
-                }
+            ZStack {
+                content
+                constructPopup()
+            }
             #endif
         } else {
             ZStack {
@@ -168,6 +104,58 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
                 constructPopup()
             }
         }
+    }
+
+    // MARK: Internal
+
+    // MARK: - Presentaion
+
+    @Binding
+    var isPresented: Bool
+    @Binding
+    var item: Item?
+
+    var isBoolMode: Bool
+
+    // MARK: - Parameters
+
+    /// If nil - never hides on its own
+    var autohideIn: Double?
+
+    /// Should close on tap outside - default is `false`
+    var closeOnTapOutside: Bool
+
+    /// Background color for outside area - default is `Color.clear`
+    var backgroundColor: Color
+
+    /// Custom background view for outside area
+    var backgroundView: AnyView?
+
+    /// If opaque - taps do not pass through popup's background color
+    var isOpaque: Bool
+
+    /// called when when dismiss animation starts
+    var userWillDismissCallback: (DismissSource) -> Void
+
+    /// called when when dismiss animation ends
+    var userDismissCallback: (DismissSource) -> Void
+
+    var params: Popup<PopupContent>.PopupParameters
+
+    var view: (() -> PopupContent)!
+    var itemView: ((Item) -> PopupContent)!
+
+    var sheetPresented: Bool {
+        item != nil || isPresented
+    }
+
+    var viewForItem: (() -> PopupContent)? {
+        if let item = item {
+            return { itemView(item) }
+        } else if let tempItemView {
+            return { tempItemView }
+        }
+        return nil
     }
 
     func createBackgroundView() -> some View {
@@ -200,38 +188,6 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
         }
     }
 
-    var viewForItem: (() -> PopupContent)? {
-        if let item = item {
-            return { itemView(item) }
-        } else if let tempItemView {
-            return { tempItemView }
-        }
-        return nil
-    }
-
-    private func getModifier() -> Popup<PopupContent> {
-        Popup(
-            params: params,
-            view: viewForItem != nil ? viewForItem! : view,
-            shouldShowContent: shouldShowContent,
-            showContent: showContent,
-            positionIsCalculatedCallback: {
-                // once the closing has been started, don't allow position recalculation to trigger popup shpwing again
-                if !closingIsInProcess {
-                    shouldShowContent = true // this will cause currentOffset change thus triggering the sliding showing animation
-                    opacity = 1 // this will cause cross disolving animation for background color
-                    setupAutohide()
-                }
-            },
-            animationCompletedCallback: onAnimationCompleted,
-            dismissCallback: { source in
-                dismissSource = source
-                isPresented = false
-                item = nil
-            }
-        )
-    }
-
     func appearAction(sheetPresented: Bool) {
         if sheetPresented {
             dismissSource = nil
@@ -242,7 +198,8 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
             closingIsInProcess = true
             userWillDismissCallback(dismissSource ?? .binding)
             dispatchWorkHolder.work?.cancel()
-            shouldShowContent = false // this will cause currentOffset change thus triggering the sliding hiding animation
+            shouldShowContent =
+                false // this will cause currentOffset change thus triggering the sliding hiding animation
             opacity = 0
             // do the rest once the animation is finished (see onAnimationCompleted())
 
@@ -255,7 +212,8 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
     }
 
     func onAnimationCompleted() {
-        if shouldShowContent { // return if this was called on showing animation, only proceed if called on hiding
+        if shouldShowContent {
+            // return if this was called on showing animation, only proceed if called on hiding
             return
         }
         showContent = false // unload popup body after hiding animation is done
@@ -276,7 +234,10 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
             // Weak reference to avoid the work item capturing the struct,
             // which would create a retain cycle with the work holder itself.
 
-            dispatchWorkHolder.work = DispatchWorkItem(block: { [weak isPresentedRef, weak itemRef] in
+            dispatchWorkHolder.work = DispatchWorkItem(block: { [
+                weak isPresentedRef,
+                weak itemRef
+            ] in
                 dismissSource = .autohide
                 isPresentedRef?.value.wrappedValue = false
                 itemRef?.value.wrappedValue = nil
@@ -292,5 +253,71 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             block()
         }
+    }
+
+    // MARK: Private
+
+    // MARK: - Presentation animation
+
+    /// Trigger popup showing/hiding animations and...
+    @State
+    private var shouldShowContent = false
+
+    /// ... once hiding animation is finished remove popup from the memory using this flag
+    @State
+    private var showContent = false
+
+    /// keep track of closing state to avoid unnecessary showing bug
+    @State
+    private var closingIsInProcess = false
+
+    /// show transparentNonAnimatingFullScreenCover
+    @State
+    private var showSheet = false
+
+    /// opacity of background color
+    @State
+    private var opacity = 0.0
+
+    /// A temporary variable to hold a copy of the `itemView` when the item is nil (to complete `itemView`'s dismiss animation)
+    @State
+    private var tempItemView: PopupContent?
+
+    // MARK: - Autohide
+
+    /// Class reference for capturing a weak reference later in dispatch work holder.
+    private var isPresentedRef: ClassReference<Binding<Bool>>?
+    private var itemRef: ClassReference<Binding<Item?>>?
+
+    /// holder for autohiding dispatch work (to be able to cancel it when needed)
+    @State
+    private var dispatchWorkHolder = DispatchWorkHolder()
+
+    /// Set dismiss source to pass to dismiss callback
+    @State
+    private var dismissSource: DismissSource?
+
+    private func getModifier() -> Popup<PopupContent> {
+        Popup(
+            params: params,
+            view: viewForItem != nil ? viewForItem! : view,
+            shouldShowContent: shouldShowContent,
+            showContent: showContent,
+            positionIsCalculatedCallback: {
+                // once the closing has been started, don't allow position recalculation to trigger popup shpwing again
+                if !closingIsInProcess {
+                    shouldShowContent =
+                        true // this will cause currentOffset change thus triggering the sliding showing animation
+                    opacity = 1 // this will cause cross disolving animation for background color
+                    setupAutohide()
+                }
+            },
+            animationCompletedCallback: onAnimationCompleted,
+            dismissCallback: { source in
+                dismissSource = source
+                isPresented = false
+                item = nil
+            }
+        )
     }
 }

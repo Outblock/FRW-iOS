@@ -7,10 +7,18 @@
 
 import SwiftUI
 
-// MARK: - Color Book
+// MARK: - ColorBook
 
 /// Contains fundamental colors used throughout the library.
 public struct ColorBook {
+    // MARK: Lifecycle
+
+    // MARK: Initializers
+
+    private init() {}
+
+    // MARK: Public
+
     // MARK: Properties
 
     /// Canvas color that can be used for `VBaseView`.
@@ -30,17 +38,13 @@ public struct ColorBook {
 
     /// Blue accent color.
     public static let accent: Color = .init(componentAsset: "Accent")
-
-    // MARK: Initializers
-
-    private init() {}
 }
 
 // MARK: - Helpers
 
-public extension Color {
+extension Color {
     /// Initializes color from library's local assets library from a name.
-    init(componentAsset name: String) {
+    public init(componentAsset name: String) {
 //        guard
 //            let uiColor: UIColor = .init(named: name, in: Bundle.main, compatibleWith: nil)
 //        else {

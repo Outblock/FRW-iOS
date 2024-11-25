@@ -16,15 +16,15 @@ struct StakingProvider: Codable {
     let website: String?
 
     var isLilico: Bool {
-        return name.lowercased() == "lilico"
+        name.lowercased() == "lilico"
     }
 
     var iconURL: URL? {
-        return URL(string: icon ?? "")
+        URL(string: icon ?? "")
     }
 
     var rate: Double {
-        return isLilico ? StakingManager.shared.apy : StakingDefaultNormalApy
+        isLilico ? StakingManager.shared.apy : StakingDefaultNormalApy
     }
 
     var apyYearPercentString: String {
@@ -33,11 +33,11 @@ struct StakingProvider: Codable {
     }
 
     var delegatorId: Int? {
-        return StakingManager.shared.delegatorIds[id]
+        StakingManager.shared.delegatorIds[id]
     }
 
     var currentNode: StakingNode? {
-        return StakingManager.shared.nodeInfos.first(where: { $0.nodeID == self.id })
+        StakingManager.shared.nodeInfos.first(where: { $0.nodeID == self.id })
     }
 
     var host: String {

@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct AccountKeyRevokeView: View {
-    @EnvironmentObject var vm: AccountKeyViewModel
+    @EnvironmentObject
+    var vm: AccountKeyViewModel
 
     var body: some View {
         VStack {
@@ -25,7 +26,11 @@ struct AccountKeyRevokeView: View {
 
                 Spacer()
 
-                WalletSendButtonView(allowEnable: .constant(true), buttonText: "hold_to_revoke".localized, activeColor: Color.Theme.Accent.red) {
+                WalletSendButtonView(
+                    allowEnable: .constant(true),
+                    buttonText: "hold_to_revoke".localized,
+                    activeColor: Color.Theme.Accent.red
+                ) {
                     vm.revokeKeyAction()
                 }
                 .padding(.bottom, 10)

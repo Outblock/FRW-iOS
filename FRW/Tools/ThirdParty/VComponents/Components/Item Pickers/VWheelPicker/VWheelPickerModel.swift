@@ -11,50 +11,65 @@ import SwiftUI
 
 /// Model that describes UI.
 public struct VWheelPickerModel {
-    // MARK: Properties
-
-    /// Reference to `VSegmentedPickerModel`.
-    public static let segmentedPickerReference: VSegmentedPickerModel = .init()
-
-    /// Sub-model containing layout properties.
-    public var layout: Layout = .init()
-
-    /// Sub-model containing color properties.
-    public var colors: Colors = .init()
-
-    /// Sub-model containing font properties.
-    public var fonts: Fonts = .init()
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes model with default values.
     public init() {}
 
+    // MARK: Public
+
     // MARK: Layout
 
     /// Sub-model containing layout properties.
     public struct Layout {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Picker corner radius. Defaults to `15`.
         public var cornerRadius: CGFloat = 15
 
         /// Spacing between header and picker, and picker and footer. Defaults to `3`.
-        public var headerFooterSpacing: CGFloat = segmentedPickerReference.layout.headerFooterSpacing
+        public var headerFooterSpacing: CGFloat = segmentedPickerReference.layout
+            .headerFooterSpacing
 
         /// Header and footer horizontal margin. Defaults to `10`.
-        public var headerMarginHorizontal: CGFloat = segmentedPickerReference.layout.headerFooterMarginHorizontal
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
+        public var headerMarginHorizontal: CGFloat = segmentedPickerReference.layout
+            .headerFooterMarginHorizontal
     }
 
     // MARK: Colors
 
     /// Sub-model containing color properties.
     public struct Colors {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: State Colors
+
+        /// Sub-model containing colors for component states.
+        public typealias StateColors = StateColors_ED
+
+        // MARK: State Opacities
+
+        /// Sub-model containing opacities for component states.
+        public typealias StateOpacities = StateOpacities_D
+
         // MARK: Properties
 
         /// Content opacities.
@@ -78,27 +93,21 @@ public struct VWheelPickerModel {
 
         /// Footer colors.
         public var footer: StateColors = segmentedPickerReference.colors.footer
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: State Colors
-
-        /// Sub-model containing colors for component states.
-        public typealias StateColors = StateColors_ED
-
-        // MARK: State Opacities
-
-        /// Sub-model containing opacities for component states.
-        public typealias StateOpacities = StateOpacities_D
     }
 
     // MARK: Fonts
 
     /// Sub-model containing font properties.
     public struct Fonts {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Header font. Defaults to system font of size `14`.
@@ -111,10 +120,19 @@ public struct VWheelPickerModel {
         ///
         /// Only applicable when using init with title.
         public var rows: Font = segmentedPickerReference.fonts.rows
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
+
+    // MARK: Properties
+
+    /// Reference to `VSegmentedPickerModel`.
+    public static let segmentedPickerReference: VSegmentedPickerModel = .init()
+
+    /// Sub-model containing layout properties.
+    public var layout: Layout = .init()
+
+    /// Sub-model containing color properties.
+    public var colors: Colors = .init()
+
+    /// Sub-model containing font properties.
+    public var fonts: Fonts = .init()
 }

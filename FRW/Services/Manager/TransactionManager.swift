@@ -77,7 +77,18 @@ extension TransactionManager.TransactionHolder {
 
     var toFlowScanTransaction: FlowScanTransaction {
         let time = ISO8601Formatter.string(from: Date(timeIntervalSince1970: createTime))
-        let model = FlowScanTransaction(authorizers: nil, contractInteractions: nil, error: errorMsg, eventCount: nil, hash: transactionId.hex, index: nil, payer: nil, proposer: nil, status: statusString, time: time)
+        let model = FlowScanTransaction(
+            authorizers: nil,
+            contractInteractions: nil,
+            error: errorMsg,
+            eventCount: nil,
+            hash: transactionId.hex,
+            index: nil,
+            payer: nil,
+            proposer: nil,
+            status: statusString,
+            time: time
+        )
         return model
     }
 }
@@ -102,6 +113,8 @@ extension TransactionManager {
         case success
         case failed
 
+        // MARK: Internal
+
         var statusColor: UIColor {
             switch self {
             case .pending:
@@ -115,20 +128,21 @@ extension TransactionManager {
     }
 
     class TransactionHolder: Codable {
-        var transactionId: Flow.ID
-        var createTime: TimeInterval
-        var status: Int = Flow.Transaction.Status.pending.rawValue
-        var internalStatus: TransactionManager.InternalStatus = .pending
-        var type: TransactionManager.TransactionType
-        var data: Data = .init()
-        var errorMsg: String?
+        // MARK: Lifecycle
 
-        private var timer: Timer?
-        private var retryTimes: Int = 0
-
-        var flowStatus: Flow.Transaction.Status {
-            return Flow.Transaction.Status(status)
+        init(
+            id: Flow.ID,
+            createTime: TimeInterval = Date().timeIntervalSince1970,
+            type: TransactionManager.TransactionType,
+            data: Data = Data()
+        ) {
+            self.transactionId = id
+            self.createTime = createTime
+            self.type = type
+            self.data = data
         }
+
+        // MARK: Internal
 
         enum CodingKeys: String, CodingKey {
             case transactionId
@@ -139,21 +153,27 @@ extension TransactionManager {
             case internalStatus
         }
 
-        init(id: Flow.ID, createTime: TimeInterval = Date().timeIntervalSince1970, type: TransactionManager.TransactionType, data: Data = Data()) {
-            transactionId = id
-            self.createTime = createTime
-            self.type = type
-            self.data = data
+        var transactionId: Flow.ID
+        var createTime: TimeInterval
+        var status: Int = Flow.Transaction.Status.pending.rawValue
+        var internalStatus: TransactionManager.InternalStatus = .pending
+        var type: TransactionManager.TransactionType
+        var data: Data = .init()
+        var errorMsg: String?
+
+        var flowStatus: Flow.Transaction.Status {
+            Flow.Transaction.Status(status)
         }
 
         func decodedObject<T: Decodable>(_ type: T.Type) -> T? {
-            return try? JSONDecoder().decode(type, from: data)
+            try? JSONDecoder().decode(type, from: data)
         }
 
         func icon() -> URL? {
             switch type {
             case .transferCoin:
-                guard let model = decodedObject(CoinTransferModel.self), let token = WalletManager.shared.getToken(bySymbol: model.symbol) else {
+                guard let model = decodedObject(CoinTransferModel.self),
+                      let token = WalletManager.shared.getToken(bySymbol: model.symbol) else {
                     return nil
                 }
 
@@ -165,13 +185,15 @@ extension TransactionManager {
             case .transferNFT:
                 return decodedObject(NFTTransferModel.self)?.nft.logoUrl
             case .fclTransaction:
-                guard let model = decodedObject(AuthzTransaction.self), let urlString = model.url else {
+                guard let model = decodedObject(AuthzTransaction.self),
+                      let urlString = model.url else {
                     return nil
                 }
 
                 return urlString.toFavIcon()
             case .unlinkAccount:
-                guard let iconString = decodedObject(ChildAccount.self)?.icon, let url = URL(string: iconString) else {
+                guard let iconString = decodedObject(ChildAccount.self)?.icon,
+                      let url = URL(string: iconString) else {
                     return nil
                 }
 
@@ -190,7 +212,13 @@ extension TransactionManager {
                 return
             }
 
-            let timer = Timer(timeInterval: 2, target: self, selector: #selector(onCheck), userInfo: nil, repeats: false)
+            let timer = Timer(
+                timeInterval: 2,
+                target: self,
+                selector: #selector(onCheck),
+                userInfo: nil,
+                repeats: false
+            )
             RunLoop.main.add(timer, forMode: .common)
             self.timer = timer
 
@@ -205,7 +233,13 @@ extension TransactionManager {
             }
         }
 
-        @objc private func onCheck() {
+        // MARK: Private
+
+        private var timer: Timer?
+        private var retryTimes: Int = 0
+
+        @objc
+        private func onCheck() {
             debugPrint("TransactionHolder -> onCheck")
 
             Task {
@@ -258,14 +292,10 @@ extension TransactionManager {
     }
 }
 
+// MARK: - TransactionManager
+
 class TransactionManager: ObservableObject {
-    static let shared = TransactionManager()
-
-    private lazy var rootFolder = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("transaction_cache")
-    private lazy var transactionCacheFile = rootFolder.appendingPathComponent("transaction_cache_file")
-
-    @Published
-    private(set) var holders: [TransactionHolder] = []
+    // MARK: Lifecycle
 
     init() {
         checkFolder()
@@ -274,18 +304,46 @@ class TransactionManager: ObservableObject {
         startCheckIfNeeded()
     }
 
+    // MARK: Internal
+
+    static let shared = TransactionManager()
+
+    @Published
+    private(set) var holders: [TransactionHolder] = []
+
+    // MARK: Private
+
+    private lazy var rootFolder = FileManager.default.urls(
+        for: .cachesDirectory,
+        in: .userDomainMask
+    ).first!.appendingPathComponent("transaction_cache")
+    private lazy var transactionCacheFile = rootFolder
+        .appendingPathComponent("transaction_cache_file")
+
     private func addNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(onHolderChanged(noti:)), name: .transactionStatusDidChanged, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onHolderChanged(noti:)),
+            name: .transactionStatusDidChanged,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(willReset),
+            name: .willResetWallet,
+            object: nil
+        )
     }
 
-    @objc private func willReset() {
+    @objc
+    private func willReset() {
         holders = []
         saveHoldersToCache()
         postDidChangedNotification()
     }
 
-    @objc private func onHolderChanged(noti: Notification) {
+    @objc
+    private func onHolderChanged(noti: Notification) {
         guard let holder = noti.object as? TransactionHolder else {
             return
         }
@@ -392,7 +450,8 @@ extension TransactionManager {
 
     func isTokenEnabling(symbol: String) -> Bool {
         for holder in holders {
-            if holder.type == .addToken, let token = holder.decodedObject(TokenModel.self), token.symbol == symbol {
+            if holder.type == .addToken, let token = holder.decodedObject(TokenModel.self),
+               token.symbol == symbol {
                 return true
             }
         }
@@ -402,7 +461,9 @@ extension TransactionManager {
 
     func isCollectionEnabling(contractName: String) -> Bool {
         for holder in holders {
-            if holder.type == .addCollection, let collection = holder.decodedObject(NFTCollectionInfo.self), collection.contractName == contractName {
+            if holder.type == .addCollection,
+               let collection = holder.decodedObject(NFTCollectionInfo.self),
+               collection.contractName == contractName {
                 return true
             }
         }
@@ -412,7 +473,8 @@ extension TransactionManager {
 
     func isNFTTransfering(id: String) -> Bool {
         for holder in holders {
-            if holder.type == .transferNFT, let model = holder.decodedObject(NFTTransferModel.self), model.nft.id == id {
+            if holder.type == .transferNFT, let model = holder.decodedObject(NFTTransferModel.self),
+               model.nft.id == id {
                 return true
             }
         }
@@ -427,7 +489,10 @@ extension TransactionManager {
     private func checkFolder() {
         do {
             if !FileManager.default.fileExists(atPath: rootFolder.relativePath) {
-                try FileManager.default.createDirectory(at: rootFolder, withIntermediateDirectories: true)
+                try FileManager.default.createDirectory(
+                    at: rootFolder,
+                    withIntermediateDirectories: true
+                )
             }
 
         } catch {
@@ -442,7 +507,10 @@ extension TransactionManager {
 
         do {
             let data = try Data(contentsOf: transactionCacheFile)
-            let list = try JSONDecoder().decode([TransactionManager.TransactionHolder].self, from: data)
+            let list = try JSONDecoder().decode(
+                [TransactionManager.TransactionHolder].self,
+                from: data
+            )
             let filterdList = list.filter { $0.internalStatus == .pending }
 
             if !filterdList.isEmpty {

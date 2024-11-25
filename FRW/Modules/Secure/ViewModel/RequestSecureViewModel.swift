@@ -9,37 +9,42 @@ import BiometricAuthentication
 import Foundation
 
 class RequestSecureViewModel: ViewModel {
-    @Published
-    private(set) var state: RequestSecureView.ViewState = .init()
+    // MARK: Lifecycle
 
     init() {
         if BioMetricAuthenticator.shared.faceIDAvailable() {
             // device supports face id recognition.
-            state = .init(biometric: .faceId)
+            self.state = .init(biometric: .faceId)
         }
 
         if BioMetricAuthenticator.shared.touchIDAvailable() {
             // device supports touch id authentication
-            state = .init(biometric: .touchId)
+            self.state = .init(biometric: .touchId)
         }
 
         if !BioMetricAuthenticator.canAuthenticate() {
-            state = .init(biometric: .none)
+            self.state = .init(biometric: .none)
         }
     }
+
+    // MARK: Internal
+
+    @Published
+    private(set) var state: RequestSecureView.ViewState = .init()
 
     func trigger(_ input: RequestSecureView.Action) {
         switch input {
         case .faceID:
-            BioMetricAuthenticator.authenticateWithBioMetrics(reason: "Need your permission") { result in
-                switch result {
-                case .success:
-                    Router.popToRoot()
-                case let .failure(error):
-                    print("Authentication Failed")
-                    print(error)
+            BioMetricAuthenticator
+                .authenticateWithBioMetrics(reason: "Need your permission") { result in
+                    switch result {
+                    case .success:
+                        Router.popToRoot()
+                    case let .failure(error):
+                        print("Authentication Failed")
+                        print(error)
+                    }
                 }
-            }
         case .pin:
             Router.route(to: RouteMap.PinCode.pinCode)
         }

@@ -23,11 +23,15 @@ import CoreGraphics
 import Foundation
 
 struct SPQRCorner: Equatable {
+    // MARK: Internal
+
     enum Kind: Int, CaseIterable {
         case topLeft = 0
         case bottomLeft = 1
         case bottomRight = 2
         case topRight = 3
+
+        // MARK: Internal
 
         var verticalNeighbor: Kind {
             switch self {
@@ -87,7 +91,8 @@ struct SPQRCorner: Equatable {
     }
 
     func postCurvePoint(using corners: [SPQRCorner]) -> CGPoint? {
-        guard let neighbor = corners.first(where: { self.kind.horizontalNeighbor == $0.kind }) else {
+        guard let neighbor = corners.first(where: { self.kind.horizontalNeighbor == $0.kind })
+        else {
             return nil
         }
 
@@ -99,7 +104,8 @@ struct SPQRCorner: Equatable {
     }
 
     func endPoint(using corners: [SPQRCorner]) -> CGPoint? {
-        guard let neighbor = corners.first(where: { self.kind.horizontalNeighbor == $0.kind }) else {
+        guard let neighbor = corners.first(where: { self.kind.horizontalNeighbor == $0.kind })
+        else {
             return nil
         }
 
@@ -110,7 +116,13 @@ struct SPQRCorner: Equatable {
         )
     }
 
-    private func pointOnLine(startPoint: CGPoint, endPoint: CGPoint, distance: CGFloat = 0.0) -> CGPoint {
+    // MARK: Private
+
+    private func pointOnLine(
+        startPoint: CGPoint,
+        endPoint: CGPoint,
+        distance: CGFloat = 0.0
+    ) -> CGPoint {
         let lDistance = endPoint.distance(from: startPoint)
         let vector = CGPoint(
             x: (endPoint.x - startPoint.x) / lDistance,

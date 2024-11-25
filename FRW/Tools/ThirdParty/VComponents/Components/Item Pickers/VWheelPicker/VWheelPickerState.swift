@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Wheel Picker State
+// MARK: - VWheelPickerState
 
 /// Enum that describes state, such as `enabled` or `disabled`.
 public enum VWheelPickerState: Int, CaseIterable {
@@ -18,6 +18,8 @@ public enum VWheelPickerState: Int, CaseIterable {
 
     /// Case disabled.
     case disabled
+
+    // MARK: Public
 
     // MARK: Properties
 

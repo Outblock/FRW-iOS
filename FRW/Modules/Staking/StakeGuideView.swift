@@ -8,25 +8,33 @@
 import SwiftUI
 import UIKit
 
+// MARK: - StakeGuideViewModel
+
 class StakeGuideViewModel: ObservableObject {
+    // MARK: Lifecycle
+
     init() {
         LocalUserDefaults.shared.stakingGuideDisplayed = true
     }
+
+    // MARK: Internal
 
     func goNext() {
         Router.route(to: RouteMap.Wallet.stakingSelectProvider)
     }
 }
 
+// MARK: - StakeGuideView
+
 struct StakeGuideView: RouteableView {
-    @StateObject private var vm = StakeGuideViewModel()
+    // MARK: Internal
 
     var title: String {
-        return "stake_flow".localized
+        "stake_flow".localized
     }
 
     var navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
-        return .large
+        .large
     }
 
     var body: some View {
@@ -38,12 +46,15 @@ struct StakeGuideView: RouteableView {
 
                 Spacer()
 
-                VPrimaryButton(model: ButtonStyle.stakePrimary,
-                               state: .enabled,
-                               action: {
-                                   vm.goNext()
-                               }, title: "stake_guide_btn_text".localized)
-                    .padding(.bottom)
+                VPrimaryButton(
+                    model: ButtonStyle.stakePrimary,
+                    state: .enabled,
+                    action: {
+                        vm.goNext()
+                    },
+                    title: "stake_guide_btn_text".localized
+                )
+                .padding(.bottom)
             }
             .padding(.top, 32)
             .padding(.bottom, 20)
@@ -68,7 +79,11 @@ struct StakeGuideView: RouteableView {
                     .foregroundColor(Color.clear)
                     .background {
                         Rectangle()
-                            .fill(.linearGradient(colors: [Color(hex: "#FFC062"), Color(hex: "#0BD3FF")], startPoint: .leading, endPoint: .trailing))
+                            .fill(.linearGradient(
+                                colors: [Color(hex: "#FFC062"), Color(hex: "#0BD3FF")],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ))
                             .mask {
                                 Text("stake_ad_title_2".localized)
                                     .font(.inter(size: 20, weight: .bold))
@@ -97,32 +112,57 @@ struct StakeGuideView: RouteableView {
         .padding(.horizontal, 10)
     }
 
-    func createDescSubview(icon: String, attributedString: NSAttributedString) -> some View {
-        HStack {
-            Image(icon)
-            Text(AttributedString(attributedString))
-            Spacer()
-        }
-    }
-
     var descString1: NSAttributedString {
-        let s1 = NSMutableAttributedString(string: "stake_guide_desc_1_1".localized, attributes: descNormalAttr)
-        let s2 = NSAttributedString(string: "stake_guide_desc_1_2".localized, attributes: descHighlightAttr)
-        let s3 = NSMutableAttributedString(string: "stake_guide_desc_1_3".localized, attributes: descNormalAttr)
+        let s1 = NSMutableAttributedString(
+            string: "stake_guide_desc_1_1".localized,
+            attributes: descNormalAttr
+        )
+        let s2 = NSAttributedString(
+            string: "stake_guide_desc_1_2".localized,
+            attributes: descHighlightAttr
+        )
+        let s3 = NSMutableAttributedString(
+            string: "stake_guide_desc_1_3".localized,
+            attributes: descNormalAttr
+        )
         s1.append(s2)
         s1.append(s3)
         return s1
     }
 
     var descString2: NSAttributedString {
-        let s1 = NSMutableAttributedString(string: "stake_guide_desc_2_1".localized, attributes: descNormalAttr)
-        let s2 = NSMutableAttributedString(string: "stake_guide_desc_2_2".localized, attributes: descHighlightAttr)
-        let s3 = NSMutableAttributedString(string: "stake_guide_desc_2_3".localized, attributes: descNormalAttr)
-        let s4 = NSMutableAttributedString(string: "stake_guide_desc_2_4".localized, attributes: descHighlightAttr)
-        let s5 = NSMutableAttributedString(string: "stake_guide_desc_2_5".localized, attributes: descNormalAttr)
-        let s6 = NSMutableAttributedString(string: "stake_guide_desc_2_6".localized, attributes: descNormalAttr)
-        let s7 = NSMutableAttributedString(string: "stake_guide_desc_2_7".localized, attributes: descHighlightAttr)
-        let s8 = NSMutableAttributedString(string: "stake_guide_desc_2_8".localized, attributes: descNormalAttr)
+        let s1 = NSMutableAttributedString(
+            string: "stake_guide_desc_2_1".localized,
+            attributes: descNormalAttr
+        )
+        let s2 = NSMutableAttributedString(
+            string: "stake_guide_desc_2_2".localized,
+            attributes: descHighlightAttr
+        )
+        let s3 = NSMutableAttributedString(
+            string: "stake_guide_desc_2_3".localized,
+            attributes: descNormalAttr
+        )
+        let s4 = NSMutableAttributedString(
+            string: "stake_guide_desc_2_4".localized,
+            attributes: descHighlightAttr
+        )
+        let s5 = NSMutableAttributedString(
+            string: "stake_guide_desc_2_5".localized,
+            attributes: descNormalAttr
+        )
+        let s6 = NSMutableAttributedString(
+            string: "stake_guide_desc_2_6".localized,
+            attributes: descNormalAttr
+        )
+        let s7 = NSMutableAttributedString(
+            string: "stake_guide_desc_2_7".localized,
+            attributes: descHighlightAttr
+        )
+        let s8 = NSMutableAttributedString(
+            string: "stake_guide_desc_2_8".localized,
+            attributes: descNormalAttr
+        )
         s1.append(s2)
         s1.append(s3)
         s1.append(s4)
@@ -134,19 +174,40 @@ struct StakeGuideView: RouteableView {
     }
 
     var descString3: NSAttributedString {
-        let s1 = NSMutableAttributedString(string: "stake_guide_desc_3_1".localized, attributes: descNormalAttr)
-        let s2 = NSAttributedString(string: "stake_guide_desc_3_2".localized, attributes: descHighlightAttr)
-        let s3 = NSMutableAttributedString(string: "stake_guide_desc_3_3".localized, attributes: descNormalAttr)
+        let s1 = NSMutableAttributedString(
+            string: "stake_guide_desc_3_1".localized,
+            attributes: descNormalAttr
+        )
+        let s2 = NSAttributedString(
+            string: "stake_guide_desc_3_2".localized,
+            attributes: descHighlightAttr
+        )
+        let s3 = NSMutableAttributedString(
+            string: "stake_guide_desc_3_3".localized,
+            attributes: descNormalAttr
+        )
         s1.append(s2)
         s1.append(s3)
         return s1
     }
 
     var descString4: NSAttributedString {
-        let s1 = NSMutableAttributedString(string: "stake_guide_desc_4_1".localized, attributes: descNormalAttr)
-        let s2 = NSAttributedString(string: "stake_guide_desc_4_2".localized, attributes: descNormalAttr)
-        let s3 = NSMutableAttributedString(string: "stake_guide_desc_4_3".localized, attributes: descHighlightAttr)
-        let s4 = NSMutableAttributedString(string: "stake_guide_desc_4_4".localized, attributes: descNormalAttr)
+        let s1 = NSMutableAttributedString(
+            string: "stake_guide_desc_4_1".localized,
+            attributes: descNormalAttr
+        )
+        let s2 = NSAttributedString(
+            string: "stake_guide_desc_4_2".localized,
+            attributes: descNormalAttr
+        )
+        let s3 = NSMutableAttributedString(
+            string: "stake_guide_desc_4_3".localized,
+            attributes: descHighlightAttr
+        )
+        let s4 = NSMutableAttributedString(
+            string: "stake_guide_desc_4_4".localized,
+            attributes: descNormalAttr
+        )
         s1.append(s2)
         s1.append(s3)
         s1.append(s4)
@@ -154,12 +215,31 @@ struct StakeGuideView: RouteableView {
     }
 
     var descNormalAttr: [NSAttributedString.Key: Any] {
-        let attrs: [NSAttributedString.Key: Any] = [.font: UIFont.interSemiBold(size: 14), .foregroundColor: UIColor.LL.Neutrals.text3]
+        let attrs: [NSAttributedString.Key: Any] = [
+            .font: UIFont.interSemiBold(size: 14),
+            .foregroundColor: UIColor.LL.Neutrals.text3,
+        ]
         return attrs
     }
 
     var descHighlightAttr: [NSAttributedString.Key: Any] {
-        let attrs: [NSAttributedString.Key: Any] = [.font: UIFont.interSemiBold(size: 14), .foregroundColor: UIColor.LL.stakeMain]
+        let attrs: [NSAttributedString.Key: Any] = [
+            .font: UIFont.interSemiBold(size: 14),
+            .foregroundColor: UIColor.LL.stakeMain,
+        ]
         return attrs
     }
+
+    func createDescSubview(icon: String, attributedString: NSAttributedString) -> some View {
+        HStack {
+            Image(icon)
+            Text(AttributedString(attributedString))
+            Spacer()
+        }
+    }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = StakeGuideViewModel()
 }

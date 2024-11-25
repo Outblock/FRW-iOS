@@ -7,11 +7,13 @@
 
 import SwiftUI
 
+// MARK: - WalletResetConfirmView
+
 struct WalletResetConfirmView: RouteableView {
-    @StateObject private var vm = WalletResetConfirmViewModel()
+    // MARK: Internal
 
     var title: String {
-        return "reset_wallet".localized
+        "reset_wallet".localized
     }
 
     var body: some View {
@@ -63,18 +65,40 @@ struct WalletResetConfirmView: RouteableView {
     }
 
     var descAttributeString: NSAttributedString {
-        let normalAttr: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.LL.Neutrals.text2, .font: UIFont.inter(size: 14)]
-        let highlightAttr: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.LL.Neutrals.text, .font: UIFont.interSemiBold(size: 16)]
+        let normalAttr: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.LL.Neutrals.text2,
+            .font: UIFont.inter(size: 14),
+        ]
+        let highlightAttr: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.LL.Neutrals.text,
+            .font: UIFont.interSemiBold(size: 16),
+        ]
 
-        let str1 = NSMutableAttributedString(string: "reset_wallet_desc_1".localized, attributes: normalAttr)
-        let str2 = NSAttributedString(string: "delete_wallet_desc_2".localized, attributes: highlightAttr)
-        let str3 = NSMutableAttributedString(string: "reset_wallet_desc_3".localized, attributes: normalAttr)
+        let str1 = NSMutableAttributedString(
+            string: "reset_wallet_desc_1".localized,
+            attributes: normalAttr
+        )
+        let str2 = NSAttributedString(
+            string: "delete_wallet_desc_2".localized,
+            attributes: highlightAttr
+        )
+        let str3 = NSMutableAttributedString(
+            string: "reset_wallet_desc_3".localized,
+            attributes: normalAttr
+        )
 
         str1.append(str2)
         str1.append(str3)
         return str1
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = WalletResetConfirmViewModel()
 }
+
+// MARK: - WalletResetConfirmView_Previews
 
 struct WalletResetConfirmView_Previews: PreviewProvider {
     static var previews: some View {

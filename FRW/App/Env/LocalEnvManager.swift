@@ -7,9 +7,10 @@
 
 import Foundation
 
+// MARK: - LocalEnvManager
+
 class LocalEnvManager {
-    static let shared = LocalEnvManager()
-    private let dict: [String: String]
+    // MARK: Lifecycle
 
     init() {
         do {
@@ -21,18 +22,26 @@ class LocalEnvManager {
             fatalError("LocalEnvManager init failed")
         }
     }
+
+    // MARK: Internal
+
+    static let shared = LocalEnvManager()
+
+    // MARK: Private
+
+    private let dict: [String: String]
 }
 
 extension LocalEnvManager {
     var backupAESKey: String {
-        return dict["BackupAESKey"]!
+        dict["BackupAESKey"]!
     }
 
     var walletConnectProjectID: String {
-        return dict["WalletConnectProjectID"]!
+        dict["WalletConnectProjectID"]!
     }
 
     var aesIV: String {
-        return dict["AESIV"]!
+        dict["AESIV"]!
     }
 }

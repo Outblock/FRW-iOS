@@ -8,18 +8,19 @@
 import SwiftUI
 
 struct EVMEnableView: RouteableView {
-    @StateObject var viewModel = EVMEnableViewModel()
+    @StateObject
+    var viewModel = EVMEnableViewModel()
 
     var title: String {
-        return ""
+        ""
     }
 
     var isNavigationBarHidden: Bool {
-        return true
+        true
     }
 
     var body: some View {
-        return VStack {
+        VStack {
             HStack {
                 Spacer()
                 Button {
@@ -27,10 +28,16 @@ struct EVMEnableView: RouteableView {
                 } label: {
                     Text("not_now".localized)
                         .font(.inter(size: 14))
-                        .foregroundStyle(ThemeManager.shared.style == .light ? Color.Theme.Text.black : Color.Theme.Text.black8)
+                        .foregroundStyle(
+                            ThemeManager.shared.style == .light ? Color.Theme.Text
+                                .black : Color.Theme.Text.black8
+                        )
                         .padding(.horizontal, 16)
                         .frame(height: 32)
-                        .background(ThemeManager.shared.style == .light ? Color.Theme.Text.black3.opacity(0.24) : Color.Theme.Text.black8.opacity(0.24))
+                        .background(
+                            ThemeManager.shared.style == .light ? Color.Theme.Text.black3
+                                .opacity(0.24) : Color.Theme.Text.black8.opacity(0.24)
+                        )
                         .cornerRadius(24)
                 }
                 .transition(.opacity)
@@ -67,12 +74,15 @@ struct EVMEnableView: RouteableView {
                 .multilineTextAlignment(.center)
             Spacer()
 
-            VPrimaryButton(model: ButtonStyle.evmEnable,
-                           state: viewModel.state,
-                           action: {
-                               viewModel.onClickEnable()
-                           }, title: "enable".localized)
-                .frame(width: 160)
+            VPrimaryButton(
+                model: ButtonStyle.evmEnable,
+                state: viewModel.state,
+                action: {
+                    viewModel.onClickEnable()
+                },
+                title: "enable".localized
+            )
+            .frame(width: 160)
 
             Button {
                 viewModel.onClickLearnMore()

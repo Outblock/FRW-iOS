@@ -8,17 +8,20 @@
 import SwiftUI
 
 struct CurrencyListView: RouteableView {
-    @StateObject private var vm = CurrencyListViewModel()
+    // MARK: Internal
 
     var title: String {
-        return "currency".localized
+        "currency".localized
     }
 
     var body: some View {
         ScrollView {
             VStack {
                 ForEach(vm.datas, id: \.self) { currency in
-                    createCurrencyListCell(currency: currency, selected: vm.selectedCurrency == currency)
+                    createCurrencyListCell(
+                        currency: currency,
+                        selected: vm.selectedCurrency == currency
+                    )
 
                     if currency != vm.datas.last {
                         Divider().background(Color.LL.Neutrals.background)
@@ -56,4 +59,9 @@ struct CurrencyListView: RouteableView {
         }
         .frame(height: 50)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = CurrencyListViewModel()
 }

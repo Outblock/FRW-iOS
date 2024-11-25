@@ -19,6 +19,8 @@ extension FlowScanTransaction {
     }
 }
 
+// MARK: - FlowScanTransaction
+
 struct FlowScanTransaction: Codable {
     let authorizers: [FlowScanTransaction.Account]?
     let contractInteractions: [ContractInteraction]?

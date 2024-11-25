@@ -10,14 +10,10 @@ import Kingfisher
 import SwiftUI
 
 struct DAppsListView: RouteableView {
-    @StateObject private var vm = DAppsListViewModel()
+    // MARK: Internal
 
     var title: String {
-        return "dApps"
-    }
-
-    func backButtonAction() {
-        Router.dismiss()
+        "dApps"
     }
 
     var body: some View {
@@ -42,7 +38,14 @@ struct DAppsListView: RouteableView {
                     .foregroundColor(Color.LL.Neutrals.text)
                     .padding(.horizontal, 18)
                     .padding(.vertical, 8)
-                    .roundedBg(cornerRadius: 18, fillColor: Color.LL.Other.bg2, strokeColor: vm.selectedCategory == category ? Color(hex: "#7678ED") : Color(hex: "#F5F5F5"), strokeLineWidth: 2)
+                    .roundedBg(
+                        cornerRadius: 18,
+                        fillColor: Color.LL.Other.bg2,
+                        strokeColor: vm
+                            .selectedCategory == category ? Color(hex: "#7678ED") :
+                            Color(hex: "#F5F5F5"),
+                        strokeLineWidth: 2
+                    )
                     .contentShape(Rectangle())
             }
         }
@@ -59,8 +62,7 @@ struct DAppsListView: RouteableView {
 
                         Router.dismiss {
                             if LocalUserDefaults.shared.flowNetwork == .testnet,
-                               let url = dApp.testnetURL
-                            {
+                               let url = dApp.testnetURL {
                                 Router.route(to: RouteMap.Explore.browser(url))
                             } else {
                                 Router.route(to: RouteMap.Explore.browser(dApp.url))
@@ -120,4 +122,13 @@ struct DAppsListView: RouteableView {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+
+    func backButtonAction() {
+        Router.dismiss()
+    }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = DAppsListViewModel()
 }

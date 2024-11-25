@@ -8,10 +8,14 @@
 import SwiftUI
 
 struct TextCheckListView: View {
-    var titles: [String]
-    @Binding var allChecked: Bool
+    // MARK: Internal
 
-    @State var result: [String: Bool] = [:]
+    var titles: [String]
+    @Binding
+    var allChecked: Bool
+
+    @State
+    var result: [String: Bool] = [:]
 
     var body: some View {
         VStack {
@@ -23,6 +27,8 @@ struct TextCheckListView: View {
             }
         }
     }
+
+    // MARK: Private
 
     private func checkStatus() {
         guard result.count == titles.count else {

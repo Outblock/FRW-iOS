@@ -9,8 +9,10 @@ import Combine
 import SwiftUI
 import SwiftUIPager
 
+// MARK: - OnBoardingView
+
 struct OnBoardingView: View {
-    @StateObject private var vm = OnBoardingViewModel()
+    // MARK: Internal
 
     var body: some View {
         VStack {
@@ -28,6 +30,11 @@ struct OnBoardingView: View {
 //            }
         }
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = OnBoardingViewModel()
 }
 
 // MARK: - top bottom view
@@ -48,7 +55,10 @@ extension OnBoardingView {
         } label: {
             Text("skip".localized)
                 .font(.inter(size: 14, weight: .medium))
-                .foregroundColor(vm.currentPageType.needLightContent ? .white : Color(hex: "#333333"))
+                .foregroundColor(
+                    vm.currentPageType
+                        .needLightContent ? .white : Color(hex: "#333333")
+                )
                 .padding(.horizontal, 12)
                 .frame(height: 24)
                 .background(Color.white.opacity(0.24))
@@ -60,7 +70,10 @@ extension OnBoardingView {
 
     var bottomContainer: some View {
         HStack {
-            OnBoardingView.PageControl(numberOfPages: OnBoardingViewModel.installPage().count, currentPage: $vm.currentPageIndex)
+            OnBoardingView.PageControl(
+                numberOfPages: OnBoardingViewModel.installPage().count,
+                currentPage: $vm.currentPageIndex
+            )
             Spacer()
 
             if vm.isLastPage {
@@ -148,16 +161,18 @@ extension OnBoardingView {
     }
 }
 
-// MARK: - components
+// MARK: OnBoardingView.PageControl
 
 extension OnBoardingView {
     struct PageControl: View {
-        @State var numberOfPages: Int
-        @Binding var currentPage: Int
+        @State
+        var numberOfPages: Int
+        @Binding
+        var currentPage: Int
 
         var body: some View {
             HStack(spacing: 12) {
-                ForEach(0 ..< numberOfPages, id: \.self) { index in
+                ForEach(0..<numberOfPages, id: \.self) { index in
                     Circle()
                         .frame(width: 8, height: 8)
                         .foregroundColor(currentPage == index ? Color(hex: "#579AF2") : Color.white)

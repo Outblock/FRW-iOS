@@ -11,23 +11,33 @@ import SwiftUI
 
 /// Model that describes UI.
 public struct VChevronButtonModel {
-    // MARK: Properties
-
-    /// Sub-model containing layout properties.
-    public var layout: Layout = .init()
-
-    /// Sub-model containing color properties.
-    public var colors: Colors = .init()
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes model with default values.
     public init() {}
 
+    // MARK: Public
+
     // MARK: Layout
 
     /// Sub-model containing layout properties.
     public struct Layout {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: Hit Box
+
+        /// Sub-model containing `horizontal` and `vertical` hit boxes.
+        public typealias HitBox = LayoutGroup_HV
+
         // MARK: Properties
 
         /// Button dimension. Default to `32`.
@@ -42,23 +52,34 @@ public struct VChevronButtonModel {
             vertical: 0
         )
 
+        // MARK: Internal
+
         var navigationBarBackButtonOffsetX: CGFloat?
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: Hit Box
-
-        /// Sub-model containing `horizontal` and `vertical` hit boxes.
-        public typealias HitBox = LayoutGroup_HV
     }
 
     // MARK: Colors
 
     /// Sub-model containing color properties.
     public struct Colors {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: State Colors
+
+        /// Sub-model containing colors for component states.
+        public typealias StateColors = StateColors_EPD
+
+        // MARK: State Colors and Opacities
+
+        /// Sub-model containing colors and opacities for component states.
+        public typealias StateColorsAndOpacities = StateColorsAndOpacities_EPD_PD
+
         // MARK: Properties
 
         /// Content colors and opacities.
@@ -76,20 +97,13 @@ public struct VChevronButtonModel {
             pressed: .init(componentAsset: "ChevronButton.Background.pressed"),
             disabled: .init(componentAsset: "ChevronButton.Background.disabled")
         )
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: State Colors
-
-        /// Sub-model containing colors for component states.
-        public typealias StateColors = StateColors_EPD
-
-        // MARK: State Colors and Opacities
-
-        /// Sub-model containing colors and opacities for component states.
-        public typealias StateColorsAndOpacities = StateColorsAndOpacities_EPD_PD
     }
+
+    // MARK: Properties
+
+    /// Sub-model containing layout properties.
+    public var layout: Layout = .init()
+
+    /// Sub-model containing color properties.
+    public var colors: Colors = .init()
 }

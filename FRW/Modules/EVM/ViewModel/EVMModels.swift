@@ -10,6 +10,8 @@ import Foundation
 import Web3Core
 import web3swift
 
+// MARK: - EVMTransactionExecuted
+
 struct EVMTransactionExecuted: Codable {
     let hash: [UInt8]?
 
@@ -20,6 +22,8 @@ struct EVMTransactionExecuted: Codable {
         return Data(hash).hexValue.addHexPrefix()
     }
 }
+
+// MARK: - EVMTransactionReceive
 
 struct EVMTransactionReceive: Codable {
     let to: String?
@@ -48,6 +52,6 @@ struct EVMTransactionReceive: Codable {
     }
 
     var toAddress: String? {
-        return to?.stripHexPrefix()
+        to?.stripHexPrefix()
     }
 }

@@ -14,7 +14,55 @@ private let CellHeight: CGFloat = 56
 private let IconSize: CGFloat = 40
 private let Padding: CGFloat = 8
 
+// MARK: - NFTUIKitCollectionItemCell
+
 class NFTUIKitCollectionItemCell: UICollectionViewCell {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    static func calculateSize(_ item: CollectionItem) -> CGSize {
+        var baseWidth: CGFloat = Padding + IconSize + Padding + Padding
+        let titleWidth = baseWidth + item.showName
+            .width(withFont: .montserratBold(size: 14)) + 3 + 12
+        let descWidth = baseWidth + "x_collections".localized(item.count)
+            .width(withFont: .inter(size: 14))
+
+        return CGSize(width: max(titleWidth, descWidth), height: CellHeight)
+    }
+
+    func config(_ item: CollectionItem, isSelectItem: Bool) {
+        self.item = item
+        self.isSelectItem = isSelectItem
+
+        iconImageView.kf.setImage(with: item.iconURL, placeholder: UIImage(named: "placeholder"))
+        titleLabel.text = item.showName
+        if let info = item.collection, !WalletManager.shared.accessibleManager.isAccessible(info) {
+            descLabel.isHidden = true
+            inaccessibleLabel.isHidden = false
+        } else {
+            descLabel.isHidden = false
+            inaccessibleLabel.isHidden = true
+        }
+
+        descLabel.text = "x_collections".localized(item.count)
+
+        contentView.layer.borderColor = isSelectItem ? UIColor.LL.Neutrals.neutrals3
+            .cgColor : UIColor.clear.cgColor
+    }
+
+    // MARK: Private
+
     private var item: CollectionItem?
     private var isSelectItem: Bool = false
 
@@ -88,16 +136,6 @@ class NFTUIKitCollectionItemCell: UICollectionViewCell {
         return stackView
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     private func setup() {
         contentView.addSubview(iconImageView)
         iconImageView.snp.makeConstraints { make in
@@ -114,32 +152,5 @@ class NFTUIKitCollectionItemCell: UICollectionViewCell {
         contentView.backgroundColor = UIColor.LL.frontColor
         contentView.layer.cornerRadius = 16
         contentView.layer.borderWidth = 1
-    }
-
-    func config(_ item: CollectionItem, isSelectItem: Bool) {
-        self.item = item
-        self.isSelectItem = isSelectItem
-
-        iconImageView.kf.setImage(with: item.iconURL, placeholder: UIImage(named: "placeholder"))
-        titleLabel.text = item.showName
-        if let info = item.collection, !WalletManager.shared.accessibleManager.isAccessible(info) {
-            descLabel.isHidden = true
-            inaccessibleLabel.isHidden = false
-        } else {
-            descLabel.isHidden = false
-            inaccessibleLabel.isHidden = true
-        }
-
-        descLabel.text = "x_collections".localized(item.count)
-
-        contentView.layer.borderColor = isSelectItem ? UIColor.LL.Neutrals.neutrals3.cgColor : UIColor.clear.cgColor
-    }
-
-    static func calculateSize(_ item: CollectionItem) -> CGSize {
-        var baseWidth: CGFloat = Padding + IconSize + Padding + Padding
-        let titleWidth = baseWidth + item.showName.width(withFont: .montserratBold(size: 14)) + 3 + 12
-        let descWidth = baseWidth + "x_collections".localized(item.count).width(withFont: .inter(size: 14))
-
-        return CGSize(width: max(titleWidth, descWidth), height: CellHeight)
     }
 }

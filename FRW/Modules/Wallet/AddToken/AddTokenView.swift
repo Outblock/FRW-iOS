@@ -8,6 +8,8 @@
 import Kingfisher
 import SwiftUI
 
+// MARK: - AddTokenView
+
 // struct AddTokenView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        AddTokenView.AddTokenConfirmView(token: nil)
@@ -15,25 +17,22 @@ import SwiftUI
 // }
 
 struct AddTokenView: RouteableView {
-    @StateObject var vm: AddTokenViewModel
+    // MARK: Lifecycle
 
     init(vm: AddTokenViewModel) {
         _vm = StateObject(wrappedValue: vm)
     }
+
+    // MARK: Internal
+
+    @StateObject
+    var vm: AddTokenViewModel
 
     var title: String {
         if vm.mode == .addToken {
             return "add_token".localized
         } else {
             return "swap_select_token".localized
-        }
-    }
-
-    func backButtonAction() {
-        if vm.mode == .addToken {
-            Router.pop()
-        } else {
-            Router.dismiss()
         }
     }
 
@@ -82,7 +81,18 @@ struct AddTokenView: RouteableView {
         .searchable(text: $vm.searchText)
     }
 
-    @ViewBuilder private func sectionHeader(_ section: AddTokenViewModel.Section) -> some View {
+    func backButtonAction() {
+        if vm.mode == .addToken {
+            Router.pop()
+        } else {
+            Router.dismiss()
+        }
+    }
+
+    // MARK: Private
+
+    @ViewBuilder
+    private func sectionHeader(_ section: AddTokenViewModel.Section) -> some View {
         let sectionName = section.sectionName
         Text(sectionName)
             .foregroundColor(.LL.Neutrals.text2)
@@ -93,12 +103,15 @@ struct AddTokenView: RouteableView {
 private let TokenIconWidth: CGFloat = 40
 private let TokenCellHeight: CGFloat = 64
 
+// MARK: AddTokenView.TokenItemCell
+
 extension AddTokenView {
     struct TokenItemCell: View {
         let token: TokenModel
         let isActivated: Bool
         let action: () -> Void
-        @EnvironmentObject var vm: AddTokenViewModel
+        @EnvironmentObject
+        var vm: AddTokenViewModel
 
         var body: some View {
             Button {
@@ -155,9 +168,12 @@ extension AddTokenView {
     }
 }
 
+// MARK: AddTokenView.AddTokenConfirmView
+
 extension AddTokenView {
     struct AddTokenConfirmView: View {
-        @EnvironmentObject var vm: AddTokenViewModel
+        @EnvironmentObject
+        var vm: AddTokenViewModel
         let token: TokenModel
 
         @State
@@ -211,18 +227,23 @@ extension AddTokenView {
 
                     Spacer()
 
-                    VPrimaryButton(model: ButtonStyle.primary,
-                                   state: buttonState,
-                                   action: {
-                                       vm.confirmActiveTokenAction(token)
-                                   }, title: buttonState == .loading ? "working_on_it".localized : "enable".localized)
-                        .padding(.bottom)
+                    VPrimaryButton(
+                        model: ButtonStyle.primary,
+                        state: buttonState,
+                        action: {
+                            vm.confirmActiveTokenAction(token)
+                        },
+                        title: buttonState == .loading ? "working_on_it"
+                            .localized : "enable".localized
+                    )
+                    .padding(.bottom)
                 }
                 .padding(.horizontal, 36)
             }
             .task {
                 Task { @MainActor in
-                    if let color = await ImageHelper.colors(from: token.icon?.absoluteString ?? placeholder).first {
+                    if let color = await ImageHelper
+                        .colors(from: token.icon?.absoluteString ?? placeholder).first {
                         self.color = color.opacity(0.1)
                     }
                 }

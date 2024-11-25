@@ -9,6 +9,20 @@ import SwiftUI
 import UIKit
 
 class NFTUIKitTopSelectionHeaderView: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("")
+    }
+
+    // MARK: Private
+
     private lazy var iconImageView: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(named: "icon-nft-top-selection")?.withRenderingMode(.alwaysTemplate)
@@ -23,16 +37,6 @@ class NFTUIKitTopSelectionHeaderView: UIView {
         label.text = "top_selection".localized
         return label
     }()
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("")
-    }
 
     private func setup() {
         backgroundColor = .clear

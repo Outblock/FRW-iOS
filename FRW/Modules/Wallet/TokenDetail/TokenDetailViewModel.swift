@@ -344,14 +344,14 @@ extension TokenDetailViewModel {
     }
 
     private func refreshSummary() {
-        guard let symbol = token.symbol else {
-            return
-        }
-
-        balance = WalletManager.shared.getBalance(bySymbol: symbol)
-        rate = CoinRateCache.cache.getSummary(for: symbol)?.getLastRate() ?? 0
+        balance = WalletManager.shared
+            .getBalance(byId: token.contractId).doubleValue
+        rate = CoinRateCache.cache
+            .getSummary(by: token.contractId)?
+            .getLastRate() ?? 0
         balanceAsUSD = balance * rate
-        changePercent = CoinRateCache.cache.getSummary(for: symbol)?.getChangePercentage() ?? 0
+        changePercent = CoinRateCache.cache.getSummary(by: token.contractId)?
+            .getChangePercentage() ?? 0
     }
 
     private func fetchChartData() {

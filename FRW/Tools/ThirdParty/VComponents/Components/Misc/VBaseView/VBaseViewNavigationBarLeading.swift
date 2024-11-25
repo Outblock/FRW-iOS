@@ -21,8 +21,7 @@ extension View {
         where
         LeadingItem: View,
         Title: View,
-        TrailingItem: View
-    {
+        TrailingItem: View {
         modifier(VBaseViewNavigationBarLeading(
             model: model,
             titleContent: titleContent,
@@ -34,26 +33,14 @@ extension View {
     }
 }
 
-// MARK: - V Base View Navigation Bar Leading
+// MARK: - VBaseViewNavigationBarLeading
 
 struct VBaseViewNavigationBarLeading<TrailingItem, Title, LeadingItem>: ViewModifier
     where
     LeadingItem: View,
     Title: View,
-    TrailingItem: View
-{
-    // MARK: Properties
-
-    @Environment(\.vHalfModalNavigationViewCloseButton) private var vHalfModalNavigationViewCloseButton: Bool
-
-    private let model: VBaseViewModel
-
-    private let titleContent: () -> Title
-    private let leadingItemContent: (() -> LeadingItem)?
-    private let trailingItemContent: (() -> TrailingItem)?
-
-    private let showBackButton: Bool
-    private let backAction: () -> Void
+    TrailingItem: View {
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -73,6 +60,8 @@ struct VBaseViewNavigationBarLeading<TrailingItem, Title, LeadingItem>: ViewModi
         self.backAction = backAction
     }
 
+    // MARK: Internal
+
     // MARK: Body
 
     func body(content: Content) -> some View {
@@ -80,20 +69,49 @@ struct VBaseViewNavigationBarLeading<TrailingItem, Title, LeadingItem>: ViewModi
             .toolbar(content: { ToolbarItem(placement: .principal, content: { items }) })
     }
 
+    // MARK: Private
+
+    // MARK: Properties
+
+    @Environment(
+        \.vHalfModalNavigationViewCloseButton
+    )
+    private var vHalfModalNavigationViewCloseButton: Bool
+
+    private let model: VBaseViewModel
+
+    private let titleContent: () -> Title
+    private let leadingItemContent: (() -> LeadingItem)?
+    private let trailingItemContent: (() -> TrailingItem)?
+
+    private let showBackButton: Bool
+    private let backAction: () -> Void
+
     private var items: some View {
         HStack(spacing: model.layout.navBarSpacing, content: {
-            if let leadingItemContent = leadingItemContent { leadingItemContent().layoutPriority(1) }
+            if let leadingItemContent = leadingItemContent { leadingItemContent().layoutPriority(1)
+            }
 
-            if showBackButton { VChevronButton(model: model.backButtonSubModel, direction: .left, action: backAction).layoutPriority(1) }
+            if showBackButton { VChevronButton(
+                model: model.backButtonSubModel,
+                direction: .left,
+                action: backAction
+            ).layoutPriority(1) }
 
             titleContent().layoutPriority(0)
 
             Spacer().layoutPriority(0)
 
-            if let trailingItemContent = trailingItemContent { trailingItemContent().layoutPriority(1) }
+            if let trailingItemContent = trailingItemContent {
+                trailingItemContent().layoutPriority(1)
+            }
         })
         .lineLimit(1)
-        .padding(.trailing, vHalfModalNavigationViewCloseButton ? VHalfModalModel.Layout.navBarTrailingItemMarginTrailing : 0)
+        .padding(
+            .trailing,
+            vHalfModalNavigationViewCloseButton ? VHalfModalModel.Layout
+                .navBarTrailingItemMarginTrailing : 0
+        )
         .frame(width: model.layout.width)
     }
 }

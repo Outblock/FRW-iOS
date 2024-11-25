@@ -15,24 +15,6 @@ import SwiftUI
 ///
 /// Object contains proeprty `swiftUIAnimation`, which can be used to create object that `SwiftUI` can interpret.
 public struct BasicAnimation {
-    // MARK: Properties
-
-    /// Animation curve.
-    public var curve: AnimationCurve
-
-    /// Animation duration.
-    public var duration: TimeInterval
-
-    /// Creates `SwiftUI` `Animation`.
-    public var asSwiftUIAnimation: Animation {
-        switch curve {
-        case .linear: return .linear(duration: duration)
-        case .easeIn: return .easeIn(duration: duration)
-        case .easeOut: return .easeOut(duration: duration)
-        case .easeInOut: return .easeInOut(duration: duration)
-        }
-    }
-
     // MARK: Animation Curve
 
     /// Enum that represents animation curve, suh as `linear`, `easeIn`, `easeOut`, or `easeInOut`.
@@ -50,5 +32,23 @@ public struct BasicAnimation {
 
         /// Ease in and out.
         case easeInOut
+    }
+
+    // MARK: Properties
+
+    /// Animation curve.
+    public var curve: AnimationCurve
+
+    /// Animation duration.
+    public var duration: TimeInterval
+
+    /// Creates `SwiftUI` `Animation`.
+    public var asSwiftUIAnimation: Animation {
+        switch curve {
+        case .linear: return .linear(duration: duration)
+        case .easeIn: return .easeIn(duration: duration)
+        case .easeOut: return .easeOut(duration: duration)
+        case .easeInOut: return .easeInOut(duration: duration)
+        }
     }
 }

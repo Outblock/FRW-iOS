@@ -9,16 +9,13 @@ import Kingfisher
 import SwiftUI
 
 struct NFTCollectionCard: View {
+    // MARK: Internal
+
     let index: Int
     var item: CollectionItem
     let isHorizontal: Bool
-    @Binding var selectedIndex: Int
-
-    @EnvironmentObject private var viewModel: NFTTabViewModel
-
-    private var iconSize: Double {
-        return isHorizontal ? 40 : 48
-    }
+    @Binding
+    var selectedIndex: Int
 
     var body: some View {
         HStack {
@@ -61,18 +58,33 @@ struct NFTCollectionCard: View {
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.LL.text,
-                        lineWidth:
-                        (isHorizontal && selectedIndex == index) ? 1 : 0)
+                .stroke(
+                    Color.LL.text,
+                    lineWidth:
+                    (isHorizontal && selectedIndex == index) ? 1 : 0
+                )
         )
-        .shadow(color: .LL.rebackground.opacity(0.05),
-                radius: 8, x: 0, y: 0)
+        .shadow(
+            color: .LL.rebackground.opacity(0.05),
+            radius: 8,
+            x: 0,
+            y: 0
+        )
         .onTapGesture {
             if isHorizontal {
                 selectedIndex = index
             } else {}
         }
         .frame(height: isHorizontal ? 56 : 64)
+    }
+
+    // MARK: Private
+
+    @EnvironmentObject
+    private var viewModel: NFTTabViewModel
+
+    private var iconSize: Double {
+        isHorizontal ? 40 : 48
     }
 }
 

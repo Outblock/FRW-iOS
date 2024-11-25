@@ -8,7 +8,9 @@
 import SwiftUI
 
 class EVMEnableViewModel: ObservableObject {
-    @Published var state: VPrimaryButtonState = .enabled
+    @Published
+    var state: VPrimaryButtonState = .enabled
+
     func onSkip() {
         Router.pop()
     }
@@ -16,9 +18,15 @@ class EVMEnableViewModel: ObservableObject {
     func onClickEnable() {
         let minBalance = 0.000
         let result = WalletManager.shared.activatedCoins.filter { tokenModel in
-            if tokenModel.isFlowCoin, let symbol = tokenModel.symbol {
-                log.debug("[EVM] enable check balance: \(WalletManager.shared.getBalance(bySymbol: symbol))")
-                return WalletManager.shared.getBalance(bySymbol: symbol) >= minBalance
+            if tokenModel.isFlowCoin {
+                log
+                    .debug(
+                        "[EVM] enable check balance: \(WalletManager.shared.getBalance(byId: tokenModel.contractId)) "
+                    )
+                return WalletManager.shared
+                    .getBalance(
+                        byId: tokenModel.contractId
+                    ).doubleValue >= minBalance
             }
             return false
         }

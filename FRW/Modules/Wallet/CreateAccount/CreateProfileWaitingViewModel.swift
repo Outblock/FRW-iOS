@@ -12,17 +12,7 @@ import SwiftUI
 import SwiftUIPager
 
 class CreateProfileWaitingViewModel: ObservableObject {
-    @Published var animationPhase: AnimationPhase = .initial
-    @Published var page: Page = .first()
-    @Published var createFinished = false
-    @Published var currentPage: Int = 0
-
-    private var timer: Timer?
-
-    private var cancellableSet = Set<AnyCancellable>()
-
-    var txId = Flow.ID(hex: "")
-    var callback: (Bool) -> Void
+    // MARK: Lifecycle
 
     init(txId: String, callback: @escaping (Bool) -> Void) {
         self.txId = Flow.ID(hex: txId)
@@ -33,7 +23,8 @@ class CreateProfileWaitingViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .map { $0 }
             .sink { walletInfo in
-                let isEmptyBlockChain = walletInfo?.currentNetworkWalletModel?.isEmptyBlockChain ?? true
+                let isEmptyBlockChain = walletInfo?.currentNetworkWalletModel?
+                    .isEmptyBlockChain ?? true
                 if !isEmptyBlockChain {
                     self.createFinished = true
                 }
@@ -44,18 +35,19 @@ class CreateProfileWaitingViewModel: ObservableObject {
         }))
     }
 
-    @objc private func onHolderStatusChanged(noti: Notification) {
-        guard let holder = noti.object as? TransactionManager.TransactionHolder,
-              holder.transactionId.hex == txId.hex
-        else {
-            return
-        }
-        guard let current = AnimationPhase(rawValue: holder.flowStatus.rawValue) else {
-            return
-        }
+    // MARK: Internal
 
-        animationPhase = current
-    }
+    @Published
+    var animationPhase: AnimationPhase = .initial
+    @Published
+    var page: Page = .first()
+    @Published
+    var createFinished = false
+    @Published
+    var currentPage: Int = 0
+
+    var txId = Flow.ID(hex: "")
+    var callback: (Bool) -> Void
 
     func onPageIndexChangeAction(_ index: Int) {
         withAnimation(.default) {
@@ -78,9 +70,35 @@ class CreateProfileWaitingViewModel: ObservableObject {
         ConfettiManager.show()
     }
 
+    // MARK: Private
+
+    private var timer: Timer?
+
+    private var cancellableSet = Set<AnyCancellable>()
+
+    @objc
+    private func onHolderStatusChanged(noti: Notification) {
+        guard let holder = noti.object as? TransactionManager.TransactionHolder,
+              holder.transactionId.hex == txId.hex
+        else {
+            return
+        }
+        guard let current = AnimationPhase(rawValue: holder.flowStatus.rawValue) else {
+            return
+        }
+
+        animationPhase = current
+    }
+
     private func startTimer() {
         stopTimer()
-        let timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(onTimer), userInfo: nil, repeats: true)
+        let timer = Timer.scheduledTimer(
+            timeInterval: 10,
+            target: self,
+            selector: #selector(onTimer),
+            userInfo: nil,
+            repeats: true
+        )
         self.timer = timer
         RunLoop.main.add(timer, forMode: .common)
     }
@@ -92,7 +110,8 @@ class CreateProfileWaitingViewModel: ObservableObject {
         }
     }
 
-    @objc private func onTimer() {
+    @objc
+    private func onTimer() {
         if page.index == 2 {
             page.update(.moveToFirst)
         } else {

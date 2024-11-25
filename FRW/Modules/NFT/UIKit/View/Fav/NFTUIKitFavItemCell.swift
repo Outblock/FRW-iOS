@@ -12,7 +12,36 @@ import UIKit
 
 private let Padding: CGFloat = 12
 
+// MARK: - NFTUIKitFavItemCell
+
 class NFTUIKitFavItemCell: UICollectionViewCell {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Internal
+
+    static func calculateViewHeight() -> CGFloat {
+        let maxWidth = CGFloat(Router.coordinator.window.bounds.size.width - 18 * 2)
+        let itemWidth = floor(264.0 / 339.0 * maxWidth)
+
+        return itemWidth
+    }
+
+    func config(_ item: NFTModel) {
+        imageView.kf.setImage(with: item.imageURL, placeholder: UIImage(named: "placeholder"))
+    }
+
+    // MARK: Private
+
     private lazy var containerView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(dynamicProvider: { trait in
@@ -35,16 +64,6 @@ class NFTUIKitFavItemCell: UICollectionViewCell {
         return view
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     private func setup() {
         contentView.backgroundColor = .clear
 
@@ -63,22 +82,13 @@ class NFTUIKitFavItemCell: UICollectionViewCell {
             make.bottom.equalToSuperview().offset(-Padding)
         }
     }
-
-    func config(_ item: NFTModel) {
-        imageView.kf.setImage(with: item.imageURL, placeholder: UIImage(named: "placeholder"))
-    }
-
-    static func calculateViewHeight() -> CGFloat {
-        let maxWidth = CGFloat(Router.coordinator.window.bounds.size.width - 18 * 2)
-        let itemWidth = floor(264.0 / 339.0 * maxWidth)
-
-        return itemWidth
-    }
 }
+
+// MARK: StackTransformView
 
 extension NFTUIKitFavItemCell: StackTransformView {
     var options: StackTransformViewOptions {
-        return StackTransformViewOptions(
+        StackTransformViewOptions(
             scaleFactor: 0.10,
             minScale: 0.6,
             maxScale: 1,
@@ -106,6 +116,6 @@ extension NFTUIKitFavItemCell: StackTransformView {
     }
 
     var stackOptions: StackTransformViewOptions {
-        return options
+        options
     }
 }

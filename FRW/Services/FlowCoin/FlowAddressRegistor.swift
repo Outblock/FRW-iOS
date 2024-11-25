@@ -29,17 +29,27 @@ enum ScriptAddress: String, CaseIterable {
     case flowEVMBridge = "0xFlowEVMBridge"
     case CapabilityFilter = "0xCapabilityFilter"
 
-    static func addressMap(on network: LocalUserDefaults.FlowNetworkType = LocalUserDefaults.shared.flowNetwork) -> [String: String] {
-        let dict = ScriptAddress.allCases.reduce(into: [String: String]()) { partialResult, script in
-            if let address = script.address(on: network) {
-                partialResult[script.rawValue] = address.hex.withPrefix()
+    // MARK: Internal
+
+    static func addressMap(
+        on network: LocalUserDefaults.FlowNetworkType = LocalUserDefaults.shared
+            .flowNetwork
+    ) -> [String: String] {
+        let dict = ScriptAddress.allCases
+            .reduce(into: [String: String]()) { partialResult, script in
+                if let address = script.address(on: network) {
+                    partialResult[script.rawValue] = address.hex.withPrefix()
+                }
             }
-        }
         return dict
     }
 
-    func address(on network: LocalUserDefaults.FlowNetworkType = LocalUserDefaults.shared.flowNetwork) -> Flow.Address? {
-        guard let addressMap = RemoteConfigManager.shared.getContarctAddress(network), let address = addressMap[rawValue], !address.isEmpty else {
+    func address(
+        on network: LocalUserDefaults.FlowNetworkType = LocalUserDefaults.shared
+            .flowNetwork
+    ) -> Flow.Address? {
+        guard let addressMap = RemoteConfigManager.shared.getContarctAddress(network),
+              let address = addressMap[rawValue], !address.isEmpty else {
             return nil
         }
 

@@ -9,11 +9,10 @@ import Combine
 import Haneke
 import SwiftUI
 
-class PageCache {
-    static let cache = PageCache()
+// MARK: - PageCache
 
-    private var cacheObj = Cache<Data>(name: "PageCache")
-    private var cancelSet = Set<AnyCancellable>()
+class PageCache {
+    // MARK: Lifecycle
 
     init() {
         UserManager.shared.$activatedUID
@@ -31,6 +30,15 @@ class PageCache {
                 self.clear()
             }.store(in: &cancelSet)
     }
+
+    // MARK: Internal
+
+    static let cache = PageCache()
+
+    // MARK: Private
+
+    private var cacheObj = Cache<Data>(name: "PageCache")
+    private var cancelSet = Set<AnyCancellable>()
 
     private func clear() {
         cacheObj.removeAll()

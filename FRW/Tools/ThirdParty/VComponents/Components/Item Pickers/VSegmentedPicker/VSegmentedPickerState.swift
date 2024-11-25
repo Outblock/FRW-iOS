@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Segmented Picker State
+// MARK: - VSegmentedPickerState
 
 /// Enum that describes state, such as `enabled` or `disabled`.
 public enum VSegmentedPickerState: Int, CaseIterable {
@@ -18,6 +18,8 @@ public enum VSegmentedPickerState: Int, CaseIterable {
 
     /// Disabled.
     case disabled
+
+    // MARK: Public
 
     // MARK: Properties
 
@@ -30,7 +32,7 @@ public enum VSegmentedPickerState: Int, CaseIterable {
     }
 }
 
-// MARK: - V Segmented Picker Row State
+// MARK: - VSegmentedPickerRowState
 
 enum VSegmentedPickerRowState {
     // MARK: Cases
@@ -38,6 +40,8 @@ enum VSegmentedPickerRowState {
     case enabled
     case pressed
     case disabled
+
+    // MARK: Lifecycle
 
     // MARK: Properties
 

@@ -9,20 +9,30 @@ import Kingfisher
 import SwiftUI
 import SwiftUIX
 
+// MARK: - MoveTokenView
+
 struct MoveTokenView: RouteableView, PresentActionDelegate {
+    // MARK: Lifecycle
+
+    init(tokenModel: TokenModel, isPresent: Binding<Bool>) {
+        _viewModel = StateObject(wrappedValue: MoveTokenViewModel(
+            token: tokenModel,
+            isPresent: isPresent
+        ))
+    }
+
+    // MARK: Internal
+
     var changeHeight: (() -> Void)?
+    @StateObject
+    var viewModel: MoveTokenViewModel
+
     var title: String {
         ""
     }
 
     var isNavigationBarHidden: Bool {
         true
-    }
-
-    @StateObject var viewModel: MoveTokenViewModel
-
-    init(tokenModel: TokenModel, isPresent: Binding<Bool>) {
-        _viewModel = StateObject(wrappedValue: MoveTokenViewModel(token: tokenModel, isPresent: isPresent))
     }
 
     var body: some View {
@@ -51,7 +61,10 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                             .frame(height: 20)
 
                         VStack(spacing: 8) {
-                            ContactRelationView(fromContact: viewModel.fromContact, toContact: viewModel.toContact)
+                            ContactRelationView(
+                                fromContact: viewModel.fromContact,
+                                toContact: viewModel.toContact
+                            )
 
                             MoveTokenView.AccountView(isFree: viewModel.fromContact.walletType == viewModel.toContact.walletType) { _ in }
                                 .padding(.bottom, 36)
@@ -162,13 +175,15 @@ struct MoveUserView: View {
     }
 }
 
-// MARK: - MoveTokenView
+// MARK: - MoveTokenView.AccountView
 
 extension MoveTokenView {
     struct AccountView: View {
-        @EnvironmentObject private var viewModel: MoveTokenViewModel
+        @EnvironmentObject
+        private var viewModel: MoveTokenViewModel
 
-        @FocusState private var isAmountFocused: Bool
+        @FocusState
+        private var isAmountFocused: Bool
         var isFree = false
         var textDidChanged: (String) -> Void
 
@@ -178,10 +193,12 @@ extension MoveTokenView {
                     TextField("", text: $viewModel.showBalance)
                         .keyboardType(.decimalPad)
                         .disableAutocorrection(true)
-                        .modifier(PlaceholderStyle(showPlaceHolder: viewModel.showBalance.isEmpty,
-                                                   placeholder: "0.00",
-                                                   font: .inter(size: 30, weight: .w700),
-                                                   color: Color.Theme.Text.black3))
+                        .modifier(PlaceholderStyle(
+                            showPlaceHolder: viewModel.showBalance.isEmpty,
+                            placeholder: "0.00",
+                            font: .inter(size: 30, weight: .w700),
+                            color: Color.Theme.Text.black3
+                        ))
                         .font(.inter(size: 30, weight: .w700))
                         .onChange(of: viewModel.showBalance) { text in
                             viewModel.inputTextDidChangeAction(text: text)
@@ -254,6 +271,20 @@ extension MoveTokenView {
 }
 
 #Preview {
-    MoveTokenView(tokenModel: TokenModel(name: "Flow", address: FlowNetworkModel(mainnet: "", testnet: "", crescendo: "", previewnet: ""), contractName: "", storagePath: FlowTokenStoragePath(balance: "100", vault: "a", receiver: ""), decimal: 30, icon: nil, symbol: nil, website: nil, evmAddress: nil, flowIdentifier: nil), isPresent: .constant(true))
+    MoveTokenView(
+        tokenModel: TokenModel(
+            name: "Flow",
+            address: FlowNetworkModel(mainnet: "", testnet: "", crescendo: "", previewnet: ""),
+            contractName: "",
+            storagePath: FlowTokenStoragePath(balance: "100", vault: "a", receiver: ""),
+            decimal: 30,
+            icon: nil,
+            symbol: nil,
+            website: nil,
+            evmAddress: nil,
+            flowIdentifier: nil
+        ),
+        isPresent: .constant(true)
+    )
 //
 }

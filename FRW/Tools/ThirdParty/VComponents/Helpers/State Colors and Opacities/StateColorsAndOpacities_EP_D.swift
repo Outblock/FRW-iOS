@@ -11,16 +11,7 @@ import SwiftUI
 
 /// Color and opacity level group containing `enabled` and `disabled` values.
 public struct StateColorsAndOpacities_EP_D: Equatable {
-    // MARK: Properties
-
-    /// Enabled color.
-    public var enabled: Color
-
-    /// Disabled color.
-    public var disabled: Color
-
-    /// Disabled opacity level.
-    public var disabledOpacity: Double
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -37,11 +28,24 @@ public struct StateColorsAndOpacities_EP_D: Equatable {
 
     /// Initializes group with clear values.
     public init() {
-        enabled = .clear
-        disabled = .clear
-        disabledOpacity = 0
+        self.enabled = .clear
+        self.disabled = .clear
+        self.disabledOpacity = 0
     }
+
+    // MARK: Public
 
     /// Initializes group with clear values.
     public static var clear: Self { .init() }
+
+    // MARK: Properties
+
+    /// Enabled color.
+    public var enabled: Color
+
+    /// Disabled color.
+    public var disabled: Color
+
+    /// Disabled opacity level.
+    public var disabledOpacity: Double
 }

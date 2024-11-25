@@ -8,11 +8,32 @@
 import UIKit
 
 class BrowserProgressView: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError()
+    }
+
+    // MARK: Internal
+
     var progress: Double = 0 {
         didSet {
             reloadView()
         }
     }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        reloadView()
+    }
+
+    // MARK: Private
 
     private lazy var progressLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
@@ -25,24 +46,9 @@ class BrowserProgressView: UIView {
         return layer
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError()
-    }
-
     private func setup() {
         backgroundColor = .clear
         layer.addSublayer(progressLayer)
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        reloadView()
     }
 
     private func reloadView() {

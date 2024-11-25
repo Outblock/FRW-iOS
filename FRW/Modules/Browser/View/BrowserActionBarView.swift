@@ -14,28 +14,25 @@ private let BtnWidth: CGFloat = 44
 private let BtnHeight: CGFloat = 40
 private let ProgressViewHeight: CGFloat = 4
 
+// MARK: - BrowserActionBarView
+
 class BrowserActionBarView: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("")
+    }
+
+    // MARK: Internal
+
     var bookmarkAction: ((Bool) -> Void)?
     var clearCookie: EmptyClosure?
-
-    private lazy var contentView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.clipsToBounds = true
-        return view
-    }()
-
-    private lazy var blurView: UIVisualEffectView = {
-        let view = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
-        return view
-    }()
-
-    private lazy var stackView: UIStackView = {
-        let view = UIStackView(arrangedSubviews: [backBtn, moveBtn, addressBarContainer, menuBtn, homeBtn])
-        view.axis = .horizontal
-        view.spacing = 0
-        return view
-    }()
 
     lazy var backBtn: UIButton = {
         let btn = UIButton(type: .system)
@@ -65,7 +62,10 @@ class BrowserActionBarView: UIView {
     lazy var moveBtn: UIButton = {
         let btn = UIButton(type: .custom)
         btn.setImage(UIImage(named: "icon-btn-move"), for: .normal)
-        btn.setImage(UIImage(named: "icon-btn-move")?.withRenderingMode(.alwaysTemplate), for: .selected)
+        btn.setImage(
+            UIImage(named: "icon-btn-move")?.withRenderingMode(.alwaysTemplate),
+            for: .selected
+        )
         btn.tintColor = .white
 
         btn.snp.makeConstraints { make in
@@ -79,7 +79,10 @@ class BrowserActionBarView: UIView {
     lazy var reloadBtn: UIButton = {
         let btn = UIButton(type: .custom)
         btn.setImage(UIImage(named: "icon-btn-reload"), for: .normal)
-        btn.setImage(UIImage(named: "icon-btn-reload-stop")?.withRenderingMode(.alwaysTemplate), for: .selected)
+        btn.setImage(
+            UIImage(named: "icon-btn-reload-stop")?.withRenderingMode(.alwaysTemplate),
+            for: .selected
+        )
         btn.tintColor = .white
 
         btn.snp.makeConstraints { make in
@@ -109,17 +112,6 @@ class BrowserActionBarView: UIView {
         return view
     }()
 
-    private lazy var addressBarBgView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.layer.borderWidth = 2
-        view.layer.borderColor = UIColor.white.withAlphaComponent(0.24).cgColor
-        view.layer.cornerRadius = 12
-        view.alpha = 0.8
-//        view.isUserInteractionEnabled = false
-        return view
-    }()
-
     lazy var addressLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
@@ -138,15 +130,43 @@ class BrowserActionBarView: UIView {
         return view
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
+    // MARK: Private
 
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("")
-    }
+    private lazy var contentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.clipsToBounds = true
+        return view
+    }()
+
+    private lazy var blurView: UIVisualEffectView = {
+        let view = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+        return view
+    }()
+
+    private lazy var stackView: UIStackView = {
+        let view = UIStackView(arrangedSubviews: [
+            backBtn,
+            moveBtn,
+            addressBarContainer,
+            menuBtn,
+            homeBtn,
+        ])
+        view.axis = .horizontal
+        view.spacing = 0
+        return view
+    }()
+
+    private lazy var addressBarBgView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.layer.borderWidth = 2
+        view.layer.borderColor = UIColor.white.withAlphaComponent(0.24).cgColor
+        view.layer.cornerRadius = 12
+        view.alpha = 0.8
+//        view.isUserInteractionEnabled = false
+        return view
+    }()
 
     private func setup() {
         backgroundColor = .clear
@@ -210,11 +230,17 @@ extension BrowserActionBarView {
 
         if let url = currentURL {
             let isBookmarked = DBManager.shared.webBookmarkIsExist(url: url.absoluteString)
-            let bookmarkAction = UIAction(title: "browser_bookmark".localized, image: UIImage(systemName: isBookmarked ? .starFill : .star)) { [weak self] _ in
+            let bookmarkAction = UIAction(
+                title: "browser_bookmark".localized,
+                image: UIImage(systemName: isBookmarked ? .starFill : .star)
+            ) { [weak self] _ in
                 guard let self = self else { return }
                 self.bookmarkAction?(!isBookmarked)
             }
-            let clearCacheAction = UIAction(title: "clean cookie".localized, image: UIImage(systemName: "trash.slash")) { [weak self] _ in
+            let clearCacheAction = UIAction(
+                title: "clean cookie".localized,
+                image: UIImage(systemName: "trash.slash")
+            ) { [weak self] _ in
                 guard let self = self else { return }
                 self.clearCookie?()
             }

@@ -8,6 +8,8 @@
 import Foundation
 import Moya
 
+// MARK: - FRWAPI.EVM
+
 extension FRWAPI {
     enum EVM {
         case tokenList(String)
@@ -15,9 +17,11 @@ extension FRWAPI {
     }
 }
 
+// MARK: - FRWAPI.EVM + TargetType, AccessTokenAuthorizable
+
 extension FRWAPI.EVM: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
-        return .bearer
+        .bearer
     }
 
     var baseURL: URL {
@@ -40,7 +44,7 @@ extension FRWAPI.EVM: TargetType, AccessTokenAuthorizable {
     }
 
     var method: Moya.Method {
-        return .get
+        .get
     }
 
     var task: Task {
@@ -48,7 +52,10 @@ extension FRWAPI.EVM: TargetType, AccessTokenAuthorizable {
 
         switch self {
         case .tokenList, .nfts:
-            return .requestParameters(parameters: ["network": network], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: ["network": network],
+                encoding: URLEncoding.queryString
+            )
         }
     }
 

@@ -7,7 +7,11 @@
 
 import Foundation
 
+// MARK: - StakingNode
+
 struct StakingNode: Codable {
+    // MARK: Internal
+
     let id: Int
     let nodeID: String
     let tokensCommitted: Double
@@ -18,16 +22,17 @@ struct StakingNode: Codable {
     let tokensRequestedToUnstake: Double
 
     var stakingCount: Double {
-        return tokensCommitted + tokensStaked
+        tokensCommitted + tokensStaked
     }
 
     var isLilico: Bool {
-        return StakingProviderCache.cache.providers.first { $0.isLilico }?.id == nodeID
+        StakingProviderCache.cache.providers.first { $0.isLilico }?.id == nodeID
     }
 
     var tokenStakedASUSD: Double {
-        let rate = CoinRateCache.cache.getSummary(for: "flow")?.getLastRate() ?? 0.0
-        return tokensStaked * rate
+        let token = WalletManager.shared.flowToken
+        let rate = CoinRateCache.cache.getSummary(by: token?.contractId ?? "")?.getLastRate() ?? 0.0
+        return tokensStaked * coinRate
     }
 
     var dayRewards: Double {
@@ -36,26 +41,33 @@ struct StakingNode: Codable {
     }
 
     var monthRewards: Double {
-        return dayRewards * 30
+        dayRewards * 30
     }
 
     var dayRewardsASUSD: Double {
-        let coinRate = CoinRateCache.cache.getSummary(for: "flow")?.getLastRate() ?? 0
-        return dayRewards * coinRate
+        dayRewards * coinRate
     }
 
     var monthRewardsASUSD: Double {
-        let coinRate = CoinRateCache.cache.getSummary(for: "flow")?.getLastRate() ?? 0
-        return monthRewards * coinRate
+        monthRewards * coinRate
+    }
+
+    // MARK: Private
+
+    private var coinRate: Double {
+        let token = WalletManager.shared.flowToken
+        return CoinRateCache.cache.getSummary(by: token?.contractId ?? "")?.getLastRate() ?? 0.0
     }
 }
 
-// MARK: - DelegatorInner
+// MARK: - StakingDelegatorInner
 
 struct StakingDelegatorInner: Codable {
     let type: String?
     let value: StakingDelegatorInner.Value1?
 }
+
+// MARK: StakingDelegatorInner.Value1
 
 extension StakingDelegatorInner {
     struct Value1: Codable {
@@ -63,6 +75,8 @@ extension StakingDelegatorInner {
         let value: [StakingDelegatorInner.Value1.Value2?]?
     }
 }
+
+// MARK: - StakingDelegatorInner.Value1.Value2
 
 extension StakingDelegatorInner.Value1 {
     struct Value2: Codable {
@@ -83,11 +97,15 @@ extension StakingDelegatorInner.Value1.Value2 {
     }
 }
 
+// MARK: - StakingDelegatorInner.Value1.Value2.Value.Value3
+
 extension StakingDelegatorInner.Value1.Value2.Value {
     struct Value3: Codable {
         let key: StakingDelegatorInner.Value1.Value2.Value.Value3.Key?
     }
 }
+
+// MARK: - StakingDelegatorInner.Value1.Value2.Value.Value3.Key
 
 extension StakingDelegatorInner.Value1.Value2.Value.Value3 {
     struct Key: Codable {

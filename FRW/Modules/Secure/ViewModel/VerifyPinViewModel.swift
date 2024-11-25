@@ -18,11 +18,44 @@ extension VerifyPinViewModel {
     }
 }
 
+// MARK: - VerifyPinViewModel
+
 class VerifyPinViewModel: ObservableObject {
-    @Published var currentVerifyType: VerifyPinViewModel.VerifyType = .pin
-    @Published var inputPin: String = ""
-    @Published var pinCodeErrorTimes: Int = 0
+    // MARK: Lifecycle
+
+    init(callback: VerifyCallback?) {
+        self.callback = callback
+
+        let type = SecurityManager.shared.securityType
+        switch type {
+        case .both, .bionic:
+            self.currentVerifyType = .bionic
+        case .pin:
+            self.currentVerifyType = .pin
+        default:
+            break
+        }
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onAppBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+    }
+
+    // MARK: Internal
+
+    @Published
+    var currentVerifyType: VerifyPinViewModel.VerifyType = .pin
+    @Published
+    var inputPin: String = ""
+    @Published
+    var pinCodeErrorTimes: Int = 0
     var callback: VerifyCallback?
+
+    // MARK: Private
+
     private lazy var generator: UINotificationFeedbackGenerator = {
         let obj = UINotificationFeedbackGenerator()
         return obj
@@ -31,24 +64,10 @@ class VerifyPinViewModel: ObservableObject {
     private var isBionicVerifing: Bool = false
     private var canVerifyBionicAutomatically = true
 
-    init(callback: VerifyCallback?) {
-        self.callback = callback
-
-        let type = SecurityManager.shared.securityType
-        switch type {
-        case .both, .bionic:
-            currentVerifyType = .bionic
-        case .pin:
-            currentVerifyType = .pin
-        default:
-            break
-        }
-
-        NotificationCenter.default.addObserver(self, selector: #selector(onAppBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
-    }
-
-    @objc private func onAppBecomeActive() {
-        if currentVerifyType == .bionic, isBionicVerifing == false, canVerifyBionicAutomatically == true {
+    @objc
+    private func onAppBecomeActive() {
+        if currentVerifyType == .bionic, isBionicVerifing == false,
+           canVerifyBionicAutomatically == true {
             verifyBionicAction()
         }
     }

@@ -24,8 +24,11 @@ extension InputMnemonicView {
     }
 }
 
+// MARK: - InputMnemonicView
+
 struct InputMnemonicView: RouteableView {
-    @StateObject private var viewModel = InputMnemonicViewModel()
+    @StateObject
+    private var viewModel = InputMnemonicViewModel()
 
     var model: VTextFieldModel = {
         var model = TextFieldStyle.primary
@@ -36,11 +39,21 @@ struct InputMnemonicView: RouteableView {
 
     private var accountNotFoundDesc: NSAttributedString = {
         let normalDict = [NSAttributedString.Key.foregroundColor: UIColor.LL.Neutrals.text]
-        let highlightDict = [NSAttributedString.Key.foregroundColor: UIColor.LL.Primary.salmonPrimary]
+        let highlightDict =
+            [NSAttributedString.Key.foregroundColor: UIColor.LL.Primary.salmonPrimary]
 
-        var str = NSMutableAttributedString(string: "account_not_found_prev".localized, attributes: normalDict)
-        str.append(NSAttributedString(string: "account_not_found_highlight".localized, attributes: highlightDict))
-        str.append(NSAttributedString(string: "account_not_found_suff".localized, attributes: normalDict))
+        var str = NSMutableAttributedString(
+            string: "account_not_found_prev".localized,
+            attributes: normalDict
+        )
+        str.append(NSAttributedString(
+            string: "account_not_found_highlight".localized,
+            attributes: highlightDict
+        ))
+        str.append(NSAttributedString(
+            string: "account_not_found_suff".localized,
+            attributes: normalDict
+        ))
 
         return str
     }()
@@ -118,12 +131,15 @@ struct InputMnemonicView: RouteableView {
             .opacity(viewModel.state.hasError ? 1 : 0)
             .animation(.linear, value: viewModel.state.hasError)
 
-            VPrimaryButton(model: ButtonStyle.primary,
-                           state: viewModel.state.nextEnable ? .enabled : .disabled,
-                           action: {
-                               viewModel.trigger(.next)
-                           }, title: "next".localized)
-                .padding(.horizontal, 28)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: viewModel.state.nextEnable ? .enabled : .disabled,
+                action: {
+                    viewModel.trigger(.next)
+                },
+                title: "next".localized
+            )
+            .padding(.horizontal, 28)
 
             Spacer()
 
@@ -156,17 +172,28 @@ struct InputMnemonicView: RouteableView {
         }
         .backgroundFill(Color.LL.background)
         .applyRouteable(self)
-        .customAlertView(isPresented: $viewModel.state.isAlertViewPresented, title: "account_not_found".localized, attributedDesc: accountNotFoundDesc, buttons: [AlertView.ButtonItem(type: .confirm, title: "create_wallet".localized, action: {
-            viewModel.trigger(.confirmCreateWallet)
-        })])
+        .customAlertView(
+            isPresented: $viewModel.state.isAlertViewPresented,
+            title: "account_not_found".localized,
+            attributedDesc: accountNotFoundDesc,
+            buttons: [AlertView.ButtonItem(
+                type: .confirm,
+                title: "create_wallet".localized,
+                action: {
+                    viewModel.trigger(.confirmCreateWallet)
+                }
+            )]
+        )
     }
 }
 
 extension InputMnemonicView {
     var title: String {
-        return ""
+        ""
     }
 }
+
+// MARK: - InputMnemonicView_Previews
 
 struct InputMnemonicView_Previews: PreviewProvider {
     static var previews: some View {

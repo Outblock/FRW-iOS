@@ -18,6 +18,8 @@ extension AlertView {
         case primaryAction
         case secondaryAction
 
+        // MARK: Internal
+
         var titleColor: Color {
             switch self {
             case .normal:
@@ -45,7 +47,7 @@ extension AlertView {
         }
 
         var font: Font {
-            return .inter(size: 14, weight: .semibold)
+            .inter(size: 14, weight: .semibold)
         }
     }
 
@@ -57,8 +59,11 @@ extension AlertView {
     }
 }
 
+// MARK: - AlertView
+
 struct AlertView: ViewModifier {
-    @Binding var isPresented: Bool
+    @Binding
+    var isPresented: Bool
     let title: String?
     let desc: String?
     let attributedDesc: NSAttributedString?
@@ -78,7 +83,8 @@ struct AlertView: ViewModifier {
 
     let testString: AttributedString = {
         let normalDict = [NSAttributedString.Key.foregroundColor: UIColor.LL.Neutrals.text]
-        let highlightDict = [NSAttributedString.Key.foregroundColor: UIColor.LL.Primary.salmonPrimary]
+        let highlightDict =
+            [NSAttributedString.Key.foregroundColor: UIColor.LL.Primary.salmonPrimary]
 
         var str = NSMutableAttributedString(string: "this is a ", attributes: normalDict)
         str.append(NSMutableAttributedString(string: "highlight", attributes: highlightDict))
@@ -192,7 +198,8 @@ extension AlertView {
         }
     }
 
-    @ViewBuilder func createButtonLabel(item: AlertView.ButtonItem) -> some View {
+    @ViewBuilder
+    func createButtonLabel(item: AlertView.ButtonItem) -> some View {
         Text(item.title)
             .font(item.type.font)
             .foregroundColor(item.type.titleColor)
@@ -229,9 +236,13 @@ extension View {
     }
 }
 
+// MARK: - AlertViewTestView
+
 struct AlertViewTestView: View {
-    @State var isPresented: Bool = true
-    let desc = "No account found with the recoveray phrase. Do you want to create a new account with your phrase?"
+    @State
+    var isPresented: Bool = true
+    let desc =
+        "No account found with the recoveray phrase. Do you want to create a new account with your phrase?"
 
     var body: some View {
         Button {
@@ -241,7 +252,12 @@ struct AlertViewTestView: View {
         } label: {
             Text("test")
         }
-        .customAlertView(isPresented: $isPresented, title: "Account not Found", desc: desc, buttons: [confirmBtn])
+        .customAlertView(
+            isPresented: $isPresented,
+            title: "Account not Found",
+            desc: desc,
+            buttons: [confirmBtn]
+        )
     }
 
     var confirmBtn: AlertView.ButtonItem {
@@ -250,6 +266,8 @@ struct AlertViewTestView: View {
         return confirmBtn
     }
 }
+
+// MARK: - AlertView_Previews
 
 struct AlertView_Previews: PreviewProvider {
     static var previews: some View {

@@ -9,6 +9,20 @@ import SnapKit
 import UIKit
 
 class AppPrivateView: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError()
+    }
+
+    // MARK: Private
+
     private lazy var blurView: UIVisualEffectView = {
         let view = UIVisualEffectView(effect: UIBlurEffect(style: .light))
         return view
@@ -26,16 +40,6 @@ class AppPrivateView: UIView {
 
         return view
     }()
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError()
-    }
 
     private func setup() {
         backgroundColor = .clear

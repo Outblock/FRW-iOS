@@ -9,19 +9,7 @@ import SwiftUI
 import UIKit
 
 class FlowTransactionViewMoreFooter: UICollectionReusableView {
-    private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor.LL.Neutrals.text
-        label.font = .inter(size: 14)
-        label.text = "view_more_transactions".localized
-        return label
-    }()
-
-    private lazy var arrowImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(systemName: .arrowRight))
-        imageView.tintColor = UIColor.LL.Neutrals.text
-        return imageView
-    }()
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -45,8 +33,26 @@ class FlowTransactionViewMoreFooter: UICollectionReusableView {
         fatalError()
     }
 
-    @objc private func onTap() {
-        guard let address = WalletManager.shared.getPrimaryWalletAddress(), let url = address.toFlowScanAccountDetailURL else {
+    // MARK: Private
+
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor.LL.Neutrals.text
+        label.font = .inter(size: 14)
+        label.text = "view_more_transactions".localized
+        return label
+    }()
+
+    private lazy var arrowImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: .arrowRight))
+        imageView.tintColor = UIColor.LL.Neutrals.text
+        return imageView
+    }()
+
+    @objc
+    private func onTap() {
+        guard let address = WalletManager.shared.getPrimaryWalletAddress(),
+              let url = address.toFlowScanAccountDetailURL else {
             return
         }
 

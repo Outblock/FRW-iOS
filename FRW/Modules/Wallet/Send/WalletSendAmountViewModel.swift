@@ -125,7 +125,7 @@ class WalletSendAmountViewModel: ObservableObject {
 
     private var addressIsValid: Bool?
 
-    private var minBalance: Double = 0.001
+    private var minBalance: Decimal = 0.001
     private var _insufficientStorageFailure: InsufficientStorageFailure?
 }
 
@@ -171,8 +171,11 @@ extension WalletSendAmountViewModel {
     }
 
     private func refreshTokenData() {
-        amountBalance = WalletManager.shared.getBalance(bySymbol: token.symbol ?? "")
-        coinRate = CoinRateCache.cache.getSummary(for: token.symbol ?? "")?.getLastRate() ?? 0
+        amountBalance = WalletManager.shared
+            .getBalance(byId: token.contractId).doubleValue
+        coinRate = CoinRateCache.cache
+            .getSummary(by: token.contractId)?
+            .getLastRate() ?? 0
     }
 
     private func refreshInput() {
@@ -215,7 +218,7 @@ extension WalletSendAmountViewModel {
 
         if token.isFlowCoin, WalletManager.shared.isCoa(targetContact.address) {
             let validBalance = (
-                Decimal(amountBalance) - Decimal(minBalance)
+                Decimal(amountBalance) - minBalance
             ).doubleValue
             if validBalance < inputTokenNum {
                 errorType = .belowMinimum
@@ -233,7 +236,7 @@ extension WalletSendAmountViewModel {
     private func fetchMinFlowBalance() {
         Task {
             do {
-                self.minBalance = try await FlowNetwork.minFlowBalance()
+                self.minBalance = try await FlowNetwork.minFlowBalance().decimalValue
                 log.debug("[Flow] min balance:\(self.minBalance)")
             } catch {
                 self.minBalance = 0.001
@@ -275,7 +278,7 @@ extension WalletSendAmountViewModel {
 
                     actualBalance = num.formatCurrencyString(digits: token.decimal)
                 } catch {
-                    let num = max(amountBalance - minBalance, 0)
+                    let num = max(amountBalance - minBalance.doubleValue, 0)
                     DispatchQueue.main.async {
                         self.inputText = num.formatCurrencyString()
                     }
@@ -390,10 +393,8 @@ extension WalletSendAmountViewModel {
                             address: targetAddress
                         )
                     } else {
-                        guard let bigUIntValue = Utilities.parseToBigUInt(
-                            amount.description,
-                            units: .ether
-                        ),
+                        guard let bigUIntValue = amount.description
+                            .parseToBigUInt(decimals: token.decimal),
                             let flowIdentifier = self.token.flowIdentifier
                         else {
                             failureBlock()
@@ -439,18 +440,23 @@ extension WalletSendAmountViewModel {
                                 gas: gas
                             )
                     } else {
+                        guard let toAddress = token.getAddress() else {
+                            throw LLError.invalidAddress
+                        }
+                        guard let bigAmount = amount.description
+                            .parseToBigUInt(decimals: token.decimal) else {
+                            throw WalletError.insufficientBalance
+                        }
                         let erc20Contract = try await FlowProvider.Web3.defaultContract()
                         let testData = erc20Contract?.contract.method(
                             "transfer",
                             parameters: [
                                 targetAddress,
-                                Utilities.parseToBigUInt(amount.description, units: .ether)!,
+                                bigAmount,
                             ],
                             extraData: nil
                         )
-                        guard let toAddress = token.getAddress() else {
-                            throw LLError.invalidAddress
-                        }
+
                         txId = try await FlowNetwork.sendTransaction(
                             amount: "0",
                             data: testData,

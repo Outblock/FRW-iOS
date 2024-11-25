@@ -8,11 +8,12 @@
 import Kingfisher
 import SwiftUI
 
-struct RefreshableView<Content: View>: View {
-    var content: () -> Content
+// MARK: - RefreshableView
 
-    @Environment(\.refresh) private var refresh // << refreshable injected !!
-    @State private var isRefreshing = false
+struct RefreshableView<Content: View>: View {
+    // MARK: Internal
+
+    var content: () -> Content
 
     var body: some View {
         VStack {
@@ -39,46 +40,65 @@ struct RefreshableView<Content: View>: View {
             }
         }
     }
+
+    // MARK: Private
+
+    @Environment(\.refresh)
+    private var refresh // << refreshable injected !!
+    @State
+    private var isRefreshing = false
 }
 
+// MARK: - MyProgress
+
 struct MyProgress: View {
-    @State private var isProgress = false
+    // MARK: Internal
+
     var body: some View {
         HStack {
-            ForEach(0 ... 4, id: \.self) { index in
+            ForEach(0...4, id: \.self) { index in
                 Circle()
                     .frame(width: 10, height: 10)
                     .foregroundColor(.red)
                     .scaleEffect(self.isProgress ? 1 : 0.01)
-                    .animation(self.isProgress ? Animation.linear(duration: 0.6).repeatForever().delay(0.2 * Double(index)) :
-                        .default,
-                        value: isProgress)
+                    .animation(
+                        self.isProgress ? Animation.linear(duration: 0.6).repeatForever()
+                            .delay(0.2 * Double(index)) :
+                            .default,
+                        value: isProgress
+                    )
             }
         }
         .onAppear { isProgress = true }
         .padding()
     }
+
+    // MARK: Private
+
+    @State
+    private var isProgress = false
 }
+
+// MARK: - ViewOffsetKey
 
 private struct ViewOffsetKey: PreferenceKey {
     public typealias Value = CGFloat
+
     public static var defaultValue = CGFloat.zero
+
     public static func reduce(value: inout Value, nextValue: () -> Value) {
         value += nextValue()
     }
 }
 
+// MARK: - NFTListView
+
 struct NFTListView: View {
+    // MARK: Internal
+
     var list: [NFTModel]
     var imageEffect: Namespace.ID
     var fromChildAccount: ChildAccount?
-
-    @EnvironmentObject private var viewModel: NFTTabViewModel
-
-    private let nftLayout: [GridItem] = [
-        GridItem(.adaptive(minimum: 130), spacing: 18),
-        GridItem(.adaptive(minimum: 130), spacing: 18),
-    ]
 
     var body: some View {
         VStack {
@@ -105,10 +125,24 @@ struct NFTListView: View {
         }
         return 0.0
     }
+
+    // MARK: Private
+
+    @EnvironmentObject
+    private var viewModel: NFTTabViewModel
+
+    private let nftLayout: [GridItem] = [
+        GridItem(.adaptive(minimum: 130), spacing: 18),
+        GridItem(.adaptive(minimum: 130), spacing: 18),
+    ]
 }
 
+// MARK: - NFTListView_Previews
+
 struct NFTListView_Previews: PreviewProvider {
-    @Namespace static var namespace
+    @Namespace
+    static var namespace
+
     static var previews: some View {
         NFTListView(list: [], imageEffect: namespace)
             .environmentObject(NFTTabViewModel())

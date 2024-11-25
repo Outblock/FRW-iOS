@@ -11,38 +11,28 @@ import SwiftUI
 
 /// Model that describes UI.
 public struct VRadioButtonModel {
-    // MARK: Properties
-
-    /// Reference to `VToggleModel`.
-    public static let toggleRefrence: VToggleModel = .init()
-
-    /// Reference to `VCheckBoxModel`.
-    public static let checkBoxReference: VCheckBoxModel = .init()
-
-    /// Sub-model containing layout properties.
-    public var layout: Layout = .init()
-
-    /// Sub-model containing color properties.
-    public var colors: Colors = .init()
-
-    /// Sub-model containing font properties.
-    public var fonts: Fonts = .init()
-
-    /// Sub-model containing animation properties.
-    public var animations: Animations = .init()
-
-    /// Sub-model containing misc properties.
-    public var misc: Misc = .init()
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes model with default values.
     public init() {}
 
+    // MARK: Public
+
     // MARK: Layout
 
     /// Sub-model containing layout properties.
     public struct Layout {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Radio button dimension. Defaults to `16.`
@@ -59,17 +49,31 @@ public struct VRadioButtonModel {
 
         /// Content leading margin. Defaults to `5`.
         public var contentMarginLeading: CGFloat = checkBoxReference.layout.contentMarginLeading
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
 
     // MARK: Colors
 
     /// Sub-model containing color properties.
     public struct Colors {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: State Colors
+
+        /// Sub-model containing colors for component states.
+        public typealias StateColors = StateColors_OOD
+
+        // MARK: State Opacities
+
+        /// Sub-model containing opacities for component states.
+        public typealias StateOpacities = StateOpacities_PD
+
         // MARK: Properties
 
         /// Fill colors.
@@ -112,67 +116,87 @@ public struct VRadioButtonModel {
             pressedOn: toggleRefrence.colors.textContent.pressedOn,
             disabled: toggleRefrence.colors.textContent.disabled
         )
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: State Colors
-
-        /// Sub-model containing colors for component states.
-        public typealias StateColors = StateColors_OOD
-
-        // MARK: State Opacities
-
-        /// Sub-model containing opacities for component states.
-        public typealias StateOpacities = StateOpacities_PD
     }
 
     // MARK: Fonts
 
     /// Sub-model containing font properties.
     public struct Fonts {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Title font. Defaults to system font of size `15`.
         ///
         /// Only applicable when using init with title.
         public var title: Font = toggleRefrence.fonts.title
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
 
     // MARK: Animations
 
     /// Sub-model containing animation properties.
     public struct Animations {
-        // MARK: Properties
-
-        /// State change animation. Defaults to `easeIn` with duration `0.1`.
-        public var stateChange: Animation? = toggleRefrence.animations.stateChange
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
         /// Initializes sub-model with default values.
         public init() {}
+
+        // MARK: Public
+
+        // MARK: Properties
+
+        /// State change animation. Defaults to `easeIn` with duration `0.1`.
+        public var stateChange: Animation? = toggleRefrence.animations.stateChange
     }
 
     // MARK: Misc
 
     /// Sub-model containing misc properties.
     public struct Misc {
-        // MARK: Properties
-
-        /// Indicates if content is clickable. Defaults to `true`.
-        public var contentIsClickable: Bool = toggleRefrence.misc.contentIsClickable
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
         /// Initializes sub-model with default values.
         public init() {}
+
+        // MARK: Public
+
+        // MARK: Properties
+
+        /// Indicates if content is clickable. Defaults to `true`.
+        public var contentIsClickable: Bool = toggleRefrence.misc.contentIsClickable
     }
+
+    // MARK: Properties
+
+    /// Reference to `VToggleModel`.
+    public static let toggleRefrence: VToggleModel = .init()
+
+    /// Reference to `VCheckBoxModel`.
+    public static let checkBoxReference: VCheckBoxModel = .init()
+
+    /// Sub-model containing layout properties.
+    public var layout: Layout = .init()
+
+    /// Sub-model containing color properties.
+    public var colors: Colors = .init()
+
+    /// Sub-model containing font properties.
+    public var fonts: Fonts = .init()
+
+    /// Sub-model containing animation properties.
+    public var animations: Animations = .init()
+
+    /// Sub-model containing misc properties.
+    public var misc: Misc = .init()
 }

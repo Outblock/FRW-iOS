@@ -9,15 +9,18 @@ import Combine
 import Kingfisher
 import SwiftUI
 
+// MARK: - AccountSettingViewModel
+
 class AccountSettingViewModel: ObservableObject {
     init() {
         ChildAccountManager.shared.refresh()
     }
 }
 
+// MARK: - AccountSettingView
+
 struct AccountSettingView: RouteableView {
-    @StateObject private var cm = ChildAccountManager.shared
-    @StateObject private var vm = AccountSettingViewModel()
+    // MARK: Internal
 
     var title: String {
         "wallet".localized.capitalized
@@ -43,9 +46,28 @@ struct AccountSettingView: RouteableView {
         .applyRouteable(self)
     }
 
+    var linkAccountContentView: some View {
+        LazyVStack(alignment: .leading, spacing: 8) {
+            Text("linked_account".localized)
+                .foregroundColor(Color.LL.Neutrals.text4)
+                .font(.inter(size: 16, weight: .bold))
+
+            ForEach(cm.sortedChildAccounts, id: \.addr) { childAccount in
+                Button {
+                    Router.route(to: RouteMap.Profile.accountDetail(childAccount))
+                } label: {
+                    childAccountCell(childAccount)
+                }
+            }
+        }
+    }
+
     func walletInfoCell() -> some View {
         Button {
-            Router.route(to: RouteMap.Profile.walletSetting(true, WalletManager.shared.getPrimaryWalletAddress() ?? "0x"))
+            Router.route(to: RouteMap.Profile.walletSetting(
+                true,
+                WalletManager.shared.getPrimaryWalletAddress() ?? "0x"
+            ))
         } label: {
             HStack(spacing: 18) {
                 Image("flow")
@@ -70,22 +92,6 @@ struct AccountSettingView: RouteableView {
             .contentShape(Rectangle())
             .cornerRadius(16)
             .shadow(color: Color.black.opacity(0.02), x: 0, y: 12, blur: 16)
-        }
-    }
-
-    var linkAccountContentView: some View {
-        LazyVStack(alignment: .leading, spacing: 8) {
-            Text("linked_account".localized)
-                .foregroundColor(Color.LL.Neutrals.text4)
-                .font(.inter(size: 16, weight: .bold))
-
-            ForEach(cm.sortedChildAccounts, id: \.addr) { childAccount in
-                Button {
-                    Router.route(to: RouteMap.Profile.accountDetail(childAccount))
-                } label: {
-                    childAccountCell(childAccount)
-                }
-            }
         }
     }
 
@@ -123,12 +129,19 @@ struct AccountSettingView: RouteableView {
             } label: {
                 Image("icon-pin")
                     .renderingMode(.template)
-                    .foregroundColor(childAccount.isPinned ? Color.LL.Primary.salmonPrimary : Color(hex: "#00B881"))
+                    .foregroundColor(
+                        childAccount.isPinned ? Color.LL.Primary
+                            .salmonPrimary : Color(hex: "#00B881")
+                    )
                     .frame(width: 32, height: 32)
                     .background {
                         if childAccount.isPinned {
-                            LinearGradient(colors: [Color.clear, Color(hex: "#00B881").opacity(0.15)], startPoint: .bottomLeading, endPoint: .topTrailing)
-                                .cornerRadius([.topTrailing, .bottomLeading], 16)
+                            LinearGradient(
+                                colors: [Color.clear, Color(hex: "#00B881").opacity(0.15)],
+                                startPoint: .bottomLeading,
+                                endPoint: .topTrailing
+                            )
+                            .cornerRadius([.topTrailing, .bottomLeading], 16)
                         } else {
                             Color.clear
                         }
@@ -143,4 +156,11 @@ struct AccountSettingView: RouteableView {
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.02), x: 0, y: 12, blur: 16)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var cm = ChildAccountManager.shared
+    @StateObject
+    private var vm = AccountSettingViewModel()
 }

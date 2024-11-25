@@ -10,6 +10,28 @@ import SnapKit
 import UIKit
 
 class BrowserSearchDAppItemCell: UICollectionViewCell {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError()
+    }
+
+    // MARK: Internal
+
+    func config(_ model: DAppModel) {
+        iconImageView.setImage(with: model.logo)
+        titleLabel.text = model.name
+        descLabel.text = model.host
+    }
+
+    // MARK: Private
+
     private lazy var iconImageView: UIImageView = {
         let view = UIImageView()
         view.contentMode = .scaleAspectFill
@@ -40,16 +62,6 @@ class BrowserSearchDAppItemCell: UICollectionViewCell {
         return view
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError()
-    }
-
     private func setup() {
         contentView.backgroundColor = .clear
 
@@ -68,11 +80,5 @@ class BrowserSearchDAppItemCell: UICollectionViewCell {
             make.left.equalTo(iconImageView.snp.right).offset(12)
             make.centerY.equalToSuperview()
         }
-    }
-
-    func config(_ model: DAppModel) {
-        iconImageView.setImage(with: model.logo)
-        titleLabel.text = model.name
-        descLabel.text = model.host
     }
 }

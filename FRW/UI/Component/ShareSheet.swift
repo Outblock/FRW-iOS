@@ -9,7 +9,8 @@ import SwiftUI
 
 struct ShareSheet: UIViewControllerRepresentable {
     // 你想分享的数据
-    @Binding var items: [UIImage]
+    @Binding
+    var items: [UIImage]
 
     func makeUIViewController(context _: Context) -> UIActivityViewController {
         let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)

@@ -7,11 +7,13 @@
 
 import SwiftUI
 
+// MARK: - DevicesView
+
 struct DevicesView: RouteableView {
-    @StateObject private var vm = DevicesViewModel()
+    // MARK: Internal
 
     var title: String {
-        return "devices".localized
+        "devices".localized
     }
 
     var body: some View {
@@ -75,12 +77,20 @@ struct DevicesView: RouteableView {
         .mockPlaceholder(vm.status == PageStatus.loading)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = DevicesViewModel()
 }
+
+// MARK: DevicesView.Cell
 
 extension DevicesView {
     struct Cell: View {
         var model: DeviceInfoModel
         var isCurrent: Bool = false
+
         var body: some View {
             Button {
                 Router.route(to: RouteMap.Profile.deviceInfo(model))
