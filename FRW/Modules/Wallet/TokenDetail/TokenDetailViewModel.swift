@@ -273,7 +273,7 @@ extension TokenDetailViewModel {
             let accountType = AccountType.current
             let url = network.getTransactionHistoryUrl(accountType: accountType, transactionId: txid)
 
-            UIApplication.shared.open(url)
+            url.map { UIApplication.shared.open($0) }
         }
     }
 

@@ -12,7 +12,6 @@ import struct SwiftUI.Color
 enum FlowNetworkType: String, CaseIterable, Codable {
     case testnet
     case mainnet
-    case previewnet
     
     // MARK: Lifecycle
     
@@ -22,8 +21,6 @@ enum FlowNetworkType: String, CaseIterable, Codable {
             self = .testnet
         case .mainnet:
             self = .mainnet
-        case .previewnet:
-            self = .previewnet
         default:
             return nil
         }
@@ -37,8 +34,6 @@ enum FlowNetworkType: String, CaseIterable, Codable {
             return Color.LL.Primary.salmonPrimary
         case .testnet:
             return Color(hex: "#FF8A00")
-        case .previewnet:
-            return Color(hex: "#CCAF21")
         }
     }
     
@@ -52,8 +47,6 @@ enum FlowNetworkType: String, CaseIterable, Codable {
             return Flow.ChainID.testnet
         case .mainnet:
             return Flow.ChainID.mainnet
-        case .previewnet:
-            return Flow.ChainID.previewnet
         }
     }
 }

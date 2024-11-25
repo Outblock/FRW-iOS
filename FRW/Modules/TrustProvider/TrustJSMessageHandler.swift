@@ -25,7 +25,6 @@ class TrustJSMessageHandler: NSObject {
     var supportChainID: [Int: Flow.ChainID] = [
         FlowNetworkType.mainnet.networkID: .mainnet,
         FlowNetworkType.testnet.networkID: .testnet,
-        FlowNetworkType.previewnet.networkID: .previewnet,
     ]
 }
 

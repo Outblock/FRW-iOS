@@ -425,12 +425,6 @@ extension WalletManager {
         return nil
     }
 
-    var isPreviewEnabled: Bool {
-        walletInfo?.wallets?
-            .first(where: { $0.chainId == FlowNetworkType.previewnet.rawValue })?
-            .getAddress != nil
-    }
-
     func isTokenActivated(symbol: String) -> Bool {
         for token in activatedCoins {
             if token.symbol == symbol {

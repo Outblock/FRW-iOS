@@ -600,7 +600,7 @@ extension RouteMap.Transaction: RouterTarget {
 
 //            UIApplication.shared.open(url)
             TransactionUIHandler.shared.dismissListView()
-            Router.route(to: RouteMap.Explore.browser(url))
+            url.map { Router.route(to: RouteMap.Explore.browser($0)) }
         }
     }
 }

@@ -54,7 +54,6 @@ struct DeveloperModeView: RouteableView {
                         Section {
                             let isMainnet = lud.flowNetwork == .mainnet
                             let isTestnet = lud.flowNetwork == .testnet
-                            let isPreviewnet = lud.flowNetwork == .previewnet
 
                             Cell(
                                 sysImageTuple: (

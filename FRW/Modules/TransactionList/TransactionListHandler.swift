@@ -217,7 +217,7 @@ extension TransactionListHandler: UICollectionViewDelegateFlowLayout, UICollecti
             let network = LocalUserDefaults.shared.flowNetwork
             let accountType = AccountType.current
             let url = network.getTransactionHistoryUrl(accountType: accountType, transactionId: hash)
-            Router.route(to: RouteMap.Explore.browser(url))
+            url.map { Router.route(to: RouteMap.Explore.browser($0)) }
         }
     }
 }

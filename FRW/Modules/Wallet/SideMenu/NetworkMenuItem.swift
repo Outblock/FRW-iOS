@@ -46,5 +46,5 @@ struct NetworkMenuItem: View {
 }
 
 #Preview {
-    NetworkMenuItem(network: .mainnet, currentNetwork: .previewnet)
+    NetworkMenuItem(network: .mainnet, currentNetwork: .testnet)
 }

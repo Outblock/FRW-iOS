@@ -59,6 +59,6 @@ class FlowTransactionViewMoreFooter: UICollectionReusableView {
         let accountType = AccountType.current
         let url = network.getAccountUrl(accountType: accountType, address: address)
 
-        UIApplication.shared.open(url)
+        url.map { UIApplication.shared.open($0) }
     }
 }
