@@ -168,7 +168,7 @@ class TokenDetailViewModel: ObservableObject {
     var showSheet: Bool = false
     var buttonAction: TokenDetailViewModel.Action = .none
 
-    var isTokenDetailsButtonEnabled: Bool { self.token.website != nil }
+    var isTokenDetailsButtonEnabled: Bool { self.token.website.isNotNullNorEmpty }
     
     // MARK: Private
 
