@@ -26,7 +26,7 @@ extension FlowNetworkType {
     }
     
     func getAccountUrl(accountType: AccountType, address: String) -> URL? {
-        let baseUrl = getAccountBaseUrl(accountType: accountType)
+        let baseUrl = getHistoryBaseUrl(accountType: accountType)
         return URL(string: "\(baseUrl)/account/\(address)")
     }
     
@@ -37,13 +37,6 @@ extension FlowNetworkType {
             
         case (.flow, .testnet): "https://testnet.flowscan.io"
         case (.flow, .mainnet): "https://www.flowscan.io"
-        }
-    }
-    
-    private func getAccountBaseUrl(accountType: AccountType) -> String {
-        return switch (accountType, self) {
-        case (_, .testnet): "https://testnet.flowscan.org"
-        case (_, .mainnet): "https://flowscan.org"
         }
     }
 }
