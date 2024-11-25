@@ -973,7 +973,6 @@
 		4E1DD8CC2B1629560055E510 /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1DD8CA2B1629560055E510 /* QRCodeView.swift */; };
 		4E1DD8D12B162F9B0055E510 /* SyncConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1DD8D02B162F9B0055E510 /* SyncConfirmView.swift */; };
 		4E1DD8D22B162F9B0055E510 /* SyncConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1DD8D02B162F9B0055E510 /* SyncConfirmView.swift */; };
-		4E1DD8D42B16443B0055E510 /* WalletConnectAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4E1DD8D32B16443B0055E510 /* WalletConnectAuth */; };
 		4E1DE2C52C6AF412001022B7 /* ThreadSafeDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1DE2C42C6AF412001022B7 /* ThreadSafeDictionary.swift */; };
 		4E1DE2C62C6AF412001022B7 /* ThreadSafeDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1DE2C42C6AF412001022B7 /* ThreadSafeDictionary.swift */; };
 		4E2380FE2B186A6000756874 /* WalletConnect+Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2380FD2B186A6000756874 /* WalletConnect+Tools.swift */; };
@@ -2875,7 +2874,6 @@
 				154B891B276A1EEB00780E93 /* FirebaseAuth in Frameworks */,
 				15F517FD28C6577000504FDC /* Atlantis in Frameworks */,
 				4E5F2F132C192F3B008589C4 /* WalletConnectNotify in Frameworks */,
-				4E1DD8D42B16443B0055E510 /* WalletConnectAuth in Frameworks */,
 				157D91BE293E102C00AC102B /* GoogleSignIn in Frameworks */,
 				15F22F07278A899D00FCF772 /* AuthenticationServices.framework in Frameworks */,
 				6A5F15FA2A3185860035AC38 /* SwiftyBeaver in Frameworks */,
@@ -6157,7 +6155,6 @@
 				150D3E382A58719A00F7F2DC /* QRCode */,
 				6A19A74D2A612FAB00B84F09 /* FirebaseMessaging */,
 				4E5D4FAD2AEF9A7400DC419B /* DeviceGuru */,
-				4E1DD8D32B16443B0055E510 /* WalletConnectAuth */,
 				4E1DD8C82B16222A0055E510 /* Instabug */,
 				4E9D98DE2B9DEAEF00A70879 /* TrustWeb3Provider */,
 				4E3682C62BB6A59100B24785 /* web3swift */,
@@ -9988,11 +9985,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4E1DD8C52B1622030055E510 /* XCRemoteSwiftPackageReference "Instabug-SP" */;
 			productName = Instabug;
-		};
-		4E1DD8D32B16443B0055E510 /* WalletConnectAuth */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 158832C82894262B00142B35 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
-			productName = WalletConnectAuth;
 		};
 		4E2E8CBC2C61B9A800095D5B /* LogView */ = {
 			isa = XCSwiftPackageProductDependency;
