@@ -11,13 +11,13 @@ import FirebaseAnalytics
 import FirebaseMessaging
 import Foundation
 import GoogleSignIn
+import ReownWalletKit
 import Resolver
 import SwiftUI
 import SwiftyBeaver
 import UIKit
 import WalletConnectNotify
 import WalletCore
-import Web3Wallet
 
 #if DEBUG
 import Atlantis
