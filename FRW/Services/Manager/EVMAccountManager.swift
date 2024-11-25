@@ -230,6 +230,13 @@ extension EVMAccountManager {
                         message: result.errorMessage
                     )
                 throw EVMError.createAccount
+            } else {
+                EventTrack.General
+                    .coaCreation(
+                        txId: tid.description,
+                        flowAddress: address,
+                        message: ""
+                    )
             }
         } catch {
             EventTrack.General

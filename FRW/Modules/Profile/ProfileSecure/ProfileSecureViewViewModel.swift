@@ -8,9 +8,12 @@
 import SwiftUI
 
 class ProfileSecureViewModel: ObservableObject {
-    @Published var isBionicEnabled: Bool = SecurityManager.shared.isBionicEnabled
-    @Published var isPinCodeEnabled: Bool = SecurityManager.shared.isPinCodeEnabled
-    @Published var isLockOnExit: Bool = SecurityManager.shared.isLockOnExitEnabled
+    @Published
+    var isBionicEnabled: Bool = SecurityManager.shared.isBionicEnabled
+    @Published
+    var isPinCodeEnabled: Bool = SecurityManager.shared.isPinCodeEnabled
+    @Published
+    var isLockOnExit: Bool = SecurityManager.shared.isLockOnExitEnabled
 
     func changeBionicAction(_ isEnabled: Bool) {
         if SecurityManager.shared.isBionicEnabled == isEnabled {
@@ -18,11 +21,12 @@ class ProfileSecureViewModel: ObservableObject {
         }
 
         if !isEnabled {
+            EventTrack.General.security(type: .none)
             SecurityManager.shared.disableBionic()
             isBionicEnabled = false
             return
         }
-
+        EventTrack.General.security(type: .bionic)
         Task {
             let result = await SecurityManager.shared.enableBionic()
             if !result {
@@ -44,12 +48,12 @@ class ProfileSecureViewModel: ObservableObject {
                 HUD.error(title: "disable_pin_code_failed".localized)
                 return
             }
-
+            EventTrack.General.security(type: .none)
             HUD.success(title: "pin_code_disabled".localized)
             isPinCodeEnabled = false
             return
         }
-
+        EventTrack.General.security(type: .pin)
         Router.route(to: RouteMap.PinCode.pinCode)
     }
 

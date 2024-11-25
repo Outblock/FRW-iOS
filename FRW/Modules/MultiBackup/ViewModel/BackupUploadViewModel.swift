@@ -206,7 +206,7 @@ class BackupUploadViewModel: ObservableObject {
                         self.buttonState = .enabled
                     }
                     toggleProcess(process: .finish)
-//                    onClickButton()
+                    trackCreatSuccess()
 
                 } catch {
                     buttonState = .enabled
@@ -216,7 +216,6 @@ class BackupUploadViewModel: ObservableObject {
                 }
             }
         case .finish:
-            trackCreatSuccess()
             let nextIndex = currentIndex + 1
             if items.count <= nextIndex {
                 currentIndex = nextIndex

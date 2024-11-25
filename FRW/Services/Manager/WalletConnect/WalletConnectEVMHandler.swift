@@ -221,8 +221,18 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                     if tixResult.isFailed {
                         HUD.error(title: "transaction failed")
                         cancel()
+                        EventTrack.Transaction
+                            .evmSigned(
+                                txId: txid.hex,
+                                success: false
+                            )
                         return
                     }
+                    EventTrack.Transaction
+                        .evmSigned(
+                            txId: txid.hex,
+                            success: true
+                        )
                     let model = try await FlowNetwork.fetchEVMTransactionResult(txid: txid.hex)
                     DispatchQueue.main.async {
                         confirm(model.hashString?.addHexPrefix() ?? "")

@@ -477,8 +477,6 @@ struct WalletHomeView: View {
                 Spacer()
 
                 Button {
-                    EventTrack.General
-                        .security(type: SecurityManager.shared.securityType)
                     UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                     Router.route(to: RouteMap.Wallet.buyCrypto)
                 } label: {

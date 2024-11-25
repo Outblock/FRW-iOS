@@ -45,7 +45,6 @@ extension EventTrack.General {
             ])
     }
 
-    /// home page buy button clicked
     static func security(type: SecurityManager.SecurityType) {
         EventTrack
             .send(event: EventTrack.General.securityTool, properties: [

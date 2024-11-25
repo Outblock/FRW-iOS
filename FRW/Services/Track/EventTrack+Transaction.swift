@@ -28,10 +28,14 @@ extension EventTrack.Transaction {
             ])
     }
 
-    static func evmSigned(flowAddress: String, evmAddress: String, txId: String, success: Bool) {
+    static func evmSigned(txId: String, success: Bool) {
+        guard let primaryAddress = WalletManager.shared.getPrimaryWalletAddress(),
+              let evmAddress = EVMAccountManager.shared.accounts.first?.showAddress else {
+            return
+        }
         EventTrack
             .send(event: EventTrack.Transaction.flowSigned, properties: [
-                "flow_address": flowAddress,
+                "flow_address": primaryAddress,
                 "evm_address": evmAddress,
                 "tx_id": txId,
                 "success": success,
