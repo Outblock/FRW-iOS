@@ -54,7 +54,6 @@ struct DeveloperModeView: RouteableView {
                         Section {
                             let isMainnet = lud.flowNetwork == .mainnet
                             let isTestnet = lud.flowNetwork == .testnet
-                            let isPreviewnet = lud.flowNetwork == .previewnet
 
                             Cell(
                                 sysImageTuple: (
@@ -74,7 +73,7 @@ struct DeveloperModeView: RouteableView {
                                 sysImageTuple: (
                                     isTestnet ? .checkmarkSelected :
                                         .checkmarkUnselected,
-                                    isTestnet ? LocalUserDefaults.FlowNetworkType.testnet
+                                    isTestnet ? FlowNetworkType.testnet
                                         .color : .LL.Neutrals.neutrals1
                                 ),
                                 title: "Testnet",

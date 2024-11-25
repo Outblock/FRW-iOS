@@ -13,8 +13,8 @@ class NetworkSwitchPopViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(
-        fromNetwork: LocalUserDefaults.FlowNetworkType,
-        toNetwork: LocalUserDefaults.FlowNetworkType,
+        fromNetwork: FlowNetworkType,
+        toNetwork: FlowNetworkType,
         callback: SwitchNetworkClosure? = nil
     ) {
         self.fromNetwork = fromNetwork
@@ -25,9 +25,9 @@ class NetworkSwitchPopViewModel: ObservableObject {
     // MARK: Internal
 
     @Published
-    var fromNetwork: LocalUserDefaults.FlowNetworkType
+    var fromNetwork: FlowNetworkType
     @Published
-    var toNetwork: LocalUserDefaults.FlowNetworkType
+    var toNetwork: FlowNetworkType
 
     var callback: SwitchNetworkClosure?
 
@@ -67,8 +67,8 @@ struct NetworkSwitchPopView: View {
     // MARK: Lifecycle
 
     init(
-        from: LocalUserDefaults.FlowNetworkType,
-        to: LocalUserDefaults.FlowNetworkType,
+        from: FlowNetworkType,
+        to: FlowNetworkType,
         callback: SwitchNetworkClosure? = nil
     ) {
         _vm = StateObject(wrappedValue: NetworkSwitchPopViewModel(

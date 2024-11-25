@@ -934,7 +934,6 @@
 "account_key_index" = "Ключевой индекс";
 "account_key_done_revoked_tips" = "Ключ был отозван";
 "other_key" = "Другой ключ";
-"enable_previewnet_failed" = "Включить сеть предварительного просмотра не удалось";
 "evm_on_flow" = "EVM на потоке";
 "other" = "другие";
 "evm_check_balance" = "Баланс ниже 0,02,\n , пожалуйста, пополните счет для продолжения.";

@@ -192,7 +192,7 @@ extension WalletAccount {
                 forKey: WalletAccount.User.CodingKeys.address
             )
             self.network = try container.decode(
-                LocalUserDefaults.FlowNetworkType.self,
+                FlowNetworkType.self,
                 forKey: WalletAccount.User.CodingKeys.network
             )
         }
@@ -202,7 +202,7 @@ extension WalletAccount {
         var emoji: WalletAccount.Emoji
         var name: String
         var address: String
-        var network: LocalUserDefaults.FlowNetworkType
+        var network: FlowNetworkType
     }
 }
 

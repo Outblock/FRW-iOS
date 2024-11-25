@@ -51,11 +51,14 @@ class FlowTransactionViewMoreFooter: UICollectionReusableView {
 
     @objc
     private func onTap() {
-        guard let address = WalletManager.shared.getPrimaryWalletAddress(),
-              let url = address.toFlowScanAccountDetailURL else {
+        guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             return
         }
 
-        UIApplication.shared.open(url)
+        let network = LocalUserDefaults.shared.flowNetwork
+        let accountType = AccountType.current
+        let url = network.getAccountUrl(accountType: accountType, address: address)
+
+        url.map { UIApplication.shared.open($0) }
     }
 }
