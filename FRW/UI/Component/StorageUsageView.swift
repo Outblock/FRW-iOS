@@ -12,14 +12,16 @@ struct StorageUsageView: View {
     private var titleFont: Font?
     private var headerView: AnyView?
     private var footerView: AnyView?
+    private let invertedVerticalOrder: Bool
     
     @Binding private var usage: String
     @Binding private var usageRatio: Double
     
-    init(title: String? = nil, usage: Binding<String>, usageRatio: Binding<Double>) {
+    init(title: String? = nil, usage: Binding<String>, usageRatio: Binding<Double>, invertedVerticalOrder: Bool = false) {
         self.title = title
         self._usage = usage
         self._usageRatio = usageRatio
+        self.invertedVerticalOrder = invertedVerticalOrder
     }
     
     var body: some View {
@@ -35,6 +37,10 @@ struct StorageUsageView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             
+            if invertedVerticalOrder {
+                progressView()
+            }
+
             HStack {
                 Text(String(format: "%.2f%%", self.usageRatio * 100))
                     .font(.inter(size: 12, weight: .regular))
@@ -47,14 +53,20 @@ struct StorageUsageView: View {
                     .foregroundColor(Color.LL.Neutrals.neutrals7)
             }
             .padding(.top, 5)
-            
-            ProgressView(value: self.usageRatio, total: 1.0)
-                .tint(Color.LL.Primary.salmonPrimary)
+
+            if !invertedVerticalOrder {
+                progressView()
+            }
             
             if let footerView {
                 footerView
             }
         }
+    }
+    
+    private func progressView() -> some View {
+        ProgressView(value: self.usageRatio, total: 1.0)
+            .tint(Color.LL.Primary.salmonPrimary)
     }
     
     func titleFont(_ font: Font) -> Self {

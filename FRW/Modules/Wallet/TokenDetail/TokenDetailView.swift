@@ -340,15 +340,7 @@ struct TokenDetailView: RouteableView {
             }
             .padding(.horizontal, 18)
 
-            if colorScheme == .dark {
-                Color(hex: "#262626")
-                    .opacity(0.64)
-                    .frame(height: 1)
-            } else {
-                Color.LL.Neutrals.neutrals10
-                    .opacity(0.64)
-                    .frame(height: 1)
-            }
+            separator()
 
             chartRangeView
             chartView
@@ -378,7 +370,8 @@ struct TokenDetailView: RouteableView {
         HStack(spacing: 0) {
             StorageUsageView(
                 usage: $vm.storageUsedDesc,
-                usageRatio: $vm.storageUsedRatio
+                usageRatio: $vm.storageUsedRatio,
+                invertedVerticalOrder: true
             )
             .headerView(
                 HStack {
@@ -391,21 +384,39 @@ struct TokenDetailView: RouteableView {
                 }
             )
             .footerView(
-                HStack {
-                    Text("total_balance".localized)
-                        .font(.inter(size: 16, weight: .semibold))
+                VStack(spacing: 8) {
+                    separator()
                     
-                    Spacer()
-                    
-                    Text(String(format: "%.3f FLOW", vm.totalBalance))
+                    HStack {
+                        Text("total_balance".localized)
+                            .font(.inter(size: 16, weight: .semibold))
+                        
+                        Spacer()
+                        
+                        Text(String(format: "%.3f FLOW", vm.totalBalance))
+                    }
                 }
             )
-            .padding(16)
+            .padding(.top, 16)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 22)
             .background {
                 Color.LL.Neutrals.background.cornerRadius(16)
             }
         }
         .padding(.bottom, 12)
+    }
+    
+    private func separator() -> some View {
+        if colorScheme == .dark {
+            Color(hex: "#262626")
+                .opacity(0.64)
+                .frame(height: 1)
+        } else {
+            Color.LL.Neutrals.neutrals10
+                .opacity(0.64)
+                .frame(height: 1)
+        }
     }
 }
 
