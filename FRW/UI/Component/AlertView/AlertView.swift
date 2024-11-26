@@ -73,6 +73,8 @@ struct AlertView: ViewModifier {
     let showCloseButton: Bool
     let buttonsLayout: ButtonsLayout
     let textAlignment: TextAlignment
+    var onClose: ((_ completion: (() -> Void)?) -> Void)?
+    
     private var _textAlignment: Alignment {
         switch self.textAlignment {
         case .center: return .center
@@ -161,7 +163,7 @@ extension AlertView {
         .transition(.scale)
         .overlay(alignment: .topTrailing) {
             Button {
-                self.isPresented = false
+                closeAction(completion: nil)
             } label: {
                 Image("icon_close_circle_gray")
                     .foregroundColor(.gray)
@@ -178,8 +180,9 @@ extension AlertView {
     private var buttonsList: some View {
         ForEach(buttons, id: \.id) { btn in
             Button {
-                closeAction()
-                btn.action()
+                closeAction {
+                    btn.action()
+                }
             } label: {
                 createButtonLabel(item: btn)
             }
@@ -192,7 +195,7 @@ extension AlertView {
     var defaultCancelButton: some View {
         let btn = AlertView.ButtonItem(type: .normal, title: "cancel".localized, action: {})
         return Button {
-            closeAction()
+            closeAction(completion: nil)
         } label: {
             createButtonLabel(item: btn)
         }
@@ -212,9 +215,20 @@ extension AlertView {
 }
 
 extension AlertView {
-    private func closeAction() {
+    private func closeAction(completion: (() -> Void)?) {
+        let closeAction = {
+            completion?()
+            self.isPresented = false
+        }
+        
         withAnimation(.alertViewSpring) {
-            isPresented = false
+            if let onClose {
+                onClose {
+                    closeAction()
+                }
+            } else {
+                closeAction()
+            }
         }
     }
 }
@@ -230,9 +244,10 @@ extension View {
         useDefaultCancelButton: Bool = true,
         showCloseButton: Bool = false,
         buttonsLayout: AlertView.ButtonsLayout = .vertical,
-        textAlignment: TextAlignment = .leading
+        textAlignment: TextAlignment = .leading,
+        onClose: ((_ completion: (() -> Void)?) -> Void)? = nil
     ) -> some View {
-        modifier(AlertView(isPresented: isPresented, title: title, desc: desc, attributedDesc: attributedDesc, customContentView: customContentView, buttons: buttons, useDefaultCancelButton: useDefaultCancelButton, showCloseButton: showCloseButton, buttonsLayout: buttonsLayout, textAlignment: textAlignment))
+        modifier(AlertView(isPresented: isPresented, title: title, desc: desc, attributedDesc: attributedDesc, customContentView: customContentView, buttons: buttons, useDefaultCancelButton: useDefaultCancelButton, showCloseButton: showCloseButton, buttonsLayout: buttonsLayout, textAlignment: textAlignment, onClose: onClose))
     }
 }
 
@@ -300,4 +315,69 @@ struct AlertView_Previews: PreviewProvider {
             buttonsLayout: .horizontal,
             textAlignment: .center
         )
+}
+
+final class AlertViewController: UIHostingController<AlertViewController.AlertContainerView> {
+    struct AlertContainerView: View {
+        let isPresented: Binding<Bool>
+        let title: String?
+        let customContentView: AnyView?
+        let buttons: [AlertView.ButtonItem]
+        let useDefaultCancelButton: Bool
+        let showCloseButton: Bool
+        let buttonsLayout: AlertView.ButtonsLayout
+        let textAlignment: TextAlignment
+        var onClose: ((_ completion: (() -> Void)?) -> Void)?
+        
+        var body: some View {
+            EmptyView()
+                .background(Color.clear)
+                .customAlertView(
+                    isPresented: self.isPresented,
+                    title: title,
+                    customContentView: customContentView,
+                    buttons: buttons,
+                    useDefaultCancelButton: useDefaultCancelButton,
+                    showCloseButton: showCloseButton,
+                    buttonsLayout: buttonsLayout,
+                    textAlignment: textAlignment,
+                    onClose: onClose
+                )
+        }
+    }
+    
+    static func presentOnRoot(
+        title: String? = nil,
+        customContentView: AnyView? = nil,
+        buttons: [AlertView.ButtonItem] = [],
+        useDefaultCancelButton: Bool = true,
+        showCloseButton: Bool = false,
+        buttonsLayout: AlertView.ButtonsLayout = .vertical,
+        textAlignment: TextAlignment = .leading
+    ) {
+        let topController = Router.topPresentedController()
+        var view = AlertContainerView(
+            isPresented: Binding.constant(true),
+            title: title,
+            customContentView: customContentView,
+            buttons: buttons,
+            useDefaultCancelButton: useDefaultCancelButton,
+            showCloseButton: showCloseButton,
+            buttonsLayout: buttonsLayout,
+            textAlignment: textAlignment
+        )
+        let viewController = Self(rootView: view)
+        viewController.modalTransitionStyle = .crossDissolve
+        viewController.modalPresentationStyle = .overFullScreen
+        view.onClose = { [weak viewController] completion in
+            viewController?.dismiss(animated: true) {
+                completion?()
+            }
+        }
+        viewController.rootView = view
+        viewController.view.backgroundColor = UIColor.clear
+        viewController.view.subviews.first?.backgroundColor = UIColor.clear
+
+        topController.present(viewController, animated: true)
+    }
 }

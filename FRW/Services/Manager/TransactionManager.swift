@@ -261,8 +261,7 @@ extension TransactionManager {
                             
                             switch result.errorCode {
                             case .storageCapacityExceeded:
-                                let data = InsufficientStorageTransactionFailureData(minimumBalance: WalletManager.shared.minimumStorageBalance)
-                                NotificationCenter.default.post(name: .insufficientStorageTransactionFailure, object: data)
+                                AlertViewController.showInsufficientStorageError(minimumBalance: WalletManager.shared.minimumStorageBalance.doubleValue)
                             default:
                                 break
                             }

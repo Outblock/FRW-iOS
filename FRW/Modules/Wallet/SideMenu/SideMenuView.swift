@@ -480,11 +480,6 @@ class SideContainerViewModel: ObservableObject {
             name: .remoteConfigDidUpdate,
             object: nil
         )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(onInsufficientStorageTransactionFailure),
-            name: .insufficientStorageTransactionFailure, object: nil
-        )
 
         self.isLinkedAccount = ChildAccountManager.shared.selectedChildAccount != nil
         ChildAccountManager.shared.$selectedChildAccount
@@ -503,23 +498,12 @@ class SideContainerViewModel: ObservableObject {
     var isLinkedAccount: Bool = false
     @Published
     var hideBrowser: Bool = false
-    @Published @MainActor
-    var isInsufficientStorageTransactionFailurePopupVisible = false
-    var insufficientStorageTransactionFailurePopupData = InsufficientStorageTransactionFailureData()
 
     @objc
     func onToggle() {
         withAnimation {
             isOpen.toggle()
         }
-    }
-
-    func routeToBuyFlow() {
-        Router.route(to: RouteMap.Wallet.receive)
-    }
-    
-    func routeToDeposit() {
-        Router.route(to: RouteMap.Wallet.buyCrypto)
     }
 
     @objc func onRemoteConfigDidChange() {
@@ -531,15 +515,6 @@ class SideContainerViewModel: ObservableObject {
     // MARK: Private
 
     private var cancellableSet = Set<AnyCancellable>()
-
-    @objc private func onInsufficientStorageTransactionFailure(notification: NSNotification) {
-        DispatchQueue.main.async {
-            self.isInsufficientStorageTransactionFailurePopupVisible = true
-            if let data = notification.object as? InsufficientStorageTransactionFailureData {
-                self.insufficientStorageTransactionFailurePopupData = data
-            }
-        }
-    }
 }
 
 // MARK: - SideContainerView
@@ -586,28 +561,6 @@ struct SideContainerView: View {
             }
             .offset(x: vm.isOpen ? screenWidth - SideOffset : 0)
         }
-        .customAlertView(
-            isPresented: $vm.isInsufficientStorageTransactionFailurePopupVisible,
-            title: .init("insufficient_storage::error::title".localized),
-            customContentView: AnyView(
-                VStack(alignment: .center, spacing: 8) {
-                    Text(.init("insufficient_storage::error::content::first".localized))
-                    Text(.init("insufficient_storage::error::content::second".localized(self.vm.insufficientStorageTransactionFailurePopupData.minimumBalance.doubleValue)))
-                        .foregroundColor(Color.LL.Button.Warning.background)
-                    Text(.init("insufficient_storage::error::content::third".localized))
-                        .padding(.top, 8)
-                }
-                .padding(.vertical, 8)
-            ),
-            buttons: [
-                AlertView.ButtonItem(type: .secondaryAction, title: "Deposit::message".localized, action: self.vm.routeToBuyFlow),
-                AlertView.ButtonItem(type: .primaryAction, title: "buy_flow".localized, action: self.vm.routeToDeposit)
-            ],
-            useDefaultCancelButton: false,
-            showCloseButton: true,
-            buttonsLayout: .horizontal,
-            textAlignment: .center
-        )
     }
 
     // MARK: Private
