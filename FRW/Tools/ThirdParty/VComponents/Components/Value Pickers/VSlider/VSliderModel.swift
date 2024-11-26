@@ -11,32 +11,28 @@ import SwiftUI
 
 /// Model that describes UI.
 public struct VSliderModel {
-    // MARK: Properties
-
-    /// Reference to `VPrimaryButtonModel`.
-    public static let primaryButtonReference: VPrimaryButtonModel = .init()
-
-    /// Reference to `VToggleModel`.
-    public static let toggleReference: VToggleModel = .init()
-
-    /// Sub-model containing layout properties.
-    public var layout: Layout = .init()
-
-    /// Sub-model containing color properties.
-    public var colors: Colors = .init()
-
-    /// Sub-model containing animation properties.
-    public var animations: Animations = .init()
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes model with default values.
     public init() {}
 
+    // MARK: Public
+
     // MARK: Layout
 
     /// Sub-model containing layout properties.
     public struct Layout {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Slider height. Defaults to `10`.
@@ -57,18 +53,29 @@ public struct VSliderModel {
         /// Thumb shadow radius. Defaults to `2`.
         public var thumbShadowRadius: CGFloat = 2
 
+        // MARK: Internal
+
         var hasThumb: Bool { thumbDimension > 0 }
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
 
     // MARK: Colors
 
     /// Sub-model containing color properties.
     public struct Colors {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: State Colors
+
+        /// Sub-model containing colors for component states.
+        public typealias StateColors = StateColors_ED
+
         // MARK: Properties
 
         /// Slider track colors.
@@ -100,30 +107,41 @@ public struct VSliderModel {
             enabled: .init(componentAsset: "Slider.Thumb.Shadow.enabled"),
             disabled: .init(componentAsset: "Slider.Thumb.Shadow.disabled")
         )
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: State Colors
-
-        /// Sub-model containing colors for component states.
-        public typealias StateColors = StateColors_ED
     }
 
     // MARK: Animations
 
     /// Sub-model containing animation properties.
     public struct Animations {
-        // MARK: Properties
-
-        /// Progress animation. Defaults to `nil`.
-        public var progress: Animation?
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
         /// Initializes sub-model with default values.
         public init() {}
+
+        // MARK: Public
+
+        // MARK: Properties
+
+        /// Progress animation. Defaults to `nil`.
+        public var progress: Animation?
     }
+
+    // MARK: Properties
+
+    /// Reference to `VPrimaryButtonModel`.
+    public static let primaryButtonReference: VPrimaryButtonModel = .init()
+
+    /// Reference to `VToggleModel`.
+    public static let toggleReference: VToggleModel = .init()
+
+    /// Sub-model containing layout properties.
+    public var layout: Layout = .init()
+
+    /// Sub-model containing color properties.
+    public var colors: Colors = .init()
+
+    /// Sub-model containing animation properties.
+    public var animations: Animations = .init()
 }

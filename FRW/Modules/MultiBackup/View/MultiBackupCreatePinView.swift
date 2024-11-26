@@ -8,14 +8,20 @@
 import Foundation
 import SwiftUI
 
+// MARK: - MultiBackupCreatePinView
+
 struct MultiBackupCreatePinView: RouteableView {
-    @StateObject var viewModel = MultiBackupCreatePinViewModel()
-    @State var text: String = ""
-    @State var focuse: Bool = false
-    @FocusState private var pinCodeViewIsFocus: Bool
+    // MARK: Internal
+
+    @StateObject
+    var viewModel = MultiBackupCreatePinViewModel()
+    @State
+    var text: String = ""
+    @State
+    var focuse: Bool = false
 
     var title: String {
-        return ""
+        ""
     }
 
     var body: some View {
@@ -60,7 +66,14 @@ struct MultiBackupCreatePinView: RouteableView {
         .backgroundFill(.LL.background)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    @FocusState
+    private var pinCodeViewIsFocus: Bool
 }
+
+// MARK: - MultiBackupCreatePinView_Previews
 
 struct MultiBackupCreatePinView_Previews: PreviewProvider {
     static var previews: some View {

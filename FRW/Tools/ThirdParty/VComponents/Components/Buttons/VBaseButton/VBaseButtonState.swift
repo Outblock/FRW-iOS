@@ -19,15 +19,7 @@ public enum VBaseButtonState: Int, CaseIterable {
     /// Disabled.
     case disabled
 
-    // MARK: Properties
-
-    /// Indicates if state is enabled.
-    public var isEnabled: Bool {
-        switch self {
-        case .enabled: return true
-        case .disabled: return false
-        }
-    }
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -35,6 +27,18 @@ public enum VBaseButtonState: Int, CaseIterable {
         switch isEnabled {
         case false: self = .disabled
         case true: self = .enabled
+        }
+    }
+
+    // MARK: Public
+
+    // MARK: Properties
+
+    /// Indicates if state is enabled.
+    public var isEnabled: Bool {
+        switch self {
+        case .enabled: return true
+        case .disabled: return false
         }
     }
 }

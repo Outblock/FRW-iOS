@@ -22,30 +22,48 @@ import UIKit
 /// MMCQ (modified median cut quantization) algorithm from
 /// the Leptonica library (http://www.leptonica.com/).
 open class MMCQ {
-    // Use only upper 5 bits of 8 bits
-    private static let signalBits = 5
-    private static let rightShift = 8 - signalBits
-    private static let multiplier = 1 << rightShift
-    private static let histogramSize = 1 << (3 * signalBits)
-    private static let vboxLength = 1 << signalBits
-    private static let fractionByPopulation = 0.75
-    private static let maxIterations = 1000
+    // MARK: Open
 
-    /// Get reduced-space color index for a pixel.
-    ///
-    /// - Parameters:
-    ///   - red: the red value
-    ///   - green: the green value
-    ///   - blue: the blue value
-    /// - Returns: the color index
-    static func makeColorIndexOf(red: Int, green: Int, blue: Int) -> Int {
-        return (red << (2 * signalBits)) + (green << signalBits) + blue
+    /// Color map.
+    open class ColorMap {
+        // MARK: Open
+
+        open func makePalette() -> [Color] {
+            vboxes.map { $0.getAverage() }
+        }
+
+        open func makeNearestColor(to color: Color) -> Color {
+            var nearestDistance = Int.max
+            var nearestColor = Color(r: 0, g: 0, b: 0)
+
+            for vbox in vboxes {
+                let vbColor = vbox.getAverage()
+                let dr = abs(Int(color.r) - Int(vbColor.r))
+                let dg = abs(Int(color.g) - Int(vbColor.g))
+                let db = abs(Int(color.b) - Int(vbColor.b))
+                let distance = dr + dg + db
+                if distance < nearestDistance {
+                    nearestDistance = distance
+                    nearestColor = vbColor
+                }
+            }
+
+            return nearestColor
+        }
+
+        // MARK: Internal
+
+        var vboxes = [VBox]()
+
+        func push(_ vbox: VBox) {
+            vboxes.append(vbox)
+        }
     }
 
+    // MARK: Public
+
     public struct Color {
-        public var r: UInt8
-        public var g: UInt8
-        public var b: UInt8
+        // MARK: Lifecycle
 
         init(r: UInt8, g: UInt8, b: UInt8) {
             self.r = r
@@ -53,10 +71,23 @@ open class MMCQ {
             self.b = b
         }
 
+        // MARK: Public
+
+        public var r: UInt8
+        public var g: UInt8
+        public var b: UInt8
+
         public func makeUIColor() -> UIColor {
-            return UIColor(red: CGFloat(r) / CGFloat(255), green: CGFloat(g) / CGFloat(255), blue: CGFloat(b) / CGFloat(255), alpha: CGFloat(1))
+            UIColor(
+                red: CGFloat(r) / CGFloat(255),
+                green: CGFloat(g) / CGFloat(255),
+                blue: CGFloat(b) / CGFloat(255),
+                alpha: CGFloat(1)
+            )
         }
     }
+
+    // MARK: Internal
 
     enum ColorChannel {
         case r
@@ -66,20 +97,17 @@ open class MMCQ {
 
     /// 3D color space box.
     class VBox {
-        var rMin: UInt8
-        var rMax: UInt8
-        var gMin: UInt8
-        var gMax: UInt8
-        var bMin: UInt8
-        var bMax: UInt8
+        // MARK: Lifecycle
 
-        private let histogram: [Int]
-
-        private var average: Color?
-        private var volume: Int?
-        private var count: Int?
-
-        init(rMin: UInt8, rMax: UInt8, gMin: UInt8, gMax: UInt8, bMin: UInt8, bMax: UInt8, histogram: [Int]) {
+        init(
+            rMin: UInt8,
+            rMax: UInt8,
+            gMin: UInt8,
+            gMax: UInt8,
+            bMin: UInt8,
+            bMax: UInt8,
+            histogram: [Int]
+        ) {
             self.rMin = rMin
             self.rMax = rMax
             self.gMin = gMin
@@ -90,26 +118,35 @@ open class MMCQ {
         }
 
         init(vbox: VBox) {
-            rMin = vbox.rMin
-            rMax = vbox.rMax
-            gMin = vbox.gMin
-            gMax = vbox.gMax
-            bMin = vbox.bMin
-            bMax = vbox.bMax
-            histogram = vbox.histogram
+            self.rMin = vbox.rMin
+            self.rMax = vbox.rMax
+            self.gMin = vbox.gMin
+            self.gMax = vbox.gMax
+            self.bMin = vbox.bMin
+            self.bMax = vbox.bMax
+            self.histogram = vbox.histogram
         }
+
+        // MARK: Internal
+
+        var rMin: UInt8
+        var rMax: UInt8
+        var gMin: UInt8
+        var gMax: UInt8
+        var bMin: UInt8
+        var bMax: UInt8
+
+        var rRange: CountableRange<Int> { makeRange(min: rMin, max: rMax) }
+        var gRange: CountableRange<Int> { makeRange(min: gMin, max: gMax) }
+        var bRange: CountableRange<Int> { makeRange(min: bMin, max: bMax) }
 
         func makeRange(min: UInt8, max: UInt8) -> CountableRange<Int> {
             if min <= max {
-                return Int(min) ..< Int(max + 1)
+                return Int(min)..<Int(max + 1)
             } else {
-                return Int(max) ..< Int(max)
+                return Int(max)..<Int(max)
             }
         }
-
-        var rRange: CountableRange<Int> { return makeRange(min: rMin, max: rMax) }
-        var gRange: CountableRange<Int> { return makeRange(min: gMin, max: gMax) }
-        var bRange: CountableRange<Int> { return makeRange(min: bMin, max: bMax) }
 
         /// Get 3 dimensional volume of the color space
         ///
@@ -119,7 +156,8 @@ open class MMCQ {
             if let volume = volume, !force {
                 return volume
             } else {
-                let volume = (Int(rMax) - Int(rMin) + 1) * (Int(gMax) - Int(gMin) + 1) * (Int(bMax) - Int(bMin) + 1)
+                let volume = (Int(rMax) - Int(rMin) + 1) * (Int(gMax) - Int(gMin) + 1) *
+                    (Int(bMax) - Int(bMin) + 1)
                 self.volume = volume
                 return volume
             }
@@ -201,42 +239,91 @@ open class MMCQ {
                 return .b
             }
         }
+
+        // MARK: Private
+
+        private let histogram: [Int]
+
+        private var average: Color?
+        private var volume: Int?
+        private var count: Int?
     }
 
-    /// Color map.
-    open class ColorMap {
-        var vboxes = [VBox]()
-
-        func push(_ vbox: VBox) {
-            vboxes.append(vbox)
-        }
-
-        open func makePalette() -> [Color] {
-            return vboxes.map { $0.getAverage() }
-        }
-
-        open func makeNearestColor(to color: Color) -> Color {
-            var nearestDistance = Int.max
-            var nearestColor = Color(r: 0, g: 0, b: 0)
-
-            for vbox in vboxes {
-                let vbColor = vbox.getAverage()
-                let dr = abs(Int(color.r) - Int(vbColor.r))
-                let dg = abs(Int(color.g) - Int(vbColor.g))
-                let db = abs(Int(color.b) - Int(vbColor.b))
-                let distance = dr + dg + db
-                if distance < nearestDistance {
-                    nearestDistance = distance
-                    nearestColor = vbColor
-                }
-            }
-
-            return nearestColor
-        }
+    /// Get reduced-space color index for a pixel.
+    ///
+    /// - Parameters:
+    ///   - red: the red value
+    ///   - green: the green value
+    ///   - blue: the blue value
+    /// - Returns: the color index
+    static func makeColorIndexOf(red: Int, green: Int, blue: Int) -> Int {
+        (red << (2 * signalBits)) + (green << signalBits) + blue
     }
+
+    static func quantize(
+        _ pixels: [UInt8],
+        quality: Int,
+        ignoreWhite: Bool,
+        maxColors: Int
+    ) -> ColorMap? {
+        // short-circuit
+        guard !pixels.isEmpty, maxColors > 1, maxColors <= 256 else {
+            return nil
+        }
+
+        // get the histogram and the beginning vbox from the colors
+        let (histogram, vbox) = makeHistogramAndVBox(
+            from: pixels,
+            quality: quality,
+            ignoreWhite: ignoreWhite
+        )
+
+        // priority queue
+        var pq = [vbox]
+
+        // Round up to have the same behaviour as in JavaScript
+        let target = Int(ceil(fractionByPopulation * Double(maxColors)))
+
+        // first set of colors, sorted by population
+        iterate(over: &pq, comparator: compareByCount, target: target, histogram: histogram)
+
+        // Re-sort by the product of pixel occupancy times the size in color space.
+        pq.sort(by: compareByProduct)
+
+        // next set - generate the median cuts using the (npix * vol) sorting.
+        iterate(
+            over: &pq,
+            comparator: compareByProduct,
+            target: maxColors - pq.count,
+            histogram: histogram
+        )
+
+        // Reverse to put the highest elements first into the color map
+        pq = pq.reversed()
+
+        // calculate the actual colors
+        let colorMap = ColorMap()
+        pq.forEach { colorMap.push($0) }
+        return colorMap
+    }
+
+    // MARK: Private
+
+    // Use only upper 5 bits of 8 bits
+    private static let signalBits = 5
+    private static let rightShift = 8 - signalBits
+    private static let multiplier = 1 << rightShift
+    private static let histogramSize = 1 << (3 * signalBits)
+    private static let vboxLength = 1 << signalBits
+    private static let fractionByPopulation = 0.75
+    private static let maxIterations = 1000
 
     /// Histo (1-d array, giving the number of pixels in each quantized region of color space), or null on error.
-    private static func makeHistogramAndVBox(from pixels: [UInt8], quality: Int, ignoreWhite: Bool) -> ([Int], VBox) {
+    private static func makeHistogramAndVBox(
+        from pixels: [UInt8],
+        quality: Int,
+        ignoreWhite: Bool
+    ) -> ([Int], VBox) {
         var histogram = [Int](repeating: 0, count: histogramSize)
         var rMin = UInt8.max
         var rMax = UInt8.min
@@ -270,11 +357,23 @@ open class MMCQ {
             bMax = max(bMax, shiftedB)
 
             // increment histgram
-            let index = MMCQ.makeColorIndexOf(red: Int(shiftedR), green: Int(shiftedG), blue: Int(shiftedB))
+            let index = MMCQ.makeColorIndexOf(
+                red: Int(shiftedR),
+                green: Int(shiftedG),
+                blue: Int(shiftedB)
+            )
             histogram[index] += 1
         }
 
-        let vbox = VBox(rMin: rMin, rMax: rMax, gMin: gMin, gMax: gMax, bMin: bMin, bMax: bMax, histogram: histogram)
+        let vbox = VBox(
+            rMin: rMin,
+            rMax: rMax,
+            gMin: gMin,
+            gMax: gMax,
+            bMin: bMin,
+            bMax: bMax,
+            histogram: histogram
+        )
         return (histogram, vbox)
     }
 
@@ -337,10 +436,22 @@ open class MMCQ {
             lookAheadSum[i] = total - sum
         }
 
-        return cut(by: axis, vbox: vbox, partialSum: partialSum, lookAheadSum: lookAheadSum, total: total)
+        return cut(
+            by: axis,
+            vbox: vbox,
+            partialSum: partialSum,
+            lookAheadSum: lookAheadSum,
+            total: total
+        )
     }
 
-    private static func cut(by axis: ColorChannel, vbox: VBox, partialSum: [Int], lookAheadSum: [Int], total: Int) -> [VBox] {
+    private static func cut(
+        by axis: ColorChannel,
+        vbox: VBox,
+        partialSum: [Int],
+        lookAheadSum: [Int],
+        total: Int
+    ) -> [VBox] {
         let vboxMin: Int
         let vboxMax: Int
 
@@ -356,7 +467,7 @@ open class MMCQ {
             vboxMax = Int(vbox.bMax)
         }
 
-        for i in vboxMin ... vboxMax where partialSum[i] > total / 2 {
+        for i in vboxMin...vboxMax where partialSum[i] > total / 2 {
             let vbox1 = VBox(vbox: vbox)
             let vbox2 = VBox(vbox: vbox)
 
@@ -401,44 +512,16 @@ open class MMCQ {
         fatalError("VBox can't be cut")
     }
 
-    static func quantize(_ pixels: [UInt8], quality: Int, ignoreWhite: Bool, maxColors: Int) -> ColorMap? {
-        // short-circuit
-        guard !pixels.isEmpty, maxColors > 1, maxColors <= 256 else {
-            return nil
-        }
-
-        // get the histogram and the beginning vbox from the colors
-        let (histogram, vbox) = makeHistogramAndVBox(from: pixels, quality: quality, ignoreWhite: ignoreWhite)
-
-        // priority queue
-        var pq = [vbox]
-
-        // Round up to have the same behaviour as in JavaScript
-        let target = Int(ceil(fractionByPopulation * Double(maxColors)))
-
-        // first set of colors, sorted by population
-        iterate(over: &pq, comparator: compareByCount, target: target, histogram: histogram)
-
-        // Re-sort by the product of pixel occupancy times the size in color space.
-        pq.sort(by: compareByProduct)
-
-        // next set - generate the median cuts using the (npix * vol) sorting.
-        iterate(over: &pq, comparator: compareByProduct, target: maxColors - pq.count, histogram: histogram)
-
-        // Reverse to put the highest elements first into the color map
-        pq = pq.reversed()
-
-        // calculate the actual colors
-        let colorMap = ColorMap()
-        pq.forEach { colorMap.push($0) }
-        return colorMap
-    }
-
     // Inner function to do the iteration.
-    private static func iterate(over queue: inout [VBox], comparator: (VBox, VBox) -> Bool, target: Int, histogram: [Int]) {
+    private static func iterate(
+        over queue: inout [VBox],
+        comparator: (VBox, VBox) -> Bool,
+        target: Int,
+        histogram: [Int]
+    ) {
         var color = 1
 
-        for _ in 0 ..< maxIterations {
+        for _ in 0..<maxIterations {
             guard let vbox = queue.last else {
                 return
             }
@@ -465,7 +548,7 @@ open class MMCQ {
     }
 
     private static func compareByCount(_ a: VBox, _ b: VBox) -> Bool {
-        return a.getCount() < b.getCount()
+        a.getCount() < b.getCount()
     }
 
     private static func compareByProduct(_ a: VBox, _ b: VBox) -> Bool {

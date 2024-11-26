@@ -28,6 +28,15 @@ public enum VTextFieldType: Int, CaseIterable {
 
     case userName
 
+    // MARK: Public
+
+    // MARK: Initailizers
+
+    /// Default value. Set to `standard`.
+    public static var `default`: Self { .standard }
+
+    // MARK: Internal
+
     // MARK: Properties
 
     var isStandard: Bool {
@@ -45,9 +54,4 @@ public enum VTextFieldType: Int, CaseIterable {
     var isUserName: Bool {
         self == .userName
     }
-
-    // MARK: Initailizers
-
-    /// Default value. Set to `standard`.
-    public static var `default`: Self { .standard }
 }

@@ -116,8 +116,7 @@ class ChildAccountLinkViewModel: ObservableObject {
     @objc
     private func onTransactionStatusChanged(_ noti: Notification) {
         guard let obj = noti.object as? TransactionManager.TransactionHolder,
-              obj.transactionId.hex == self.txId?.hex
-        else {
+              obj.transactionId.hex == self.txId?.hex else {
             return
         }
 

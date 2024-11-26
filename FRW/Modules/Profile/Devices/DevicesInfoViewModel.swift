@@ -84,8 +84,7 @@ class DevicesInfoViewModel: ObservableObject {
             return
         }
         guard let cur = WalletManager.shared.getCurrentPublicKey(),
-              cur != accountKey.publicKey.description
-        else {
+              cur != accountKey.publicKey.description else {
             HUD.info(title: "account_key_current_tips".localized)
             withAnimation(.easeOut(duration: 0.2)) {
                 showRemoveTipView = false

@@ -56,8 +56,7 @@ extension Binding where Value == Double {
     )
         where
         V: BinaryFloatingPoint,
-        V.Stride: BinaryFloatingPoint
-    {
+        V.Stride: BinaryFloatingPoint {
         self.init(
             get: {
                 let value: Double = .init(value.wrappedValue)

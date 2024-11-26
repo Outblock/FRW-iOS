@@ -8,6 +8,8 @@
 import Foundation
 import Moya
 
+// MARK: - FRWAPI.User
+
 extension FRWAPI {
     enum User {
         case login(LoginRequest)
@@ -30,13 +32,15 @@ extension FRWAPI {
     }
 }
 
+// MARK: - FRWAPI.User + TargetType, AccessTokenAuthorizable
+
 extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
-        return .bearer
+        .bearer
     }
 
     var baseURL: URL {
-        return Config.get(.lilico)
+        Config.get(.lilico)
     }
 
     var path: String {
@@ -82,7 +86,8 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
         switch self {
         case .checkUsername, .userInfo, .userWallet, .search, .keys, .devices, .checkimport:
             return .get
-        case .login, .register, .userAddress, .manualCheck, .crescendo, .syncDevice, .addSigned, .previewnet, .updateDevice, .loginWithImport:
+        case .login, .register, .userAddress, .manualCheck, .crescendo, .syncDevice, .addSigned,
+             .previewnet, .updateDevice, .loginWithImport:
             return .post
         }
     }
@@ -92,15 +97,24 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
         case .userAddress, .userInfo, .userWallet, .manualCheck, .keys:
             return .requestPlain
         case let .checkUsername(username):
-            return .requestParameters(parameters: ["username": username], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: ["username": username],
+                encoding: URLEncoding.queryString
+            )
         case let .register(request):
             return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         case let .login(request):
             return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         case let .search(keyword):
-            return .requestParameters(parameters: ["keyword": keyword], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: ["keyword": keyword],
+                encoding: URLEncoding.queryString
+            )
         case let .devices(uuid):
-            return .requestParameters(parameters: ["device_id": uuid], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: ["device_id": uuid],
+                encoding: URLEncoding.queryString
+            )
         case let .syncDevice(request):
             return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         case let .addSigned(request):

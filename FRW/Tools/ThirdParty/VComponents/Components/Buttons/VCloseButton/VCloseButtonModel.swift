@@ -11,26 +11,33 @@ import SwiftUI
 
 /// Model that describes UI.
 public struct VCloseButtonModel {
-    // MARK: Properties
-
-    /// Reference to `VChevronButtonModel`.
-    public static let chevronButtonReference: VChevronButtonModel = .init()
-
-    /// Sub-model containing layout properties.
-    public var layout: Layout = .init()
-
-    /// Sub-model containing color properties.
-    public var colors: Colors = .init()
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes model with default values.
     public init() {}
 
+    // MARK: Public
+
     // MARK: Layout
 
     /// Sub-model containing layout properties.
     public struct Layout {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: Hit Box
+
+        /// Sub-model containing `horizontal` and `vertical` hit boxes
+        public typealias HitBox = LayoutGroup_HV
+
         // MARK: Properties
 
         /// Button dimension. Default to `32`.
@@ -41,34 +48,20 @@ public struct VCloseButtonModel {
 
         /// Hit box. Defaults to `0` horizontally and `0` vertically.
         public var hitBox: HitBox = chevronButtonReference.layout.hitBox
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values
-        public init() {}
-
-        // MARK: Hit Box
-
-        /// Sub-model containing `horizontal` and `vertical` hit boxes
-        public typealias HitBox = LayoutGroup_HV
     }
 
     // MARK: Colors
 
     /// Sub-model containing color properties.
     public struct Colors {
-        // MARK: Properties
-
-        /// Content colors.
-        public var content: StateColorsAndOpacities = chevronButtonReference.colors.content
-
-        /// Background colors.
-        public var background: StateColors = chevronButtonReference.colors.background
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
         /// Initializes sub-model with default values.
         public init() {}
+
+        // MARK: Public
 
         // MARK: State Colors
 
@@ -79,5 +72,24 @@ public struct VCloseButtonModel {
 
         /// Sub-model containing colors and opacities for component states.
         public typealias StateColorsAndOpacities = StateColorsAndOpacities_EPD_PD
+
+        // MARK: Properties
+
+        /// Content colors.
+        public var content: StateColorsAndOpacities = chevronButtonReference.colors.content
+
+        /// Background colors.
+        public var background: StateColors = chevronButtonReference.colors.background
     }
+
+    // MARK: Properties
+
+    /// Reference to `VChevronButtonModel`.
+    public static let chevronButtonReference: VChevronButtonModel = .init()
+
+    /// Sub-model containing layout properties.
+    public var layout: Layout = .init()
+
+    /// Sub-model containing color properties.
+    public var colors: Colors = .init()
 }

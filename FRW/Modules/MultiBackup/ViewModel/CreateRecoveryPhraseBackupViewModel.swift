@@ -16,7 +16,7 @@ class CreateRecoveryPhraseBackupViewModel: ObservableObject {
 
     init(mnemonic: String) {
         self.mnemonic = mnemonic
-        dataSource = mnemonic.split(separator: " ").enumerated().map { item in
+        self.dataSource = mnemonic.split(separator: " ").enumerated().map { item in
             WordListView.WordItem(id: item.offset + 1, word: String(item.element))
         }
     }

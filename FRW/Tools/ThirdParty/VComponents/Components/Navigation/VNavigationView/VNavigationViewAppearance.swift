@@ -15,9 +15,11 @@ extension View {
     }
 }
 
-// MARK: - V Navigation View Appearance
+// MARK: - VNavigationViewAppearance
 
 struct VNavigationViewAppearance: ViewModifier {
+    // MARK: Lifecycle
+
     init(
         model: VNavigationViewModel
     ) {
@@ -36,6 +38,8 @@ struct VNavigationViewAppearance: ViewModifier {
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
         UINavigationBar.appearance().compactAppearance = appearance
     }
+
+    // MARK: Internal
 
     // MARK: Body
 

@@ -20,18 +20,35 @@ extension ProfileEditNameViewModel {
     }
 }
 
+// MARK: - ProfileEditNameViewModel
+
 class ProfileEditNameViewModel: ObservableObject {
-    @Published var name: String = "" {
+    // MARK: Lifecycle
+
+    init() {
+        self.name = UserManager.shared.userInfo?.nickname ?? ""
+    }
+
+    // MARK: Internal
+
+    @Published
+    var status: StatusType = .idle
+
+    @Published
+    var name: String = "" {
         didSet {
             refreshStatus()
         }
     }
 
-    @Published var status: StatusType = .idle
-
-    init() {
-        name = UserManager.shared.userInfo?.nickname ?? ""
+    func trigger(_ input: Input) {
+        switch input {
+        case .save:
+            save()
+        }
     }
+
+    // MARK: Private
 
     private func refreshStatus() {
         let name = name.trim()
@@ -41,13 +58,6 @@ class ProfileEditNameViewModel: ObservableObject {
         }
 
         status = .ok
-    }
-
-    func trigger(_ input: Input) {
-        switch input {
-        case .save:
-            save()
-        }
     }
 
     private func save() {
@@ -74,7 +84,8 @@ class ProfileEditNameViewModel: ObservableObject {
         Task {
             do {
                 let request = UserInfoUpdateRequest(nickname: name, avatar: avatar)
-                let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.Profile.updateInfo(request))
+                let response: Network.EmptyResponse = try await Network
+                    .requestWithRawModel(FRWAPI.Profile.updateInfo(request))
                 if response.httpCode != 200 {
                     failed()
                 } else {

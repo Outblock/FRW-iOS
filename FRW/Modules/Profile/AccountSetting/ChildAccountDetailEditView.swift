@@ -34,7 +34,7 @@ class ChildAccountDetailEditViewModel: ObservableObject {
 
     init(childAccount: ChildAccount) {
         self.childAccount = childAccount
-        newInfo = NewAccountInfo()
+        self.newInfo = NewAccountInfo()
         newInfo.name = childAccount.name ?? ""
         newInfo.desc = childAccount.description ?? ""
         newInfo.imageURL = childAccount.icon

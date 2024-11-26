@@ -14,7 +14,7 @@ struct WalletSettingView: RouteableView {
 
     init(address: String) {
         self.address = address
-        user = WalletManager.shared.walletAccount.readInfo(at: address)
+        self.user = WalletManager.shared.walletAccount.readInfo(at: address)
     }
 
     // MARK: Internal

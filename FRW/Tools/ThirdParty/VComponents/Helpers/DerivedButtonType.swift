@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - Derived Button Type
+// MARK: - DerivedButtonType
 
 enum DerivedButtonType {
     case primary(model: VPrimaryButtonModel)
@@ -17,7 +17,7 @@ enum DerivedButtonType {
     case custom
 }
 
-// MARK: - Derived Button Preset
+// MARK: - DerivedButtonPreset
 
 /// Enum that represents button preset, such as `primary`, `secondary`, `square`, or `plain`.
 public enum DerivedButtonPreset {
@@ -35,6 +35,8 @@ public enum DerivedButtonPreset {
     /// Plain button.
     case plain(model: VPlainButtonModel = .init())
 
+    // MARK: Internal
+
     // MARK: Properties
 
     var buttonType: DerivedButtonType {
@@ -49,10 +51,14 @@ public enum DerivedButtonPreset {
     func text(from title: String, isEnabled: Bool) -> VText {
         let color: Color = {
             switch self {
-            case let .primary(model): return model.colors.textContent.for(isEnabled ? VPrimaryButtonInternalState.enabled : .disabled)
-            case let .secondary(model): return model.colors.textContent.for(isEnabled ? VSecondaryButtonInternalState.enabled : .disabled)
-            case let .square(model): return model.colors.textContent.for(isEnabled ? VSquareButtonInternalState.enabled : .disabled)
-            case let .plain(model): return model.colors.textContent.for(isEnabled ? VPlainButtonInternalState.enabled : .disabled)
+            case let .primary(model): return model.colors.textContent
+                .for(isEnabled ? VPrimaryButtonInternalState.enabled : .disabled)
+            case let .secondary(model): return model.colors.textContent
+                .for(isEnabled ? VSecondaryButtonInternalState.enabled : .disabled)
+            case let .square(model): return model.colors.textContent
+                .for(isEnabled ? VSquareButtonInternalState.enabled : .disabled)
+            case let .plain(model): return model.colors.textContent
+                .for(isEnabled ? VPlainButtonInternalState.enabled : .disabled)
             }
         }()
 

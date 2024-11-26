@@ -143,8 +143,7 @@ extension BackupManager {
         }
 
         guard let mnemonic = WalletManager.shared.getCurrentMnemonic(), !mnemonic.isEmpty,
-              let mnemonicData = mnemonic.data(using: .utf8)
-        else {
+              let mnemonicData = mnemonic.data(using: .utf8) else {
             throw BackupError.missingMnemonic
         }
 

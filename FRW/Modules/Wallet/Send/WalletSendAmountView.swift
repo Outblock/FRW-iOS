@@ -74,8 +74,7 @@ struct WalletSendAmountView: RouteableView {
                     if vm.targetContact.user?.emoji != nil {
                         vm.targetContact.user?.emoji.icon(size: 44)
                     } else if let avatar = vm.targetContact.avatar?.convertedAvatarString(),
-                              avatar.isEmpty == false
-                    {
+                              avatar.isEmpty == false {
                         KFImage.url(URL(string: avatar))
                             .placeholder {
                                 Image("placeholder")
@@ -99,8 +98,7 @@ struct WalletSendAmountView: RouteableView {
                     } else {
                         if let contactType = vm.targetContact.contactType,
                            let contactName = vm.targetContact.contactName, contactType == .external,
-                           contactName.isFlowOrEVMAddress
-                        {
+                           contactName.isFlowOrEVMAddress {
                             Text("0x")
                                 .foregroundColor(.Theme.Accent.grey)
                                 .font(.inter(size: 24, weight: .semibold))
@@ -512,8 +510,7 @@ extension WalletSendAmountView {
                     if contact.user?.emoji != nil {
                         contact.user?.emoji.icon(size: 44)
                     } else if let avatar = contact.avatar?.convertedAvatarString(),
-                              avatar.isEmpty == false
-                    {
+                              avatar.isEmpty == false {
                         KFImage.url(URL(string: avatar))
                             .placeholder {
                                 Image("placeholder")
@@ -537,8 +534,7 @@ extension WalletSendAmountView {
                     } else {
                         if let contactType = vm.targetContact.contactType,
                            let contactName = vm.targetContact.contactName, contactType == .external,
-                           contactName.isFlowOrEVMAddress
-                        {
+                           contactName.isFlowOrEVMAddress {
                             Text("0x")
                                 .foregroundColor(.Theme.Accent.grey)
                                 .font(.inter(size: 24, weight: .semibold))
@@ -574,7 +570,7 @@ extension WalletSendAmountView {
 
         var body: some View {
             HStack(spacing: 12) {
-                ForEach(0 ..< totalNum, id: \.self) { index in
+                ForEach(0..<totalNum, id: \.self) { index in
                     if step == index {
                         Image("icon-right-arrow-1")
                             .renderingMode(.template)

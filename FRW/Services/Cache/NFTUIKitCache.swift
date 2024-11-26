@@ -362,8 +362,7 @@ extension NFTUIKitCache {
         }
 
         guard var address = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress(),
-              let collectionId = nft.response.collectionID
-        else {
+              let collectionId = nft.response.collectionID else {
             return
         }
 
@@ -428,8 +427,7 @@ extension NFTUIKitCache {
         }
 
         guard let address = WalletManager.shared
-            .getWatchAddressOrChildAccountAddressOrPrimaryAddress()
-        else {
+            .getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
             return
         }
 
@@ -487,8 +485,7 @@ extension NFTUIKitCache {
 
             // remove collection if needed
             if var collections = getCollections(),
-               let index = collections.firstIndex(where: { $0.collection.id == collectionId })
-            {
+               let index = collections.firstIndex(where: { $0.collection.id == collectionId }) {
                 if listNFTs.isEmpty {
                     collections.removeAll { $0.collection.id == collectionId }
                 } else {

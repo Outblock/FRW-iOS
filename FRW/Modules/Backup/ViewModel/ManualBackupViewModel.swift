@@ -43,17 +43,17 @@ class ManualBackupViewModel: ViewModel {
         }
 
         let positions = [
-            Int.random(in: 0 ... 2),
-            Int.random(in: 3 ... 5),
-            Int.random(in: 6 ... 8),
-            Int.random(in: 9 ... 11),
+            Int.random(in: 0...2),
+            Int.random(in: 3...5),
+            Int.random(in: 6...8),
+            Int.random(in: 9...11),
         ]
 
         var dataSource: [ManualBackupView.BackupModel] = []
         for position in positions {
             let word = String(wordList[position])
             let matches = Mnemonic.search(prefix: String(word.prefix(1)))
-            var matchList = matches.filter { $0 != word }.shuffled()[0 ... 1]
+            var matchList = matches.filter { $0 != word }.shuffled()[0...1]
             matchList.append(word)
             matchList.shuffle()
             let firstIndex = matchList.firstIndex(of: word)

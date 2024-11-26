@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Primary Button State
+// MARK: - VPrimaryButtonState
 
 /// Enum that describes state, such as `enabled`, `disabled`, or `loading`.
 public enum VPrimaryButtonState: Int, CaseIterable {
@@ -24,16 +24,7 @@ public enum VPrimaryButtonState: Int, CaseIterable {
     /// Unique state during which spinner appears.
     case loading
 
-    // MARK: Properties
-
-    /// Indicates if state is enabled.
-    public var isEnabled: Bool {
-        switch self {
-        case .enabled: return true
-        case .disabled: return false
-        case .loading: return false
-        }
-    }
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -45,9 +36,22 @@ public enum VPrimaryButtonState: Int, CaseIterable {
         case .loading: self = .loading
         }
     }
+
+    // MARK: Public
+
+    // MARK: Properties
+
+    /// Indicates if state is enabled.
+    public var isEnabled: Bool {
+        switch self {
+        case .enabled: return true
+        case .disabled: return false
+        case .loading: return false
+        }
+    }
 }
 
-// MARK: - V Primary Button Internal State
+// MARK: - VPrimaryButtonInternalState
 
 enum VPrimaryButtonInternalState {
     // MARK: Cases
@@ -56,6 +60,21 @@ enum VPrimaryButtonInternalState {
     case pressed
     case disabled
     case loading
+
+    // MARK: Lifecycle
+
+    // MARK: Initializers
+
+    init(state: VPrimaryButtonState, isPressed: Bool) {
+        switch (state, isPressed) {
+        case (.enabled, false): self = .enabled
+        case (.enabled, true): self = .pressed
+        case (.disabled, _): self = .disabled
+        case (.loading, _): self = .loading
+        }
+    }
+
+    // MARK: Internal
 
     // MARK: Properties
 
@@ -74,17 +93,6 @@ enum VPrimaryButtonInternalState {
         case .pressed: return false
         case .disabled: return false
         case .loading: return true
-        }
-    }
-
-    // MARK: Initializers
-
-    init(state: VPrimaryButtonState, isPressed: Bool) {
-        switch (state, isPressed) {
-        case (.enabled, false): self = .enabled
-        case (.enabled, true): self = .pressed
-        case (.disabled, _): self = .disabled
-        case (.loading, _): self = .loading
         }
     }
 

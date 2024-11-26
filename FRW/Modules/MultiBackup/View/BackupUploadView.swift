@@ -98,7 +98,6 @@ struct BackupUploadView: RouteableView {
                                 }
                             }
                             .padding(.top, 16)
-                            .padding(.horizontal, 18)
                         } else if viewModel.process == .regist || viewModel
                             .process == .upload || viewModel.process == .finish {
                             if let mnemonic = MultiBackupManager.shared.mnemonic {

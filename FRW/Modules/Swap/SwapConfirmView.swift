@@ -176,7 +176,7 @@ extension SwapConfirmView {
 
         var body: some View {
             HStack(spacing: 12) {
-                ForEach(0 ..< totalNum, id: \.self) { index in
+                ForEach(0..<totalNum, id: \.self) { index in
                     if step == index {
                         Image("icon-right-arrow-1")
                             .renderingMode(.template)

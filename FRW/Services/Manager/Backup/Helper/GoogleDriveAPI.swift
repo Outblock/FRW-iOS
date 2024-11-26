@@ -35,8 +35,7 @@ class GoogleDriveAPI {
                 }
 
                 guard let fileListObject = results as? GTLRDrive_FileList,
-                      let files = fileListObject.files
-                else {
+                      let files = fileListObject.files else {
                     continuation.resume(returning: nil)
                     return
                 }
@@ -130,8 +129,7 @@ class GoogleDriveAPI {
                 }
 
                 guard let file = file as? GTLRDrive_File, let fileId = file.identifier,
-                      !fileId.isEmpty
-                else {
+                      !fileId.isEmpty else {
                     debugPrint("GoogleDriveAPI -> createFile(): fileObject error")
                     continuation.resume(throwing: GoogleBackupError.createFileError)
                     return

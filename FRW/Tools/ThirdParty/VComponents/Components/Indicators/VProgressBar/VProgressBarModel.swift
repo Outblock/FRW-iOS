@@ -11,6 +11,78 @@ import SwiftUI
 
 /// Model that describes UI.
 public struct VProgressBarModel {
+    // MARK: Lifecycle
+
+    // MARK: Initializers
+
+    /// Initializes model with default values.
+    public init() {}
+
+    // MARK: Public
+
+    // MARK: Layout
+
+    /// Sub-model containing layout properties.
+    public struct Layout {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: Properties
+
+        /// Slider height. Defaults to `10`.
+        public var height: CGFloat = sliderReference.layout.height
+
+        /// Slider corner radius. Defaults to `5`.
+        public var cornerRadius: CGFloat = sliderReference.layout.cornerRadius
+    }
+
+    // MARK: Colors
+
+    /// Sub-model containing color properties.
+    public struct Colors {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: Properties
+
+        /// Track color.
+        public var track: Color = sliderReference.colors.track.enabled
+
+        /// Progress color.
+        public var progress: Color = sliderReference.colors.progress.enabled
+    }
+
+    // MARK: Animations
+
+    /// Sub-model containing animation properties.
+    public struct Animations {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: Properties
+
+        /// Progress animation. Defaults to `default`.
+        public var progress: Animation? = .default
+    }
+
     // MARK: Properties
 
     /// Reference to `VSliderModel`
@@ -25,61 +97,7 @@ public struct VProgressBarModel {
     /// Sub-model containing animation properties.
     public var animations: Animations = .init()
 
-    // MARK: Initializers
-
-    /// Initializes model with default values.
-    public init() {}
-
-    // MARK: Layout
-
-    /// Sub-model containing layout properties.
-    public struct Layout {
-        // MARK: Properties
-
-        /// Slider height. Defaults to `10`.
-        public var height: CGFloat = sliderReference.layout.height
-
-        /// Slider corner radius. Defaults to `5`.
-        public var cornerRadius: CGFloat = sliderReference.layout.cornerRadius
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-    }
-
-    // MARK: Colors
-
-    /// Sub-model containing color properties.
-    public struct Colors {
-        // MARK: Properties
-
-        /// Track color.
-        public var track: Color = sliderReference.colors.track.enabled
-
-        /// Progress color.
-        public var progress: Color = sliderReference.colors.progress.enabled
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-    }
-
-    // MARK: Animations
-
-    /// Sub-model containing animation properties.
-    public struct Animations {
-        // MARK: Properties
-
-        /// Progress animation. Defaults to `default`.
-        public var progress: Animation? = .default
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-    }
+    // MARK: Internal
 
     // MARK: Sub-Models
 

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Toggle State
+// MARK: - VCheckBoxState
 
 /// Enum that describes state, such as `off`, `on`, `indeterminate`, or `disabled`.
 public enum VCheckBoxState: Int, CaseIterable {
@@ -26,6 +26,21 @@ public enum VCheckBoxState: Int, CaseIterable {
 
     /// Disabled.
     case disabled
+
+    // MARK: Lifecycle
+
+    // MARK: Initializers
+
+    init(internalState: VCheckBoxInternalState) {
+        switch internalState {
+        case .off, .pressedOff: self = .off
+        case .on, .pressedOn: self = .on
+        case .indeterminate, .pressedIndeterminate: self = .indeterminate
+        case .disabled: self = .disabled
+        }
+    }
+
+    // MARK: Public
 
     // MARK: Properties
 
@@ -49,17 +64,6 @@ public enum VCheckBoxState: Int, CaseIterable {
         }
     }
 
-    // MARK: Initializers
-
-    init(internalState: VCheckBoxInternalState) {
-        switch internalState {
-        case .off, .pressedOff: self = .off
-        case .on, .pressedOn: self = .on
-        case .indeterminate, .pressedIndeterminate: self = .indeterminate
-        case .disabled: self = .disabled
-        }
-    }
-
     // MARK: Next State
 
     /// Goes to the next state.
@@ -73,7 +77,7 @@ public enum VCheckBoxState: Int, CaseIterable {
     }
 }
 
-// MARK: - V Checkbox Internal State
+// MARK: - VCheckBoxInternalState
 
 enum VCheckBoxInternalState {
     // MARK: Cases
@@ -86,19 +90,7 @@ enum VCheckBoxInternalState {
     case pressedIndeterminate
     case disabled
 
-    // MARK: Properties
-
-    var isEnabled: Bool {
-        switch self {
-        case .off: return true
-        case .on: return true
-        case .indeterminate: return true
-        case .pressedOff: return true
-        case .pressedOn: return true
-        case .pressedIndeterminate: return true
-        case .disabled: return false
-        }
-    }
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -120,6 +112,22 @@ enum VCheckBoxInternalState {
         case (false, true): self = .pressedOff
         case (true, false): self = .on
         case (true, true): self = .pressedOn
+        }
+    }
+
+    // MARK: Internal
+
+    // MARK: Properties
+
+    var isEnabled: Bool {
+        switch self {
+        case .off: return true
+        case .on: return true
+        case .indeterminate: return true
+        case .pressedOff: return true
+        case .pressedOn: return true
+        case .pressedIndeterminate: return true
+        case .disabled: return false
         }
     }
 
@@ -171,9 +179,9 @@ extension StateOpacities_PD {
 
 // MARK: - Helpers
 
-public extension Binding where Value == VCheckBoxState {
+extension Binding where Value == VCheckBoxState {
     /// Initializes state with bool.
-    init(bool: Binding<Bool>) {
+    public init(bool: Binding<Bool>) {
         self.init(
             get: { bool.wrappedValue ? .on : .off },
             set: { bool.wrappedValue = $0.isOn }

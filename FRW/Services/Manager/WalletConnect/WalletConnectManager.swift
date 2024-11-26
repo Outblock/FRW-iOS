@@ -9,17 +9,17 @@ import Combine
 import Flow
 import Foundation
 import Gzip
+import ReownRouter
+import ReownWalletKit
 import Starscream
 import UIKit
 import WalletConnectNetworking
 import WalletConnectNotify
 import WalletConnectPairing
 import WalletConnectRelay
-import WalletConnectRouter
 import WalletConnectSign
 import WalletConnectUtils
 import WalletCore
-import Web3Wallet
 
 // MARK: - WalletConnectManager
 
@@ -45,7 +45,8 @@ class WalletConnectManager: ObservableObject {
         )
         Pair.configure(metadata: metadata)
         Sign.configure(crypto: DefaultCryptoProvider())
-        Web3Wallet.configure(metadata: metadata, crypto: DefaultCryptoProvider())
+
+        WalletKit.configure(metadata: metadata, crypto: DefaultCryptoProvider())
 
         Notify.configure(environment: .production, crypto: DefaultCryptoProvider())
         Notify.instance.setLogging(level: .debug)
@@ -108,8 +109,7 @@ class WalletConnectManager: ObservableObject {
         Task {
             do {
                 if let removedLink = link.removingPercentEncoding,
-                   let uri = WalletConnectURI(string: removedLink)
-                {
+                   let uri = WalletConnectURI(string: removedLink) {
                     // TODO: commit
                     #if DEBUG
 //                    if Pair.instance.getPairings().contains(where: { $0.topic == uri.topic }) {
@@ -264,10 +264,9 @@ class WalletConnectManager: ObservableObject {
     private var cacheReqeust: [String] = []
 
     private func navigateBackTodApp(topic: String) {
-        // TODO: #six
-//        WalletConnectRouter.Router.goBack()
         if let session = findSession(topic: topic), let url = session.peer.redirect?.native {
-            WalletConnectRouter.goBack(uri: url)
+            ReownRouter.goBack(uri: url)
+//            WalletConnectRouter.goBack(uri: url)
         }
     }
 }
@@ -332,7 +331,8 @@ extension WalletConnectManager {
             return
         }
 
-        if pairings.contains(where: { $0.peer == sessionProposal.proposer }) {
+        if pairings
+            .contains(where: { $0.topic == sessionProposal.pairingTopic }) {
             approveSession(proposal: sessionProposal)
             return
         }
@@ -400,8 +400,7 @@ extension WalletConnectManager {
                            nonce: nonce,
                            appIdentifier: appIdentifier
                        ),
-                       let signedData = try? await WalletManager.shared.sign(signableData: data)
-                    {
+                       let signedData = try? await WalletManager.shared.sign(signableData: data) {
                         services.append(accountProofServiceDefinition(
                             address: address,
                             keyId: keyId,
@@ -496,8 +495,7 @@ extension WalletConnectManager {
                 var model: Signable?
                 if let data = Data(base64Encoded: json),
                    data.isGzipped,
-                   let uncompressData = try? data.gunzipped()
-                {
+                   let uncompressData = try? data.gunzipped() {
                     model = try JSONDecoder().decode(Signable.self, from: uncompressData)
                 } else if let data = json.data(using: .utf8) {
                     model = try JSONDecoder().decode(Signable.self, from: data)
@@ -571,8 +569,7 @@ extension WalletConnectManager {
                 var model: SignableMessage?
                 if let data = Data(base64Encoded: json),
                    data.isGzipped,
-                   let uncompressData = try? data.gunzipped()
-                {
+                   let uncompressData = try? data.gunzipped() {
                     model = try JSONDecoder().decode(SignableMessage.self, from: uncompressData)
                 } else if let data = json.data(using: .utf8) {
                     model = try JSONDecoder().decode(SignableMessage.self, from: data)

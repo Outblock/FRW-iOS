@@ -7,20 +7,10 @@
 
 import SwiftUI
 
-// MARK: - _ V Toast
+// MARK: - _VToast
 
 struct _VToast: View {
-    // MARK: Properties
-
-    private let model: VToastModel
-    private let toastType: VToastType
-
-    @Binding private var isHCPresented: Bool
-    @State private var isViewPresented: Bool = false
-
-    private let title: String
-
-    @State private var height: CGFloat = .zero
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -36,6 +26,8 @@ struct _VToast: View {
         self.title = title
     }
 
+    // MARK: Internal
+
     // MARK: Body
 
     var body: some View {
@@ -47,6 +39,23 @@ struct _VToast: View {
         .onAppear(perform: animateIn)
         .onAppear(perform: animateOutAfterLifecycle)
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VToastModel
+    private let toastType: VToastType
+
+    @Binding
+    private var isHCPresented: Bool
+    @State
+    private var isViewPresented: Bool = false
+
+    private let title: String
+
+    @State
+    private var height: CGFloat = .zero
 
     private var contentView: some View {
         textView
@@ -87,7 +96,8 @@ struct _VToast: View {
             return UIView.topSafeAreaHeight + model.layout.presentationOffsetFromSafeEdge
 
         case .bottom:
-            return UIScreen.main.bounds.height - UIView.bottomSafeAreaHeight - height - model.layout.presentationOffsetFromSafeEdge
+            return UIScreen.main.bounds.height - UIView.bottomSafeAreaHeight - height - model.layout
+                .presentationOffsetFromSafeEdge
         }
     }
 
@@ -108,15 +118,21 @@ struct _VToast: View {
 
     private func animateOut() {
         withAnimation(model.animations.disappear?.asSwiftUIAnimation) { isViewPresented = false }
-        DispatchQueue.main.asyncAfter(deadline: .now() + (model.animations.disappear?.duration ?? 0)) { isHCPresented = false }
+        DispatchQueue.main
+            .asyncAfter(deadline: .now() + (model.animations.disappear?.duration ?? 0)) {
+                isHCPresented = false
+            }
     }
 
     private func animateOutAfterLifecycle() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + model.animations.duration, execute: animateOut)
+        DispatchQueue.main.asyncAfter(
+            deadline: .now() + model.animations.duration,
+            execute: animateOut
+        )
     }
 }
 
-// MARK: - Preview
+// MARK: - _VToast_Previews
 
 struct _VToast_Previews: PreviewProvider {
     static var previews: some View {

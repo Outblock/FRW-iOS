@@ -11,41 +11,32 @@ import SwiftUI
 
 /// Model that describes UI.
 public struct VToggleModel {
-    // MARK: Properties
-
-    /// Reference to `VPrimaryButtonModel`.
-    public static let primaryButtonReference: VPrimaryButtonModel = .init()
-
-    /// Sub-model containing layout properties.
-    public var layout: Layout = .init()
-
-    /// Sub-model containing color properties.
-    public var colors: Colors = .init()
-
-    /// Sub-model containing font properties.
-    public var fonts: Fonts = .init()
-
-    /// Sub-model containing animation properties.
-    public var animations: Animations = .init()
-
-    /// Sub-model containing misc properties.
-    public var misc: Misc = .init()
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes model with default values.
     public init() {}
 
+    // MARK: Public
+
     // MARK: Layout
 
     /// Sub-model containing layout properties.
     public struct Layout {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Toggle size. Defaults to `51` width and `32` height, similarly to native toggle.
         public var size: CGSize = .init(width: 51, height: 31)
-
-        var cornerRadius: CGFloat { size.height }
 
         /// Thumb dimension. Defaults to `27`, similarly to native toggle.
         public var thumbDimension: CGFloat = 27
@@ -53,23 +44,41 @@ public struct VToggleModel {
         /// Content leading margin. Defaults to `5`.
         public var contentMarginLeading: CGFloat = 5
 
+        // MARK: Internal
+
+        var cornerRadius: CGFloat { size.height }
+
         var animationOffset: CGFloat {
             let spacing: CGFloat = (size.height - thumbDimension) / 2
             let thumnStartPoint: CGFloat = (size.width - thumbDimension) / 2
             let offset: CGFloat = thumnStartPoint - spacing
             return offset
         }
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
 
     // MARK: Colors
 
     /// Sub-model containing color properties.
     public struct Colors {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: State Colors
+
+        /// Sub-model containing colors for component states.
+        public typealias StateColors = StateColors_OOD
+
+        // MARK: State Opacities
+
+        /// Sub-model containing colors and opacities for component states.
+        public typealias StateOpacities = StateOpacities_PD
+
         // MARK: Properties
 
         /// Fill colors.
@@ -106,67 +115,84 @@ public struct VToggleModel {
             pressedOn: ColorBook.secondary,
             disabled: ColorBook.primary
         )
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: State Colors
-
-        /// Sub-model containing colors for component states.
-        public typealias StateColors = StateColors_OOD
-
-        // MARK: State Opacities
-
-        /// Sub-model containing colors and opacities for component states.
-        public typealias StateOpacities = StateOpacities_PD
     }
 
     // MARK: Fonts
 
     /// Sub-model containing font properties.
     public struct Fonts {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Title font. Defaults to system font of size `15`.
         ///
         /// Only applicable when using init with title.
         public var title: Font = .system(size: 15)
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
 
     // MARK: Animations
 
     /// Sub-model containing animation properties.
     public struct Animations {
-        // MARK: Properties
-
-        /// State change animation. Defaults to `easeIn` with duration `0.1`.
-        public var stateChange: Animation? = .easeIn(duration: 0.1)
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
         /// Initializes sub-model with default values.
         public init() {}
+
+        // MARK: Public
+
+        // MARK: Properties
+
+        /// State change animation. Defaults to `easeIn` with duration `0.1`.
+        public var stateChange: Animation? = .easeIn(duration: 0.1)
     }
 
     // MARK: Misc
 
     /// Sub-model containing misc properties.
     public struct Misc {
-        // MARK: Properties
-
-        /// Indicates if content is clickable. Defaults to `true`.
-        public var contentIsClickable: Bool = true
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
         /// Initializes sub-model with default values.
         public init() {}
+
+        // MARK: Public
+
+        // MARK: Properties
+
+        /// Indicates if content is clickable. Defaults to `true`.
+        public var contentIsClickable: Bool = true
     }
+
+    // MARK: Properties
+
+    /// Reference to `VPrimaryButtonModel`.
+    public static let primaryButtonReference: VPrimaryButtonModel = .init()
+
+    /// Sub-model containing layout properties.
+    public var layout: Layout = .init()
+
+    /// Sub-model containing color properties.
+    public var colors: Colors = .init()
+
+    /// Sub-model containing font properties.
+    public var fonts: Fonts = .init()
+
+    /// Sub-model containing animation properties.
+    public var animations: Animations = .init()
+
+    /// Sub-model containing misc properties.
+    public var misc: Misc = .init()
 }

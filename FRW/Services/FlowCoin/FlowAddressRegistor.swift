@@ -49,8 +49,7 @@ enum ScriptAddress: String, CaseIterable {
             .flowNetwork
     ) -> Flow.Address? {
         guard let addressMap = RemoteConfigManager.shared.getContarctAddress(network),
-              let address = addressMap[rawValue], !address.isEmpty
-        else {
+              let address = addressMap[rawValue], !address.isEmpty else {
             return nil
         }
 

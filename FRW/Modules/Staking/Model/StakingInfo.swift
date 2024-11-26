@@ -10,6 +10,8 @@ import Foundation
 // MARK: - StakingNode
 
 struct StakingNode: Codable {
+    // MARK: Internal
+
     let id: Int
     let nodeID: String
     let tokensCommitted: Double
@@ -28,8 +30,9 @@ struct StakingNode: Codable {
     }
 
     var tokenStakedASUSD: Double {
-        let rate = CoinRateCache.cache.getSummary(for: "flow")?.getLastRate() ?? 0.0
-        return tokensStaked * rate
+        let token = WalletManager.shared.flowToken
+        let rate = CoinRateCache.cache.getSummary(by: token?.contractId ?? "")?.getLastRate() ?? 0.0
+        return tokensStaked * coinRate
     }
 
     var dayRewards: Double {
@@ -42,13 +45,18 @@ struct StakingNode: Codable {
     }
 
     var dayRewardsASUSD: Double {
-        let coinRate = CoinRateCache.cache.getSummary(for: "flow")?.getLastRate() ?? 0
-        return dayRewards * coinRate
+        dayRewards * coinRate
     }
 
     var monthRewardsASUSD: Double {
-        let coinRate = CoinRateCache.cache.getSummary(for: "flow")?.getLastRate() ?? 0
-        return monthRewards * coinRate
+        monthRewards * coinRate
+    }
+
+    // MARK: Private
+
+    private var coinRate: Double {
+        let token = WalletManager.shared.flowToken
+        return CoinRateCache.cache.getSummary(by: token?.contractId ?? "")?.getLastRate() ?? 0.0
     }
 }
 

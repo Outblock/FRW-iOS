@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Text Field
+// MARK: - VTextField
 
 /// Input component that displays an editable text interface.
 ///
@@ -111,46 +111,7 @@ import SwiftUI
 ///     }
 ///
 public struct VTextField: View {
-    private let model: VTextFieldModel
-    private let textFieldType: VTextFieldType
-
-    @State private var stateInternally: VTextFieldState = .enabled
-    @Binding private var stateExternally: VTextFieldState
-    private let stateManagament: ComponentStateManagement
-    private var state: Binding<VTextFieldState> {
-        .init(
-            get: {
-                switch stateManagament {
-                case .internal: return stateInternally
-                case .external: return stateExternally
-                }
-            },
-            set: { value in
-                switch stateManagament {
-                case .internal: stateInternally = value
-                case .external: stateExternally = value
-                }
-            }
-        )
-    }
-
-    private let highlight: VTextFieldHighlight
-
-    private let placeholder: String?
-    private let headerTitle: String?
-    private let footerTitle: String?
-    @Binding private var text: String
-
-    private let beginHandler: (() -> Void)?
-    private let changeHandler: (() -> Void)?
-    private let endHandler: (() -> Void)?
-
-    private let returnButtonAction: VTextFieldReturnButtonAction
-    private let clearButtonAction: VTextFieldClearButtonAction
-    private let cancelButtonAction: VTextFieldCancelButtonAction
-
-    @State private var isTextNonEmpty: Bool = false
-    @State private var secureFieldIsVisible: Bool = false
+    // MARK: Lifecycle
 
     // MARK: Initialiers
 
@@ -174,7 +135,7 @@ public struct VTextField: View {
         self.model = model
         self.textFieldType = textFieldType
         _stateExternally = state
-        stateManagament = .external
+        self.stateManagament = .external
         self.highlight = highlight
         self.placeholder = placeholder
         self.headerTitle = headerTitle
@@ -207,7 +168,7 @@ public struct VTextField: View {
         self.model = model
         self.textFieldType = textFieldType
         _stateExternally = .constant(.enabled)
-        stateManagament = .internal
+        self.stateManagament = .internal
         self.highlight = highlight
         self.placeholder = placeholder
         self.headerTitle = headerTitle
@@ -221,6 +182,8 @@ public struct VTextField: View {
         self.cancelButtonAction = cancelButtonAction
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -231,6 +194,54 @@ public struct VTextField: View {
             textFieldView
             footerView
         })
+    }
+
+    // MARK: Private
+
+    private let model: VTextFieldModel
+    private let textFieldType: VTextFieldType
+
+    @State
+    private var stateInternally: VTextFieldState = .enabled
+    @Binding
+    private var stateExternally: VTextFieldState
+    private let stateManagament: ComponentStateManagement
+    private let highlight: VTextFieldHighlight
+
+    private let placeholder: String?
+    private let headerTitle: String?
+    private let footerTitle: String?
+    @Binding
+    private var text: String
+
+    private let beginHandler: (() -> Void)?
+    private let changeHandler: (() -> Void)?
+    private let endHandler: (() -> Void)?
+
+    private let returnButtonAction: VTextFieldReturnButtonAction
+    private let clearButtonAction: VTextFieldClearButtonAction
+    private let cancelButtonAction: VTextFieldCancelButtonAction
+
+    @State
+    private var isTextNonEmpty: Bool = false
+    @State
+    private var secureFieldIsVisible: Bool = false
+
+    private var state: Binding<VTextFieldState> {
+        .init(
+            get: {
+                switch stateManagament {
+                case .internal: return stateInternally
+                case .external: return stateExternally
+                }
+            },
+            set: { value in
+                switch stateManagament {
+                case .internal: stateInternally = value
+                case .external: stateExternally = value
+                }
+            }
+        )
     }
 
     private var textFieldView: some View {
@@ -250,7 +261,8 @@ public struct VTextField: View {
         .frame(height: model.layout.height)
     }
 
-    @ViewBuilder private var headerView: some View {
+    @ViewBuilder
+    private var headerView: some View {
         if let headerTitle = headerTitle, !headerTitle.isEmpty {
             VText(
                 type: .oneLine,
@@ -263,7 +275,8 @@ public struct VTextField: View {
         }
     }
 
-    @ViewBuilder private var footerView: some View {
+    @ViewBuilder
+    private var footerView: some View {
         if let footerTitle = footerTitle, !footerTitle.isEmpty {
             HStack {
                 switch highlight {
@@ -271,10 +284,16 @@ public struct VTextField: View {
                     EmptyView()
                 case .success:
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(model.colors.footer.for(state.wrappedValue, highlight: highlight))
+                        .foregroundColor(model.colors.footer.for(
+                            state.wrappedValue,
+                            highlight: highlight
+                        ))
                 case .error:
                     Image(systemName: "multiply.circle.fill")
-                        .foregroundColor(model.colors.footer.for(state.wrappedValue, highlight: highlight))
+                        .foregroundColor(model.colors.footer.for(
+                            state.wrappedValue,
+                            highlight: highlight
+                        ))
                 case .loading:
                     VSpinner(type: .continous(SpinnerStyle.primary))
                 }
@@ -291,12 +310,16 @@ public struct VTextField: View {
         }
     }
 
-    @ViewBuilder private var searchIcon: some View {
+    @ViewBuilder
+    private var searchIcon: some View {
         if textFieldType.isSearch {
             ImageBook.search
                 .resizable()
                 .frame(dimension: model.layout.searchIconDimension)
-                .foregroundColor(model.colors.searchIcon.for(state.wrappedValue, highlight: highlight))
+                .foregroundColor(model.colors.searchIcon.for(
+                    state.wrappedValue,
+                    highlight: highlight
+                ))
                 .opacity(model.colors.content.for(state.wrappedValue))
         }
 
@@ -316,7 +339,10 @@ public struct VTextField: View {
 
     private var textFieldContentView: some View {
         UIKitTextFieldRepresentable(
-            model: model.baseTextFieldSubModel(state: state.wrappedValue, isSecureTextEntry: textFieldType.isSecure && !secureFieldIsVisible),
+            model: model.baseTextFieldSubModel(
+                state: state.wrappedValue,
+                isSecureTextEntry: textFieldType.isSecure && !secureFieldIsVisible
+            ),
             state: VTextFieldState.baseTextFieldState(state),
             placeholder: placeholder,
             text: $text,
@@ -328,7 +354,8 @@ public struct VTextField: View {
         .onChange(of: text, perform: textChanged)
     }
 
-    @ViewBuilder private var clearButton: some View {
+    @ViewBuilder
+    private var clearButton: some View {
         if !textFieldType.isSecure && isTextNonEmpty && model.misc.clearButton {
             VCloseButton(
                 model: model.clearSubButtonModel(state: state.wrappedValue, highlight: highlight),
@@ -338,24 +365,33 @@ public struct VTextField: View {
         }
     }
 
-    @ViewBuilder private var visibilityButton: some View {
+    @ViewBuilder
+    private var visibilityButton: some View {
         if textFieldType.isSecure {
             VSquareButton(
-                model: model.visibilityButtonSubModel(state: state.wrappedValue, highlight: highlight),
+                model: model.visibilityButtonSubModel(
+                    state: state.wrappedValue,
+                    highlight: highlight
+                ),
                 state: state.wrappedValue.visiblityButtonState,
                 action: { secureFieldIsVisible.toggle() },
                 content: {
                     visiblityIcon
                         .resizable()
                         .frame(dimension: model.layout.visibilityButtonIconDimension)
-                        .foregroundColor(model.colors.visibilityButtonIcon.for(state.wrappedValue, highlight: highlight))
+                        .foregroundColor(model.colors.visibilityButtonIcon.for(
+                            state.wrappedValue,
+                            highlight: highlight
+                        ))
                 }
             )
         }
     }
 
-    @ViewBuilder private var cancelButton: some View {
-        if !textFieldType.isSecure, isTextNonEmpty, state.wrappedValue.isFocused, let cancelButton = model.misc.cancelButton, !cancelButton.isEmpty {
+    @ViewBuilder
+    private var cancelButton: some View {
+        if !textFieldType.isSecure, isTextNonEmpty, state.wrappedValue.isFocused,
+           let cancelButton = model.misc.cancelButton, !cancelButton.isEmpty {
             VPlainButton(
                 model: model.cancelButtonSubModel,
                 state: state.wrappedValue.cancelButtonState,
@@ -368,11 +404,26 @@ public struct VTextField: View {
     private var background: some View {
         ZStack(content: {
             RoundedRectangle(cornerRadius: model.layout.cornerRadius)
-                .foregroundColor(model.colors.background.for(state.wrappedValue, highlight: highlight))
+                .foregroundColor(model.colors.background.for(
+                    state.wrappedValue,
+                    highlight: highlight
+                ))
 
             RoundedRectangle(cornerRadius: model.layout.cornerRadius)
-                .strokeBorder(model.colors.border.for(state.wrappedValue, highlight: highlight), lineWidth: model.layout.borderWidth)
+                .strokeBorder(
+                    model.colors.border.for(state.wrappedValue, highlight: highlight),
+                    lineWidth: model.layout.borderWidth
+                )
         })
+    }
+
+    // MARK: Visiblity Icon
+
+    private var visiblityIcon: Image {
+        switch secureFieldIsVisible {
+        case false: return ImageBook.visibilityOff
+        case true: return ImageBook.visibilityOn
+        }
     }
 
     // MARK: State Syncs
@@ -384,15 +435,6 @@ public struct VTextField: View {
 
         DispatchQueue.main.async {
             if secureFieldIsVisible, !textFieldType.isSecure { secureFieldIsVisible = false }
-        }
-    }
-
-    // MARK: Visiblity Icon
-
-    private var visiblityIcon: Image {
-        switch secureFieldIsVisible {
-        case false: return ImageBook.visibilityOff
-        case true: return ImageBook.visibilityOn
         }
     }
 
@@ -424,11 +466,10 @@ public struct VTextField: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - VTextField_Previews
 
 struct VTextField_Previews: PreviewProvider {
-    @State private static var state: VTextFieldState = .enabled
-    @State private static var text: String = "Lorem ipsum"
+    // MARK: Internal
 
     static var previews: some View {
         VStack(spacing: 50, content: {
@@ -445,4 +486,11 @@ struct VTextField_Previews: PreviewProvider {
         })
         .padding()
     }
+
+    // MARK: Private
+
+    @State
+    private static var state: VTextFieldState = .enabled
+    @State
+    private static var text: String = "Lorem ipsum"
 }

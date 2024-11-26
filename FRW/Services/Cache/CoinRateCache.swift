@@ -14,18 +14,18 @@ import SwiftUI
 extension CoinRateCache {
     struct CoinRateModel: Codable, Hashable {
         let updateTime: TimeInterval
-        let symbol: String
+        let contractId: String
         let summary: CryptoSummaryResponse
 
         static func == (
             lhs: CoinRateCache.CoinRateModel,
             rhs: CoinRateCache.CoinRateModel
         ) -> Bool {
-            lhs.symbol == rhs.symbol
+            lhs.contractId == rhs.contractId
         }
 
         func hash(into hasher: inout Hasher) {
-            hasher.combine(symbol)
+            hasher.combine(contractId)
         }
     }
 }
@@ -69,8 +69,11 @@ class CoinRateCache {
         }
     }
 
-    func getSummary(for symbol: String) -> CryptoSummaryResponse? {
-        summarys.first { $0.symbol == symbol }?.summary
+    func getSummary(by contractId: String) -> CryptoSummaryResponse? {
+        guard !contractId.isEmpty else {
+            return nil
+        }
+        return summarys.first { $0.contractId == contractId }?.summary
     }
 
     // MARK: Private
@@ -133,7 +136,7 @@ extension CoinRateCache {
                                 try await self?.fetchCoinRate(coin)
                             } catch {
                                 debugPrint(
-                                    "CoinRateCache -> fetchCoinRate:\(coin.symbol ?? "") failed: \(error)"
+                                    "CoinRateCache -> fetchCoinRate:\(coin.contractId ?? "") failed: \(error)"
                                 )
                             }
                         }
@@ -151,7 +154,7 @@ extension CoinRateCache {
                                     try await self?.fetchCoinRate(coin)
                                 } catch {
                                     debugPrint(
-                                        "CoinRateCache -> fetchCoinRate:\(coin.symbol ?? "") failed: \(error)"
+                                        "CoinRateCache -> fetchCoinRate:\(coin.contractId) failed: \(error)"
                                     )
                                 }
                             }
@@ -165,7 +168,7 @@ extension CoinRateCache {
                             } catch {
                                 log
                                     .debug(
-                                        "CoinRateCache -> fetchCoinRate:\(coin.symbol ?? "") failed: \(error)"
+                                        "CoinRateCache -> fetchCoinRate:\(coin.contractId) failed: \(error)"
                                     )
                             }
                         }
@@ -179,11 +182,8 @@ extension CoinRateCache {
     }
 
     private func fetchCoinRate(_ coin: TokenModel) async throws {
-        guard let symbol = coin.symbol else {
-            return
-        }
-
-        if let old = summarys.first(where: { $0.symbol == symbol }) {
+        let contractId = coin.contractId
+        if let old = summarys.first(where: { $0.contractId == contractId }) {
             let interval = abs(old.updateTime - Date().timeIntervalSince1970)
             if interval < CacheUpdateInverval {
                 // still valid
@@ -201,7 +201,7 @@ extension CoinRateCache {
             let request = CryptoSummaryRequest(provider: market.rawValue, pair: coinPair)
             let response: CryptoSummaryResponse = try await Network
                 .request(FRWAPI.Crypto.summary(request))
-            await set(summary: response, forSymbol: symbol)
+            await set(summary: response, forContractId: contractId)
         case let .mirror(token):
             guard let mirrorTokenModel = WalletManager.shared.supportedCoins?
                 .first(where: { $0.symbol == token.rawValue })
@@ -211,14 +211,14 @@ extension CoinRateCache {
 
             try await fetchCoinRate(mirrorTokenModel)
 
-            guard let mirrorResponse = getSummary(for: token.rawValue) else {
+            guard let mirrorResponse = getSummary(by: contractId) else {
                 break
             }
 
-            await set(summary: mirrorResponse, forSymbol: symbol)
+            await set(summary: mirrorResponse, forContractId: contractId)
         case let .fixed(price):
             let response = createFixedRateResponse(fixedRate: price, for: coin)
-            await set(summary: response, forSymbol: symbol)
+            await set(summary: response, forContractId: contractId)
         }
     }
 
@@ -248,10 +248,10 @@ extension CoinRateCache {
     }
 
     @MainActor
-    private func set(summary: CryptoSummaryResponse, forSymbol: String) {
+    private func set(summary: CryptoSummaryResponse, forContractId: String) {
         let model = CoinRateModel(
             updateTime: Date().timeIntervalSince1970,
-            symbol: forSymbol,
+            contractId: forContractId,
             summary: summary
         )
         _ = queue.sync {

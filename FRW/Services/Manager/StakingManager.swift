@@ -91,12 +91,16 @@ class StakingManager: ObservableObject {
     }
 
     var dayRewardsASUSD: Double {
-        let coinRate = CoinRateCache.cache.getSummary(for: "flow")?.getLastRate() ?? 0
+        let token = WalletManager.shared.flowToken
+        let coinRate = CoinRateCache.cache.getSummary(by: token?.contractId ?? "")?
+            .getLastRate() ?? 0
         return dayRewards * coinRate
     }
 
     var monthRewardsASUSD: Double {
-        let coinRate = CoinRateCache.cache.getSummary(for: "flow")?.getLastRate() ?? 0
+        let token = WalletManager.shared.flowToken
+        let coinRate = CoinRateCache.cache.getSummary(by: token?.contractId ?? "")?
+            .getLastRate() ?? 0
         return monthRewards * coinRate
     }
 

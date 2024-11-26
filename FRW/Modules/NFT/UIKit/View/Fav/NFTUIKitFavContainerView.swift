@@ -98,8 +98,7 @@ extension NFTUIKitFavContainerView {
 // MARK: UICollectionViewDataSource, UICollectionViewDelegate, CollectionViewPagingLayoutDelegate
 
 extension NFTUIKitFavContainerView: UICollectionViewDataSource, UICollectionViewDelegate,
-    CollectionViewPagingLayoutDelegate
-{
+    CollectionViewPagingLayoutDelegate {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         NFTUIKitCache.cache.favList.count
     }

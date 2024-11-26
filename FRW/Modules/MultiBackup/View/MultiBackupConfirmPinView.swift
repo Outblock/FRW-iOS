@@ -8,15 +8,19 @@
 import SwiftUI
 
 struct MultiBackupConfirmPinView: RouteableView {
-    @StateObject var viewModel: MultiBackupConfirmPinViewModel
-    @FocusState private var pinCodeViewIsFocus: Bool
-
-    var title: String {
-        return ""
-    }
+    // MARK: Lifecycle
 
     init(lastPin: String) {
         _viewModel = StateObject(wrappedValue: MultiBackupConfirmPinViewModel(pin: lastPin))
+    }
+
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: MultiBackupConfirmPinViewModel
+
+    var title: String {
+        ""
     }
 
     var body: some View {
@@ -68,6 +72,11 @@ struct MultiBackupConfirmPinView: RouteableView {
         .background(Color.LL.background, ignoresSafeAreaEdges: .all)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    @FocusState
+    private var pinCodeViewIsFocus: Bool
 }
 
 #Preview {

@@ -17,8 +17,7 @@ extension String {
         }
 
         guard let path = Bundle.main.path(forResource: "en", ofType: "lproj"),
-              let bundle = Bundle(path: path)
-        else {
+              let bundle = Bundle(path: path) else {
             return value
         }
 
@@ -44,8 +43,7 @@ struct Provider: TimelineProvider {
 
     func getTimeline(in _: Context, completion: @escaping (Timeline<Entry>) -> Void) {
         guard let userDefaults = groupUserDefaults(),
-              let url = userDefaults.url(forKey: FirstFavNFTImageURL)
-        else {
+              let url = userDefaults.url(forKey: FirstFavNFTImageURL) else {
             let entry = SimpleEntry(date: Date(), image: nil)
             completion(Timeline(entries: [entry], policy: .never))
             return

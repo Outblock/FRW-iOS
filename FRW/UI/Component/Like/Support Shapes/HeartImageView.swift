@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// MARK: - HeartImageView
+
 struct HeartImageView: View {
     @Binding
     var isLike: Bool
@@ -18,6 +20,8 @@ struct HeartImageView: View {
             .font(.system(size: 120, weight: .medium, design: .rounded))
     }
 }
+
+// MARK: - HeartImageView_Previews
 
 struct HeartImageView_Previews: PreviewProvider {
     static var previews: some View {

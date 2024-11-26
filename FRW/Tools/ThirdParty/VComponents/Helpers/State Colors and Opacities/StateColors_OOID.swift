@@ -11,28 +11,7 @@ import SwiftUI
 
 /// Color group containing `off`, `on`, `indeterminate`, and `disabled` values.
 public struct StateColors_OOID: Equatable {
-    // MARK: Properties
-
-    /// Off color.
-    public var off: Color
-
-    /// On color.
-    public var on: Color
-
-    /// Indeterminate color.
-    public var indeterminate: Color
-
-    /// Off pressed color.
-    public var pressedOff: Color
-
-    /// On pressed color.
-    public var pressedOn: Color
-
-    /// Indeterminate pressed color.
-    public var pressedIndeterminate: Color
-
-    /// Disabled color.
-    public var disabled: Color
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -57,15 +36,40 @@ public struct StateColors_OOID: Equatable {
 
     /// Initializes group with clear values.
     public init() {
-        off = .clear
-        on = .clear
-        indeterminate = .clear
-        pressedOff = .clear
-        pressedOn = .clear
-        pressedIndeterminate = .clear
-        disabled = .clear
+        self.off = .clear
+        self.on = .clear
+        self.indeterminate = .clear
+        self.pressedOff = .clear
+        self.pressedOn = .clear
+        self.pressedIndeterminate = .clear
+        self.disabled = .clear
     }
+
+    // MARK: Public
 
     /// Initializes group with clear values.
     public static var clear: Self { .init() }
+
+    // MARK: Properties
+
+    /// Off color.
+    public var off: Color
+
+    /// On color.
+    public var on: Color
+
+    /// Indeterminate color.
+    public var indeterminate: Color
+
+    /// Off pressed color.
+    public var pressedOff: Color
+
+    /// On pressed color.
+    public var pressedOn: Color
+
+    /// Indeterminate pressed color.
+    public var pressedIndeterminate: Color
+
+    /// Disabled color.
+    public var disabled: Color
 }

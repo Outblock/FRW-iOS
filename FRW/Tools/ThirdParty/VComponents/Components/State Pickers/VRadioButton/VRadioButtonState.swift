@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Radio Button State
+// MARK: - VRadioButtonState
 
 /// Enum that describes state, such as `off`, `on`, or `disabled`.
 public enum VRadioButtonState: Int, CaseIterable {
@@ -21,6 +21,20 @@ public enum VRadioButtonState: Int, CaseIterable {
 
     /// Disabled.
     case disabled
+
+    // MARK: Lifecycle
+
+    // MARK: Initializers
+
+    init(internalState: VRadioButtonInternalState) {
+        switch internalState {
+        case .off, .pressedOff: self = .off
+        case .on, .pressedOn: self = .on
+        case .disabled: self = .disabled
+        }
+    }
+
+    // MARK: Public
 
     // MARK: Properties
 
@@ -42,16 +56,6 @@ public enum VRadioButtonState: Int, CaseIterable {
         }
     }
 
-    // MARK: Initializers
-
-    init(internalState: VRadioButtonInternalState) {
-        switch internalState {
-        case .off, .pressedOff: self = .off
-        case .on, .pressedOn: self = .on
-        case .disabled: self = .disabled
-        }
-    }
-
     // MARK: Next State
 
     /// Goes to the next state.
@@ -64,7 +68,7 @@ public enum VRadioButtonState: Int, CaseIterable {
     }
 }
 
-// MARK: - V Radio Button Internal State
+// MARK: - VRadioButtonInternalState
 
 enum VRadioButtonInternalState {
     // MARK: Cases
@@ -75,17 +79,7 @@ enum VRadioButtonInternalState {
     case pressedOn
     case disabled
 
-    // MARK: Properties
-
-    var isEnabled: Bool {
-        switch self {
-        case .off: return true
-        case .on: return true
-        case .pressedOff: return true
-        case .pressedOn: return true
-        case .disabled: return false
-        }
-    }
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -105,6 +99,20 @@ enum VRadioButtonInternalState {
         case (false, true): self = .pressedOff
         case (true, false): self = .on
         case (true, true): self = .pressedOn
+        }
+    }
+
+    // MARK: Internal
+
+    // MARK: Properties
+
+    var isEnabled: Bool {
+        switch self {
+        case .off: return true
+        case .on: return true
+        case .pressedOff: return true
+        case .pressedOn: return true
+        case .disabled: return false
         }
     }
 
@@ -151,9 +159,9 @@ extension StateOpacities_PD {
 
 // MARK: - Helpers
 
-public extension Binding where Value == VRadioButtonState {
+extension Binding where Value == VRadioButtonState {
     /// Initializes state with bool.
-    init(bool: Binding<Bool>) {
+    public init(bool: Binding<Bool>) {
         self.init(
             get: { bool.wrappedValue ? .on : .off },
             set: { bool.wrappedValue = $0.isOn }

@@ -20,6 +20,8 @@
 import UIKit
 
 public enum ColorThief {
+    // MARK: Public
+
     public static let defaultQuality = 10
     public static let defaultIgnoreWhite = true
 
@@ -35,8 +37,17 @@ public enum ColorThief {
     ///              color.
     ///   - ignoreWhite: if true, white pixels are ignored
     /// - Returns: the dominant color
-    public static func getColor(from image: UIImage, quality: Int = defaultQuality, ignoreWhite: Bool = defaultIgnoreWhite) -> MMCQ.Color? {
-        guard let palette = getPalette(from: image, colorCount: 5, quality: quality, ignoreWhite: ignoreWhite) else {
+    public static func getColor(
+        from image: UIImage,
+        quality: Int = defaultQuality,
+        ignoreWhite: Bool = defaultIgnoreWhite
+    ) -> MMCQ.Color? {
+        guard let palette = getPalette(
+            from: image,
+            colorCount: 5,
+            quality: quality,
+            ignoreWhite: ignoreWhite
+        ) else {
             return nil
         }
         let dominantColor = palette[0]
@@ -56,8 +67,18 @@ public enum ColorThief {
     ///              likelihood that colors will be missed.
     ///   - ignoreWhite: if true, white pixels are ignored
     /// - Returns: the palette
-    public static func getPalette(from image: UIImage, colorCount: Int, quality: Int = defaultQuality, ignoreWhite: Bool = defaultIgnoreWhite) -> [MMCQ.Color]? {
-        guard let colorMap = getColorMap(from: image, colorCount: colorCount, quality: quality, ignoreWhite: ignoreWhite) else {
+    public static func getPalette(
+        from image: UIImage,
+        colorCount: Int,
+        quality: Int = defaultQuality,
+        ignoreWhite: Bool = defaultIgnoreWhite
+    ) -> [MMCQ.Color]? {
+        guard let colorMap = getColorMap(
+            from: image,
+            colorCount: colorCount,
+            quality: quality,
+            ignoreWhite: ignoreWhite
+        ) else {
             return nil
         }
         return colorMap.makePalette()
@@ -76,13 +97,25 @@ public enum ColorThief {
     ///              likelihood that colors will be missed.
     ///   - ignoreWhite: if true, white pixels are ignored
     /// - Returns: the color map
-    public static func getColorMap(from image: UIImage, colorCount: Int, quality: Int = defaultQuality, ignoreWhite: Bool = defaultIgnoreWhite) -> MMCQ.ColorMap? {
+    public static func getColorMap(
+        from image: UIImage,
+        colorCount: Int,
+        quality: Int = defaultQuality,
+        ignoreWhite: Bool = defaultIgnoreWhite
+    ) -> MMCQ.ColorMap? {
         guard let pixels = makeBytes(from: image) else {
             return nil
         }
-        let colorMap = MMCQ.quantize(pixels, quality: quality, ignoreWhite: ignoreWhite, maxColors: colorCount)
+        let colorMap = MMCQ.quantize(
+            pixels,
+            quality: quality,
+            ignoreWhite: ignoreWhite,
+            maxColors: colorCount
+        )
         return colorMap
     }
+
+    // MARK: Internal
 
     static func makeBytes(from image: UIImage) -> [UInt8]? {
         guard let cgImage = image.cgImage else {
@@ -104,7 +137,10 @@ public enum ColorThief {
         }
         let bitmapInfo = cgImage.bitmapInfo
         let alpha = bitmapInfo.rawValue & CGBitmapInfo.alphaInfoMask.rawValue
-        let alphaRequirement = (alpha == CGImageAlphaInfo.noneSkipLast.rawValue || alpha == CGImageAlphaInfo.last.rawValue)
+        let alphaRequirement = (
+            alpha == CGImageAlphaInfo.noneSkipLast
+                .rawValue || alpha == CGImageAlphaInfo.last.rawValue
+        )
         let byteOrder = bitmapInfo.rawValue & CGBitmapInfo.byteOrderMask.rawValue
         let byteOrderRequirement = (byteOrder == CGBitmapInfo.byteOrder32Little.rawValue)
         if !(alphaRequirement && byteOrderRequirement) {
@@ -146,7 +182,8 @@ public enum ColorThief {
             bitsPerComponent: 8,
             bytesPerRow: 4 * width,
             space: CGColorSpaceCreateDeviceRGB(),
-            bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue | CGBitmapInfo.byteOrder32Little.rawValue
+            bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue | CGBitmapInfo.byteOrder32Little
+                .rawValue
         ) else {
             return nil
         }

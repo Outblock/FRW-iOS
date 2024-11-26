@@ -8,17 +8,24 @@
 
 import SwiftUI
 
+// MARK: - FloatingLike
+
 struct FloatingLike: View {
     let likeColor: Color
     let animationDuration: TimeInterval = 0.45
     let animation = Animation.spring(response: 0.75).speed(0.75)
 
-    @State var scale: CGFloat = 1.25
-    @State var offset = CGSize(width: 0, height: 0)
-    @State var rotationAngle = Angle.degrees(-4)
-    @State var opacity: Double = 1
+    @State
+    var scale: CGFloat = 1.25
+    @State
+    var offset = CGSize(width: 0, height: 0)
+    @State
+    var rotationAngle = Angle.degrees(-4)
+    @State
+    var opacity: Double = 1
 
-    @Binding var isAnimating: Bool
+    @Binding
+    var isAnimating: Bool
 
     var body: some View {
         ZStack {
@@ -80,6 +87,8 @@ struct FloatingLike: View {
         }
     }
 }
+
+// MARK: - FloatingLike_Previews
 
 struct FloatingLike_Previews: PreviewProvider {
     static var previews: some View {

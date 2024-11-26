@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Side Bar
+// MARK: - VSideBar
 
 /// Modal component that draws a from left side with background, hosts content, and is present when condition is true.
 ///
@@ -32,10 +32,7 @@ import SwiftUI
 ///     }
 ///
 public struct VSideBar<Content> where Content: View {
-    // MARK: Properties
-
-    fileprivate let model: VSideBarModel
-    fileprivate let content: () -> Content
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -47,18 +44,24 @@ public struct VSideBar<Content> where Content: View {
         self.model = model
         self.content = content
     }
+
+    // MARK: Fileprivate
+
+    // MARK: Properties
+
+    fileprivate let model: VSideBarModel
+    fileprivate let content: () -> Content
 }
 
 // MARK: - Extension
 
-public extension View {
+extension View {
     /// Presents `VSideBar`.
-    func vSideBar<Content>(
+    public func vSideBar<Content>(
         isPresented: Binding<Bool>,
         sideBar: @escaping () -> VSideBar<Content>
     ) -> some View
-        where Content: View
-    {
+        where Content: View {
         let sideBar = sideBar()
 
         return overlay(Group(content: {

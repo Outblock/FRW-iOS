@@ -13,5 +13,5 @@ let isDevModel = false
 let FirstFavNFTImageURL = "FirstFavNFTImageURL"
 
 func groupUserDefaults() -> UserDefaults? {
-    return UserDefaults(suiteName: AppGroupName)
+    UserDefaults(suiteName: AppGroupName)
 }

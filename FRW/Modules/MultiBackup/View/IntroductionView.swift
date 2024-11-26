@@ -44,7 +44,7 @@ struct IntroductionView: RouteableView {
                 action: {
                     onClick()
                 },
-                title: "ok".localized
+                title: "OK".localized
             )
         }
         .padding(.horizontal, 28)

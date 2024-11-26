@@ -168,8 +168,11 @@ extension WalletSendAmountViewModel {
     }
 
     private func refreshTokenData() {
-        amountBalance = WalletManager.shared.getBalance(bySymbol: token.symbol ?? "")
-        coinRate = CoinRateCache.cache.getSummary(for: token.symbol ?? "")?.getLastRate() ?? 0
+        amountBalance = WalletManager.shared
+            .getBalance(byId: token.contractId).doubleValue
+        coinRate = CoinRateCache.cache
+            .getSummary(by: token.contractId)?
+            .getLastRate() ?? 0
     }
 
     private func refreshInput() {
@@ -374,10 +377,8 @@ extension WalletSendAmountViewModel {
                             address: targetAddress
                         )
                     } else {
-                        guard let bigUIntValue = Utilities.parseToBigUInt(
-                            amount.description,
-                            units: .ether
-                        ),
+                        guard let bigUIntValue = amount.description
+                            .parseToBigUInt(decimals: token.decimal),
                             let flowIdentifier = self.token.flowIdentifier
                         else {
                             failureBlock()
@@ -423,18 +424,23 @@ extension WalletSendAmountViewModel {
                                 gas: gas
                             )
                     } else {
+                        guard let toAddress = token.getAddress() else {
+                            throw LLError.invalidAddress
+                        }
+                        guard let bigAmount = amount.description
+                            .parseToBigUInt(decimals: token.decimal) else {
+                            throw WalletError.insufficientBalance
+                        }
                         let erc20Contract = try await FlowProvider.Web3.defaultContract()
                         let testData = erc20Contract?.contract.method(
                             "transfer",
                             parameters: [
                                 targetAddress,
-                                Utilities.parseToBigUInt(amount.description, units: .ether)!,
+                                bigAmount,
                             ],
                             extraData: nil
                         )
-                        guard let toAddress = token.getAddress() else {
-                            throw LLError.invalidAddress
-                        }
+
                         txId = try await FlowNetwork.sendTransaction(
                             amount: "0",
                             data: testData,

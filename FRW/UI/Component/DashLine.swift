@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: - VDashLine
+
 struct VDashLine: Shape {
     func path(in rect: CGRect) -> Path {
         Path { path in
@@ -16,6 +18,8 @@ struct VDashLine: Shape {
     }
 }
 
+// MARK: - HDashLine
+
 struct HDashLine: Shape {
     func path(in rect: CGRect) -> Path {
         Path { path in
@@ -24,6 +28,8 @@ struct HDashLine: Shape {
         }
     }
 }
+
+// MARK: - DashLine_Previews
 
 struct DashLine_Previews: PreviewProvider {
     static var previews: some View {

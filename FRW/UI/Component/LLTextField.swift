@@ -8,10 +8,34 @@
 import SwiftUI
 import SwiftUIX
 
+// MARK: - LL
+
 final class LL {}
+
+// MARK: LL.TextField
 
 extension LL {
     struct TextField: View {
+        // MARK: Lifecycle
+
+        init(
+            placeHolder: String = "",
+            text: Binding<String>,
+            status: LL.TextField.Status = .normal,
+            style: Binding<LL.TextField.Style> = .constant(.normal),
+            onEditingChanged: BoolBlock? = nil,
+            onCommit: VoidBlock? = nil
+        ) {
+            self.placeHolder = placeHolder
+            self.status = status
+            _text = text
+            _style = style
+            self.onEditingChanged = onEditingChanged
+            self.onCommit = onCommit
+        }
+
+        // MARK: Public
+
         public enum Status {
             case normal
             case loading(String = "Loading")
@@ -25,16 +49,23 @@ extension LL {
         }
 
         public struct Delegate {
-            var onEditingChanged: (Bool) -> Void
-            var onCommit: () -> Void
+            // MARK: Lifecycle
 
-            init(onEditingChanged: @escaping (Bool) -> Void = { _ in },
-                 onCommit: @escaping () -> Void = {})
-            {
+            init(
+                onEditingChanged: @escaping (Bool) -> Void = { _ in },
+                onCommit: @escaping () -> Void = {}
+            ) {
                 self.onCommit = onCommit
                 self.onEditingChanged = onEditingChanged
             }
+
+            // MARK: Internal
+
+            var onEditingChanged: (Bool) -> Void
+            var onCommit: () -> Void
         }
+
+        // MARK: Internal
 
         var placeHolder: String
 
@@ -68,22 +99,26 @@ extension LL {
             HStack {
                 switch style {
                 case .secure:
-                    SwiftUI.SecureField(placeHolder,
-                                        text: $text,
-                                        onCommit: onCommit ?? {})
-                        .onChange(of: text, perform: { _ in
-                            if let block = onEditingChanged {
-                                block(true)
-                            }
-                        })
-                        .focused($focusState)
-                        .padding()
+                    SwiftUI.SecureField(
+                        placeHolder,
+                        text: $text,
+                        onCommit: onCommit ?? {}
+                    )
+                    .onChange(of: text, perform: { _ in
+                        if let block = onEditingChanged {
+                            block(true)
+                        }
+                    })
+                    .focused($focusState)
+                    .padding()
                 case .normal:
                     SwiftUI
-                        .TextField(placeHolder,
-                                   text: $text,
-                                   onEditingChanged: onEditingChanged ?? { _ in },
-                                   onCommit: onCommit ?? {})
+                        .TextField(
+                            placeHolder,
+                            text: $text,
+                            onEditingChanged: onEditingChanged ?? { _ in },
+                            onCommit: onCommit ?? {}
+                        )
                         .focused($focusState)
                         .padding()
                 }
@@ -116,41 +151,13 @@ extension LL {
                     .stroke(statusColor, lineWidth: 0.5)
             }
         }
-
-        init(placeHolder: String = "",
-             text: Binding<String>,
-             status: LL.TextField.Status = .normal,
-             style: Binding<LL.TextField.Style> = .constant(.normal),
-             onEditingChanged: BoolBlock? = nil,
-             onCommit: VoidBlock? = nil)
-        {
-            self.placeHolder = placeHolder
-            self.status = status
-            _text = text
-            _style = style
-            self.onEditingChanged = onEditingChanged
-            self.onCommit = onCommit
-        }
     }
 }
 
+// MARK: - LLTextField_Previews
+
 struct LLTextField_Previews: PreviewProvider {
-    @State
-    private static var normalStatus: LL.TextField.Status = .normal
-
-    @State
-    private static var errorStatus: LL.TextField.Status = .error("It's taken")
-
-    @State
-    private static var successStatus: LL.TextField.Status = .success("Sounds good")
-
-    @State
-    private static var loadingStatus: LL.TextField.Status = .loading("Loading")
-
-    @State
-    private static var text: String = ""
-
-    private static var delegate = LL.TextField.Delegate()
+    // MARK: Internal
 
     static var previews: some View {
         VStack(spacing: 50) {}
@@ -175,4 +182,23 @@ struct LLTextField_Previews: PreviewProvider {
 //        .background(.black)
 //        .colorScheme(.dark)
     }
+
+    // MARK: Private
+
+    @State
+    private static var normalStatus: LL.TextField.Status = .normal
+
+    @State
+    private static var errorStatus: LL.TextField.Status = .error("It's taken")
+
+    @State
+    private static var successStatus: LL.TextField.Status = .success("Sounds good")
+
+    @State
+    private static var loadingStatus: LL.TextField.Status = .loading("Loading")
+
+    @State
+    private static var text: String = ""
+
+    private static var delegate = LL.TextField.Delegate()
 }

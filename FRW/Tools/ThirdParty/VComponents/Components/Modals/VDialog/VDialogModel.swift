@@ -11,35 +11,33 @@ import SwiftUI
 
 /// Model that describes UI.
 public struct VDialogModel {
-    // MARK: Properties
-
-    /// Reference to `VModalModel`.
-    public static let modalReference: VModalModel = .init()
-
-    /// Sub-model containing layout properties.
-    public var layout: Layout = .init()
-
-    /// Sub-model containing color properties.
-    public var colors: Colors = .init()
-
-    /// Sub-model containing font properties.
-    public var fonts: Fonts = .init()
-
-    /// Sub-model containing animation properties.
-    public var animations: Animations = .init()
-
-    /// Sub-model containing misc properties.
-    public var misc: Misc = .init()
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes model with default values.
     public init() {}
 
+    // MARK: Public
+
     // MARK: Layout
 
     /// Sub-model containing layout properties.
     public struct Layout {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: Title and Content Margin
+
+        /// Sub-model containing `horizontal` and `vertical` margins.
+        public typealias TitleAndContentMargin = LayoutGroup_HV
+
         // MARK: Properties
 
         /// Side bar width. Defaults to `0.75` ratio of screen with.
@@ -71,22 +69,21 @@ public struct VDialogModel {
 
         /// Spacing between buttons during many-button type. Defaults to `10`.
         public var manyButtonSpacing: CGFloat = 10
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: Title and Content Margin
-
-        /// Sub-model containing `horizontal` and `vertical` margins.
-        public typealias TitleAndContentMargin = LayoutGroup_HV
     }
 
     // MARK: Colors
 
     /// Sub-model containing color properties.
     public struct Colors {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Backgrond color.
@@ -100,17 +97,21 @@ public struct VDialogModel {
 
         /// Description color.
         public var description: Color = ColorBook.primary
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
 
     // MARK: Fonts
 
     /// Sub-model containing font properties.
     public struct Fonts {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Title font. Defaults to system font of size `16` and weight `bold`.
@@ -118,28 +119,47 @@ public struct VDialogModel {
 
         /// Description font. Defaults to system font of size `15`.
         public var description: Font = .system(size: 14)
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
 
     // MARK: Misc
 
     /// Sub-model containing misc properties.
     public struct Misc {
-        /// Description line limit. Defaults to `5`.
-        public var descriptionLineLimit: Int = 5
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
         /// Initializes sub-model with default values.
         public init() {}
+
+        // MARK: Public
+
+        /// Description line limit. Defaults to `5`.
+        public var descriptionLineLimit: Int = 5
     }
 
     // MARK: Animations
 
     /// Sub-model containing animation properties.
     public typealias Animations = VModalModel.Animations
+
+    // MARK: Properties
+
+    /// Reference to `VModalModel`.
+    public static let modalReference: VModalModel = .init()
+
+    /// Sub-model containing layout properties.
+    public var layout: Layout = .init()
+
+    /// Sub-model containing color properties.
+    public var colors: Colors = .init()
+
+    /// Sub-model containing font properties.
+    public var fonts: Fonts = .init()
+
+    /// Sub-model containing animation properties.
+    public var animations: Animations = .init()
+
+    /// Sub-model containing misc properties.
+    public var misc: Misc = .init()
 }
