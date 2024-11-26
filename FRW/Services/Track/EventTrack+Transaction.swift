@@ -34,7 +34,7 @@ extension EventTrack.Transaction {
             return
         }
         EventTrack
-            .send(event: EventTrack.Transaction.flowSigned, properties: [
+            .send(event: EventTrack.Transaction.evmSigned, properties: [
                 "flow_address": primaryAddress,
                 "evm_address": evmAddress,
                 "tx_id": txId,

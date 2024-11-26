@@ -15,7 +15,7 @@ class CreateProfileWaitingViewModel: ObservableObject {
     // MARK: Lifecycle
 
     deinit {
-        EventTrack.Account.createdTimeStart()
+        EventTrack.Account.createdTimeEnd()
     }
 
     init(txId: String, callback: @escaping (Bool) -> Void) {
