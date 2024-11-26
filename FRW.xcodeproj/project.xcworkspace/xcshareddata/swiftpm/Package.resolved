@@ -1,5 +1,5 @@
 {
-  "originHash" : "a9e5ce1a6592bee76ab9c7de46f9716080aec9f4b339029f7ff050d8d68c50a7",
+  "originHash" : "06ce4e84737de847ffa019b003ca853f1427c6626c9115ef82a70b72f4b8dd32",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -130,18 +130,9 @@
     {
       "identity" : "flow-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/outblock/flow-swift",
+      "location" : "https://github.com/outblock/flow-swift.git",
       "state" : {
-        "revision" : "bbe28ecf73e18e5fe5c5f7dd4b35c3577f7d5558",
-        "version" : "0.3.8"
-      }
-    },
-    {
-      "identity" : "flow-wallet-kit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Outblock/Flow-Wallet-Kit",
-      "state" : {
-        "revision" : "d1f877f15bf1574bf64d75631f0187197a665b53"
+        "revision" : "5888bf6012f3ea87fbdb07905e6d4817d421ffcb"
       }
     },
     {
@@ -652,6 +643,15 @@
       "state" : {
         "revision" : "55f1c46241b181c3e0b68d70edb6d87926c7d183",
         "version" : "3.1.0"
+      }
+    },
+    {
+      "identity" : "wallet-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Outblock/wallet-core",
+      "state" : {
+        "branch" : "master",
+        "revision" : "24497b1e6f34f171ad421dae8699758bda09e78d"
       }
     },
     {

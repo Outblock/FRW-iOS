@@ -32,30 +32,25 @@ class RestoreMultiAccountViewModel: ObservableObject {
 
         // If it is the current user, do nothing and return directly.
         if let userId = UserManager.shared.activatedUID, userId == selectedUserId {
-            // FIXME: must find the key, eg. walletmanager
             Router.popToRoot()
             return
         }
 
         // If it is in the login list, switch user
         if UserManager.shared.loginUIDList.contains(selectedUserId) {
-            var isValidKey = true
-            // FIXME: if key type is secure enclave, Check if it is valid
-            if isValidKey {
-                Task {
-                    do {
-                        HUD.loading()
-                        try await UserManager.shared.switchAccount(withUID: selectedUserId)
-                        MultiAccountStorage.shared.setBackupType(.multi, uid: selectedUserId)
-                        HUD.dismissLoading()
-                    } catch {
-                        log.error("switch account failed", context: error)
-                        HUD.dismissLoading()
-                        HUD.error(title: error.localizedDescription)
-                    }
+            Task {
+                do {
+                    HUD.loading()
+                    try await UserManager.shared.switchAccount(withUID: selectedUserId)
+                    MultiAccountStorage.shared.setBackupType(.multi, uid: selectedUserId)
+                    HUD.dismissLoading()
+                } catch {
+                    log.error("switch account failed", context: error)
+                    HUD.dismissLoading()
+                    HUD.error(title: error.localizedDescription)
                 }
-                return
             }
+            return
         }
 
         guard selectedUser.count > 1 else {

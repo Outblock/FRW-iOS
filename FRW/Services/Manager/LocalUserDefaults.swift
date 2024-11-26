@@ -428,7 +428,12 @@ class LocalUserDefaults: ObservableObject {
 
     func addUser(user: UserManager.StoreUser) {
         var list = userList
-        list.append(user)
+        let index = list.lastIndex { $0.publicKey == user.publicKey && $0.keyType == user.keyType }
+        if let result = index {
+            list[result] = user
+        } else {
+            list.append(user)
+        }
         userList = list
     }
 }

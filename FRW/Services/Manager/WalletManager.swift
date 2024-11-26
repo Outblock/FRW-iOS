@@ -1099,8 +1099,6 @@ extension WalletManager: FlowSigner {
     }
 
     public var hashAlgo: Flow.HashAlgorithm {
-        // TODO: FIX ME, make it dynamic
-
         if let key = accountKey {
             return key.hashAlgo
         }
@@ -1111,7 +1109,6 @@ extension WalletManager: FlowSigner {
     }
 
     public var signatureAlgo: Flow.SignatureAlgorithm {
-        // TODO: FIX ME, make it dynamic
         if let key = accountKey {
             return key.signAlgo
         }
@@ -1123,7 +1120,6 @@ extension WalletManager: FlowSigner {
     }
 
     public var keyIndex: Int {
-        // TODO: FIX ME, make it dynamic
         if let key = accountKey {
             return key.index
         }
@@ -1207,12 +1203,6 @@ extension WalletManager: FlowSigner {
                 let signature = try secureKey.sign(data: signableData, hashAlgo: .SHA2_256)
                 return signature
             }
-
-//            if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
-//                let sec = try WallectSecureEnclave(privateKey: data)
-//                let signature = try sec.sign(data: signableData)
-//                return signature
-//            }
         }
 
         guard let hdWallet = hdWallet else {
@@ -1259,12 +1249,6 @@ extension WalletManager: FlowSigner {
                     let signature = try secureKey.sign(data: signableData, hashAlgo: .SHA2_256)
                     return signature
                 }
-
-//                if let userId = walletInfo?.id, let data = try WallectSecureEnclave.Store.fetch(by: userId) {
-//                    let sec = try WallectSecureEnclave(privateKey: data)
-//                    let signature = try sec.sign(data: signableData)
-//                    return signature
-//                }
             } catch {
                 return nil
             }
@@ -1307,7 +1291,6 @@ extension WalletManager: FlowSigner {
     }
 
     func findFlowAccount(with _: String, at address: String) async throws {
-        // TODO: 111
         guard let provider = keyProvider,
               let key = accountKey,
               let publicKey = try? provider.publicKey(signAlgo: key.signAlgo)?.hexValue
