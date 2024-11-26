@@ -10,6 +10,7 @@ import FlowWalletKit
 import Foundation
 
 extension FlowWalletKit.PrivateKey {
+    private static let suffix = ".PK"
     static func wallet(id: String) throws -> FlowWalletKit.PrivateKey {
         let pw = KeyProvider.password(with: id)
         let privateKey = try FlowWalletKit.PrivateKey.get(
@@ -28,7 +29,8 @@ extension FlowWalletKit.PrivateKey {
 
 extension FlowWalletKit.PrivateKey {
     static var PKStorage: FlowWalletKit.KeychainStorage {
-        let service = (Bundle.main.bundleIdentifier ?? AppBundleName) + ".PK"
+        let service = (Bundle.main.bundleIdentifier ?? AppBundleName) + FlowWalletKit.PrivateKey
+            .suffix
         let storage = FlowWalletKit.KeychainStorage(
             service: service,
             label: "PKWallet",

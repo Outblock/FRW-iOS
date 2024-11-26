@@ -72,7 +72,7 @@ struct ImportAccountsView: RouteableView, PresentActionDelegate {
             .frame(height: 40)
             .padding(.top, 18)
 
-            Text("Choose an account you want to import")
+            Text("choose_account_import".localized)
                 .font(.inter(size: 14))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.Theme.Text.black3)

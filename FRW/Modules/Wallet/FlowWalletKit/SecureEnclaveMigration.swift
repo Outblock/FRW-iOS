@@ -43,6 +43,14 @@ enum SecureEnclaveMigration {
         log.debug("[Migration] total: \(users.count)")
     }
 
+    static func canKeySign(privateKey: SecureEnclaveKey) -> Bool {
+        guard let data = generateRandomBytes(),
+              let _ = try? privateKey.sign(data: data, hashAlgo: .SHA2_256) else {
+            return false
+        }
+        return true
+    }
+
     // MARK: Private
 
     private static var service: String = "com.flowfoundation.wallet.securekey"
@@ -62,14 +70,18 @@ enum SecureEnclaveMigration {
         var finishCount = 0
         for item in users {
             if let privateKey = try? SecureEnclave.P256.Signing
-                .PrivateKey(dataRepresentation: item.publicKey)
-            {
+                .PrivateKey(dataRepresentation: item.publicKey) {
                 let secureKey = SecureEnclaveKey(
                     key: privateKey,
                     storage: SecureEnclaveKey.KeychainStorage
                 )
-                try? secureKey.store(id: item.uniq, password: KeyProvider.password(with: item.uniq))
-                finishCount += 1
+                if canKeySign(privateKey: secureKey) {
+                    try? secureKey.store(
+                        id: item.uniq,
+                        password: KeyProvider.password(with: item.uniq)
+                    )
+                    finishCount += 1
+                }
             }
         }
         let endAt = CFAbsoluteTimeGetCurrent()
@@ -77,6 +89,19 @@ enum SecureEnclaveMigration {
             .debug(
                 "[Migration] total: \(users.count), finish: \(finishCount), time:\(endAt - startAt)"
             )
+    }
+
+    private static func generateRandomBytes(length: Int = 32) -> Data? {
+        var keyData = Data(count: length)
+        let result = keyData.withUnsafeMutableBytes {
+            SecRandomCopyBytes(kSecRandomDefault, length, $0.baseAddress!)
+        }
+
+        if result == errSecSuccess {
+            return keyData
+        }
+
+        return nil
     }
 }
 

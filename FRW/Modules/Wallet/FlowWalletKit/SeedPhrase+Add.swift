@@ -10,6 +10,7 @@ import FlowWalletKit
 import Foundation
 
 extension SeedPhraseKey {
+    private static let suffix = ".SP"
     static func wallet(id: String) throws -> SeedPhraseKey {
         let pw = KeyProvider.password(with: id)
         let seedPhraseKey = try SeedPhraseKey.get(
@@ -21,7 +22,7 @@ extension SeedPhraseKey {
     }
 
     static var seedPhraseStorage: FlowWalletKit.KeychainStorage {
-        let service = (Bundle.main.bundleIdentifier ?? AppBundleName) + ".SP"
+        let service = (Bundle.main.bundleIdentifier ?? AppBundleName) + suffix
         let storage = FlowWalletKit.KeychainStorage(
             service: service,
             label: "SeedPhraseKey",

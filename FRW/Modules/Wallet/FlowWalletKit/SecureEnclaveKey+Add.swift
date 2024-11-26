@@ -10,6 +10,7 @@ import FlowWalletKit
 import Foundation
 
 extension SecureEnclaveKey {
+    private static let suffix = ".SE"
     static func create() throws -> SecureEnclaveKey {
         let SecureEnclaveKey = try SecureEnclaveKey
             .create(storage: SecureEnclaveKey.KeychainStorage)
@@ -52,7 +53,7 @@ extension SecureEnclaveKey {
 
 extension SecureEnclaveKey {
     static var KeychainStorage: FlowWalletKit.KeychainStorage {
-        let service = (Bundle.main.bundleIdentifier ?? AppBundleName) + ".SE"
+        let service = (Bundle.main.bundleIdentifier ?? AppBundleName) + SecureEnclaveKey.suffix
         let storage = FlowWalletKit.KeychainStorage(
             service: service,
             label: "SecureEnclaveKey",
@@ -73,8 +74,8 @@ extension String {
     }
 }
 
-public extension Data {
-    func signUserMessage() -> Data {
+extension Data {
+    public func signUserMessage() -> Data {
         Flow.DomainTag.user.normalize + self
     }
 }
