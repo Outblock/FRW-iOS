@@ -19,7 +19,7 @@ struct NFTDetailPage: RouteableView {
     init(viewModel: NFTTabViewModel, nft: NFTModel, from childAccount: ChildAccount? = nil) {
         _viewModel = StateObject(wrappedValue: viewModel)
         _vm = StateObject(wrappedValue: NFTDetailPageViewModel(nft: nft))
-        fromChildAccount = childAccount
+        self.fromChildAccount = childAccount
     }
 
     // MARK: Internal
@@ -420,8 +420,7 @@ struct NFTDetailPage: RouteableView {
                     }
 
                     if let urlString = vm.nft.response.externalURL,
-                       let url = URL(string: urlString)
-                    {
+                       let url = URL(string: urlString) {
                         Button {
                             Router.route(to: RouteMap.Explore.browser(url))
                         } label: {

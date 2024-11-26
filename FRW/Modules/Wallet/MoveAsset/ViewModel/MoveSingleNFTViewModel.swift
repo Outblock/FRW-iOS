@@ -21,7 +21,7 @@ class MoveSingleNFTViewModel: ObservableObject {
         loadUserInfo()
 
         let accountViewModel = MoveAccountsViewModel(selected: "") { _ in }
-        accountCount = accountViewModel.list.count
+        self.accountCount = accountViewModel.list.count
     }
 
     // MARK: Internal
@@ -150,8 +150,7 @@ class MoveSingleNFTViewModel: ObservableObject {
         }
 
         if ChildAccountManager.shared.selectedChildAccount != nil || EVMAccountManager.shared
-            .selectedAccount != nil || fromChildAccount != nil
-        {
+            .selectedAccount != nil || fromChildAccount != nil {
             let user = WalletManager.shared.walletAccount.readInfo(at: primaryAddr)
             toContact = Contact(
                 address: primaryAddr,

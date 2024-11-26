@@ -633,8 +633,7 @@ extension WalletHomeView {
                 .frame(minHeight: CoinCellHeight)
 
                 if EVMAccountManager.shared.selectedAccount == nil && ChildAccountManager.shared
-                    .selectedChildAccount == nil
-                {
+                    .selectedChildAccount == nil {
                     HStack(spacing: 0) {
                         Divider()
                             .frame(width: 1, height: 10)
@@ -716,8 +715,7 @@ extension WalletHomeView {
 //                Router.route(to: RouteMap.Wallet.swap(nil))
             case .stake:
                 if !LocalUserDefaults.shared.stakingGuideDisplayed && !StakingManager.shared
-                    .isStaked
-                {
+                    .isStaked {
                     Router.route(to: RouteMap.Wallet.stakeGuide)
                     return
                 }

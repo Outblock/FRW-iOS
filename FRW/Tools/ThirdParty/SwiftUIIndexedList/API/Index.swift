@@ -22,15 +22,15 @@ public struct Index: Equatable {
 
 // MARK: Index.DisplayPriority
 
-public extension Index {
-    enum DisplayPriority: Equatable, Hashable {
+extension Index {
+    public enum DisplayPriority: Equatable, Hashable {
         case standard
         case increased
     }
 }
 
-public extension Index {
-    init<Title, ContentID>(
+extension Index {
+    public init<Title, ContentID>(
         _ title: Title,
         image name: String? = nil,
         displayPriority: DisplayPriority = .standard,
@@ -38,39 +38,37 @@ public extension Index {
     )
         where
         Title: StringProtocol,
-        ContentID: Hashable
-    {
+        ContentID: Hashable {
         self.contentID = AnyHashable(contentID)
         self.displayPriority = displayPriority
         self.title = Text(title)
 
         if let name = name {
-            icon = Image(name)
+            self.icon = Image(name)
         } else {
-            icon = nil
+            self.icon = nil
         }
     }
 
-    init<ContentID>(
+    public init<ContentID>(
         _ title: LocalizedStringKey,
         image name: String? = nil,
         displayPriority: DisplayPriority = .standard,
         contentID: ContentID
     )
-        where ContentID: Hashable
-    {
+        where ContentID: Hashable {
         self.contentID = AnyHashable(contentID)
         self.displayPriority = displayPriority
         self.title = Text(title)
 
         if let name = name {
-            icon = Image(name)
+            self.icon = Image(name)
         } else {
-            icon = nil
+            self.icon = nil
         }
     }
 
-    init<Title, ContentID>(
+    public init<Title, ContentID>(
         _ title: Title,
         systemImage name: String?,
         displayPriority: DisplayPriority = .standard,
@@ -78,35 +76,33 @@ public extension Index {
     )
         where
         Title: StringProtocol,
-        ContentID: Hashable
-    {
+        ContentID: Hashable {
         self.contentID = AnyHashable(contentID)
         self.displayPriority = displayPriority
         self.title = Text(title)
 
         if let name = name {
-            icon = Image(systemName: name)
+            self.icon = Image(systemName: name)
         } else {
-            icon = nil
+            self.icon = nil
         }
     }
 
-    init<ContentID>(
+    public init<ContentID>(
         _ title: LocalizedStringKey,
         systemImage name: String?,
         displayPriority: DisplayPriority = .standard,
         contentID: ContentID
     )
-        where ContentID: Hashable
-    {
+        where ContentID: Hashable {
         self.contentID = AnyHashable(contentID)
         self.displayPriority = displayPriority
         self.title = Text(title)
 
         if let name = name {
-            icon = Image(systemName: name)
+            self.icon = Image(systemName: name)
         } else {
-            icon = nil
+            self.icon = nil
         }
     }
 }
@@ -114,9 +110,9 @@ public extension Index {
 extension Index {
     init(separatorWith contentID: AnyHashable) {
         self.contentID = contentID
-        displayPriority = .standard
-        icon = nil
-        title = nil
+        self.displayPriority = .standard
+        self.icon = nil
+        self.title = nil
     }
 
     @ViewBuilder

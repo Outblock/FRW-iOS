@@ -66,8 +66,7 @@ extension ChildAccountManager {
             let result = collections?.filter { idStr in
                 let list = idStr.split(separator: ".")
                 if let contractName = list[safe: 2],
-                   let address = list[safe: 1]
-                {
+                   let address = list[safe: 1] {
                     if let name = model.contractName, let modelAddress = model.address {
                         return contractName == name && modelAddress.hasSuffix(address)
                     }
@@ -90,8 +89,7 @@ extension ChildAccountManager {
             }
 
             if let address = model.response.contractAddress,
-               let name = model.response.collectionContractName
-            {
+               let name = model.response.collectionContractName {
                 return isAccessible(contractName: name, address: address)
             }
 
@@ -112,8 +110,7 @@ extension ChildAccountManager {
             let result = collections?.filter { idStr in
                 let list = idStr.split(separator: ".")
                 if let contractName = list[safe: 2],
-                   let addr = list[safe: 1]
-                {
+                   let addr = list[safe: 1] {
                     return contractName == contractName && address.hasSuffix(addr)
                 } else {
                     return false

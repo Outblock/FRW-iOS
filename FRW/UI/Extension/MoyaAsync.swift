@@ -10,8 +10,8 @@ import Moya
 
 public typealias AsyncTask = Task
 
-public extension AsyncSequence where Element == Result<ProgressResponse, MoyaError> {
-    func forEach(_ body: (Element) async throws -> Void) async throws {
+extension AsyncSequence where Element == Result<ProgressResponse, MoyaError> {
+    public func forEach(_ body: (Element) async throws -> Void) async throws {
         for try await element in self {
             try await body(element)
         }
@@ -45,11 +45,11 @@ class AsyncMoyaRequestWrapper {
     }
 }
 
-public extension MoyaProvider {
+extension MoyaProvider {
     /// Async request
     /// - Parameter target: Entity, with provides Moya.Target protocol
     /// - Returns: Result type with response and error
-    func asyncRequest(_ target: Target) async -> Result<Response, MoyaError> {
+    public func asyncRequest(_ target: Target) async -> Result<Response, MoyaError> {
         let asyncRequestWrapper = AsyncMoyaRequestWrapper { [weak self] continuation in
             guard let self = self else { return nil }
             return self.request(target) { result in
@@ -74,7 +74,7 @@ public extension MoyaProvider {
     /// Async request with progress using `AsyncStream`
     /// - Parameter target: Entity, with provides Moya.Target protocol
     /// - Returns: `AsyncStream<Result<ProgressResponse, MoyaError>>`  with Result type of progress and error
-    func requestWithProgress(_ target: Target) async -> AsyncStream<Result<
+    public func requestWithProgress(_ target: Target) async -> AsyncStream<Result<
         ProgressResponse,
         MoyaError
     >> {

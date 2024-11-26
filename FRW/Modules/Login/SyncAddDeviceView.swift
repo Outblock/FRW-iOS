@@ -94,8 +94,7 @@ struct SyncAddDeviceView: View {
             res += viewModel.model.deviceInfo.city!
         }
         if viewModel.model.deviceInfo.country != nil && !viewModel.model.deviceInfo.country!
-            .isEmpty
-        {
+            .isEmpty {
             res += ",\(viewModel.model.deviceInfo.country!)"
         }
         return res

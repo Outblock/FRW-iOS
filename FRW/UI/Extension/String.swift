@@ -75,7 +75,7 @@ extension String {
                 of: String(delimiter),
                 with: replacement,
                 options: [],
-                range: startIndex ..< index
+                range: startIndex..<index
             )
         } else {
             return self
@@ -101,10 +101,10 @@ extension String {
 
     var hexValue: [UInt8] {
         var startIndex = self.startIndex
-        return (0 ..< count / 2).compactMap { _ in
+        return (0..<count / 2).compactMap { _ in
             let endIndex = index(after: startIndex)
             defer { startIndex = index(after: endIndex) }
-            return UInt8(self[startIndex ... endIndex], radix: 16)
+            return UInt8(self[startIndex...endIndex], radix: 16)
         }
     }
 
@@ -142,7 +142,7 @@ extension String {
         while let range = range(
             of: substring,
             options: options,
-            range: (ranges.last?.upperBound ?? startIndex) ..< endIndex,
+            range: (ranges.last?.upperBound ?? startIndex)..<endIndex,
             locale: locale
         ) {
             ranges.append(range)

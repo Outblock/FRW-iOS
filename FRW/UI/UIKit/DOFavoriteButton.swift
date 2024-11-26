@@ -130,7 +130,7 @@ open class DOFavoriteButton: UIButton {
         circleMask.add(circleMaskTransform, forKey: "transform")
         imageShape.add(imageTransform, forKey: "transform")
 
-        for i in 0 ..< 5 {
+        for i in 0..<5 {
             lines[i].add(lineStrokeStart, forKey: "strokeStart")
             lines[i].add(lineStrokeEnd, forKey: "strokeEnd")
             lines[i].add(lineOpacity, forKey: "opacity")
@@ -242,7 +242,7 @@ open class DOFavoriteButton: UIButton {
         // line layer
         //===============
         lines = []
-        for i in 0 ..< 5 {
+        for i in 0..<5 {
             let line = CAShapeLayer()
             line.bounds = lineFrame
             line.position = imgCenterPoint
