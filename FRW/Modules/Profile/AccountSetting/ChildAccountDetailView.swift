@@ -71,7 +71,7 @@ class ChildAccountDetailViewModel: ObservableObject {
         if index == 0 {
             if var list = collections {
                 if !showEmptyCollection {
-                    list = list.filter { $0.count > 0 }
+                    list = list.filter { !$0.isEmpty }
                 }
                 accessibleItems = list
             } else {
@@ -413,14 +413,14 @@ struct ChildAccountDetailView: RouteableView {
             LLSegmenControl(titles: ["collections".localized, "coins_cap".localized]) { idx in
                 vm.switchTab(index: idx)
             }
-            if vm.accessibleItems.count == 0, !vm.isLoading {
+            if vm.accessibleItems.isEmpty, !vm.isLoading {
                 emptyAccessibleView
             }
             ForEach(vm.accessibleItems.indices, id: \.self) { idx in
                 AccessibleItemView(item: vm.accessibleItems[idx]) { item in
                     if let collectionInfo = item as? NFTCollection, let addr = vm.childAccount.addr,
                        let pathId = collectionInfo.collection.path?.storagePathId(),
-                       collectionInfo.count > 0 {
+                       !collectionInfo.isEmpty {
                         Router.route(to: RouteMap.NFT.collectionDetail(
                             addr,
                             pathId,
@@ -694,6 +694,7 @@ protocol ChildAccountAccessible {
     var isShowNext: Bool { get }
     var id: String { get }
     var count: Int { get }
+    var isEmpty: Bool { get }
 }
 
 extension ChildAccountAccessible {
@@ -764,6 +765,10 @@ extension FlowModel.NFTCollection: ChildAccountAccessible {
         idList.count
     }
 
+    var isEmpty: Bool {
+        count == 0
+    }
+
     func toCollectionModel() -> CollectionItem {
         let item = CollectionItem()
         item.name = title
@@ -825,6 +830,10 @@ extension FlowModel.TokenInfo: ChildAccountAccessible {
 
     var isShowNext: Bool {
         false
+    }
+
+    var isEmpty: Bool {
+        count == 0
     }
 
     private var theToken: TokenModel? {
