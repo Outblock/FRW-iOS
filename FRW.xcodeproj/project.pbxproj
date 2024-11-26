@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1219,6 +1219,8 @@
 		4EA820C7286354E200DF36A8 /* remote_config_defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4EA820C5286354E200DF36A8 /* remote_config_defaults.plist */; };
 		4EAD14162B61DD940076B318 /* MultiBackupPasskeyTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAD14152B61DD940076B318 /* MultiBackupPasskeyTarget.swift */; };
 		4EAD14172B61DD940076B318 /* MultiBackupPasskeyTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAD14152B61DD940076B318 /* MultiBackupPasskeyTarget.swift */; };
+		4EAD6A212CF6012200F1D9CF /* FlowWalletKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EAD6A202CF6012200F1D9CF /* FlowWalletKit */; };
+		4EAD6A232CF6013200F1D9CF /* FlowWalletKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EAD6A222CF6013200F1D9CF /* FlowWalletKit */; };
 		4EAF31BA2845E501002AF489 /* NFTSegmentControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAF31B82845E501002AF489 /* NFTSegmentControl.swift */; };
 		4EAF31BF28464ACE002AF489 /* BackAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAF31BD28464ACE002AF489 /* BackAppBar.swift */; };
 		4EAFBD452C0FF72B0031EA20 /* CreateProfileWaitingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAFBD442C0FF72B0031EA20 /* CreateProfileWaitingView.swift */; };
@@ -1345,7 +1347,6 @@
 		4ED9C5C52C05CE12004276D1 /* WalletListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED9C5C32C05CE12004276D1 /* WalletListView.swift */; };
 		4EDDAA24285F5DC600EB8AF9 /* NFTAddCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDDAA22285F5DC600EB8AF9 /* NFTAddCollectionView.swift */; };
 		4EDE41EB2CF5944500A6EAB3 /* FlowWalletKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EDE41EA2CF5944500A6EAB3 /* FlowWalletKit */; };
-		4EDE41ED2CF5945400A6EAB3 /* FlowWalletKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EDE41EC2CF5945400A6EAB3 /* FlowWalletKit */; };
 		4EDEA7622C8FE3DB00DE76B6 /* SecureEnclaveKey+Add.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDEA7612C8FE3DB00DE76B6 /* SecureEnclaveKey+Add.swift */; };
 		4EDEA7632C8FE3DB00DE76B6 /* SecureEnclaveKey+Add.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDEA7612C8FE3DB00DE76B6 /* SecureEnclaveKey+Add.swift */; };
 		4EDEA7652C90305B00DE76B6 /* SecureEnclaveMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDEA7642C90305B00DE76B6 /* SecureEnclaveMigration.swift */; };
@@ -2913,16 +2914,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				150D3E392A58719A00F7F2DC /* QRCode in Frameworks */,
-				4ED06E442ABABB9900F49A1A /* WalletCore.xcframework in Frameworks */,
 				4E2FA6B62CF4177C00D46EA7 /* WalletConnectPush in Frameworks */,
 				156AC7AB27802F9D00ED5E3E /* GoogleAPIClientForREST_Drive in Frameworks */,
 				154B891A276A1EEB00780E93 /* Flow in Frameworks */,
 				4E2FA6B42CF4177C00D46EA7 /* WalletConnectPairing in Frameworks */,
 				154B891B276A1EEB00780E93 /* FirebaseAuth in Frameworks */,
 				15F517FD28C6577000504FDC /* Atlantis in Frameworks */,
-				4EDE41ED2CF5945400A6EAB3 /* FlowWalletKit in Frameworks */,
-				4E5F2F132C192F3B008589C4 /* WalletConnectNotify in Frameworks */,
-				4E1DD8D42B16443B0055E510 /* WalletConnectAuth in Frameworks */,
 				4E2FA6AC2CF4177C00D46EA7 /* WalletConnect in Frameworks */,
 				157D91BE293E102C00AC102B /* GoogleSignIn in Frameworks */,
 				15F22F07278A899D00FCF772 /* AuthenticationServices.framework in Frameworks */,
@@ -2933,6 +2930,7 @@
 				6AE1D48E287690E7000FA0B7 /* SwiftUIPager in Frameworks */,
 				6AADFB54293CB7F800E5D6B2 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				4E3682C72BB6A59100B24785 /* web3swift in Frameworks */,
+				4EAD6A232CF6013200F1D9CF /* FlowWalletKit in Frameworks */,
 				15D6D8F628CBAEE000CBA152 /* FancyScrollView in Frameworks */,
 				152BB09628AE900C00B2A2AA /* Lottie in Frameworks */,
 				6AEA375A28A51792004545D4 /* MJRefresh in Frameworks */,
@@ -2959,8 +2957,6 @@
 				4EC56B2D281D3ED000246878 /* FirebaseRemoteConfig in Frameworks */,
 				15D57759277C23BF00045E79 /* CombineMoya in Frameworks */,
 				154B891F276A1EEB00780E93 /* FirebaseDynamicLinks in Frameworks */,
-				158832CC2894267700142B35 /* WalletConnect in Frameworks */,
-				4ED06E462ABABB9D00F49A1A /* SwiftProtobuf.xcframework in Frameworks */,
 				4E2FA6B02CF4177C00D46EA7 /* WalletConnectNetworking in Frameworks */,
 				157046752793241A00D1747B /* Kingfisher in Frameworks */,
 				6A204C6C2860784B00D0D3A4 /* FirebaseStorage in Frameworks */,
@@ -3037,8 +3033,6 @@
 				4E2FA6942CF40FE700D46EA7 /* WalletConnectNetworking in Frameworks */,
 				15C58C502868A4EE00BD4FC6 /* FirebaseRemoteConfig in Frameworks */,
 				15C58C512868A4EE00BD4FC6 /* CombineMoya in Frameworks */,
-				158832CA2894262B00142B35 /* WalletConnect in Frameworks */,
-				4ED06E3F2ABABB9400F49A1A /* SwiftProtobuf.xcframework in Frameworks */,
 				15C58C522868A4EE00BD4FC6 /* FirebaseDynamicLinks in Frameworks */,
 				15C58C532868A4EE00BD4FC6 /* Kingfisher in Frameworks */,
 				15C58C542868A4EE00BD4FC6 /* FirebaseStorage in Frameworks */,
@@ -3049,6 +3043,7 @@
 				15D6D8F428CBAEBD00CBA152 /* FancyScrollView in Frameworks */,
 				4EDE41EB2CF5944500A6EAB3 /* FlowWalletKit in Frameworks */,
 				4E5F2F112C12B1C2008589C4 /* CrowdinSDK in Frameworks */,
+				4EAD6A212CF6012200F1D9CF /* FlowWalletKit in Frameworks */,
 				4E660F1C2C80B42F00E5239E /* CollectionViewPagingLayout in Frameworks */,
 				15C58C582868A4EE00BD4FC6 /* SwiftUIX in Frameworks */,
 				6AC1AE69289BACDF00F76C7A /* SnapKit in Frameworks */,
@@ -6248,7 +6243,6 @@
 				4E660F1D2C80B43E00E5239E /* CollectionViewPagingLayout */,
 				4E131A992CA17389002B258D /* PocketSVG */,
 				4E09A1EF2CC7949E0099606E /* Mixpanel */,
-				4EDE41EC2CF5945400A6EAB3 /* FlowWalletKit */,
 				4E2FA6A72CF410BF00D46EA7 /* ReownRouter */,
 				4E2FA6A92CF4177C00D46EA7 /* ReownWalletKit */,
 				4E2FA6AB2CF4177C00D46EA7 /* WalletConnect */,
@@ -6258,6 +6252,7 @@
 				4E2FA6B32CF4177C00D46EA7 /* WalletConnectPairing */,
 				4E2FA6B52CF4177C00D46EA7 /* WalletConnectPush */,
 				4E2FA6B72CF4177C00D46EA7 /* WalletConnectVerify */,
+				4EAD6A222CF6013200F1D9CF /* FlowWalletKit */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 154B8928276A1EEB00780E93 /* FRW-dev.app */;
@@ -6347,6 +6342,7 @@
 				4E2FA6992CF40FE700D46EA7 /* WalletConnectPush */,
 				4E2FA69B2CF40FE700D46EA7 /* WalletConnectVerify */,
 				4E2FA6A52CF410B700D46EA7 /* ReownRouter */,
+				4EAD6A202CF6012200F1D9CF /* FlowWalletKit */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 15C58C6D2868A4EE00BD4FC6 /* FRW.app */;
@@ -6520,8 +6516,8 @@
 				4E660F1A2C80B42F00E5239E /* XCRemoteSwiftPackageReference "CollectionViewPagingLayout" */,
 				4E131A982CA17389002B258D /* XCRemoteSwiftPackageReference "PocketSVG" */,
 				4E09A1EC2CC794900099606E /* XCRemoteSwiftPackageReference "mixpanel-swift" */,
-				4EDE41E92CF5944500A6EAB3 /* XCLocalSwiftPackageReference "../Flow-Wallet-Core" */,
 				4E2FA68C2CF40EAB00D46EA7 /* XCRemoteSwiftPackageReference "reown-swift" */,
+				4EAD6A1F2CF6012200F1D9CF /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */,
 			);
 			productRefGroup = 15EC9DEF274FD1FC00F70CD9 /* Products */;
 			projectDirPath = "";
@@ -9166,13 +9162,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		4EDE41E92CF5944500A6EAB3 /* XCLocalSwiftPackageReference "../Flow-Wallet-Core" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "../Flow-Wallet-Core";
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		1500783028682B8900A00109 /* XCRemoteSwiftPackageReference "SPIndicator" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -9653,6 +9642,14 @@
 			requirement = {
 				kind = revision;
 				revision = 828bce9b79deb0b7c02ebdce3e30f63a1f142fd3;
+			};
+		};
+		4EAD6A1F2CF6012200F1D9CF /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Outblock/Flow-Wallet-Kit";
+			requirement = {
+				branch = six;
+				kind = branch;
 			};
 		};
 		4ED6DD0E285A22A800105133 /* XCRemoteSwiftPackageReference "IrregularGradient" */ = {
@@ -10261,6 +10258,16 @@
 			package = 4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */;
 			productName = TrustWeb3Provider;
 		};
+		4EAD6A202CF6012200F1D9CF /* FlowWalletKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4EAD6A1F2CF6012200F1D9CF /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */;
+			productName = FlowWalletKit;
+		};
+		4EAD6A222CF6013200F1D9CF /* FlowWalletKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4EAD6A1F2CF6012200F1D9CF /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */;
+			productName = FlowWalletKit;
+		};
 		4EC56B2C281D3ED000246878 /* FirebaseRemoteConfig */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 154B887C2765EBA700780E93 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
@@ -10273,11 +10280,6 @@
 		};
 		4EDE41EA2CF5944500A6EAB3 /* FlowWalletKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = FlowWalletKit;
-		};
-		4EDE41EC2CF5945400A6EAB3 /* FlowWalletKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4EDE41E92CF5944500A6EAB3 /* XCLocalSwiftPackageReference "../Flow-Wallet-Core" */;
 			productName = FlowWalletKit;
 		};
 		4EEE9DC62BD243DB00685AAA /* FirebaseAnalytics */ = {

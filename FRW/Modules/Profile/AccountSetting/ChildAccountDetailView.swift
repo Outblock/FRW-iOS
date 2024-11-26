@@ -71,7 +71,7 @@ class ChildAccountDetailViewModel: ObservableObject {
         if index == 0 {
             if var list = collections {
                 if !showEmptyCollection {
-                    list = list.filter { !$0.isEmpty }
+                    list = list.filter { $0.count > 0  }
                 }
                 accessibleItems = list
             } else {
@@ -415,14 +415,14 @@ struct ChildAccountDetailView: RouteableView {
             LLSegmenControl(titles: ["collections".localized, "coins_cap".localized]) { idx in
                 vm.switchTab(index: idx)
             }
-            if vm.accessibleItems.isEmpty, !vm.isLoading {
+            if vm.accessibleItems.count == 0, !vm.isLoading {
                 emptyAccessibleView
             }
             ForEach(vm.accessibleItems.indices, id: \.self) { idx in
                 AccessibleItemView(item: vm.accessibleItems[idx]) { item in
                     if let collectionInfo = item as? NFTCollection, let addr = vm.childAccount.addr,
                        let pathId = collectionInfo.collection.path?.storagePathId(),
-                       !collectionInfo.isEmpty {
+                       collectionInfo.count > 0 {
                         Router.route(to: RouteMap.NFT.collectionDetail(
                             addr,
                             pathId,

@@ -1,5 +1,5 @@
 {
-  "originHash" : "06ce4e84737de847ffa019b003ca853f1427c6626c9115ef82a70b72f4b8dd32",
+  "originHash" : "9217cd13f025ce17983efb8f2aab5c3cecbf096ed4ee0f608330f4a1eef1665d",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -133,6 +133,15 @@
       "location" : "https://github.com/outblock/flow-swift.git",
       "state" : {
         "revision" : "5888bf6012f3ea87fbdb07905e6d4817d421ffcb"
+      }
+    },
+    {
+      "identity" : "flow-wallet-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Outblock/Flow-Wallet-Kit",
+      "state" : {
+        "branch" : "six",
+        "revision" : "73f57333f5a3e6b49ba0fe723a62d8ca91e5b1aa"
       }
     },
     {
