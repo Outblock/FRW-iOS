@@ -171,6 +171,7 @@ extension RemoteConfigManager {
     enum ConditionType: String, Codable {
         case unknow
         case canUpgrade
+        case insufficientStorage
         case isIOS
         case isAndroid
         case isWeb
@@ -202,6 +203,9 @@ extension RemoteConfigManager {
                 }
             case .isIOS:
                 return true
+            case .insufficientStorage:
+                // TODO: [AB] Not very elegant adding a dependency here, but implementing in a different way would probably require major refactoring
+                return WalletManager.shared.isStorageInsufficient
             default:
                 return false
             }

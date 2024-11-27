@@ -18,51 +18,37 @@ extension BrowserAuthzViewModel {
 // MARK: - BrowserAuthzViewModel
 
 class BrowserAuthzViewModel: ObservableObject {
-    // MARK: Lifecycle
-
-    init(
-        title: String,
-        url: String,
-        logo: String?,
-        cadence: String,
-        arguments: [Flow.Argument]? = nil,
-        callback: @escaping BrowserAuthnViewModel.Callback
-    ) {
+    @Published var title: String
+    @Published var urlString: String
+    @Published var logo: String?
+    @Published var cadence: String
+    @Published var cadenceFormatted: AttributedString?
+    @Published var arguments: [Flow.Argument]?
+    @Published var argumentsFormatted: AttributedString?
+    @Published var isScriptShowing: Bool = false
+    
+    @Published var template: FlowTransactionTemplate?
+    
+    private var callback: BrowserAuthzViewModel.Callback?
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
+    
+    init(title: String, url: String, logo: String?, cadence: String, arguments: [Flow.Argument]? = nil, callback: @escaping BrowserAuthnViewModel.Callback) {
         self.title = title
         self.urlString = url
         self.logo = logo
         self.cadence = cadence
         self.arguments = arguments
         self.callback = callback
+        checkForInsufficientStorage()
     }
-
+    
     deinit {
         callback?(false)
         WalletConnectManager.shared.reloadPendingRequests()
     }
-
+    
     // MARK: Internal
-
-    @Published
-    var title: String
-    @Published
-    var urlString: String
-    @Published
-    var logo: String?
-    @Published
-    var cadence: String
-    @Published
-    var cadenceFormatted: AttributedString?
-    @Published
-    var arguments: [Flow.Argument]? = nil
-    @Published
-    var argumentsFormatted: AttributedString?
-    @Published
-    var isScriptShowing: Bool = false
-
-    @Published
-    var template: FlowTransactionTemplate?
-
+    
     func didChooseAction(_ result: Bool) {
         Router.dismiss { [weak self] in
             guard let self else { return }
@@ -70,7 +56,7 @@ class BrowserAuthzViewModel: ObservableObject {
             self.callback = nil
         }
     }
-
+    
     func formatArguments() {
         guard let arguments else {
             return
@@ -80,7 +66,7 @@ class BrowserAuthzViewModel: ObservableObject {
                 .joined(separator: "\n\n")
         )
     }
-
+    
     func formatCode() {
         guard let highlightr = Highlightr() else {
             return
@@ -92,14 +78,14 @@ class BrowserAuthzViewModel: ObservableObject {
         }
         cadenceFormatted = AttributedString(highlightedCode)
     }
-
+    
     func checkTemplate() {
         let network = LocalUserDefaults.shared.flowNetwork.rawValue.lowercased()
         guard let dataString = cadence.data(using: .utf8)?.base64EncodedString() else {
             return
         }
         let request = FlixAuditRequest(cadenceBase64: dataString, network: network)
-
+        
         Task {
             do {
                 let response: FlowTransactionTemplate = try await Network.requestWithRawModel(
@@ -114,14 +100,20 @@ class BrowserAuthzViewModel: ObservableObject {
             }
         }
     }
-
+    
     func changeScriptViewShowingAction(_ show: Bool) {
         withAnimation {
             self.isScriptShowing = show
         }
     }
+}
 
-    // MARK: Private
+// MARK: - InsufficientStorageToastViewModel
 
-    private var callback: BrowserAuthzViewModel.Callback?
+extension BrowserAuthzViewModel: InsufficientStorageToastViewModel {
+    var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
+    
+    private func checkForInsufficientStorage() {
+        self._insufficientStorageFailure = insufficientStorageCheckForTransfer()
+    }
 }
