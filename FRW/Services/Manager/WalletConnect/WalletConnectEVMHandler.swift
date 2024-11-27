@@ -8,11 +8,11 @@
 import BigInt
 import Flow
 import Foundation
-import WalletConnectRouter
+import ReownRouter
+import ReownWalletKit
 import WalletConnectSign
 import Web3Core
 import web3swift
-import Web3Wallet
 
 // MARK: - WalletConnectEVMMethod
 

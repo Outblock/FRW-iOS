@@ -104,6 +104,7 @@ struct TokenDetailView: RouteableView {
                                 .foregroundColor(.LL.Neutrals.neutrals1)
                                 .font(.inter(size: 16, weight: .semibold))
                             Image("icon-right-arrow")
+                                .visibility(self.vm.isTokenDetailsButtonEnabled ? .visible: .gone)
                         }
                         .frame(height: 32)
                         .padding(.trailing, 10)
@@ -132,6 +133,7 @@ struct TokenDetailView: RouteableView {
                     }
                     .padding(.leading, -18)
                 }
+                .allowsHitTesting(self.vm.isTokenDetailsButtonEnabled)
 
                 Spacer()
 
