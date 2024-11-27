@@ -18,18 +18,10 @@ extension VerifyPinViewModel {
     }
 }
 
-class VerifyPinViewModel: ObservableObject {
-    @Published var currentVerifyType: VerifyPinViewModel.VerifyType = .pin
-    @Published var inputPin: String = ""
-    @Published var pinCodeErrorTimes: Int = 0
-    var callback: VerifyCallback?
-    private lazy var generator: UINotificationFeedbackGenerator = {
-        let obj = UINotificationFeedbackGenerator()
-        return obj
-    }()
+// MARK: - VerifyPinViewModel
 
-    private var isBionicVerifing: Bool = false
-    private var canVerifyBionicAutomatically = true
+class VerifyPinViewModel: ObservableObject {
+    // MARK: Lifecycle
 
     init(callback: VerifyCallback?) {
         self.callback = callback
@@ -44,11 +36,39 @@ class VerifyPinViewModel: ObservableObject {
             break
         }
 
-        NotificationCenter.default.addObserver(self, selector: #selector(onAppBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onAppBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
-    @objc private func onAppBecomeActive() {
-        if currentVerifyType == .bionic, isBionicVerifing == false, canVerifyBionicAutomatically == true {
+    // MARK: Internal
+
+    @Published
+    var currentVerifyType: VerifyPinViewModel.VerifyType = .pin
+    @Published
+    var inputPin: String = ""
+    @Published
+    var pinCodeErrorTimes: Int = 0
+    var callback: VerifyCallback?
+
+    // MARK: Private
+
+    private lazy var generator: UINotificationFeedbackGenerator = {
+        let obj = UINotificationFeedbackGenerator()
+        return obj
+    }()
+
+    private var isBionicVerifing: Bool = false
+    private var canVerifyBionicAutomatically = true
+
+    @objc
+    private func onAppBecomeActive() {
+        if currentVerifyType == .bionic, isBionicVerifing == false,
+           canVerifyBionicAutomatically == true
+        {
             verifyBionicAction()
         }
     }

@@ -11,12 +11,30 @@ import UIKit
 
 private let ItemSize: CGFloat = 20
 
+// MARK: - LLPinCodeItemView
+
 private class LLPinCodeItemView: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("")
+    }
+
+    // MARK: Internal
+
     var isTyped: Bool = false {
         didSet {
             foreHolder.isHidden = !isTyped
         }
     }
+
+    // MARK: Private
 
     private lazy var bgHolder: UIView = {
         let view = UIView()
@@ -31,16 +49,6 @@ private class LLPinCodeItemView: UIView {
         view.layer.cornerRadius = ItemSize / 2
         return view
     }()
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("")
-    }
 
     private func setup() {
         isUserInteractionEnabled = false
@@ -62,26 +70,10 @@ private class LLPinCodeItemView: UIView {
     }
 }
 
+// MARK: - LLPinCodeView
+
 class LLPinCodeView: UIView, UITextInputTraits {
-    public var keyboardType = UIKeyboardType.numberPad
-
-    private let numberOfPin: Int = 6
-    private let itemSpacing: CGFloat = 24
-    private(set) var text: String = "" {
-        didSet {
-            debugPrint("LLPinCodeView text changed: \(text)")
-            callback?(text)
-        }
-    }
-
-    var callback: ((String) -> Void)?
-
-    private lazy var stackView: UIStackView = {
-        let view = UIStackView(frame: bounds)
-        view.axis = .horizontal
-        view.spacing = itemSpacing
-        return view
-    }()
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -92,6 +84,44 @@ class LLPinCodeView: UIView, UITextInputTraits {
     required init?(coder _: NSCoder) {
         fatalError("")
     }
+
+    // MARK: Public
+
+    public var keyboardType = UIKeyboardType.numberPad
+
+    // MARK: Internal
+
+    var callback: ((String) -> Void)?
+
+    private(set) var text: String = "" {
+        didSet {
+            debugPrint("LLPinCodeView text changed: \(text)")
+            callback?(text)
+        }
+    }
+
+    override var intrinsicContentSize: CGSize {
+        CGSize(
+            width: ItemSize * CGFloat(numberOfPin) + itemSpacing * CGFloat(numberOfPin - 1),
+            height: ItemSize
+        )
+    }
+
+    func changeText(_ text: String) {
+        self.text = text
+        reload()
+    }
+
+    // MARK: Private
+
+    private let numberOfPin: Int = 6
+    private let itemSpacing: CGFloat = 24
+    private lazy var stackView: UIStackView = {
+        let view = UIStackView(frame: bounds)
+        view.axis = .horizontal
+        view.spacing = itemSpacing
+        return view
+    }()
 
     private func setup() {
         snp.makeConstraints { make in
@@ -117,26 +147,19 @@ class LLPinCodeView: UIView, UITextInputTraits {
         }
     }
 
-    func changeText(_ text: String) {
-        self.text = text
-        reload()
-    }
-
     private func reload() {
         for i in 0 ..< numberOfPin {
             let itemView = stackView.arrangedSubviews[i] as! LLPinCodeItemView
             itemView.isTyped = i < text.count
         }
     }
-
-    override var intrinsicContentSize: CGSize {
-        return CGSize(width: ItemSize * CGFloat(numberOfPin) + itemSpacing * CGFloat(numberOfPin - 1), height: ItemSize)
-    }
 }
+
+// MARK: UIKeyInput
 
 extension LLPinCodeView: UIKeyInput {
     var hasText: Bool {
-        return true
+        true
     }
 
     func insertText(_ text: String) {
@@ -182,12 +205,15 @@ extension LLPinCodeView {
     }
 
     override var canBecomeFirstResponder: Bool {
-        return true
+        true
     }
 }
 
+// MARK: - PinCodeTextField
+
 struct PinCodeTextField: UIViewRepresentable {
-    @Binding var text: String
+    @Binding
+    var text: String
 
     func makeUIView(context _: Context) -> LLPinCodeView {
         let view = LLPinCodeView()

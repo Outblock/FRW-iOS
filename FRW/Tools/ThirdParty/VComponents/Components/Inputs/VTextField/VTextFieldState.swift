@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Text Field State
+// MARK: - VTextFieldState
 
 /// Enum that describes state, such as `enabled`, `focused`, or `disabled`.
 public enum VTextFieldState: Int, CaseIterable {
@@ -22,6 +22,8 @@ public enum VTextFieldState: Int, CaseIterable {
     /// Disabled.
     case disabled
 
+    // MARK: Public
+
     // MARK: Properties
 
     /// Indicates if state is enabled.
@@ -33,33 +35,14 @@ public enum VTextFieldState: Int, CaseIterable {
         }
     }
 
+    // MARK: Internal
+
     var isFocused: Bool {
         switch self {
         case .enabled: return false
         case .focused: return true
         case .disabled: return false
         }
-    }
-
-    // MARK: Helpers
-
-    static func baseTextFieldState(_ state: Binding<VTextFieldState>) -> Binding<VBaseTextFieldState> {
-        .init(
-            get: {
-                switch state.wrappedValue {
-                case .enabled: return .enabled
-                case .focused: return .focused
-                case .disabled: return .disabled
-                }
-            },
-            set: { baseState in
-                switch baseState {
-                case .enabled: state.wrappedValue = .enabled
-                case .focused: state.wrappedValue = .focused
-                case .disabled: state.wrappedValue = .disabled
-                }
-            }
-        )
     }
 
     var clearButtonState: VCloseButtonState {
@@ -84,6 +67,29 @@ public enum VTextFieldState: Int, CaseIterable {
         case .focused: return .enabled
         case .disabled: return .disabled
         }
+    }
+
+    // MARK: Helpers
+
+    static func baseTextFieldState(_ state: Binding<VTextFieldState>)
+        -> Binding<VBaseTextFieldState>
+    {
+        .init(
+            get: {
+                switch state.wrappedValue {
+                case .enabled: return .enabled
+                case .focused: return .focused
+                case .disabled: return .disabled
+                }
+            },
+            set: { baseState in
+                switch baseState {
+                case .enabled: state.wrappedValue = .enabled
+                case .focused: state.wrappedValue = .focused
+                case .disabled: state.wrappedValue = .disabled
+                }
+            }
+        )
     }
 }
 

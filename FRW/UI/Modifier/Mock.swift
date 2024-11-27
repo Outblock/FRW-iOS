@@ -7,6 +7,8 @@
 
 import Foundation
 
+// MARK: - Mockable
+
 protocol Mockable {
     static func mock() -> Self
 }

@@ -9,8 +9,7 @@ import BiometricAuthentication
 import Foundation
 
 class RequestSecureViewModel: ViewModel {
-    @Published
-    private(set) var state: RequestSecureView.ViewState = .init()
+    // MARK: Lifecycle
 
     init() {
         if BioMetricAuthenticator.shared.faceIDAvailable() {
@@ -28,18 +27,24 @@ class RequestSecureViewModel: ViewModel {
         }
     }
 
+    // MARK: Internal
+
+    @Published
+    private(set) var state: RequestSecureView.ViewState = .init()
+
     func trigger(_ input: RequestSecureView.Action) {
         switch input {
         case .faceID:
-            BioMetricAuthenticator.authenticateWithBioMetrics(reason: "Need your permission") { result in
-                switch result {
-                case .success:
-                    Router.popToRoot()
-                case let .failure(error):
-                    print("Authentication Failed")
-                    print(error)
+            BioMetricAuthenticator
+                .authenticateWithBioMetrics(reason: "Need your permission") { result in
+                    switch result {
+                    case .success:
+                        Router.popToRoot()
+                    case let .failure(error):
+                        print("Authentication Failed")
+                        print(error)
+                    }
                 }
-            }
         case .pin:
             Router.route(to: RouteMap.PinCode.pinCode)
         }

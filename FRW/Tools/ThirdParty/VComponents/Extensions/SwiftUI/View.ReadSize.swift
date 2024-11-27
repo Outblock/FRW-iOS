@@ -24,9 +24,10 @@ public extension View {
     }
 }
 
-// MARK: - Size Preference Key
+// MARK: - SizePreferenceKey
 
 private struct SizePreferenceKey: PreferenceKey {
     static var defaultValue: CGSize = .zero
+
     static func reduce(value _: inout CGSize, nextValue _: () -> CGSize) {}
 }

@@ -22,10 +22,10 @@ extension ProfileEditViewModel {
     }
 }
 
-class ProfileEditViewModel: ViewModel {
-    @Published var state: State
+// MARK: - ProfileEditViewModel
 
-    private var cancellableSet = Set<AnyCancellable>()
+class ProfileEditViewModel: ViewModel {
+    // MARK: Lifecycle
 
     init() {
         state = State()
@@ -40,6 +40,11 @@ class ProfileEditViewModel: ViewModel {
         }.store(in: &cancellableSet)
     }
 
+    // MARK: Internal
+
+    @Published
+    var state: State
+
     func trigger(_ input: Input) {
         switch input {
         case let .changePrivate(isPrivate):
@@ -48,6 +53,10 @@ class ProfileEditViewModel: ViewModel {
             editAvatarAction()
         }
     }
+
+    // MARK: Private
+
+    private var cancellableSet = Set<AnyCancellable>()
 
     private func editAvatarAction() {
         gotoAvatarEdit()
@@ -66,7 +75,8 @@ class ProfileEditViewModel: ViewModel {
 
         Task {
             do {
-                let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.Profile.updatePrivate(isPrivate))
+                let response: Network.EmptyResponse = try await Network
+                    .requestWithRawModel(FRWAPI.Profile.updatePrivate(isPrivate))
                 DispatchQueue.main.async {
                     HUD.dismissLoading()
                     if response.httpCode == 200 {

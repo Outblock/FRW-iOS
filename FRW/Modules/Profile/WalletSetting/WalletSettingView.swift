@@ -7,21 +7,26 @@
 
 import SwiftUI
 
+// MARK: - WalletSettingView
+
 struct WalletSettingView: RouteableView {
-    var title: String {
-        "account".localized.capitalized
-    }
-
-    var address: String
-    @State var showAccountEditor = false
-    @State var user: WalletAccount.User
-
-    @StateObject private var vm = WalletSettingViewModel()
-    @AppStorage(LocalUserDefaults.Keys.freeGas.rawValue) private var localGreeGas = true
+    // MARK: Lifecycle
 
     init(address: String) {
         self.address = address
         user = WalletManager.shared.walletAccount.readInfo(at: address)
+    }
+
+    // MARK: Internal
+
+    var address: String
+    @State
+    var showAccountEditor = false
+    @State
+    var user: WalletAccount.User
+
+    var title: String {
+        "account".localized.capitalized
     }
 
     var body: some View {
@@ -50,7 +55,12 @@ struct WalletSettingView: RouteableView {
                                     }
                                 }
                             } label: {
-                                ProfileSecureView.ItemCell(title: "private_key".localized, style: .arrow, isOn: false, toggleAction: nil)
+                                ProfileSecureView.ItemCell(
+                                    title: "private_key".localized,
+                                    style: .arrow,
+                                    isOn: false,
+                                    toggleAction: nil
+                                )
                             }
 
                             Divider().foregroundColor(.LL.Neutrals.background)
@@ -63,8 +73,13 @@ struct WalletSettingView: RouteableView {
                                     }
                                 }
                             } label: {
-                                ProfileSecureView.ItemCell(title: "recovery_phrase".localized, style: .arrow, isOn: false, toggleAction: nil)
-                                    .contentShape(Rectangle())
+                                ProfileSecureView.ItemCell(
+                                    title: "recovery_phrase".localized,
+                                    style: .arrow,
+                                    isOn: false,
+                                    toggleAction: nil
+                                )
+                                .contentShape(Rectangle())
                             }
                         }
                         .padding(.horizontal, 16)
@@ -75,7 +90,12 @@ struct WalletSettingView: RouteableView {
                             Button {
                                 Router.route(to: RouteMap.Profile.secureEnclavePrivateKey)
                             } label: {
-                                ProfileSecureView.ItemCell(title: "private_key".localized, style: .arrow, isOn: false, toggleAction: nil)
+                                ProfileSecureView.ItemCell(
+                                    title: "private_key".localized,
+                                    style: .arrow,
+                                    isOn: false,
+                                    toggleAction: nil
+                                )
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -88,7 +108,12 @@ struct WalletSettingView: RouteableView {
                             Button {
                                 Router.route(to: RouteMap.Profile.accountKeys)
                             } label: {
-                                ProfileSecureView.ItemCell(title: "wallet_account_key".localized, style: .arrow, isOn: false, toggleAction: nil)
+                                ProfileSecureView.ItemCell(
+                                    title: "wallet_account_key".localized,
+                                    style: .arrow,
+                                    isOn: false,
+                                    toggleAction: nil
+                                )
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -194,10 +219,20 @@ struct WalletSettingView: RouteableView {
     }
 
     func onlyShowInfo() -> Bool {
-        let list = EVMAccountManager.shared.accounts.filter { $0.showAddress.lowercased() == address.lowercased() }
+        let list = EVMAccountManager.shared.accounts
+            .filter { $0.showAddress.lowercased() == address.lowercased() }
         return !list.isEmpty
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = WalletSettingViewModel()
+    @AppStorage(LocalUserDefaults.Keys.freeGas.rawValue)
+    private var localGreeGas = true
 }
+
+// MARK: - WalletSettingView_Previews
 
 struct WalletSettingView_Previews: PreviewProvider {
     static var previews: some View {

@@ -16,8 +16,7 @@ public extension WallectSecureEnclave {
     }
 
     enum Store {
-        private static var service: String = "io.outblock.lilico.securekey"
-        private static var userKey: String = "user"
+        // MARK: Public
 
         public static func store(user: StoreUser) throws {
             let list = try? loginedUser()
@@ -44,6 +43,11 @@ public extension WallectSecureEnclave {
             }
             return users
         }
+
+        // MARK: Private
+
+        private static var service: String = "io.outblock.lilico.securekey"
+        private static var userKey: String = "user"
     }
 
     struct StoreUser: Codable {

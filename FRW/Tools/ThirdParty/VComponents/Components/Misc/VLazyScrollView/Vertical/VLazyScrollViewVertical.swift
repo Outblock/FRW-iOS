@@ -7,13 +7,10 @@
 
 import SwiftUI
 
-// MARK: - V Lazy Scroll View Vertical
+// MARK: - VLazyScrollViewVertical
 
 struct VLazyScrollViewVertical<Content>: View where Content: View {
-    // MARK: Properties
-
-    private let model: VLazyScrollViewModelVertical
-    private let content: () -> Content
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -25,31 +22,48 @@ struct VLazyScrollViewVertical<Content>: View where Content: View {
         self.content = content
     }
 
+    // MARK: Internal
+
     // MARK: Body
 
     var body: some View {
         if #available(iOS 16.0, *) {
             ScrollView(.vertical, showsIndicators: model.misc.showIndicator, content: {
-                LazyVStack(alignment: model.layout.alignment, spacing: model.layout.rowSpacing, content: {
-                    content()
-                })
+                LazyVStack(
+                    alignment: model.layout.alignment,
+                    spacing: model.layout.rowSpacing,
+                    content: {
+                        content()
+                    }
+                )
             }).scrollContentBackground(.hidden)
         } else {
             ScrollView(.vertical, showsIndicators: model.misc.showIndicator, content: {
-                LazyVStack(alignment: model.layout.alignment, spacing: model.layout.rowSpacing, content: {
-                    content()
-                })
+                LazyVStack(
+                    alignment: model.layout.alignment,
+                    spacing: model.layout.rowSpacing,
+                    content: {
+                        content()
+                    }
+                )
             })
         }
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VLazyScrollViewModelVertical
+    private let content: () -> Content
 }
 
-// MARK: - Preview
+// MARK: - VLazyScrollViewVertical_Previews
 
 struct VLazyScrollViewVertical_Previews: PreviewProvider {
     static var previews: some View {
         VLazyScrollViewVertical(model: .init(), content: {
-            ForEach(1 ..< 100, content: { num in
+            ForEach(1..<100, content: { num in
                 Text(String(num))
             })
         })

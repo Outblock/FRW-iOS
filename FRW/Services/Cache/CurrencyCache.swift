@@ -11,22 +11,32 @@ import SwiftUI
 
 private let CacheUpdateInverval = TimeInterval(60)
 
+// MARK: - CurrencyCache
+
 class CurrencyCache: ObservableObject {
-    static let cache = CurrencyCache()
-
-    @Published var currentCurrency: Currency = LocalUserDefaults.shared.currentCurrency
-    @Published var currentCurrencyRate: Double = LocalUserDefaults.shared.currentCurrencyRate
-
-    private var lastUpdateTime: Date?
-    private var isRefreshing = false
+    // MARK: Lifecycle
 
     init() {
         refreshRate()
-        NotificationCenter.default.addObserver(self, selector: #selector(refreshRate), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(refreshRate),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
+    // MARK: Internal
+
+    static let cache = CurrencyCache()
+
+    @Published
+    var currentCurrency: Currency = LocalUserDefaults.shared.currentCurrency
+    @Published
+    var currentCurrencyRate: Double = LocalUserDefaults.shared.currentCurrencyRate
+
     var currencySymbol: String {
-        return currentCurrency.symbol
+        currentCurrency.symbol
     }
 
     func changeCurrency(currency: Currency, rate: Double) {
@@ -37,10 +47,16 @@ class CurrencyCache: ObservableObject {
         currentCurrency = currency
         currentCurrencyRate = checkedRate
     }
+
+    // MARK: Private
+
+    private var lastUpdateTime: Date?
+    private var isRefreshing = false
 }
 
 extension CurrencyCache {
-    @objc private func refreshRate() {
+    @objc
+    private func refreshRate() {
         if currentCurrency == .USD {
             if currentCurrencyRate != 1 {
                 currentCurrencyRate = 1
@@ -50,7 +66,9 @@ extension CurrencyCache {
         }
 
         let now = Date()
-        if let lastUpdateTime = lastUpdateTime, abs(lastUpdateTime.timeIntervalSince(now)) < CacheUpdateInverval {
+        if let lastUpdateTime = lastUpdateTime,
+           abs(lastUpdateTime.timeIntervalSince(now)) < CacheUpdateInverval
+        {
             return
         }
 
@@ -65,7 +83,8 @@ extension CurrencyCache {
 
         Task {
             do {
-                let response: CurrencyRateResponse = try await Network.request(FRWAPI.Utils.currencyRate(requestingCurrency))
+                let response: CurrencyRateResponse = try await Network
+                    .request(FRWAPI.Utils.currencyRate(requestingCurrency))
                 if self.currentCurrency != requestingCurrency {
                     // expired response
                     return

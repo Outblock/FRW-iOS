@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Segmented Picker
+// MARK: - VSegmentedPicker
 
 /// Item picker component that selects from a set of mutually exclusive values, and displays their representative content horizontally.
 ///
@@ -45,30 +45,8 @@ public struct VSegmentedPicker<Data, RowContent>: View
     where
     Data: RandomAccessCollection,
     Data.Index == Int,
-    RowContent: View
-{
-    // MARK: Properties
-
-    private let model: VSegmentedPickerModel
-
-    private let state: VSegmentedPickerState
-    @State private var pressedIndex: Int?
-    private func rowState(for index: Int) -> VSegmentedPickerRowState { .init(
-        isEnabled: state.isEnabled && !disabledIndexes.contains(index),
-        isPressed: pressedIndex == index
-    ) }
-
-    @Binding private var selectedIndex: Int?
-    @State private var animatableSelectedIndex: Int?
-
-    private let headerTitle: String?
-    private let footerTitle: String?
-    private let disabledIndexes: Set<Int>
-
-    private let data: Data
-    private let rowContent: (Data.Element) -> RowContent
-
-    @State private var rowWidth: CGFloat = .zero
+    RowContent: View {
+    // MARK: Lifecycle
 
     // MARK: Initializers - View Builder
 
@@ -107,8 +85,7 @@ public struct VSegmentedPicker<Data, RowContent>: View
     )
         where
         Data == [String],
-        RowContent == VText
-    {
+        RowContent == VText {
         self.init(
             model: model,
             state: state,
@@ -142,8 +119,7 @@ public struct VSegmentedPicker<Data, RowContent>: View
     )
         where
         Data == [Item],
-        Item: VPickableItem
-    {
+        Item: VPickableItem {
         self.init(
             model: model,
             state: state,
@@ -173,8 +149,7 @@ public struct VSegmentedPicker<Data, RowContent>: View
         where
         Data == [Item],
         RowContent == VText,
-        Item: VPickableTitledItem
-    {
+        Item: VPickableTitledItem {
         self.init(
             model: model,
             state: state,
@@ -197,6 +172,8 @@ public struct VSegmentedPicker<Data, RowContent>: View
         )
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -209,6 +186,30 @@ public struct VSegmentedPicker<Data, RowContent>: View
         })
     }
 
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VSegmentedPickerModel
+
+    private let state: VSegmentedPickerState
+    @State
+    private var pressedIndex: Int?
+    @Binding
+    private var selectedIndex: Int?
+    @State
+    private var animatableSelectedIndex: Int?
+
+    private let headerTitle: String?
+    private let footerTitle: String?
+    private let disabledIndexes: Set<Int>
+
+    private let data: Data
+    private let rowContent: (Data.Element) -> RowContent
+
+    @State
+    private var rowWidth: CGFloat = .zero
+
     private var pickerView: some View {
         ZStack(alignment: .leading, content: {
             background
@@ -220,7 +221,8 @@ public struct VSegmentedPicker<Data, RowContent>: View
         .cornerRadius(model.layout.cornerRadius)
     }
 
-    @ViewBuilder private var headerView: some View {
+    @ViewBuilder
+    private var headerView: some View {
         if let headerTitle = headerTitle, !headerTitle.isEmpty {
             VText(
                 type: .oneLine,
@@ -233,7 +235,8 @@ public struct VSegmentedPicker<Data, RowContent>: View
         }
     }
 
-    @ViewBuilder private var footerView: some View {
+    @ViewBuilder
+    private var footerView: some View {
         if let footerTitle = footerTitle, !footerTitle.isEmpty {
             VText(
                 type: .multiLine(limit: nil, alignment: .leading),
@@ -256,7 +259,10 @@ public struct VSegmentedPicker<Data, RowContent>: View
             .frame(width: rowWidth)
             .scaleEffect(indicatorScale)
             .opacity(selectedIndex == nil ? 0 : 1)
-            .offset(x: rowWidth * .init(animatableSelectedIndex ?? selectedIndex ?? (data.count / 2)))
+            .offset(
+                x: rowWidth *
+                    .init(animatableSelectedIndex ?? selectedIndex ?? (data.count / 2))
+            )
             .foregroundColor(model.colors.indicator.for(state))
             .shadow(
                 color: model.colors.indicatorShadow.for(state),
@@ -267,7 +273,7 @@ public struct VSegmentedPicker<Data, RowContent>: View
 
     private var rows: some View {
         HStack(spacing: 0, content: {
-            ForEach(0 ..< data.count, content: { i in
+            ForEach(0..<data.count, content: { i in
                 VBaseButton(
                     isEnabled: state.isEnabled && !disabledIndexes.contains(i),
                     gesture: { gestureState in
@@ -288,7 +294,7 @@ public struct VSegmentedPicker<Data, RowContent>: View
 
     private var dividers: some View {
         HStack(spacing: 0, content: {
-            ForEach(0 ..< data.count, content: { i in
+            ForEach(0..<data.count, content: { i in
                 Spacer()
 
                 if i <= data.count - 2 {
@@ -301,12 +307,27 @@ public struct VSegmentedPicker<Data, RowContent>: View
         })
     }
 
+    // MARK: State Indication
+
+    private var indicatorScale: CGFloat {
+        switch selectedIndex {
+        case pressedIndex: return model.layout.indicatorPressedScale
+        case _: return 1
+        }
+    }
+
+    private func rowState(for index: Int) -> VSegmentedPickerRowState { .init(
+        isEnabled: state.isEnabled && !disabledIndexes.contains(index),
+        isPressed: pressedIndex == index
+    ) }
+
     // MARK: State Syncs
 
     private func syncInternalStateWithState() {
         DispatchQueue.main.async {
             if animatableSelectedIndex == nil || animatableSelectedIndex != selectedIndex {
-                withAnimation(model.animations.selection) { animatableSelectedIndex = selectedIndex }
+                withAnimation(model.animations.selection) { animatableSelectedIndex = selectedIndex
+                }
             }
         }
     }
@@ -316,15 +337,6 @@ public struct VSegmentedPicker<Data, RowContent>: View
     private func setSelectedIndex(to index: Int) {
         withAnimation(model.animations.selection) { animatableSelectedIndex = index }
         selectedIndex = index
-    }
-
-    // MARK: State Indication
-
-    private var indicatorScale: CGFloat {
-        switch selectedIndex {
-        case pressedIndex: return model.layout.indicatorPressedScale
-        case _: return 1
-        }
     }
 
     private func contentOpacity(for index: Int) -> Double {
@@ -343,13 +355,15 @@ public struct VSegmentedPicker<Data, RowContent>: View
     }
 }
 
-// MARK: - Preview
+// MARK: - VSegmentedPicker_Previews
 
 struct VSegmentedPicker_Previews: PreviewProvider {
-    @State private static var selection: PickerRow = .red
+    // MARK: Internal
 
     enum PickerRow: Int, VPickableTitledItem {
         case red, green, blue
+
+        // MARK: Internal
 
         var pickerTitle: String {
             switch self {
@@ -368,4 +382,9 @@ struct VSegmentedPicker_Previews: PreviewProvider {
         )
         .padding(20)
     }
+
+    // MARK: Private
+
+    @State
+    private static var selection: PickerRow = .red
 }

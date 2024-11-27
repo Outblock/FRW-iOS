@@ -8,8 +8,10 @@
 import SwiftUI
 
 class CurrencyListViewModel: ObservableObject {
-    @Published var datas: [Currency] = Currency.allCases
-    @Published var selectedCurrency: Currency = CurrencyCache.cache.currentCurrency
+    @Published
+    var datas: [Currency] = Currency.allCases
+    @Published
+    var selectedCurrency: Currency = CurrencyCache.cache.currentCurrency
 
     func changeCurrencyAction(_ newCurrency: Currency) {
         if selectedCurrency == newCurrency {
@@ -32,7 +34,8 @@ class CurrencyListViewModel: ObservableObject {
         HUD.loading()
         Task {
             do {
-                let response: CurrencyRateResponse = try await Network.request(FRWAPI.Utils.currencyRate(newCurrency))
+                let response: CurrencyRateResponse = try await Network
+                    .request(FRWAPI.Utils.currencyRate(newCurrency))
 
                 if let success = response.success, success != true {
                     failedBlock()

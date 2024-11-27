@@ -8,8 +8,11 @@
 import Kingfisher
 import SwiftUI
 
+// MARK: - SwapConfirmView
+
 struct SwapConfirmView: View {
-    @EnvironmentObject var vm: SwapViewModel
+    @EnvironmentObject
+    var vm: SwapViewModel
 
     var body: some View {
         VStack {
@@ -57,31 +60,6 @@ struct SwapConfirmView: View {
         .padding(.vertical, 20)
     }
 
-    func tokenView(token: TokenModel, num: String) -> some View {
-        VStack(spacing: 5) {
-            KFImage.url(token.icon)
-                .placeholder {
-                    Image("placeholder")
-                        .resizable()
-                }
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 40, height: 40)
-                .clipShape(Circle())
-
-            Text("\(token.symbol?.uppercased() ?? "")")
-                .foregroundColor(.LL.Neutrals.text)
-                .font(.inter(size: 14, weight: .semibold))
-                .lineLimit(1)
-
-            Text("\(num) \(token.symbol?.uppercased() ?? "")")
-                .foregroundColor(.LL.Neutrals.note)
-                .font(.inter(size: 12, weight: .regular))
-                .lineLimit(1)
-        }
-        .frame(maxWidth: .infinity)
-    }
-
     var swapDetailView: some View {
         VStack(spacing: 10) {
             HStack {
@@ -122,10 +100,13 @@ struct SwapConfirmView: View {
 
                 Spacer()
 
-                Text(((vm.estimateResponse?.priceImpact ?? 0.0) * -100).formatCurrencyString(digits: 4) + "%")
-                    .font(.inter(size: 14, weight: .medium))
-                    .foregroundColor(Color.LL.Success.success1)
-                    .lineLimit(1)
+                Text(
+                    ((vm.estimateResponse?.priceImpact ?? 0.0) * -100)
+                        .formatCurrencyString(digits: 4) + "%"
+                )
+                .font(.inter(size: 14, weight: .medium))
+                .foregroundColor(Color.LL.Success.success1)
+                .lineLimit(1)
             }
 
 //            HStack {
@@ -150,17 +131,48 @@ struct SwapConfirmView: View {
     }
 
     var sendButton: some View {
-        VPrimaryButton(model: ButtonStyle.primary, state: vm.confirmButtonState, action: {
-            vm.confirmSwapAction()
-        }, title: vm.confirmButtonState == .loading ? "working_on_it".localized : "swap_confirm".localized)
+        VPrimaryButton(
+            model: ButtonStyle.primary,
+            state: vm.confirmButtonState,
+            action: {
+                vm.confirmSwapAction()
+            },
+            title: vm.confirmButtonState == .loading ? "working_on_it".localized : "swap_confirm"
+                .localized
+        )
+    }
+
+    func tokenView(token: TokenModel, num: String) -> some View {
+        VStack(spacing: 5) {
+            KFImage.url(token.icon)
+                .placeholder {
+                    Image("placeholder")
+                        .resizable()
+                }
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 40, height: 40)
+                .clipShape(Circle())
+
+            Text("\(token.symbol?.uppercased() ?? "")")
+                .foregroundColor(.LL.Neutrals.text)
+                .font(.inter(size: 14, weight: .semibold))
+                .lineLimit(1)
+
+            Text("\(num) \(token.symbol?.uppercased() ?? "")")
+                .foregroundColor(.LL.Neutrals.note)
+                .font(.inter(size: 12, weight: .regular))
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
+// MARK: SwapConfirmView.SwapConfirmProgressView
+
 extension SwapConfirmView {
     struct SwapConfirmProgressView: View {
-        private let totalNum: Int = 7
-        @State private var step: Int = 0
-        private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+        // MARK: Internal
 
         var body: some View {
             HStack(spacing: 12) {
@@ -213,5 +225,12 @@ extension SwapConfirmView {
                 }
             }
         }
+
+        // MARK: Private
+
+        private let totalNum: Int = 7
+        @State
+        private var step: Int = 0
+        private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     }
 }

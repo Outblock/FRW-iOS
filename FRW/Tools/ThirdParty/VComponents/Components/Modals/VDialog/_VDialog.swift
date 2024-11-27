@@ -7,21 +7,10 @@
 
 import SwiftUI
 
-// MARK: - _ V Dialog
+// MARK: - _VDialog
 
 struct _VDialog<Content>: View where Content: View {
-    // MARK: Properties
-
-    private let model: VDialogModel
-
-    @Binding private var isHCPresented: Bool
-    @State private var isViewPresented: Bool = false
-
-    private let dialogButtons: VDialogButtons
-
-    private let title: String?
-    private let description: String?
-    private let content: (() -> Content)?
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -41,6 +30,8 @@ struct _VDialog<Content>: View where Content: View {
         self.content = content
     }
 
+    // MARK: Internal
+
     // MARK: Body
 
     var body: some View {
@@ -52,6 +43,23 @@ struct _VDialog<Content>: View where Content: View {
         .ignoresSafeArea(.keyboard, edges: model.layout.ignoredKeybordSafeAreaEdges)
         .onAppear(perform: animateIn)
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VDialogModel
+
+    @Binding
+    private var isHCPresented: Bool
+    @State
+    private var isViewPresented: Bool = false
+
+    private let dialogButtons: VDialogButtons
+
+    private let title: String?
+    private let description: String?
+    private let content: (() -> Content)?
 
     private var blinding: some View {
         model.colors.blinding
@@ -83,7 +91,8 @@ struct _VDialog<Content>: View where Content: View {
             .cornerRadius(model.layout.cornerRadius)
     }
 
-    @ViewBuilder private var titleView: some View {
+    @ViewBuilder
+    private var titleView: some View {
         if let title = title, !title.isEmpty {
             VText(
                 type: .oneLine,
@@ -94,7 +103,8 @@ struct _VDialog<Content>: View where Content: View {
         }
     }
 
-    @ViewBuilder private var descriptionView: some View {
+    @ViewBuilder
+    private var descriptionView: some View {
         if let description = description, !description.isEmpty {
             VText(
                 type: .multiLine(limit: model.misc.descriptionLineLimit, alignment: .center),
@@ -105,17 +115,22 @@ struct _VDialog<Content>: View where Content: View {
         }
     }
 
-    @ViewBuilder private var freeContentView: some View {
+    @ViewBuilder
+    private var freeContentView: some View {
         if let content = content {
             content()
                 .padding(.vertical, model.layout.contentMarginVertical)
         }
     }
 
-    @ViewBuilder private var dialogView: some View {
+    @ViewBuilder
+    private var dialogView: some View {
         switch dialogButtons {
         case let .one(button): oneButtonDialogView(button: button)
-        case let .two(primary, secondary): twoButtonDialogView(primary: primary, secondary: secondary)
+        case let .two(primary, secondary): twoButtonDialogView(
+                primary: primary,
+                secondary: secondary
+            )
         case let .many(buttons): manyButtonDialogView(buttons: buttons)
         }
     }
@@ -129,7 +144,10 @@ struct _VDialog<Content>: View where Content: View {
         )
     }
 
-    private func twoButtonDialogView(primary: VDialogButton, secondary: VDialogButton) -> some View {
+    private func twoButtonDialogView(
+        primary: VDialogButton,
+        secondary: VDialogButton
+    ) -> some View {
         HStack(spacing: model.layout.twoButtonSpacing, content: {
             VPrimaryButton(
                 model: secondary.model.buttonSubModel,
@@ -169,11 +187,14 @@ struct _VDialog<Content>: View where Content: View {
     private func animateOut(and action: @escaping () -> Void) {
         action()
         withAnimation(model.animations.disappear?.asSwiftUIAnimation) { isViewPresented = false }
-        DispatchQueue.main.asyncAfter(deadline: .now() + (model.animations.disappear?.duration ?? 0)) { isHCPresented = false }
+        DispatchQueue.main
+            .asyncAfter(deadline: .now() + (model.animations.disappear?.duration ?? 0)) {
+                isHCPresented = false
+            }
     }
 }
 
-// MARK: - Preview
+// MARK: - VDialog_Previews
 
 struct VDialog_Previews: PreviewProvider {
     static var previews: some View {
@@ -186,7 +207,10 @@ struct VDialog_Previews: PreviewProvider {
             ),
             title: "Lorem ipsum dolor sit amet",
             description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-            content: { VTextField(state: .constant(.enabled), text: .constant("Lorem ipsum dolor sit amet")) }
+            content: { VTextField(
+                state: .constant(.enabled),
+                text: .constant("Lorem ipsum dolor sit amet")
+            ) }
         )
     }
 }

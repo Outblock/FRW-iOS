@@ -8,8 +8,10 @@
 import Flow
 import SwiftUI
 
+// MARK: - AccountKeysView
+
 struct AccountKeysView: RouteableView {
-    @StateObject private var vm = AccountKeyViewModel()
+    // MARK: Internal
 
     var title: String {
         "wallet_account_key".localized.capitalized
@@ -44,14 +46,23 @@ struct AccountKeysView: RouteableView {
         }
         vm.revokeKey(at: model)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = AccountKeyViewModel()
 }
+
+// MARK: AccountKeysView.Cell
 
 extension AccountKeysView {
     struct Cell: View {
         var model: AccountKeyModel
         var onRevoke: ((AccountKeyModel) -> Void)?
-        @State var isExpanding = false
-        @State var isShowRevoke = false
+        @State
+        var isExpanding = false
+        @State
+        var isShowRevoke = false
 
         var body: some View {
             VStack(spacing: -8) {
@@ -87,7 +98,10 @@ extension AccountKeysView {
                     }
                     .frame(height: 52)
                     .padding(.horizontal, 16)
-                    .background(ThemeManager.shared.style == .light ? Color.Theme.Background.pureWhite : Color.Theme.Background.grey)
+                    .background(
+                        ThemeManager.shared.style == .light ? Color.Theme.Background
+                            .pureWhite : Color.Theme.Background.grey
+                    )
                     .cornerRadius(16)
                     .padding(.horizontal, 18)
                     .zIndex(100)
@@ -179,6 +193,7 @@ extension AccountKeysView {
     struct TextInfoView: View {
         var model: AccountKeyModel
         var contentType: AccountKeyModel.ContentType
+
         var body: some View {
             HStack {
                 model.icon(at: contentType)
@@ -197,6 +212,7 @@ extension AccountKeysView {
     struct WeightView: View {
         var model: AccountKeyModel
         var contentType: AccountKeyModel.ContentType
+
         var body: some View {
             HStack {
                 model.icon(at: contentType)
@@ -211,13 +227,26 @@ extension AccountKeysView {
     }
 }
 
+// MARK: - ViewSwipe
+
 struct ViewSwipe: ViewModifier {
+    // MARK: Internal
+
     let title: String
     let action: () -> Void
 
-    @State var offset: CGSize = .zero
-    @State var initialOffset: CGSize = .zero
-    @State var contentWidth: CGFloat = 0.0
+    @State
+    var offset: CGSize = .zero
+    @State
+    var initialOffset: CGSize = .zero
+    @State
+    var contentWidth: CGFloat = 0.0
+
+    // MARK: Constants
+
+    let deletionDistance = CGFloat(200)
+    let halfDeletionDistance = CGFloat(50)
+    let tappableDeletionWidth = CGFloat(89 + 18)
 
     func body(content: Content) -> some View {
         content
@@ -279,6 +308,8 @@ struct ViewSwipe: ViewModifier {
             .animation(.interactiveSpring(), value: offset)
     }
 
+    // MARK: Private
+
     private func onAction() {
         offset = .zero
         initialOffset = .zero
@@ -290,12 +321,6 @@ struct ViewSwipe: ViewModifier {
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
     }
-
-    // MARK: Constants
-
-    let deletionDistance = CGFloat(200)
-    let halfDeletionDistance = CGFloat(50)
-    let tappableDeletionWidth = CGFloat(89 + 18)
 }
 
 extension View {

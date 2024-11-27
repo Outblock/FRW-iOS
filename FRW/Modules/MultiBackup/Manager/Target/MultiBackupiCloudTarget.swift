@@ -10,14 +10,16 @@ import Foundation
 import SwiftUI
 import UIKit
 
+// MARK: - MultiBackupiCloudTarget
+
 class MultiBackupiCloudTarget: MultiBackupTarget {
+    // MARK: Internal
+
     var uploadedItem: MultiBackupManager.StoreItem?
     var registeredDeviceInfo: SyncInfo.DeviceInfo?
 
-    private var api: iCloudAPI?
-
     var isPrepared: Bool {
-        return api != nil
+        api != nil
     }
 
     func loginCloud() async throws {}
@@ -42,7 +44,11 @@ class MultiBackupiCloudTarget: MultiBackupTarget {
             // it's ok
         }
 
-        let newList = try await MultiBackupManager.shared.addNewMnemonic(on: .icloud, list: list, password: password)
+        let newList = try await MultiBackupManager.shared.addNewMnemonic(
+            on: .icloud,
+            list: list,
+            password: password
+        )
         let encrypedString = try MultiBackupManager.shared.encryptList(newList)
         guard let data = encrypedString.data(using: .utf8), !data.isEmpty else {
             throw BackupError.hexStringToDataFailed
@@ -94,6 +100,10 @@ class MultiBackupiCloudTarget: MultiBackupTarget {
             throw iCloudBackupError.saveToDataFailed
         }
     }
+
+    // MARK: Private
+
+    private var api: iCloudAPI?
 }
 
 extension MultiBackupiCloudTarget {
@@ -102,11 +112,13 @@ extension MultiBackupiCloudTarget {
             return
         }
 
-        guard let id = containerID, let url = FileManager.default.url(forUbiquityContainerIdentifier: id) else {
+        guard let id = containerID,
+              let url = FileManager.default.url(forUbiquityContainerIdentifier: id) else {
             throw iCloudBackupError.initError
         }
 
-        let fileURL = url.appendingPathComponent("Documents").appendingPathComponent(MultiBackupManager.backupFileName)
+        let fileURL = url.appendingPathComponent("Documents")
+            .appendingPathComponent(MultiBackupManager.backupFileName)
         api = await iCloudAPI(fileURL: fileURL)
 
         // double check if prepared

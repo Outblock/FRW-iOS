@@ -24,6 +24,8 @@ public enum VActionSheetRow {
     /// Cancel button.
     case cancel(action: (() -> Void)? = nil, title: String)
 
+    // MARK: Internal
+
     // MARK: Properties
 
     var actionSheetButton: ActionSheet.Button {

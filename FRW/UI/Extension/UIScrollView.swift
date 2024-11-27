@@ -42,12 +42,15 @@ public extension UIScrollView {
     }
 
     func isRefreshing() -> Bool {
-        return mj_header?.isRefreshing ?? false
+        mj_header?.isRefreshing ?? false
     }
 
     // loading
 
-    func setLoadingAction(_ action: @escaping () -> Void, noMoreDataLabelEnabled: Bool = true) {
+    func setLoadingAction(
+        _ action: @escaping () -> Void,
+        noMoreDataLabelEnabled: Bool = true
+    ) {
         let footer = MJRefreshAutoStateFooter(refreshingBlock: action)
         footer.stateLabel?.textColor = UIColor(hex: "#888888")
         footer.stateLabel?.font = UIFont.systemFont(ofSize: 14)
@@ -75,7 +78,7 @@ public extension UIScrollView {
     }
 
     func isLoading() -> Bool {
-        return mj_footer?.isRefreshing ?? false
+        mj_footer?.isRefreshing ?? false
     }
 
     func setNoMoreData(_ noMore: Bool) {

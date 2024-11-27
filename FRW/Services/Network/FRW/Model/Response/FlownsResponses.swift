@@ -7,6 +7,8 @@
 
 import Foundation
 
+// MARK: - ClaimDomainPrepareResponse
+
 struct ClaimDomainPrepareResponse: Codable {
     let cadence: String?
     let domain: String?
@@ -14,11 +16,13 @@ struct ClaimDomainPrepareResponse: Codable {
     let lilicoServerAddress: String?
 }
 
+// MARK: - ClaimDomainSignatureResponse
+
 struct ClaimDomainSignatureResponse: Codable {
     let txId: String?
 }
 
-// MARK: - Inbox
+// MARK: - InboxResponse
 
 struct InboxResponse: Codable {
     let id: String
@@ -28,22 +32,34 @@ struct InboxResponse: Codable {
     let collections: [String: [String]]
 
     var tokenList: [InboxToken] {
-        return vaultBalances.map { item in
+        vaultBalances.map { item in
             let dataArray = item.key.components(separatedBy: ["."])
-            return InboxToken(key: item.key, coinAddress: dataArray[1].addHexPrefix(), coinSymbol: dataArray[2], amount: Double(item.value) ?? 0)
+            return InboxToken(
+                key: item.key,
+                coinAddress: dataArray[1].addHexPrefix(),
+                coinSymbol: dataArray[2],
+                amount: Double(item.value) ?? 0
+            )
         }.filter { $0.amount != 0 }
     }
 
     var nftList: [InboxNFT] {
-        return collections.map { item in
+        collections.map { item in
             let dataArray = item.key.components(separatedBy: ["."])
 
             return item.value.map { string in
-                InboxNFT(key: item.key, collectionAddress: dataArray[1].addHexPrefix(), collectionName: dataArray[2], tokenId: string)
+                InboxNFT(
+                    key: item.key,
+                    collectionAddress: dataArray[1].addHexPrefix(),
+                    collectionName: dataArray[2],
+                    tokenId: string
+                )
             }
         }.flatMap { $0 }
     }
 }
+
+// MARK: - InboxToken
 
 struct InboxToken: Codable {
     let key: String
@@ -52,15 +68,17 @@ struct InboxToken: Codable {
     let amount: Double
 
     var iconURL: URL? {
-        return matchedCoin?.icon
+        matchedCoin?.icon
     }
 
     var amountText: String {
-        return "\(amount.formatCurrencyString()) \(matchedCoin?.symbol?.uppercased() ?? "")"
+        "\(amount.formatCurrencyString()) \(matchedCoin?.symbol?.uppercased() ?? "")"
     }
 
     var marketPrice: Double {
-        guard let coin = matchedCoin, let rate = CoinRateCache.cache.getSummary(for: coin.symbol ?? "") else {
+        guard let coin = matchedCoin,
+              let rate = CoinRateCache.cache.getSummary(by: coin.contractId)
+        else {
             return 0
         }
 
@@ -82,6 +100,8 @@ struct InboxToken: Codable {
     }
 }
 
+// MARK: - InboxNFT
+
 struct InboxNFT: Codable {
     let key: String
     let collectionAddress: String
@@ -89,6 +109,6 @@ struct InboxNFT: Codable {
     let tokenId: String
 
     var localCollection: NFTCollectionInfo? {
-        return NFTCollectionConfig.share.config.first { $0.address == collectionAddress }
+        NFTCollectionConfig.share.config.first { $0.address == collectionAddress }
     }
 }

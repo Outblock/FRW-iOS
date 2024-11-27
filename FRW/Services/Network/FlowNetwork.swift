@@ -38,7 +38,7 @@ extension FlowNetwork {
         )
     }
 
-    static func enableToken(at address: Flow.Address, token: TokenModel) async throws -> Flow.ID {
+    static func enableToken(at _: Flow.Address, token: TokenModel) async throws -> Flow.ID {
         try await sendTransaction(
             by: \.ft?.addToken,
             with: token,
@@ -82,7 +82,7 @@ extension FlowNetwork {
     }
 
     static func addCollection(
-        at address: Flow.Address,
+        at _: Flow.Address,
         collection: NFTCollectionInfo
     ) async throws -> Flow.ID {
         try await sendTransaction(
@@ -251,7 +251,8 @@ extension FlowNetwork {
     }
 
     static func claimUnstake(nodeID: String, delegatorId: Int, amount: Decimal) async throws -> Flow
-        .ID {
+        .ID
+    {
         try await sendTransaction(
             by: \.staking?.withdrawUnstaked,
             argumentList: [
@@ -279,7 +280,8 @@ extension FlowNetwork {
 
     // FIXME:
     static func claimReward(nodeID: String, delegatorId: Int, amount: Decimal) async throws -> Flow
-        .ID {
+        .ID
+    {
         try await sendTransaction(
             by: \.staking?.withdrawReward,
             argumentList: [.string(nodeID), .uint32(UInt32(delegatorId)), .ufix64(amount)]
@@ -322,7 +324,8 @@ extension FlowNetwork {
     }
 
     static func stakeFlow(providerId: String, delegatorId: Int, amount: Double) async throws -> Flow
-        .ID {
+        .ID
+    {
         let txId = try await sendTransaction(
             by: \.staking?.createStake,
             argumentList: [
@@ -747,14 +750,14 @@ extension Flow.TransactionResult {
 // MARK: - Account Key
 
 extension FlowNetwork {
-    static func revokeAccountKey(by index: Int, at address: Flow.Address) async throws -> Flow.ID {
+    static func revokeAccountKey(by index: Int, at _: Flow.Address) async throws -> Flow.ID {
         try await sendTransaction(by: \.basic?.revokeKey, argumentList: [.int(index)])
     }
 
     static func addKeyToAccount(
-        address: Flow.Address,
+        address _: Flow.Address,
         accountKey: Flow.AccountKey,
-        signers: [FlowSigner]
+        signers _: [FlowSigner]
     ) async throws -> Flow.ID {
         try await sendTransaction(
             by: \.basic?.addKey,
@@ -768,11 +771,11 @@ extension FlowNetwork {
     }
 
     static func addKeyWithMulti(
-        address: Flow.Address,
-        keyIndex: Int,
-        sequenceNum: Int64,
+        address _: Flow.Address,
+        keyIndex _: Int,
+        sequenceNum _: Int64,
         accountKey: Flow.AccountKey,
-        signers: [FlowSigner]
+        signers _: [FlowSigner]
     ) async throws -> Flow.ID {
         try await sendTransaction(
             by: \.basic?.addKey,
@@ -882,7 +885,8 @@ extension FlowNetwork {
 
     // transferFlowToEvmAddress
     static func sendFlowToEvm(evmAddress: String, amount: Decimal, gas: UInt64) async throws -> Flow
-        .ID {
+        .ID
+    {
         try await sendTransaction(by: \.evm?.transferFlowToEvmAddress, argumentList: [
             .string(evmAddress),
             .ufix64(amount),
@@ -892,7 +896,8 @@ extension FlowNetwork {
 
     /// transferFlowFromCoaToFlow
     static func sendFlowTokenFromCoaToFlow(amount: Decimal, address: String) async throws -> Flow
-        .ID {
+        .ID
+    {
         try await sendTransaction(by: \.evm?.transferFlowFromCoaToFlow, argumentList: [
             .ufix64(amount),
             .address(Flow.Address(hex: address)),
@@ -927,7 +932,8 @@ extension FlowNetwork {
             .bridgeTokensFromEvmV2 : \.bridge?.bridgeTokensToEvmV2
 
         var amountValue = Flow.Cadence.FValue.ufix64(amount)
-        if let result = Utilities.parseToBigUInt(amount.description, decimals: decimals), fromEvm {
+
+        if let result = amount.description.parseToBigUInt(decimals: decimals), fromEvm {
             amountValue = Flow.Cadence.FValue.uint256(result)
         }
         return try await sendTransaction(by: keyPath, argumentList: [
@@ -1114,7 +1120,8 @@ extension FlowNetwork {
     static func bridgeChildTokenFromCoa(
         vaultIdentifier: String,
         child: String,
-        amount: Decimal
+        amount: Decimal,
+        decimals _: Int
     ) async throws -> Flow.ID {
         let amountValue = Flow.Cadence.FValue.ufix64(amount)
         return try await sendTransaction(by: \.hybridCustody?.bridgeChildFTFromEvm, argumentList: [
@@ -1321,10 +1328,33 @@ extension String {
     func compareVersion(to version: String) -> ComparisonResult {
         compare(version, options: .numeric)
     }
+
+    public func parseToBigUInt(decimals: Int = 18) -> BigUInt? {
+        let separators = CharacterSet(charactersIn: ".,")
+        let components = trimmingCharacters(in: .whitespacesAndNewlines).components(
+            separatedBy: separators
+        )
+        guard components.count == 1 || components.count == 2 else { return nil }
+        let unitDecimals = decimals
+        guard let beforeDecPoint = BigUInt(components[0], radix: 10) else { return nil }
+        var mainPart = beforeDecPoint * BigUInt(10).power(unitDecimals)
+        if components.count == 2 {
+            var part = components[1]
+            var numDigits = part.count
+            if numDigits > unitDecimals {
+                part = String(part.prefix(unitDecimals))
+                numDigits = part.count
+            }
+            guard let afterDecPoint = BigUInt(part, radix: 10) else { return nil }
+            let extraPart = afterDecPoint * BigUInt(10).power(unitDecimals - numDigits)
+            mainPart += extraPart
+        }
+        return mainPart
+    }
 }
 
-extension KeyPath {
-    fileprivate func funcName() -> String {
+private extension KeyPath {
+    func funcName() -> String {
         "\(self)".split(separator: ".").last?.replacingOccurrences(
             of: "?",
             with: ""

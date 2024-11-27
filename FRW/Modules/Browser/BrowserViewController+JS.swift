@@ -80,6 +80,8 @@ private func generateFCLExtensionInject() -> String {
     return js
 }
 
+// MARK: - JSListenerType
+
 enum JSListenerType: String {
     case message
     case flowTransaction = "transaction"
@@ -87,17 +89,29 @@ enum JSListenerType: String {
 
 extension BrowserViewController {
     var listenFCLMessageUserScript: WKUserScript {
-        let us = WKUserScript(source: jsListenWindowFCLMessage, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+        let us = WKUserScript(
+            source: jsListenWindowFCLMessage,
+            injectionTime: .atDocumentStart,
+            forMainFrameOnly: true
+        )
         return us
     }
 
     var listenFlowWalletTransactionUserScript: WKUserScript {
-        let us = WKUserScript(source: jsListenFlowWalletTransaction, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+        let us = WKUserScript(
+            source: jsListenFlowWalletTransaction,
+            injectionTime: .atDocumentStart,
+            forMainFrameOnly: true
+        )
         return us
     }
 
     var extensionInjectUserScript: WKUserScript {
-        let us = WKUserScript(source: generateFCLExtensionInject(), injectionTime: .atDocumentStart, forMainFrameOnly: true)
+        let us = WKUserScript(
+            source: generateFCLExtensionInject(),
+            injectionTime: .atDocumentStart,
+            forMainFrameOnly: true
+        )
         return us
     }
 
@@ -162,7 +176,12 @@ extension BrowserViewController {
             accountProofSign = sign.hexValue
         }
         let keyIndex = WalletManager.shared.keyIndex
-        let message = try await FCLScripts.generateAuthnResponse(accountProofSign: accountProofSign, nonce: response.body.nonce ?? "", address: address, keyId: keyIndex)
+        let message = try await FCLScripts.generateAuthnResponse(
+            accountProofSign: accountProofSign,
+            nonce: response.body.nonce ?? "",
+            address: address,
+            keyId: keyIndex
+        )
 
         DispatchQueue.syncOnMain {
             log.debug("will post authn view ready response")
@@ -183,7 +202,11 @@ extension BrowserViewController {
         let keyId = WalletManager.shared.keyIndex
 //        let keyId = try await FlowNetwork.getLastBlockAccountKeyId(address: address)
 
-        let message = FCLScripts.generateAuthzResponse(address: address, signature: signData.hexValue, keyId: keyId)
+        let message = FCLScripts.generateAuthzResponse(
+            address: address,
+            signature: signData.hexValue,
+            keyId: keyId
+        )
         DispatchQueue.syncOnMain {
             log.debug("will post authz payload sign response")
             postMessage(message)
@@ -192,7 +215,11 @@ extension BrowserViewController {
     }
 
     func postAuthzEnvelopeSignResponse(sign: FCLVoucher.Signature) {
-        let message = FCLScripts.generateAuthzResponse(address: sign.address.hex.addHexPrefix(), signature: sign.sig, keyId: sign.keyId)
+        let message = FCLScripts.generateAuthzResponse(
+            address: sign.address.hex.addHexPrefix(),
+            signature: sign.sig,
+            keyId: sign.keyId
+        )
         log.debug("will post authz envelope response")
         postMessage(message)
         log.debug("did post authz envelope response")
@@ -208,7 +235,11 @@ extension BrowserViewController {
         let keyIndex = WalletManager.shared.keyIndex
         guard let address = WalletManager.shared.getPrimaryWalletAddress(),
               let message = response.body?.message,
-              let js = FCLScripts.generateSignMessageResponse(message: message, address: address, keyId: keyIndex)
+              let js = FCLScripts.generateSignMessageResponse(
+                  message: message,
+                  address: address,
+                  keyId: keyIndex
+              )
         else {
             log.error("generate js failed")
             return

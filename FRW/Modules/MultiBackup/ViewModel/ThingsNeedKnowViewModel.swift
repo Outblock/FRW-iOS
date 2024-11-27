@@ -12,13 +12,13 @@ import UIKit
 import WalletCore
 
 class ThingsNeedKnowViewModel: ObservableObject {
-    private var hdWallet: HDWallet?
-    private let mnemonicStrength: Int32 = 128
-    private let store = PhraseKeyStore()
+    // MARK: Lifecycle
 
     init() {
         hdWallet = HDWallet(strength: mnemonicStrength, passphrase: "")
     }
+
+    // MARK: Internal
 
     func onCreate() {
         guard let hdWallet = hdWallet else {
@@ -48,12 +48,22 @@ class ThingsNeedKnowViewModel: ObservableObject {
         }
     }
 
+    // MARK: Private
+
+    private var hdWallet: HDWallet?
+    private let mnemonicStrength: Int32 = 128
+    private let store = PhraseKeyStore()
+
     private func addKeyToFlow(hdWallet: HDWallet) async throws -> Bool {
         let publicKey = hdWallet.getPublicKey()
         let address = WalletManager.shared.address
 
         let flowKey = flowKey(with: publicKey)
-        let flowId = try await FlowNetwork.addKeyToAccount(address: address, accountKey: flowKey, signers: WalletManager.shared.defaultSigners)
+        let flowId = try await FlowNetwork.addKeyToAccount(
+            address: address,
+            accountKey: flowKey,
+            signers: WalletManager.shared.defaultSigners
+        )
         guard let data = try? JSONEncoder().encode(publicKey) else {
             return false
         }
@@ -72,10 +82,15 @@ class ThingsNeedKnowViewModel: ObservableObject {
         let backupName = type.title
 
         let flowKey = flowKey(with: publicKey)
-        let deviceInfo = SyncInfo.DeviceInfo(accountKey: flowKey.toCodableModel(), deviceInfo: IPManager.shared.toParams(), backupInfo: BackupInfoModel(createTime: nil, name: backupName, type: type.rawValue))
+        let deviceInfo = SyncInfo.DeviceInfo(
+            accountKey: flowKey.toCodableModel(),
+            deviceInfo: IPManager.shared.toParams(),
+            backupInfo: BackupInfoModel(createTime: nil, name: backupName, type: type.rawValue)
+        )
 
         do {
-            let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.syncDevice(deviceInfo))
+            let response: Network.EmptyResponse = try await Network
+                .requestWithRawModel(FRWAPI.User.syncDevice(deviceInfo))
             if response.httpCode != 200 {
                 log.info("sync key to server failed.\(response.httpCode): \(response.message)")
             }
@@ -86,7 +101,12 @@ class ThingsNeedKnowViewModel: ObservableObject {
 
     private func flowKey(with publicKey: String) -> Flow.AccountKey {
         let flowPublicKey = Flow.PublicKey(hex: publicKey)
-        let flowKey = Flow.AccountKey(publicKey: flowPublicKey, signAlgo: .ECDSA_SECP256k1, hashAlgo: .SHA2_256, weight: 1000)
+        let flowKey = Flow.AccountKey(
+            publicKey: flowPublicKey,
+            signAlgo: .ECDSA_SECP256k1,
+            hashAlgo: .SHA2_256,
+            weight: 1000
+        )
         return flowKey
     }
 

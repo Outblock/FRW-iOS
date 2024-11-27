@@ -7,11 +7,15 @@
 
 import Foundation
 
+// MARK: - NFTMask
+
 protocol NFTMask {
     var maskLogo: String { get }
     var maskId: String { get }
     var maskFlowIdentifier: String? { get }
 }
+
+// MARK: - CollectionMask
 
 protocol CollectionMask {
     var maskAddress: String { get }
@@ -23,7 +27,7 @@ protocol CollectionMask {
     var maskFlowIdentifier: String? { get }
 }
 
-// MARK: NFTResponse
+// MARK: - NFTResponse + NFTMask
 
 extension NFTResponse: NFTMask {
     var maskLogo: String {
@@ -38,7 +42,7 @@ extension NFTResponse: NFTMask {
     }
 
     var maskId: String {
-        return id
+        id
     }
 
     var maskFlowIdentifier: String? {
@@ -46,7 +50,7 @@ extension NFTResponse: NFTMask {
     }
 }
 
-// MARK: NFTCollection
+// MARK: - NFTCollection + CollectionMask
 
 extension NFTCollection: CollectionMask {
     var maskName: String {
@@ -70,7 +74,7 @@ extension NFTCollection: CollectionMask {
     }
 
     var maskCount: Int {
-        return count
+        count
     }
 
     var maskFlowIdentifier: String? {
@@ -78,11 +82,11 @@ extension NFTCollection: CollectionMask {
     }
 }
 
-// MARK: EVMNFT
+// MARK: - EVMNFT + NFTMask
 
 extension EVMNFT: NFTMask {
     var maskLogo: String {
-        return thumbnail
+        thumbnail
     }
 
     var maskId: String {
@@ -90,11 +94,11 @@ extension EVMNFT: NFTMask {
     }
 
     var maskFlowIdentifier: String? {
-        return nil
+        nil
     }
 }
 
-// MARK: EVMCollection
+// MARK: - EVMCollection + CollectionMask
 
 extension EVMCollection: CollectionMask {
     var maskAddress: String {

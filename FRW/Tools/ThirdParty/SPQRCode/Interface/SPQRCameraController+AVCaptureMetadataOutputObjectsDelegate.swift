@@ -23,13 +23,20 @@ import AVKit
 import UIKit
 
 extension SPQRCameraController: AVCaptureMetadataOutputObjectsDelegate {
-    open func metadataOutput(_: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from _: AVCaptureConnection) {
+    open func metadataOutput(
+        _: AVCaptureMetadataOutput,
+        didOutput metadataObjects: [AVMetadataObject],
+        from _: AVCaptureConnection
+    ) {
         guard !metadataObjects.isEmpty else { return }
-        guard let object = metadataObjects.first as? AVMetadataMachineReadableCodeObject else { return }
+        guard let object = metadataObjects.first as? AVMetadataMachineReadableCodeObject
+        else { return }
         guard Self.supportedCodeTypes.contains(object.type) else { return }
         guard let detectedData = convert(object: object) else { return }
         let observingData = detectQRCodeData(detectedData, self)
-        guard let transformedObject = previewLayer.transformedMetadataObject(for: object) as? AVMetadataMachineReadableCodeObject else { return }
+        guard let transformedObject = previewLayer
+            .transformedMetadataObject(for: object) as? AVMetadataMachineReadableCodeObject
+        else { return }
 
         let points = transformedObject.corners
 
@@ -57,7 +64,9 @@ extension SPQRCameraController: AVCaptureMetadataOutputObjectsDelegate {
         }
 
         if let bottomPoint = points.max(by: { $0.y < $1.y }) {
-            if let secondBottomPoint = points.sorted(by: { $0.y < $1.y }).dropLast().max(by: { $0.y < $1.y }) {
+            if let secondBottomPoint = points.sorted(by: { $0.y < $1.y }).dropLast()
+                .max(by: { $0.y < $1.y })
+            {
                 let maxX = max(bottomPoint.x, secondBottomPoint.x)
                 let minX = min(bottomPoint.x, secondBottomPoint.x)
 
@@ -73,9 +82,17 @@ extension SPQRCameraController: AVCaptureMetadataOutputObjectsDelegate {
 
                 let animated = !detailView.isHidden
                 if animated {
-                    UIView.animate(withDuration: 0.3, delay: .zero, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: [.beginFromCurrentState, .allowUserInteraction], animations: {
-                        updateDetailFrame()
-                    }, completion: nil)
+                    UIView.animate(
+                        withDuration: 0.3,
+                        delay: .zero,
+                        usingSpringWithDamping: 1,
+                        initialSpringVelocity: 1,
+                        options: [.beginFromCurrentState, .allowUserInteraction],
+                        animations: {
+                            updateDetailFrame()
+                        },
+                        completion: nil
+                    )
                 } else {
                     updateDetailFrame()
                 }
@@ -91,10 +108,15 @@ extension SPQRCameraController: AVCaptureMetadataOutputObjectsDelegate {
         // Timer
 
         updateTimer?.invalidate()
-        updateTimer = Timer(fire: Date(timeIntervalSinceNow: 0.8), interval: 1, repeats: false, block: { [weak self] _ in
-            self?.qrCodeData = nil
-            self?.frameLayer.dissapear()
-        })
+        updateTimer = Timer(
+            fire: Date(timeIntervalSinceNow: 0.8),
+            interval: 1,
+            repeats: false,
+            block: { [weak self] _ in
+                self?.qrCodeData = nil
+                self?.frameLayer.dissapear()
+            }
+        )
 
         RunLoop.main.add(updateTimer!, forMode: .default)
     }

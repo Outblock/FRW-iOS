@@ -7,14 +7,18 @@
 
 import SwiftUI
 
+// MARK: - TabBarView.TabBar
+
 extension TabBarView {
     struct TabBar<T: Hashable>: View {
+        // MARK: Internal
+
         var pages: [TabBarPageModel<T>]
         var indicatorColor: Color
-        @Binding var offsetX: CGFloat
-        @Binding var selected: T
-
-        private let indicatorWidth: CGFloat = 20
+        @Binding
+        var offsetX: CGFloat
+        @Binding
+        var selected: T
 
         var body: some View {
             GeometryReader { proxy in
@@ -36,7 +40,12 @@ extension TabBarView {
             .frame(height: 46)
         }
 
-        @ViewBuilder private func indicator(_ parentMaxWidth: CGFloat) -> some View {
+        // MARK: Private
+
+        private let indicatorWidth: CGFloat = 20
+
+        @ViewBuilder
+        private func indicator(_ parentMaxWidth: CGFloat) -> some View {
             let pageCount = CGFloat(pages.count)
             let scrollMaxOffsetX = parentMaxWidth * (pageCount - 1)
             let scrollPercent = max(0, min(1, offsetX / scrollMaxOffsetX))
@@ -58,7 +67,7 @@ extension TabBarView {
     }
 }
 
-// MARK: - Helper
+// MARK: - TranslateEffect
 
 private struct TranslateEffect: GeometryEffect {
     var offsetX: CGFloat

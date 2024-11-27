@@ -8,19 +8,25 @@
 import Foundation
 import Moya
 
+// MARK: - NFTListRequest
+
 struct NFTListRequest: Codable {
     var owner: String = "0x050aa60ac445a061"
     var offset: Int = 0
     var limit: Int = 100
 }
 
+// MARK: - AlchemyEndpoint
+
 enum AlchemyEndpoint {
     case nftList(NFTListRequest)
 }
 
+// MARK: TargetType
+
 extension AlchemyEndpoint: TargetType {
     var baseURL: URL {
-        return URL(string: "https://flow-mainnet.g.alchemy.com/v2/twx0ea5rbnqjbg7ev8jb058pqg50wklj/")!
+        URL(string: "https://flow-mainnet.g.alchemy.com/v2/twx0ea5rbnqjbg7ev8jb058pqg50wklj/")!
     }
 
     var path: String {
@@ -37,7 +43,10 @@ extension AlchemyEndpoint: TargetType {
     var task: Task {
         switch self {
         case let .nftList(nftListRequest):
-            return .requestParameters(parameters: nftListRequest.dictionary ?? [:], encoding: URLEncoding())
+            return .requestParameters(
+                parameters: nftListRequest.dictionary ?? [:],
+                encoding: URLEncoding()
+            )
         }
     }
 
@@ -49,7 +58,8 @@ extension AlchemyEndpoint: TargetType {
 extension Encodable {
     var dictionary: [String: Any]? {
         guard let data = try? JSONEncoder().encode(self) else { return nil }
-        return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)).flatMap { $0 as? [String: Any] }
+        return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments))
+            .flatMap { $0 as? [String: Any] }
     }
 
     func jsonPrettyPrinted() throws -> String {
@@ -65,7 +75,9 @@ extension Encodable {
     func jsonPrettyPrint() -> String? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
-        guard let data = try? encoder.encode(self), let string = String(data: data, encoding: .utf8) else {
+        guard let data = try? encoder.encode(self),
+              let string = String(data: data, encoding: .utf8)
+        else {
             return nil
         }
         return string

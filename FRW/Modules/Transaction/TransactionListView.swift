@@ -13,8 +13,36 @@ import UIKit
 
 private let CellHeight: CGFloat = 48
 
+// MARK: - TransactionListCell
+
 class TransactionListCell: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("")
+    }
+
+    // MARK: Internal
+
     private(set) var model: TransactionManager.TransactionHolder?
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        reloadBgPaths()
+    }
+
+    func config(_ model: TransactionManager.TransactionHolder) {
+        self.model = model
+        refreshView()
+    }
+
+    // MARK: Private
 
     private lazy var progressView: TransactionProgressView = {
         let view = TransactionProgressView()
@@ -52,16 +80,6 @@ class TransactionListCell: UIView {
         view.backgroundColor = UIColor.LL.Button.text
         return view
     }()
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("")
-    }
 
     private func setup() {
         backgroundColor = .clear
@@ -106,35 +124,39 @@ class TransactionListCell: UIView {
         addGestureRecognizer(tap)
     }
 
-    @objc private func onTap() {
+    @objc
+    private func onTap() {
         if let id = model?.transactionId {
             Router.route(to: RouteMap.Transaction.detail(id))
         }
     }
 
     private func addNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(onHolderStatusChanged(noti:)), name: .transactionStatusDidChanged, object: nil)
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        reloadBgPaths()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onHolderStatusChanged(noti:)),
+            name: .transactionStatusDidChanged,
+            object: nil
+        )
     }
 
     private func reloadBgPaths() {
         bgMaskLayer.frame = bounds
 
-        let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.topLeft, .bottomLeft], cornerRadii: CGSize(width: 24.0, height: 24.0))
+        let path = UIBezierPath(
+            roundedRect: bounds,
+            byRoundingCorners: [.topLeft, .bottomLeft],
+            cornerRadii: CGSize(width: 24.0, height: 24.0)
+        )
         bgMaskLayer.path = path.cgPath
     }
 
-    func config(_ model: TransactionManager.TransactionHolder) {
-        self.model = model
-        refreshView()
-    }
-
-    @objc private func onHolderStatusChanged(noti: Notification) {
-        guard let holder = noti.object as? TransactionManager.TransactionHolder, let current = model, current.transactionId.hex == holder.transactionId.hex else {
+    @objc
+    private func onHolderStatusChanged(noti: Notification) {
+        guard let holder = noti.object as? TransactionManager.TransactionHolder,
+              let current = model,
+              current.transactionId.hex == holder.transactionId.hex
+        else {
             return
         }
 
@@ -143,7 +165,10 @@ class TransactionListCell: UIView {
 
     private func refreshView() {
         if let iconURL = model?.icon() {
-            progressView.iconImageView.kf.setImage(with: iconURL, placeholder: UIImage(named: "placeholder"))
+            progressView.iconImageView.kf.setImage(
+                with: iconURL,
+                placeholder: UIImage(named: "placeholder")
+            )
         } else {
             progressView.iconImageView.image = UIImage(named: "flow")
         }
@@ -160,7 +185,35 @@ class TransactionListCell: UIView {
     }
 }
 
+// MARK: - TransactionListView
+
 class TransactionListView: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("")
+    }
+
+    // MARK: Internal
+
+    func refresh() {
+        removeAllCells()
+
+        for holder in TransactionManager.shared.holders {
+            let cell = TransactionListCell()
+            cell.config(holder)
+            stackView.addArrangedSubview(cell)
+        }
+    }
+
+    // MARK: Private
+
     private lazy var bgView: UIVisualEffectView = {
         let view = UIVisualEffectView(style: .systemChromeMaterial)
 //        view.backgroundColor = .white.withAlphaComponent(0.7)
@@ -180,16 +233,6 @@ class TransactionListView: UIView {
         view.alignment = .trailing
         return view
     }()
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("")
-    }
 
     private func setup() {
         backgroundColor = .clear
@@ -215,24 +258,15 @@ class TransactionListView: UIView {
         addGestureRecognizer(gesture)
     }
 
-    @objc private func onTap() {
+    @objc
+    private func onTap() {
         TransactionUIHandler.shared.dismissListView()
     }
 
     private func removeAllCells() {
-        while stackView.arrangedSubviews.count != 0 {
+        while !stackView.arrangedSubviews.isEmpty {
             let view = stackView.arrangedSubviews.first!
             view.removeFromSuperview()
-        }
-    }
-
-    func refresh() {
-        removeAllCells()
-
-        for holder in TransactionManager.shared.holders {
-            let cell = TransactionListCell()
-            cell.config(holder)
-            stackView.addArrangedSubview(cell)
         }
     }
 }

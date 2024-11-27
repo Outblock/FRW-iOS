@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct NFTTagsView: View {
-    @State var tags: [NFTTrait]
-    @State private var totalHeight = CGFloat.zero
+    @State
+    var tags: [NFTTrait]
+    @State
+    private var totalHeight = CGFloat.zero
     var color: Color
 
     var body: some View {
@@ -68,13 +70,15 @@ struct NFTTagsView: View {
         .padding(.vertical, 6)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(color,
-                        lineWidth: 1)
+                .stroke(
+                    color,
+                    lineWidth: 1
+                )
         )
     }
 
     private func viewHeightReader(_ binding: Binding<CGFloat>) -> some View {
-        return GeometryReader { geometry -> Color in
+        GeometryReader { geometry -> Color in
             let rect = geometry.frame(in: .local)
             DispatchQueue.main.async {
                 binding.wrappedValue = rect.size.height

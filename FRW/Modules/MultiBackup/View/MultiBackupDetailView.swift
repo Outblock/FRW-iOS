@@ -9,14 +9,19 @@ import MapKit
 import SwiftUI
 
 struct MultiBackupDetailView: RouteableView {
-    @StateObject var viewModel: MultiBackupDetailViewModel
+    // MARK: Lifecycle
 
     init(item: KeyDeviceModel) {
         _viewModel = StateObject(wrappedValue: MultiBackupDetailViewModel(item: item))
     }
 
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: MultiBackupDetailViewModel
+
     var title: String {
-        return "backup_detail".localized
+        "backup_detail".localized
     }
 
     var body: some View {
@@ -78,7 +83,11 @@ struct MultiBackupDetailView: RouteableView {
         }
         .applyRouteable(self)
         .halfSheet(showSheet: $viewModel.showRemoveTipView) {
-            DangerousTipSheetView(title: "account_key_revoke_title".localized, detail: "account_key_revoke_content".localized, buttonTitle: "hold_to_revoke".localized) {
+            DangerousTipSheetView(
+                title: "account_key_revoke_title".localized,
+                detail: "account_key_revoke_content".localized,
+                buttonTitle: "hold_to_revoke".localized
+            ) {
                 viewModel.deleteMultiBackup()
             } onCancel: {
                 viewModel.onCancelTip()
@@ -151,19 +160,31 @@ struct MultiBackupDetailView: RouteableView {
                 .frame(height: 8)
 
             VStack {
-                DeviceInfoItem(title: "application_tag".localized, detail: viewModel.item.device.showApp())
+                DeviceInfoItem(
+                    title: "application_tag".localized,
+                    detail: viewModel.item.device.showApp()
+                )
                 Divider()
                     .background(Color.Theme.Line.line)
                     .padding(.vertical, 16)
-                DeviceInfoItem(title: "ip_address_tag".localized, detail: viewModel.item.device.showIP())
+                DeviceInfoItem(
+                    title: "ip_address_tag".localized,
+                    detail: viewModel.item.device.showIP()
+                )
                 Divider()
                     .background(Color.Theme.Line.line)
                     .padding(.vertical, 16)
-                DeviceInfoItem(title: "location".localized, detail: viewModel.item.device.showLocation())
+                DeviceInfoItem(
+                    title: "location".localized,
+                    detail: viewModel.item.device.showLocation()
+                )
                 Divider()
                     .background(Color.Theme.Line.line)
                     .padding(.vertical, 16)
-                DeviceInfoItem(title: "entry_date_tag".localized, detail: viewModel.item.device.showDate())
+                DeviceInfoItem(
+                    title: "entry_date_tag".localized,
+                    detail: viewModel.item.device.showDate()
+                )
             }
             .padding(.all, 16)
             .background(.Theme.Background.grey)
@@ -172,12 +193,15 @@ struct MultiBackupDetailView: RouteableView {
     }
 
     func region() -> MKCoordinateRegion {
-        let region = MKCoordinateRegion(center: viewModel.item.device.coordinate(), span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+        let region = MKCoordinateRegion(
+            center: viewModel.item.device.coordinate(),
+            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+        )
         return region
     }
 
     func annotations() -> [CLLocationCoordinate2D] {
-        return [
+        [
             viewModel.item.device.coordinate(),
         ]
     }

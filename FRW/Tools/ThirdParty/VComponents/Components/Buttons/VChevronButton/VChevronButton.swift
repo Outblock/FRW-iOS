@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Chevron Button
+// MARK: - VChevronButton
 
 /// Circular colored chevron button component that performs action when triggered.
 ///
@@ -24,17 +24,7 @@ import SwiftUI
 ///     }
 ///
 public struct VChevronButton: View {
-    // MARK: Properties
-
-    private let model: VChevronButtonModel
-
-    private let direction: VChevronButtonDirection
-
-    private let state: VChevronButtonState
-    @State private var internalStateRaw: VChevronButtonInternalState?
-    private var internalState: VChevronButtonInternalState { internalStateRaw ?? .default(state: state) }
-
-    private let action: () -> Void
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -51,6 +41,8 @@ public struct VChevronButton: View {
         self.action = action
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -61,6 +53,23 @@ public struct VChevronButton: View {
             gesture: gestureHandler,
             content: { hitBoxButtonView }
         )
+    }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VChevronButtonModel
+
+    private let direction: VChevronButtonDirection
+
+    private let state: VChevronButtonState
+    @State
+    private var internalStateRaw: VChevronButtonInternalState?
+    private let action: () -> Void
+
+    private var internalState: VChevronButtonInternalState {
+        internalStateRaw ?? .default(state: state)
     }
 
     private var hitBoxButtonView: some View {
@@ -82,7 +91,10 @@ public struct VChevronButton: View {
             .foregroundColor(model.colors.content.for(internalState))
             .opacity(model.colors.content.for(internalState))
             .rotationEffect(.init(degrees: direction.angle))
-            .ifLet(model.layout.navigationBarBackButtonOffsetX, transform: { $0.offset(x: $1, y: 0) })
+            .ifLet(
+                model.layout.navigationBarBackButtonOffsetX,
+                transform: { $0.offset(x: $1, y: 0) }
+            )
     }
 
     private var backgroundView: some View {
@@ -94,10 +106,8 @@ public struct VChevronButton: View {
 
     private func syncInternalStateWithState() {
         DispatchQueue.main.async {
-            if
-                internalStateRaw == nil ||
-                .init(internalState: internalState) != state
-            {
+            if internalStateRaw == nil ||
+                .init(internalState: internalState) != state {
                 internalStateRaw = .default(state: state)
             }
         }
@@ -113,8 +123,8 @@ public struct VChevronButton: View {
 
 // MARK: - Rotation
 
-private extension VChevronButtonDirection {
-    var angle: Double {
+extension VChevronButtonDirection {
+    fileprivate var angle: Double {
         switch self {
         case .up: return 0
         case .right: return 90
@@ -124,7 +134,7 @@ private extension VChevronButtonDirection {
     }
 }
 
-// MARK: - Preview
+// MARK: - VChevronButton_Previews
 
 struct VChevronButton_Previews: PreviewProvider {
     static var previews: some View {

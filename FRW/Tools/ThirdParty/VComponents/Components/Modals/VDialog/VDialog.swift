@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Dialog
+// MARK: - VDialog
 
 /// Modal component that presents dialog when condition is true.
 ///
@@ -47,13 +47,7 @@ import SwiftUI
 ///     }
 ///
 public struct VDialog<Content> where Content: View {
-    // MARK: Properties
-
-    fileprivate let model: VDialogModel
-    fileprivate let dialogButtons: VDialogButtons
-    fileprivate let title: String?
-    fileprivate let description: String?
-    fileprivate let content: (() -> Content)?
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -87,6 +81,16 @@ public struct VDialog<Content> where Content: View {
         self.description = description
         content = nil
     }
+
+    // MARK: Fileprivate
+
+    // MARK: Properties
+
+    fileprivate let model: VDialogModel
+    fileprivate let dialogButtons: VDialogButtons
+    fileprivate let title: String?
+    fileprivate let description: String?
+    fileprivate let content: (() -> Content)?
 }
 
 // MARK: - Extension

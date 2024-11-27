@@ -13,6 +13,8 @@ import UIKit
 private let PinnedHeaderHeight: CGFloat = 80
 private let CollecitonTitleViewHeight: CGFloat = 32
 
+// MARK: - NFTUIKitListStyleHandler.Section
+
 extension NFTUIKitListStyleHandler {
     enum Section: Int {
         case other
@@ -20,12 +22,10 @@ extension NFTUIKitListStyleHandler {
     }
 }
 
+// MARK: - NFTUIKitListStyleHandler
+
 class NFTUIKitListStyleHandler: NSObject {
-    var vm: NFTTabViewModel? {
-        didSet {
-            favContainerView.vm = vm
-        }
-    }
+    // MARK: Internal
 
     lazy var dataModel: NFTUIKitListNormalDataModel = {
         let dm = NFTUIKitListNormalDataModel()
@@ -36,20 +36,103 @@ class NFTUIKitListStyleHandler: NSObject {
         return dm
     }()
 
-    private var isInitRequested: Bool = false
-    private var isRequesting: Bool = false
-
     var offsetCallback: ((CGFloat) -> Void)?
-
-    private lazy var emptyView: NFTUIKitListStyleHandler.EmptyView = {
-        let view = NFTUIKitListStyleHandler.EmptyView()
-        view.button.addTarget(self, action: #selector(onAddButtonClick), for: .touchUpInside)
-        return view
-    }()
 
     lazy var containerView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.LL.Neutrals.background
+        return view
+    }()
+
+    lazy var collectionView: UICollectionView = {
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.contentInsetAdjustmentBehavior = .never
+        view.backgroundColor = .clear
+        view.delegate = self
+        view.dataSource = self
+        view.showsHorizontalScrollIndicator = false
+        view.showsVerticalScrollIndicator = false
+        view.register(
+            NFTUIKitCollectionPinnedSectionView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "PinHeader"
+        )
+        view.register(
+            NFTUIKitCollectionPinnedSectionView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: "PinFooter"
+        )
+        view.register(NFTUIKitItemCell.self, forCellWithReuseIdentifier: "NFTUIKitItemCell")
+        view.register(
+            NFTUIKitCollectionRegularItemCell.self,
+            forCellWithReuseIdentifier: "NFTUIKitCollectionRegularItemCell"
+        )
+        view.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "UICollectionViewCell")
+
+        view.setRefreshingAction { [weak self] in
+            guard let self = self else {
+                return
+            }
+
+            self.refreshAction()
+        }
+
+        return view
+    }()
+
+    var vm: NFTTabViewModel? {
+        didSet {
+            favContainerView.vm = vm
+        }
+    }
+
+    func setup() {
+        setupBlurBgView()
+
+        containerView.addSubview(collectionView)
+        collectionView.snp.makeConstraints { make in
+            make.top.left.right.bottom.equalToSuperview()
+        }
+
+        let offset = Router.coordinator.window.safeAreaInsets.top + 44.0
+        containerView.addSubview(emptyView)
+        emptyView.snp.makeConstraints { make in
+            make.left.right.bottom.equalToSuperview()
+            make.top.equalToSuperview().offset(-offset)
+        }
+        emptyView.isHidden = true
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(reloadViews),
+            name: .nftFavDidChanged,
+            object: nil
+        )
+        reloadBgView()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onCollectionsDidChanged),
+            name: .nftCollectionsDidChanged,
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(openCollectionListNoti(noti:)),
+            name: .openNFTCollectionList,
+            object: nil
+        )
+    }
+
+    // MARK: Private
+
+    private var isInitRequested: Bool = false
+    private var isRequesting: Bool = false
+
+    private lazy var emptyView: NFTUIKitListStyleHandler.EmptyView = {
+        let view = NFTUIKitListStyleHandler.EmptyView()
+        view.button.addTarget(self, action: #selector(onAddButtonClick), for: .touchUpInside)
         return view
     }()
 
@@ -83,7 +166,11 @@ class NFTUIKitListStyleHandler: NSObject {
 
     private lazy var collectionTitleView: NFTUIKitListTitleView = {
         let view = NFTUIKitListTitleView()
-        view.switchButton.addTarget(self, action: #selector(onSwitchButtonClick), for: .touchUpInside)
+        view.switchButton.addTarget(
+            self,
+            action: #selector(onSwitchButtonClick),
+            for: .touchUpInside
+        )
 
         return view
     }()
@@ -111,61 +198,12 @@ class NFTUIKitListStyleHandler: NSObject {
         return view
     }()
 
-    lazy var collectionView: UICollectionView = {
-        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.contentInsetAdjustmentBehavior = .never
-        view.backgroundColor = .clear
-        view.delegate = self
-        view.dataSource = self
-        view.showsHorizontalScrollIndicator = false
-        view.showsVerticalScrollIndicator = false
-        view.register(NFTUIKitCollectionPinnedSectionView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "PinHeader")
-        view.register(NFTUIKitCollectionPinnedSectionView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "PinFooter")
-        view.register(NFTUIKitItemCell.self, forCellWithReuseIdentifier: "NFTUIKitItemCell")
-        view.register(NFTUIKitCollectionRegularItemCell.self, forCellWithReuseIdentifier: "NFTUIKitCollectionRegularItemCell")
-        view.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "UICollectionViewCell")
-
-        view.setRefreshingAction { [weak self] in
-            guard let self = self else {
-                return
-            }
-
-            self.refreshAction()
-        }
-
-        return view
-    }()
-
     private lazy var layout: UICollectionViewFlowLayout = {
         let viewLayout = UICollectionViewFlowLayout()
         viewLayout.scrollDirection = .vertical
         viewLayout.sectionHeadersPinToVisibleBounds = true
         return viewLayout
     }()
-
-    func setup() {
-        setupBlurBgView()
-
-        containerView.addSubview(collectionView)
-        collectionView.snp.makeConstraints { make in
-            make.top.left.right.bottom.equalToSuperview()
-        }
-
-        let offset = Router.coordinator.window.safeAreaInsets.top + 44.0
-        containerView.addSubview(emptyView)
-        emptyView.snp.makeConstraints { make in
-            make.left.right.bottom.equalToSuperview()
-            make.top.equalToSuperview().offset(-offset)
-        }
-        emptyView.isHidden = true
-
-        NotificationCenter.default.addObserver(self, selector: #selector(reloadViews), name: .nftFavDidChanged, object: nil)
-        reloadBgView()
-
-        NotificationCenter.default.addObserver(self, selector: #selector(onCollectionsDidChanged), name: .nftCollectionsDidChanged, object: nil)
-
-        NotificationCenter.default.addObserver(self, selector: #selector(openCollectionListNoti(noti:)), name: .openNFTCollectionList, object: nil)
-    }
 
     private func setupBlurBgView() {
         let offset = Router.coordinator.window.safeAreaInsets.top + 44.0
@@ -187,15 +225,22 @@ class NFTUIKitListStyleHandler: NSObject {
             make.edges.equalToSuperview()
         }
 
-        blurMaskLayer.frame = CGRect(x: 0, y: 0, width: Router.coordinator.window.bounds.size.width, height: offset + NFTUIKitFavContainerView.calculateViewHeight())
+        blurMaskLayer.frame = CGRect(
+            x: 0,
+            y: 0,
+            width: Router.coordinator.window.bounds.size.width,
+            height: offset + NFTUIKitFavContainerView.calculateViewHeight()
+        )
         blurBgView.layer.mask = blurMaskLayer
     }
 
-    @objc private func onCollectionsDidChanged() {
+    @objc
+    private func onCollectionsDidChanged() {
         collectionView.beginRefreshing()
     }
 
-    @objc private func reloadViews() {
+    @objc
+    private func reloadViews() {
         if dataModel.items.isEmpty {
             showEmptyView()
         } else {
@@ -215,7 +260,11 @@ class NFTUIKitListStyleHandler: NSObject {
 
         if !blurBgView.isHidden, favContainerView.currentIndex < NFTUIKitCache.cache.favList.count {
             let model = NFTUIKitCache.cache.favList[favContainerView.currentIndex]
-            bgImageView.kf.setImage(with: model.imageURL, placeholder: UIImage(named: "placeholder"), options: [.transition(.fade(0.25)), .forceTransition])
+            bgImageView.kf.setImage(
+                with: model.imageURL,
+                placeholder: UIImage(named: "placeholder"),
+                options: [.transition(.fade(0.25)), .forceTransition]
+            )
         }
     }
 
@@ -236,11 +285,13 @@ class NFTUIKitListStyleHandler: NSObject {
         }
     }
 
-    @objc private func onAddButtonClick() {
+    @objc
+    private func onAddButtonClick() {
         Router.route(to: RouteMap.NFT.addCollection)
     }
 
-    @objc private func openCollectionListNoti(noti: Notification) {
+    @objc
+    private func openCollectionListNoti(noti: Notification) {
         if let id = noti.object as? String, let vm = vm {
             for item in dataModel.items {
                 if item.collectionId == id {
@@ -265,7 +316,8 @@ extension NFTUIKitListStyleHandler {
             return
         }
 
-        guard WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() != nil else {
+        guard WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() != nil
+        else {
             showEmptyView()
             return
         }
@@ -376,12 +428,15 @@ extension NFTUIKitListStyleHandler {
     }
 
     private func loadCurrentCollectionNFTsIfNeeded() {
-        if let item = dataModel.selectedCollectionItem, !dataModel.isCollectionListStyle, item.nfts.isEmpty, !item.isRequesting, !item.isEnd {
+        if let item = dataModel.selectedCollectionItem, !dataModel.isCollectionListStyle,
+           item.nfts.isEmpty, !item.isRequesting, !item.isEnd
+        {
             collectionView.beginLoading()
         }
     }
 
-    @objc private func onSwitchButtonClick() {
+    @objc
+    private func onSwitchButtonClick() {
         collectionView.scrollToTop(animated: false)
 
         dataModel.isCollectionListStyle.toggle()
@@ -407,6 +462,8 @@ extension NFTUIKitListStyleHandler {
     private func hideErrorView() {}
 }
 
+// MARK: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource
+
 extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         var offsetY = scrollView.contentOffset.y
@@ -420,7 +477,7 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
     }
 
     func numberOfSections(in _: UICollectionView) -> Int {
-        return 2
+        2
     }
 
     func collectionView(_: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -435,9 +492,15 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
         return dataModel.selectedCollectionItem?.nfts.count ?? 0
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         if indexPath.section == Section.other.rawValue {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UICollectionViewCell", for: indexPath)
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "UICollectionViewCell",
+                for: indexPath
+            )
             cell.contentView.backgroundColor = .clear
 
             if favContainerView.superview != cell.contentView {
@@ -452,27 +515,43 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
 
         if dataModel.isCollectionListStyle {
             let collection = dataModel.items[indexPath.item]
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NFTUIKitCollectionRegularItemCell", for: indexPath) as! NFTUIKitCollectionRegularItemCell
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "NFTUIKitCollectionRegularItemCell",
+                for: indexPath
+            ) as! NFTUIKitCollectionRegularItemCell
             cell.config(collection)
             return cell
         }
 
         if let nftList = dataModel.selectedCollectionItem?.nfts, indexPath.item < nftList.count {
             let nft = nftList[indexPath.item]
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NFTUIKitItemCell", for: indexPath) as! NFTUIKitItemCell
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "NFTUIKitItemCell",
+                for: indexPath
+            ) as! NFTUIKitItemCell
             cell.config(nft)
             return cell
         } else {
             log.info("[NFT] data may be is invalid.")
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UICollectionViewCell", for: indexPath)
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "UICollectionViewCell",
+                for: indexPath
+            )
             cell.contentView.backgroundColor = .clear
             return cell
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout _: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         if indexPath.section == Section.other.rawValue {
-            return CGSize(width: collectionView.bounds.size.width, height: NFTUIKitFavContainerView.calculateViewHeight())
+            return CGSize(
+                width: collectionView.bounds.size.width,
+                height: NFTUIKitFavContainerView.calculateViewHeight()
+            )
         }
 
         if dataModel.isCollectionListStyle {
@@ -482,7 +561,11 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
         return NFTUIKitItemCell.calculateSize()
     }
 
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
         if section == Section.other.rawValue {
             return .zero
         }
@@ -494,18 +577,32 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
         return CGSize(width: 0, height: PinnedHeaderHeight)
     }
 
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        if section == Section.other.rawValue, !dataModel.isCollectionListStyle, !dataModel.items.isEmpty {
+    func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        referenceSizeForFooterInSection section: Int
+    ) -> CGSize {
+        if section == Section.other.rawValue, !dataModel.isCollectionListStyle,
+           !dataModel.items.isEmpty
+        {
             return CGSize(width: 0, height: CollecitonTitleViewHeight)
         }
 
         return .zero
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
         if indexPath.section == Section.other.rawValue {
             if !dataModel.isCollectionListStyle, kind == UICollectionView.elementKindSectionFooter {
-                let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "PinFooter", for: indexPath)
+                let footer = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: kind,
+                    withReuseIdentifier: "PinFooter",
+                    for: indexPath
+                )
                 if collectionTitleView.superview != footer {
                     collectionTitleView.removeFromSuperview()
                     footer.addSubview(collectionTitleView)
@@ -523,7 +620,11 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
         }
 
         if dataModel.isCollectionListStyle {
-            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "PinHeader", for: indexPath)
+            let header = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: "PinHeader",
+                for: indexPath
+            )
             header.removeSubviews()
             collectionTitleView.removeFromSuperview()
             header.addSubview(collectionTitleView)
@@ -534,7 +635,11 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
             return header
         }
 
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "PinHeader", for: indexPath)
+        let header = collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: "PinHeader",
+            for: indexPath
+        )
         header.removeSubviews()
         collectionHContainer.removeFromSuperview()
         header.addSubview(collectionHContainer)
@@ -545,7 +650,11 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
         return header
     }
 
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumLineSpacingForSectionAt _: Int) -> CGFloat {
+    func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        minimumLineSpacingForSectionAt _: Int
+    ) -> CGFloat {
         if dataModel.isCollectionListStyle {
             return 12
         }
@@ -553,7 +662,11 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
         return 18
     }
 
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumInteritemSpacingForSectionAt _: Int) -> CGFloat {
+    func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        minimumInteritemSpacingForSectionAt _: Int
+    ) -> CGFloat {
         if dataModel.isCollectionListStyle {
             return 12
         }
@@ -561,7 +674,11 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
         return 18
     }
 
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
         if section == Section.other.rawValue {
             return .zero
         }
@@ -578,7 +695,9 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
             return
         }
 
-        if !dataModel.isCollectionListStyle, let nftList = dataModel.selectedCollectionItem?.nfts, indexPath.item < nftList.count {
+        if !dataModel.isCollectionListStyle, let nftList = dataModel.selectedCollectionItem?.nfts,
+           indexPath.item < nftList.count
+        {
             let nft = nftList[indexPath.item]
             Router.route(to: RouteMap.NFT.detail(vm, nft, nil))
             return
@@ -591,8 +710,43 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
     }
 }
 
+// MARK: NFTUIKitListStyleHandler.EmptyView
+
 extension NFTUIKitListStyleHandler {
     class EmptyView: UIView {
+        // MARK: Lifecycle
+
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            setup()
+        }
+
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) {
+            fatalError("")
+        }
+
+        // MARK: Internal
+
+        lazy var button: UIButton = {
+            let btn = UIButton(type: .custom)
+            let bg = UIImage.image(withColor: UIColor.LL.Secondary.mango4.withAlphaComponent(0.08))
+            btn.setBackgroundImage(bg, for: .normal)
+
+            btn.setTitle("get_new_nft".localized, for: .normal)
+            btn.setTitleColor(UIColor.LL.Secondary.mangoNFT, for: .normal)
+            btn.titleLabel?.font = .interSemiBold(size: 14)
+
+            btn.contentEdgeInsets = UIEdgeInsets(top: 10, left: 43, bottom: 10, right: 43)
+
+            btn.clipsToBounds = true
+            btn.layer.cornerRadius = 12
+
+            return btn
+        }()
+
+        // MARK: Private
+
         private lazy var bgImageView: UIView = {
             let view = UIHostingController(rootView: NFTEmptyView()).view ?? UIView()
 //            UIImageView(image: UIImage(named: "nft_empty_bg"))
@@ -621,33 +775,6 @@ extension NFTUIKitListStyleHandler {
             view.text = "nft_empty_discovery".localized
             return view
         }()
-
-        lazy var button: UIButton = {
-            let btn = UIButton(type: .custom)
-            let bg = UIImage.image(withColor: UIColor.LL.Secondary.mango4.withAlphaComponent(0.08))
-            btn.setBackgroundImage(bg, for: .normal)
-
-            btn.setTitle("get_new_nft".localized, for: .normal)
-            btn.setTitleColor(UIColor.LL.Secondary.mangoNFT, for: .normal)
-            btn.titleLabel?.font = .interSemiBold(size: 14)
-
-            btn.contentEdgeInsets = UIEdgeInsets(top: 10, left: 43, bottom: 10, right: 43)
-
-            btn.clipsToBounds = true
-            btn.layer.cornerRadius = 12
-
-            return btn
-        }()
-
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            setup()
-        }
-
-        @available(*, unavailable)
-        required init?(coder _: NSCoder) {
-            fatalError("")
-        }
 
         private func setup() {
             addSubview(bgImageView)

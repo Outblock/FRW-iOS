@@ -20,19 +20,26 @@ extension BackupManager.BackupType {
     }
 }
 
+// MARK: - ProfileBackupView
+
 struct ProfileBackupView: RouteableView {
+    // MARK: Internal
+
     let types: [BackupManager.BackupType] = [.icloud, .googleDrive]
-    @StateObject private var vm = ProfileBackupViewModel()
 
     var title: String {
-        return "backup".localized
+        "backup".localized
     }
 
     var body: some View {
         VStack {
             VStack(spacing: 0) {
                 ForEach(types, id: \.self) { type in
-                    ItemCell(title: type.descLocalizedString, icon: type.littleIcon, isSelected: vm.selectedBackupType == type) {
+                    ItemCell(
+                        title: type.descLocalizedString,
+                        icon: type.littleIcon,
+                        isSelected: vm.selectedBackupType == type
+                    ) {
                         vm.changeBackupTypeAction(type)
                     }
 
@@ -49,7 +56,14 @@ struct ProfileBackupView: RouteableView {
         .backgroundFill(Color.LL.Neutrals.background)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = ProfileBackupViewModel()
 }
+
+// MARK: ProfileBackupView.ItemCell
 
 extension ProfileBackupView {
     struct ItemCell: View {
@@ -89,6 +103,8 @@ extension ProfileBackupView {
         }
     }
 }
+
+// MARK: - Previews_ProfileBackupView_Previews
 
 struct Previews_ProfileBackupView_Previews: PreviewProvider {
     static var previews: some View {

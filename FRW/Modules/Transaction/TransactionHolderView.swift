@@ -13,6 +13,8 @@ import UIKit
 
 private let PanelHolderViewWidth: CGFloat = 48
 
+// MARK: - TransactionHolderView.Status
+
 extension TransactionHolderView {
     enum Status {
         case dragging
@@ -21,14 +23,45 @@ extension TransactionHolderView {
     }
 }
 
+// MARK: - TransactionHolderView
+
 class TransactionHolderView: UIView {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("")
+    }
+
+    // MARK: Internal
+
     private(set) var model: TransactionManager.TransactionHolder?
 
-    private var status: TransactionHolderView.Status = .right {
-        didSet {
-            reloadBgPaths()
-        }
+    static func defaultPanelHolderFrame() -> CGRect {
+        let size = Router.coordinator.window.bounds.size
+        let x = size.width - PanelHolderViewWidth
+        let y = size.height * 0.6
+        return CGRect(x: x, y: y, width: PanelHolderViewWidth, height: PanelHolderViewWidth)
     }
+
+    static func createView() -> TransactionHolderView {
+        TransactionHolderView(
+            frame: LocalUserDefaults.shared
+                .panelHolderFrame ?? defaultPanelHolderFrame()
+        )
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        reloadBgPaths()
+    }
+
+    // MARK: Private
 
     private lazy var bgMaskLayer: CAShapeLayer = {
         let layer = CAShapeLayer()
@@ -46,25 +79,10 @@ class TransactionHolderView: UIView {
         return view
     }()
 
-    static func defaultPanelHolderFrame() -> CGRect {
-        let size = Router.coordinator.window.bounds.size
-        let x = size.width - PanelHolderViewWidth
-        let y = size.height * 0.6
-        return CGRect(x: x, y: y, width: PanelHolderViewWidth, height: PanelHolderViewWidth)
-    }
-
-    static func createView() -> TransactionHolderView {
-        return TransactionHolderView(frame: LocalUserDefaults.shared.panelHolderFrame ?? defaultPanelHolderFrame())
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("")
+    private var status: TransactionHolderView.Status = .right {
+        didSet {
+            reloadBgPaths()
+        }
     }
 
     private func setup() {
@@ -84,7 +102,10 @@ class TransactionHolderView: UIView {
             make.center.equalToSuperview()
         }
 
-        let gesture = UIPanGestureRecognizer(target: self, action: #selector(onPanelHolderPan(gesture:)))
+        let gesture = UIPanGestureRecognizer(
+            target: self,
+            action: #selector(onPanelHolderPan(gesture:))
+        )
         addGestureRecognizer(gesture)
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(onTap))
@@ -94,12 +115,12 @@ class TransactionHolderView: UIView {
     }
 
     private func addNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(onHolderStatusChanged(noti:)), name: .transactionStatusDidChanged, object: nil)
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        reloadBgPaths()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onHolderStatusChanged(noti:)),
+            name: .transactionStatusDidChanged,
+            object: nil
+        )
     }
 
     private func reloadBgPaths() {
@@ -115,15 +136,21 @@ class TransactionHolderView: UIView {
             corner = [.topRight, .bottomRight]
         }
 
-        let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corner, cornerRadii: CGSize(width: 12.0, height: 12.0))
+        let path = UIBezierPath(
+            roundedRect: bounds,
+            byRoundingCorners: corner,
+            cornerRadii: CGSize(width: 12.0, height: 12.0)
+        )
         bgMaskLayer.path = path.cgPath
     }
 
-    @objc private func onTap() {
+    @objc
+    private func onTap() {
         TransactionUIHandler.shared.showListView()
     }
 
-    @objc private func onPanelHolderPan(gesture: UIPanGestureRecognizer) {
+    @objc
+    private func onPanelHolderPan(gesture: UIPanGestureRecognizer) {
         switch gesture.state {
         case .began:
             status = .dragging
@@ -166,8 +193,12 @@ class TransactionHolderView: UIView {
         LocalUserDefaults.shared.panelHolderFrame = frame
     }
 
-    @objc private func onHolderStatusChanged(noti: Notification) {
-        guard let holder = noti.object as? TransactionManager.TransactionHolder, let current = model, current.transactionId.hex == holder.transactionId.hex else {
+    @objc
+    private func onHolderStatusChanged(noti: Notification) {
+        guard let holder = noti.object as? TransactionManager.TransactionHolder,
+              let current = model,
+              current.transactionId.hex == holder.transactionId.hex
+        else {
             return
         }
 
@@ -176,7 +207,10 @@ class TransactionHolderView: UIView {
 
     private func refreshView() {
         if let iconURL = model?.icon() {
-            progressView.iconImageView.kf.setImage(with: iconURL, placeholder: UIImage(named: "placeholder"))
+            progressView.iconImageView.kf.setImage(
+                with: iconURL,
+                placeholder: UIImage(named: "placeholder")
+            )
         } else {
             progressView.iconImageView.image = UIImage(named: "flow")
         }
@@ -189,7 +223,13 @@ extension TransactionHolderView {
     func show(inView _: UIView) {
         alpha = 1
         transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
-        UIView.animate(withDuration: 0.25, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 5, options: .curveEaseInOut) {
+        UIView.animate(
+            withDuration: 0.25,
+            delay: 0,
+            usingSpringWithDamping: 0.7,
+            initialSpringVelocity: 5,
+            options: .curveEaseInOut
+        ) {
             self.transform = .identity
         } completion: { _ in
         }

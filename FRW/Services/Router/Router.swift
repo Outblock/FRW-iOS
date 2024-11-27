@@ -8,6 +8,8 @@
 import SwiftUI
 import UIKit
 
+// MARK: - RouterTarget
+
 protocol RouterTarget {
     func onPresent(navi: UINavigationController)
 }
@@ -47,14 +49,19 @@ extension Router {
 
     static func dismiss(animated: Bool = true, completion: (() -> Void)? = nil) {
         safeMainThreadCall {
-            topPresentedController().presentingViewController?.dismiss(animated: animated, completion: completion)
+            topPresentedController().presentingViewController?.dismiss(
+                animated: animated,
+                completion: completion
+            )
         }
     }
 }
 
-// MARK: - Private
+// MARK: - Router
 
 enum Router {
+    // MARK: Internal
+
     static var coordinator = (UIApplication.shared.delegate as! AppDelegate).coordinator
 
     static func topPresentedController() -> UIViewController {
@@ -73,6 +80,8 @@ enum Router {
 
         return coordinator.rootNavi
     }
+
+    // MARK: Private
 
     private static func safeMainThreadCall(_ call: @escaping () -> Void) {
         if Thread.isMainThread {

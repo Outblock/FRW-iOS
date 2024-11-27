@@ -18,7 +18,11 @@ extension UIImage {
             return [.LL.text]
         }
 
-        return [Color(palette.background), Color(palette.primary), (palette.secondary != nil) ? Color(palette.secondary!) : .LL.text]
+        return [
+            Color(palette.background),
+            Color(palette.primary),
+            (palette.secondary != nil) ? Color(palette.secondary!) : .LL.text,
+        ]
     }
 
     func mostFrequentColor() -> Color? {
@@ -77,9 +81,11 @@ extension UIImage {
     }
 }
 
+// MARK: - ImageHelper
+
 enum ImageHelper {
     static func mostFrequentColor(from url: String) async -> Color {
-        return await withCheckedContinuation { continuation in
+        await withCheckedContinuation { continuation in
             ImageCache.default.retrieveImage(forKey: url) { result in
                 switch result {
                 case let .success(value):
@@ -101,13 +107,17 @@ enum ImageHelper {
     }
 
     static func colors(from url: String) async -> [Color] {
-        return await withCheckedContinuation { continuation in
+        await withCheckedContinuation { continuation in
             ImageCache.default.retrieveImage(forKey: url) { result in
                 switch result {
                 case let .success(value):
                     Task {
                         guard let image = value.image else {
-                            continuation.resume(returning: [Color.LL.background, Color.LL.text, Color.LL.outline])
+                            continuation.resume(returning: [
+                                Color.LL.background,
+                                Color.LL.text,
+                                Color.LL.outline,
+                            ])
                             return
                         }
                         let colors = await image.colors()
@@ -115,14 +125,18 @@ enum ImageHelper {
                     }
 
                 case .failure:
-                    continuation.resume(returning: [Color.LL.background, Color.LL.text, Color.LL.outline])
+                    continuation.resume(returning: [
+                        Color.LL.background,
+                        Color.LL.text,
+                        Color.LL.outline,
+                    ])
                 }
             }
         }
     }
 
     static func image(from url: String) async -> UIImage? {
-        return await withCheckedContinuation { continuation in
+        await withCheckedContinuation { continuation in
             ImageCache.default.retrieveImage(forKey: url) { result in
                 switch result {
                 case let .success(value):

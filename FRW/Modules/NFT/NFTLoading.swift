@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: - NFTLoading
+
 struct NFTLoading: View {
     var body: some View {
         ZStack {
@@ -15,6 +17,8 @@ struct NFTLoading: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+
+// MARK: - NFTLoading_Previews
 
 struct NFTLoading_Previews: PreviewProvider {
     static var previews: some View {

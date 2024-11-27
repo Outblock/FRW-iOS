@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Accordion
+// MARK: - VAccordion
 
 /// Expandable container component that draws a background, and either hosts content, or computes views on demad from an underlying collection of identified data.
 ///
@@ -68,21 +68,7 @@ public struct VAccordion<HeaderContent, Data, ID, RowContent, Content>: View
     RowContent: View,
     Content: View
 {
-    // MARK: Properties
-
-    private let model: VAccordionModel
-    private let layoutType: VAccordionLayoutType
-
-    @Binding private var state: VAccordionState
-    @State private var animatableState: VAccordionState?
-
-    private let headerContent: () -> HeaderContent
-
-    private let contentType: ContentType
-    private enum ContentType {
-        case list(data: Data, id: KeyPath<Data.Element, ID>, rowContent: (Data.Element) -> RowContent)
-        case freeForm(content: () -> Content)
-    }
+    // MARK: Lifecycle
 
     // MARK: Initializers - View Builder
 
@@ -254,6 +240,8 @@ public struct VAccordion<HeaderContent, Data, ID, RowContent, Content>: View
         )
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -268,6 +256,31 @@ public struct VAccordion<HeaderContent, Data, ID, RowContent, Content>: View
         })
     }
 
+    // MARK: Private
+
+    private enum ContentType {
+        case list(
+            data: Data,
+            id: KeyPath<Data.Element, ID>,
+            rowContent: (Data.Element) -> RowContent
+        )
+        case freeForm(content: () -> Content)
+    }
+
+    // MARK: Properties
+
+    private let model: VAccordionModel
+    private let layoutType: VAccordionLayoutType
+
+    @Binding
+    private var state: VAccordionState
+    @State
+    private var animatableState: VAccordionState?
+
+    private let headerContent: () -> HeaderContent
+
+    private let contentType: ContentType
+
     private var headerView: some View {
         HStack(spacing: 0, content: {
             headerContent()
@@ -281,17 +294,25 @@ public struct VAccordion<HeaderContent, Data, ID, RowContent, Content>: View
                 state: state.chevronButtonState,
                 action: expandCollapse
             )
-            .allowsHitTesting(!model.misc.expandCollapseOnHeaderTap) // No need for two-layer tap area
+            .allowsHitTesting(
+                !model.misc
+                    .expandCollapseOnHeaderTap
+            ) // No need for two-layer tap area
         })
         .padding(.leading, model.layout.headerMargins.leading)
         .padding(.trailing, model.layout.headerMargins.trailing)
         .padding(.top, model.layout.headerMargins.top)
-        .padding(.bottom, (animatableState ?? state).isExpanded ? model.layout.headerMargins.bottomExpanded : model.layout.headerMargins.bottomCollapsed)
+        .padding(
+            .bottom,
+            (animatableState ?? state).isExpanded ? model.layout.headerMargins
+                .bottomExpanded : model.layout.headerMargins.bottomCollapsed
+        )
         .contentShape(Rectangle())
         .onTapGesture(perform: expandCollapseFromHeaderTap)
     }
 
-    @ViewBuilder private var divider: some View {
+    @ViewBuilder
+    private var divider: some View {
         if (animatableState ?? state).isExpanded, model.layout.hasHeaderDivider {
             Rectangle()
                 .frame(height: model.layout.headerDividerHeight)
@@ -303,7 +324,8 @@ public struct VAccordion<HeaderContent, Data, ID, RowContent, Content>: View
         }
     }
 
-    @ViewBuilder private var contentView: some View {
+    @ViewBuilder
+    private var contentView: some View {
         if (animatableState ?? state).isExpanded {
             Group(content: {
                 switch contentType {
@@ -355,10 +377,10 @@ public struct VAccordion<HeaderContent, Data, ID, RowContent, Content>: View
     }
 }
 
-// MARK: - Previews
+// MARK: - VAccordion_Previews
 
 struct VAccordion_Previews: PreviewProvider {
-    @State private static var accordionState: VAccordionState = .expanded
+    // MARK: Internal
 
     static var previews: some View {
         ZStack(alignment: .top, content: {
@@ -377,4 +399,9 @@ struct VAccordion_Previews: PreviewProvider {
             .padding(16)
         })
     }
+
+    // MARK: Private
+
+    @State
+    private static var accordionState: VAccordionState = .expanded
 }

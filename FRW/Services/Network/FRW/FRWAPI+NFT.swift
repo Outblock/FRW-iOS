@@ -12,15 +12,15 @@ extension FRWAPI {
     typealias Address = String
 
     struct Offset {
+        static var `default`: FRWAPI.Offset {
+            Offset(start: 0, length: 24)
+        }
+
         let start: Int
         let length: Int
 
         func next() -> FRWAPI.Offset {
             Offset(start: start + length, length: length)
-        }
-
-        static var `default`: FRWAPI.Offset {
-            Offset(start: 0, length: 24)
         }
     }
 }
@@ -42,9 +42,11 @@ extension FRWAPI {
     }
 }
 
+// MARK: - FRWAPI.NFT + TargetType, AccessTokenAuthorizable
+
 extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
-        return .bearer
+        .bearer
     }
 
     var baseURL: URL {
@@ -100,9 +102,15 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
     var task: Task {
         switch self {
         case let .gridDetailList(request, _):
-            return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding())
+            return .requestParameters(
+                parameters: request.dictionary ?? [:],
+                encoding: URLEncoding()
+            )
         case let .collectionDetailList(request, _):
-            return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding())
+            return .requestParameters(
+                parameters: request.dictionary ?? [:],
+                encoding: URLEncoding()
+            )
         case .collections:
             return .requestParameters(parameters: [:], encoding: URLEncoding())
         case let .favList(address):
@@ -112,7 +120,10 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
         case let .updateFav(request):
             return .requestJSONEncodable(request)
         case let .userCollection(address, offset, _):
-            return .requestParameters(parameters: ["address": address, "offset": offset.start, "limit": offset.length], encoding: URLEncoding())
+            return .requestParameters(
+                parameters: ["address": address, "offset": offset.start, "limit": offset.length],
+                encoding: URLEncoding()
+            )
         }
     }
 

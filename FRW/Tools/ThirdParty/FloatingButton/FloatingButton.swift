@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// MARK: - FloatButton
+
 public enum FloatButton {
     public enum Direction {
         case left, right, top, bottom
@@ -22,7 +24,78 @@ public enum FloatButton {
     }
 }
 
+// MARK: - FloatingButton
+
 public struct FloatingButton<MainView, ButtonView>: View where MainView: View, ButtonView: View {
+    // MARK: Lifecycle
+
+    private init(
+        mainButtonView: MainView,
+        buttons: [SubmenuButton<ButtonView>],
+        isOpenBinding: Binding<Bool>?
+    ) {
+        self.mainButtonView = mainButtonView
+        self.buttons = buttons
+        self.isOpenBinding = isOpenBinding
+    }
+
+    public init(mainButtonView: MainView, buttons: [ButtonView]) {
+        self.mainButtonView = mainButtonView
+        self.buttons = buttons.map { SubmenuButton(buttonView: $0) }
+    }
+
+    public init(mainButtonView: MainView, buttons: [ButtonView], isOpen: Binding<Bool>) {
+        self.mainButtonView = mainButtonView
+        self.buttons = buttons.map { SubmenuButton(buttonView: $0) }
+        isOpenBinding = isOpen
+    }
+
+    // MARK: Public
+
+    public var body: some View {
+        ZStack(alignment: mainZStackAlignment) {
+            ForEach(0 ..< buttons.count, id: \.self) { i in
+                buttons[i]
+                    .background(SubmenuButtonPreferenceViewSetter())
+                    .offset(alignmentOffsets.isEmpty ? .zero : alignmentOffsets[i])
+                    .offset(buttonOffset(at: i))
+                    .scaleEffect(isOpen ? 1 : initialScaling)
+                    .opacity(mainButtonSize == .zero ? 0 : isOpen ? 1 : initialOpacity)
+                    .animation(buttonAnimation(at: i), value: isOpen)
+                    .zIndex(Double(inverseZIndex ? (buttons.count - i - 1) : 0))
+            }
+
+            MainButtonViewInternal(
+                isOpen: isOpenBinding ?? $privateIsOpen,
+                mainButtonView: mainButtonView
+            )
+            .buttonStyle(PlainButtonStyle())
+            .sizeGetter($mainButtonSize)
+            .zIndex(Double(inverseZIndex ? buttons.count : 1))
+        }
+        .onPreferenceChange(SubmenuButtonPreferenceKey.self) { sizes in
+            let sizes = sizes.map { CGSize(
+                width: CGFloat(Int($0.width + 0.5)),
+                height: CGFloat(Int($0.height + 0.5))
+            ) }
+            if sizes != self.sizes {
+                self.sizes = sizes
+                calculateCoords()
+            }
+        }
+        .onChange(of: mainButtonSize) { _ in
+            calculateCoords()
+        }
+    }
+
+    // MARK: Internal
+
+    var isOpenBinding: Binding<Bool>?
+
+    var isOpen: Bool { isOpenBinding?.wrappedValue ?? privateIsOpen }
+
+    // MARK: Fileprivate
+
     fileprivate enum MenuType {
         case straight
         case circle
@@ -54,73 +127,20 @@ public struct FloatingButton<MainView, ButtonView>: View where MainView: View, B
     fileprivate var endAngle: Double = 2 * .pi
     fileprivate var radius: Double?
 
-    @State private var privateIsOpen: Bool = false
-    var isOpenBinding: Binding<Bool>?
-    var isOpen: Bool { isOpenBinding?.wrappedValue ?? privateIsOpen }
-
-    @State private var coords: [CGPoint] = []
-    @State private var alignmentOffsets: [CGSize] = []
-    @State private var initialPositions: [CGPoint] = [] // if there is initial offset
-    @State private var sizes: [CGSize] = []
-    @State private var mainButtonSize = CGSize()
-
-    private init(mainButtonView: MainView, buttons: [SubmenuButton<ButtonView>], isOpenBinding: Binding<Bool>?) {
-        self.mainButtonView = mainButtonView
-        self.buttons = buttons
-        self.isOpenBinding = isOpenBinding
-    }
-
-    public init(mainButtonView: MainView, buttons: [ButtonView]) {
-        self.mainButtonView = mainButtonView
-        self.buttons = buttons.map { SubmenuButton(buttonView: $0) }
-    }
-
-    public init(mainButtonView: MainView, buttons: [ButtonView], isOpen: Binding<Bool>) {
-        self.mainButtonView = mainButtonView
-        self.buttons = buttons.map { SubmenuButton(buttonView: $0) }
-        isOpenBinding = isOpen
-    }
-
-    public var body: some View {
-        ZStack(alignment: mainZStackAlignment) {
-            ForEach(0 ..< buttons.count, id: \.self) { i in
-                buttons[i]
-                    .background(SubmenuButtonPreferenceViewSetter())
-                    .offset(alignmentOffsets.isEmpty ? .zero : alignmentOffsets[i])
-                    .offset(buttonOffset(at: i))
-                    .scaleEffect(isOpen ? 1 : initialScaling)
-                    .opacity(mainButtonSize == .zero ? 0 : isOpen ? 1 : initialOpacity)
-                    .animation(buttonAnimation(at: i), value: isOpen)
-                    .zIndex(Double(inverseZIndex ? (buttons.count - i - 1) : 0))
-            }
-
-            MainButtonViewInternal(isOpen: isOpenBinding ?? $privateIsOpen, mainButtonView: mainButtonView)
-                .buttonStyle(PlainButtonStyle())
-                .sizeGetter($mainButtonSize)
-                .zIndex(Double(inverseZIndex ? buttons.count : 1))
-        }
-        .onPreferenceChange(SubmenuButtonPreferenceKey.self) { sizes in
-            let sizes = sizes.map { CGSize(width: CGFloat(Int($0.width + 0.5)), height: CGFloat(Int($0.height + 0.5))) }
-            if sizes != self.sizes {
-                self.sizes = sizes
-                calculateCoords()
-            }
-        }
-        .onChange(of: mainButtonSize) { _ in
-            calculateCoords()
-        }
-    }
-
     fileprivate func buttonOffset(at i: Int) -> CGSize {
         isOpen
             ? CGSize(width: coords[safe: i].x, height: coords[safe: i].y)
-            : CGSize(width: initialPositions.isEmpty ? 0 : initialPositions[safe: i].x,
-                     height: initialPositions.isEmpty ? 0 : initialPositions[safe: i].y)
+            : CGSize(
+                width: initialPositions.isEmpty ? 0 : initialPositions[safe: i].x,
+                height: initialPositions.isEmpty ? 0 : initialPositions[safe: i].y
+            )
     }
 
     fileprivate func buttonAnimation(at i: Int) -> Animation {
-        animation.delay(delays.isEmpty ? Double(0) :
-            (isOpen ? delays[delays.count - i - 1] : delays[i]))
+        animation.delay(
+            delays.isEmpty ? Double(0) :
+                (isOpen ? delays[delays.count - i - 1] : delays[i])
+        )
     }
 
     fileprivate func calculateCoords() {
@@ -133,7 +153,7 @@ public struct FloatingButton<MainView, ButtonView>: View where MainView: View, B
     }
 
     fileprivate func calculateCoordsStraight() {
-        guard sizes.count > 0, mainButtonSize != .zero else {
+        guard !sizes.isEmpty, mainButtonSize != .zero else {
             return
         }
 
@@ -160,8 +180,10 @@ public struct FloatingButton<MainView, ButtonView>: View where MainView: View, B
 
         if initialOffset.x != 0 || initialOffset.y != 0 {
             initialPositions = (0 ..< sizes.count).map { i -> CGPoint in
-                CGPoint(x: coords[i].x + initialOffset.x,
-                        y: coords[i].y + initialOffset.y)
+                CGPoint(
+                    x: coords[i].x + initialOffset.x,
+                    y: coords[i].y + initialOffset.y
+                )
             }
         } else {
             initialPositions = Array(repeating: .zero, count: sizes.count)
@@ -219,7 +241,7 @@ public struct FloatingButton<MainView, ButtonView>: View where MainView: View, B
     }
 
     fileprivate func calculateCoordsCircle() {
-        guard sizes.count > 0, mainButtonSize != .zero else {
+        guard !sizes.isEmpty, mainButtonSize != .zero else {
             return
         }
 
@@ -233,30 +255,70 @@ public struct FloatingButton<MainView, ButtonView>: View where MainView: View, B
 
         coords = (0 ..< count).map { i in
             let increment = (endAngle - startAngle) / Double(count - 1) * Double(i)
-            let angle = layoutDirection == .clockwise ? startAngle + increment : startAngle - increment
+            let angle = layoutDirection == .clockwise ? startAngle + increment : startAngle -
+                increment
 
             return CGPoint(x: radius * cos(angle), y: radius * sin(angle))
         }
 
-        var finalFrame = CGRect(x: -mainButtonSize.width / 2, y: -mainButtonSize.height / 2, width: mainButtonSize.width, height: mainButtonSize.height)
+        var finalFrame = CGRect(
+            x: -mainButtonSize.width / 2,
+            y: -mainButtonSize.height / 2,
+            width: mainButtonSize.width,
+            height: mainButtonSize.height
+        )
         let buttonSize = sizes.first?.width ?? 0
         let buttonRadius = buttonSize / 2
 
         for coord in coords {
-            finalFrame = finalFrame.union(CGRect(x: coord.x - buttonRadius, y: coord.y - buttonRadius, width: buttonSize, height: buttonSize))
+            finalFrame = finalFrame.union(CGRect(
+                x: coord.x - buttonRadius,
+                y: coord.y - buttonRadius,
+                width: buttonSize,
+                height: buttonSize
+            ))
         }
 
         wholeMenuSize.wrappedValue = finalFrame.size
         menuButtonsSize.wrappedValue = finalFrame.size
     }
+
+    // MARK: Private
+
+    @State
+    private var privateIsOpen: Bool = false
+    @State
+    private var coords: [CGPoint] = []
+    @State
+    private var alignmentOffsets: [CGSize] = []
+    @State
+    private var initialPositions: [CGPoint] = [] // if there is initial offset
+    @State
+    private var sizes: [CGSize] = []
+    @State
+    private var mainButtonSize = CGSize()
 }
 
+// MARK: - DefaultFloatingButton
+
 public class DefaultFloatingButton { fileprivate init() {} }
+
+// MARK: - StraightFloatingButton
+
 public class StraightFloatingButton: DefaultFloatingButton {}
+
+// MARK: - CircleFloatingButton
+
 public class CircleFloatingButton: DefaultFloatingButton {}
 
-public struct FloatingButtonGeneric<T: DefaultFloatingButton, MainView: View, ButtonView: View>: View {
-    private var floatingButton: FloatingButton<MainView, ButtonView>
+// MARK: - FloatingButtonGeneric
+
+public struct FloatingButtonGeneric<
+    T: DefaultFloatingButton,
+    MainView: View,
+    ButtonView: View
+>: View {
+    // MARK: Lifecycle
 
     fileprivate init(floatingButton: FloatingButton<MainView, ButtonView>) {
         self.floatingButton = floatingButton
@@ -266,9 +328,15 @@ public struct FloatingButtonGeneric<T: DefaultFloatingButton, MainView: View, Bu
         fatalError("don't call this method")
     }
 
+    // MARK: Public
+
     public var body: some View {
         floatingButton
     }
+
+    // MARK: Private
+
+    private var floatingButton: FloatingButton<MainView, ButtonView>
 }
 
 public extension FloatingButton {
@@ -394,12 +462,17 @@ public extension FloatingButtonGeneric where T: CircleFloatingButton {
         return copy
     }
 
-    func layoutDirection(_ layoutDirection: FloatButton.LayoutDirection) -> FloatingButtonGeneric {
+    func layoutDirection(
+        _ layoutDirection: FloatButton
+            .LayoutDirection
+    ) -> FloatingButtonGeneric {
         var copy = self
         copy.floatingButton.layoutDirection = layoutDirection
         return copy
     }
 }
+
+// MARK: - SubmenuButton
 
 struct SubmenuButton<ButtonView: View>: View {
     var buttonView: ButtonView
@@ -413,13 +486,21 @@ struct SubmenuButton<ButtonView: View>: View {
     }
 }
 
+// MARK: - MainButtonViewInternal
+
 private struct MainButtonViewInternal<MainView: View>: View {
-    @Binding public var isOpen: Bool
-    fileprivate var mainButtonView: MainView
+    // MARK: Public
+
+    @Binding
+    public var isOpen: Bool
 
     public var body: some View {
         Button(action: { isOpen.toggle() }) {
             mainButtonView
         }
     }
+
+    // MARK: Fileprivate
+
+    fileprivate var mainButtonView: MainView
 }

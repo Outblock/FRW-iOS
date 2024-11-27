@@ -12,7 +12,29 @@ private let AllTransfersListCountKey = "AllTransfersListCountKey"
 private let Limit: Int = 30
 private let CellHeight: CGFloat = 66
 
+// MARK: - TransferListHandler
+
 class TransferListHandler: TransactionListBaseHandler {
+    // MARK: Lifecycle
+
+    override init(contractId: String? = nil) {
+        super.init(contractId: contractId)
+        setup()
+        loadCache()
+    }
+
+    // MARK: Internal
+
+    var countChangeCallback: (() -> Void)?
+
+    var totalCount: Int = 0 {
+        didSet {
+            countChangeCallback?()
+        }
+    }
+
+    // MARK: Private
+
     private lazy var layout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -68,27 +90,14 @@ class TransferListHandler: TransactionListBaseHandler {
     private var dataList: [FlowScanTransfer] = []
     private var next: String?
 
-    var totalCount: Int = 0 {
-        didSet {
-            countChangeCallback?()
-        }
-    }
-
     private var isRequesting: Bool = false
+
     private var cacheKey: String {
         if contractId != nil {
             return "transfer_contractId_\(contractId ?? "")_key"
         } else {
             return AllTransfersListCacheKey
         }
-    }
-
-    var countChangeCallback: (() -> Void)?
-
-    override init(contractId: String? = nil) {
-        super.init(contractId: contractId)
-        setup()
-        loadCache()
     }
 
     private func setup() {
@@ -104,7 +113,10 @@ class TransferListHandler: TransactionListBaseHandler {
         totalCount = UserDefaults.standard.integer(forKey: AllTransfersListCountKey)
 
         Task {
-            if let cacheList = try? await PageCache.cache.get(forKey: cacheKey, type: [FlowScanTransfer].self) {
+            if let cacheList = try? await PageCache.cache.get(
+                forKey: cacheKey,
+                type: [FlowScanTransfer].self
+            ) {
                 DispatchQueue.main.async {
                     self.dataList = cacheList
                     self.collectionView.reloadData()
@@ -124,15 +136,26 @@ extension TransferListHandler {
         Task {
             do {
                 if let contractId = self.contractId {
-                    let request = TokenTransfersRequest(address: WalletManager.shared.getPrimaryWalletAddress() ?? "", limit: Limit, after: start, token: contractId)
-                    let response: TransfersResponse = try await Network.request(FRWAPI.Account.tokenTransfers(request))
+                    let request = TokenTransfersRequest(
+                        address: WalletManager.shared.getPrimaryWalletAddress() ?? "",
+                        limit: Limit,
+                        after: start,
+                        token: contractId
+                    )
+                    let response: TransfersResponse = try await Network
+                        .request(FRWAPI.Account.tokenTransfers(request))
                     DispatchQueue.main.async {
                         self.isRequesting = false
                         self.requestSuccess(response, start: start)
                     }
                 } else {
-                    let request = TransfersRequest(address: WalletManager.shared.getPrimaryWalletAddress() ?? "", limit: Limit, after: start)
-                    let response: TransfersResponse = try await Network.request(FRWAPI.Account.transfers(request))
+                    let request = TransfersRequest(
+                        address: WalletManager.shared.getPrimaryWalletAddress() ?? "",
+                        limit: Limit,
+                        after: start
+                    )
+                    let response: TransfersResponse = try await Network
+                        .request(FRWAPI.Account.transfers(request))
                     DispatchQueue.main.async {
                         self.isRequesting = false
                         self.requestSuccess(response, start: start)
@@ -184,20 +207,32 @@ extension TransferListHandler {
     }
 }
 
+// MARK: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource
+
 extension TransferListHandler: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return dataList.count
+        dataList.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let item = dataList[indexPath.item]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FlowTransferItemCell", for: indexPath) as! FlowTransferItemCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: "FlowTransferItemCell",
+            for: indexPath
+        ) as! FlowTransferItemCell
         cell.config(item)
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: CellHeight)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout _: UICollectionViewLayout,
+        sizeForItemAt _: IndexPath
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: CellHeight)
     }
 
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {

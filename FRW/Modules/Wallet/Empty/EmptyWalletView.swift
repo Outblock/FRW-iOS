@@ -12,9 +12,7 @@ import SwiftUI
 import SwiftUIX
 
 struct EmptyWalletView: View {
-    @StateObject private var vm = EmptyWalletViewModel()
-
-    @State private var isSettingNotificationFirst = true
+    // MARK: Internal
 
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -163,6 +161,14 @@ struct EmptyWalletView: View {
         .cornerRadius(24)
         .shadow(color: Color.black.opacity(0.04), x: 0, y: 4, blur: 16)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = EmptyWalletViewModel()
+
+    @State
+    private var isSettingNotificationFirst = true
 }
 
 #Preview {

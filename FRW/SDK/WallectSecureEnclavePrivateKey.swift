@@ -10,19 +10,12 @@ import Foundation
 
 extension WallectSecureEnclave {
     struct PrivateKey {
-        var privateKey: SecureEnclave.P256.Signing.PrivateKey?
-
-        var publicKey: P256.Signing.PublicKey? {
-            return privateKey?.publicKey
-        }
-
-        var publickeyValue: String? {
-            return publicKey?.rawRepresentation.hexValue
-        }
+        // MARK: Lifecycle
 
         init(data: Data) {
             do {
-                privateKey = try SecureEnclave.P256.Signing.PrivateKey(dataRepresentation: data)
+                privateKey = try SecureEnclave.P256.Signing
+                    .PrivateKey(dataRepresentation: data)
             } catch {
                 debugPrint("[WallectSecureEnclave] init with data failed.")
             }
@@ -36,8 +29,20 @@ extension WallectSecureEnclave {
             }
         }
 
+        // MARK: Internal
+
+        var privateKey: SecureEnclave.P256.Signing.PrivateKey?
+
+        var publicKey: P256.Signing.PublicKey? {
+            privateKey?.publicKey
+        }
+
+        var publickeyValue: String? {
+            publicKey?.rawRepresentation.hexValue
+        }
+
         static func generate() throws -> SecureEnclave.P256.Signing.PrivateKey {
-            return try SecureEnclave.P256.Signing.PrivateKey()
+            try SecureEnclave.P256.Signing.PrivateKey()
         }
     }
 }

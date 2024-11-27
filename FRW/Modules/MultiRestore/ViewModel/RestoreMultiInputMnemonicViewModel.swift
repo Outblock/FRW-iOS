@@ -10,18 +10,25 @@ import SwiftUI
 import WalletCore
 
 class RestoreMultiInputMnemonicViewModel: ObservableObject {
-    @Published var nextEnable: Bool = false
-    @Published var hasError: Bool = false
-    @Published var suggestions: [String] = []
-    @Published var text: String = ""
-    @Published var isAlertViewPresented: Bool = false
+    // MARK: Internal
+
+    @Published
+    var nextEnable: Bool = false
+    @Published
+    var hasError: Bool = false
+    @Published
+    var suggestions: [String] = []
+    @Published
+    var text: String = ""
+    @Published
+    var isAlertViewPresented: Bool = false
 
     func onEditingChanged(text: String) {
         let original = text.condenseWhitespace()
         let words = original.split(separator: " ")
         var hasError = false
         for word in words {
-            if Mnemonic.search(prefix: String(word)).count == 0 {
+            if Mnemonic.search(prefix: String(word)).isEmpty {
                 hasError = true
                 break
             }
@@ -42,8 +49,10 @@ class RestoreMultiInputMnemonicViewModel: ObservableObject {
     }
 
     func getRawMnemonic() -> String {
-        return text.condenseWhitespace()
+        text.condenseWhitespace()
     }
+
+    // MARK: Private
 
     private func showCreateWalletAlertView() {
         withAnimation(.alertViewSpring) {

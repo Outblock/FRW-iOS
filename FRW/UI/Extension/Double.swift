@@ -15,8 +15,15 @@ extension Double {
         return f
     }()
 
-    func formatCurrencyString(digits: Int = 3, roundingMode: NumberFormatter.RoundingMode = .down, considerCustomCurrency: Bool = false) -> String {
-        let value = NSNumber(value: considerCustomCurrency ? self * CurrencyCache.cache.currentCurrencyRate : self).decimalValue
+    func formatCurrencyString(
+        digits: Int = 3,
+        roundingMode: NumberFormatter.RoundingMode = .down,
+        considerCustomCurrency: Bool = false
+    ) -> String {
+        let value = NSNumber(
+            value: considerCustomCurrency ? self * CurrencyCache.cache
+                .currentCurrencyRate : self
+        ).decimalValue
 
         let f = NumberFormatter()
         f.maximumFractionDigits = digits

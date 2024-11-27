@@ -8,13 +8,39 @@
 import UIKit
 import WidgetKit
 
+// MARK: - NFTUIKitCache
+
 class NFTUIKitCache {
+    // MARK: Lifecycle
+
+    init() {
+        createFolderIfNeeded()
+        loadFavCache()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(willReset),
+            name: .willResetWallet,
+            object: nil
+        )
+    }
+
+    // MARK: Internal
+
     static let cache = NFTUIKitCache()
 
-    private lazy var rootFolder = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("nft_uikit_cache")
+    private(set) var favList: [NFTModel] = []
+
+    // MARK: Private
+
+    private lazy var rootFolder = FileManager.default.urls(
+        for: .cachesDirectory,
+        in: .userDomainMask
+    ).first!.appendingPathComponent("nft_uikit_cache")
 
     private lazy var collectionFolder = rootFolder.appendingPathComponent("collection")
-    private lazy var collectionCacheFile = collectionFolder.appendingPathComponent("collection_cache_file")
+    private lazy var collectionCacheFile = collectionFolder
+        .appendingPathComponent("collection_cache_file")
 
     private lazy var nftFolder = rootFolder.appendingPathComponent("nft")
 
@@ -24,17 +50,10 @@ class NFTUIKitCache {
     private lazy var favFolder = rootFolder.appendingPathComponent("fav")
     private lazy var favCacheFile = gridFolder.appendingPathComponent("fav_cache_file")
 
-    private(set) var favList: [NFTModel] = []
     private var favIsRequesting: Bool = false
 
-    init() {
-        createFolderIfNeeded()
-        loadFavCache()
-
-        NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
-    }
-
-    @objc private func willReset() {
+    @objc
+    private func willReset() {
         favList = []
         removeCollectionCache()
         removeAllNFTs()
@@ -45,23 +64,38 @@ class NFTUIKitCache {
     private func createFolderIfNeeded() {
         do {
             if !FileManager.default.fileExists(atPath: rootFolder.relativePath) {
-                try FileManager.default.createDirectory(at: rootFolder, withIntermediateDirectories: true)
+                try FileManager.default.createDirectory(
+                    at: rootFolder,
+                    withIntermediateDirectories: true
+                )
             }
 
             if !FileManager.default.fileExists(atPath: collectionFolder.relativePath) {
-                try FileManager.default.createDirectory(at: collectionFolder, withIntermediateDirectories: true)
+                try FileManager.default.createDirectory(
+                    at: collectionFolder,
+                    withIntermediateDirectories: true
+                )
             }
 
             if !FileManager.default.fileExists(atPath: nftFolder.relativePath) {
-                try FileManager.default.createDirectory(at: nftFolder, withIntermediateDirectories: true)
+                try FileManager.default.createDirectory(
+                    at: nftFolder,
+                    withIntermediateDirectories: true
+                )
             }
 
             if !FileManager.default.fileExists(atPath: gridFolder.relativePath) {
-                try FileManager.default.createDirectory(at: gridFolder, withIntermediateDirectories: true)
+                try FileManager.default.createDirectory(
+                    at: gridFolder,
+                    withIntermediateDirectories: true
+                )
             }
 
             if !FileManager.default.fileExists(atPath: favFolder.relativePath) {
-                try FileManager.default.createDirectory(at: favFolder, withIntermediateDirectories: true)
+                try FileManager.default.createDirectory(
+                    at: favFolder,
+                    withIntermediateDirectories: true
+                )
             }
         } catch {
             debugPrint("NFTUIKitCache -> createFolderIfNeeded error: \(error)")
@@ -207,7 +241,10 @@ extension NFTUIKitCache {
         if FileManager.default.fileExists(atPath: nftFolder.relativePath) {
             do {
                 try FileManager.default.removeItem(at: nftFolder)
-                try FileManager.default.createDirectory(at: nftFolder, withIntermediateDirectories: true)
+                try FileManager.default.createDirectory(
+                    at: nftFolder,
+                    withIntermediateDirectories: true
+                )
             } catch {
                 debugPrint("NFTUIKitCache -> removeAllNFTs error: \(error)")
             }
@@ -324,7 +361,9 @@ extension NFTUIKitCache {
             return
         }
 
-        guard var address = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress(), let collectionId = nft.response.collectionID else {
+        guard var address = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress(),
+              let collectionId = nft.response.collectionID
+        else {
             return
         }
 
@@ -340,7 +379,8 @@ extension NFTUIKitCache {
         let request = NFTAddFavRequest(address: address, contract: collectionId, ids: tokenId)
         Task {
             do {
-                let _: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.NFT.addFav(request))
+                let _: Network.EmptyResponse = try await Network
+                    .requestWithRawModel(FRWAPI.NFT.addFav(request))
             } catch {
                 debugPrint("NFTUIKitCache -> addFav error: \(error)")
             }
@@ -356,7 +396,8 @@ extension NFTUIKitCache {
             Task {
                 do {
                     let request = NFTUpdateFavRequest(ids: ids)
-                    let _: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.NFT.updateFav(request))
+                    let _: Network.EmptyResponse = try await Network
+                        .requestWithRawModel(FRWAPI.NFT.updateFav(request))
                 } catch {
                     debugPrint("NFTUIKitCache -> removeFav error: \(error)")
                 }
@@ -386,7 +427,9 @@ extension NFTUIKitCache {
             return
         }
 
-        guard let address = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
+        guard let address = WalletManager.shared
+            .getWatchAddressOrChildAccountAddressOrPrimaryAddress()
+        else {
             return
         }
 
@@ -394,7 +437,8 @@ extension NFTUIKitCache {
 
         Task {
             do {
-                let request: Network.Response<NFTFavListResponse> = try await Network.requestWithRawModel(FRWAPI.NFT.favList(address))
+                let request: Network.Response<NFTFavListResponse> = try await Network
+                    .requestWithRawModel(FRWAPI.NFT.favList(address))
 
                 DispatchQueue.main.async {
                     self.favIsRequesting = false
@@ -442,7 +486,9 @@ extension NFTUIKitCache {
             saveNFTsToCache(listNFTs, collectionId: collectionId)
 
             // remove collection if needed
-            if var collections = getCollections(), let index = collections.firstIndex(where: { $0.collection.id == collectionId }) {
+            if var collections = getCollections(),
+               let index = collections.firstIndex(where: { $0.collection.id == collectionId })
+            {
                 if listNFTs.isEmpty {
                     collections.removeAll { $0.collection.id == collectionId }
                 } else {

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Tab Navigation View
+// MARK: - VTabNavigationView
 
 /// Navigation component that switches between multiple views using interactive user interface elements.
 ///
@@ -52,18 +52,7 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
     C4: View,
     C5: View
 {
-    // MARK: Properties
-
-    private let model: VTabNavigationViewModel
-
-    @Binding private var selection: Int
-
-    private let pageOne: VTabNavigationViewPage<C0>?
-    private let pageTwo: VTabNavigationViewPage<C1>?
-    private let pageThree: VTabNavigationViewPage<C2>?
-    private let pageFour: VTabNavigationViewPage<C3>?
-    private let pageFive: VTabNavigationViewPage<C4>?
-    private let pageSix: VTabNavigationViewPage<C5>?
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -179,6 +168,8 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
         pageSix = nil
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -192,6 +183,22 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
         })
         .setUpTabNavigationViewAppearance(model: model)
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VTabNavigationViewModel
+
+    @Binding
+    private var selection: Int
+
+    private let pageOne: VTabNavigationViewPage<C0>?
+    private let pageTwo: VTabNavigationViewPage<C1>?
+    private let pageThree: VTabNavigationViewPage<C2>?
+    private let pageFour: VTabNavigationViewPage<C3>?
+    private let pageFive: VTabNavigationViewPage<C4>?
+    private let pageSix: VTabNavigationViewPage<C5>?
 
     private func pageContent<PageContent>(
         _ page: VTabNavigationViewPage<PageContent>
@@ -225,12 +232,10 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
     }
 }
 
-// MARK: Preview
+// MARK: - VTabNavigationView_Previews
 
 struct VTabNavigationView_Previews: PreviewProvider {
-    private static var pageOne: VTabNavigationViewPage<Color> { .init(item: .titled(title: "Red"), content: Color.red) }
-    private static var pageTwo: VTabNavigationViewPage<Color> { .init(item: .titled(title: "Green"), content: Color.green) }
-    private static var pageThree: VTabNavigationViewPage<Color> { .init(item: .titled(title: "Blue"), content: Color.blue) }
+    // MARK: Internal
 
     static var previews: some View {
         VTabNavigationView<Color, Color, Color, Never, Never, Never>(
@@ -241,4 +246,19 @@ struct VTabNavigationView_Previews: PreviewProvider {
             pageThree: pageThree
         )
     }
+
+    // MARK: Private
+
+    private static var pageOne: VTabNavigationViewPage<Color> { .init(
+        item: .titled(title: "Red"),
+        content: Color.red
+    ) }
+    private static var pageTwo: VTabNavigationViewPage<Color> { .init(
+        item: .titled(title: "Green"),
+        content: Color.green
+    ) }
+    private static var pageThree: VTabNavigationViewPage<Color> { .init(
+        item: .titled(title: "Blue"),
+        content: Color.blue
+    ) }
 }

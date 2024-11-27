@@ -8,11 +8,11 @@
 import BigInt
 import Flow
 import Foundation
-import WalletConnectRouter
+import ReownRouter
+import ReownWalletKit
 import WalletConnectSign
 import Web3Core
 import web3swift
-import Web3Wallet
 
 // MARK: - WalletConnectEVMMethod
 
@@ -129,10 +129,10 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
             cancel()
             return
         }
-        let pair = try? Pair.instance.getPairing(for: request.topic)
-        let title = pair?.peer?.name ?? "unknown"
-        let url = pair?.peer?.url ?? "unknown"
-        let logo = pair?.peer?.icons.first
+        let title = request.name ?? ""
+        let url = request.dappURL?.absoluteString ?? ""
+        let logo = request.logoURL?.absoluteString ?? ""
+
         let vm = BrowserSignMessageViewModel(
             title: title,
             url: url,
@@ -176,10 +176,9 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         confirm: @escaping (String) -> Void,
         cancel: @escaping () -> Void
     ) {
-        let pair = try? Pair.instance.getPairing(for: request.topic)
-        let title = pair?.peer?.name ?? "unknown"
-        let url = pair?.peer?.url ?? "unknown"
-        let logo = pair?.peer?.icons.first
+        let title = request.name ?? ""
+        let url = request.dappURL?.absoluteString ?? ""
+        let logo = request.logoURL?.absoluteString ?? ""
 
         let originCadence = CadenceManager.shared.current.evm?.callContract?.toFunc() ?? ""
 
@@ -252,10 +251,9 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         confirm: @escaping (String) -> Void,
         cancel: @escaping () -> Void
     ) {
-        let pair = try? Pair.instance.getPairing(for: request.topic)
-        let title = pair?.peer?.name ?? "unknown"
-        let url = pair?.peer?.url ?? "unknown"
-        let logo = pair?.peer?.icons.first
+        let title = request.name ?? ""
+        let url = request.dappURL?.absoluteString ?? ""
+        let logo = request.logoURL?.absoluteString ?? ""
 
         do {
             let list = try request.params.get([String].self)
@@ -328,7 +326,8 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         cancel: @escaping () -> Void
     ) {
         guard let model = try? request.params.get(WalletConnectEVMHandler.WatchAsset.self),
-              let address = model.options?.address else {
+              let address = model.options?.address
+        else {
             cancel()
             return
         }

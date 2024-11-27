@@ -10,11 +10,15 @@ import Foundation
 import WalletConnectPairing
 import WalletConnectSign
 
+// MARK: - SyncError
+
 enum SyncError: Error {
     case emptyJSON
     case decode
     case userInfo
 }
+
+// MARK: - WalletConnectSyncDevice
 
 enum WalletConnectSyncDevice {
     enum SyncResult {
@@ -25,10 +29,12 @@ enum WalletConnectSyncDevice {
     static let nameDomain = "flow"
 
     static func createAndPair() async throws -> WalletConnectURI {
-        let uri = try await Pair.instance.create()
-        let methods: Set<String> = [FCLWalletConnectMethod.accountInfo.rawValue, FCLWalletConnectMethod.addDeviceInfo.rawValue]
+        let methods: Set<String> = [
+            FCLWalletConnectMethod.accountInfo.rawValue,
+            FCLWalletConnectMethod.addDeviceInfo.rawValue,
+        ]
         let namespaces = Sign.FlowWallet.namespaces(methods)
-        try await Sign.instance.connect(requiredNamespaces: namespaces, topic: uri.topic)
+        let uri = try await Sign.instance.connect(requiredNamespaces: namespaces)
         return uri
     }
 
@@ -38,7 +44,12 @@ enum WalletConnectSyncDevice {
         let methods: String = FCLWalletConnectMethod.accountInfo.rawValue
         let blockchain = Sign.FlowWallet.blockchain
         do {
-            let request = try Request(topic: session.topic, method: methods, params: emptyParams(), chainId: blockchain)
+            let request = try Request(
+                topic: session.topic,
+                method: methods,
+                params: emptyParams(),
+                chainId: blockchain
+            )
             try await Sign.instance.request(params: request)
             return request
         } catch {
@@ -47,8 +58,12 @@ enum WalletConnectSyncDevice {
         }
     }
 
-    static func isAccount(request: WalletConnectSign.Request, with response: WalletConnectSign.Response) -> Bool {
-        return (request.method == FCLWalletConnectMethod.accountInfo.rawValue) && (request.topic == response.topic)
+    static func isAccount(
+        request: WalletConnectSign.Request,
+        with response: WalletConnectSign.Response
+    ) -> Bool {
+        (request.method == FCLWalletConnectMethod.accountInfo.rawValue) &&
+            (request.topic == response.topic)
     }
 
     static func parseAccount(data: AnyCodable) throws -> SyncInfo.User {
@@ -57,7 +72,10 @@ enum WalletConnectSyncDevice {
         }
 
         let jsonDecoder = JSONDecoder()
-        let response = try jsonDecoder.decode(SyncInfo.SyncResponse<SyncInfo.User>.self, from: Data(json.utf8))
+        let response = try jsonDecoder.decode(
+            SyncInfo.SyncResponse<SyncInfo.User>.self,
+            from: Data(json.utf8)
+        )
         guard let user = response.data else {
             throw SyncError.userInfo
         }
@@ -89,8 +107,12 @@ enum WalletConnectSyncDevice {
 // MARK: Device
 
 extension WalletConnectSyncDevice {
-    static func isDevice(request: WalletConnectSign.Request, with response: WalletConnectSign.Response) -> Bool {
-        return (request.method == FCLWalletConnectMethod.addDeviceInfo.rawValue) && (request.topic == response.topic)
+    static func isDevice(
+        request: WalletConnectSign.Request,
+        with response: WalletConnectSign.Response
+    ) -> Bool {
+        (request.method == FCLWalletConnectMethod.addDeviceInfo.rawValue) &&
+            (request.topic == response.topic)
     }
 
     static func packageDeviceInfo(userId: String) async throws -> AnyCodable {
@@ -101,9 +123,19 @@ extension WalletConnectSyncDevice {
         let sec = try WallectSecureEnclave()
         let key = try sec.accountKey()
 
-        let requestParam = RegisterRequest(username: "", accountKey: key.toCodableModel(), deviceInfo: IPManager.shared.toParams())
-        let response = SyncInfo.SyncResponse<RegisterRequest>(method: FCLWalletConnectMethod.addDeviceInfo.rawValue, data: requestParam)
-        try WallectSecureEnclave.Store.store(key: userId, value: sec.key.privateKey!.dataRepresentation)
+        let requestParam = RegisterRequest(
+            username: "",
+            accountKey: key.toCodableModel(),
+            deviceInfo: IPManager.shared.toParams()
+        )
+        let response = SyncInfo.SyncResponse<RegisterRequest>(
+            method: FCLWalletConnectMethod.addDeviceInfo.rawValue,
+            data: requestParam
+        )
+        try WallectSecureEnclave.Store.store(
+            key: userId,
+            value: sec.key.privateKey!.dataRepresentation
+        )
         log.debug("[Sync] public: \(sec.key.publickeyValue ?? "")")
         return AnyCodable(response)
     }
@@ -113,10 +145,10 @@ extension WalletConnectSyncDevice {
 
 extension WalletConnectSyncDevice {
     private static func isFlowSession(_ session: Session) -> Bool {
-        return session.namespaces.filter { $0.key == nameDomain }.count > 0
+        !session.namespaces.filter { $0.key == nameDomain }.isEmpty
     }
 
     private static func emptyParams() -> AnyCodable {
-        return AnyCodable([""])
+        AnyCodable([""])
     }
 }

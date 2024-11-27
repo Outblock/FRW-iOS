@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Toast
+// MARK: - VToast
 
 /// Message component that present text modally.
 ///
@@ -33,11 +33,7 @@ import SwiftUI
 ///     }
 ///
 public struct VToast {
-    // MARK: Properties
-
-    fileprivate let model: VToastModel
-    fileprivate let toastType: VToastType
-    fileprivate let title: String
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -51,6 +47,14 @@ public struct VToast {
         self.toastType = toastType
         self.title = title
     }
+
+    // MARK: Fileprivate
+
+    // MARK: Properties
+
+    fileprivate let model: VToastModel
+    fileprivate let toastType: VToastType
+    fileprivate let title: String
 }
 
 // MARK: - Extension

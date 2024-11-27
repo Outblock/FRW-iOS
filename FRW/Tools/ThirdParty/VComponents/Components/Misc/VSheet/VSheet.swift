@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Sheet
+// MARK: - VSheet
 
 /// Container component that draws a background and hosts content.
 ///
@@ -32,10 +32,7 @@ import SwiftUI
 ///     }
 ///
 public struct VSheet<Content>: View where Content: View {
-    // MARK: Properties
-
-    private let model: VSheetModel
-    private let content: () -> Content
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -58,12 +55,21 @@ public struct VSheet<Content>: View where Content: View {
         content = { .clear }
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
         contentView
             .background(sheetView)
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VSheetModel
+    private let content: () -> Content
 
     private var sheetView: some View {
         model.colors.background
@@ -79,7 +85,7 @@ public struct VSheet<Content>: View where Content: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - VSheet_Previews
 
 struct VSheet_Previews: PreviewProvider {
     static var previews: some View {

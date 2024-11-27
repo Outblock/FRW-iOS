@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Modal
+// MARK: - VModal
 
 /// Modal component that draws a background, hosts content, and is present when condition is true.
 ///
@@ -37,12 +37,7 @@ public struct VModal<Content, HeaderContent>
     Content: View,
     HeaderContent: View
 {
-    // MARK: Properties
-
-    fileprivate let model: VModalModel
-
-    fileprivate let headerContent: (() -> HeaderContent)?
-    fileprivate let content: () -> Content
+    // MARK: Lifecycle
 
     // MARK: Initializers - Header
 
@@ -92,6 +87,15 @@ public struct VModal<Content, HeaderContent>
         headerContent = nil
         self.content = content
     }
+
+    // MARK: Fileprivate
+
+    // MARK: Properties
+
+    fileprivate let model: VModalModel
+
+    fileprivate let headerContent: (() -> HeaderContent)?
+    fileprivate let content: () -> Content
 }
 
 // MARK: - Extension

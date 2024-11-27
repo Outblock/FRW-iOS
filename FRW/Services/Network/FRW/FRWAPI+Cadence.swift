@@ -8,15 +8,19 @@
 import Foundation
 import Moya
 
+// MARK: - FRWAPI.Cadence
+
 extension FRWAPI {
     enum Cadence {
         case list
     }
 }
 
+// MARK: - FRWAPI.Cadence + TargetType, AccessTokenAuthorizable
+
 extension FRWAPI.Cadence: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
-        return .bearer
+        .bearer
     }
 
     var baseURL: URL {
@@ -34,7 +38,7 @@ extension FRWAPI.Cadence: TargetType, AccessTokenAuthorizable {
     }
 
     var method: Moya.Method {
-        return .get
+        .get
     }
 
     var task: Task {

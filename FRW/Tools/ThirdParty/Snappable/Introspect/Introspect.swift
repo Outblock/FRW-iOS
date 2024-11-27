@@ -2,6 +2,8 @@ import SwiftUI
 
 typealias PlatformView = UIView
 
+// MARK: - Introspect
+
 /// Utility methods to inspect the UIKit view hierarchy.
 enum Introspect {
     /// Finds a previous sibling that is of the specified type.
@@ -29,7 +31,10 @@ enum Introspect {
 
     /// Finds an ancestor of the specified type.
     /// If it reaches the top of the view without finding the specified view type, it returns nil.
-    static func findAncestor<AnyViewType: PlatformView>(ofType _: AnyViewType.Type, from entry: PlatformView) -> AnyViewType? {
+    static func findAncestor<AnyViewType: PlatformView>(
+        ofType _: AnyViewType.Type,
+        from entry: PlatformView
+    ) -> AnyViewType? {
         var superview = entry.superview
         while let s = superview {
             if let typed = s as? AnyViewType {
@@ -55,6 +60,8 @@ enum Introspect {
     }
 }
 
+// MARK: - TargetViewSelector
+
 enum TargetViewSelector {
     static func siblingOfType<TargetView: PlatformView>(from entry: PlatformView) -> TargetView? {
         guard let viewHost = Introspect.findViewHost(from: entry) else {
@@ -63,7 +70,9 @@ enum TargetViewSelector {
         return Introspect.previousSibling(ofType: TargetView.self, from: viewHost)
     }
 
-    static func siblingOfTypeOrAncestor<TargetView: PlatformView>(from entry: PlatformView) -> TargetView? {
+    static func siblingOfTypeOrAncestor<TargetView: PlatformView>(from entry: PlatformView)
+        -> TargetView?
+    {
         if let sibling: TargetView = siblingOfType(from: entry) {
             return sibling
         }

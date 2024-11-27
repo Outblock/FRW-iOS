@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Menu
+// MARK: - VMenu
 
 /// Modal component that presents menu of actions.
 ///
@@ -36,12 +36,7 @@ import SwiftUI
 ///     )
 ///
 public struct VMenu<Label>: View where Label: View {
-    // MARK: Properties
-
-    private let menuButtonType: VMenuButtonType
-    private let state: VMenuState
-    private let rows: [VMenuRow]
-    private let label: () -> Label
+    // MARK: Lifecycle
 
     // MARK: Initializers - Preset
 
@@ -89,6 +84,8 @@ public struct VMenu<Label>: View where Label: View {
         self.label = label
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -96,11 +93,21 @@ public struct VMenu<Label>: View where Label: View {
             .allowsHitTesting(state.isEnabled) // Adding this on label has no effect
     }
 
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let menuButtonType: VMenuButtonType
+    private let state: VMenuState
+    private let rows: [VMenuRow]
+    private let label: () -> Label
+
     private func contentView() -> some View {
         VMenuSubMenu(rows: rows)
     }
 
-    @ViewBuilder private func labelView() -> some View {
+    @ViewBuilder
+    private func labelView() -> some View {
         VMenuButtonType.menuButton(
             buttonType: menuButtonType,
             isEnabled: state.isEnabled,
@@ -109,7 +116,7 @@ public struct VMenu<Label>: View where Label: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - VMenu_Previews
 
 struct VMenu_Previews: PreviewProvider {
     static var previews: some View {

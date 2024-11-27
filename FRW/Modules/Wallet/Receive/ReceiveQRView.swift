@@ -8,15 +8,14 @@
 import QRCode
 import SwiftUI
 
+// MARK: - ReceiveQRView
+
 struct ReceiveQRView: RouteableView {
-    @StateObject var viewModel: ReceiveQRViewModel = .init()
+    @StateObject
+    var viewModel: ReceiveQRViewModel = .init()
 
     var title: String {
-        return "receiving_qr".localized
-    }
-
-    func backButtonAction() {
-        Router.dismiss()
+        "receiving_qr".localized
     }
 
     var body: some View {
@@ -78,13 +77,19 @@ struct ReceiveQRView: RouteableView {
     var qrCodeView: some View {
         VStack(spacing: 0) {
             ZStack {
-                QRCodeView(content: viewModel.address, eyeColor: (viewModel.isEVM ?
-                        Color.Theme.Accent.blue : Color.Theme.Accent.green).toUIColor()!)
+                QRCodeView(content: viewModel.address, eyeColor: (
+                    viewModel.isEVM ?
+                        Color.Theme.Accent.blue : Color.Theme.Accent.green
+                ).toUIColor()!)
             }
             .cornerRadius(25)
             .overlay(
                 RoundedRectangle(cornerRadius: 25)
-                    .stroke(currentNetwork.isMainnet ? Color.LL.Neutrals.background : currentNetwork.color, lineWidth: 5)
+                    .stroke(
+                        currentNetwork.isMainnet ? Color.LL.Neutrals.background : currentNetwork
+                            .color,
+                        lineWidth: 5
+                    )
                     .colorScheme(.light)
             )
             .aspectRatio(1, contentMode: .fit)
@@ -99,11 +104,22 @@ struct ReceiveQRView: RouteableView {
 
             let image = qrCodeView.snapshot()
 
-            let itemSource = ShareActivityItemSource(shareText: viewModel.address, shareImage: image)
+            let itemSource = ShareActivityItemSource(
+                shareText: viewModel.address,
+                shareImage: image
+            )
 
-            let activityController = UIActivityViewController(activityItems: [image, viewModel.address, itemSource], applicationActivities: nil)
+            let activityController = UIActivityViewController(
+                activityItems: [image, viewModel.address, itemSource],
+                applicationActivities: nil
+            )
             activityController.isModalInPresentation = true
-            UIApplication.shared.windows.first?.rootViewController?.presentedViewController?.present(activityController, animated: true, completion: nil)
+            UIApplication.shared.windows.first?.rootViewController?.presentedViewController?
+                .present(
+                    activityController,
+                    animated: true,
+                    completion: nil
+                )
 
         } label: {
             Text("share_qr_code".localized)
@@ -116,11 +132,18 @@ struct ReceiveQRView: RouteableView {
         }
         .buttonStyle(ScaleButtonStyle())
     }
+
+    func backButtonAction() {
+        Router.dismiss()
+    }
 }
+
+// MARK: ReceiveQRView.SwitchText
 
 extension ReceiveQRView {
     struct SwitchText: View {
-        @State private var isOn = false
+        @State
+        private var isOn = false
         var callback: ((Bool) -> Void)?
 
         var body: some View {

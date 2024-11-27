@@ -8,13 +8,19 @@
 import SwiftUI
 
 class MultiBackupConfirmPinViewModel: ObservableObject {
-    let lastPin: String
-    @Published var pinCodeErrorTimes: Int = 0
-    @Published var text: String = ""
+    // MARK: Lifecycle
 
     init(pin: String) {
         lastPin = pin
     }
+
+    // MARK: Internal
+
+    let lastPin: String
+    @Published
+    var pinCodeErrorTimes: Int = 0
+    @Published
+    var text: String = ""
 
     func onMatch(confirmPin: String) {
         if lastPin != confirmPin {
@@ -32,7 +38,7 @@ class MultiBackupConfirmPinViewModel: ObservableObject {
         HUD.success(title: "pin_code_enabled".localized)
         DispatchQueue.main.async {
             let list = MultiBackupManager.shared.backupList
-            if list.count > 0 {
+            if !list.isEmpty {
                 Router.route(to: RouteMap.Backup.uploadMulti(list))
             }
         }

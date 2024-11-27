@@ -7,9 +7,13 @@
 import Foundation
 
 class ThreadSafeDictionary<V: Hashable, T>: Collection {
-    private var dictionary: [V: T]
-    private let concurrentQueue = DispatchQueue(label: "Dictionary Barrier Queue",
-                                                attributes: .concurrent)
+    // MARK: Lifecycle
+
+    init(dict: [V: T] = [V: T]()) {
+        dictionary = dict
+    }
+
+    // MARK: Internal
 
     var keys: Dictionary<V, T>.Keys {
         concurrentQueue.sync {
@@ -33,10 +37,6 @@ class ThreadSafeDictionary<V: Hashable, T>: Collection {
         concurrentQueue.sync {
             self.dictionary.endIndex
         }
-    }
-
-    init(dict: [V: T] = [V: T]()) {
-        dictionary = dict
     }
 
     // this is because it is an apple protocol method
@@ -80,4 +80,12 @@ class ThreadSafeDictionary<V: Hashable, T>: Collection {
             self?.dictionary.removeAll()
         }
     }
+
+    // MARK: Private
+
+    private var dictionary: [V: T]
+    private let concurrentQueue = DispatchQueue(
+        label: "Dictionary Barrier Queue",
+        attributes: .concurrent
+    )
 }

@@ -8,19 +8,21 @@
 import Foundation
 import SwiftUI
 
-class ThemeManager: ObservableObject {
-    static let shared = ThemeManager()
+// MARK: - ThemeManager
 
-    @Published var style: ColorScheme?
-    @AppStorage("customThemeKey") private var storageThemeKey: String?
+class ThemeManager: ObservableObject {
+    // MARK: Lifecycle
 
     init() {
         reloadStyle()
     }
 
-    private func reloadStyle() {
-        style = ColorScheme.fromKey(key: storageThemeKey)
-    }
+    // MARK: Internal
+
+    static let shared = ThemeManager()
+
+    @Published
+    var style: ColorScheme?
 
     func setStyle(style: ColorScheme?) {
         if let style = style {
@@ -38,6 +40,15 @@ class ThemeManager: ObservableObject {
         }
 
         return .dark
+    }
+
+    // MARK: Private
+
+    @AppStorage("customThemeKey")
+    private var storageThemeKey: String?
+
+    private func reloadStyle() {
+        style = ColorScheme.fromKey(key: storageThemeKey)
     }
 }
 

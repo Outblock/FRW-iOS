@@ -7,10 +7,15 @@
 import SwiftUI
 
 public extension View {
-    func indexBarBackground<Content>(contentMode: ContentMode = .fit,
-                                     @ViewBuilder content: @escaping () -> Content) -> some View
+    func indexBarBackground<Content>(
+        contentMode: ContentMode = .fit,
+        @ViewBuilder content: @escaping () -> Content
+    ) -> some View
         where Content: View
     {
-        environment(\.indexBarBackground, IndexBarBackground(contentMode: contentMode, view: { AnyView(content()) }))
+        environment(
+            \.indexBarBackground,
+            IndexBarBackground(contentMode: contentMode, view: { AnyView(content()) })
+        )
     }
 }

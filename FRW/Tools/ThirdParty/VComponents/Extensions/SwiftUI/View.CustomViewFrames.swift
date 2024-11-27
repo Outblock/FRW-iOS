@@ -52,10 +52,23 @@ public extension View {
     }
 }
 
-// MARK: - Size Configuration
+// MARK: - SizeConfiguration
 
 /// Object containing minimum, ideal, and maximum size configurations.
 public struct SizeConfiguration {
+    // MARK: Lifecycle
+
+    // MARK: Initializers
+
+    /// Initializes `SizeConfiguration`.
+    public init(min: CGSize, ideal: CGSize, max: CGSize) {
+        self.min = min
+        self.ideal = ideal
+        self.max = max
+    }
+
+    // MARK: Public
+
     // MARK: Properties
 
     /// Minimum size.
@@ -66,13 +79,4 @@ public struct SizeConfiguration {
 
     /// Maximum size.
     public var max: CGSize
-
-    // MARK: Initializers
-
-    /// Initializes `SizeConfiguration`.
-    public init(min: CGSize, ideal: CGSize, max: CGSize) {
-        self.min = min
-        self.ideal = ideal
-        self.max = max
-    }
 }

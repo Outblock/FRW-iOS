@@ -8,9 +8,15 @@
 import Flow
 import SwiftUI
 
+// MARK: - ClaimDomainViewModel
+
 class ClaimDomainViewModel: ObservableObject {
-    @Published var username: String? = UserManager.shared.userInfo?.username
-    @Published var isRequesting: Bool = false
+    // MARK: Internal
+
+    @Published
+    var username: String? = UserManager.shared.userInfo?.username
+    @Published
+    var isRequesting: Bool = false
 
     func claimAction() {
         guard username != nil else {
@@ -19,7 +25,11 @@ class ClaimDomainViewModel: ObservableObject {
 
         let successBlock: (String) -> Void = { txId in
             DispatchQueue.main.async {
-                let holder = TransactionManager.TransactionHolder(id: Flow.ID(hex: txId), type: .claimDomain, data: Data())
+                let holder = TransactionManager.TransactionHolder(
+                    id: Flow.ID(hex: txId),
+                    type: .claimDomain,
+                    data: Data()
+                )
                 TransactionManager.shared.newTransaction(holder: holder)
 
                 self.isRequesting = false
@@ -38,9 +48,11 @@ class ClaimDomainViewModel: ObservableObject {
 
         Task {
             do {
-                let prepareResponse: ClaimDomainPrepareResponse = try await Network.request(FRWAPI.Flowns.domainPrepare)
+                let prepareResponse: ClaimDomainPrepareResponse = try await Network
+                    .request(FRWAPI.Flowns.domainPrepare)
                 let request = try await buildPayerSignableRequest(response: prepareResponse)
-                let signatureResponse: ClaimDomainSignatureResponse = try await Network.request(FRWAPI.Flowns.domainSignature(request))
+                let signatureResponse: ClaimDomainSignatureResponse = try await Network
+                    .request(FRWAPI.Flowns.domainSignature(request))
 
                 guard let txId = signatureResponse.txId, !txId.isEmpty else {
                     debugPrint("ClaimDomainViewModel -> claimAction txId is empty")
@@ -61,7 +73,11 @@ class ClaimDomainViewModel: ObservableObject {
         }
     }
 
-    private func buildPayerSignableRequest(response: ClaimDomainPrepareResponse) async throws -> SignPayerRequest {
+    // MARK: Private
+
+    private func buildPayerSignableRequest(response: ClaimDomainPrepareResponse) async throws
+        -> SignPayerRequest
+    {
         let address = WalletManager.shared.getPrimaryWalletAddress() ?? ""
         let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
 
@@ -83,7 +99,11 @@ class ClaimDomainViewModel: ObservableObject {
             }
 
             authorizers {
-                [Flow.Address(hex: address), Flow.Address(hex: response.lilicoServerAddress ?? ""), Flow.Address(hex: response.flownsServerAddress ?? "")]
+                [
+                    Flow.Address(hex: address),
+                    Flow.Address(hex: response.lilicoServerAddress ?? ""),
+                    Flow.Address(hex: response.flownsServerAddress ?? ""),
+                ]
             }
 
             payer {
@@ -91,7 +111,8 @@ class ClaimDomainViewModel: ObservableObject {
             }
         }
 
-        let signedTransaction = try await transaction.signPayload(signers: WalletManager.shared.defaultSigners)
+        let signedTransaction = try await transaction
+            .signPayload(signers: WalletManager.shared.defaultSigners)
 
         return signedTransaction.buildSignPayerRequest()
     }
@@ -99,13 +120,33 @@ class ClaimDomainViewModel: ObservableObject {
 
 extension Flow.Transaction {
     func buildSignPayerRequest() -> SignPayerRequest {
-        let pKey = FCLVoucher.ProposalKey(address: proposalKey.address, keyId: proposalKey.keyIndex, sequenceNum: UInt64(proposalKey.sequenceNumber))
-        let payloadSigs = payloadSignatures.map { FCLVoucher.Signature(address: $0.address, keyId: $0.keyIndex, sig: $0.signature.hexValue) }
+        let pKey = FCLVoucher.ProposalKey(
+            address: proposalKey.address,
+            keyId: proposalKey.keyIndex,
+            sequenceNum: UInt64(proposalKey.sequenceNumber)
+        )
+        let payloadSigs = payloadSignatures.map { FCLVoucher.Signature(
+            address: $0.address,
+            keyId: $0.keyIndex,
+            sig: $0.signature.hexValue
+        ) }
 
-        let voucher = FCLVoucher(cadence: script, payer: payer, refBlock: referenceBlockId, arguments: arguments, proposalKey: pKey, computeLimit: UInt64(gasLimit), authorizers: authorizers, payloadSigs: payloadSigs)
+        let voucher = FCLVoucher(
+            cadence: script,
+            payer: payer,
+            refBlock: referenceBlockId,
+            arguments: arguments,
+            proposalKey: pKey,
+            computeLimit: UInt64(gasLimit),
+            authorizers: authorizers,
+            payloadSigs: payloadSigs
+        )
 
         let msg = signablePlayload?.hexValue ?? ""
-        let request = SignPayerRequest(transaction: voucher, message: PayerMessage(envelopeMessage: msg))
+        let request = SignPayerRequest(
+            transaction: voucher,
+            message: PayerMessage(envelopeMessage: msg)
+        )
 
         return request
     }

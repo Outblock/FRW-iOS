@@ -8,11 +8,17 @@
 import SwiftUI
 
 class SelectProviderViewModel: ObservableObject {
-    @Published var lilicoProvider: StakingProvider?
-    @Published var otherProviders: [StakingProvider] = []
+    // MARK: Lifecycle
 
     init() {
         lilicoProvider = StakingProviderCache.cache.providers.first { $0.isLilico }
         otherProviders = StakingProviderCache.cache.providers.filter { $0.isLilico == false }
     }
+
+    // MARK: Internal
+
+    @Published
+    var lilicoProvider: StakingProvider?
+    @Published
+    var otherProviders: [StakingProvider] = []
 }

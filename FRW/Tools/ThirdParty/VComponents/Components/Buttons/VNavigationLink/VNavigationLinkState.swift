@@ -19,6 +19,8 @@ public enum VNavigationLinkState: Int, CaseIterable {
     /// Disabled.
     case disabled
 
+    // MARK: Public
+
     // MARK: Properties
 
     /// Indicates if state is enabled.

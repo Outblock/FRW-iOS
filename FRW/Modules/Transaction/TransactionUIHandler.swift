@@ -7,8 +7,24 @@
 
 import UIKit
 
+// MARK: - TransactionUIHandler
+
 class TransactionUIHandler {
+    // MARK: Lifecycle
+
+    init() {
+        addNotification()
+    }
+
+    // MARK: Internal
+
     static let shared = TransactionUIHandler()
+
+    var window: UIWindow {
+        Router.coordinator.window
+    }
+
+    // MARK: Private
 
     private lazy var panelHolder: TransactionHolderView = {
         let view = TransactionHolderView.createView()
@@ -20,19 +36,17 @@ class TransactionUIHandler {
         return view
     }()
 
-    var window: UIWindow {
-        return Router.coordinator.window
-    }
-
-    init() {
-        addNotification()
-    }
-
     private func addNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(onTransactionManagerChanged), name: .transactionManagerDidChanged, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onTransactionManagerChanged),
+            name: .transactionManagerDidChanged,
+            object: nil
+        )
     }
 
-    @objc private func onTransactionManagerChanged() {
+    @objc
+    private func onTransactionManagerChanged() {
         refreshPanelHolder()
     }
 }

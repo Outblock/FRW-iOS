@@ -13,7 +13,8 @@ extension UIDevice {
             return false
         #else
             if FileManager.default.fileExists(atPath: "/Applications/Cydia.app") ||
-                FileManager.default.fileExists(atPath: "/Library/MobileSubstrate/MobileSubstrate.dylib") ||
+                FileManager.default
+                .fileExists(atPath: "/Library/MobileSubstrate/MobileSubstrate.dylib") ||
                 FileManager.default.fileExists(atPath: "/bin/bash") ||
                 FileManager.default.fileExists(atPath: "/usr/bin/sshd") ||
                 FileManager.default.fileExists(atPath: "/usr/sbin/sshd") ||
@@ -28,7 +29,11 @@ extension UIDevice {
 
             let stringToWrite = "Jailbreak Test"
             do {
-                try stringToWrite.write(toFile: "/private/JailbreakTest.txt", atomically: true, encoding: .utf8)
+                try stringToWrite.write(
+                    toFile: "/private/JailbreakTest.txt",
+                    atomically: true,
+                    encoding: .utf8
+                )
                 try? FileManager.default.removeItem(atPath: "/private/JailbreakTest.txt")
                 return true
             } catch {

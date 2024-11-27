@@ -9,11 +9,7 @@ import Foundation
 import KeychainAccess
 
 struct PhraseKeyStore {
-    private static let defaultBundleID = "com.flowfoundation.wallet"
-    private var mainKeychain = Keychain(service: (Bundle.main.bundleIdentifier ?? defaultBundleID) + ".backup.phrase")
-        .label("Lilico app backup")
-        .synchronizable(false)
-        .accessibility(.whenUnlocked)
+    // MARK: Internal
 
     func addMnemonic(mnemonic: String, userId: String) throws {
         guard var data = mnemonic.data(using: .utf8) else {
@@ -34,7 +30,10 @@ struct PhraseKeyStore {
 
     func getMnemonicFromKeychain(uid: String) -> String? {
         if var encryptedData = try? mainKeychain.getData(uid),
-           var decryptedData = try? WalletManager.decryptionChaChaPoly(key: uid, data: encryptedData),
+           var decryptedData = try? WalletManager.decryptionChaChaPoly(
+               key: uid,
+               data: encryptedData
+           ),
            var mnemonic = String(data: decryptedData, encoding: .utf8)
         {
             defer {
@@ -55,4 +54,14 @@ struct PhraseKeyStore {
         let backupList = list.filter { $0.contains(tag) }
         return tag + "\(backupList)"
     }
+
+    // MARK: Private
+
+    private static let defaultBundleID = "com.flowfoundation.wallet"
+
+    private var mainKeychain =
+        Keychain(service: (Bundle.main.bundleIdentifier ?? defaultBundleID) + ".backup.phrase")
+            .label("Lilico app backup")
+            .synchronizable(false)
+            .accessibility(.whenUnlocked)
 }

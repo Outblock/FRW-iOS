@@ -9,17 +9,14 @@ import Combine
 import Flow
 import SwiftUI
 
-class DeveloperModeViewModel: ObservableObject {
-    @Published var customWatchAddress: String? = LocalUserDefaults.shared.customWatchAddress
-    @Published var customAddressText: String = ""
-    private(set) var demoAddress: String = "0x01d63aa89238a559"
-    private(set) var svgDemoAddress: String = "0x95601dba5c2506eb"
+// MARK: - DeveloperModeViewModel
 
-    private var cancelable = Set<AnyCancellable>()
+class DeveloperModeViewModel: ObservableObject {
+    // MARK: Lifecycle
 
     init() {
         if let customWatchAddress = customWatchAddress, !customWatchAddress.isEmpty {
-            customAddressText = customWatchAddress
+            self.customAddressText = customWatchAddress
         }
 
         NotificationCenter.default.publisher(for: .watchAddressDidChanged).sink { [weak self] _ in
@@ -33,6 +30,19 @@ class DeveloperModeViewModel: ObservableObject {
             }
         }.store(in: &cancelable)
     }
+
+    // MARK: Internal
+
+    @Published
+    var customWatchAddress: String? = LocalUserDefaults.shared.customWatchAddress
+    @Published
+    var customAddressText: String = ""
+    private(set) var demoAddress: String = "0x01d63aa89238a559"
+    private(set) var svgDemoAddress: String = "0x95601dba5c2506eb"
+
+    // MARK: Private
+
+    private var cancelable = Set<AnyCancellable>()
 }
 
 extension DeveloperModeViewModel {
@@ -89,7 +99,15 @@ extension DeveloperModeViewModel {
 
         Task {
             do {
-                let request = NetworkRequest(accountKey: AccountKey(hashAlgo: WalletManager.shared.hashAlgo.index, publicKey: WalletManager.shared.getCurrentPublicKey() ?? "", signAlgo: WalletManager.shared.signatureAlgo.index, weight: 1000), network: "previewnet")
+                let request = NetworkRequest(
+                    accountKey: AccountKey(
+                        hashAlgo: WalletManager.shared.hashAlgo.index,
+                        publicKey: WalletManager.shared.getCurrentPublicKey() ?? "",
+                        signAlgo: WalletManager.shared.signatureAlgo.index,
+                        weight: 1000
+                    ),
+                    network: "previewnet"
+                )
                 let id: String = try await Network.request(FRWAPI.User.previewnet(request))
                 let txId = Flow.ID(hex: id)
                 flow.configure(chainID: LocalUserDefaults.FlowNetworkType.previewnet.toFlowType())

@@ -8,16 +8,56 @@
 import Flow
 import Foundation
 
+// MARK: - AuthnResponse
+
 struct AuthnResponse: Codable {
-    let fType: String?
-    let fVsn: String?
-    let status: Status
-    var updates: Service?
-    var local: Service?
-    var data: AuthnData?
-    let reason: String?
-    let compositeSignature: AuthnData?
-    var authorizationUpdates: Service?
+    // MARK: Lifecycle
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        fType = try? container.decode(String.self, forKey: .fType)
+        fVsn = try? container.decode(String.self, forKey: .fVsn)
+        status = try container.decode(Status.self, forKey: .status)
+        updates = try? container.decode(Service.self, forKey: .updates)
+        authorizationUpdates = try? container.decode(
+            Service.self,
+            forKey: .authorizationUpdates
+        )
+        do {
+            local = try container.decode(Service.self, forKey: .local)
+        } catch {
+            let locals = try? container.decode([Service].self, forKey: .local)
+            local = locals?.first
+        }
+
+        data = try? container.decode(AuthnData.self, forKey: .data)
+        reason = try? container.decode(String.self, forKey: .reason)
+        compositeSignature = try? container.decode(AuthnData.self, forKey: .compositeSignature)
+    }
+
+    init(
+        fType: String?,
+        fVsn: String?,
+        status: Status,
+        updates: Service? = nil,
+        local: Service? = nil,
+        data: AuthnData? = nil,
+        reason: String?,
+        compositeSignature: AuthnData?,
+        authorizationUpdates: Service? = nil
+    ) {
+        self.fType = fType
+        self.fVsn = fVsn
+        self.status = status
+        self.updates = updates
+        self.local = local
+        self.data = data
+        self.reason = reason
+        self.compositeSignature = compositeSignature
+        self.authorizationUpdates = authorizationUpdates
+    }
+
+    // MARK: Internal
 
     enum CodingKeys: String, CodingKey {
         case fType = "f_type"
@@ -31,37 +71,18 @@ struct AuthnResponse: Codable {
         case authorizationUpdates
     }
 
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        fType = try? container.decode(String.self, forKey: .fType)
-        fVsn = try? container.decode(String.self, forKey: .fVsn)
-        status = try container.decode(Status.self, forKey: .status)
-        updates = try? container.decode(Service.self, forKey: .updates)
-        authorizationUpdates = try? container.decode(Service.self, forKey: .authorizationUpdates)
-        do {
-            local = try container.decode(Service.self, forKey: .local)
-        } catch {
-            let locals = try? container.decode([Service].self, forKey: .local)
-            local = locals?.first
-        }
-
-        data = try? container.decode(AuthnData.self, forKey: .data)
-        reason = try? container.decode(String.self, forKey: .reason)
-        compositeSignature = try? container.decode(AuthnData.self, forKey: .compositeSignature)
-    }
-
-    init(fType: String?, fVsn: String?, status: Status, updates: Service? = nil, local: Service? = nil, data: AuthnData? = nil, reason: String?, compositeSignature: AuthnData?, authorizationUpdates: Service? = nil) {
-        self.fType = fType
-        self.fVsn = fVsn
-        self.status = status
-        self.updates = updates
-        self.local = local
-        self.data = data
-        self.reason = reason
-        self.compositeSignature = compositeSignature
-        self.authorizationUpdates = authorizationUpdates
-    }
+    let fType: String?
+    let fVsn: String?
+    let status: Status
+    var updates: Service?
+    var local: Service?
+    var data: AuthnData?
+    let reason: String?
+    let compositeSignature: AuthnData?
+    var authorizationUpdates: Service?
 }
+
+// MARK: - AuthnData
 
 struct AuthnData: Codable {
     let addr: String?
@@ -75,18 +96,17 @@ struct AuthnData: Codable {
     var signature: String? = nil
 }
 
+// MARK: - Status
+
 enum Status: String, Codable {
     case pending = "PENDING"
     case approved = "APPROVED"
     case declined = "DECLINED"
 }
 
+// MARK: - FCLResponse
+
 public struct FCLResponse: Codable {
-    var fType: String = "Service"
-    var fVsn: String = "1.0.0"
-    let addr: String
-    let type: String
-    var services: [Service]? = []
     //        let cid: String
     //        let expiresAt: Date
 
@@ -97,7 +117,15 @@ public struct FCLResponse: Codable {
         case type
         case services
     }
+
+    var fType: String = "Service"
+    var fVsn: String = "1.0.0"
+    let addr: String
+    let type: String
+    var services: [Service]? = []
 }
+
+// MARK: - FCLServiceType
 
 public enum FCLServiceType: String, Codable {
     case authn
@@ -110,6 +138,8 @@ public enum FCLServiceType: String, Codable {
     case openID = "open-id"
 }
 
+// MARK: - FCLWalletConnectMethod
+
 public enum FCLWalletConnectMethod: String, Codable {
     case preAuthz = "flow_pre_authz"
     case authn = "flow_authn"
@@ -119,6 +149,8 @@ public enum FCLWalletConnectMethod: String, Codable {
 
     case accountInfo = "frw_account_info"
     case addDeviceInfo = "frw_add_device_key"
+
+    // MARK: Lifecycle
 
     public init?(type: FCLServiceType) {
         switch type {
@@ -138,6 +170,8 @@ public enum FCLWalletConnectMethod: String, Codable {
     }
 }
 
+// MARK: - FCLServiceMethod
+
 public enum FCLServiceMethod: String, Codable {
     case httpPost = "HTTP/POST"
     case httpGet = "HTTP/GET"
@@ -147,12 +181,23 @@ public enum FCLServiceMethod: String, Codable {
     case data = "DATA"
 }
 
+// MARK: - Identity
+
 struct Identity: Codable {
+    // MARK: Public
+
     public let address: String
+
+    // MARK: Internal
+
     let keyId: Int?
 }
 
+// MARK: - Provider
+
 struct Provider: Codable {
+    // MARK: Public
+
     public let fType: String?
     public let fVsn: String?
     public let address: String
@@ -162,6 +207,8 @@ struct Provider: Codable {
     public let supportEmail: String?
     public let website: String?
     public let icon: String?
+
+    // MARK: Internal
 
     enum CodingKeys: String, CodingKey {
         case fType = "f_type"
@@ -176,8 +223,10 @@ struct Provider: Codable {
     }
 }
 
+// MARK: - ParamValue
+
 struct ParamValue: Codable {
-    var value: String
+    // MARK: Lifecycle
 
     init(from decoder: Decoder) throws {
         if let container = try? decoder.singleValueContainer() {
@@ -190,42 +239,42 @@ struct ParamValue: Codable {
             } else if let stringVal = try? container.decode(String.self) {
                 value = stringVal
             } else {
-                throw DecodingError.dataCorruptedError(in: container, debugDescription: "the container contains nothing serialisable")
+                throw DecodingError.dataCorruptedError(
+                    in: container,
+                    debugDescription: "the container contains nothing serialisable"
+                )
             }
         } else {
-            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Could not serialise"))
+            throw DecodingError.dataCorrupted(DecodingError.Context(
+                codingPath: decoder.codingPath,
+                debugDescription: "Could not serialise"
+            ))
         }
     }
+
+    // MARK: Internal
+
+    var value: String
 }
 
+// MARK: - Service
+
 struct Service: Codable {
-    var fType: String? = "Service"
-    var fVsn: String? = "1.0.0"
-    var type: FCLServiceType?
-    var method: FCLServiceMethod?
-    var endpoint: String?
-    var uid: String?
-    var id: String?
-    var identity: Identity?
-    var provider: Provider?
-    var params: [String: String]?
-    var data: AccountProof?
+    // MARK: Lifecycle
 
-    enum CodingKeys: String, CodingKey {
-        case fType = "f_type"
-        case fVsn = "f_vsn"
-        case type
-        case method
-        case endpoint
-        case uid
-        case id
-        case identity
-        case provider
-        case params
-        case data
-    }
-
-    init(fType: String?, fVsn: String?, type: FCLServiceType?, method: FCLServiceMethod?, endpoint: String?, uid: String?, id: String?, identity: Identity?, provider: Provider?, params: [String: String]?, data: AccountProof?) {
+    init(
+        fType: String?,
+        fVsn: String?,
+        type: FCLServiceType?,
+        method: FCLServiceMethod?,
+        endpoint: String?,
+        uid: String?,
+        id: String?,
+        identity: Identity?,
+        provider: Provider?,
+        params: [String: String]?,
+        data: AccountProof?
+    ) {
         self.fType = fType
         self.fVsn = fVsn
         self.type = type
@@ -258,26 +307,52 @@ struct Service: Codable {
         provider = try? container.decode(Provider.self, forKey: .provider)
         data = try? container.decode(AccountProof.self, forKey: .data)
     }
+
+    // MARK: Internal
+
+    enum CodingKeys: String, CodingKey {
+        case fType = "f_type"
+        case fVsn = "f_vsn"
+        case type
+        case method
+        case endpoint
+        case uid
+        case id
+        case identity
+        case provider
+        case params
+        case data
+    }
+
+    var fType: String? = "Service"
+    var fVsn: String? = "1.0.0"
+    var type: FCLServiceType?
+    var method: FCLServiceMethod?
+    var endpoint: String?
+    var uid: String?
+    var id: String?
+    var identity: Identity?
+    var provider: Provider?
+    var params: [String: String]?
+    var data: AccountProof?
 }
 
-struct AccountProof: Codable {
-    let fType, fVsn, address, nonce: String
-    let signatures: [AccountProofSignature]
+// MARK: - AccountProof
 
+struct AccountProof: Codable {
     enum CodingKeys: String, CodingKey {
         case fType = "f_type"
         case fVsn = "f_vsn"
         case address, nonce, signatures
     }
+
+    let fType, fVsn, address, nonce: String
+    let signatures: [AccountProofSignature]
 }
 
-// MARK: - Signature
+// MARK: - AccountProofSignature
 
 struct AccountProofSignature: Codable {
-    let fType, fVsn, addr: String
-    let keyID: Int
-    let signature: String
-
     enum CodingKeys: String, CodingKey {
         case fType = "f_type"
         case fVsn = "f_vsn"
@@ -285,4 +360,8 @@ struct AccountProofSignature: Codable {
         case keyID = "keyId"
         case signature
     }
+
+    let fType, fVsn, addr: String
+    let keyID: Int
+    let signature: String
 }

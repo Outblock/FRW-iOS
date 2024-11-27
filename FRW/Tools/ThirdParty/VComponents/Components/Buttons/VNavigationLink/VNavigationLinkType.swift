@@ -21,7 +21,8 @@ public typealias VNavigationLinkPreset = DerivedButtonPreset
 // MARK: - Button
 
 extension VNavigationLinkType {
-    @ViewBuilder static func navLinkButton<Content>(
+    @ViewBuilder
+    static func navLinkButton<Content>(
         buttonType: VNavigationLinkType,
         isEnabled: Bool,
         action: @escaping () -> Void,

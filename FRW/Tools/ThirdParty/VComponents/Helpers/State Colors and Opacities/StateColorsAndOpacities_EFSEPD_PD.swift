@@ -11,6 +11,57 @@ import SwiftUI
 
 /// Color and opacity level group containing `enabled`, `focused`, `success`, `error`, `pressed`, and `disabled` values.
 public struct StateColorsAndOpacities_EFSEPD_PD: Equatable {
+    // MARK: Lifecycle
+
+    // MARK: Initializers
+
+    /// Initializes group with values.
+    public init(
+        enabled: Color,
+        focused: Color,
+        success: Color,
+        error: Color,
+        pressedEnabled: Color,
+        pressedFocused: Color,
+        pressedSuccess: Color,
+        pressedError: Color,
+        disabled: Color,
+        pressedOpacity: Double,
+        disabledOpacity: Double
+    ) {
+        self.enabled = enabled
+        self.focused = focused
+        self.success = success
+        self.error = error
+        self.pressedEnabled = pressedEnabled
+        self.pressedFocused = pressedFocused
+        self.pressedSuccess = pressedSuccess
+        self.pressedError = pressedError
+        self.disabled = disabled
+        self.pressedOpacity = pressedOpacity
+        self.disabledOpacity = disabledOpacity
+    }
+
+    /// Initializes group with clear values.
+    public init() {
+        self.enabled = .clear
+        self.focused = .clear
+        self.success = .clear
+        self.error = .clear
+        self.pressedEnabled = .clear
+        self.pressedFocused = .clear
+        self.pressedSuccess = .clear
+        self.pressedError = .clear
+        self.disabled = .clear
+        self.pressedOpacity = 0
+        self.disabledOpacity = 0
+    }
+
+    // MARK: Public
+
+    /// Initializes group with clear values.
+    public static var clear: Self { .init() }
+
     // MARK: Properties
 
     /// Enabled color.
@@ -45,51 +96,4 @@ public struct StateColorsAndOpacities_EFSEPD_PD: Equatable {
 
     /// Disabled opacity level.
     public var disabledOpacity: Double
-
-    // MARK: Initializers
-
-    /// Initializes group with values.
-    public init(
-        enabled: Color,
-        focused: Color,
-        success: Color,
-        error: Color,
-        pressedEnabled: Color,
-        pressedFocused: Color,
-        pressedSuccess: Color,
-        pressedError: Color,
-        disabled: Color,
-        pressedOpacity: Double,
-        disabledOpacity: Double
-    ) {
-        self.enabled = enabled
-        self.focused = focused
-        self.success = success
-        self.error = error
-        self.pressedEnabled = pressedEnabled
-        self.pressedFocused = pressedFocused
-        self.pressedSuccess = pressedSuccess
-        self.pressedError = pressedError
-        self.disabled = disabled
-        self.pressedOpacity = pressedOpacity
-        self.disabledOpacity = disabledOpacity
-    }
-
-    /// Initializes group with clear values.
-    public init() {
-        enabled = .clear
-        focused = .clear
-        success = .clear
-        error = .clear
-        pressedEnabled = .clear
-        pressedFocused = .clear
-        pressedSuccess = .clear
-        pressedError = .clear
-        disabled = .clear
-        pressedOpacity = 0
-        disabledOpacity = 0
-    }
-
-    /// Initializes group with clear values.
-    public static var clear: Self { .init() }
 }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Web3Core
 
 extension AddAddressView {
     enum AddressStateType {
@@ -14,6 +15,8 @@ extension AddAddressView {
         case passed
         case invalidFormat
         case notFound
+
+        // MARK: Internal
 
         var desc: String {
             switch self {
@@ -62,7 +65,9 @@ extension AddAddressView {
             }
 
             if isEditingMode {
-                if finalName == editingContact?.contactName, finalAddress == editingContact?.address {
+                if finalName == editingContact?.contactName,
+                   finalAddress == editingContact?.address
+                {
                     isReadyForSave = false
                     return
                 }
@@ -77,11 +82,8 @@ extension AddAddressView {
         case save
     }
 
-    class AddAddressViewModel: ViewModel {
-        @Published var state: AddAddressState
-        private var addressBookVM: AddressBookView.AddressBookViewModel
-
-        private var addressCheckTask: DispatchWorkItem?
+    final class AddAddressViewModel: ViewModel {
+        // MARK: Lifecycle
 
         init(addressBookVM: AddressBookView.AddressBookViewModel) {
             state = AddAddressState()
@@ -100,6 +102,15 @@ extension AddAddressView {
             trigger(.checkAddress)
         }
 
+        // MARK: Internal
+
+        enum AddressType {
+            case flow, evm
+        }
+
+        @Published
+        var state: AddAddressState
+
         func trigger(_ input: AddAddressInput) {
             switch input {
             case .checkAddress:
@@ -108,6 +119,12 @@ extension AddAddressView {
                 saveAction()
             }
         }
+
+        // MARK: Private
+
+        private var addressBookVM: AddressBookView.AddressBookViewModel
+
+        private var addressCheckTask: DispatchWorkItem?
 
         private func saveAction() {
             if checkContactExists() == true {
@@ -146,8 +163,15 @@ extension AddAddressView {
 
             Task {
                 do {
-                    let request = AddressBookAddRequest(contactName: contactName, address: address, domain: "", domainType: .unknown, username: "")
-                    let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.AddressBook.addExternal(request))
+                    let request = AddressBookAddRequest(
+                        contactName: contactName,
+                        address: address,
+                        domain: "",
+                        domainType: .unknown,
+                        username: ""
+                    )
+                    let response: Network.EmptyResponse = try await Network
+                        .requestWithRawModel(FRWAPI.AddressBook.addExternal(request))
 
                     if response.httpCode != 200 {
                         errorAction()
@@ -184,13 +208,23 @@ extension AddAddressView {
 
             Task {
                 do {
-                    guard let id = state.editingContact?.id, let domainType = state.editingContact?.domain?.domainType else {
+                    guard let id = state.editingContact?.id,
+                          let domainType = state.editingContact?.domain?.domainType
+                    else {
                         errorAction()
                         return
                     }
 
-                    let request = AddressBookEditRequest(id: id, contactName: contactName, address: address, domain: "", domainType: domainType, username: "")
-                    let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.AddressBook.edit(request))
+                    let request = AddressBookEditRequest(
+                        id: id,
+                        contactName: contactName,
+                        address: address,
+                        domain: "",
+                        domainType: domainType,
+                        username: ""
+                    )
+                    let response: Network.EmptyResponse = try await Network
+                        .requestWithRawModel(FRWAPI.AddressBook.edit(request))
 
                     if response.httpCode != 200 {
                         errorAction()
@@ -208,7 +242,15 @@ extension AddAddressView {
             let contactName = state.name.trim()
             let address = state.address.trim().lowercased()
             let domain = Contact.Domain(domainType: .unknown, value: "")
-            let contact = Contact(address: address, avatar: nil, contactName: contactName, contactType: .external, domain: domain, id: 0, username: "")
+            let contact = Contact(
+                address: address,
+                avatar: nil,
+                contactName: contactName,
+                contactType: .external,
+                domain: domain,
+                id: 0,
+                username: ""
+            )
 
             return addressBookVM.contactIsExists(contact)
         }
@@ -221,29 +263,36 @@ extension AddAddressView {
                 return
             }
 
-            var formatedAddress = state.address.trim().lowercased()
-            if !formatedAddress.hasPrefix("0x") {
-                formatedAddress = "0x" + formatedAddress
-            }
+            let formattedAddress = state.address.trim().lowercased().addHexPrefix()
 
-            if !checkAddressFormat(formatedAddress) {
+            switch checkAddressFormat(formattedAddress) {
+            case .some(.flow):
+                delayCheckAddressExists(formattedAddress)
+            case .some(.evm):
+                checkEoaAddressExists(formattedAddress)
+            case .none:
                 state.addressStateType = .invalidFormat
-                return
-            } else {
-                state.addressStateType = .idle
             }
-
-            delayCheckAddressIsExist(formatedAddress)
         }
     }
 }
 
 extension AddAddressView.AddAddressViewModel {
-    private func checkAddressFormat(_ address: String) -> Bool {
-        return address.matchRegex("^0x[a-fA-F0-9]{16}$")
+    private func checkAddressFormat(_ address: String) -> AddressType? {
+        if address.matchRegex("^0x[a-fA-F0-9]{16}$") {
+            return .flow
+        }
+
+        if address.matchRegex("^0x[0-9a-fA-F]{40}$") {
+            return .evm
+        }
+
+        return nil
     }
 
-    private func delayCheckAddressIsExist(_ address: String) {
+    private func delayCheckAddressExists(_ address: String) {
+        state.addressStateType = .idle
+
         let task = DispatchWorkItem { [weak self] in
             guard let self = self else {
                 return
@@ -261,6 +310,20 @@ extension AddAddressView.AddAddressViewModel {
         addressCheckTask = task
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: task)
+    }
+
+    private func checkEoaAddressExists(_ address: String) {
+        guard let eoa = EthereumAddress(address, type: .normal, ignoreChecksum: true) else {
+            state.addressStateType = .invalidFormat
+            return
+        }
+
+        guard eoa.isValid else {
+            state.addressStateType = .invalidFormat
+            return
+        }
+
+        state.addressStateType = .passed
     }
 
     private func cancelCurrentAddressCheckTask() {

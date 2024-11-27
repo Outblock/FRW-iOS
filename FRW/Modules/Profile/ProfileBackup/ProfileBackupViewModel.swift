@@ -9,9 +9,7 @@ import Combine
 import SwiftUI
 
 class ProfileBackupViewModel: ObservableObject {
-    @Published var selectedBackupType: BackupManager.BackupType = .none
-
-    private var cancelSets = Set<AnyCancellable>()
+    // MARK: Lifecycle
 
     init() {
         if let uid = UserManager.shared.activatedUID {
@@ -25,13 +23,10 @@ class ProfileBackupViewModel: ObservableObject {
             }.store(in: &cancelSets)
     }
 
-    private func refreshBackupType() {
-        if let uid = UserManager.shared.activatedUID {
-            selectedBackupType = MultiAccountStorage.shared.getBackupType(uid)
-        } else {
-            selectedBackupType = .none
-        }
-    }
+    // MARK: Internal
+
+    @Published
+    var selectedBackupType: BackupManager.BackupType = .none
 
     func changeBackupTypeAction(_ type: BackupManager.BackupType) {
         guard let uid = UserManager.shared.activatedUID else { return }
@@ -76,6 +71,18 @@ class ProfileBackupViewModel: ObservableObject {
                 HUD.dismissLoading()
                 HUD.error(title: "backup_to_x_failed".localized(type.descLocalizedString))
             }
+        }
+    }
+
+    // MARK: Private
+
+    private var cancelSets = Set<AnyCancellable>()
+
+    private func refreshBackupType() {
+        if let uid = UserManager.shared.activatedUID {
+            selectedBackupType = MultiAccountStorage.shared.getBackupType(uid)
+        } else {
+            selectedBackupType = .none
         }
     }
 }

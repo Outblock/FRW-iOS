@@ -7,11 +7,15 @@
 
 import Foundation
 
+// MARK: - ConfigKey
+
 enum ConfigKey: String {
     case lilico
     case lilicoWeb = "lilico-web"
     case firebaseFunction = "firebase-function"
 }
+
+// MARK: - Config
 
 enum Config {
     static func get(_ key: ConfigKey) -> String {

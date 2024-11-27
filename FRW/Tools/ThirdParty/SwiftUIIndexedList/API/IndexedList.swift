@@ -6,6 +6,8 @@
 
 import SwiftUI
 
+// MARK: - IndexedList
+
 public struct IndexedList<SelectionValue, Indices, Content>: View
     where SelectionValue: Hashable,
     Indices: Equatable,
@@ -13,6 +15,8 @@ public struct IndexedList<SelectionValue, Indices, Content>: View
     Indices.Element == Index,
     Content: View
 {
+    // MARK: Public
+
     public var body: some View {
         ScrollViewReader { scrollView in
             Group {
@@ -22,11 +26,19 @@ public struct IndexedList<SelectionValue, Indices, Content>: View
                 case let .multiple(value): List(selection: value, content: content)
                 }
             }
-            .background(UITableViewCustomizer(showsVerticalScrollIndicator: accessory.showsScrollIndicator(indices: indices)))
+            .background(UITableViewCustomizer(
+                showsVerticalScrollIndicator: accessory
+                    .showsScrollIndicator(indices: indices)
+            ))
             .overlay(IndexBar(accessory: accessory, indices: indices, scrollView: scrollView))
-            .environment(\.internalIndexBarInsets, accessory.showsIndexBar(indices: indices) ? indexBarInsets : nil)
+            .environment(
+                \.internalIndexBarInsets,
+                accessory.showsIndexBar(indices: indices) ? indexBarInsets : nil
+            )
         }
     }
+
+    // MARK: Private
 
     private var accessory: ScrollAccessory
     private var content: () -> Content
@@ -35,22 +47,24 @@ public struct IndexedList<SelectionValue, Indices, Content>: View
 }
 
 public extension IndexedList {
-    init(accessory: ScrollAccessory = .automatic,
-         indices: Indices,
-         selection: Binding<SelectionValue?>?,
-         @ViewBuilder content: @escaping () -> Content)
-    {
+    init(
+        accessory: ScrollAccessory = .automatic,
+        indices: Indices,
+        selection: Binding<SelectionValue?>?,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.accessory = accessory
         self.content = content
         self.indices = indices
         self.selection = .single(value: selection)
     }
 
-    init(accessory: ScrollAccessory = .automatic,
-         indices: Indices,
-         selection: Binding<Set<SelectionValue>>?,
-         @ViewBuilder content: @escaping () -> Content)
-    {
+    init(
+        accessory: ScrollAccessory = .automatic,
+        indices: Indices,
+        selection: Binding<Set<SelectionValue>>?,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.accessory = accessory
         self.content = content
         self.indices = indices
@@ -61,11 +75,13 @@ public extension IndexedList {
 public extension IndexedList
     where Indices == [Index]
 {
-    init<Data, ID, ElementContent>(_ data: Data,
-                                   id: KeyPath<Data.Element, ID>,
-                                   accessory: ScrollAccessory = .automatic,
-                                   selection: Binding<SelectionValue?>?,
-                                   @ViewBuilder content: @escaping (Data.Element) -> ElementContent)
+    init<Data, ID, ElementContent>(
+        _ data: Data,
+        id: KeyPath<Data.Element, ID>,
+        accessory: ScrollAccessory = .automatic,
+        selection: Binding<SelectionValue?>?,
+        @ViewBuilder content: @escaping (Data.Element) -> ElementContent
+    )
         where
         Data: RandomAccessCollection,
         Data.Element: Indexable,
@@ -79,11 +95,13 @@ public extension IndexedList
         self.selection = .single(value: selection)
     }
 
-    init<Data, ID, ElementContent>(_ data: Data,
-                                   id: KeyPath<Data.Element, ID>,
-                                   accessory: ScrollAccessory = .automatic,
-                                   selection: Binding<Set<SelectionValue>>?,
-                                   @ViewBuilder content: @escaping (Data.Element) -> ElementContent)
+    init<Data, ID, ElementContent>(
+        _ data: Data,
+        id: KeyPath<Data.Element, ID>,
+        accessory: ScrollAccessory = .automatic,
+        selection: Binding<Set<SelectionValue>>?,
+        @ViewBuilder content: @escaping (Data.Element) -> ElementContent
+    )
         where
         Data: RandomAccessCollection,
         Data.Element: Indexable,
@@ -97,10 +115,12 @@ public extension IndexedList
         self.selection = .multiple(value: selection)
     }
 
-    init<Data, ElementContent>(_ data: Data,
-                               accessory: ScrollAccessory = .automatic,
-                               selection: Binding<SelectionValue?>?,
-                               @ViewBuilder content: @escaping (Data.Element) -> ElementContent)
+    init<Data, ElementContent>(
+        _ data: Data,
+        accessory: ScrollAccessory = .automatic,
+        selection: Binding<SelectionValue?>?,
+        @ViewBuilder content: @escaping (Data.Element) -> ElementContent
+    )
         where
         Data: RandomAccessCollection,
         Data.Element: Identifiable,
@@ -114,10 +134,12 @@ public extension IndexedList
         self.selection = .single(value: selection)
     }
 
-    init<Data, ElementContent>(_ data: Data,
-                               accessory: ScrollAccessory = .automatic,
-                               selection: Binding<Set<SelectionValue>>?,
-                               @ViewBuilder content: @escaping (Data.Element) -> ElementContent)
+    init<Data, ElementContent>(
+        _ data: Data,
+        accessory: ScrollAccessory = .automatic,
+        selection: Binding<Set<SelectionValue>>?,
+        @ViewBuilder content: @escaping (Data.Element) -> ElementContent
+    )
         where
         Data: RandomAccessCollection,
         Data.Element: Identifiable,
@@ -131,11 +153,14 @@ public extension IndexedList
         self.selection = .multiple(value: selection)
     }
 
-    init<Data, ID, ElementContent>(_ data: Binding<Data>,
-                                   id: KeyPath<Data.Element, ID>,
-                                   accessory: ScrollAccessory = .automatic,
-                                   selection: Binding<SelectionValue?>?,
-                                   @ViewBuilder content: @escaping (Binding<Data.Element>) -> ElementContent)
+    init<Data, ID, ElementContent>(
+        _ data: Binding<Data>,
+        id: KeyPath<Data.Element, ID>,
+        accessory: ScrollAccessory = .automatic,
+        selection: Binding<SelectionValue?>?,
+        @ViewBuilder content: @escaping (Binding<Data.Element>)
+            -> ElementContent
+    )
         where
         Data: MutableCollection,
         Data: RandomAccessCollection,
@@ -151,11 +176,14 @@ public extension IndexedList
         self.selection = .single(value: selection)
     }
 
-    init<Data, ID, ElementContent>(_ data: Binding<Data>,
-                                   id: KeyPath<Data.Element, ID>,
-                                   accessory: ScrollAccessory = .automatic,
-                                   selection: Binding<Set<SelectionValue>>?,
-                                   @ViewBuilder content: @escaping (Binding<Data.Element>) -> ElementContent)
+    init<Data, ID, ElementContent>(
+        _ data: Binding<Data>,
+        id: KeyPath<Data.Element, ID>,
+        accessory: ScrollAccessory = .automatic,
+        selection: Binding<Set<SelectionValue>>?,
+        @ViewBuilder content: @escaping (Binding<Data.Element>)
+            -> ElementContent
+    )
         where
         Data: MutableCollection,
         Data: RandomAccessCollection,
@@ -171,10 +199,13 @@ public extension IndexedList
         self.selection = .multiple(value: selection)
     }
 
-    init<Data, ElementContent>(_ data: Binding<Data>,
-                               accessory: ScrollAccessory = .automatic,
-                               selection: Binding<SelectionValue?>?,
-                               @ViewBuilder content: @escaping (Binding<Data.Element>) -> ElementContent)
+    init<Data, ElementContent>(
+        _ data: Binding<Data>,
+        accessory: ScrollAccessory = .automatic,
+        selection: Binding<SelectionValue?>?,
+        @ViewBuilder content: @escaping (Binding<Data.Element>)
+            -> ElementContent
+    )
         where
         Data: MutableCollection,
         Data: RandomAccessCollection,
@@ -182,7 +213,11 @@ public extension IndexedList
         Data.Element: Indexable,
         Data.Index: Hashable,
         ElementContent: View,
-        Content == ForEach<LazyMapSequence<Data.Indices, (Data.Index, Data.Element.ID)>, Data.Element.ID, ElementContent>
+        Content == ForEach<
+            LazyMapSequence<Data.Indices, (Data.Index, Data.Element.ID)>,
+            Data.Element.ID,
+            ElementContent
+        >
     {
         self.accessory = accessory
         self.content = { ForEach(data, content: content) }
@@ -190,10 +225,13 @@ public extension IndexedList
         self.selection = .single(value: selection)
     }
 
-    init<Data, ElementContent>(_ data: Binding<Data>,
-                               accessory: ScrollAccessory = .automatic,
-                               selection: Binding<Set<SelectionValue>>?,
-                               @ViewBuilder content: @escaping (Binding<Data.Element>) -> ElementContent)
+    init<Data, ElementContent>(
+        _ data: Binding<Data>,
+        accessory: ScrollAccessory = .automatic,
+        selection: Binding<Set<SelectionValue>>?,
+        @ViewBuilder content: @escaping (Binding<Data.Element>)
+            -> ElementContent
+    )
         where
         Data: MutableCollection,
         Data: RandomAccessCollection,
@@ -201,7 +239,11 @@ public extension IndexedList
         Data.Element: Indexable,
         Data.Index: Hashable,
         ElementContent: View,
-        Content == ForEach<LazyMapSequence<Data.Indices, (Data.Index, Data.Element.ID)>, Data.Element.ID, ElementContent>
+        Content == ForEach<
+            LazyMapSequence<Data.Indices, (Data.Index, Data.Element.ID)>,
+            Data.Element.ID,
+            ElementContent
+        >
     {
         self.accessory = accessory
         self.content = { ForEach(data, content: content) }
@@ -213,10 +255,11 @@ public extension IndexedList
 public extension IndexedList
     where SelectionValue == Never
 {
-    init(accessory: ScrollAccessory = .automatic,
-         indices: Indices,
-         @ViewBuilder content: @escaping () -> Content)
-    {
+    init(
+        accessory: ScrollAccessory = .automatic,
+        indices: Indices,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.accessory = accessory
         self.content = content
         self.indices = indices
@@ -228,10 +271,12 @@ public extension IndexedList
     where SelectionValue == Never,
     Indices == [Index]
 {
-    init<Data, ID, ElementContent>(_ data: Data,
-                                   id: KeyPath<Data.Element, ID>,
-                                   accessory: ScrollAccessory = .automatic,
-                                   @ViewBuilder content: @escaping (Data.Element) -> ElementContent)
+    init<Data, ID, ElementContent>(
+        _ data: Data,
+        id: KeyPath<Data.Element, ID>,
+        accessory: ScrollAccessory = .automatic,
+        @ViewBuilder content: @escaping (Data.Element) -> ElementContent
+    )
         where
         Data: RandomAccessCollection,
         Data.Element: Indexable,
@@ -245,9 +290,11 @@ public extension IndexedList
         selection = .none
     }
 
-    init<Data, ElementContent>(_ data: Data,
-                               accessory: ScrollAccessory = .automatic,
-                               @ViewBuilder content: @escaping (Data.Element) -> ElementContent)
+    init<Data, ElementContent>(
+        _ data: Data,
+        accessory: ScrollAccessory = .automatic,
+        @ViewBuilder content: @escaping (Data.Element) -> ElementContent
+    )
         where
         Data: RandomAccessCollection,
         Data.Element: Identifiable,
@@ -261,10 +308,13 @@ public extension IndexedList
         selection = .none
     }
 
-    init<Data, ID, ElementContent>(_ data: Binding<Data>,
-                                   id: KeyPath<Data.Element, ID>,
-                                   accessory: ScrollAccessory = .automatic,
-                                   @ViewBuilder content: @escaping (Binding<Data.Element>) -> ElementContent)
+    init<Data, ID, ElementContent>(
+        _ data: Binding<Data>,
+        id: KeyPath<Data.Element, ID>,
+        accessory: ScrollAccessory = .automatic,
+        @ViewBuilder content: @escaping (Binding<Data.Element>)
+            -> ElementContent
+    )
         where
         Data: MutableCollection,
         Data: RandomAccessCollection,
@@ -280,9 +330,12 @@ public extension IndexedList
         selection = .none
     }
 
-    init<Data, ElementContent>(_ data: Binding<Data>,
-                               accessory: ScrollAccessory = .automatic,
-                               @ViewBuilder content: @escaping (Binding<Data.Element>) -> ElementContent)
+    init<Data, ElementContent>(
+        _ data: Binding<Data>,
+        accessory: ScrollAccessory = .automatic,
+        @ViewBuilder content: @escaping (Binding<Data.Element>)
+            -> ElementContent
+    )
         where
         Data: MutableCollection,
         Data: RandomAccessCollection,
@@ -290,7 +343,11 @@ public extension IndexedList
         Data.Element: Indexable,
         Data.Index: Hashable,
         ElementContent: View,
-        Content == ForEach<LazyMapSequence<Data.Indices, (Data.Index, Data.Element.ID)>, Data.Element.ID, ElementContent>
+        Content == ForEach<
+            LazyMapSequence<Data.Indices, (Data.Index, Data.Element.ID)>,
+            Data.Element.ID,
+            ElementContent
+        >
     {
         self.accessory = accessory
         self.content = { ForEach(data, content: content) }
@@ -298,6 +355,8 @@ public extension IndexedList
         selection = .none
     }
 }
+
+// MARK: IndexedList.Selection
 
 private extension IndexedList {
     enum Selection {

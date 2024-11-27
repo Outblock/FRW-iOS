@@ -8,6 +8,8 @@
 import Foundation
 import Moya
 
+// MARK: - FRWAPI.Utils
+
 extension FRWAPI {
     enum Utils {
         case currencyRate(Currency)
@@ -15,6 +17,8 @@ extension FRWAPI {
         case flowAddress(String)
     }
 }
+
+// MARK: - FRWAPI.Utils + TargetType, AccessTokenAuthorizable
 
 extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
@@ -67,7 +71,10 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
     var task: Task {
         switch self {
         case let .currencyRate(toCurrency):
-            return .requestParameters(parameters: ["from": "USD", "to": toCurrency.rawValue], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: ["from": "USD", "to": toCurrency.rawValue],
+                encoding: URLEncoding.queryString
+            )
         case let .retoken(token, address):
             return .requestJSONEncodable(["token": token, "address": address])
         case .flowAddress:

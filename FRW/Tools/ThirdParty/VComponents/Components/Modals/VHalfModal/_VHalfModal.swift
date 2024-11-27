@@ -7,33 +7,14 @@
 
 import SwiftUI
 
-// MARK: - _ V Half Modal
+// MARK: - _VHalfModal
 
 struct _VHalfModal<Content, HeaderContent>: View
     where
     Content: View,
     HeaderContent: View
 {
-    // MARK: Properties
-
-    private let model: VHalfModalModel
-
-    @Binding private var isHCPresented: Bool
-    @State private var isViewPresented: Bool = false
-
-    private let headerContent: (() -> HeaderContent)?
-    private let content: () -> Content
-
-    @State private var offset: CGFloat?
-    @State private var offsetBeforeDrag: CGFloat?
-
-    private var headerExists: Bool { headerContent != nil || model.misc.dismissType.hasButton }
-    private var hasGrabber: Bool {
-        model.layout.hasGrabber &&
-            (model.misc.dismissType.contains(.pullDown) || model.layout.height.isResizable)
-    }
-
-    private let isLayoutValid: Bool
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -53,6 +34,8 @@ struct _VHalfModal<Content, HeaderContent>: View
             model.layout.height.ideal <= model.layout.height.max
     }
 
+    // MARK: Internal
+
     // MARK: Body
 
     var body: some View {
@@ -67,19 +50,75 @@ struct _VHalfModal<Content, HeaderContent>: View
         .onAppear(perform: animateIn)
     }
 
+    // MARK: Private
+
+    // MARK: Region
+
+    private enum Region {
+        // MARK: Cases
+
+        case idealMax, ideal, minIdeal
+
+        // MARK: Lifecycle
+
+        // MARK: Initializrs
+
+        init(offset: CGFloat, min _: CGFloat, ideal: CGFloat, max: CGFloat) {
+            // max means offset of max, not maximum allowed offset. Otherwise, the logic would seem nverted
+            switch offset {
+            case ideal: self = .ideal
+            case max ..< ideal: self = .idealMax
+            default: self =
+                .minIdeal // Min isn't used to allow registering area between dismiss point and min
+            }
+        }
+    }
+
+    // MARK: Properties
+
+    private let model: VHalfModalModel
+
+    @Binding
+    private var isHCPresented: Bool
+    @State
+    private var isViewPresented: Bool = false
+
+    private let headerContent: (() -> HeaderContent)?
+    private let content: () -> Content
+
+    @State
+    private var offset: CGFloat?
+    @State
+    private var offsetBeforeDrag: CGFloat?
+
+    private let isLayoutValid: Bool
+
+    private var headerExists: Bool { headerContent != nil || model.misc.dismissType.hasButton }
+    private var hasGrabber: Bool {
+        model.layout.hasGrabber &&
+            (model.misc.dismissType.contains(.pullDown) || model.layout.height.isResizable)
+    }
+
     private var blinding: some View {
         model.colors.blinding
             .edgesIgnoringSafeArea(.all)
             .onTapGesture(perform: animateOutFromBackTap)
     }
 
-    @ViewBuilder private var modalView: some View {
+    @ViewBuilder
+    private var modalView: some View {
         if isLayoutValid {
             ZStack(alignment: .top, content: {
                 VSheet(model: model.sheetModel)
                     .edgesIgnoringSafeArea(.all)
-                    .frame(height: model.layout.height.max - UIView.bottomSafeAreaHeight) // NOTE: Duplicated on all views in ZStack due to DragGesture
-                    .offset(y: isViewPresented ? (offset ?? .zero) : model.layout.height.max) // NOTE: Duplicated on all views in ZStack due to DragGesture
+                    .frame(
+                        height: model.layout.height.max - UIView
+                            .bottomSafeAreaHeight
+                    ) // NOTE: Duplicated on all views in ZStack due to DragGesture
+                    .offset(
+                        y: isViewPresented ? (offset ?? .zero) : model.layout.height
+                            .max
+                    ) // NOTE: Duplicated on all views in ZStack due to DragGesture
                     .gesture(
                         DragGesture(minimumDistance: 0)
                             .onChanged(dragChanged)
@@ -94,18 +133,31 @@ struct _VHalfModal<Content, HeaderContent>: View
                 })
                 .edgesIgnoringSafeArea(model.layout.edgesToIgnore)
                 .frame(maxHeight: .infinity, alignment: .top)
-                .frame(height: model.layout.height.max - UIView.bottomSafeAreaHeight) // NOTE: Duplicated on all views in ZStack due to DragGesture
-                .offset(y: isViewPresented ? (offset ?? .zero) : model.layout.height.max) // NOTE: Duplicated on all views in ZStack due to DragGesture
+                .frame(
+                    height: model.layout.height.max - UIView
+                        .bottomSafeAreaHeight
+                ) // NOTE: Duplicated on all views in ZStack due to DragGesture
+                .offset(
+                    y: isViewPresented ? (offset ?? .zero) : model.layout.height
+                        .max
+                ) // NOTE: Duplicated on all views in ZStack due to DragGesture
 
                 navigationBarCloseButton
                     .edgesIgnoringSafeArea(.all)
-                    .frame(height: model.layout.height.max - UIView.bottomSafeAreaHeight) // NOTE: Duplicated on all views in ZStack due to DragGesture
-                    .offset(y: isViewPresented ? (offset ?? .zero) : model.layout.height.max) // NOTE: Duplicated on all views in ZStack due to DragGesture
+                    .frame(
+                        height: model.layout.height.max - UIView
+                            .bottomSafeAreaHeight
+                    ) // NOTE: Duplicated on all views in ZStack due to DragGesture
+                    .offset(
+                        y: isViewPresented ? (offset ?? .zero) : model.layout.height
+                            .max
+                    ) // NOTE: Duplicated on all views in ZStack due to DragGesture
             })
         }
     }
 
-    @ViewBuilder private var grabberView: some View {
+    @ViewBuilder
+    private var grabberView: some View {
         if hasGrabber {
             RoundedRectangle(cornerRadius: model.layout.grabberCornerRadius)
                 .frame(size: model.layout.grabberSize)
@@ -115,7 +167,8 @@ struct _VHalfModal<Content, HeaderContent>: View
         }
     }
 
-    @ViewBuilder private var headerView: some View {
+    @ViewBuilder
+    private var headerView: some View {
         if headerExists {
             HStack(spacing: model.layout.headerSpacing, content: {
                 if model.misc.dismissType.contains(.leadingButton) {
@@ -140,7 +193,8 @@ struct _VHalfModal<Content, HeaderContent>: View
         }
     }
 
-    @ViewBuilder private var dividerView: some View {
+    @ViewBuilder
+    private var dividerView: some View {
         if headerExists && model.layout.hasDivider {
             Rectangle()
                 .frame(height: model.layout.headerDividerHeight)
@@ -170,7 +224,8 @@ struct _VHalfModal<Content, HeaderContent>: View
         VCloseButton(model: model.closeButtonSubModel, action: animateOut)
     }
 
-    @ViewBuilder private var navigationBarCloseButton: some View {
+    @ViewBuilder
+    private var navigationBarCloseButton: some View {
         if model.misc.dismissType.contains(.navigationViewCloseButton) {
             VCloseButton(model: model.closeButtonSubModel, action: animateOut)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
@@ -200,12 +255,20 @@ struct _VHalfModal<Content, HeaderContent>: View
 
     private func animateOut() {
         withAnimation(model.animations.disappear?.asSwiftUIAnimation) { isViewPresented = false }
-        DispatchQueue.main.asyncAfter(deadline: .now() + (model.animations.disappear?.duration ?? 0)) { isHCPresented = false }
+        DispatchQueue.main
+            .asyncAfter(deadline: .now() + (model.animations.disappear?.duration ?? 0)) {
+                isHCPresented = false
+            }
     }
 
     private func animateOutFromDrag() {
-        withAnimation(VHalfModalModel.Animations.dragDisappear.asSwiftUIAnimation) { isViewPresented = false }
-        DispatchQueue.main.asyncAfter(deadline: .now() + VHalfModalModel.Animations.dragDisappear.duration) { isHCPresented = false }
+        withAnimation(VHalfModalModel.Animations.dragDisappear.asSwiftUIAnimation) {
+            isViewPresented = false
+        }
+        DispatchQueue.main
+            .asyncAfter(deadline: .now() + VHalfModalModel.Animations.dragDisappear.duration) {
+                isHCPresented = false
+            }
     }
 
     private func animateOutFromBackTap() {
@@ -224,7 +287,8 @@ struct _VHalfModal<Content, HeaderContent>: View
         offset = {
             switch rawOffset {
             case ...minAllowedOffset: return minAllowedOffset
-            case maxAllowedOffset...: return model.misc.dismissType.contains(.pullDown) ? rawOffset : minAllowedOffset
+            case maxAllowedOffset...: return model.misc.dismissType
+                .contains(.pullDown) ? rawOffset : minAllowedOffset
             default: return rawOffset
             }
         }()
@@ -232,7 +296,8 @@ struct _VHalfModal<Content, HeaderContent>: View
 
     private func dragEnded(drag: DragGesture.Value) {
         defer { offsetBeforeDrag = nil }
-        guard let offsetBeforeDrag = offsetBeforeDrag else { return } // Content may cause gesture to skip onChange
+        guard let offsetBeforeDrag = offsetBeforeDrag
+        else { return } // Content may cause gesture to skip onChange
 
         let shouldDismiss: Bool = {
             let rawOffset: CGFloat = offsetBeforeDrag + drag.translation.height
@@ -243,7 +308,8 @@ struct _VHalfModal<Content, HeaderContent>: View
             let isDraggedDown: Bool = drag.translation.height > 0
             guard isDraggedDown else { return false }
 
-            guard rawOffset - maxAllowedOffset >= abs(model.layout.translationBelowMinHeightToDismiss) else { return false }
+            guard rawOffset - maxAllowedOffset >=
+                abs(model.layout.translationBelowMinHeightToDismiss) else { return false }
 
             return true
         }()
@@ -283,28 +349,9 @@ struct _VHalfModal<Content, HeaderContent>: View
             animateOutFromDrag()
         }
     }
-
-    // MARK: Region
-
-    private enum Region {
-        // MARK: Cases
-
-        case idealMax, ideal, minIdeal
-
-        // MARK: Initializrs
-
-        init(offset: CGFloat, min _: CGFloat, ideal: CGFloat, max: CGFloat) {
-            // max means offset of max, not maximum allowed offset. Otherwise, the logic would seem nverted
-            switch offset {
-            case ideal: self = .ideal
-            case max ..< ideal: self = .idealMax
-            default: self = .minIdeal // Min isn't used to allow registering area between dismiss point and min
-            }
-        }
-    }
 }
 
-// MARK: - Preview
+// MARK: - VHalfModal_Previews
 
 struct VHalfModal_Previews: PreviewProvider {
     static var previews: some View {

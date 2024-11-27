@@ -168,6 +168,8 @@ class TokenDetailViewModel: ObservableObject {
     var showSheet: Bool = false
     var buttonAction: TokenDetailViewModel.Action = .none
 
+    var isTokenDetailsButtonEnabled: Bool { token.website.isNotNullNorEmpty }
+
     // MARK: Private
 
     private var cancelSets = Set<AnyCancellable>()
@@ -317,14 +319,14 @@ extension TokenDetailViewModel {
     }
 
     private func refreshSummary() {
-        guard let symbol = token.symbol else {
-            return
-        }
-
-        balance = WalletManager.shared.getBalance(bySymbol: symbol)
-        rate = CoinRateCache.cache.getSummary(for: symbol)?.getLastRate() ?? 0
+        balance = WalletManager.shared
+            .getBalance(byId: token.contractId).doubleValue
+        rate = CoinRateCache.cache
+            .getSummary(by: token.contractId)?
+            .getLastRate() ?? 0
         balanceAsUSD = balance * rate
-        changePercent = CoinRateCache.cache.getSummary(for: symbol)?.getChangePercentage() ?? 0
+        changePercent = CoinRateCache.cache.getSummary(by: token.contractId)?
+            .getChangePercentage() ?? 0
     }
 
     private func fetchChartData() {
@@ -434,7 +436,8 @@ extension TokenDetailViewModel {
         if (RemoteConfigManager.shared.config?.features.swap ?? false) == true {
             // don't show when current is Linked account
             if ChildAccountManager.shared.selectedChildAccount != nil || ChildAccountManager.shared
-                .selectedChildAccount != nil {
+                .selectedChildAccount != nil
+            {
                 showSwapButton = false
             } else {
                 showSwapButton = true
@@ -445,7 +448,8 @@ extension TokenDetailViewModel {
 
         // buy
         if RemoteConfigManager.shared.config?.features.onRamp ?? false == true,
-           flow.chainID == .mainnet {
+           flow.chainID == .mainnet
+        {
             if ChildAccountManager.shared.selectedChildAccount != nil {
                 showBuyButton = false
             } else {

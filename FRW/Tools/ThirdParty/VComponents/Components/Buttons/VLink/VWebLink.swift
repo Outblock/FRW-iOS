@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Web Link
+// MARK: - VWebLink
 
 /// Button component that controls a navigation presentation to an URL.
 ///
@@ -28,14 +28,7 @@ import SwiftUI
 ///     }
 ///
 public struct VWebLink<Content>: View where Content: View {
-    // MARK: Properties
-
-    @Environment(\.openURL) private var openURLAction: OpenURLAction
-
-    private let linkButtonType: VWebLinkType
-    private let state: VWebLinkState
-    private let url: URL?
-    private let content: () -> Content
+    // MARK: Lifecycle
 
     // MARK: Initializers - Preset
 
@@ -83,6 +76,8 @@ public struct VWebLink<Content>: View where Content: View {
         self.content = content
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -94,6 +89,18 @@ public struct VWebLink<Content>: View where Content: View {
         )
     }
 
+    // MARK: Private
+
+    // MARK: Properties
+
+    @Environment(\.openURL)
+    private var openURLAction: OpenURLAction
+
+    private let linkButtonType: VWebLinkType
+    private let state: VWebLinkState
+    private let url: URL?
+    private let content: () -> Content
+
     // MARK: Actions
 
     private func openURL() {
@@ -102,7 +109,7 @@ public struct VWebLink<Content>: View where Content: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - VWebLink_Previews
 
 struct VWebLink_Previews: PreviewProvider {
     static var previews: some View {

@@ -8,6 +8,8 @@
 import Kingfisher
 import SwiftUI
 
+// MARK: - AddressBookView.Mode
+
 // struct AddressBookView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        ProfileView.NoLoginTipsView()
@@ -31,18 +33,10 @@ extension AddressBookView {
     }
 }
 
+// MARK: - AddressBookView
+
 struct AddressBookView: RouteableView {
-    @StateObject private var vm: AddressBookViewModel
-
-    @StateObject private var pendingDeleteModel = PendingDeleteModel()
-    @State private var showAlert = false
-
-    @State private var mode: Mode
-    @State private var opacity: Double = 0
-
-    var title: String {
-        return "address_book".localized
-    }
+    // MARK: Lifecycle
 
     init() {
         self.init(mode: .normal)
@@ -59,6 +53,12 @@ struct AddressBookView: RouteableView {
         UITableView.appearance().backgroundColor = UIColor.LL.background
     }
 
+    // MARK: Internal
+
+    var title: String {
+        "address_book".localized
+    }
+
     var body: some View {
         let view =
             ZStack {
@@ -68,16 +68,17 @@ struct AddressBookView: RouteableView {
             }
 
         if mode == .normal {
-            return AnyView(view
-                .applyRouteable(self)
-                .navigationBarItems(trailing: HStack(spacing: 6) {
-                    Button {
-                        Router.route(to: RouteMap.AddressBook.add(vm))
-                    } label: {
-                        Image("btn-add")
-                            .renderingMode(.template)
-                            .foregroundColor(.LL.Primary.salmonPrimary)
-                    }
+            return AnyView(
+                view
+                    .applyRouteable(self)
+                    .navigationBarItems(trailing: HStack(spacing: 6) {
+                        Button {
+                            Router.route(to: RouteMap.AddressBook.add(vm))
+                        } label: {
+                            Image("btn-add")
+                                .renderingMode(.template)
+                                .foregroundColor(.LL.Primary.salmonPrimary)
+                        }
 
 //                    Button {
 //                        debugPrint("scan btn click")
@@ -86,27 +87,44 @@ struct AddressBookView: RouteableView {
 //                            .renderingMode(.template)
 //                            .foregroundColor(.LL.Primary.salmonPrimary)
 //                    }
-                })
-                .alert("contact_delete_alert".localized, isPresented: $showAlert) {
-                    Button("delete".localized, role: .destructive) {
-                        if let sectionVM = self.pendingDeleteModel.sectionVM, let contact = self.pendingDeleteModel.contact {
-                            self.vm.trigger(.delete(sectionVM, contact))
+                    })
+                    .alert("contact_delete_alert".localized, isPresented: $showAlert) {
+                        Button("delete".localized, role: .destructive) {
+                            if let sectionVM = self.pendingDeleteModel.sectionVM,
+                               let contact = self.pendingDeleteModel.contact
+                            {
+                                self.vm.trigger(.delete(sectionVM, contact))
+                            }
                         }
                     }
-                }
-                .opacity(opacity)
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        withAnimation {
-                            opacity = 1
+                    .opacity(opacity)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            withAnimation {
+                                opacity = 1
+                            }
                         }
                     }
-                }
             )
         }
 
         return AnyView(view)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm: AddressBookViewModel
+
+    @StateObject
+    private var pendingDeleteModel = PendingDeleteModel()
+    @State
+    private var showAlert = false
+
+    @State
+    private var mode: Mode
+    @State
+    private var opacity: Double = 0
 }
 
 extension AddressBookView {
@@ -207,13 +225,17 @@ extension AddressBookView {
         #endif
     }
 
-    @ViewBuilder private func sectionHeader(_ sectionVM: SectionViewModel) -> some View {
+    @ViewBuilder
+    private func sectionHeader(_ sectionVM: SectionViewModel) -> some View {
         let sectionName = sectionVM.state.sectionName
-        Text(sectionName).foregroundColor(.LL.Neutrals.text2).font(.inter(size: 14, weight: .semibold))
+        Text(sectionName).foregroundColor(.LL.Neutrals.text2).font(.inter(
+            size: 14,
+            weight: .semibold
+        ))
     }
 }
 
-// MARK: - Component
+// MARK: AddressBookView.ContactCell
 
 extension AddressBookView {
     struct ContactCell: View {
@@ -230,7 +252,11 @@ extension AddressBookView {
                         if contact.user?.emoji != nil {
                             contact.user?.emoji.icon(size: 48)
                         } else {
-                            KFImage.url(URL(string: contact.avatar?.convertedAvatarString() ?? placeholder))
+                            KFImage
+                                .url(URL(
+                                    string: contact.avatar?
+                                        .convertedAvatarString() ?? placeholder
+                                ))
                                 .placeholder {
                                     Image("placeholder")
                                         .resizable()
@@ -294,6 +320,8 @@ extension AddressBookView {
         }
     }
 }
+
+// MARK: AddressBookView.PendingDeleteModel
 
 extension AddressBookView {
     class PendingDeleteModel: ObservableObject {

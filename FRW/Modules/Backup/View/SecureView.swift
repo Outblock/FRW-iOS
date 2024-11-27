@@ -7,18 +7,17 @@
 
 import SwiftUI
 
+// MARK: - SecureView
+
 struct SecureView: View {
-    @Binding var text: String
+    // MARK: Internal
+
+    @Binding
+    var text: String
     var maxCount: Int = 6
     var emptyColor: Color = .LL.Neutrals.outline
     var highlightColor: Color = .LL.Primary.salmonPrimary
     var handler: (String, Bool) -> Void
-
-    private let spacing = 24.0
-    private let itemSize = 20.0
-    private var maxWidth: Double {
-        (spacing + itemSize) * Double(maxCount) - spacing
-    }
 
     var body: some View {
         HStack {
@@ -42,7 +41,10 @@ struct SecureView: View {
                     .accentColor(Color.clear)
                     .onChange(of: text) { _ in
                         if text.count > maxCount {
-                            text = String(text[text.startIndex ... text.index(text.startIndex, offsetBy: maxCount - 1)])
+                            text = String(text[text.startIndex ... text.index(
+                                text.startIndex,
+                                offsetBy: maxCount - 1
+                            )])
                         }
                         handler(text, text.count == maxCount)
                     }
@@ -51,11 +53,23 @@ struct SecureView: View {
             Spacer()
         }
     }
+
+    // MARK: Private
+
+    private let spacing = 24.0
+    private let itemSize = 20.0
+
+    private var maxWidth: Double {
+        (spacing + itemSize) * Double(maxCount) - spacing
+    }
 }
+
+// MARK: - DotView
 
 private struct DotView: View {
     var color: Color
     var size: Double
+
     var body: some View {
         Circle()
             .frame(width: size, height: size, alignment: .center)
@@ -63,8 +77,12 @@ private struct DotView: View {
     }
 }
 
+// MARK: - SecureView_Previews
+
 struct SecureView_Previews: PreviewProvider {
-    @State static var content: String = ""
+    @State
+    static var content: String = ""
+
     static var previews: some View {
         Group {
             SecureView(text: $content) { _, _ in

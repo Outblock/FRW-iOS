@@ -12,13 +12,14 @@ import GoogleSignIn
 import GTMSessionFetcherCore
 
 class GoogleDriveAPI {
-    private let user: GIDGoogleUser
-    private let service: GTLRDriveService
+    // MARK: Lifecycle
 
     init(user: GIDGoogleUser, service: GTLRDriveService) {
         self.user = user
         self.service = service
     }
+
+    // MARK: Internal
 
     func getFileId(fileName: String) async throws -> String? {
         let query = GTLRDriveQuery_FilesList.query()
@@ -33,7 +34,9 @@ class GoogleDriveAPI {
                     return
                 }
 
-                guard let fileListObject = results as? GTLRDrive_FileList, let files = fileListObject.files else {
+                guard let fileListObject = results as? GTLRDrive_FileList,
+                      let files = fileListObject.files
+                else {
                     continuation.resume(returning: nil)
                     return
                 }
@@ -82,9 +85,16 @@ class GoogleDriveAPI {
         let file = GTLRDrive_File()
         file.name = fileName
 
-        let query = GTLRDriveQuery_FilesUpdate.query(withObject: file, fileId: fileId, uploadParameters: parameter)
+        let query = GTLRDriveQuery_FilesUpdate.query(
+            withObject: file,
+            fileId: fileId,
+            uploadParameters: parameter
+        )
 
-        try await withUnsafeThrowingContinuation { (continuation: UnsafeContinuation<Void, Error>) in
+        try await withUnsafeThrowingContinuation { (continuation: UnsafeContinuation<
+            Void,
+            Error
+        >) in
             service.executeQuery(query) { _, _, error in
                 if let error = error {
                     debugPrint("GoogleDriveAPI -> write(): error: \(error)")
@@ -96,6 +106,11 @@ class GoogleDriveAPI {
             }
         }
     }
+
+    // MARK: Private
+
+    private let user: GIDGoogleUser
+    private let service: GTLRDriveService
 
     private func createFile(fileName: String, content: Data) async throws -> String {
         let parameter = GTLRUploadParameters(data: content, mimeType: "application/json")
@@ -114,7 +129,9 @@ class GoogleDriveAPI {
                     return
                 }
 
-                guard let file = file as? GTLRDrive_File, let fileId = file.identifier, !fileId.isEmpty else {
+                guard let file = file as? GTLRDrive_File, let fileId = file.identifier,
+                      !fileId.isEmpty
+                else {
                     debugPrint("GoogleDriveAPI -> createFile(): fileObject error")
                     continuation.resume(throwing: GoogleBackupError.createFileError)
                     return

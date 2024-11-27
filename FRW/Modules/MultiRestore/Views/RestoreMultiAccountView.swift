@@ -8,15 +8,22 @@
 import Kingfisher
 import SwiftUI
 
-struct RestoreMultiAccountView: RouteableView {
-    @StateObject var viewModel: RestoreMultiAccountViewModel
+// MARK: - RestoreMultiAccountView
 
-    var title: String {
-        ""
-    }
+struct RestoreMultiAccountView: RouteableView {
+    // MARK: Lifecycle
 
     init(_ items: [[MultiBackupManager.StoreItem]]) {
         _viewModel = StateObject(wrappedValue: RestoreMultiAccountViewModel(items: items))
+    }
+
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: RestoreMultiAccountViewModel
+
+    var title: String {
+        ""
     }
 
     var body: some View {
@@ -58,11 +65,14 @@ struct RestoreMultiAccountView: RouteableView {
     }
 }
 
+// MARK: RestoreMultiAccountView.UserInfoView
+
 extension RestoreMultiAccountView {
     struct UserInfoView: View {
         let user: MultiBackupManager.StoreItem
         let index: Int
         let onClick: (Int) -> Void
+
         var body: some View {
             HStack(spacing: 12) {
                 KFImage.url(URL(string: (user.userAvatar ?? "").convertedAvatarString()))

@@ -7,11 +7,13 @@
 
 import SwiftUI
 
+// MARK: - RestoreListView
+
 struct RestoreListView: RouteableView {
-    @State private var showSwitchUserAlert = false
+    // MARK: Internal
 
     var title: String {
-        return ""
+        ""
     }
 
     var body: some View {
@@ -34,7 +36,11 @@ struct RestoreListView: RouteableView {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             VStack(spacing: 16) {
-                RestoreListView.CardView(icon: "restore.icon.device", title: "restore_device_title".localized, des: "restore_device_desc".localized) {
+                RestoreListView.CardView(
+                    icon: "restore.icon.device",
+                    title: "restore_device_title".localized,
+                    des: "restore_device_desc".localized
+                ) {
                     if LocalUserDefaults.shared.flowNetwork != .mainnet {
                         showSwitchUserAlert = true
                     } else {
@@ -42,7 +48,11 @@ struct RestoreListView: RouteableView {
                     }
                 }
 
-                RestoreListView.CardView(icon: "restore.icon.multi", title: "restore_multi_title".localized, des: "restore_multi_desc".localized) {
+                RestoreListView.CardView(
+                    icon: "restore.icon.multi",
+                    title: "restore_multi_title".localized,
+                    des: "restore_multi_desc".localized
+                ) {
                     if LocalUserDefaults.shared.flowNetwork != .mainnet {
                         showSwitchUserAlert = true
                     } else {
@@ -50,7 +60,11 @@ struct RestoreListView: RouteableView {
                     }
                 }
 
-                RestoreListView.CardView(icon: "restore.icon.phrase", title: "restore_phrase_title".localized, des: "restore_phrase_desc".localized) {
+                RestoreListView.CardView(
+                    icon: "restore.icon.phrase",
+                    title: "restore_phrase_title".localized,
+                    des: "restore_phrase_desc".localized
+                ) {
                     if LocalUserDefaults.shared.flowNetwork != .mainnet {
                         showSwitchUserAlert = true
                     } else {
@@ -75,7 +89,14 @@ struct RestoreListView: RouteableView {
         .backgroundFill(Color.LL.background)
         .applyRouteable(self)
     }
+
+    // MARK: Private
+
+    @State
+    private var showSwitchUserAlert = false
 }
+
+// MARK: RestoreListView.CardView
 
 extension RestoreListView {
     struct CardView: View {
@@ -83,6 +104,7 @@ extension RestoreListView {
         var title: String
         var des: String
         var onClick: () -> Void
+
         var body: some View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {

@@ -8,20 +8,34 @@
 import Flow
 import SwiftUI
 
-class AccountKeyViewModel: ObservableObject {
-    @Published var allKeys: [AccountKeyModel] = []
-    @Published var status: PageStatus = .loading
+// MARK: - AccountKeyViewModel
 
-    @Published var showRovekeView = false
-    var revokeModel: AccountKeyModel?
+class AccountKeyViewModel: ObservableObject {
+    // MARK: Lifecycle
 
     init() {
         addMock()
         fetch()
     }
 
+    // MARK: Internal
+
+    @Published
+    var allKeys: [AccountKeyModel] = []
+    @Published
+    var status: PageStatus = .loading
+
+    @Published
+    var showRovekeView = false
+    var revokeModel: AccountKeyModel?
+
     func addMock() {
-        let model = Flow.AccountKey(publicKey: Flow.PublicKey(hex: "test"), signAlgo: .ECDSA_P256, hashAlgo: .SHA2_256, weight: 1000)
+        let model = Flow.AccountKey(
+            publicKey: Flow.PublicKey(hex: "test"),
+            signAlgo: .ECDSA_P256,
+            hashAlgo: .SHA2_256,
+            weight: 1000
+        )
         allKeys = [AccountKeyModel(accountKey: model)]
     }
 
@@ -44,9 +58,11 @@ class AccountKeyViewModel: ObservableObject {
                         }
                         if let info = devicesInfo {
                             model.deviceType = DeviceType(value: info.device.deviceType)
-                            if let backupInfo = info.backupInfo, backupInfo.backupType() != .undefined {
+                            if let backupInfo = info.backupInfo,
+                               backupInfo.backupType() != .undefined {
                                 model.backupType = backupInfo.backupType()
-                                model.name = "backup".localized + " - " + backupInfo.backupType().title
+                                model.name = "backup".localized + " - " + backupInfo.backupType()
+                                    .title
                             } else {
                                 model.name = info.device.deviceName ?? ""
                             }
@@ -98,7 +114,17 @@ class AccountKeyViewModel: ObservableObject {
     }
 }
 
+// MARK: - AccountKeyModel
+
 struct AccountKeyModel {
+    // MARK: Lifecycle
+
+    init(accountKey: Flow.AccountKey) {
+        self.accountKey = accountKey
+    }
+
+    // MARK: Internal
+
     enum ContentType: Int {
         case publicKey, curve, hash, number, weight, keyIndex
     }
@@ -108,10 +134,6 @@ struct AccountKeyModel {
     var name: String = ""
     var backupType: BackupType = .undefined
     var deviceType: DeviceType = .iOS
-
-    init(accountKey: Flow.AccountKey) {
-        self.accountKey = accountKey
-    }
 
     func deviceName() -> String {
         if backupType != .undefined {
@@ -171,7 +193,7 @@ struct AccountKeyModel {
     }
 
     func icon(at type: ContentType) -> some View {
-        return Image("key.icon.\(type.rawValue)")
+        Image("key.icon.\(type.rawValue)")
             .renderingMode(.template)
             .foregroundColor(Color.Theme.Text.black3)
     }
@@ -211,7 +233,7 @@ struct AccountKeyModel {
     }
 
     func weightDes() -> String {
-        return "\(accountKey.weight)/1000"
+        "\(accountKey.weight)/1000"
     }
 
     func weightPadding() -> Double {
@@ -220,6 +242,6 @@ struct AccountKeyModel {
     }
 
     func weightBG() -> Color {
-        return Color.Theme.Background.silver
+        Color.Theme.Background.silver
     }
 }

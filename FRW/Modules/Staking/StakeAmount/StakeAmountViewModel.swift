@@ -43,8 +43,9 @@ class StakeAmountViewModel: ObservableObject {
     init(provider: StakingProvider, isUnstake: Bool) {
         self.provider = provider
         self.isUnstake = isUnstake
-        self.balance = isUnstake ? (provider.currentNode?.stakingCount ?? 0) : WalletManager.shared
-            .getBalance(bySymbol: "flow")
+        let token = WalletManager.shared.flowToken
+        balance = isUnstake ? (provider.currentNode?.stakingCount ?? 0) : WalletManager.shared
+            .getBalance(byId: token?.contractId ?? "").doubleValue
     }
 
     // MARK: Internal
@@ -76,7 +77,9 @@ class StakeAmountViewModel: ObservableObject {
     }
 
     var inputNumAsUSD: Double {
-        let rate = CoinRateCache.cache.getSummary(for: "flow")?.getLastRate() ?? 0
+        let flowToken = WalletManager.shared.flowToken
+        let rate = CoinRateCache.cache.getSummary(by: flowToken?.contractId ?? "")?
+            .getLastRate() ?? 0
         return inputTextNum * rate
     }
 

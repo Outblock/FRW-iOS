@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Base Text Field
+// MARK: - VBaseTextField
 
 /// Core component that is used throughout the library as textfield.
 ///
@@ -60,36 +60,7 @@ import SwiftUI
 ///     }
 ///
 public struct VBaseTextField: View {
-    private let model: VBaseTextFieldModel
-
-    @State private var stateInternally: VBaseTextFieldState = .enabled
-    @Binding private var stateExternally: VBaseTextFieldState
-    private let stateManagament: ComponentStateManagement
-    private var state: Binding<VBaseTextFieldState> {
-        .init(
-            get: {
-                switch stateManagament {
-                case .internal: return stateInternally
-                case .external: return stateExternally
-                }
-            },
-            set: { value in
-                switch stateManagament {
-                case .internal: stateInternally = value
-                case .external: stateExternally = value
-                }
-            }
-        )
-    }
-
-    private let placeholder: String?
-    @Binding private var text: String
-
-    private let beginHandler: (() -> Void)?
-    private let changeHandler: (() -> Void)?
-    private let endHandler: (() -> Void)?
-
-    private let returnAction: VBaseTextFieldReturnButtonAction
+    // MARK: Lifecycle
 
     // MARK: Initialiers
 
@@ -136,6 +107,8 @@ public struct VBaseTextField: View {
         self.returnAction = returnAction
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -150,13 +123,48 @@ public struct VBaseTextField: View {
             onReturn: returnAction
         )
     }
+
+    // MARK: Private
+
+    private let model: VBaseTextFieldModel
+
+    @State
+    private var stateInternally: VBaseTextFieldState = .enabled
+    @Binding
+    private var stateExternally: VBaseTextFieldState
+    private let stateManagament: ComponentStateManagement
+    private let placeholder: String?
+    @Binding
+    private var text: String
+
+    private let beginHandler: (() -> Void)?
+    private let changeHandler: (() -> Void)?
+    private let endHandler: (() -> Void)?
+
+    private let returnAction: VBaseTextFieldReturnButtonAction
+
+    private var state: Binding<VBaseTextFieldState> {
+        .init(
+            get: {
+                switch stateManagament {
+                case .internal: return stateInternally
+                case .external: return stateExternally
+                }
+            },
+            set: { value in
+                switch stateManagament {
+                case .internal: stateInternally = value
+                case .external: stateExternally = value
+                }
+            }
+        )
+    }
 }
 
-// MARK: - Preview
+// MARK: - VBaseTextField_Previews
 
 struct VBaseTextField_Previews: PreviewProvider {
-    @State private static var state: VBaseTextFieldState = .enabled
-    @State private static var text: String = "Lorem ipsum"
+    // MARK: Internal
 
     static var previews: some View {
         VBaseTextField(
@@ -166,4 +174,11 @@ struct VBaseTextField_Previews: PreviewProvider {
         )
         .padding()
     }
+
+    // MARK: Private
+
+    @State
+    private static var state: VBaseTextFieldState = .enabled
+    @State
+    private static var text: String = "Lorem ipsum"
 }

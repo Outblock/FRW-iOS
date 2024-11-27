@@ -11,10 +11,7 @@ import SwiftUI
 
 /// Opacity level group containing `pressed` values.
 public struct StateOpacities_P: Equatable {
-    // MARK: Properties
-
-    /// Pressed opacity level.
-    public var pressedOpacity: Double
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -27,8 +24,10 @@ public struct StateOpacities_P: Equatable {
 
     /// Initializes group with clear values.
     public init() {
-        pressedOpacity = 0
+        self.pressedOpacity = 0
     }
+
+    // MARK: Public
 
     /// Initializes group with clear values.
     public static var clear: Self { .init() }
@@ -39,4 +38,9 @@ public struct StateOpacities_P: Equatable {
             pressedOpacity: 1
         )
     }
+
+    // MARK: Properties
+
+    /// Pressed opacity level.
+    public var pressedOpacity: Double
 }

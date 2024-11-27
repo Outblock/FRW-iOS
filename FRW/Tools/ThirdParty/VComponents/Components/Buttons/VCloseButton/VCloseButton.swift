@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Close Button
+// MARK: - VCloseButton
 
 /// Circular colored close button component that performs action when triggered.
 ///
@@ -22,17 +22,7 @@ import SwiftUI
 ///     }
 ///
 public struct VCloseButton: View {
-    // MARK: Properties
-
-    private let model: VCloseButtonModel
-
-    private let state: VCloseButtonState
-    @State private var internalStateRaw: VCloseButtonInternalState?
-    private var internalState: VCloseButtonInternalState {
-        internalStateRaw ?? .default(state: state)
-    }
-
-    private let action: () -> Void
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -47,6 +37,8 @@ public struct VCloseButton: View {
         self.action = action
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -57,6 +49,21 @@ public struct VCloseButton: View {
             gesture: gestureHandler,
             content: { hitBoxButtonView }
         )
+    }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VCloseButtonModel
+
+    private let state: VCloseButtonState
+    @State
+    private var internalStateRaw: VCloseButtonInternalState?
+    private let action: () -> Void
+
+    private var internalState: VCloseButtonInternalState {
+        internalStateRaw ?? .default(state: state)
     }
 
     private var hitBoxButtonView: some View {
@@ -90,8 +97,7 @@ public struct VCloseButton: View {
 
     private func syncInternalStateWithState() {
         DispatchQueue.main.async {
-            if
-                internalStateRaw == nil ||
+            if internalStateRaw == nil ||
                 .init(internalState: internalState) != state
             {
                 internalStateRaw = .default(state: state)
@@ -107,7 +113,7 @@ public struct VCloseButton: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - VCloseButton_Previews
 
 struct VCloseButton_Previews: PreviewProvider {
     static var previews: some View {

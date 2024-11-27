@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Action Sheet
+// MARK: - VActionSheet
 
 /// Modal component that presents half modal menu of actions.
 ///
@@ -36,11 +36,7 @@ import SwiftUI
 ///     }
 ///
 public struct VActionSheet {
-    // MARK: Properties
-
-    fileprivate let title: String
-    fileprivate let description: String?
-    fileprivate let rows: [VActionSheetRow]
+    // MARK: Lifecycle
 
     // MARK: Initializrs
 
@@ -54,6 +50,14 @@ public struct VActionSheet {
         self.description = description
         self.rows = rows
     }
+
+    // MARK: Fileprivate
+
+    // MARK: Properties
+
+    fileprivate let title: String
+    fileprivate let description: String?
+    fileprivate let rows: [VActionSheetRow]
 }
 
 // MARK: - Extension

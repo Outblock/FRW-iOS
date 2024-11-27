@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Primary Button
+// MARK: - VPrimaryButton
 
 /// Large colored button component that performs action when triggered.
 ///
@@ -26,17 +26,7 @@ import SwiftUI
 ///     }
 ///
 public struct VPrimaryButton<Content>: View where Content: View {
-    // MARK: Properties
-
-    private let model: VPrimaryButtonModel
-
-    private let state: VPrimaryButtonState
-    @State private var internalStateRaw: VPrimaryButtonInternalState?
-    private var internalState: VPrimaryButtonInternalState { internalStateRaw ?? .default(state: state) }
-
-    private let action: () -> Void
-
-    private let content: () -> Content
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -77,6 +67,8 @@ public struct VPrimaryButton<Content>: View where Content: View {
         )
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -88,6 +80,23 @@ public struct VPrimaryButton<Content>: View where Content: View {
             content: { buttonView }
         ).scaleEffect(internalStateRaw == .pressed ? 0.95 : 1)
             .animation(.linear(duration: 0.2), value: internalStateRaw)
+    }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VPrimaryButtonModel
+
+    private let state: VPrimaryButtonState
+    @State
+    private var internalStateRaw: VPrimaryButtonInternalState?
+    private let action: () -> Void
+
+    private let content: () -> Content
+
+    private var internalState: VPrimaryButtonInternalState {
+        internalStateRaw ?? .default(state: state)
     }
 
     private var buttonView: some View {
@@ -111,14 +120,16 @@ public struct VPrimaryButton<Content>: View where Content: View {
         .padding(.vertical, model.layout.contentMargin.vertical)
     }
 
-    @ViewBuilder private var loaderCompensatorView: some View {
+    @ViewBuilder
+    private var loaderCompensatorView: some View {
         if internalState.isLoading {
             Spacer()
                 .frame(width: model.layout.loaderWidth, alignment: .leading)
         }
     }
 
-    @ViewBuilder private var loaderView: some View {
+    @ViewBuilder
+    private var loaderView: some View {
         if internalState.isLoading {
             VSpinner(type: .continous(model.spinnerSubModel))
                 .frame(width: model.layout.loaderWidth, alignment: .trailing)
@@ -131,10 +142,14 @@ public struct VPrimaryButton<Content>: View where Content: View {
             .animation(.default, value: model.colors.background.for(internalState))
     }
 
-    @ViewBuilder private var border: some View {
+    @ViewBuilder
+    private var border: some View {
         if model.layout.hasBorder {
             RoundedRectangle(cornerRadius: model.layout.cornerRadius)
-                .strokeBorder(model.colors.border.for(internalState), lineWidth: model.layout.borderWidth)
+                .strokeBorder(
+                    model.colors.border.for(internalState),
+                    lineWidth: model.layout.borderWidth
+                )
         }
     }
 
@@ -142,8 +157,7 @@ public struct VPrimaryButton<Content>: View where Content: View {
 
     private func syncInternalStateWithState() {
         DispatchQueue.main.async {
-            if
-                internalStateRaw == nil ||
+            if internalStateRaw == nil ||
                 .init(internalState: internalState) != state
             {
                 internalStateRaw = .default(state: state)
@@ -163,7 +177,7 @@ public struct VPrimaryButton<Content>: View where Content: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - VPrimaryButton_Previews
 
 struct VPrimaryButton_Previews: PreviewProvider {
     static var previews: some View {

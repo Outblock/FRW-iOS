@@ -8,6 +8,8 @@
 import Foundation
 import Moya
 
+// MARK: - FRWAPI.Account
+
 extension FRWAPI {
     enum Account {
         case flowScanQuery(String)
@@ -16,13 +18,15 @@ extension FRWAPI {
     }
 }
 
+// MARK: - FRWAPI.Account + TargetType, AccessTokenAuthorizable
+
 extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
-        return .bearer
+        .bearer
     }
 
     var baseURL: URL {
-        return Config.get(.lilico)
+        Config.get(.lilico)
     }
 
     var path: String {
@@ -48,16 +52,25 @@ extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
     var task: Task {
         switch self {
         case let .flowScanQuery(query):
-            return .requestParameters(parameters: ["address": query], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: ["address": query],
+                encoding: URLEncoding.queryString
+            )
         case let .transfers(request):
-            return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: request.dictionary ?? [:],
+                encoding: URLEncoding.queryString
+            )
         case let .tokenTransfers(request):
-            return .requestParameters(parameters: request.dictionary ?? [:], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: request.dictionary ?? [:],
+                encoding: URLEncoding.queryString
+            )
         }
     }
 
     var headers: [String: String]? {
-        return FRWAPI.commonHeaders
+        FRWAPI.commonHeaders
     }
 }
 
@@ -67,7 +80,8 @@ extension FRWAPI.Account {
             return 0
         }
 
-        let response: FlowTransferCountResponse = try await Network.request(FRWAPI.Account.flowScanQuery(address))
+        let response: FlowTransferCountResponse = try await Network
+            .request(FRWAPI.Account.flowScanQuery(address))
         return response.data?.participationsAggregate?.aggregate?.count ?? 0
     }
 
@@ -111,7 +125,8 @@ extension FRWAPI.Account {
            }
         """
 
-        let response: FlowScanAccountTransferResponse = try await Network.request(FRWAPI.Account.flowScanQuery(script))
+        let response: FlowScanAccountTransferResponse = try await Network
+            .request(FRWAPI.Account.flowScanQuery(script))
 
         guard let edges = response.data?.account?.transactions?.edges else {
             return ([], 0)
@@ -184,7 +199,8 @@ extension FRWAPI.Account {
             }
         """
 
-        let response: FlowScanTokenTransferResponse = try await Network.request(FRWAPI.Account.flowScanQuery(script))
+        let response: FlowScanTokenTransferResponse = try await Network
+            .request(FRWAPI.Account.flowScanQuery(script))
 
         guard let edges = response.data?.account?.tokenTransfers?.edges else {
             return []
@@ -192,7 +208,9 @@ extension FRWAPI.Account {
 
         var results = [FlowScanTransaction]()
         for edge in edges {
-            if let transaction = edge?.node?.transaction, transaction.hash != nil, transaction.time != nil {
+            if let transaction = edge?.node?.transaction, transaction.hash != nil,
+               transaction.time != nil
+            {
                 results.append(transaction)
             }
         }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Secondary Button
+// MARK: - VSecondaryButton
 
 /// Small colored button component that performs action when triggered.
 ///
@@ -25,17 +25,7 @@ import SwiftUI
 ///     }
 ///
 public struct VSecondaryButton<Content>: View where Content: View {
-    // MARK: Properties
-
-    private let model: VSecondaryButtonModel
-
-    private let state: VSecondaryButtonState
-    @State private var internalStateRaw: VSecondaryButtonInternalState?
-    private var internalState: VSecondaryButtonInternalState { internalStateRaw ?? .default(state: state) }
-
-    private let action: () -> Void
-
-    private let content: () -> Content
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -76,6 +66,8 @@ public struct VSecondaryButton<Content>: View where Content: View {
         )
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -86,6 +78,23 @@ public struct VSecondaryButton<Content>: View where Content: View {
             gesture: gestureHandler,
             content: { hitBoxButtonView }
         )
+    }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VSecondaryButtonModel
+
+    private let state: VSecondaryButtonState
+    @State
+    private var internalStateRaw: VSecondaryButtonInternalState?
+    private let action: () -> Void
+
+    private let content: () -> Content
+
+    private var internalState: VSecondaryButtonInternalState {
+        internalStateRaw ?? .default(state: state)
     }
 
     private var hitBoxButtonView: some View {
@@ -113,10 +122,14 @@ public struct VSecondaryButton<Content>: View where Content: View {
             .foregroundColor(model.colors.background.for(internalState))
     }
 
-    @ViewBuilder private var border: some View {
+    @ViewBuilder
+    private var border: some View {
         if model.layout.hasBorder {
             RoundedRectangle(cornerRadius: model.layout.cornerRadius)
-                .strokeBorder(model.colors.border.for(internalState), lineWidth: model.layout.borderWidth)
+                .strokeBorder(
+                    model.colors.border.for(internalState),
+                    lineWidth: model.layout.borderWidth
+                )
         }
     }
 
@@ -124,8 +137,7 @@ public struct VSecondaryButton<Content>: View where Content: View {
 
     private func syncInternalStateWithState() {
         DispatchQueue.main.async {
-            if
-                internalStateRaw == nil ||
+            if internalStateRaw == nil ||
                 .init(internalState: internalState) != state
             {
                 internalStateRaw = .default(state: state)
@@ -141,7 +153,7 @@ public struct VSecondaryButton<Content>: View where Content: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - VSecondaryButton_Previews
 
 struct VSecondaryButton_Previews: PreviewProvider {
     static var previews: some View {

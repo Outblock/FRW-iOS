@@ -9,18 +9,20 @@ import Kingfisher
 import SwiftUI
 
 struct SelectCollectionView: RouteableView {
-    @StateObject private var viewModel: SelectCollectionViewModel
+    // MARK: Lifecycle
 
     init(viewModel: SelectCollectionViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
+    // MARK: Internal
+
     var title: String {
-        return ""
+        ""
     }
 
     var isNavigationBarHidden: Bool {
-        return true
+        true
     }
 
     var body: some View {
@@ -99,10 +101,18 @@ struct SelectCollectionView: RouteableView {
         }
         .buttonStyle(ScaleButtonStyle())
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var viewModel: SelectCollectionViewModel
 }
 
 #Preview {
-    SelectCollectionView(viewModel: SelectCollectionViewModel(selectedItem: nil, list: nil, callback: { _ in
-
-    }))
+    SelectCollectionView(viewModel: SelectCollectionViewModel(
+        selectedItem: nil,
+        list: nil,
+        callback: { _ in
+        }
+    ))
 }

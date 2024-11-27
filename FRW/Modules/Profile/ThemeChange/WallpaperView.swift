@@ -7,9 +7,11 @@
 
 import SwiftUI
 
+// MARK: - WallpaperView
+
 struct WallpaperView: RouteableView {
     var title: String {
-        return "Wallpaper".localized
+        "Wallpaper".localized
     }
 
     private let columns = [
@@ -17,7 +19,8 @@ struct WallpaperView: RouteableView {
         GridItem(.adaptive(minimum: 150), spacing: 8),
     ]
 
-    @State var dynamicCase = CardBackground.dynamicCases
+    @State
+    var dynamicCase = CardBackground.dynamicCases
 
     var body: some View {
         GeometryReader { proxy in
@@ -69,12 +72,13 @@ struct WallpaperView: RouteableView {
     }
 }
 
+// MARK: WallpaperView.Card
+
 extension WallpaperView {
     struct Card: View {
-        var cardBackgroud: CardBackground
+        // MARK: Internal
 
-        @AppStorage("WalletCardBackrgound")
-        private var walletCardBackrgound: String = "fade:0"
+        var cardBackgroud: CardBackground
 
         var body: some View {
             VStack {
@@ -105,6 +109,11 @@ extension WallpaperView {
 //            }
             .clipped()
         }
+
+        // MARK: Private
+
+        @AppStorage("WalletCardBackrgound")
+        private var walletCardBackrgound: String = "fade:0"
     }
 }
 

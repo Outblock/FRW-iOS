@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Plain Button
+// MARK: - VPlainButton
 
 /// Plain button component that performs action when triggered.
 ///
@@ -25,17 +25,7 @@ import SwiftUI
 ///     }
 ///
 public struct VPlainButton<Content>: View where Content: View {
-    // MARK: Properties
-
-    private let model: VPlainButtonModel
-
-    private let state: VPlainButtonState
-    @State private var internalStateRaw: VPlainButtonInternalState?
-    private var internalState: VPlainButtonInternalState { internalStateRaw ?? .default(state: state) }
-
-    private let action: () -> Void
-
-    private let content: () -> Content
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -76,6 +66,8 @@ public struct VPlainButton<Content>: View where Content: View {
         )
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -86,6 +78,23 @@ public struct VPlainButton<Content>: View where Content: View {
             gesture: gestureHandler,
             content: { hitBoxButtonView }
         )
+    }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VPlainButtonModel
+
+    private let state: VPlainButtonState
+    @State
+    private var internalStateRaw: VPlainButtonInternalState?
+    private let action: () -> Void
+
+    private let content: () -> Content
+
+    private var internalState: VPlainButtonInternalState {
+        internalStateRaw ?? .default(state: state)
     }
 
     private var hitBoxButtonView: some View {
@@ -103,8 +112,7 @@ public struct VPlainButton<Content>: View where Content: View {
 
     private func syncInternalStateWithState() {
         DispatchQueue.main.async {
-            if
-                internalStateRaw == nil ||
+            if internalStateRaw == nil ||
                 .init(internalState: internalState) != state
             {
                 internalStateRaw = .default(state: state)
@@ -120,7 +128,7 @@ public struct VPlainButton<Content>: View where Content: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - VPlainButton_Previews
 
 struct VPlainButton_Previews: PreviewProvider {
     static var previews: some View {

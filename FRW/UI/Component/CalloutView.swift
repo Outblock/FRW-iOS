@@ -8,17 +8,25 @@
 import SwiftUI
 import SwiftUIX
 
+// MARK: - CalloutType
+
 enum CalloutType: String {
     case tip, warning, failure
+
+    // MARK: Internal
+
     func iconName() -> String {
         "callout_icon_" + rawValue
     }
 }
 
+// MARK: - CalloutView
+
 struct CalloutView: View {
     var type = CalloutType.warning
     var corners: [RectangleCorner] = []
-    @State var content: String?
+    @State
+    var content: String?
 
     var body: some View {
         VStack {
@@ -42,6 +50,8 @@ struct CalloutView: View {
         .hidden((content == nil) ? true : false)
     }
 }
+
+// MARK: - CalloutView_Previews
 
 struct CalloutView_Previews: PreviewProvider {
     static var previews: some View {

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V List
+// MARK: - VList
 
 /// Container component that draws a background, and computes views on demad from an underlying collection of identified data.
 ///
@@ -57,14 +57,7 @@ public struct VList<Data, ID, RowContent>: View
     ID: Hashable,
     RowContent: View
 {
-    // MARK: Properties
-
-    private let model: VListModel
-    private let layoutType: VListLayoutType
-
-    private let data: Data
-    private let id: KeyPath<Data.Element, ID>
-    private let rowContent: (Data.Element) -> RowContent
+    // MARK: Lifecycle
 
     // MARK: Initializers - View Builder
 
@@ -105,11 +98,24 @@ public struct VList<Data, ID, RowContent>: View
         )
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
         VSheet(model: model.sheetSubModel, content: { contentView })
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VListModel
+    private let layoutType: VListLayoutType
+
+    private let data: Data
+    private let id: KeyPath<Data.Element, ID>
+    private let rowContent: (Data.Element) -> RowContent
 
     private var contentView: some View {
         VBaseList(
@@ -124,7 +130,7 @@ public struct VList<Data, ID, RowContent>: View
     }
 }
 
-// MARK: - Preview
+// MARK: - VList_Previews
 
 struct VList_Previews: PreviewProvider {
     static var previews: some View {
