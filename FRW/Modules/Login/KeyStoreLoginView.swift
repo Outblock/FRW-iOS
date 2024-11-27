@@ -26,13 +26,22 @@ struct KeyStoreLoginView: RouteableView {
                         .padding(.top, 48)
 
                     Section {
-                        ImportTextView(
-                            content: $viewModel.json,
-                            placeholder: "keystore_json".localized
-                        ) { value in
-                            viewModel.update(json: value)
+                        VStack(spacing: 0) {
+                            ImportTextView(
+                                content: $viewModel.json,
+                                placeholder: "keystore_json".localized
+                            ) { value in
+                                viewModel.update(json: value)
+                            }
+                            .frame(height: 120)
+
+                            CalloutView(
+                                corners: [.bottomLeading, .bottomTrailing],
+                                content: viewModel.errorJSON
+                            )
+                            .padding(.horizontal, 12)
+                            .visibility(viewModel.errorJSON.isEmpty ? .gone : .visible)
                         }
-                        .frame(height: 120)
 
                     } header: {
                         ImportSectionTitleView(title: "JSON", isStar: true)

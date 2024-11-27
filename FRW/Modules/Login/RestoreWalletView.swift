@@ -16,7 +16,7 @@ struct RestoreWalletView: RouteableView {
         VStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 20) {
                 HStack {
-                    Text("restore".localized)
+                    Text("import_btn_text".localized)
                         .foregroundColor(Color.LL.orange)
                         .bold()
                     Text("wallet".localized)
@@ -25,7 +25,7 @@ struct RestoreWalletView: RouteableView {
                 }
                 .font(.LL.largeTitle)
 
-                Text("restore_with_words_desc".localized)
+                Text("import_desc".localized)
                     .font(.LL.body)
                     .foregroundColor(.LL.note)
             }
@@ -39,10 +39,7 @@ struct RestoreWalletView: RouteableView {
                     .onTapGesture {
                         viewModel.restoreWithCloudAction(type: .googleDrive)
                     }
-                RestoreWalletView.Item(backupType: .iCloud)
-                    .onTapGesture {
-                        viewModel.restoreWithCloudAction(type: .icloud)
-                    }
+
                 RestoreWalletView.Item(backupType: .phrase)
                     .onTapGesture {
                         viewModel.restoreWithManualAction()

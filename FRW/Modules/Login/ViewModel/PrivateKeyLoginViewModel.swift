@@ -45,6 +45,8 @@ class PrivateKeyLoginViewModel: ObservableObject {
             do {
                 let chainId = LocalUserDefaults.shared.flowNetwork.toFlowType()
                 guard let data = Data(hexString: key.stripHexPrefix()) else {
+                    HUD.dismissLoading()
+                    HUD.error(title: "invalid_data".localized)
                     return
                 }
 
@@ -53,6 +55,8 @@ class PrivateKeyLoginViewModel: ObservableObject {
                     storage: FlowWalletKit.PrivateKey.PKStorage
                 )
                 guard let privateKey = privateKey else {
+                    HUD.dismissLoading()
+                    HUD.error(title: "invalid_data".localized)
                     return
                 }
                 wallet = FlowWalletKit.Wallet(type: .key(privateKey), networks: [chainId])
@@ -68,6 +72,7 @@ class PrivateKeyLoginViewModel: ObservableObject {
                     }
                     guard let account = keys.filter({ $0.address.hex == wantedAddress }).first
                     else {
+                        HUD.error(title: "not_find_address".localized)
                         return
                     }
                     selectedAccount(by: account)

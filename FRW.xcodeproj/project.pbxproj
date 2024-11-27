@@ -3570,7 +3570,6 @@
 		159A543627536890004BCACC /* Login */ = {
 			isa = PBXGroup;
 			children = (
-				4ED041F12C77852E0016848A /* Sign */,
 				15DE22FE2780206F00B5EE03 /* ViewModel */,
 				15DE22DE277DF37D00B5EE03 /* RestoreWalletView.swift */,
 				15DE22E1277EACF200B5EE03 /* ChooseAccountView.swift */,
@@ -5179,13 +5178,6 @@
 				4EC97651286A07060066811D /* NFTCollectionEnableView.swift */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		4ED041F12C77852E0016848A /* Sign */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Sign;
 			sourceTree = "<group>";
 		};
 		4ED041F52C7C25C10016848A /* Message */ = {

@@ -430,7 +430,7 @@
 "Incorrect__decrypt__password__please__try__again::message" = "Incorrect decrypt password, please try again.";
 "restore" = "Restore";
 "The__decrypt__password__should__be__8__characters__long::message" = "The decrypt password should be at least 8 characters long.";
-"restore_with_words_desc" = "From Flow Wallet legacy backup, Seed Phrase, \nKey Store and Private Key.";
+"restore_with_words_desc" = "From Flow Wallet legacy backup, Seed Phrase, Key Store and Private Key.";
 "We__ve__found::message" = "We've found";
 "restore_with_icloud" = "Restore with iCloud";
 "matching__accounts::message" = "matching accounts";
@@ -1069,3 +1069,13 @@ Please create backups for your wallet to ensure you retain access to your Flow a
 "like_import_token" = "Would you like to import this token？";
 "invalid_erc20" = "Invalid ERC20 address";
 "choose_account_import" = "Choose an account you want to import";
+
+"restore_device_desc_2" = "Mobile or Extension Devices";
+"restore_phrase_title_2" = "From Raw Key";
+"restore_phrase_desc_2" = "Support legacy Google Drive, iCloud, Seed Phrase, Key Store and Private Key";
+"import_desc" = "From Flow Wallet legacy backup, Seed Phrase, 
+Key Store and Private Key.";
+"invalid_data" = "Invalid Data";
+"invalid_password" = "Invalid Password";
+"not_find_address" = "cannot find this key under this address";
+"required_info_not" = "Required information has not been entered.";

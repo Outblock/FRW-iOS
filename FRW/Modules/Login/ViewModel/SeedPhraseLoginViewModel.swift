@@ -46,6 +46,10 @@ class SeedPhraseLoginViewModel: ObservableObject {
             guard let hdWallet = HDWallet(mnemonic: rawMnemonic, passphrase: passphrase) else {
                 return
             }
+            if isAdvanced && derivationPath.isEmpty {
+                HUD.error(title: "required_info_not".localized)
+                return
+            }
             if isAdvanced && !derivationPath.isEmpty {
                 providerKey = FlowWalletKit.SeedPhraseKey(
                     hdWallet: hdWallet,
@@ -74,7 +78,7 @@ class SeedPhraseLoginViewModel: ObservableObject {
                     return
                 }
                 guard let account = keys.filter({ $0.address.hex == wantedAddress }).first else {
-                    // TODO: if not find
+                    HUD.error(title: "not_find_address".localized)
                     return
                 }
                 selectedAccount(by: account)
@@ -133,9 +137,12 @@ class SeedPhraseLoginViewModel: ObservableObject {
                         flowKey: selectedKey,
                         privateKey: privateKey
                     )
+                    HUD.dismissLoading()
                 } else if response.httpCode == 200 {
+                    HUD.dismissLoading()
                     createUserName { name in
                         Task {
+                            HUD.loading()
                             try await UserManager.shared.importLogin(
                                 by: address,
                                 userName: name,
@@ -149,7 +156,6 @@ class SeedPhraseLoginViewModel: ObservableObject {
                     }
                 }
             } catch {
-                HUD.dismissLoading()
                 if let code = error.moyaCode() {
                     if code == 409 {
                         do {
