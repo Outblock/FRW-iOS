@@ -1025,6 +1025,7 @@ Please create backups for your wallet to ensure you retain access to your Flow a
 "create_phrase_backup_note" = "Create a 12 word recovery phrase";
 "Recommended" = "Recommended";
 
+"move_fee" = "Move Fee";
 "move_fee_hint_cost" = "It appears when moving between VM accounts";
 "move_fee_hint_free" = "No fee between your Flow accounts 🤟";
 "move_fee_cost" = "~ 0.001";

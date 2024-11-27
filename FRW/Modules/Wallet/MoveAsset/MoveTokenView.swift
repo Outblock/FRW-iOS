@@ -24,8 +24,8 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
     // MARK: Internal
 
     var changeHeight: (() -> Void)?
-    @StateObject
-    var viewModel: MoveTokenViewModel
+    @StateObject private var viewModel: MoveTokenViewModel
+    @State private var primaryButtonSize: CGSize = .zero
 
     var title: String {
         ""
@@ -36,68 +36,65 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
     }
 
     var body: some View {
-        GeometryReader { _ in
-            VStack {
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        HStack {
-                            Text("move_single_token".localized)
-                                .font(.inter(size: 18, weight: .w700))
-                                .foregroundStyle(Color.LL.Neutrals.text)
-                                .padding(.top, 6)
-                            Spacer()
+        VStack {
+            VStack(spacing: 0) {
+                HStack {
+                    Text("move_single_token".localized)
+                        .font(.inter(size: 18, weight: .w700))
+                        .foregroundStyle(Color.LL.Neutrals.text)
+                        .padding(.top, 6)
+                    Spacer()
 
-                            Button {
-                                viewModel.closeAction()
-                            } label: {
-                                Image("icon_close_circle_gray")
-                                    .resizable()
-                                    .frame(width: 24, height: 24)
-                            }
-                        }
-                        .padding(.top, 8)
-
-                        Color.clear
-                            .frame(height: 20)
-
-                        VStack(spacing: 8) {
-                            ContactRelationView(
-                                fromContact: viewModel.fromContact,
-                                toContact: viewModel.toContact
-                            )
-
-                            MoveTokenView
-                                .AccountView(
-                                    isFree: viewModel.fromContact.walletType == viewModel
-                                        .toContact.walletType
-                                ) { _ in
-                                }
-                        }
-                        .padding(.bottom, 20)
+                    Button {
+                        viewModel.closeAction()
+                    } label: {
+                        Image("icon_close_circle_gray")
+                            .resizable()
+                            .frame(width: 24, height: 24)
                     }
-                    .padding(18)
                 }
-                Spacer()
+                .padding(.top, 8)
+
+                Color.clear
+                    .frame(height: 20)
+
+                VStack(spacing: 8) {
+                    ContactRelationView(
+                        fromContact: viewModel.fromContact,
+                        toContact: viewModel.toContact
+                    )
+
+                    MoveTokenView
+                        .AccountView(
+                            isFree: viewModel.fromContact.walletType == viewModel
+                                .toContact.walletType
+                        ) { _ in
+                        }
+                }
+                .padding(.bottom, self.primaryButtonSize.height)
             }
-            .hideKeyboardWhenTappedAround()
-            .backgroundFill(Color.Theme.BG.bg1)
-            .cornerRadius([.topLeading, .topTrailing], 16)
-            .environmentObject(viewModel)
-            .edgesIgnoringSafeArea(.bottom)
-            .overlay(alignment: .bottom) {
-                VPrimaryButton(
-                    model: ButtonStyle.primary,
-                    state: viewModel.buttonState,
-                    action: {
-                        log.debug("[Move] click button")
-                        viewModel.onNext()
-                        UIApplication.shared.endEditing()
-                    },
-                    title: "move".localized
-                )
-                .padding(.horizontal, 18)
-                .padding(.bottom, 8)
-            }
+            .padding(18)
+            Spacer()
+        }
+        .hideKeyboardWhenTappedAround()
+        .backgroundFill(Color.Theme.BG.bg1)
+        .cornerRadius([.topLeading, .topTrailing], 16)
+        .environmentObject(viewModel)
+        .edgesIgnoringSafeArea(.bottom)
+        .overlay(alignment: .bottom) {
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                state: viewModel.buttonState,
+                action: {
+                    log.debug("[Move] click button")
+                    viewModel.onNext()
+                    UIApplication.shared.endEditing()
+                },
+                title: "move".localized
+            )
+            .sizeGetter($primaryButtonSize)
+            .padding(.horizontal, 18)
+            .padding(.bottom, 8)
         }
         .applyRouteable(self)
     }
@@ -114,7 +111,7 @@ struct MoveUserView: View {
     var isEVM: Bool = false
     var placeholder: String?
     var allowChoose: Bool = false
-    var onClick: EmptyClosure? = nil
+    var onClick: EmptyClosure?
 
     var address: String {
         contact.address ?? "0x"

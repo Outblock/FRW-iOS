@@ -13,7 +13,7 @@ struct SheetHeaderView: View {
     // MARK: Internal
 
     let title: String
-    var closeAction: (() -> Void)? = nil
+    var closeAction: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -103,8 +103,8 @@ struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
     }
 
     var sheetView: SheetView
-    @Binding
-    var showSheet: Bool
+    @Binding var showSheet: Bool
+    @State private var sheetSize: CGSize = .zero
 
     let controller = UIViewController()
 
@@ -121,7 +121,15 @@ struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         if showSheet {
             if uiViewController.view.tag == 0 {
-                let sheetController = CustomHostingController(rootView: sheetView)
+                let rootView = sheetView
+                    .readSize { size in
+                        self.sheetSize = size
+                    }
+                
+                let sheetController = CustomHostingController(
+                    rootView: rootView,
+                    sheetSize: _sheetSize.projectedValue
+                )
                 sheetController.presentationController?.delegate = context.coordinator
                 uiViewController.present(sheetController, animated: true)
                 uiViewController.view.tag = 1
@@ -139,15 +147,19 @@ struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
 // MARK: - CustomHostingController
 
 // Custom UIHostingController for halfSheet....
-class CustomHostingController<Content: View>: UIHostingController<Content> {
+final class CustomHostingController<Content: View>: UIHostingController<Content> {
+    private let sheetSize: Binding<CGSize>?
+    
     // MARK: Lifecycle
 
     public init(
         rootView: Content,
+        sheetSize: Binding<CGSize>? = nil,
         showLarge: Bool = false,
         showGrabber: Bool = true,
         onlyLarge: Bool = false
     ) {
+        self.sheetSize = sheetSize
         super.init(rootView: rootView)
         self.showLarge = showLarge
         self.showGrabber = showGrabber
@@ -163,9 +175,20 @@ class CustomHostingController<Content: View>: UIHostingController<Content> {
 
     // MARK: Internal
 
-    var showLarge: Bool = false
-    var showGrabber: Bool = true
-    var onlyLarge: Bool = false
+    private var showLarge: Bool = false
+    private var showGrabber: Bool = true
+    private var onlyLarge: Bool = false
+    private let customDetentId = UISheetPresentationController.Detent.Identifier(rawValue: "custom-detent")
+    private var customDetent: UISheetPresentationController.Detent {
+        if #available(iOS 16, *), let sheetSize {
+            return UISheetPresentationController.Detent.custom(identifier: self.customDetentId) { _ in
+                print("[SHEET SIZE] \(sheetSize.height.wrappedValue)")
+                return sheetSize.height.wrappedValue
+            }
+        } else {
+            return UISheetPresentationController.Detent.medium()
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -176,10 +199,22 @@ class CustomHostingController<Content: View>: UIHostingController<Content> {
             if onlyLarge {
                 presentationController.detents = [.large()]
             } else {
-                presentationController.detents = showLarge ? [.medium(), .large()] : [.medium()]
+                presentationController.detents = showLarge ? [customDetent, .large()] : [customDetent]
             }
             // to show grab protion...
-            presentationController.prefersGrabberVisible = true
+            presentationController.prefersGrabberVisible = self.showLarge || self.onlyLarge
+        }
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if #available(iOS 16, *) {
+            if let presentationController = self.presentationController as? UISheetPresentationController {
+                presentationController.animateChanges {
+                    presentationController.invalidateDetents()
+                }
+            }
         }
     }
 }
