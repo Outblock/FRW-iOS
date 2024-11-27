@@ -74,7 +74,6 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                 .padding(.bottom, self.primaryButtonSize.height)
             }
             .padding(18)
-            Spacer()
         }
         .hideKeyboardWhenTappedAround()
         .backgroundFill(Color.Theme.BG.bg1)

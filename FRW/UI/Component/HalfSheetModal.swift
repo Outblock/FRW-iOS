@@ -65,13 +65,14 @@ extension View {
     // Binding Show Variable...
     func halfSheet<SheetView: View>(
         showSheet: Binding<Bool>,
+        autoResizing: Bool = false,
         @ViewBuilder sheetView: @escaping () -> SheetView,
         onEnd: (() -> Void)? = nil
     ) -> some View {
         // why we using overlay or background...
         // bcz it will automatically use the swiftui frame Size only....
         background(
-            HalfSheetHelper(sheetView: sheetView(), showSheet: showSheet)
+            HalfSheetHelper(sheetView: sheetView(), autoResizing: autoResizing, showSheet: showSheet)
         )
         .onChange(of: showSheet.wrappedValue) { newValue in
             if let onEnd = onEnd, !newValue {
@@ -86,7 +87,7 @@ extension View {
 // UIKit Integration...
 struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
     // On Dismiss...
-    class Coordinator: NSObject, UISheetPresentationControllerDelegate {
+    final class Coordinator: NSObject, UISheetPresentationControllerDelegate {
         // MARK: Lifecycle
 
         init(parent: HalfSheetHelper) {
@@ -103,6 +104,7 @@ struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
     }
 
     var sheetView: SheetView
+    let autoResizing: Bool
     @Binding var showSheet: Bool
     @State private var sheetSize: CGSize = .zero
 
@@ -128,8 +130,11 @@ struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
                 
                 let sheetController = CustomHostingController(
                     rootView: rootView,
-                    sheetSize: _sheetSize.projectedValue
+                    sheetSize: self.autoResizing ? _sheetSize.projectedValue : nil
                 )
+                if #available(iOS 16.4, *), self.autoResizing {
+                    sheetController.safeAreaRegions = []
+                }
                 sheetController.presentationController?.delegate = context.coordinator
                 uiViewController.present(sheetController, animated: true)
                 uiViewController.view.tag = 1
@@ -160,10 +165,10 @@ final class CustomHostingController<Content: View>: UIHostingController<Content>
         onlyLarge: Bool = false
     ) {
         self.sheetSize = sheetSize
-        super.init(rootView: rootView)
         self.showLarge = showLarge
         self.showGrabber = showGrabber
         self.onlyLarge = onlyLarge
+        super.init(rootView: rootView)
         overrideUserInterfaceStyle = ThemeManager.shared.getUIKitStyle()
     }
 
@@ -174,10 +179,10 @@ final class CustomHostingController<Content: View>: UIHostingController<Content>
     }
 
     // MARK: Internal
-
-    private var showLarge: Bool = false
-    private var showGrabber: Bool = true
-    private var onlyLarge: Bool = false
+    private var autoResizing: Bool { return self.sheetSize != nil }
+    private let showLarge: Bool
+    private let showGrabber: Bool
+    private let onlyLarge: Bool
     private let customDetentId = UISheetPresentationController.Detent.Identifier(rawValue: "custom-detent")
     private var customDetent: UISheetPresentationController.Detent {
         if #available(iOS 16, *), let sheetSize {
@@ -195,14 +200,19 @@ final class CustomHostingController<Content: View>: UIHostingController<Content>
         view.backgroundColor = .clear
 
         // setting presentation controller properties...
-        if let presentationController = presentationController as? UISheetPresentationController {
+        if let sheetPresentationController {
             if onlyLarge {
-                presentationController.detents = [.large()]
+                sheetPresentationController.detents = [.large()]
             } else {
-                presentationController.detents = showLarge ? [customDetent, .large()] : [customDetent]
+                sheetPresentationController.detents = showLarge ? [customDetent, .large()] : [customDetent]
             }
             // to show grab protion...
-            presentationController.prefersGrabberVisible = self.showLarge || self.onlyLarge
+            sheetPresentationController.prefersGrabberVisible = self.showLarge || self.onlyLarge
+            
+            if self.autoResizing {
+                sheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge = false
+            }
+
         }
     }
 
@@ -210,9 +220,9 @@ final class CustomHostingController<Content: View>: UIHostingController<Content>
         super.viewDidAppear(animated)
 
         if #available(iOS 16, *) {
-            if let presentationController = self.presentationController as? UISheetPresentationController {
-                presentationController.animateChanges {
-                    presentationController.invalidateDetents()
+            if let sheetPresentationController {
+                sheetPresentationController.animateChanges {
+                    sheetPresentationController.invalidateDetents()
                 }
             }
         }
