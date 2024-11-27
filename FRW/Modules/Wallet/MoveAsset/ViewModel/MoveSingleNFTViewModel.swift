@@ -216,6 +216,7 @@ class MoveSingleNFTViewModel: ObservableObject {
         }
         guard let collection = collection else {
             log.error("[NFT] nft \(nft.collectionName) not found")
+
             return
         }
         let identifier = nft.publicIdentifier

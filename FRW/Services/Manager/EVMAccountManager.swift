@@ -134,7 +134,8 @@ class EVMAccountManager: ObservableObject {
     @objc
     private func onTransactionStatusChanged(_ noti: Notification) {
         guard let obj = noti.object as? TransactionManager.TransactionHolder,
-              obj.type == .editChildAccount else {
+              obj.type == .editChildAccount
+        else {
             return
         }
 

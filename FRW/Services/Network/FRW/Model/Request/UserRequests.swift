@@ -32,6 +32,16 @@ struct LoginRequest: Codable {
     let signature: String
     let accountKey: AccountKey
     let deviceInfo: DeviceInfoRequest
+    var address: String? = nil
+}
+
+// MARK: - RestoreImportRequest
+
+struct RestoreImportRequest: Codable {
+    let username: String?
+    let accountKey: AccountKey
+    let deviceInfo: DeviceInfoRequest
+    let address: String
 }
 
 // MARK: - DeviceInfoRequest

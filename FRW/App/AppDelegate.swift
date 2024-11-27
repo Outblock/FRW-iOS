@@ -45,7 +45,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         _ = LocalEnvManager.shared
-
+        SecureEnclaveMigration.start()
         FirebaseApp.configure()
 
         Analytics.setAnalyticsCollectionEnabled(true)

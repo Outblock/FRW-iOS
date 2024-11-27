@@ -224,10 +224,11 @@ struct DeveloperModeView: RouteableView {
                                     .font(.inter(size: 17, weight: .medium))
                                     .foregroundStyle(Color.Theme.Text.black8)
                                 Spacer()
-
-                                Text("\(CadenceManager.shared.current.version ?? "")")
-                                    .font(.inter(size: 17))
-                                    .foregroundStyle(Color.Theme.Text.black8)
+                                Text(
+                                    "\(String(describing: CadenceManager.shared.current.version ?? ""))"
+                                )
+                                .font(.inter(size: 17))
+                                .foregroundStyle(Color.Theme.Text.black8)
                             }
                             .frame(height: 64)
                             .padding(.horizontal, 16)

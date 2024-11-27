@@ -140,6 +140,7 @@ extension TransactionManager {
             self.createTime = createTime
             self.type = type
             self.data = data
+            log.info("[Cadence] txi:\(id.hex)")
         }
 
         // MARK: Internal

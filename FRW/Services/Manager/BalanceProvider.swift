@@ -38,7 +38,8 @@ class BalanceProvider: ObservableObject {
         do {
             let balanceList = try await FlowNetwork.fetchBalance(at: Flow.Address(hex: address))
             guard let model = balanceList
-                .first(where: { $0.key.lowercased().hasSuffix(".FlowToken".lowercased()) }) else {
+                .first(where: { $0.key.lowercased().hasSuffix(".FlowToken".lowercased()) })
+            else {
                 return
             }
             balances[address] = model.value.formatCurrencyString()

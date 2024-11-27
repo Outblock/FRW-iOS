@@ -116,7 +116,8 @@ struct SyncAddDeviceView: View {
 
     func coordinate() -> CLLocationCoordinate2D {
         guard let latitude = viewModel.model.deviceInfo.lat,
-              let longitude = viewModel.model.deviceInfo.lon else {
+              let longitude = viewModel.model.deviceInfo.lon
+        else {
             return CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
         }
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)

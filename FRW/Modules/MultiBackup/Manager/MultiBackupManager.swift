@@ -8,7 +8,7 @@
 import CryptoKit
 import FirebaseAuth
 import Flow
-import FlowWalletCore
+import FlowWalletKit
 import Foundation
 import GoogleAPIClientForREST_Drive
 import GoogleAPIClientForRESTCore
@@ -121,7 +121,8 @@ extension MultiBackupManager {
         }
 
         guard let hdWallet = WalletManager.shared.createHDWallet(),
-              let mnemonicData = hdWallet.mnemonic.data(using: .utf8) else {
+              let mnemonicData = hdWallet.mnemonic.data(using: .utf8)
+        else {
             HUD.error(title: "empty_wallet_key".localized)
             throw BackupError.missingMnemonic
         }
@@ -496,8 +497,11 @@ extension MultiBackupManager {
 
         let address = Flow.Address(hex: addressDes)
 
-        let sec = try WallectSecureEnclave()
-        let key = try sec.accountKey()
+        let secureKey = try SecureEnclaveKey.create()
+        let key = try secureKey.flowAccountKey()
+//        let sec = try WallectSecureEnclave()
+//        let key = try sec.accountKey()
+
         do {
             HUD.loading()
             let tx = try await FlowNetwork.addKeyWithMulti(
@@ -546,13 +550,10 @@ extension MultiBackupManager {
                 if response.httpCode != 200 {
                     log.info("[Multi-backup] sync failed")
                 } else {
-                    print("")
-                    if let privateKey = sec.key.privateKey {
-                        try WallectSecureEnclave.Store.store(
-                            key: firstItem.userId,
-                            value: privateKey.dataRepresentation
-                        )
-                    }
+                    try secureKey.store(id: firstItem.userId)
+//                    if let privateKey = sec.key.privateKey {
+//                        try WallectSecureEnclave.Store.store(key: firstItem.userId, value: privateKey.dataRepresentation)
+//                    }
 
                     try await UserManager.shared.restoreLogin(userId: firstItem.userId)
                     Router.popToRoot()

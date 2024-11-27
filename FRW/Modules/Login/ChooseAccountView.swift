@@ -71,7 +71,8 @@ struct ChooseAccountView: RouteableView {
     var listView: some View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 12) {
-                ForEach(vm.items, id: \.username) { item in
+                ForEach(0 ..< vm.items.count, id: \.self) { index in
+                    let item = vm.items[index]
                     Button {
                         vm.restoreAccountAction(item: item)
                     } label: {

@@ -19,7 +19,8 @@ extension String {
         }
 
         guard let path = Bundle.main.path(forResource: "en", ofType: "lproj"),
-              let bundle = Bundle(path: path) else {
+              let bundle = Bundle(path: path)
+        else {
             return value
         }
 
@@ -217,7 +218,8 @@ extension String {
         }
 
         guard let encodedString = trim()
-            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        else {
             return nil
         }
 
@@ -343,13 +345,12 @@ extension String {
 
 extension String {
     var toFlowScanAccountDetailURL: URL? {
-        var string = "https://flowscan.org/account/\(self)"
+        var string = "https://flowscan.io/account/\(self)"
         if LocalUserDefaults.shared.flowNetwork == .testnet {
-            string = "https://testnet.flowscan.org/account/\(self)"
+            string = "https://testnet.flowscan.io/account/\(self)"
         } else if LocalUserDefaults.shared.flowNetwork == .previewnet {
-            string = "https://previewnet.flowscan.org/account/\(self)"
+            string = "https://previewnet.flowscan.io/account/\(self)"
         }
-
         return URL(string: string)
     }
 
@@ -360,7 +361,6 @@ extension String {
         } else if LocalUserDefaults.shared.flowNetwork == .previewnet {
             string = "https://previewnet.flowscan.io/tx/\(self)"
         }
-
         return URL(string: string)
     }
 }

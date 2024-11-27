@@ -68,7 +68,8 @@ extension BackupiCloudTarget {
         }
 
         guard let id = containerID,
-              let url = FileManager.default.url(forUbiquityContainerIdentifier: id) else {
+              let url = FileManager.default.url(forUbiquityContainerIdentifier: id)
+        else {
             throw iCloudBackupError.initError
         }
 

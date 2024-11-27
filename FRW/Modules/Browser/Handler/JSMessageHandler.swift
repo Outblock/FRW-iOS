@@ -88,7 +88,8 @@ extension JSMessageHandler {
             }
 
             guard let processingAuthzTransaction = processingAuthzTransaction,
-                  let data = try? JSONEncoder().encode(processingAuthzTransaction) else {
+                  let data = try? JSONEncoder().encode(processingAuthzTransaction)
+            else {
                 log.error("no processingAuthzTransaction")
                 return
             }

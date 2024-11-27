@@ -5,7 +5,7 @@
 //  Created by cat on 2024/4/26.
 //
 
-import FlowWalletCore
+import FlowWalletKit
 import Foundation
 import KeychainAccess
 import SwiftUI
@@ -48,22 +48,19 @@ class KeychainListViewModel: ObservableObject {
         }
     }
 
-    func radomUpdatePrivateKey(index: Int) {
-        if isDevModel {
-            let model = seList[index]
-            if let key = model.keys.first,
-               let model = try? WallectSecureEnclave.Store.fetchModel(by: key) {
-                do {
-                    let toValue = model.publicKey + ("999".data(using: .utf8) ?? Data())
-                    try WallectSecureEnclave.Store.dangerUpdate(
-                        key: model.uniq,
-                        fromValue: model.publicKey,
-                        toValue: toValue
-                    )
-                    HUD.success(title: "修改成功")
-                } catch {}
-            }
-        }
+    func radomUpdatePrivateKey(index _: Int) {
+//        if isDevModel {
+//            let model = seList[index]
+//            if let key = model.keys.first, let model = try? WallectSecureEnclave.Store.fetchModel(by: key) {
+//                do {
+//                    let toValue =  model.publicKey + ("999".data(using: .utf8) ?? Data())
+//                    try WallectSecureEnclave.Store.dangerUpdate(key: model.uniq, fromValue: model.publicKey, toValue: toValue)
+//                    HUD.success(title: "修改成功")
+//                }catch{}
+//
+//            }
+//
+//        }
     }
 
     func getKey(item: [String: Any]) -> String {
@@ -101,29 +98,28 @@ class KeychainListViewModel: ObservableObject {
     private let mnemonicPrefix = "lilico.mnemonic."
 
     private func fecth() {
-        remoteList = remoteKeychain.allItems()
-        loadiCloudBackup()
-        if let item = remoteList.last {
-            log.info(item)
-        }
-        localList = localKeychain.allItems()
-        do {
-            guard let data = try seKeychain.getData("user.keystore") else {
-                return
-            }
-            let users = try? JSONDecoder().decode([WallectSecureEnclave.StoreInfo].self, from: data)
-            seList = users?.map { info in
-
-                if let sec = try? WallectSecureEnclave(privateKey: info.publicKey),
-                   let publicKey = sec.key.publickeyValue {
-                    return [info.uniq: publicKey]
-                } else {
-                    return [info.uniq: "undefined"]
-                }
-
-            } ?? []
-        } catch {
-            log.error("[kc] fetch failed. \(error)")
-        }
+//        remoteList = remoteKeychain.allItems()
+//        loadiCloudBackup()
+//        if let item = remoteList.last {
+//            log.info(item)
+//        }
+//        localList = localKeychain.allItems()
+//        do {
+//            guard let data = try seKeychain.getData("user.keystore") else {
+//                return
+//            }
+//            let users = try? JSONDecoder().decode([WallectSecureEnclave.StoreInfo].self, from: data)
+//            seList = users?.map({ info in
+//
+//                if let sec = try? WallectSecureEnclave(privateKey: info.publicKey), let publicKey = sec.key.publickeyValue {
+//                    return [info.uniq: publicKey]
+//                }else {
+//                    return [info.uniq: "undefined"]
+//                }
+//
+//            }) ?? []
+//        }catch {
+//            log.error("[kc] fetch failed. \(error)")
+//        }
     }
 }

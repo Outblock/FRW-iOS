@@ -89,7 +89,8 @@ class CustomTokenManager: ObservableObject {
     private func findCurrent(list: [CustomToken]) -> [CustomToken] {
         guard let address = WalletManager.shared
             .getWatchAddressOrChildAccountAddressOrPrimaryAddress(),
-            let userId = UserManager.shared.activatedUID else {
+            let userId = UserManager.shared.activatedUID
+        else {
             return []
         }
         let currentNetwork = LocalUserDefaults.shared.flowNetwork

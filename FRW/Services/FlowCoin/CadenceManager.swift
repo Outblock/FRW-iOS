@@ -15,8 +15,6 @@ class CadenceManager {
     private init() {
         loadLocalCache()
         fetchScript()
-
-        log.info("[Cadence] current version is \(String(describing: version))")
     }
 
     // MARK: Internal
@@ -49,7 +47,8 @@ class CadenceManager {
         } else {
             do {
                 guard let filePath = Bundle.main
-                    .path(forResource: "cloudfunctions", ofType: "json") else {
+                    .path(forResource: "cloudfunctions", ofType: "json")
+                else {
                     log.error("CadenceManager -> loadFromLocalFile error: no local file")
                     return
                 }
@@ -58,7 +57,7 @@ class CadenceManager {
                 let providers = try JSONDecoder().decode(CadenceResponse.self, from: data)
                 scripts = providers.scripts
                 version = providers.version ?? localVersion
-                log.info("[Cadence] romote version is \(String(describing: providers.version))")
+                log.info("[Cadence] local file version is \(String(describing: providers.version))")
             } catch {
                 log.error("CadenceManager -> decode failed", context: error)
             }
@@ -76,6 +75,7 @@ class CadenceManager {
                     self.scripts = response.data.scripts
                     if let version = response.data.version {
                         self.version = version
+                        log.info("[Cadence] remote version is \(String(describing: version))")
                     }
                 }
             } catch {

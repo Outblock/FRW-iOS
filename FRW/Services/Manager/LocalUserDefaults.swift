@@ -48,6 +48,8 @@ extension LocalUserDefaults {
 
         case whatIsBack
         case backupSheetNotAsk
+
+        case userList
         case checkCoa
 
         case customToken
@@ -377,6 +379,23 @@ class LocalUserDefaults: ObservableObject {
         }
     }
 
+    var userList: [UserManager.StoreUser] {
+        set {
+            if let data = try? JSONEncoder().encode(newValue) {
+                UserDefaults.standard.set(data, forKey: Keys.userList.rawValue)
+            } else {
+                UserDefaults.standard.removeObject(forKey: Keys.userList.rawValue)
+            }
+        }
+        get {
+            if let data = UserDefaults.standard.data(forKey: Keys.userList.rawValue),
+               let model = try? JSONDecoder().decode([UserManager.StoreUser].self, from: data) {
+                return model
+            }
+            return []
+        }
+    }
+
     var checkCoa: [String] {
         set {
             UserDefaults.standard.setValue(newValue, forKey: Keys.checkCoa.rawValue)
@@ -400,10 +419,22 @@ class LocalUserDefaults: ObservableObject {
             if let data = UserDefaults.standard.data(forKey: Keys.customToken.rawValue),
                let list = try? JSONDecoder().decode([CustomToken].self, from: data) {
                 return list
+
             } else {
                 return []
             }
         }
+    }
+
+    func addUser(user: UserManager.StoreUser) {
+        var list = userList
+        let index = list.lastIndex { $0.publicKey == user.publicKey && $0.keyType == user.keyType }
+        if let result = index {
+            list[result] = user
+        } else {
+            list.append(user)
+        }
+        userList = list
     }
 }
 
