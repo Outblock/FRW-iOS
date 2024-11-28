@@ -81,19 +81,22 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
         .environmentObject(viewModel)
         .edgesIgnoringSafeArea(.bottom)
         .overlay(alignment: .bottom) {
-            VPrimaryButton(
-                model: ButtonStyle.primary,
-                state: viewModel.buttonState,
-                action: {
-                    log.debug("[Move] click button")
-                    viewModel.onNext()
-                    UIApplication.shared.endEditing()
-                },
-                title: "move".localized
-            )
-            .sizeGetter($primaryButtonSize)
-            .padding(.horizontal, 18)
-            .padding(.bottom, 8)
+                VStack(spacing: 0) {
+                    InsufficientStorageToastView<MoveTokenViewModel>()
+                        .environmentObject(self.viewModel)
+                        .padding(.horizontal, 22)
+                    
+                    VPrimaryButton(model: ButtonStyle.primary,
+                                   state: viewModel.buttonState,
+                                   action: {
+                        log.debug("[Move] click button")
+                        viewModel.onNext()
+                        UIApplication.shared.endEditing()
+                    }, title: "move".localized)
+                    .padding(.horizontal, 18)
+                    .padding(.bottom, 8)
+                    .sizeGetter($primaryButtonSize)
+                }
         }
         .applyRouteable(self)
     }

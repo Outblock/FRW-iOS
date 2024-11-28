@@ -98,8 +98,6 @@ class CadenceManager {
     }
 
     private func loadCache() -> CadenceResponse? {
-        return nil
-
         guard let file = filePath() else {
             return nil
         }

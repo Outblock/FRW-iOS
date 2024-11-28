@@ -22,6 +22,8 @@ class MoveTokenViewModel: ObservableObject {
         Task {
             await fetchMinFlowBalance()
         }
+        
+        checkForInsufficientStorage()
     }
 
     // MARK: Internal
@@ -120,6 +122,8 @@ class MoveTokenViewModel: ObservableObject {
         inputDollarNum = inputTokenNum.doubleValue * coinRate * CurrencyCache.cache
             .currentCurrencyRate
 
+        checkForInsufficientStorage()
+
         if inputTokenNum > amountBalance {
             errorType = .insufficientBalance
             return
@@ -147,8 +151,9 @@ class MoveTokenViewModel: ObservableObject {
 
     // MARK: Private
 
-    private var minBalance: Double? = nil
+    private var minBalance: Decimal? = nil
     private var maxButtonClickedOnce = false
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
 
     private func loadUserInfo() {
         guard let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress()
@@ -237,7 +242,7 @@ class MoveTokenViewModel: ObservableObject {
 
     private func fetchMinFlowBalance() async {
         do {
-            minBalance = try await FlowNetwork.minFlowBalance()
+            minBalance = try await FlowNetwork.minFlowBalance().decimalValue
             log.debug("[Flow] min balance:\(minBalance ?? 0.001)")
         } catch {
             minBalance = 0.001
@@ -281,9 +286,9 @@ class MoveTokenViewModel: ObservableObject {
         }
         // move fee
         let num = max(
-            inputAmount -
-                Decimal(minBalance ?? WalletManager.minDefaultBlance)
-                - Decimal(WalletManager.moveFee),
+            inputAmount - (
+                minBalance ?? WalletManager.minDefaultBlance
+            ) - WalletManager.fixedMoveFee,
             0
         )
         return num
@@ -293,6 +298,16 @@ class MoveTokenViewModel: ObservableObject {
         DispatchQueue.main.async {
             self.buttonState = self.isReadyForSend ? .enabled : .disabled
         }
+    }
+}
+
+// MARK: - InsufficientStorageToastViewModel
+
+extension MoveTokenViewModel: InsufficientStorageToastViewModel {
+    var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
+    
+    private func checkForInsufficientStorage() {
+        self._insufficientStorageFailure = insufficientStorageCheckForMove(amount: self.inputTokenNum, from: self.fromContact.walletType, to: self.toContact.walletType)
     }
 }
 

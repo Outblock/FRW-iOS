@@ -1164,6 +1164,18 @@ extension FlowNetwork {
         ).decode(Flow.StorageInfo.self)
         return response
     }
+    
+    static func checkAccountInfo() async throws -> Flow.AccountInfo {
+        guard let address = WalletManager.shared.getPrimaryWalletAddress().map(Flow.Address.init(hex:)) else {
+            throw LLError.invalidAddress
+        }
+                                                           
+        guard let cadence = CadenceManager.shared.current.basic?.getAccountInfo?.toFunc() else {
+            throw LLError.invalidCadence
+        }
+        
+        return try await flow.accessAPI.executeScriptAtLatestBlock(cadence: cadence, arguments: [.address(address)]).decode(Flow.AccountInfo.self)
+    }
 }
 
 // MARK: - Base

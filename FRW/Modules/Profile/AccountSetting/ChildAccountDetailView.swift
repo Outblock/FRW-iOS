@@ -700,6 +700,8 @@ extension ChildAccountAccessible {
     var count: Int {
         0
     }
+    
+    var isEmpty: Bool { self.count == 0 }
 }
 
 // MARK: - NFTCollection + ChildAccountAccessible

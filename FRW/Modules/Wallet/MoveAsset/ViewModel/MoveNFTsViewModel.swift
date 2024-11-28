@@ -18,6 +18,7 @@ class MoveNFTsViewModel: ObservableObject {
     init() {
         fetchNFTs(0)
         loadUserInfo()
+        checkForInsufficientStorage()
     }
 
     // MARK: Internal
@@ -78,6 +79,7 @@ class MoveNFTsViewModel: ObservableObject {
     func updateToContact(_ contact: Contact) {
         toContact = contact
         updateFee()
+        checkForInsufficientStorage()
     }
 
     func moveAction() {
@@ -324,6 +326,7 @@ class MoveNFTsViewModel: ObservableObject {
     // MARK: Private
 
     private var collectionList: [CollectionMask] = []
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
 
     private func loadUserInfo() {
         guard let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress()
@@ -464,6 +467,16 @@ class MoveNFTsViewModel: ObservableObject {
                 log.error("[MoveAsset] fetch Collection failed:\(error)")
             }
         }
+    }
+}
+
+// MARK: - InsufficientStorageToastViewModel
+
+extension MoveNFTsViewModel: InsufficientStorageToastViewModel {
+    var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
+    
+    private func checkForInsufficientStorage() {
+        self._insufficientStorageFailure = insufficientStorageCheckForMove(from: self.fromContact.walletType, to: self.toContact.walletType)
     }
 }
 
