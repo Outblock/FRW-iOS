@@ -44,6 +44,7 @@ class SeedPhraseLoginViewModel: ObservableObject {
         let rawMnemonic = words.condenseWhitespace()
         Task {
             guard let hdWallet = HDWallet(mnemonic: rawMnemonic, passphrase: passphrase) else {
+                HUD.error(title: "invalid_data".localized)
                 return
             }
             if isAdvanced && derivationPath.isEmpty {

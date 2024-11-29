@@ -66,6 +66,7 @@ class KeyStoreLoginViewModel: ObservableObject {
                 )
                 guard let privateKey = privateKey else {
                     errorJSON = "invalid_data".localized
+                    HUD.error(title: errorJSON)
                     return
                 }
                 wallet = FlowWalletKit.Wallet(type: .key(privateKey), networks: [chainId])
@@ -90,12 +91,15 @@ class KeyStoreLoginViewModel: ObservableObject {
             } catch let error as FlowWalletKit.WalletError {
                 if error == FlowWalletKit.WalletError.invaildKeyStorePassword {
                     errorPassword = "invalid_password".localized
+                    HUD.error(title: errorPassword)
                 } else {
                     errorJSON = "invalid_data".localized
+                    HUD.error(title: errorJSON)
                 }
                 HUD.dismissLoading()
             } catch {
                 errorJSON = "invalid_data".localized
+                HUD.error(title: errorJSON)
                 HUD.dismissLoading()
             }
         }
