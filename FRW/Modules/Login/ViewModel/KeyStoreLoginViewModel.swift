@@ -33,11 +33,6 @@ class KeyStoreLoginViewModel: ObservableObject {
     @Published
     var wallet: FlowWalletKit.Wallet? = nil
 
-    @Published
-    var errorJSON: String = ""
-
-    @Published
-    var errorPassword: String = ""
 
     @MainActor
     func update(json _: String) {
@@ -52,8 +47,7 @@ class KeyStoreLoginViewModel: ObservableObject {
     func update(address _: String) {}
 
     func onSumbit() {
-        errorJSON = ""
-        errorPassword = ""
+
         UIApplication.shared.endEditing()
         HUD.loading()
         Task {
@@ -65,8 +59,7 @@ class KeyStoreLoginViewModel: ObservableObject {
                     storage: FlowWalletKit.PrivateKey.PKStorage
                 )
                 guard let privateKey = privateKey else {
-                    errorJSON = "invalid_data".localized
-                    HUD.error(title: errorJSON)
+                    HUD.error(title: "invalid_data".localized)
                     return
                 }
                 wallet = FlowWalletKit.Wallet(type: .key(privateKey), networks: [chainId])
@@ -90,16 +83,15 @@ class KeyStoreLoginViewModel: ObservableObject {
 
             } catch let error as FlowWalletKit.WalletError {
                 if error == FlowWalletKit.WalletError.invaildKeyStorePassword {
-                    errorPassword = "invalid_password".localized
-                    HUD.error(title: errorPassword)
-                } else {
-                    errorJSON = "invalid_data".localized
-                    HUD.error(title: errorJSON)
+                    HUD.error(title: "invalid_password".localized)
+                } else if error == FlowWalletKit.WalletError.invaildKeyStoreJSON {
+                    HUD.error(title: "invalid_json".localized)
+                }else {
+                    HUD.error(title: "invalid_data".localized)
                 }
                 HUD.dismissLoading()
             } catch {
-                errorJSON = "invalid_data".localized
-                HUD.error(title: errorJSON)
+                HUD.error(title: "invalid_data".localized)
                 HUD.dismissLoading()
             }
         }

@@ -1,5 +1,5 @@
 {
-  "originHash" : "9217cd13f025ce17983efb8f2aab5c3cecbf096ed4ee0f608330f4a1eef1665d",
+  "originHash" : "a9e5ce1a6592bee76ab9c7de46f9716080aec9f4b339029f7ff050d8d68c50a7",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -141,7 +141,7 @@
       "location" : "https://github.com/Outblock/Flow-Wallet-Kit",
       "state" : {
         "branch" : "six",
-        "revision" : "73f57333f5a3e6b49ba0fe723a62d8ca91e5b1aa"
+        "revision" : "ba4017266e084f654160dfc346381966924c9297"
       }
     },
     {

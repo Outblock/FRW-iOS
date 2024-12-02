@@ -35,12 +35,6 @@ struct KeyStoreLoginView: RouteableView {
                             }
                             .frame(height: 120)
 
-//                            CalloutView(
-//                                corners: [.bottomLeading, .bottomTrailing],
-//                                content: viewModel.errorJSON
-//                            )
-//                            .padding(.horizontal, 12)
-//                            .visibility(viewModel.errorJSON.isEmpty ? .gone : .visible)
                         }
 
                     } header: {

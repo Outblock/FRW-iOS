@@ -1076,6 +1076,7 @@ Please create backups for your wallet to ensure you retain access to your Flow a
 "import_desc" = "From Flow Wallet legacy backup, Seed Phrase, 
 Key Store and Private Key.";
 "invalid_data" = "Invalid Data";
-"invalid_password" = "Invalid Password";
+"invalid_json" = "Key decryption failed - possibly wrong keystore file";
+"invalid_password" = "Key decryption failed - possibly wrong password";
 "not_find_address" = "cannot find this key under this address";
 "required_info_not" = "Required information has not been entered.";
