@@ -14,7 +14,7 @@ import SwiftUIPager
 class CreateProfileWaitingViewModel: ObservableObject {
     // MARK: Lifecycle
 
-    init(txId: String, callback: @escaping (Bool) -> Void) {
+    init(txId: String, callback: @escaping (_ succeeded: Bool, _ createBackup: Bool) -> Void) {
         self.txId = Flow.ID(hex: txId)
         self.callback = callback
 
@@ -47,7 +47,7 @@ class CreateProfileWaitingViewModel: ObservableObject {
     var currentPage: Int = 0
 
     var txId = Flow.ID(hex: "")
-    var callback: (Bool) -> Void
+    var callback: (_ succeeded: Bool, _ createBackup: Bool) -> Void
 
     func onPageIndexChangeAction(_ index: Int) {
         withAnimation(.default) {
@@ -63,13 +63,21 @@ class CreateProfileWaitingViewModel: ObservableObject {
         }
     }
 
-    func onConfirm() {
+    private func onConfirm(createBackup: Bool) {
         HUD.success(title: "create_user_success".localized)
         stopTimer()
-        callback(true)
+        callback(true, createBackup)
         ConfettiManager.show()
     }
 
+    func onGoHome() {
+        onConfirm(createBackup: false)
+    }
+    
+    func onCreateBackup() {
+        onConfirm(createBackup: true)
+    }
+    
     // MARK: Private
 
     private var timer: Timer?

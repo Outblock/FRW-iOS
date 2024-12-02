@@ -99,12 +99,16 @@ class UsernameViewModel: ViewModel {
         Task {
             do {
                 let txid = try await UserManager.shared.register(currentText, mnemonic: nil)
-                let viewModel = CreateProfileWaitingViewModel(txId: txid ?? "") { _ in
+                let viewModel = CreateProfileWaitingViewModel(txId: txid ?? "") { _, createBackup in
 
                     DispatchQueue.main.async {
                         self.changeBackupTypeIfNeeded()
                         self.state.isRegisting = false
                         Router.popToRoot()
+                        
+                        if createBackup {
+                            Router.route(to: RouteMap.Backup.backupList)
+                        }
                     }
                 }
                 Router.route(to: RouteMap.RestoreLogin.createProfile(viewModel))
