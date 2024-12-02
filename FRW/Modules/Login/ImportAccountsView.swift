@@ -129,10 +129,7 @@ struct ImportAccountsView: RouteableView, PresentActionDelegate {
     }
 
     var headerTitle: String {
-        if viewModel.list.isEmpty {
-            return "no_account_found".localized
-        }
-        return "x_account_found_title".localized("\(viewModel.list.count)")
+        return "x_account_found_title".localized(self.viewModel.list.count)
     }
 
     func onClose() {
