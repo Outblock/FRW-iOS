@@ -24,13 +24,13 @@ struct SecureView: View {
             Spacer()
             ZStack(alignment: .leading) {
                 HStack(spacing: spacing) {
-                    ForEach(0 ..< maxCount, id: \.self) { _ in
+                    ForEach(0..<maxCount, id: \.self) { _ in
                         DotView(color: emptyColor, size: itemSize)
                     }
                 }
 
                 HStack(spacing: spacing) {
-                    ForEach(0 ..< min(maxCount, text.count), id: \.self) { _ in
+                    ForEach(0..<min(maxCount, text.count), id: \.self) { _ in
                         DotView(color: highlightColor, size: itemSize)
                     }
                 }
@@ -41,7 +41,7 @@ struct SecureView: View {
                     .accentColor(Color.clear)
                     .onChange(of: text) { _ in
                         if text.count > maxCount {
-                            text = String(text[text.startIndex ... text.index(
+                            text = String(text[text.startIndex...text.index(
                                 text.startIndex,
                                 offsetBy: maxCount - 1
                             )])

@@ -118,13 +118,13 @@ open class MMCQ {
         }
 
         init(vbox: VBox) {
-            rMin = vbox.rMin
-            rMax = vbox.rMax
-            gMin = vbox.gMin
-            gMax = vbox.gMax
-            bMin = vbox.bMin
-            bMax = vbox.bMax
-            histogram = vbox.histogram
+            self.rMin = vbox.rMin
+            self.rMax = vbox.rMax
+            self.gMin = vbox.gMin
+            self.gMax = vbox.gMax
+            self.bMin = vbox.bMin
+            self.bMax = vbox.bMax
+            self.histogram = vbox.histogram
         }
 
         // MARK: Internal
@@ -142,9 +142,9 @@ open class MMCQ {
 
         func makeRange(min: UInt8, max: UInt8) -> CountableRange<Int> {
             if min <= max {
-                return Int(min) ..< Int(max + 1)
+                return Int(min)..<Int(max + 1)
             } else {
-                return Int(max) ..< Int(max)
+                return Int(max)..<Int(max)
             }
         }
 
@@ -467,7 +467,7 @@ open class MMCQ {
             vboxMax = Int(vbox.bMax)
         }
 
-        for i in vboxMin ... vboxMax where partialSum[i] > total / 2 {
+        for i in vboxMin...vboxMax where partialSum[i] > total / 2 {
             let vbox1 = VBox(vbox: vbox)
             let vbox2 = VBox(vbox: vbox)
 
@@ -521,7 +521,7 @@ open class MMCQ {
     ) {
         var color = 1
 
-        for _ in 0 ..< maxIterations {
+        for _ in 0..<maxIterations {
             guard let vbox = queue.last else {
                 return
             }

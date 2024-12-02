@@ -77,7 +77,7 @@ public struct VBaseTextField: View {
     ) {
         self.model = model
         _stateExternally = state
-        stateManagament = .external
+        self.stateManagament = .external
         self.placeholder = placeholder
         _text = text
         self.beginHandler = beginHandler
@@ -98,7 +98,7 @@ public struct VBaseTextField: View {
     ) {
         self.model = model
         _stateExternally = .constant(.enabled)
-        stateManagament = .internal
+        self.stateManagament = .internal
         self.placeholder = placeholder
         _text = text
         self.beginHandler = beginHandler

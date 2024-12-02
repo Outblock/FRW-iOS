@@ -51,7 +51,7 @@ class WalletSendAmountViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(target: Contact, token: TokenModel) {
-        targetContact = target
+        self.targetContact = target
         self.token = token
 
         WalletManager.shared.$coinBalances.sink { [weak self] _ in
@@ -245,13 +245,16 @@ extension WalletSendAmountViewModel {
     }
 }
 
-// MARK: - InsufficientStorageToastViewModel
+// MARK: InsufficientStorageToastViewModel
 
 extension WalletSendAmountViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
 
     private func checkForInsufficientStorage() {
-        _insufficientStorageFailure = insufficientStorageCheckForTransfer(amount: inputTokenNum.decimalValue)
+        _insufficientStorageFailure = insufficientStorageCheckForTransfer(
+            amount: inputTokenNum
+                .decimalValue
+        )
     }
 }
 
@@ -264,8 +267,7 @@ extension WalletSendAmountViewModel {
     func maxAction() {
         exchangeType = .token
         if token.isFlowCoin, WalletManager.shared
-            .isCoa(targetContact.address), WalletManager.shared.isMain()
-        {
+            .isCoa(targetContact.address), WalletManager.shared.isMain() {
             Task {
                 do {
                     let topAmount = try await FlowNetwork.minFlowBalance()
@@ -375,8 +377,7 @@ extension WalletSendAmountViewModel {
                     .coa : AccountType.flow
                 var toAccountType = targetAddress.isEVMAddress ? AccountType.coa : AccountType.flow
                 if toAccountType == .coa,
-                   targetAddress != EVMAccountManager.shared.accounts.first?.address
-                {
+                   targetAddress != EVMAccountManager.shared.accounts.first?.address {
                     toAccountType = .eoa
                 }
 

@@ -217,8 +217,7 @@ class StakingManager: ObservableObject {
     func goStakingAction() {
         if nodeInfos.count == 1, let node = nodeInfos.first,
            let provider = StakingProviderCache.cache.providers
-           .first(where: { $0.id == node.nodeID })
-        {
+           .first(where: { $0.id == node.nodeID }) {
             Router.route(to: RouteMap.Wallet.stakeDetail(provider, node))
         } else {
             Router.route(to: RouteMap.Wallet.stakingList)

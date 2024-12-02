@@ -68,8 +68,7 @@ class InputMnemonicViewModel: ViewModel {
 
                 DispatchQueue.main.async {
                     if let uid = UserManager.shared.activatedUID,
-                       MultiAccountStorage.shared.getBackupType(uid) == .none
-                    {
+                       MultiAccountStorage.shared.getBackupType(uid) == .none {
                         MultiAccountStorage.shared.setBackupType(.manual, uid: uid)
                     }
                 }

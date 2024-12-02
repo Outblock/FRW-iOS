@@ -1011,8 +1011,7 @@ extension ProfileView {
                 }
 
                 if let imageName = imageName, let sysImageColor = sysImageColor,
-                   style == .sysImage
-                {
+                   style == .sysImage {
                     Image(systemName: imageName)
                         .foregroundColor(sysImageColor)
                 }

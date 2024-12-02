@@ -136,8 +136,7 @@ class WalletViewModel: ObservableObject {
                 }
 
                 if abs(self.lastRefreshTS - Date().timeIntervalSince1970) > self
-                    .autoRefreshInterval
-                {
+                    .autoRefreshInterval {
                     self.reloadWalletData()
                 }
             }.store(in: &cancelSets)
@@ -530,8 +529,7 @@ extension WalletViewModel {
 
         // buy
         if RemoteConfigManager.shared.config?.features.onRamp ?? false == true,
-           flow.chainID == .mainnet
-        {
+           flow.chainID == .mainnet {
             if isNotPrimary {
                 showBuyButton = false
             } else {

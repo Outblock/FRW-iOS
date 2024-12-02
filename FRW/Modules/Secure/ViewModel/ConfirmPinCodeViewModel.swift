@@ -11,7 +11,7 @@ class ConfirmPinCodeViewModel: ViewModel {
     // MARK: Lifecycle
 
     init(pin: String) {
-        state = .init(lastPin: pin)
+        self.state = .init(lastPin: pin)
     }
 
     // MARK: Internal
@@ -40,8 +40,7 @@ class ConfirmPinCodeViewModel: ViewModel {
             DispatchQueue.main.async {
                 if let navi = Router.topNavigationController(),
                    let existVC = navi.viewControllers
-                   .first { $0.navigationItem.title == "security".localized }
-                {
+                   .first { $0.navigationItem.title == "security".localized } {
                     Router.route(to: RouteMap.Profile.security(true))
                 } else {
                     Router.popToRoot()

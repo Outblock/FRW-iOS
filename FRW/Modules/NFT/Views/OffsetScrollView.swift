@@ -184,7 +184,7 @@ struct NavigationScrollView_Previews: PreviewProvider {
     static var previews: some View {
         OffsetScrollView(offset: .constant(1)) {
             LazyVStack {
-                ForEach(0 ..< 200) { index in
+                ForEach(0..<200) { index in
                     Text("Row number \(index)")
                         .padding()
                 }

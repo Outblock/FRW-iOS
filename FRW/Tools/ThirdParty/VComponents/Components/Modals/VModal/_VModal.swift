@@ -12,8 +12,7 @@ import SwiftUI
 struct _VModal<Content, HeaderContent>: View
     where
     Content: View,
-    HeaderContent: View
-{
+    HeaderContent: View {
     // MARK: Lifecycle
 
     // MARK: Initializers

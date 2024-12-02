@@ -52,8 +52,7 @@ struct UIKitIntrospectionView<TargetViewType: UIView>: UIViewRepresentable {
     let customize: (TargetViewType) -> Void
 
     func makeUIView(context _: UIViewRepresentableContext<UIKitIntrospectionView>)
-        -> IntrospectionUIView
-    {
+        -> IntrospectionUIView {
         let view = IntrospectionUIView()
         view.accessibilityLabel = "IntrospectionUIView<\(TargetViewType.self)>"
         return view

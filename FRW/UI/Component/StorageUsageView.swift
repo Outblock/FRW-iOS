@@ -8,21 +8,21 @@
 import SwiftUI
 
 struct StorageUsageView: View {
-    private let title: String?
-    private var titleFont: Font?
-    private var headerView: AnyView?
-    private var footerView: AnyView?
-    private let invertedVerticalOrder: Bool
+    // MARK: Lifecycle
 
-    @Binding private var usage: String
-    @Binding private var usageRatio: Double
-
-    init(title: String? = nil, usage: Binding<String>, usageRatio: Binding<Double>, invertedVerticalOrder: Bool = false) {
+    init(
+        title: String? = nil,
+        usage: Binding<String>,
+        usageRatio: Binding<Double>,
+        invertedVerticalOrder: Bool = false
+    ) {
         self.title = title
         _usage = usage
         _usageRatio = usageRatio
         self.invertedVerticalOrder = invertedVerticalOrder
     }
+
+    // MARK: Internal
 
     var body: some View {
         VStack {
@@ -64,11 +64,6 @@ struct StorageUsageView: View {
         }
     }
 
-    private func progressView() -> some View {
-        ProgressView(value: usageRatio, total: 1.0)
-            .tint(Color.LL.Primary.salmonPrimary)
-    }
-
     func titleFont(_ font: Font) -> Self {
         var view = self
         view.titleFont = font
@@ -85,6 +80,24 @@ struct StorageUsageView: View {
         var view = self
         view.footerView = AnyView(footer)
         return view
+    }
+
+    // MARK: Private
+
+    private let title: String?
+    private var titleFont: Font?
+    private var headerView: AnyView?
+    private var footerView: AnyView?
+    private let invertedVerticalOrder: Bool
+
+    @Binding
+    private var usage: String
+    @Binding
+    private var usageRatio: Double
+
+    private func progressView() -> some View {
+        ProgressView(value: usageRatio, total: 1.0)
+            .tint(Color.LL.Primary.salmonPrimary)
     }
 }
 

@@ -10,20 +10,20 @@ import Foundation
 import SwiftUI
 
 #if canImport(UIKit)
-    extension View {
-        func dismissKeyboard() {
-            UIApplication.shared.sendAction(
-                #selector(UIResponder.resignFirstResponder),
-                to: nil,
-                from: nil,
-                for: nil
-            )
-        }
+extension View {
+    func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
     }
+}
 #endif
 
-public extension View {
-    func dismissKeyboardOnDrag() -> some View {
+extension View {
+    public func dismissKeyboardOnDrag() -> some View {
         gesture(DragGesture().onChanged { _ in self.dismissKeyboard() })
     }
 }

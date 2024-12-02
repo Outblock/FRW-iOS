@@ -28,8 +28,7 @@ extension VNavigationLinkType {
         action: @escaping () -> Void,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View
-        where Content: View
-    {
+        where Content: View {
         switch buttonType {
         case let .primary(model):
             VPrimaryButton(

@@ -487,8 +487,7 @@ extension NFTUIKitCache {
 
             // remove collection if needed
             if var collections = getCollections(),
-               let index = collections.firstIndex(where: { $0.collection.id == collectionId })
-            {
+               let index = collections.firstIndex(where: { $0.collection.id == collectionId }) {
                 if listNFTs.isEmpty {
                     collections.removeAll { $0.collection.id == collectionId }
                 } else {

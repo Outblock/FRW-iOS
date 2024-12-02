@@ -62,6 +62,8 @@ extension AlertView {
 // MARK: - AlertView
 
 struct AlertView: ViewModifier {
+    // MARK: Internal
+
     @Binding
     var isPresented: Bool
     let title: String?
@@ -74,14 +76,6 @@ struct AlertView: ViewModifier {
     let buttonsLayout: ButtonsLayout
     let textAlignment: TextAlignment
     var onClose: ((_ completion: (() -> Void)?) -> Void)?
-
-    private var _textAlignment: Alignment {
-        switch textAlignment {
-        case .center: return .center
-        case .leading: return .leading
-        case .trailing: return .trailing
-        }
-    }
 
     let testString: AttributedString = {
         let normalDict = [NSAttributedString.Key.foregroundColor: UIColor.LL.Neutrals.text]
@@ -111,6 +105,16 @@ struct AlertView: ViewModifier {
         .multilineTextAlignment(textAlignment)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+
+    // MARK: Private
+
+    private var _textAlignment: Alignment {
+        switch textAlignment {
+        case .center: return .center
+        case .leading: return .leading
+        case .trailing: return .trailing
+        }
+    }
 }
 
 extension AlertView {
@@ -139,7 +143,10 @@ extension AlertView {
                 .foregroundColor(Color.LL.Neutrals.text)
                 .font(.inter(size: 14, weight: .regular))
                 .frame(maxWidth: .infinity, alignment: self._textAlignment)
-                .visibility((desc != nil || attributedDesc != nil || customContentView != nil) ? .visible : .gone)
+                .visibility(
+                    (desc != nil || attributedDesc != nil || customContentView != nil) ?
+                        .visible : .gone
+                )
             }
 
             switch self.buttonsLayout {
@@ -247,7 +254,19 @@ extension View {
         textAlignment: TextAlignment = .leading,
         onClose: ((_ completion: (() -> Void)?) -> Void)? = nil
     ) -> some View {
-        modifier(AlertView(isPresented: isPresented, title: title, desc: desc, attributedDesc: attributedDesc, customContentView: customContentView, buttons: buttons, useDefaultCancelButton: useDefaultCancelButton, showCloseButton: showCloseButton, buttonsLayout: buttonsLayout, textAlignment: textAlignment, onClose: onClose))
+        modifier(AlertView(
+            isPresented: isPresented,
+            title: title,
+            desc: desc,
+            attributedDesc: attributedDesc,
+            customContentView: customContentView,
+            buttons: buttons,
+            useDefaultCancelButton: useDefaultCancelButton,
+            showCloseButton: showCloseButton,
+            buttonsLayout: buttonsLayout,
+            textAlignment: textAlignment,
+            onClose: onClose
+        ))
     }
 }
 
@@ -316,6 +335,8 @@ struct AlertView_Previews: PreviewProvider {
             textAlignment: .center
         )
 }
+
+// MARK: - AlertViewController
 
 final class AlertViewController: UIHostingController<AlertViewController.AlertContainerView> {
     struct AlertContainerView: View {

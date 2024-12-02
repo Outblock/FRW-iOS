@@ -145,16 +145,12 @@ extension Color {
         }
 
         enum Button {
-            static let light = Color("button.light")
-            static let color = Color("button.color")
-            static let text = Color("button.text")
-            static let send = Color("button.send")
-
             enum Elevated {
-                static let text = Color("button.elevated.text")
                 enum Secondary {
                     static let background = Color("button.elevated.secondary.background")
                 }
+
+                static let text = Color("button.elevated.text")
             }
 
             enum Primary {
@@ -164,6 +160,11 @@ extension Color {
             enum Warning {
                 static let background = Color("button.warning.background")
             }
+
+            static let light = Color("button.light")
+            static let color = Color("button.color")
+            static let text = Color("button.text")
+            static let send = Color("button.send")
         }
 
         enum Other {

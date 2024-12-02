@@ -150,8 +150,7 @@ class ChildAccountDetailViewModel: ObservableObject {
         for holder in TransactionManager.shared.holders {
             if holder.type == .unlinkAccount, holder.internalStatus == .pending,
                let holderModel = try? JSONDecoder().decode(ChildAccount.self, from: holder.data),
-               holderModel.addr == self.childAccount.addr
-            {
+               holderModel.addr == self.childAccount.addr {
                 return true
             }
         }
@@ -643,8 +642,8 @@ extension ChildAccountManager {}
 
 // MARK: - ChildAccountDetailView.AccessibleItemView
 
-private extension ChildAccountDetailView {
-    struct AccessibleItemView: View {
+extension ChildAccountDetailView {
+    fileprivate struct AccessibleItemView: View {
         var item: ChildAccountAccessible
         var onClick: ((_ item: ChildAccountAccessible) -> Void)?
 

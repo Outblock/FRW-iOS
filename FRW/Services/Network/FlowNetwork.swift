@@ -251,8 +251,7 @@ extension FlowNetwork {
     }
 
     static func claimUnstake(nodeID: String, delegatorId: Int, amount: Decimal) async throws -> Flow
-        .ID
-    {
+        .ID {
         try await sendTransaction(
             by: \.staking?.withdrawUnstaked,
             argumentList: [
@@ -280,8 +279,7 @@ extension FlowNetwork {
 
     // FIXME:
     static func claimReward(nodeID: String, delegatorId: Int, amount: Decimal) async throws -> Flow
-        .ID
-    {
+        .ID {
         try await sendTransaction(
             by: \.staking?.withdrawReward,
             argumentList: [.string(nodeID), .uint32(UInt32(delegatorId)), .ufix64(amount)]
@@ -324,8 +322,7 @@ extension FlowNetwork {
     }
 
     static func stakeFlow(providerId: String, delegatorId: Int, amount: Double) async throws -> Flow
-        .ID
-    {
+        .ID {
         let txId = try await sendTransaction(
             by: \.staking?.createStake,
             argumentList: [
@@ -716,7 +713,8 @@ extension FlowNetwork {
     }
 
     static func checkAccountInfo() async throws -> Flow.AccountInfo {
-        guard let address = WalletManager.shared.getPrimaryWalletAddress().map(Flow.Address.init(hex:)) else {
+        guard let address = WalletManager.shared.getPrimaryWalletAddress()
+            .map(Flow.Address.init(hex:)) else {
             throw LLError.invalidAddress
         }
 
@@ -724,7 +722,10 @@ extension FlowNetwork {
             throw LLError.invalidCadence
         }
 
-        return try await flow.accessAPI.executeScriptAtLatestBlock(cadence: cadence, arguments: [.address(address)]).decode(Flow.AccountInfo.self)
+        return try await flow.accessAPI.executeScriptAtLatestBlock(
+            cadence: cadence,
+            arguments: [.address(address)]
+        ).decode(Flow.AccountInfo.self)
     }
 }
 
@@ -897,8 +898,7 @@ extension FlowNetwork {
 
     // transferFlowToEvmAddress
     static func sendFlowToEvm(evmAddress: String, amount: Decimal, gas: UInt64) async throws -> Flow
-        .ID
-    {
+        .ID {
         try await sendTransaction(by: \.evm?.transferFlowToEvmAddress, argumentList: [
             .string(evmAddress),
             .ufix64(amount),
@@ -908,8 +908,7 @@ extension FlowNetwork {
 
     /// transferFlowFromCoaToFlow
     static func sendFlowTokenFromCoaToFlow(amount: Decimal, address: String) async throws -> Flow
-        .ID
-    {
+        .ID {
         try await sendTransaction(by: \.evm?.transferFlowFromCoaToFlow, argumentList: [
             .ufix64(amount),
             .address(Flow.Address(hex: address)),
@@ -1365,8 +1364,8 @@ extension String {
     }
 }
 
-private extension KeyPath {
-    func funcName() -> String {
+extension KeyPath {
+    fileprivate func funcName() -> String {
         "\(self)".split(separator: ".").last?.replacingOccurrences(
             of: "?",
             with: ""

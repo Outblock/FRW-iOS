@@ -59,8 +59,7 @@ public struct VLazyScrollView<Content>: View where Content: View {
         Content == ForEach<Data, ID, RowContent>,
         Data: RandomAccessCollection,
         ID: Hashable,
-        RowContent: View
-    {
+        RowContent: View {
         self.init(
             type: listType,
             content: {
@@ -84,8 +83,7 @@ public struct VLazyScrollView<Content>: View where Content: View {
         Data: RandomAccessCollection,
         Data.Element: Identifiable,
         ID == Data.Element.ID,
-        RowContent: View
-    {
+        RowContent: View {
         self.init(
             type: listType,
             data: data,
@@ -102,8 +100,7 @@ public struct VLazyScrollView<Content>: View where Content: View {
         range: Range<Int>,
         content rowContent: @escaping (Int) -> RowContent
     )
-        where Content == ForEach<Range<Int>, Int, RowContent>
-    {
+        where Content == ForEach<Range<Int>, Int, RowContent> {
         self.init(
             type: listType,
             content: {
@@ -163,5 +160,5 @@ struct VLazyScrollViewView_Previews: PreviewProvider {
 
     // MARK: Private
 
-    private static var range: Range<Int> { 1 ..< 101 }
+    private static var range: Range<Int> { 1..<101 }
 }

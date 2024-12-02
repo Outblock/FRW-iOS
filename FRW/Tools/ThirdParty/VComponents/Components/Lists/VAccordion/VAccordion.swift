@@ -66,8 +66,7 @@ public struct VAccordion<HeaderContent, Data, ID, RowContent, Content>: View
     Data: RandomAccessCollection,
     ID: Hashable,
     RowContent: View,
-    Content: View
-{
+    Content: View {
     // MARK: Lifecycle
 
     // MARK: Initializers - View Builder
@@ -82,13 +81,12 @@ public struct VAccordion<HeaderContent, Data, ID, RowContent, Content>: View
         id: KeyPath<Data.Element, ID>,
         @ViewBuilder rowContent: @escaping (Data.Element) -> RowContent
     )
-        where Content == Never
-    {
+        where Content == Never {
         self.model = model
         self.layoutType = layoutType
         _state = state
         self.headerContent = headerContent
-        contentType = .list(
+        self.contentType = .list(
             data: data,
             id: id,
             rowContent: rowContent
@@ -107,8 +105,7 @@ public struct VAccordion<HeaderContent, Data, ID, RowContent, Content>: View
     )
         where
         HeaderContent == VBaseHeaderFooter,
-        Content == Never
-    {
+        Content == Never {
         self.init(
             model: model,
             layout: layoutType,
@@ -141,8 +138,7 @@ public struct VAccordion<HeaderContent, Data, ID, RowContent, Content>: View
         where
         Content == Never,
         Data.Element: Identifiable,
-        ID == Data.Element.ID
-    {
+        ID == Data.Element.ID {
         self.init(
             model: model,
             layout: layoutType,
@@ -167,8 +163,7 @@ public struct VAccordion<HeaderContent, Data, ID, RowContent, Content>: View
         HeaderContent == VBaseHeaderFooter,
         Content == Never,
         Data.Element: Identifiable,
-        ID == Data.Element.ID
-    {
+        ID == Data.Element.ID {
         self.init(
             model: model,
             layout: layoutType,
@@ -199,13 +194,12 @@ public struct VAccordion<HeaderContent, Data, ID, RowContent, Content>: View
         where
         Data == [Never],
         ID == Never,
-        RowContent == Never
-    {
+        RowContent == Never {
         self.model = model
         self.layoutType = layoutType
         _state = state
         self.headerContent = headerContent
-        contentType = .freeForm(
+        self.contentType = .freeForm(
             content: content
         )
     }
@@ -222,8 +216,7 @@ public struct VAccordion<HeaderContent, Data, ID, RowContent, Content>: View
         HeaderContent == VBaseHeaderFooter,
         Data == [Never],
         ID == Never,
-        RowContent == Never
-    {
+        RowContent == Never {
         self.init(
             model: model,
             layout: layoutType,

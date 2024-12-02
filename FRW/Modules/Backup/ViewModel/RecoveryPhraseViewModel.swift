@@ -13,12 +13,12 @@ class RecoveryPhraseViewModel: ViewModel {
 
     init() {
         if let mnemonic = WalletManager.shared.getCurrentMnemonic() {
-            state = RecoveryPhraseView
+            self.state = RecoveryPhraseView
                 .ViewState(dataSource: mnemonic.split(separator: " ").enumerated().map { item in
                     WordListView.WordItem(id: item.offset + 1, word: String(item.element))
                 })
         } else {
-            state = RecoveryPhraseView.ViewState(dataSource: mockData)
+            self.state = RecoveryPhraseView.ViewState(dataSource: mockData)
         }
     }
 

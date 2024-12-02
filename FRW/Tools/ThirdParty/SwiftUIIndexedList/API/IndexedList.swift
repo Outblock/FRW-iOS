@@ -13,8 +13,7 @@ public struct IndexedList<SelectionValue, Indices, Content>: View
     Indices: Equatable,
     Indices: RandomAccessCollection,
     Indices.Element == Index,
-    Content: View
-{
+    Content: View {
     // MARK: Public
 
     public var body: some View {
@@ -46,8 +45,8 @@ public struct IndexedList<SelectionValue, Indices, Content>: View
     private var selection: Selection
 }
 
-public extension IndexedList {
-    init(
+extension IndexedList {
+    public init(
         accessory: ScrollAccessory = .automatic,
         indices: Indices,
         selection: Binding<SelectionValue?>?,
@@ -59,7 +58,7 @@ public extension IndexedList {
         self.selection = .single(value: selection)
     }
 
-    init(
+    public init(
         accessory: ScrollAccessory = .automatic,
         indices: Indices,
         selection: Binding<Set<SelectionValue>>?,
@@ -72,10 +71,9 @@ public extension IndexedList {
     }
 }
 
-public extension IndexedList
-    where Indices == [Index]
-{
-    init<Data, ID, ElementContent>(
+extension IndexedList
+    where Indices == [Index] {
+    public init<Data, ID, ElementContent>(
         _ data: Data,
         id: KeyPath<Data.Element, ID>,
         accessory: ScrollAccessory = .automatic,
@@ -87,15 +85,14 @@ public extension IndexedList
         Data.Element: Indexable,
         ID: Hashable,
         ElementContent: View,
-        Content == ForEach<Data, ID, ElementContent>
-    {
+        Content == ForEach<Data, ID, ElementContent> {
         self.accessory = accessory
         self.content = { ForEach(data, id: id, content: content) }
-        indices = data.compactMap(\.index)
+        self.indices = data.compactMap(\.index)
         self.selection = .single(value: selection)
     }
 
-    init<Data, ID, ElementContent>(
+    public init<Data, ID, ElementContent>(
         _ data: Data,
         id: KeyPath<Data.Element, ID>,
         accessory: ScrollAccessory = .automatic,
@@ -107,15 +104,14 @@ public extension IndexedList
         Data.Element: Indexable,
         ID: Hashable,
         ElementContent: View,
-        Content == ForEach<Data, ID, ElementContent>
-    {
+        Content == ForEach<Data, ID, ElementContent> {
         self.accessory = accessory
         self.content = { ForEach(data, id: id, content: content) }
-        indices = data.compactMap(\.index)
+        self.indices = data.compactMap(\.index)
         self.selection = .multiple(value: selection)
     }
 
-    init<Data, ElementContent>(
+    public init<Data, ElementContent>(
         _ data: Data,
         accessory: ScrollAccessory = .automatic,
         selection: Binding<SelectionValue?>?,
@@ -126,15 +122,14 @@ public extension IndexedList
         Data.Element: Identifiable,
         Data.Element: Indexable,
         ElementContent: View,
-        Content == ForEach<Data, Data.Element.ID, ElementContent>
-    {
+        Content == ForEach<Data, Data.Element.ID, ElementContent> {
         self.accessory = accessory
         self.content = { ForEach(data, content: content) }
-        indices = data.compactMap(\.index)
+        self.indices = data.compactMap(\.index)
         self.selection = .single(value: selection)
     }
 
-    init<Data, ElementContent>(
+    public init<Data, ElementContent>(
         _ data: Data,
         accessory: ScrollAccessory = .automatic,
         selection: Binding<Set<SelectionValue>>?,
@@ -145,15 +140,14 @@ public extension IndexedList
         Data.Element: Identifiable,
         Data.Element: Indexable,
         ElementContent: View,
-        Content == ForEach<Data, Data.Element.ID, ElementContent>
-    {
+        Content == ForEach<Data, Data.Element.ID, ElementContent> {
         self.accessory = accessory
         self.content = { ForEach(data, content: content) }
-        indices = data.compactMap(\.index)
+        self.indices = data.compactMap(\.index)
         self.selection = .multiple(value: selection)
     }
 
-    init<Data, ID, ElementContent>(
+    public init<Data, ID, ElementContent>(
         _ data: Binding<Data>,
         id: KeyPath<Data.Element, ID>,
         accessory: ScrollAccessory = .automatic,
@@ -168,15 +162,14 @@ public extension IndexedList
         Data.Index: Hashable,
         ID: Hashable,
         ElementContent: View,
-        Content == ForEach<LazyMapSequence<Data.Indices, (Data.Index, ID)>, ID, ElementContent>
-    {
+        Content == ForEach<LazyMapSequence<Data.Indices, (Data.Index, ID)>, ID, ElementContent> {
         self.accessory = accessory
         self.content = { ForEach(data, id: id, content: content) }
-        indices = data.wrappedValue.compactMap(\.index)
+        self.indices = data.wrappedValue.compactMap(\.index)
         self.selection = .single(value: selection)
     }
 
-    init<Data, ID, ElementContent>(
+    public init<Data, ID, ElementContent>(
         _ data: Binding<Data>,
         id: KeyPath<Data.Element, ID>,
         accessory: ScrollAccessory = .automatic,
@@ -191,15 +184,14 @@ public extension IndexedList
         Data.Index: Hashable,
         ID: Hashable,
         ElementContent: View,
-        Content == ForEach<LazyMapSequence<Data.Indices, (Data.Index, ID)>, ID, ElementContent>
-    {
+        Content == ForEach<LazyMapSequence<Data.Indices, (Data.Index, ID)>, ID, ElementContent> {
         self.accessory = accessory
         self.content = { ForEach(data, id: id, content: content) }
-        indices = data.wrappedValue.compactMap(\.index)
+        self.indices = data.wrappedValue.compactMap(\.index)
         self.selection = .multiple(value: selection)
     }
 
-    init<Data, ElementContent>(
+    public init<Data, ElementContent>(
         _ data: Binding<Data>,
         accessory: ScrollAccessory = .automatic,
         selection: Binding<SelectionValue?>?,
@@ -217,15 +209,14 @@ public extension IndexedList
             LazyMapSequence<Data.Indices, (Data.Index, Data.Element.ID)>,
             Data.Element.ID,
             ElementContent
-        >
-    {
+        > {
         self.accessory = accessory
         self.content = { ForEach(data, content: content) }
-        indices = data.wrappedValue.compactMap(\.index)
+        self.indices = data.wrappedValue.compactMap(\.index)
         self.selection = .single(value: selection)
     }
 
-    init<Data, ElementContent>(
+    public init<Data, ElementContent>(
         _ data: Binding<Data>,
         accessory: ScrollAccessory = .automatic,
         selection: Binding<Set<SelectionValue>>?,
@@ -243,19 +234,17 @@ public extension IndexedList
             LazyMapSequence<Data.Indices, (Data.Index, Data.Element.ID)>,
             Data.Element.ID,
             ElementContent
-        >
-    {
+        > {
         self.accessory = accessory
         self.content = { ForEach(data, content: content) }
-        indices = data.wrappedValue.compactMap(\.index)
+        self.indices = data.wrappedValue.compactMap(\.index)
         self.selection = .multiple(value: selection)
     }
 }
 
-public extension IndexedList
-    where SelectionValue == Never
-{
-    init(
+extension IndexedList
+    where SelectionValue == Never {
+    public init(
         accessory: ScrollAccessory = .automatic,
         indices: Indices,
         @ViewBuilder content: @escaping () -> Content
@@ -263,15 +252,14 @@ public extension IndexedList
         self.accessory = accessory
         self.content = content
         self.indices = indices
-        selection = .none
+        self.selection = .none
     }
 }
 
-public extension IndexedList
+extension IndexedList
     where SelectionValue == Never,
-    Indices == [Index]
-{
-    init<Data, ID, ElementContent>(
+    Indices == [Index] {
+    public init<Data, ID, ElementContent>(
         _ data: Data,
         id: KeyPath<Data.Element, ID>,
         accessory: ScrollAccessory = .automatic,
@@ -282,15 +270,14 @@ public extension IndexedList
         Data.Element: Indexable,
         ID: Hashable,
         ElementContent: View,
-        Content == ForEach<Data, ID, ElementContent>
-    {
+        Content == ForEach<Data, ID, ElementContent> {
         self.accessory = accessory
         self.content = { ForEach(data, id: id, content: content) }
-        indices = data.compactMap(\.index)
-        selection = .none
+        self.indices = data.compactMap(\.index)
+        self.selection = .none
     }
 
-    init<Data, ElementContent>(
+    public init<Data, ElementContent>(
         _ data: Data,
         accessory: ScrollAccessory = .automatic,
         @ViewBuilder content: @escaping (Data.Element) -> ElementContent
@@ -300,15 +287,14 @@ public extension IndexedList
         Data.Element: Identifiable,
         Data.Element: Indexable,
         ElementContent: View,
-        Content == ForEach<Data, Data.Element.ID, ElementContent>
-    {
+        Content == ForEach<Data, Data.Element.ID, ElementContent> {
         self.accessory = accessory
         self.content = { ForEach(data, content: content) }
-        indices = data.compactMap(\.index)
-        selection = .none
+        self.indices = data.compactMap(\.index)
+        self.selection = .none
     }
 
-    init<Data, ID, ElementContent>(
+    public init<Data, ID, ElementContent>(
         _ data: Binding<Data>,
         id: KeyPath<Data.Element, ID>,
         accessory: ScrollAccessory = .automatic,
@@ -322,15 +308,14 @@ public extension IndexedList
         Data.Index: Hashable,
         ID: Hashable,
         ElementContent: View,
-        Content == ForEach<LazyMapSequence<Data.Indices, (Data.Index, ID)>, ID, ElementContent>
-    {
+        Content == ForEach<LazyMapSequence<Data.Indices, (Data.Index, ID)>, ID, ElementContent> {
         self.accessory = accessory
         self.content = { ForEach(data, id: id, content: content) }
-        indices = data.wrappedValue.compactMap(\.index)
-        selection = .none
+        self.indices = data.wrappedValue.compactMap(\.index)
+        self.selection = .none
     }
 
-    init<Data, ElementContent>(
+    public init<Data, ElementContent>(
         _ data: Binding<Data>,
         accessory: ScrollAccessory = .automatic,
         @ViewBuilder content: @escaping (Binding<Data.Element>)
@@ -347,19 +332,18 @@ public extension IndexedList
             LazyMapSequence<Data.Indices, (Data.Index, Data.Element.ID)>,
             Data.Element.ID,
             ElementContent
-        >
-    {
+        > {
         self.accessory = accessory
         self.content = { ForEach(data, content: content) }
-        indices = data.wrappedValue.compactMap(\.index)
-        selection = .none
+        self.indices = data.wrappedValue.compactMap(\.index)
+        self.selection = .none
     }
 }
 
 // MARK: IndexedList.Selection
 
-private extension IndexedList {
-    enum Selection {
+extension IndexedList {
+    fileprivate enum Selection {
         case none
         case single(value: Binding<SelectionValue?>?)
         case multiple(value: Binding<Set<SelectionValue>>?)

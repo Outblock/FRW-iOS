@@ -31,13 +31,12 @@ struct DigitalRain: View {
                 // Add columns progressively, every `addColumnRate` seconds, up to a maximum of `maxColumns`
                 if core.columns.count < MatrixCore.maxColumns,
                    Date().timeIntervalSinceReferenceDate > core.lastAddDate
-                   .addingTimeInterval(MatrixCore.addColumnRate).timeIntervalSinceReferenceDate
-                {
+                   .addingTimeInterval(MatrixCore.addColumnRate).timeIntervalSinceReferenceDate {
                     core.addColumn()
                 }
 
                 // update columns data (e.g., position, depth, character count, etc)
-                for idx in 0 ..< core.columns.count {
+                for idx in 0..<core.columns.count {
                     core.columns[idx].fallDown(date: date)
                 }
             }
@@ -107,11 +106,11 @@ class MatrixCore: ObservableObject {
     // MARK: Lifecycle
 
     init(columnCount: Int) {
-        for idx in 0 ..< columnCount {
+        for idx in 0..<columnCount {
             columns.append(MatrixColumn(
                 id: idx,
                 origin: Self.randomOrigin,
-                z: CGFloat.random(in: 0 ... 1)
+                z: CGFloat.random(in: 0...1)
             ))
         }
     }
@@ -122,7 +121,7 @@ class MatrixCore: ObservableObject {
     static var addColumnRate: TimeInterval = 0.2
 
     static var randomOrigin: UnitPoint {
-        UnitPoint(x: .random(in: -0.25 ... 1.25), y: .random(in: 0 ... 0.25))
+        UnitPoint(x: .random(in: -0.25...1.25), y: .random(in: 0...0.25))
     }
 
     var lastAddDate = Date(timeIntervalSinceReferenceDate: 0)
@@ -140,14 +139,14 @@ struct MatrixColumn: Identifiable {
     static var matrixCharacters = "イウエオカキクケコサシスセソタチツテトナニヌノハヒフヘホマミムメモヤユヨラリルレロワヰヲンーヽヿ0123456789"
 
     static var randomMatrixCharacter: String {
-        let idx = Int.random(in: 0 ..< matrixCharacters.count)
+        let idx = Int.random(in: 0..<matrixCharacters.count)
         let index = matrixCharacters.index(matrixCharacters.startIndex, offsetBy: idx)
         return String(matrixCharacters[index])
     }
 
     let id: Int
     var origin: UnitPoint = MatrixCore.randomOrigin
-    var z = CGFloat.random(in: 0 ... 1)
+    var z = CGFloat.random(in: 0...1)
     var offset: CGFloat = 0
 
     var texts = [String]()
@@ -161,7 +160,7 @@ struct MatrixColumn: Identifiable {
     var concatenatedTexts: Text {
         var t = ""
 
-        for k in 0 ..< texts.count {
+        for k in 0..<texts.count {
             if k == 0 {
                 t = t + texts[k]
             } else {
@@ -173,7 +172,7 @@ struct MatrixColumn: Identifiable {
     }
 
     mutating func addCharacter(_ count: Int = 1) {
-        for _ in 0 ..< count {
+        for _ in 0..<count {
             texts.append(Self.randomMatrixCharacter)
         }
     }
@@ -213,7 +212,7 @@ struct MatrixColumn: Identifiable {
         removed = 0
         texts = []
         origin = MatrixCore.randomOrigin
-        z = CGFloat.random(in: 0 ... 1)
+        z = CGFloat.random(in: 0...1)
     }
 }
 

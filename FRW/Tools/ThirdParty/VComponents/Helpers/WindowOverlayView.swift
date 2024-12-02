@@ -124,8 +124,8 @@ final class WindowOverlayViewController<Content>: UIViewController where Content
 
 // MARK: - Helpers
 
-private extension UIView {
-    static var appRootView: UIView? {
+extension UIView {
+    fileprivate static var appRootView: UIView? {
         guard let window: UIWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }),
               let viewController: UIViewController = window.rootViewController,
               let view: UIView = viewController.view

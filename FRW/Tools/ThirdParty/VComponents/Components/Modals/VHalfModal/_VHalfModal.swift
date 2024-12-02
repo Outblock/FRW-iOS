@@ -12,8 +12,7 @@ import SwiftUI
 struct _VHalfModal<Content, HeaderContent>: View
     where
     Content: View,
-    HeaderContent: View
-{
+    HeaderContent: View {
     // MARK: Lifecycle
 
     // MARK: Initializers
@@ -29,7 +28,7 @@ struct _VHalfModal<Content, HeaderContent>: View
         self.headerContent = headerContent
         self.content = content
 
-        isLayoutValid =
+        self.isLayoutValid =
             model.layout.height.min <= model.layout.height.ideal &&
             model.layout.height.ideal <= model.layout.height.max
     }
@@ -67,7 +66,7 @@ struct _VHalfModal<Content, HeaderContent>: View
             // max means offset of max, not maximum allowed offset. Otherwise, the logic would seem nverted
             switch offset {
             case ideal: self = .ideal
-            case max ..< ideal: self = .idealMax
+            case max..<ideal: self = .idealMax
             default: self =
                 .minIdeal // Min isn't used to allow registering area between dismiss point and min
             }

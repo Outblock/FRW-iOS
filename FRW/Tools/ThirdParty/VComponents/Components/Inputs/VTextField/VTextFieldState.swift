@@ -72,8 +72,7 @@ public enum VTextFieldState: Int, CaseIterable {
     // MARK: Helpers
 
     static func baseTextFieldState(_ state: Binding<VTextFieldState>)
-        -> Binding<VBaseTextFieldState>
-    {
+        -> Binding<VBaseTextFieldState> {
         .init(
             get: {
                 switch state.wrappedValue {

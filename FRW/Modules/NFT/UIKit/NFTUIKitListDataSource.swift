@@ -202,8 +202,7 @@ class NFTUIKitListNormalDataModel {
     private func loadCache() {
         if var cachedCollections = NFTUIKitCache.cache.getCollections(),
            let address = WalletManager.shared
-           .getWatchAddressOrChildAccountAddressOrPrimaryAddress()
-        {
+           .getWatchAddressOrChildAccountAddressOrPrimaryAddress() {
             cachedCollections.sort {
                 if $0.count == $1.count {
                     return ($0.collection.contractName ?? "") < ($1.collection.contractName ?? "")

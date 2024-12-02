@@ -14,7 +14,7 @@ extension WallectSecureEnclave {
 
         init(data: Data) {
             do {
-                privateKey = try SecureEnclave.P256.Signing
+                self.privateKey = try SecureEnclave.P256.Signing
                     .PrivateKey(dataRepresentation: data)
             } catch {
                 debugPrint("[WallectSecureEnclave] init with data failed.")
@@ -23,7 +23,7 @@ extension WallectSecureEnclave {
 
         init() {
             do {
-                privateKey = try PrivateKey.generate()
+                self.privateKey = try PrivateKey.generate()
             } catch {
                 debugPrint("[WallectSecureEnclave] init failed.")
             }

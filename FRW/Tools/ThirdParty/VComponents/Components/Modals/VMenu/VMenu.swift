@@ -47,7 +47,7 @@ public struct VMenu<Label>: View where Label: View {
         rows: [VMenuRow],
         @ViewBuilder label: @escaping () -> Label
     ) {
-        menuButtonType = menuButtonPreset.buttonType
+        self.menuButtonType = menuButtonPreset.buttonType
         self.state = state
         self.rows = rows
         self.label = label
@@ -60,8 +60,7 @@ public struct VMenu<Label>: View where Label: View {
         rows: [VMenuRow],
         title: String
     )
-        where Label == VText
-    {
+        where Label == VText {
         self.init(
             preset: menuButtonPreset,
             state: state,
@@ -78,7 +77,7 @@ public struct VMenu<Label>: View where Label: View {
         rows: [VMenuRow],
         @ViewBuilder label: @escaping () -> Label
     ) {
-        menuButtonType = .custom
+        self.menuButtonType = .custom
         self.state = state
         self.rows = rows
         self.label = label

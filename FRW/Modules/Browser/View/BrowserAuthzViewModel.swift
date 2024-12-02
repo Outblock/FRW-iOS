@@ -18,23 +18,18 @@ extension BrowserAuthzViewModel {
 // MARK: - BrowserAuthzViewModel
 
 class BrowserAuthzViewModel: ObservableObject {
-    @Published var title: String
-    @Published var urlString: String
-    @Published var logo: String?
-    @Published var cadence: String
-    @Published var cadenceFormatted: AttributedString?
-    @Published var arguments: [Flow.Argument]?
-    @Published var argumentsFormatted: AttributedString?
-    @Published var isScriptShowing: Bool = false
+    // MARK: Lifecycle
 
-    @Published var template: FlowTransactionTemplate?
-
-    private var callback: BrowserAuthzViewModel.Callback?
-    private var _insufficientStorageFailure: InsufficientStorageFailure?
-
-    init(title: String, url: String, logo: String?, cadence: String, arguments: [Flow.Argument]? = nil, callback: @escaping BrowserAuthnViewModel.Callback) {
+    init(
+        title: String,
+        url: String,
+        logo: String?,
+        cadence: String,
+        arguments: [Flow.Argument]? = nil,
+        callback: @escaping BrowserAuthnViewModel.Callback
+    ) {
         self.title = title
-        urlString = url
+        self.urlString = url
         self.logo = logo
         self.cadence = cadence
         self.arguments = arguments
@@ -48,6 +43,26 @@ class BrowserAuthzViewModel: ObservableObject {
     }
 
     // MARK: Internal
+
+    @Published
+    var title: String
+    @Published
+    var urlString: String
+    @Published
+    var logo: String?
+    @Published
+    var cadence: String
+    @Published
+    var cadenceFormatted: AttributedString?
+    @Published
+    var arguments: [Flow.Argument]?
+    @Published
+    var argumentsFormatted: AttributedString?
+    @Published
+    var isScriptShowing: Bool = false
+
+    @Published
+    var template: FlowTransactionTemplate?
 
     func didChooseAction(_ result: Bool) {
         Router.dismiss { [weak self] in
@@ -106,9 +121,14 @@ class BrowserAuthzViewModel: ObservableObject {
             self.isScriptShowing = show
         }
     }
+
+    // MARK: Private
+
+    private var callback: BrowserAuthzViewModel.Callback?
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
 }
 
-// MARK: - InsufficientStorageToastViewModel
+// MARK: InsufficientStorageToastViewModel
 
 extension BrowserAuthzViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }

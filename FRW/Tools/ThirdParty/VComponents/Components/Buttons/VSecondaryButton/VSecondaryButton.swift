@@ -49,8 +49,7 @@ public struct VSecondaryButton<Content>: View where Content: View {
         action: @escaping () -> Void,
         title: String
     )
-        where Content == VText
-    {
+        where Content == VText {
         self.init(
             model: model,
             state: state,
@@ -138,8 +137,7 @@ public struct VSecondaryButton<Content>: View where Content: View {
     private func syncInternalStateWithState() {
         DispatchQueue.main.async {
             if internalStateRaw == nil ||
-                .init(internalState: internalState) != state
-            {
+                .init(internalState: internalState) != state {
                 internalStateRaw = .default(state: state)
             }
         }

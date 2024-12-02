@@ -38,7 +38,7 @@ class SwapViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(defaultFromToken: TokenModel?) {
-        fromToken = defaultFromToken
+        self.fromToken = defaultFromToken
     }
 
     // MARK: Internal
@@ -185,8 +185,7 @@ extension SwapViewModel {
 
                     if fromToken.contractId != self.fromToken?.contractId || toToken
                         .contractId != self.toToken?.contractId || localIsFromInput != self
-                        .requestIsFromInput
-                    {
+                        .requestIsFromInput {
                         // invalid response
                         return
                     }
@@ -253,8 +252,7 @@ extension SwapViewModel {
         }
 
         if fromAmount > WalletManager.shared
-            .getBalance(byId: contractId).doubleValue
-        {
+            .getBalance(byId: contractId).doubleValue {
             errorType = .insufficientBalance
         } else {
             errorType = .none

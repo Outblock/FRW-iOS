@@ -14,7 +14,7 @@ class DevicesViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init() {
-        devices = [DeviceInfoModel.empty()]
+        self.devices = [DeviceInfoModel.empty()]
         fetch()
     }
 

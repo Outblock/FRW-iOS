@@ -172,7 +172,7 @@ extension OnBoardingView {
 
         var body: some View {
             HStack(spacing: 12) {
-                ForEach(0 ..< numberOfPages, id: \.self) { index in
+                ForEach(0..<numberOfPages, id: \.self) { index in
                     Circle()
                         .frame(width: 8, height: 8)
                         .foregroundColor(currentPage == index ? Color(hex: "#579AF2") : Color.white)

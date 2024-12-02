@@ -66,8 +66,7 @@ extension AddAddressView {
 
             if isEditingMode {
                 if finalName == editingContact?.contactName,
-                   finalAddress == editingContact?.address
-                {
+                   finalAddress == editingContact?.address {
                     isReadyForSave = false
                     return
                 }
@@ -86,14 +85,14 @@ extension AddAddressView {
         // MARK: Lifecycle
 
         init(addressBookVM: AddressBookView.AddressBookViewModel) {
-            state = AddAddressState()
+            self.state = AddAddressState()
             self.addressBookVM = addressBookVM
         }
 
         init(contact: Contact, addressBookVM: AddressBookView.AddressBookViewModel) {
             self.addressBookVM = addressBookVM
 
-            state = AddAddressState()
+            self.state = AddAddressState()
             state.isEditingMode = true
             state.editingContact = contact
             state.name = contact.contactName ?? ""

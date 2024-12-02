@@ -15,7 +15,7 @@ class ThingsNeedKnowViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init() {
-        hdWallet = HDWallet(strength: mnemonicStrength, passphrase: "")
+        self.hdWallet = HDWallet(strength: mnemonicStrength, passphrase: "")
     }
 
     // MARK: Internal

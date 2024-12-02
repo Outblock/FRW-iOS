@@ -9,12 +9,24 @@ import Flow
 import SwiftUI
 
 class WalletSettingViewModel: ObservableObject {
-    @Published var storageUsedRatio: Double = 0
-    @Published var storageUsedDesc: String = ""
+    // MARK: Lifecycle
 
     init() {
         fetchAccountInfo()
     }
+
+    // MARK: Internal
+
+    @Published
+    var storageUsedRatio: Double = 0
+    @Published
+    var storageUsedDesc: String = ""
+
+    func resetWalletAction() {
+        Router.route(to: RouteMap.Profile.resetWalletConfirm)
+    }
+
+    // MARK: Private
 
     private func fetchAccountInfo() {
         Task {
@@ -26,9 +38,5 @@ class WalletSettingViewModel: ObservableObject {
                 }
             } catch {}
         }
-    }
-
-    func resetWalletAction() {
-        Router.route(to: RouteMap.Profile.resetWalletConfirm)
     }
 }

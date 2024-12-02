@@ -200,8 +200,7 @@ class MoveTokenViewModel: ObservableObject {
         }
 
         if ChildAccountManager.shared.selectedChildAccount != nil || EVMAccountManager.shared
-            .selectedAccount != nil
-        {
+            .selectedAccount != nil {
             let user = WalletManager.shared.walletAccount.readInfo(at: primaryAddr)
             toContact = Contact(
                 address: primaryAddr,
@@ -302,13 +301,17 @@ class MoveTokenViewModel: ObservableObject {
     }
 }
 
-// MARK: - InsufficientStorageToastViewModel
+// MARK: InsufficientStorageToastViewModel
 
 extension MoveTokenViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
 
     private func checkForInsufficientStorage() {
-        _insufficientStorageFailure = insufficientStorageCheckForMove(amount: inputTokenNum, from: fromContact.walletType, to: toContact.walletType)
+        _insufficientStorageFailure = insufficientStorageCheckForMove(
+            amount: inputTokenNum,
+            from: fromContact.walletType,
+            to: toContact.walletType
+        )
     }
 }
 

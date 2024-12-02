@@ -98,8 +98,7 @@ public struct VCloseButton: View {
     private func syncInternalStateWithState() {
         DispatchQueue.main.async {
             if internalStateRaw == nil ||
-                .init(internalState: internalState) != state
-            {
+                .init(internalState: internalState) != state {
                 internalStateRaw = .default(state: state)
             }
         }

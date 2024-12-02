@@ -73,13 +73,12 @@ public struct VDialog<Content> where Content: View {
         title: String?,
         description: String?
     )
-        where Content == Never
-    {
+        where Content == Never {
         self.model = model
         self.dialogButtons = dialogButtons
         self.title = title
         self.description = description
-        content = nil
+        self.content = nil
     }
 
     // MARK: Fileprivate
@@ -95,14 +94,13 @@ public struct VDialog<Content> where Content: View {
 
 // MARK: - Extension
 
-public extension View {
+extension View {
     /// Presents `VDialog`.
-    func vDialog<Content>(
+    public func vDialog<Content>(
         isPresented: Binding<Bool>,
         dialog: @escaping () -> VDialog<Content>
     ) -> some View
-        where Content: View
-    {
+        where Content: View {
         let dialog = dialog()
 
         return overlay(Group(content: {

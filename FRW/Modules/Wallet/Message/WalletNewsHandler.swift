@@ -14,8 +14,13 @@ class WalletNewsHandler: ObservableObject {
     // MARK: Lifecycle
 
     private init() {
-        removeIds = LocalUserDefaults.shared.removedNewsIds
-        NotificationCenter.default.addObserver(self, selector: #selector(onAccountDataUpdate), name: .accountDataDidUpdate, object: nil)
+        self.removeIds = LocalUserDefaults.shared.removedNewsIds
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onAccountDataUpdate),
+            name: .accountDataDidUpdate,
+            object: nil
+        )
     }
 
     deinit {
@@ -128,7 +133,8 @@ class WalletNewsHandler: ObservableObject {
     private func handleCondition(force: Bool = false) {
         accessQueue.sync {
             list = list.filter { model in
-                guard let conditionList = model.conditions, !conditionList.isEmpty, force == false else {
+                guard let conditionList = model.conditions, !conditionList.isEmpty,
+                      force == false else {
                     return true
                 }
                 return !conditionList.map { $0.type.boolValue() }.contains(false)
@@ -187,8 +193,7 @@ extension WalletNewsHandler {
 
         if item.flag == .walletconnect,
            let request = WalletConnectManager.shared.pendingRequests
-           .first(where: { $0.topic == item.id })
-        {
+           .first(where: { $0.topic == item.id }) {
             WalletConnectManager.shared.handleRequest(request)
         }
 

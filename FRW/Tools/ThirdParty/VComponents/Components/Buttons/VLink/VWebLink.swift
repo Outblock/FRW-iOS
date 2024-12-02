@@ -39,7 +39,7 @@ public struct VWebLink<Content>: View where Content: View {
         url: URL?,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        linkButtonType = linkPreset.buttonType
+        self.linkButtonType = linkPreset.buttonType
         self.state = state
         self.url = url
         self.content = content
@@ -52,8 +52,7 @@ public struct VWebLink<Content>: View where Content: View {
         url: URL?,
         title: String
     )
-        where Content == VText
-    {
+        where Content == VText {
         self.init(
             preset: linkPreset,
             state: state,
@@ -70,7 +69,7 @@ public struct VWebLink<Content>: View where Content: View {
         url: URL?,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        linkButtonType = .custom
+        self.linkButtonType = .custom
         self.state = state
         self.url = url
         self.content = content

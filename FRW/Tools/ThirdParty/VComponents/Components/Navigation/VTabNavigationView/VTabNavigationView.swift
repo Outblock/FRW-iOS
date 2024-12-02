@@ -50,8 +50,7 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
     C2: View,
     C3: View,
     C4: View,
-    C5: View
-{
+    C5: View {
     // MARK: Lifecycle
 
     // MARK: Initializers
@@ -87,8 +86,7 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
         pageFour: VTabNavigationViewPage<C3>,
         pageFive: VTabNavigationViewPage<C4>
     )
-        where C5 == Never
-    {
+        where C5 == Never {
         self.model = model
         _selection = selection
         self.pageOne = pageOne
@@ -96,7 +94,7 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
         self.pageThree = pageThree
         self.pageFour = pageFour
         self.pageFive = pageFive
-        pageSix = nil
+        self.pageSix = nil
     }
 
     /// Initializes component with selected index and four pages.
@@ -110,16 +108,15 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
     )
         where
         C4 == Never,
-        C5 == Never
-    {
+        C5 == Never {
         self.model = model
         _selection = selection
         self.pageOne = pageOne
         self.pageTwo = pageTwo
         self.pageThree = pageThree
         self.pageFour = pageFour
-        pageFive = nil
-        pageSix = nil
+        self.pageFive = nil
+        self.pageSix = nil
     }
 
     /// Initializes component with selected index and three pages.
@@ -133,16 +130,15 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
         where
         C3 == Never,
         C4 == Never,
-        C5 == Never
-    {
+        C5 == Never {
         self.model = model
         _selection = selection
         self.pageOne = pageOne
         self.pageTwo = pageTwo
         self.pageThree = pageThree
-        pageFour = nil
-        pageFive = nil
-        pageSix = nil
+        self.pageFour = nil
+        self.pageFive = nil
+        self.pageSix = nil
     }
 
     /// Initializes component with selected index and four pages.
@@ -156,16 +152,15 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
         C2 == Never,
         C3 == Never,
         C4 == Never,
-        C5 == Never
-    {
+        C5 == Never {
         self.model = model
         _selection = selection
         self.pageOne = pageOne
         self.pageTwo = pageTwo
-        pageThree = nil
-        pageFour = nil
-        pageFive = nil
-        pageSix = nil
+        self.pageThree = nil
+        self.pageFour = nil
+        self.pageFive = nil
+        self.pageSix = nil
     }
 
     // MARK: Public
@@ -203,8 +198,7 @@ public struct VTabNavigationView<C0, C1, C2, C3, C4, C5>: View
     private func pageContent<PageContent>(
         _ page: VTabNavigationViewPage<PageContent>
     ) -> some View
-        where PageContent: View
-    {
+        where PageContent: View {
         let originalAccentColor = Color(UIColor(Color.accentColor).cgColor)
 
         return page.content

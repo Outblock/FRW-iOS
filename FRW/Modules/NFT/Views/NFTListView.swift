@@ -56,7 +56,7 @@ struct MyProgress: View {
 
     var body: some View {
         HStack {
-            ForEach(0 ... 4, id: \.self) { index in
+            ForEach(0...4, id: \.self) { index in
                 Circle()
                     .frame(width: 10, height: 10)
                     .foregroundColor(.red)

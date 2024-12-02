@@ -14,27 +14,21 @@ import SwiftUIX
 // MARK: - TokenDetailView
 
 struct TokenDetailView: RouteableView {
-    @Environment(\.colorScheme) var colorScheme
-    @StateObject private var vm: TokenDetailViewModel
-    @StateObject private var stakingManager = StakingManager.shared
-
-    private var isAccessible: Bool = true
-
-    private let lightGradientColors: [Color] = [.white.opacity(0), Color(hex: "#E6E6E6").opacity(0), Color(hex: "#E6E6E6").opacity(1)]
-    private let darkGradientColors: [Color] = [.white.opacity(0), .white.opacity(0), Color(hex: "#282828").opacity(1)]
-
-    var title: String {
-        return ""
-    }
-
     // MARK: Lifecycle
 
     init(token: TokenModel, accessible: Bool) {
         _vm = StateObject(wrappedValue: TokenDetailViewModel(token: token))
-        isAccessible = accessible
+        self.isAccessible = accessible
     }
 
     // MARK: Internal
+
+    @Environment(\.colorScheme)
+    var colorScheme
+
+    var title: String {
+        ""
+    }
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -278,7 +272,7 @@ struct TokenDetailView: RouteableView {
 
             // transfer list
             VStack(spacing: 8) {
-                ForEach(0 ..< vm.recentTransfers.count, id: \.self) { index in
+                ForEach(0..<vm.recentTransfers.count, id: \.self) { index in
                     let transfer = vm.recentTransfers[index]
                     Button {
                         vm.transferDetailAction(transfer)
@@ -408,6 +402,26 @@ struct TokenDetailView: RouteableView {
         }
         .padding(.bottom, 12)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm: TokenDetailViewModel
+    @StateObject
+    private var stakingManager = StakingManager.shared
+
+    private var isAccessible: Bool = true
+
+    private let lightGradientColors: [Color] = [
+        .white.opacity(0),
+        Color(hex: "#E6E6E6").opacity(0),
+        Color(hex: "#E6E6E6").opacity(1),
+    ]
+    private let darkGradientColors: [Color] = [
+        .white.opacity(0),
+        .white.opacity(0),
+        Color(hex: "#282828").opacity(1),
+    ]
 
     private func separator() -> some View {
         if colorScheme == .dark {

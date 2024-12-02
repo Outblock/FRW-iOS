@@ -39,8 +39,7 @@ final class NFTCollectionStateManager {
                         .firstIndex(where: {
                             $0.address.lowercased() == address.lowercased() && $0.name == collection
                                 .contractName
-                        })
-                    {
+                        }) {
                         tokenStateList.remove(at: oldIndex)
                     }
                     tokenStateList.append(NftCollectionState(

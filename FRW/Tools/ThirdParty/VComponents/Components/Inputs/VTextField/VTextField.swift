@@ -135,7 +135,7 @@ public struct VTextField: View {
         self.model = model
         self.textFieldType = textFieldType
         _stateExternally = state
-        stateManagament = .external
+        self.stateManagament = .external
         self.highlight = highlight
         self.placeholder = placeholder
         self.headerTitle = headerTitle
@@ -168,7 +168,7 @@ public struct VTextField: View {
         self.model = model
         self.textFieldType = textFieldType
         _stateExternally = .constant(.enabled)
-        stateManagament = .internal
+        self.stateManagament = .internal
         self.highlight = highlight
         self.placeholder = placeholder
         self.headerTitle = headerTitle
@@ -391,8 +391,7 @@ public struct VTextField: View {
     @ViewBuilder
     private var cancelButton: some View {
         if !textFieldType.isSecure, isTextNonEmpty, state.wrappedValue.isFocused,
-           let cancelButton = model.misc.cancelButton, !cancelButton.isEmpty
-        {
+           let cancelButton = model.misc.cancelButton, !cancelButton.isEmpty {
             VPlainButton(
                 model: model.cancelButtonSubModel,
                 state: state.wrappedValue.cancelButtonState,

@@ -34,10 +34,9 @@ public struct VProgressBar: View {
         value: V
     )
         where
-        V: BinaryFloatingPoint
-    {
+        V: BinaryFloatingPoint {
         self.model = model
-        range = 0 ... Double(total)
+        self.range = 0...Double(total)
         self.value = {
             let value: Double = .init(value)
             let min: Double = 0

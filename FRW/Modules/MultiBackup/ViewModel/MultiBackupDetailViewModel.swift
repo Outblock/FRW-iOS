@@ -15,7 +15,7 @@ class MultiBackupDetailViewModel: ObservableObject {
         self.item = item
         if let backupType = item.multiBackupType() {
             if backupType == .google || backupType == .icloud {
-                showPhrase = true
+                self.showPhrase = true
             }
         }
     }

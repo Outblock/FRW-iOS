@@ -23,7 +23,7 @@ struct TabBarPageModel<T: Hashable> {
         self.color = color
         self.view = view
         self.contextMenu = contextMenu
-        lottieView = AnimationView(name: iconName, bundle: .main)
+        self.lottieView = AnimationView(name: iconName, bundle: .main)
     }
 
     // MARK: Internal

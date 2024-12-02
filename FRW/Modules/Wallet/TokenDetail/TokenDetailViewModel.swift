@@ -175,7 +175,8 @@ class TokenDetailViewModel: ObservableObject {
     @Published
     var showSheet: Bool = false
     var buttonAction: TokenDetailViewModel.Action = .none
-    var showStorageView: Bool { return token.isFlowCoin }
+
+    var showStorageView: Bool { token.isFlowCoin }
 
     var isTokenDetailsButtonEnabled: Bool { token.website.isNotNullNorEmpty }
 
@@ -463,8 +464,7 @@ extension TokenDetailViewModel {
         if (RemoteConfigManager.shared.config?.features.swap ?? false) == true {
             // don't show when current is Linked account
             if ChildAccountManager.shared.selectedChildAccount != nil || ChildAccountManager.shared
-                .selectedChildAccount != nil
-            {
+                .selectedChildAccount != nil {
                 showSwapButton = false
             } else {
                 showSwapButton = true
@@ -475,8 +475,7 @@ extension TokenDetailViewModel {
 
         // buy
         if RemoteConfigManager.shared.config?.features.onRamp ?? false == true,
-           flow.chainID == .mainnet
-        {
+           flow.chainID == .mainnet {
             if ChildAccountManager.shared.selectedChildAccount != nil {
                 showBuyButton = false
             } else {

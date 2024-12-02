@@ -30,7 +30,7 @@ struct VPageIndicatorFinite: View {
 
     var body: some View {
         HStack(spacing: model.layout.spacing, content: {
-            ForEach(0 ..< total, content: { i in
+            ForEach(0..<total, content: { i in
                 Circle()
                     .foregroundColor(
                         selectedIndex == i ? model.colors.selectedDot : model.colors

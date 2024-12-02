@@ -12,7 +12,7 @@ struct AddAddressView: RouteableView {
 
     init(addressBookVM: AddressBookView.AddressBookViewModel) {
         _vm = StateObject(wrappedValue: AddAddressViewModel(addressBookVM: addressBookVM))
-        confirmedTitle = "add_contact".localized
+        self.confirmedTitle = "add_contact".localized
     }
 
     init(editingContact: Contact, addressBookVM: AddressBookView.AddressBookViewModel) {
@@ -20,7 +20,7 @@ struct AddAddressView: RouteableView {
             contact: editingContact,
             addressBookVM: addressBookVM
         ))
-        confirmedTitle = "edit_contact".localized
+        self.confirmedTitle = "edit_contact".localized
     }
 
     // MARK: Internal

@@ -34,8 +34,7 @@ struct PhraseKeyStore {
                key: uid,
                data: encryptedData
            ),
-           var mnemonic = String(data: decryptedData, encoding: .utf8)
-        {
+           var mnemonic = String(data: decryptedData, encoding: .utf8) {
             defer {
                 encryptedData = Data()
                 decryptedData = Data()

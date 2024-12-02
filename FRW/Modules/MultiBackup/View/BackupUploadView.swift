@@ -99,8 +99,7 @@ struct BackupUploadView: RouteableView {
                             }
                             .padding(.top, 16)
                         } else if viewModel.process == .regist || viewModel
-                            .process == .upload || viewModel.process == .finish
-                        {
+                            .process == .upload || viewModel.process == .finish {
                             if let mnemonic = MultiBackupManager.shared.mnemonic {
                                 BackupUploadView.PhraseWords(
                                     isBlur: viewModel.mnemonicBlur,
@@ -293,7 +292,7 @@ extension BackupUploadView {
         init(isBlur: Bool, mnemonic: String) {
             self.mnemonic = mnemonic
             self.isBlur = isBlur
-            dataSource = mnemonic.split(separator: " ").enumerated().map { item in
+            self.dataSource = mnemonic.split(separator: " ").enumerated().map { item in
                 WordListView.WordItem(id: item.offset + 1, word: String(item.element))
             }
         }

@@ -49,10 +49,9 @@ public struct VSheet<Content>: View where Content: View {
     public init(
         model: VSheetModel = .init()
     )
-        where Content == Color
-    {
+        where Content == Color {
         self.model = model
-        content = { .clear }
+        self.content = { .clear }
     }
 
     // MARK: Public
@@ -94,7 +93,7 @@ struct VSheet_Previews: PreviewProvider {
                 .edgesIgnoringSafeArea(.all)
 
             VSheet(content: {
-                VLazyScrollView(range: 1 ..< 100, content: { num in
+                VLazyScrollView(range: 1..<100, content: { num in
                     Text(String(num))
                         .padding(.vertical, 10)
                 })

@@ -8,6 +8,8 @@
 import Flow
 import Foundation
 
+// MARK: - Flow.AccountInfo
+
 extension Flow {
     struct AccountInfo: Decodable {
         public let address: Flow.Address

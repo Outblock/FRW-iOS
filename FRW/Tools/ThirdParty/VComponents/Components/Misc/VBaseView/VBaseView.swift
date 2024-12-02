@@ -48,8 +48,7 @@ public struct VBaseView<
     NavBarLeadingItemContent: View,
     NavBarTitleContent: View,
     NavBarTrailingItemContent: View,
-    Content: View
-{
+    Content: View {
     // MARK: Lifecycle
 
     // MARK: Initializers - Leading and Trailing
@@ -79,8 +78,7 @@ public struct VBaseView<
             -> NavBarTrailingItemContent,
         @ViewBuilder content: @escaping () -> Content
     )
-        where NavBarTitleContent == VBaseHeaderFooter
-    {
+        where NavBarTitleContent == VBaseHeaderFooter {
         self.init(
             model: model,
             titleContent: {
@@ -106,12 +104,11 @@ public struct VBaseView<
         @ViewBuilder leadingItem navBarLeadingItemContent: @escaping () -> NavBarLeadingItemContent,
         @ViewBuilder content: @escaping () -> Content
     )
-        where NavBarTrailingItemContent == Never
-    {
+        where NavBarTrailingItemContent == Never {
         self.model = model
         self.navBarTitleContent = navBarTitleContent
         self.navBarLeadingItemContent = navBarLeadingItemContent
-        navBarTrailingItemContent = nil
+        self.navBarTrailingItemContent = nil
         self.content = content
     }
 
@@ -124,8 +121,7 @@ public struct VBaseView<
     )
         where
         NavBarTitleContent == VBaseHeaderFooter,
-        NavBarTrailingItemContent == Never
-    {
+        NavBarTrailingItemContent == Never {
         self.init(
             model: model,
             titleContent: {
@@ -151,11 +147,10 @@ public struct VBaseView<
             -> NavBarTrailingItemContent,
         @ViewBuilder content: @escaping () -> Content
     )
-        where NavBarLeadingItemContent == Never
-    {
+        where NavBarLeadingItemContent == Never {
         self.model = model
         self.navBarTitleContent = navBarTitleContent
-        navBarLeadingItemContent = nil
+        self.navBarLeadingItemContent = nil
         self.navBarTrailingItemContent = navBarTrailingItemContent
         self.content = content
     }
@@ -170,8 +165,7 @@ public struct VBaseView<
     )
         where
         NavBarLeadingItemContent == Never,
-        NavBarTitleContent == VBaseHeaderFooter
-    {
+        NavBarTitleContent == VBaseHeaderFooter {
         self.init(
             model: model,
             titleContent: {
@@ -197,12 +191,11 @@ public struct VBaseView<
     )
         where
         NavBarLeadingItemContent == Never,
-        NavBarTrailingItemContent == Never
-    {
+        NavBarTrailingItemContent == Never {
         self.model = model
         self.navBarTitleContent = navBarTitleContent
-        navBarLeadingItemContent = nil
-        navBarTrailingItemContent = nil
+        self.navBarLeadingItemContent = nil
+        self.navBarTrailingItemContent = nil
         self.content = content
     }
 
@@ -215,8 +208,7 @@ public struct VBaseView<
         where
         NavBarLeadingItemContent == Never,
         NavBarTitleContent == VBaseHeaderFooter,
-        NavBarTrailingItemContent == Never
-    {
+        NavBarTrailingItemContent == Never {
         self.init(
             model: model,
             titleContent: {

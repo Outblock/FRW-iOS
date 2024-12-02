@@ -65,8 +65,7 @@ extension SPQRCameraController: AVCaptureMetadataOutputObjectsDelegate {
 
         if let bottomPoint = points.max(by: { $0.y < $1.y }) {
             if let secondBottomPoint = points.sorted(by: { $0.y < $1.y }).dropLast()
-                .max(by: { $0.y < $1.y })
-            {
+                .max(by: { $0.y < $1.y }) {
                 let maxX = max(bottomPoint.x, secondBottomPoint.x)
                 let minX = min(bottomPoint.x, secondBottomPoint.x)
 

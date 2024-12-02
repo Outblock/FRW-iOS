@@ -55,8 +55,7 @@ public struct VList<Data, ID, RowContent>: View
     where
     Data: RandomAccessCollection,
     ID: Hashable,
-    RowContent: View
-{
+    RowContent: View {
     // MARK: Lifecycle
 
     // MARK: Initializers - View Builder
@@ -87,8 +86,7 @@ public struct VList<Data, ID, RowContent>: View
     )
         where
         Data.Element: Identifiable,
-        ID == Data.Element.ID
-    {
+        ID == Data.Element.ID {
         self.init(
             model: model,
             layout: layoutType,

@@ -196,8 +196,7 @@ extension RemoteConfigManager {
             case .canUpgrade:
                 if let remoteVersion = RemoteConfigManager.shared.remoteVersion,
                    let currentVersion = Bundle.main
-                   .infoDictionary?["CFBundleShortVersionString"] as? String
-                {
+                   .infoDictionary?["CFBundleShortVersionString"] as? String {
                     return remoteVersion.compareVersion(to: currentVersion) == .orderedDescending
                 } else {
                     return false

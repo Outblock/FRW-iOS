@@ -28,7 +28,7 @@ class ProfileEditViewModel: ViewModel {
     // MARK: Lifecycle
 
     init() {
-        state = State()
+        self.state = State()
         UserManager.shared.$userInfo.sink { [weak self] userInfo in
             guard let userInfo = userInfo else {
                 return

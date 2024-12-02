@@ -95,25 +95,25 @@ class IPManager {
             "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
         let osName: String = {
             #if os(iOS)
-                #if targetEnvironment(macCatalyst)
-                    return "macOS(Catalyst)"
-                #else
-                    return "iOS"
-                #endif
-            #elseif os(watchOS)
-                return "watchOS"
-            #elseif os(tvOS)
-                return "tvOS"
-            #elseif os(macOS)
-                return "macOS"
-            #elseif os(Linux)
-                return "Linux"
-            #elseif os(Windows)
-                return "Windows"
-            #elseif os(Android)
-                return "Android"
+            #if targetEnvironment(macCatalyst)
+            return "macOS(Catalyst)"
             #else
-                return "Unknown"
+            return "iOS"
+            #endif
+            #elseif os(watchOS)
+            return "watchOS"
+            #elseif os(tvOS)
+            return "tvOS"
+            #elseif os(macOS)
+            return "macOS"
+            #elseif os(Linux)
+            return "Linux"
+            #elseif os(Windows)
+            return "Windows"
+            #elseif os(Android)
+            return "Android"
+            #else
+            return "Unknown"
             #endif
         }()
 

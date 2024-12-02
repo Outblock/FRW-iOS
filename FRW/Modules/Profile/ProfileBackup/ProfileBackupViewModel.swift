@@ -13,7 +13,7 @@ class ProfileBackupViewModel: ObservableObject {
 
     init() {
         if let uid = UserManager.shared.activatedUID {
-            selectedBackupType = MultiAccountStorage.shared.getBackupType(uid)
+            self.selectedBackupType = MultiAccountStorage.shared.getBackupType(uid)
         }
 
         NotificationCenter.default.publisher(for: .backupTypeDidChanged)

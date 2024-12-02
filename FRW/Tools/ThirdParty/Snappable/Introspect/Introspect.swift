@@ -20,7 +20,7 @@ enum Introspect {
             return nil
         }
 
-        for subview in superview.subviews[0 ..< entryIndex].reversed() {
+        for subview in superview.subviews[0..<entryIndex].reversed() {
             if let typed = subview as? AnyViewType {
                 return typed
             }
@@ -71,8 +71,7 @@ enum TargetViewSelector {
     }
 
     static func siblingOfTypeOrAncestor<TargetView: PlatformView>(from entry: PlatformView)
-        -> TargetView?
-    {
+        -> TargetView? {
         if let sibling: TargetView = siblingOfType(from: entry) {
             return sibling
         }

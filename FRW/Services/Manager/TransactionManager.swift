@@ -136,7 +136,7 @@ extension TransactionManager {
             type: TransactionManager.TransactionType,
             data: Data = Data()
         ) {
-            transactionId = id
+            self.transactionId = id
             self.createTime = createTime
             self.type = type
             self.data = data
@@ -260,14 +260,20 @@ extension TransactionManager {
                         if result.isFailed {
                             self.errorMsg = result.errorMessage
                             self.internalStatus = .failed
-                            debugPrint("TransactionHolder -> onCheck result failed: \(result.errorMessage)")
+                            debugPrint(
+                                "TransactionHolder -> onCheck result failed: \(result.errorMessage)"
+                            )
                             self.trackResult(
                                 result: result,
                                 fromId: self.transactionId.hex
                             )
                             switch result.errorCode {
                             case .storageCapacityExceeded:
-                                AlertViewController.showInsufficientStorageError(minimumBalance: WalletManager.shared.minimumStorageBalance.doubleValue)
+                                AlertViewController
+                                    .showInsufficientStorageError(
+                                        minimumBalance: WalletManager
+                                            .shared.minimumStorageBalance.doubleValue
+                                    )
                             default:
                                 break
                             }
@@ -469,8 +475,7 @@ extension TransactionManager {
     func isTokenEnabling(symbol: String) -> Bool {
         for holder in holders {
             if holder.type == .addToken, let token = holder.decodedObject(TokenModel.self),
-               token.symbol == symbol
-            {
+               token.symbol == symbol {
                 return true
             }
         }
@@ -482,8 +487,7 @@ extension TransactionManager {
         for holder in holders {
             if holder.type == .addCollection,
                let collection = holder.decodedObject(NFTCollectionInfo.self),
-               collection.contractName == contractName
-            {
+               collection.contractName == contractName {
                 return true
             }
         }
@@ -494,8 +498,7 @@ extension TransactionManager {
     func isNFTTransfering(id: String) -> Bool {
         for holder in holders {
             if holder.type == .transferNFT, let model = holder.decodedObject(NFTTransferModel.self),
-               model.nft.id == id
-            {
+               model.nft.id == id {
                 return true
             }
         }

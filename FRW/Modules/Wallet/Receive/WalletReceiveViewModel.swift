@@ -11,7 +11,7 @@ class WalletReceiveViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init() {
-        address = WalletManager.shared.selectedAccountAddress
+        self.address = WalletManager.shared.selectedAccountAddress
     }
 
     // MARK: Internal

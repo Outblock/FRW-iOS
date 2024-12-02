@@ -65,7 +65,7 @@ public struct VBaseButton<Content>: View where Content: View {
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.state = state
-        gestureHandler = { gestureState in if gestureState.isClicked { action() } }
+        self.gestureHandler = { gestureState in if gestureState.isClicked { action() } }
         self.content = content
     }
 
@@ -77,7 +77,7 @@ public struct VBaseButton<Content>: View where Content: View {
         gesture gestureHandler: @escaping (VBaseButtonGestureState) -> Void,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        state = .init(isEnabled: isEnabled)
+        self.state = .init(isEnabled: isEnabled)
         self.gestureHandler = gestureHandler
         self.content = content
     }
@@ -88,8 +88,8 @@ public struct VBaseButton<Content>: View where Content: View {
         action: @escaping () -> Void,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        state = .init(isEnabled: isEnabled)
-        gestureHandler = { gestureState in if gestureState.isClicked { action() } }
+        self.state = .init(isEnabled: isEnabled)
+        self.gestureHandler = { gestureState in if gestureState.isClicked { action() } }
         self.content = content
     }
 

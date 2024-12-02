@@ -38,9 +38,9 @@ extension FRWAPI.Utils: TargetType, AccessTokenAuthorizable {
             return Config.get(.lilico)
         case .retoken:
             #if LILICOPROD
-                return .init(string: "https://scanner.lilico.app")!
+            return .init(string: "https://scanner.lilico.app")!
             #else
-                return .init(string: "https://dev-scanner.lilico.app")!
+            return .init(string: "https://dev-scanner.lilico.app")!
             #endif
         case .flowAddress:
             return .init(string: "https://production.key-indexer.flow.com/")!

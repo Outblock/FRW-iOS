@@ -429,8 +429,7 @@ extension NFTUIKitListStyleHandler {
 
     private func loadCurrentCollectionNFTsIfNeeded() {
         if let item = dataModel.selectedCollectionItem, !dataModel.isCollectionListStyle,
-           item.nfts.isEmpty, !item.isRequesting, !item.isEnd
-        {
+           item.nfts.isEmpty, !item.isRequesting, !item.isEnd {
             collectionView.beginLoading()
         }
     }
@@ -583,8 +582,7 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
         referenceSizeForFooterInSection section: Int
     ) -> CGSize {
         if section == Section.other.rawValue, !dataModel.isCollectionListStyle,
-           !dataModel.items.isEmpty
-        {
+           !dataModel.items.isEmpty {
             return CGSize(width: 0, height: CollecitonTitleViewHeight)
         }
 
@@ -696,8 +694,7 @@ extension NFTUIKitListStyleHandler: UICollectionViewDelegateFlowLayout, UICollec
         }
 
         if !dataModel.isCollectionListStyle, let nftList = dataModel.selectedCollectionItem?.nfts,
-           indexPath.item < nftList.count
-        {
+           indexPath.item < nftList.count {
             let nft = nftList[indexPath.item]
             Router.route(to: RouteMap.NFT.detail(vm, nft, nil))
             return

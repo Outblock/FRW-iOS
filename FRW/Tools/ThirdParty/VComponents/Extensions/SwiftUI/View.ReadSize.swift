@@ -9,9 +9,9 @@ import SwiftUI
 
 // MARK: - Read Size
 
-public extension View {
+extension View {
     /// Reads `View` size and calls an on-change block.
-    func readSize(
+    public func readSize(
         onChange completion: @escaping (CGSize) -> Void
     ) -> some View {
         background(

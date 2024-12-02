@@ -229,10 +229,10 @@ struct CustomToken: Codable {
         self.balance = balance
         self.flowIdentifier = flowIdentifier
 
-        userId = UserManager.shared.activatedUID ?? ""
-        belongAddress = WalletManager.shared
+        self.userId = UserManager.shared.activatedUID ?? ""
+        self.belongAddress = WalletManager.shared
             .getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? ""
-        network = LocalUserDefaults.shared.flowNetwork
+        self.network = LocalUserDefaults.shared.flowNetwork
     }
 
     // MARK: Internal

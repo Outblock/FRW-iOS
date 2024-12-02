@@ -47,9 +47,9 @@ class FlowLog {
     private let file = FileDestination()
 }
 
-public extension NSPredicate {
+extension NSPredicate {
     /// Predicate for fetching from OSLogStore, allow to condition subsystem, and set if empty subsystem should be filtered.
-    static func library(_ values: [String]) -> NSPredicate {
+    public static func library(_ values: [String]) -> NSPredicate {
         NSPredicate(format: "library in $LIST")
             .withSubstitutionVariables(["LIST": values])
     }

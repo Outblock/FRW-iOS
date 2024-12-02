@@ -11,7 +11,7 @@ class ChooseAccountViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(driveItems: [BackupManager.DriveItem], backupType: BackupManager.BackupType) {
-        items = driveItems
+        self.items = driveItems
         self.backupType = backupType
     }
 

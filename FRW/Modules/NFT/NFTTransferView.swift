@@ -99,8 +99,7 @@ class NFTTransferViewModel: ObservableObject {
             return
         }
         if EVMAccountManager.shared.selectedAccount != nil,
-           let identifier = nft.response.flowIdentifier
-        {
+           let identifier = nft.response.flowIdentifier {
             isValidNFT = true
             return
         }
@@ -186,8 +185,7 @@ class NFTTransferViewModel: ObservableObject {
                 }
 
                 if toAccountType == .coa,
-                   toAddress != EVMAccountManager.shared.accounts.first?.showAddress
-                {
+                   toAddress != EVMAccountManager.shared.accounts.first?.showAddress {
                     toAccountType = .eoa
                 }
 
@@ -407,7 +405,7 @@ class NFTTransferViewModel: ObservableObject {
     }
 }
 
-// MARK: - InsufficientStorageToastViewModel
+// MARK: InsufficientStorageToastViewModel
 
 extension NFTTransferViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
@@ -437,7 +435,7 @@ struct NFTTransferView: View {
 
         var body: some View {
             HStack(spacing: 12) {
-                ForEach(0 ..< totalNum, id: \.self) { index in
+                ForEach(0..<totalNum, id: \.self) { index in
                     if step == index {
                         Image("icon-right-arrow-1")
                             .renderingMode(.template)
@@ -593,8 +591,7 @@ struct NFTTransferView: View {
                 if contact.user?.emoji != nil {
                     contact.user?.emoji.icon(size: 44)
                 } else if let avatar = contact.avatar?.convertedAvatarString(),
-                          avatar.isEmpty == false
-                {
+                          avatar.isEmpty == false {
                     KFImage.url(URL(string: avatar))
                         .placeholder {
                             Image("placeholder")

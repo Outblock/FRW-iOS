@@ -24,13 +24,13 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
         self.isBoolMode = isBoolMode
 
         self.params = params
-        autohideIn = params.autohideIn
-        closeOnTapOutside = params.closeOnTapOutside
-        backgroundColor = params.backgroundColor
-        backgroundView = params.backgroundView
-        isOpaque = params.isOpaque
-        userDismissCallback = params.dismissCallback
-        userWillDismissCallback = params.willDismissCallback
+        self.autohideIn = params.autohideIn
+        self.closeOnTapOutside = params.closeOnTapOutside
+        self.backgroundColor = params.backgroundColor
+        self.backgroundView = params.backgroundView
+        self.isOpaque = params.isOpaque
+        self.userDismissCallback = params.dismissCallback
+        self.userWillDismissCallback = params.willDismissCallback
 
         if let view = view {
             self.view = view
@@ -39,8 +39,8 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
             self.itemView = itemView
         }
 
-        isPresentedRef = ClassReference($isPresented)
-        itemRef = ClassReference($item)
+        self.isPresentedRef = ClassReference($isPresented)
+        self.itemRef = ClassReference($item)
     }
 
     // MARK: Public
@@ -85,18 +85,18 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
     public func main(content: Content) -> some View {
         if isOpaque {
             #if os(iOS)
-                content.transparentNonAnimatingFullScreenCover(
-                    isPresented: $showSheet,
-                    dismissSource: dismissSource,
-                    userDismissCallback: userDismissCallback
-                ) {
-                    constructPopup()
-                }
+            content.transparentNonAnimatingFullScreenCover(
+                isPresented: $showSheet,
+                dismissSource: dismissSource,
+                userDismissCallback: userDismissCallback
+            ) {
+                constructPopup()
+            }
             #else
-                ZStack {
-                    content
-                    constructPopup()
-                }
+            ZStack {
+                content
+                constructPopup()
+            }
             #endif
         } else {
             ZStack {

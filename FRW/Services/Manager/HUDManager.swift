@@ -60,7 +60,7 @@ class HUD {
         haptic: SPIndicatorHaptic = .success
     ) {
         #if DEBUG
-            HUD.present(title: title, message: message, preset: preset, haptic: haptic)
+        HUD.present(title: title, message: message, preset: preset, haptic: haptic)
         #endif
     }
 
@@ -71,7 +71,7 @@ class HUD {
         haptic: SPIndicatorHaptic = .error
     ) {
         #if DEBUG
-            HUD.present(title: title, message: message, preset: preset, haptic: haptic)
+        HUD.present(title: title, message: message, preset: preset, haptic: haptic)
         #endif
     }
 

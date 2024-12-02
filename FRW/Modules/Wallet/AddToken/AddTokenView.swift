@@ -243,8 +243,7 @@ extension AddTokenView {
             .task {
                 Task { @MainActor in
                     if let color = await ImageHelper
-                        .colors(from: token.icon?.absoluteString ?? placeholder).first
-                    {
+                        .colors(from: token.icon?.absoluteString ?? placeholder).first {
                         self.color = color.opacity(0.1)
                     }
                 }

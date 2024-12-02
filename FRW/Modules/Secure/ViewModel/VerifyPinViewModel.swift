@@ -29,9 +29,9 @@ class VerifyPinViewModel: ObservableObject {
         let type = SecurityManager.shared.securityType
         switch type {
         case .both, .bionic:
-            currentVerifyType = .bionic
+            self.currentVerifyType = .bionic
         case .pin:
-            currentVerifyType = .pin
+            self.currentVerifyType = .pin
         default:
             break
         }
@@ -67,8 +67,7 @@ class VerifyPinViewModel: ObservableObject {
     @objc
     private func onAppBecomeActive() {
         if currentVerifyType == .bionic, isBionicVerifing == false,
-           canVerifyBionicAutomatically == true
-        {
+           canVerifyBionicAutomatically == true {
             verifyBionicAction()
         }
     }

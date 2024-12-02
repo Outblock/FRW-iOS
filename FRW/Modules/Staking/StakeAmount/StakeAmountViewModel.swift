@@ -44,7 +44,7 @@ class StakeAmountViewModel: ObservableObject {
         self.provider = provider
         self.isUnstake = isUnstake
         let token = WalletManager.shared.flowToken
-        balance = isUnstake ? (provider.currentNode?.stakingCount ?? 0) : WalletManager.shared
+        self.balance = isUnstake ? (provider.currentNode?.stakingCount ?? 0) : WalletManager.shared
             .getBalance(byId: token?.contractId ?? "").doubleValue
     }
 

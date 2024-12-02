@@ -21,8 +21,7 @@ extension View {
         where
         LeadingItem: View,
         Title: View,
-        TrailingItem: View
-    {
+        TrailingItem: View {
         modifier(VBaseViewNavigationBarCenter(
             model: model,
             titleContent: titleContent,
@@ -40,8 +39,7 @@ struct VBaseViewNavigationBarCenter<TrailingItem, Title, LeadingItem>: ViewModif
     where
     LeadingItem: View,
     Title: View,
-    TrailingItem: View
-{
+    TrailingItem: View {
     // MARK: Lifecycle
 
     // MARK: Initializers

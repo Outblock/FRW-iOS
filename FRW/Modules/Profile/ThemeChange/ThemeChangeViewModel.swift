@@ -23,7 +23,7 @@ extension ThemeChangeView {
         // MARK: Lifecycle
 
         init() {
-            state = ThemeChangeState(
+            self.state = ThemeChangeState(
                 isAuto: ThemeManager.shared.style == nil,
                 isLight: ThemeManager.shared.style == .light,
                 isDark: ThemeManager.shared.style == .dark

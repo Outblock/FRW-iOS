@@ -16,7 +16,7 @@ struct ThemeChangeView: RouteableView {
     init() {
         let value = UserDefaults.standard.string(forKey: "WalletCardBackrgound") ?? "fade:0"
         let card = CardBackground(value: value)
-        cardColor = card.color
+        self.cardColor = card.color
     }
 
     // MARK: Internal

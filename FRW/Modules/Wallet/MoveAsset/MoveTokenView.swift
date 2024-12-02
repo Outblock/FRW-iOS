@@ -66,7 +66,11 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                                 toContact: viewModel.toContact
                             )
 
-                            MoveTokenView.AccountView(isFree: viewModel.fromContact.walletType == viewModel.toContact.walletType) { _ in }
+                            MoveTokenView
+                                .AccountView(
+                                    isFree: viewModel.fromContact.walletType == viewModel
+                                        .toContact.walletType
+                                ) { _ in }
                                 .padding(.bottom, 36)
                         }
                         .padding(.bottom, 20)
@@ -87,15 +91,18 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                         .environmentObject(self.viewModel)
                         .padding(.horizontal, 22)
 
-                    VPrimaryButton(model: ButtonStyle.primary,
-                                   state: viewModel.buttonState,
-                                   action: {
-                                       log.debug("[Move] click button")
-                                       viewModel.onNext()
-                                       UIApplication.shared.endEditing()
-                                   }, title: "move".localized)
-                        .padding(.horizontal, 18)
-                        .padding(.bottom, 8)
+                    VPrimaryButton(
+                        model: ButtonStyle.primary,
+                        state: viewModel.buttonState,
+                        action: {
+                            log.debug("[Move] click button")
+                            viewModel.onNext()
+                            UIApplication.shared.endEditing()
+                        },
+                        title: "move".localized
+                    )
+                    .padding(.horizontal, 18)
+                    .padding(.bottom, 8)
                 }
             }
         }

@@ -104,7 +104,7 @@ public struct Shimmer: ViewModifier {
     private var layoutDirection
 }
 
-public extension View {
+extension View {
     /// Adds an animated shimmering effect to any view, typically to show that an operation is in progress.
     /// - Parameters:
     ///   - active: Convenience parameter to conditionally enable the effect. Defaults to `true`.
@@ -113,7 +113,7 @@ public extension View {
     ///   - bandSize: The size of the animated mask's "band". Defaults to 0.3 unit points, which corresponds to
     /// 20% of the extent of the gradient.
     @ViewBuilder
-    func shimmering(
+    public func shimmering(
         active: Bool = true,
         animation: Animation = Shimmer.defaultAnimation,
         gradient: Gradient = Shimmer.defaultGradient,
@@ -138,7 +138,7 @@ public extension View {
         message: "Use shimmering(active:animation:gradient:bandSize:) instead."
     )
     @ViewBuilder
-    func shimmering(
+    public func shimmering(
         active: Bool = true, duration: Double, bounce: Bool = false, delay: Double = 0.25
     ) -> some View {
         shimmering(
@@ -158,9 +158,9 @@ public struct PlaceholderShimmer: ViewModifier {
     }
 }
 
-public extension View {
+extension View {
     @ViewBuilder
-    func mockPlaceholder(_ active: Bool = true) -> some View {
+    public func mockPlaceholder(_ active: Bool = true) -> some View {
         if active {
             modifier(PlaceholderShimmer())
         } else {
@@ -170,32 +170,32 @@ public extension View {
 }
 
 #if DEBUG
-    struct Shimmer_Previews: PreviewProvider {
-        static var previews: some View {
-            Group {
-                Text("SwiftUI Shimmer")
-                if #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) {
-                    Text("SwiftUI Shimmer").preferredColorScheme(.light)
-                    Text("SwiftUI Shimmer").preferredColorScheme(.dark)
-                    VStack(alignment: .leading) {
-                        Text("Loading...").font(.title)
-                        Text(String(repeating: "Shimmer", count: 12))
-                            .redacted(reason: .placeholder)
-                    }.frame(maxWidth: 200)
-                }
+struct Shimmer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            Text("SwiftUI Shimmer")
+            if #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) {
+                Text("SwiftUI Shimmer").preferredColorScheme(.light)
+                Text("SwiftUI Shimmer").preferredColorScheme(.dark)
+                VStack(alignment: .leading) {
+                    Text("Loading...").font(.title)
+                    Text(String(repeating: "Shimmer", count: 12))
+                        .redacted(reason: .placeholder)
+                }.frame(maxWidth: 200)
             }
-            .padding()
-            .shimmering()
-            .previewLayout(.sizeThatFits)
-
-            VStack(alignment: .leading) {
-                Text("مرحبًا")
-                Text("← Right-to-left layout direction").font(.body)
-                Text("שלום")
-            }
-            .font(.largeTitle)
-            .shimmering()
-            .environment(\.layoutDirection, .rightToLeft)
         }
+        .padding()
+        .shimmering()
+        .previewLayout(.sizeThatFits)
+
+        VStack(alignment: .leading) {
+            Text("مرحبًا")
+            Text("← Right-to-left layout direction").font(.body)
+            Text("שלום")
+        }
+        .font(.largeTitle)
+        .shimmering()
+        .environment(\.layoutDirection, .rightToLeft)
     }
+}
 #endif

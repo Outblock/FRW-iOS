@@ -24,7 +24,7 @@ extension TabBarView {
             GeometryReader { proxy in
                 ZStack(alignment: .topLeading) {
                     HStack(spacing: 0) {
-                        ForEach(0 ..< pages.count, id: \.self) { index in
+                        ForEach(0..<pages.count, id: \.self) { index in
                             let pm = pages[index]
                             TabBarItemView(pageModel: pm, selected: $selected) {
                                 resetOffset(index: index, maxWidth: proxy.size.width)
@@ -82,6 +82,6 @@ private struct TranslateEffect: GeometryEffect {
     }
 }
 
-private extension Animation {
-    static let tabSelect = Animation.spring(response: 0.3, dampingFraction: 0.7)
+extension Animation {
+    fileprivate static let tabSelect = Animation.spring(response: 0.3, dampingFraction: 0.7)
 }

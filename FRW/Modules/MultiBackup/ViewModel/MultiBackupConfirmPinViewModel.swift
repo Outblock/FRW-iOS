@@ -11,7 +11,7 @@ class MultiBackupConfirmPinViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(pin: String) {
-        lastPin = pin
+        self.lastPin = pin
     }
 
     // MARK: Internal

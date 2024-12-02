@@ -11,8 +11,8 @@ class SelectProviderViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init() {
-        lilicoProvider = StakingProviderCache.cache.providers.first { $0.isLilico }
-        otherProviders = StakingProviderCache.cache.providers.filter { $0.isLilico == false }
+        self.lilicoProvider = StakingProviderCache.cache.providers.first { $0.isLilico }
+        self.otherProviders = StakingProviderCache.cache.providers.filter { $0.isLilico == false }
     }
 
     // MARK: Internal

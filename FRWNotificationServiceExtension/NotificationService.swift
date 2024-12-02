@@ -95,8 +95,7 @@ extension NotificationService {
         if let content = bestAttemptContent,
            let topic = content.userInfo["topic"] as? String,
            let ciphertext = content.userInfo["message"] as? String,
-           let tag = content.userInfo["tag"] as? UInt
-        {
+           let tag = content.userInfo["tag"] as? UInt {
             if WalletKitDecryptionService.canHandle(tag: tag) {
                 let mutableContent = handleWeb3WalletNotification(
                     content: content,

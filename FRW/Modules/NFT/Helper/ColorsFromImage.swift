@@ -54,7 +54,7 @@ extension UIImage {
 
         var colorCounts: [UInt32: Int] = [:]
 
-        for i in 0 ..< length {
+        for i in 0..<length {
             let pixelIndex = i * 4
             let r = data[pixelIndex]
             let g = data[pixelIndex + 1]

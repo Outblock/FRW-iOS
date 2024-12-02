@@ -373,8 +373,7 @@ class MoveNFTsViewModel: ObservableObject {
         }
 
         if ChildAccountManager.shared.selectedChildAccount != nil || EVMAccountManager.shared
-            .selectedAccount != nil
-        {
+            .selectedAccount != nil {
             let user = WalletManager.shared.walletAccount.readInfo(at: primaryAddr)
             toContact = Contact(
                 address: primaryAddr,
@@ -422,8 +421,7 @@ class MoveNFTsViewModel: ObservableObject {
 
     private func updateCollection(item: CollectionMask) {
         if item.maskId == selectedCollection?.maskId,
-           item.maskContractName == selectedCollection?.maskContractName
-        {
+           item.maskContractName == selectedCollection?.maskContractName {
             return
         }
         selectedCollection = item
@@ -472,13 +470,16 @@ class MoveNFTsViewModel: ObservableObject {
     }
 }
 
-// MARK: - InsufficientStorageToastViewModel
+// MARK: InsufficientStorageToastViewModel
 
 extension MoveNFTsViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
 
     private func checkForInsufficientStorage() {
-        _insufficientStorageFailure = insufficientStorageCheckForMove(from: fromContact.walletType, to: toContact.walletType)
+        _insufficientStorageFailure = insufficientStorageCheckForMove(
+            from: fromContact.walletType,
+            to: toContact.walletType
+        )
     }
 }
 

@@ -137,7 +137,7 @@ class LLPinCodeView: UIView, UITextInputTraits {
     }
 
     private func initItemViews() {
-        for _ in 0 ..< numberOfPin {
+        for _ in 0..<numberOfPin {
             let itemView = LLPinCodeItemView()
             itemView.snp.makeConstraints { make in
                 make.width.height.equalTo(ItemSize)
@@ -148,7 +148,7 @@ class LLPinCodeView: UIView, UITextInputTraits {
     }
 
     private func reload() {
-        for i in 0 ..< numberOfPin {
+        for i in 0..<numberOfPin {
             let itemView = stackView.arrangedSubviews[i] as! LLPinCodeItemView
             itemView.isTyped = i < text.count
         }

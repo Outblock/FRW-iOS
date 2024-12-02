@@ -42,8 +42,7 @@ final class VBaseButtonTapGestureRecognizer: UITapGestureRecognizer, UIGestureRe
 
     override func touchesMoved(_ touches: Set<UITouch>, with _: UIEvent) {
         if touchIsOnView(touches) == false ||
-            gestureViewLocationIsUnchanged == false
-        {
+            gestureViewLocationIsUnchanged == false {
             state = .ended
             initialTouchViewCenterLocationOnSuperView = nil
             gestureHandler(.none)
@@ -130,8 +129,8 @@ final class VBaseButtonTapGestureRecognizer: UITapGestureRecognizer, UIGestureRe
 
 // MARK: - Helpers
 
-private extension CGPoint {
-    func isOn(_ frame: CGSize, offset: CGFloat) -> Bool {
+extension CGPoint {
+    fileprivate func isOn(_ frame: CGSize, offset: CGFloat) -> Bool {
         let xIsOnTarget: Bool = {
             let isPositive: Bool = x >= 0
             switch isPositive {
@@ -151,14 +150,14 @@ private extension CGPoint {
         return xIsOnTarget && yIsOnTarget
     }
 
-    func equals(_ other: CGPoint, tolerance: CGFloat) -> Bool {
+    fileprivate func equals(_ other: CGPoint, tolerance: CGFloat) -> Bool {
         abs(x - other.x) < tolerance &&
             abs(y - other.y) < tolerance
     }
 }
 
-private extension UIView {
-    var centerLocationOnSuperView: CGPoint? {
+extension UIView {
+    fileprivate var centerLocationOnSuperView: CGPoint? {
         superview?.convert(center, to: nil)
     }
 }

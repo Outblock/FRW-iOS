@@ -45,8 +45,7 @@ class BackupPasswordViewModel: ObservableObject {
 
                     if let navi = Router.topNavigationController(),
                        let _ = navi.viewControllers
-                       .first(where: { $0.navigationItem.title == "backup".localized })
-                    {
+                       .first(where: { $0.navigationItem.title == "backup".localized }) {
                         Router.route(to: RouteMap.Profile.backupChange)
                     } else {
                         Router.popToRoot()
