@@ -150,7 +150,8 @@ class ChildAccountDetailViewModel: ObservableObject {
         for holder in TransactionManager.shared.holders {
             if holder.type == .unlinkAccount, holder.internalStatus == .pending,
                let holderModel = try? JSONDecoder().decode(ChildAccount.self, from: holder.data),
-               holderModel.addr == self.childAccount.addr {
+               holderModel.addr == self.childAccount.addr
+            {
                 return true
             }
         }
@@ -164,7 +165,8 @@ class ChildAccountDetailViewModel: ObservableObject {
 
         Task {
             guard let parent = WalletManager.shared.getPrimaryWalletAddress(),
-                  let child = self.childAccount.addr else {
+                  let child = self.childAccount.addr
+            else {
                 DispatchQueue.main.async {
                     self.collections = []
                     self.accessibleItems = []
@@ -238,7 +240,8 @@ class ChildAccountDetailViewModel: ObservableObject {
 
         Task {
             guard let parent = WalletManager.shared.getPrimaryWalletAddress(),
-                  let child = childAccount.addr else {
+                  let child = childAccount.addr
+            else {
                 DispatchQueue.main.async {
                     self.coins = []
                     self.accessibleItems = []
@@ -420,7 +423,8 @@ struct ChildAccountDetailView: RouteableView {
                 AccessibleItemView(item: vm.accessibleItems[idx]) { item in
                     if let collectionInfo = item as? NFTCollection, let addr = vm.childAccount.addr,
                        let pathId = collectionInfo.collection.path?.storagePathId(),
-                       collectionInfo.count > 0 {
+                       collectionInfo.count > 0
+                    {
                         Router.route(to: RouteMap.NFT.collectionDetail(
                             addr,
                             pathId,
@@ -639,8 +643,8 @@ extension ChildAccountManager {}
 
 // MARK: - ChildAccountDetailView.AccessibleItemView
 
-extension ChildAccountDetailView {
-    fileprivate struct AccessibleItemView: View {
+private extension ChildAccountDetailView {
+    struct AccessibleItemView: View {
         var item: ChildAccountAccessible
         var onClick: ((_ item: ChildAccountAccessible) -> Void)?
 
@@ -700,6 +704,8 @@ extension ChildAccountAccessible {
     var count: Int {
         0
     }
+
+    var isEmpty: Bool { count == 0 }
 }
 
 // MARK: - NFTCollection + ChildAccountAccessible

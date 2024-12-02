@@ -481,7 +481,7 @@ class SideContainerViewModel: ObservableObject {
             object: nil
         )
 
-        self.isLinkedAccount = ChildAccountManager.shared.selectedChildAccount != nil
+        isLinkedAccount = ChildAccountManager.shared.selectedChildAccount != nil
         ChildAccountManager.shared.$selectedChildAccount
             .receive(on: DispatchQueue.main)
             .map { $0 }
@@ -506,8 +506,7 @@ class SideContainerViewModel: ObservableObject {
         }
     }
 
-    @objc
-    func onRemoteConfigDidChange() {
+    @objc func onRemoteConfigDidChange() {
         DispatchQueue.main.async {
             self.hideBrowser = RemoteConfigManager.shared.config?.features.hideBrowser ?? true
         }

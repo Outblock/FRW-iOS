@@ -18,8 +18,7 @@ public extension Notification.Name {
     static let nftCollectionsDidChanged = Notification.Name("nftCollectionsDidChanged")
     static let nftCacheDidChanged = Notification.Name("nftCacheDidChanged")
 
-    static let transactionManagerDidChanged = Notification
-        .Name("transactionManagerDidChanged")
+    static let transactionManagerDidChanged = Notification.Name("transactionManagerDidChanged")
     static let transactionStatusDidChanged = Notification.Name("transactionStatusDidChanged")
 
     static let transactionCountDidChanged = Notification.Name("transactionCountDidChanged")
@@ -44,4 +43,5 @@ public extension Notification.Name {
     static let nftDidChangedByMoving = Notification.Name("nftDidChangedByMoving")
 
     static let remoteConfigDidUpdate = Notification.Name("remoteConfigDidUpdate")
+    static let accountDataDidUpdate = Notification.Name("accountDataDidUpdate")
 }

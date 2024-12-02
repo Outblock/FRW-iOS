@@ -22,6 +22,8 @@ class NFTTransferViewModel: ObservableObject {
         self.targetContact = targetContact
         self.fromChildAccount = fromChildAccount
         checkNFTReachable()
+        checkForInsufficientStorage()
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(onHolderChanged(noti:)),
@@ -97,7 +99,8 @@ class NFTTransferViewModel: ObservableObject {
             return
         }
         if EVMAccountManager.shared.selectedAccount != nil,
-           let identifier = nft.response.flowIdentifier {
+           let identifier = nft.response.flowIdentifier
+        {
             isValidNFT = true
             return
         }
@@ -147,7 +150,8 @@ class NFTTransferViewModel: ObservableObject {
         guard let toAddress = targetContact.address,
               let primaryAddress = WalletManager.shared.getPrimaryWalletAddress(),
               let currentAddress = WalletManager.shared
-              .getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
+              .getWatchAddressOrChildAccountAddressOrPrimaryAddress()
+        else {
             return
         }
 
@@ -182,7 +186,8 @@ class NFTTransferViewModel: ObservableObject {
                 }
 
                 if toAccountType == .coa,
-                   toAddress != EVMAccountManager.shared.accounts.first?.showAddress {
+                   toAddress != EVMAccountManager.shared.accounts.first?.showAddress
+                {
                     toAccountType = .eoa
                 }
 
@@ -224,7 +229,8 @@ class NFTTransferViewModel: ObservableObject {
                 case (.coa, .flow):
                     let nftId = nft.response.id
                     guard let identifier = nft.collection?.flowIdentifier ?? nft.response
-                        .flowIdentifier else {
+                        .flowIdentifier
+                    else {
                         throw NFTError.noCollectionInfo
                     }
                     if primaryAddress.lowercased() == toAddress.lowercased() {
@@ -319,7 +325,8 @@ class NFTTransferViewModel: ObservableObject {
                     )
                 case (.linked, .coa):
                     guard let nftIdentifier = nft.response.flowIdentifier,
-                          let nftId = UInt64(nft.response.id) else {
+                          let nftId = UInt64(nft.response.id)
+                    else {
                         return
                     }
                     let childAddr = fromChildAccount?.addr ?? currentAddress
@@ -392,10 +399,21 @@ class NFTTransferViewModel: ObservableObject {
     // MARK: Private
 
     private var isRequesting: Bool = false
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
 
     @objc
     private func onHolderChanged(noti _: Notification) {
         checkTransaction()
+    }
+}
+
+// MARK: - InsufficientStorageToastViewModel
+
+extension NFTTransferViewModel: InsufficientStorageToastViewModel {
+    var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
+
+    private func checkForInsufficientStorage() {
+        _insufficientStorageFailure = insufficientStorageCheckForTransfer()
     }
 }
 
@@ -419,7 +437,7 @@ struct NFTTransferView: View {
 
         var body: some View {
             HStack(spacing: 12) {
-                ForEach(0..<totalNum, id: \.self) { index in
+                ForEach(0 ..< totalNum, id: \.self) { index in
                     if step == index {
                         Image("icon-right-arrow-1")
                             .renderingMode(.template)
@@ -493,7 +511,7 @@ struct NFTTransferView: View {
 
                 Spacer()
 
-                sendButton
+                sendActionView
             }
             .padding(.horizontal, 28)
         }
@@ -555,10 +573,15 @@ struct NFTTransferView: View {
         .cornerRadius(16)
     }
 
-    var sendButton: some View {
-        WalletSendButtonView(allowEnable: $vm.isEmptyTransation) {
-            if vm.isEmptyTransation {
-                vm.sendAction()
+    var sendActionView: some View {
+        VStack(spacing: 0) {
+            InsufficientStorageToastView<NFTTransferViewModel>()
+                .environmentObject(self.vm)
+
+            WalletSendButtonView(allowEnable: $vm.isEmptyTransation) {
+                if vm.isEmptyTransation {
+                    vm.sendAction()
+                }
             }
         }
     }
@@ -570,7 +593,8 @@ struct NFTTransferView: View {
                 if contact.user?.emoji != nil {
                     contact.user?.emoji.icon(size: 44)
                 } else if let avatar = contact.avatar?.convertedAvatarString(),
-                          avatar.isEmpty == false {
+                          avatar.isEmpty == false
+                {
                     KFImage.url(URL(string: avatar))
                         .placeholder {
                             Image("placeholder")

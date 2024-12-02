@@ -14,7 +14,12 @@ class WalletNewsHandler: ObservableObject {
     // MARK: Lifecycle
 
     private init() {
-        self.removeIds = LocalUserDefaults.shared.removedNewsIds
+        removeIds = LocalUserDefaults.shared.removedNewsIds
+        NotificationCenter.default.addObserver(self, selector: #selector(onAccountDataUpdate), name: .accountDataDidUpdate, object: nil)
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     // MARK: Internal
@@ -39,7 +44,7 @@ class WalletNewsHandler: ObservableObject {
             self.list.append(contentsOf: news)
             self.removeExpiryNew()
             self.removeMarkedNews()
-            self.handleConfition()
+            self.handleCondition()
             self.orderNews()
             log.debug("[NEWS] count:\(list.count)")
         }
@@ -100,6 +105,11 @@ class WalletNewsHandler: ObservableObject {
         attributes: .concurrent
     )
 
+    @objc
+    private func onAccountDataUpdate() {
+        handleCondition(force: true)
+    }
+
     private func removeExpiryNew() {
         accessQueue.sync {
             let currentData = Date()
@@ -115,10 +125,10 @@ class WalletNewsHandler: ObservableObject {
         }
     }
 
-    private func handleConfition() {
+    private func handleCondition(force: Bool = false) {
         accessQueue.sync {
             list = list.filter { model in
-                guard let conditionList = model.conditions, !conditionList.isEmpty else {
+                guard let conditionList = model.conditions, !conditionList.isEmpty, force == false else {
                     return true
                 }
                 return !conditionList.map { $0.type.boolValue() }.contains(false)
@@ -177,7 +187,8 @@ extension WalletNewsHandler {
 
         if item.flag == .walletconnect,
            let request = WalletConnectManager.shared.pendingRequests
-           .first(where: { $0.topic == item.id }) {
+           .first(where: { $0.topic == item.id })
+        {
             WalletConnectManager.shared.handleRequest(request)
         }
 

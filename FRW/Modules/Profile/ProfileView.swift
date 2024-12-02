@@ -333,7 +333,6 @@ extension ProfileView {
                             } else {
                                 Router.route(to: RouteMap.Backup.backupList)
                             }
-
                         } label: {
                             ProfileView.SettingItemCell(
                                 iconName: Row.backup(vm).iconName,
@@ -1012,7 +1011,8 @@ extension ProfileView {
                 }
 
                 if let imageName = imageName, let sysImageColor = sysImageColor,
-                   style == .sysImage {
+                   style == .sysImage
+                {
                     Image(systemName: imageName)
                         .foregroundColor(sysImageColor)
                 }

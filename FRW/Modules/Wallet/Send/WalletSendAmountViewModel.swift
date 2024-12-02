@@ -63,6 +63,8 @@ class WalletSendAmountViewModel: ObservableObject {
         checkAddress()
         checkTransaction()
         fetchMinFlowBalance()
+        checkForInsufficientStorage()
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(onHolderChanged(noti:)),
@@ -123,7 +125,8 @@ class WalletSendAmountViewModel: ObservableObject {
 
     private var addressIsValid: Bool?
 
-    private var minBalance: Double = 0.001
+    private var minBalance: Decimal = 0.001
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
 }
 
 extension WalletSendAmountViewModel {
@@ -176,6 +179,10 @@ extension WalletSendAmountViewModel {
     }
 
     private func refreshInput() {
+        defer {
+            checkForInsufficientStorage()
+        }
+
         if errorType == .invalidAddress {
             return
         }
@@ -211,7 +218,7 @@ extension WalletSendAmountViewModel {
 
         if token.isFlowCoin, WalletManager.shared.isCoa(targetContact.address) {
             let validBalance = (
-                Decimal(amountBalance) - Decimal(minBalance)
+                Decimal(amountBalance) - minBalance
             ).doubleValue
             if validBalance < inputTokenNum {
                 errorType = .belowMinimum
@@ -229,12 +236,22 @@ extension WalletSendAmountViewModel {
     private func fetchMinFlowBalance() {
         Task {
             do {
-                self.minBalance = try await FlowNetwork.minFlowBalance()
+                self.minBalance = try await FlowNetwork.minFlowBalance().decimalValue
                 log.debug("[Flow] min balance:\(self.minBalance)")
             } catch {
                 self.minBalance = 0.001
             }
         }
+    }
+}
+
+// MARK: - InsufficientStorageToastViewModel
+
+extension WalletSendAmountViewModel: InsufficientStorageToastViewModel {
+    var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
+
+    private func checkForInsufficientStorage() {
+        _insufficientStorageFailure = insufficientStorageCheckForTransfer(amount: inputTokenNum.decimalValue)
     }
 }
 
@@ -253,7 +270,7 @@ extension WalletSendAmountViewModel {
                 do {
                     let topAmount = try await FlowNetwork.minFlowBalance()
                     let num = max(
-                        amountBalance - topAmount - WalletManager.moveFee,
+                        amountBalance - topAmount - WalletManager.fixedMoveFee.doubleValue,
                         0
                     )
                     DispatchQueue.main.async {
@@ -262,7 +279,7 @@ extension WalletSendAmountViewModel {
 
                     actualBalance = num.formatCurrencyString(digits: token.decimal)
                 } catch {
-                    let num = max(amountBalance - minBalance, 0)
+                    let num = max(amountBalance - minBalance.doubleValue, 0)
                     DispatchQueue.main.async {
                         self.inputText = num.formatCurrencyString()
                     }

@@ -45,7 +45,7 @@ struct WalletSendAmountView: RouteableView {
 
                 Spacer()
 
-                nextButton
+                nextActionView
             }
         }
         .onAppear {
@@ -350,23 +350,29 @@ struct WalletSendAmountView: RouteableView {
         .padding(.horizontal, 18)
     }
 
-    var nextButton: some View {
-        Button {
-            isAmountFocused = false
-            vm.nextAction()
-        } label: {
-            ZStack {
-                Text("next".localized)
-                    .foregroundColor(Color.LL.Button.text)
-                    .font(.inter(size: 14, weight: .bold))
+    var nextActionView: some View {
+        VStack(spacing: 0) {
+            InsufficientStorageToastView<WalletSendAmountViewModel>()
+                .environmentObject(self.vm)
+                .padding(.horizontal, 22)
+
+            Button {
+                isAmountFocused = false
+                vm.nextAction()
+            } label: {
+                ZStack {
+                    Text("next".localized)
+                        .foregroundColor(Color.LL.Button.text)
+                        .font(.inter(size: 14, weight: .bold))
+                }
+                .frame(height: 54)
+                .frame(maxWidth: .infinity)
+                .background(Color.LL.Button.color)
+                .cornerRadius(16)
+                .padding(.horizontal, 18)
             }
-            .frame(height: 54)
-            .frame(maxWidth: .infinity)
-            .background(Color.LL.Button.color)
-            .cornerRadius(16)
-            .padding(.horizontal, 18)
+            .disabled(!vm.isReadyForSend)
         }
-        .disabled(!vm.isReadyForSend)
     }
 
     // MARK: Private

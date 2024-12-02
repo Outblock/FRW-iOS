@@ -14,6 +14,19 @@ import SwiftUIX
 // MARK: - TokenDetailView
 
 struct TokenDetailView: RouteableView {
+    @Environment(\.colorScheme) var colorScheme
+    @StateObject private var vm: TokenDetailViewModel
+    @StateObject private var stakingManager = StakingManager.shared
+
+    private var isAccessible: Bool = true
+
+    private let lightGradientColors: [Color] = [.white.opacity(0), Color(hex: "#E6E6E6").opacity(0), Color(hex: "#E6E6E6").opacity(1)]
+    private let darkGradientColors: [Color] = [.white.opacity(0), .white.opacity(0), Color(hex: "#282828").opacity(1)]
+
+    var title: String {
+        return ""
+    }
+
     // MARK: Lifecycle
 
     init(token: TokenModel, accessible: Bool) {
@@ -22,13 +35,6 @@ struct TokenDetailView: RouteableView {
     }
 
     // MARK: Internal
-
-    @Environment(\.colorScheme)
-    var colorScheme
-
-    var title: String {
-        ""
-    }
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -59,6 +65,8 @@ struct TokenDetailView: RouteableView {
                             .isSelectedChildAccount ? .gone : .visible
                     )
                 chartContainerView.visibility(vm.hasRateAndChartData ? .visible : .gone)
+                storageView
+                    .visibility(self.vm.showStorageView ? .visible : .gone)
             }
             .padding(.horizontal, 18)
 //            .padding(.top, 12)
@@ -334,15 +342,7 @@ struct TokenDetailView: RouteableView {
             }
             .padding(.horizontal, 18)
 
-            if colorScheme == .dark {
-                Color(hex: "#262626")
-                    .opacity(0.64)
-                    .frame(height: 1)
-            } else {
-                Color.LL.Neutrals.neutrals10
-                    .opacity(0.64)
-                    .frame(height: 1)
-            }
+            separator()
 
             chartRangeView
             chartView
@@ -368,25 +368,58 @@ struct TokenDetailView: RouteableView {
         .padding(.vertical, 7)
     }
 
-    // MARK: Private
+    var storageView: some View {
+        HStack(spacing: 0) {
+            StorageUsageView(
+                usage: $vm.storageUsedDesc,
+                usageRatio: $vm.storageUsedRatio,
+                invertedVerticalOrder: true
+            )
+            .headerView(
+                HStack {
+                    Text("storage_usage".localized)
+                        .font(.inter(size: 16, weight: .semibold))
 
-    @StateObject
-    private var vm: TokenDetailViewModel
-    @StateObject
-    private var stakingManager = StakingManager.shared
+                    Spacer()
 
-    private var isAccessible: Bool = true
+                    Text(String(format: "%.3f FLOW", vm.storageFlow))
+                }
+            )
+            .footerView(
+                VStack(spacing: 8) {
+                    separator()
 
-    private let lightGradientColors: [Color] = [
-        .white.opacity(0),
-        Color(hex: "#E6E6E6").opacity(0),
-        Color(hex: "#E6E6E6").opacity(1),
-    ]
-    private let darkGradientColors: [Color] = [
-        .white.opacity(0),
-        .white.opacity(0),
-        Color(hex: "#282828").opacity(1),
-    ]
+                    HStack {
+                        Text("total_balance".localized)
+                            .font(.inter(size: 16, weight: .semibold))
+
+                        Spacer()
+
+                        Text(String(format: "%.3f FLOW", vm.totalBalance))
+                    }
+                }
+            )
+            .padding(.top, 16)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 22)
+            .background {
+                Color.LL.Neutrals.background.cornerRadius(16)
+            }
+        }
+        .padding(.bottom, 12)
+    }
+
+    private func separator() -> some View {
+        if colorScheme == .dark {
+            Color(hex: "#262626")
+                .opacity(0.64)
+                .frame(height: 1)
+        } else {
+            Color.LL.Neutrals.neutrals10
+                .opacity(0.64)
+                .frame(height: 1)
+        }
+    }
 }
 
 // MARK: - Chart

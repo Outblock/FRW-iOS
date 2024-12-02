@@ -45,14 +45,21 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
 
             NFTListView()
 
-            VPrimaryButton(
-                model: ButtonStyle.green,
-                state: viewModel.buttonState,
-                action: {
-                    viewModel.moveAction()
-                },
-                title: viewModel.moveButtonTitle
-            )
+            VStack(spacing: 0) {
+                InsufficientStorageToastView<MoveNFTsViewModel>()
+                    .environmentObject(self.viewModel)
+                    .background(Color.clear)
+
+                VPrimaryButton(
+                    model: ButtonStyle.green,
+                    state: viewModel.buttonState,
+                    action: {
+                        viewModel.moveAction()
+                    },
+                    title: viewModel.moveButtonTitle
+                )
+            }
+            .background(Color.clear)
         }
         .padding(.horizontal, 18)
         .applyRouteable(self)
