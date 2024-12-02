@@ -7,14 +7,14 @@
 
 import Foundation
 
-extension String? {
+extension Optional<String> {
     var isNotNullNorEmpty: Bool {
         // An optional bool is a 3-state variable: nil, false, true, so this expression evaluates to true only if self is
         self?.isEmpty == false
     }
 }
 
-extension URL? {
+extension Optional<URL> {
     var isNotNullNorEmpty: Bool {
         self?.absoluteString.isEmpty == false
     }
