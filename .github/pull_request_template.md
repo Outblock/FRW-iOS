@@ -5,9 +5,6 @@
 <!-- Provide a concise description of the changes made in this PR. 
 What functionality was added, updated, or fixed? -->
 
-## Screenshots (if applicable)
-<!-- Attach any screenshots that help explain your changes -->
-
 ## Need Regression Testing
 <!-- Indicate whether this PR requires regression testing and why. -->
 - [ ] Yes
@@ -25,3 +22,6 @@ What functionality was added, updated, or fixed? -->
 
 ## Additional Notes
 <!-- Add any other context or comments about the PR here -->
+
+## Screenshots (if applicable)
+<!-- Attach any screenshots that help explain your changes -->
