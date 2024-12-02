@@ -8,7 +8,10 @@
 import SwiftUI
 
 class WalletResetConfirmViewModel: ObservableObject {
-    @Published var text: String = ""
+    // MARK: Internal
+
+    @Published
+    var text: String = ""
 
     func resetWalletAction() {
         if text != "delete_wallet_desc_2".localized {
@@ -16,10 +19,17 @@ class WalletResetConfirmViewModel: ObservableObject {
             return
         }
 
-        HUD.showAlert(title: "reset_warning_alert_title".localized, msg: "delete_warning_alert_desc".localized, cancelAction: {}, confirmTitle: "delete_wallet".localized) {
+        HUD.showAlert(
+            title: "reset_warning_alert_title".localized,
+            msg: "delete_warning_alert_desc".localized,
+            cancelAction: {},
+            confirmTitle: "delete_wallet".localized
+        ) {
             self.doReset()
         }
     }
+
+    // MARK: Private
 
     private func doReset() {
         HUD.loading()

@@ -20,13 +20,20 @@ extension ThemeChangeView {
     }
 
     class ThemeChangeViewModel: ViewModel {
-        @Published var state: ThemeChangeState
+        // MARK: Lifecycle
 
         init() {
-            state = ThemeChangeState(isAuto: ThemeManager.shared.style == nil,
-                                     isLight: ThemeManager.shared.style == .light,
-                                     isDark: ThemeManager.shared.style == .dark)
+            self.state = ThemeChangeState(
+                isAuto: ThemeManager.shared.style == nil,
+                isLight: ThemeManager.shared.style == .light,
+                isDark: ThemeManager.shared.style == .dark
+            )
         }
+
+        // MARK: Internal
+
+        @Published
+        var state: ThemeChangeState
 
         func trigger(_ input: ThemeChangeInput) {
             switch input {
@@ -34,6 +41,8 @@ extension ThemeChangeView {
                 changeStyle(newStyle: cs)
             }
         }
+
+        // MARK: Private
 
         private func changeStyle(newStyle: ColorScheme?) {
             DispatchQueue.main.async {
@@ -43,9 +52,11 @@ extension ThemeChangeView {
         }
 
         private func reloadStates() {
-            state = ThemeChangeState(isAuto: ThemeManager.shared.style == nil,
-                                     isLight: ThemeManager.shared.style == .light,
-                                     isDark: ThemeManager.shared.style == .dark)
+            state = ThemeChangeState(
+                isAuto: ThemeManager.shared.style == nil,
+                isLight: ThemeManager.shared.style == .light,
+                isDark: ThemeManager.shared.style == .dark
+            )
         }
     }
 }

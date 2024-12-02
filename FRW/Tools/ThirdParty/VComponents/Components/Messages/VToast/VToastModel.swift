@@ -11,56 +11,27 @@ import SwiftUI
 
 /// Model that describes UI.
 public struct VToastModel {
-    // MARK: Properties
-
-    /// Reference to `VTextFieldModel`.
-    public static let textFieldReference: VTextFieldModel = .init()
-
-    /// Sub-model containing layout properties.
-    public var layout: Layout = .init()
-
-    /// Sub-model containing color properties.
-    public var colors: Colors = .init()
-
-    /// Sub-model containing font properties.
-    public var fonts: Fonts = .init()
-
-    /// Sub-model containing animation properties.
-    public var animations: Animations = .init()
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes model with default values.
     public init() {}
 
+    // MARK: Public
+
     // MARK: Layout
 
     /// Sub-model containing layout properties.
     public struct Layout {
-        // MARK: Properties
-
-        /// Edge from which toast appears, and to which it disappears. Defaults to `default`.
-        public var presentationEdge: PresentationEdge = .default
-
-        /// Distance from presented edge. Defaults to `20`.
-        public var presentationOffsetFromSafeEdge: CGFloat = 20
-
-        /// Max width. Defaults to `0.9` ration of screen width.
-        public var maxWidth: CGFloat = UIScreen.main.bounds.width * 0.9
-
-        /// Corner radius type. Defaults to `default`.
-        public var cornerRadiusType: CornerRadiusType = .default
-
-        /// Content margins. Defaults to `20` horizontal and `10` vertical.
-        public var contentMargins: Margins = .init(
-            horizontal: 20,
-            vertical: 20
-        )
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
         /// Initializes sub-model with default values.
         public init() {}
+
+        // MARK: Public
 
         // MARK: Margins
 
@@ -78,6 +49,8 @@ public struct VToastModel {
 
             /// Presentation from bottom.
             case bottom
+
+            // MARK: Public
 
             // MARK: Initailizers
 
@@ -99,17 +72,48 @@ public struct VToastModel {
             /// Custom.
             case custom(_ value: CGFloat)
 
+            // MARK: Public
+
             // MARK: Initailizers
 
             /// Default value. Set to `rounded`.
             public static var `default`: Self { .rounded }
         }
+
+        // MARK: Properties
+
+        /// Edge from which toast appears, and to which it disappears. Defaults to `default`.
+        public var presentationEdge: PresentationEdge = .default
+
+        /// Distance from presented edge. Defaults to `20`.
+        public var presentationOffsetFromSafeEdge: CGFloat = 20
+
+        /// Max width. Defaults to `0.9` ration of screen width.
+        public var maxWidth: CGFloat = UIScreen.main.bounds.width * 0.9
+
+        /// Corner radius type. Defaults to `default`.
+        public var cornerRadiusType: CornerRadiusType = .default
+
+        /// Content margins. Defaults to `20` horizontal and `10` vertical.
+        public var contentMargins: Margins = .init(
+            horizontal: 20,
+            vertical: 20
+        )
     }
 
     // MARK: Colors
 
     /// Sub-model containing color properties.
     public struct Colors {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Text color.
@@ -117,32 +121,40 @@ public struct VToastModel {
 
         /// Background color.
         public var background: Color = textFieldReference.colors.background.enabled
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
 
     // MARK: Fonts
 
     /// Sub-model containing font properties.
     public struct Fonts {
-        // MARK: Properties
-
-        /// Text font. Defaults to system font of size `16` and weight `semibold`.
-        public var text: Font = .system(size: 16, weight: .semibold)
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
         /// Initializes sub-model with default values.
         public init() {}
+
+        // MARK: Public
+
+        // MARK: Properties
+
+        /// Text font. Defaults to system font of size `16` and weight `semibold`.
+        public var text: Font = .system(size: 16, weight: .semibold)
     }
 
     // MARK: Animations
 
     /// Sub-model containing animation properties.
     public struct Animations {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Display duration. Defaults to `3` seconds.
@@ -153,10 +165,22 @@ public struct VToastModel {
 
         /// Disappear animation. Defaults to `easeIn` with duration `0.2`.
         public var disappear: BasicAnimation? = .init(curve: .easeIn, duration: 0.2)
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
+
+    // MARK: Properties
+
+    /// Reference to `VTextFieldModel`.
+    public static let textFieldReference: VTextFieldModel = .init()
+
+    /// Sub-model containing layout properties.
+    public var layout: Layout = .init()
+
+    /// Sub-model containing color properties.
+    public var colors: Colors = .init()
+
+    /// Sub-model containing font properties.
+    public var fonts: Fonts = .init()
+
+    /// Sub-model containing animation properties.
+    public var animations: Animations = .init()
 }

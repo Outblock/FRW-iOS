@@ -7,42 +7,42 @@
 
 import SwiftUI
 
-// MARK: - V Modal Model
+// MARK: - VModalModel
 
 /// Model that describes UI.
 public struct VModalModel {
-    // MARK: Properties
-
-    /// Reference to `VCloseButtonModel`.
-    public static let closeButtonReference: VCloseButtonModel = .init()
-
-    /// Reference to `VSheetModel`.
-    public static let sheetReference: VSheetModel = .init()
-
-    /// Sub-model containing layout properties.
-    public var layout: Layout = .init()
-
-    /// Sub-model containing color properties.
-    public var colors: Colors = .init()
-
-    /// Sub-model containing font properties.
-    public var fonts: Fonts = .init()
-
-    /// Sub-model containing animation properties.
-    public var animations: Animations = .init()
-
-    /// Sub-model containing misc properties.
-    public var misc: Misc = .init()
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes model with default values.
     public init() {}
 
+    // MARK: Public
+
     // MARK: Layout
 
     /// Sub-model containing layout properties.
     public struct Layout {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: Rounded Corners
+
+        /// Enum that describes rounded corners, such as all, `top`, `bottom`, `custom`, or `none`.
+        public typealias RoundedCorners = VSheetModel.Layout.RoundedCorners
+
+        // MARK: Margins
+
+        /// Sub-model containing `leading`, `trailing`, `top`, and `bottom` margins.
+        public typealias Margins = LayoutGroup_LTTB
+
         // MARK: Properties
 
         /// Modal size. Defaults to `0.9` ratio of screen with and `0.6` ratio of screen height.
@@ -62,8 +62,6 @@ public struct VModalModel {
 
         /// Header divider height. Defaults to `0`.
         public var headerDividerHeight: CGFloat = 0
-
-        var hasDivider: Bool { headerDividerHeight > 0 }
 
         /// Close button dimension. Default to `32`.
         public var closeButtonDimension: CGFloat = closeButtonReference.layout.dimension
@@ -98,26 +96,34 @@ public struct VModalModel {
         /// Header item spacing. Defaults to `10`.
         public var headerSpacing: CGFloat = 10
 
-        // MARK: Initializers
+        // MARK: Internal
 
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: Rounded Corners
-
-        /// Enum that describes rounded corners, such as all, `top`, `bottom`, `custom`, or `none`.
-        public typealias RoundedCorners = VSheetModel.Layout.RoundedCorners
-
-        // MARK: Margins
-
-        /// Sub-model containing `leading`, `trailing`, `top`, and `bottom` margins.
-        public typealias Margins = LayoutGroup_LTTB
+        var hasDivider: Bool { headerDividerHeight > 0 }
     }
 
     // MARK: Colors
 
     /// Sub-model containing color properties.
     public struct Colors {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: State Colors
+
+        /// Sub-model containing colors for component states.
+        public typealias StateColors = StateColors_EPD
+
+        // MARK: State Colors and Opacities
+
+        /// Sub-model containing colors and opacities for component states.
+        public typealias StateColorsAndOpacities = StateColorsAndOpacities_EPD_PD
+
         // MARK: Properties
 
         /// Background color.
@@ -139,44 +145,42 @@ public struct VModalModel {
 
         /// Blinding color.
         public var blinding: Color = .init(componentAsset: "Modal.Blinding")
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: State Colors
-
-        /// Sub-model containing colors for component states.
-        public typealias StateColors = StateColors_EPD
-
-        // MARK: State Colors and Opacities
-
-        /// Sub-model containing colors and opacities for component states.
-        public typealias StateColorsAndOpacities = StateColorsAndOpacities_EPD_PD
     }
 
     // MARK: Fonts
 
     /// Sub-model containing font properties.
     public struct Fonts {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Header font.
         ///
         /// Only applicable when using init with title.
         public var header: Font = .system(size: 17, weight: .bold)
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
 
     // MARK: Animations
 
     /// Sub-model containing animation properties.
     public struct Animations {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Appear animation. Defaults to `linear` with duration `0.05`.
@@ -193,26 +197,20 @@ public struct VModalModel {
 
         /// Blur during appear and disappear. Defaults to `3`.
         public var blur: CGFloat = 3
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
 
     // MARK: Misc
 
     /// Sub-model containing misc properties.
     public struct Misc {
-        // MARK: Properties
-
-        /// Method of dismissing modal. Defaults to `default`.
-        public var dismissType: Set<DismissType> = .default
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
         /// Initializes sub-model with default values.
         public init() {}
+
+        // MARK: Public
 
         // MARK: Dismiss Type
 
@@ -227,7 +225,37 @@ public struct VModalModel {
             /// Backtap.
             case backTap
         }
+
+        // MARK: Properties
+
+        /// Method of dismissing modal. Defaults to `default`.
+        public var dismissType: Set<DismissType> = .default
     }
+
+    // MARK: Properties
+
+    /// Reference to `VCloseButtonModel`.
+    public static let closeButtonReference: VCloseButtonModel = .init()
+
+    /// Reference to `VSheetModel`.
+    public static let sheetReference: VSheetModel = .init()
+
+    /// Sub-model containing layout properties.
+    public var layout: Layout = .init()
+
+    /// Sub-model containing color properties.
+    public var colors: Colors = .init()
+
+    /// Sub-model containing font properties.
+    public var fonts: Fonts = .init()
+
+    /// Sub-model containing animation properties.
+    public var animations: Animations = .init()
+
+    /// Sub-model containing misc properties.
+    public var misc: Misc = .init()
+
+    // MARK: Internal
 
     // MARK: Sub-Models
 

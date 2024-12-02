@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Slider State
+// MARK: - VSliderState
 
 /// Enum that describes state, such as `enabled` or `disabled`.
 public enum VSliderState: Int, CaseIterable {
@@ -18,6 +18,8 @@ public enum VSliderState: Int, CaseIterable {
 
     /// Disabled.
     case disabled
+
+    // MARK: Public
 
     // MARK: Properties
 

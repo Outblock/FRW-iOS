@@ -22,6 +22,7 @@ class MoveSingleNFTViewModel: ObservableObject {
 
         let accountViewModel = MoveAccountsViewModel(selected: "") { _ in }
         self.accountCount = accountViewModel.list.count
+        checkForInsufficientStorage()
     }
 
     // MARK: Internal
@@ -90,9 +91,12 @@ class MoveSingleNFTViewModel: ObservableObject {
 
     func updateToContact(_ contact: Contact) {
         toContact = contact
+        checkForInsufficientStorage()
     }
 
     // MARK: Private
+
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
 
     private func loadUserInfo() {
         guard let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress()
@@ -276,6 +280,16 @@ class MoveSingleNFTViewModel: ObservableObject {
             log.error("[Move NFT] Move NFT failed on Linked Account. ")
             log.error(error)
         }
+    }
+}
+
+// MARK: - InsufficientStorageToastViewModel
+
+extension MoveSingleNFTViewModel: InsufficientStorageToastViewModel {
+    var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
+    
+    private func checkForInsufficientStorage() {
+        self._insufficientStorageFailure = insufficientStorageCheckForMove(from: self.fromContact.walletType, to: self.toContact.walletType)
     }
 }
 

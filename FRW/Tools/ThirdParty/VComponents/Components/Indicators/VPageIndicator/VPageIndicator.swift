@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Page Indicator
+// MARK: - VPageIndicator
 
 /// Indicator component that indicates selection in page control.
 ///
@@ -39,15 +39,7 @@ import SwiftUI
 ///     }
 ///
 public struct VPageIndicator: View {
-    // MARK: Properties
-
-    private let model: VPageIndicatorModel
-    private let pageIndicatorType: VPageIndicatorType
-
-    private let total: Int
-
-    private let selectedIndex: Int
-    @State private var animatableSelectedIndex: Int?
+    // MARK: Lifecycle
 
     // MARK: Intializers
 
@@ -63,6 +55,8 @@ public struct VPageIndicator: View {
         self.total = total
         self.selectedIndex = selectedIndex
     }
+
+    // MARK: Public
 
     // MARK: Body
 
@@ -100,6 +94,19 @@ public struct VPageIndicator: View {
         })
     }
 
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VPageIndicatorModel
+    private let pageIndicatorType: VPageIndicatorType
+
+    private let total: Int
+
+    private let selectedIndex: Int
+    @State
+    private var animatableSelectedIndex: Int?
+
     // MARK: State Syncs
 
     private func syncInternalStateWithState() {
@@ -111,7 +118,7 @@ public struct VPageIndicator: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - VPageIndicator_Previews
 
 struct VPageIndicator_Previews: PreviewProvider {
     static var previews: some View {

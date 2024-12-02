@@ -10,9 +10,13 @@ import SwiftUI
 
 typealias Callback = () -> Void
 
+// MARK: - DragGestureViewModifier
+
 struct DragGestureViewModifier: ViewModifier {
-    @GestureState private var isDragging: Bool = false
-    @State var gestureState: GestureStatus = .idle
+    @GestureState
+    private var isDragging: Bool = false
+    @State
+    var gestureState: GestureStatus = .idle
 
     var onStart: Callback?
     var onUpdate: ((DragGesture.Value) -> Void)?

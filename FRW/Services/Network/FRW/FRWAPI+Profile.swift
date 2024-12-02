@@ -8,6 +8,8 @@
 import Foundation
 import Moya
 
+// MARK: - FRWAPI.Profile
+
 extension FRWAPI {
     enum Profile {
         case updateInfo(UserInfoUpdateRequest)
@@ -15,13 +17,15 @@ extension FRWAPI {
     }
 }
 
+// MARK: - FRWAPI.Profile + TargetType, AccessTokenAuthorizable
+
 extension FRWAPI.Profile: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
-        return .bearer
+        .bearer
     }
 
     var baseURL: URL {
-        return Config.get(.lilico)
+        Config.get(.lilico)
     }
 
     var path: String {
@@ -51,6 +55,6 @@ extension FRWAPI.Profile: TargetType, AccessTokenAuthorizable {
     }
 
     var headers: [String: String]? {
-        return FRWAPI.commonHeaders
+        FRWAPI.commonHeaders
     }
 }

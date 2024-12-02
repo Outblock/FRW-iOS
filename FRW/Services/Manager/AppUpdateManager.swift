@@ -8,22 +8,27 @@
 import Foundation
 
 struct AppUpdateManager {
-    static let shared = AppUpdateManager()
-
-    var isUpdated: Bool = false
-    var isNowInstall: Bool = false
+    // MARK: Lifecycle
 
     private init() {
         let theKey = "flow_cache_version_key"
-        if let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+        if let currentVersion = Bundle.main
+            .infoDictionary?["CFBundleShortVersionString"] as? String {
             if let cacheVersion = UserDefaults.standard.string(forKey: theKey) {
-                isUpdated = (currentVersion == cacheVersion)
-                isNowInstall = false
+                self.isUpdated = (currentVersion == cacheVersion)
+                self.isNowInstall = false
             } else {
-                isUpdated = true
-                isNowInstall = true
+                self.isUpdated = true
+                self.isNowInstall = true
             }
             UserDefaults.standard.set(currentVersion, forKey: theKey)
         }
     }
+
+    // MARK: Internal
+
+    static let shared = AppUpdateManager()
+
+    var isUpdated: Bool = false
+    var isNowInstall: Bool = false
 }

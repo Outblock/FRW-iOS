@@ -17,27 +17,28 @@ extension MultiBackupVerifyPinViewModel {
     }
 }
 
+// MARK: - MultiBackupVerifyPinViewModel
+
 class MultiBackupVerifyPinViewModel: ObservableObject {
-    @Published var inputPin: String = ""
-    @Published var pinCodeErrorTimes: Int = 0
+    // MARK: Lifecycle
 
-    var from: MultiBackupVerifyPinViewModel.From
-    var callback: MultiBackupVerifyPinViewModel.VerifyCallback?
-
-    private lazy var generator: UINotificationFeedbackGenerator = {
-        let obj = UINotificationFeedbackGenerator()
-        return obj
-    }()
-
-    private var isBionicVerifing: Bool = false
-    private var canVerifyBionicAutomatically = true
-
-    init(from: MultiBackupVerifyPinViewModel.From,
-         callback: MultiBackupVerifyPinViewModel.VerifyCallback?)
-    {
+    init(
+        from: MultiBackupVerifyPinViewModel.From,
+        callback: MultiBackupVerifyPinViewModel.VerifyCallback?
+    ) {
         self.callback = callback
         self.from = from
     }
+
+    // MARK: Internal
+
+    @Published
+    var inputPin: String = ""
+    @Published
+    var pinCodeErrorTimes: Int = 0
+
+    var from: MultiBackupVerifyPinViewModel.From
+    var callback: MultiBackupVerifyPinViewModel.VerifyCallback?
 
     var desc: String {
         if from == .backup {
@@ -46,6 +47,16 @@ class MultiBackupVerifyPinViewModel: ObservableObject {
             return "pin_hint_for_create".localized
         }
     }
+
+    // MARK: Private
+
+    private lazy var generator: UINotificationFeedbackGenerator = {
+        let obj = UINotificationFeedbackGenerator()
+        return obj
+    }()
+
+    private var isBionicVerifing: Bool = false
+    private var canVerifyBionicAutomatically = true
 }
 
 extension MultiBackupVerifyPinViewModel {

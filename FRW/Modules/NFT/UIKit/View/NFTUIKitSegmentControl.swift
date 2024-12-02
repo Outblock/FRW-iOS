@@ -11,10 +11,29 @@ import UIKit
 private let Height: CGFloat = 32
 private let ButtonHeight: CGFloat = 24
 
+// MARK: - NFTUIKitSegmentControl
+
 class NFTUIKitSegmentControl: UIView {
+    // MARK: Lifecycle
+
+    required init(names: [String]) {
+        self.names = names
+        super.init(frame: .zero)
+        setupViews()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("")
+    }
+
+    // MARK: Internal
+
     var names: [String]
     var selectedIndex: Int = 0
     var callback: ((Int) -> Void)?
+
+    // MARK: Private
 
     private lazy var stackView: UIStackView = {
         let view = UIStackView(arrangedSubviews: [])
@@ -37,22 +56,11 @@ class NFTUIKitSegmentControl: UIView {
     }()
 
     private var unselectColor: UIColor {
-        return UIColor.LL.frontColor
+        UIColor.LL.frontColor
     }
 
     private var selectedColor: UIColor {
-        return UIColor.LL.Neutrals.text
-    }
-
-    required init(names: [String]) {
-        self.names = names
-        super.init(frame: .zero)
-        setupViews()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("")
+        UIColor.LL.Neutrals.text
     }
 
     private func setupViews() {
@@ -99,7 +107,8 @@ class NFTUIKitSegmentControl: UIView {
         return button
     }
 
-    @objc private func onButtonClick(button: UIButton) {
+    @objc
+    private func onButtonClick(button: UIButton) {
         changeSelectIndex(index: button.tag)
     }
 

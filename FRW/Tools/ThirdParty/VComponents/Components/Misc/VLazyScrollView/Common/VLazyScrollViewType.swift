@@ -19,6 +19,8 @@ public enum VLazyScrollViewType {
     /// Horizontal layout.
     case horizontal(_ model: VLazyScrollViewModelHorizontal = .init())
 
+    // MARK: Public
+
     // MARK: Initailizers
 
     /// Default value. Set to `vertical`.

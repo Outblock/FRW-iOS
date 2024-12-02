@@ -257,13 +257,19 @@ extension TransactionManager {
                         if result.isFailed {
                             self.errorMsg = result.errorMessage
                             self.internalStatus = .failed
-                            debugPrint(
-                                "TransactionHolder -> onCheck result failed: \(result.errorMessage)"
-                            )
+
                             self.trackResult(
                                 result: result,
                                 fromId: self.transactionId.hex
                             )
+                            debugPrint("TransactionHolder -> onCheck result failed: \(result.errorMessage)")
+                            
+                            switch result.errorCode {
+                            case .storageCapacityExceeded:
+                                AlertViewController.showInsufficientStorageError(minimumBalance: WalletManager.shared.minimumStorageBalance.doubleValue)
+                            default:
+                                break
+                            }
                         } else if result.isComplete {
                             self.internalStatus = .success
                             self.trackResult(

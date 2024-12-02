@@ -10,16 +10,10 @@ import FirebaseMessaging
 import UIKit
 import WalletConnectNotify
 
+// MARK: - PushHandler
+
 class PushHandler: NSObject, ObservableObject {
-    static let shared = PushHandler()
-
-    @Published var isPushEnabled: Bool = false
-
-    private var fcmToken: String?
-    private var uploadedHistory: [String: String] = [:]
-    private var cancelSets = Set<AnyCancellable>()
-
-    private var uploadingAddress: String?
+    // MARK: Lifecycle
 
     override private init() {
         super.init()
@@ -47,6 +41,13 @@ class PushHandler: NSObject, ObservableObject {
 //        requestPermission()
     }
 
+    // MARK: Internal
+
+    static let shared = PushHandler()
+
+    @Published
+    var isPushEnabled: Bool = false
+
     func requestPermission() {
         let options: UNAuthorizationOptions = [.alert, .badge, .sound]
         UNUserNotificationCenter.current().requestAuthorization(options: options) { result, _ in
@@ -69,6 +70,14 @@ class PushHandler: NSObject, ObservableObject {
             }
         }
     }
+
+    // MARK: Private
+
+    private var fcmToken: String?
+    private var uploadedHistory: [String: String] = [:]
+    private var cancelSets = Set<AnyCancellable>()
+
+    private var uploadingAddress: String?
 }
 
 extension PushHandler {
@@ -94,7 +103,9 @@ extension PushHandler {
     }
 
     private func uploadCurrentToken() {
-        guard let address = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress(), let fcmToken = fcmToken else {
+        guard let address = WalletManager.shared
+            .getWatchAddressOrChildAccountAddressOrPrimaryAddress(),
+            let fcmToken = fcmToken else {
             return
         }
 
@@ -114,7 +125,9 @@ extension PushHandler {
     }
 
     func uploadWhenAppUpgrade() {
-        guard let address = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress(), let fcmToken = Messaging.messaging().fcmToken else {
+        guard let address = WalletManager.shared
+            .getWatchAddressOrChildAccountAddressOrPrimaryAddress(),
+            let fcmToken = Messaging.messaging().fcmToken else {
             return
         }
 
@@ -127,7 +140,11 @@ extension PushHandler {
     private func sendToken(token: String, address: String) {
         Task {
             do {
-                let resp: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.Utils.retoken(token, address))
+                let resp: Network.EmptyResponse = try await Network
+                    .requestWithRawModel(FRWAPI.Utils.retoken(
+                        token,
+                        address
+                    ))
                 log.debug("\(address) upload push token success", context: resp)
                 DispatchQueue.main.async {
                     self.uploadedHistory[address] = token
@@ -143,6 +160,8 @@ extension PushHandler {
     }
 }
 
+// MARK: MessagingDelegate, UNUserNotificationCenterDelegate
+
 extension PushHandler: MessagingDelegate, UNUserNotificationCenterDelegate {
     func messaging(_: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         log.debug("fcm token: ", context: fcmToken)
@@ -152,11 +171,15 @@ extension PushHandler: MessagingDelegate, UNUserNotificationCenterDelegate {
 //        registerForWalletConnect()
     }
 
-    func userNotificationCenter(_: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+    func userNotificationCenter(
+        _: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse
+    ) async {
         await MainActor.run {
             let userInfo = response.notification.request.content.userInfo
             log.debug("user did click a notification", context: userInfo)
-            if let transactionId = userInfo["transactionId"] as? String, let url = transactionId.toFlowScanTransactionDetailURL {
+            if let transactionId = userInfo["transactionId"] as? String,
+               let url = transactionId.toFlowScanTransactionDetailURL {
                 Router.route(to: RouteMap.Explore.browser(url))
             }
         }

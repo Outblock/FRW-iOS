@@ -8,9 +8,16 @@
 import Flow
 import Foundation
 
+// MARK: - NFTCollectionConfig
+
 final class NFTCollectionConfig {
-    static let share = NFTCollectionConfig()
+    // MARK: Lifecycle
+
     private init() {}
+
+    // MARK: Internal
+
+    static let share = NFTCollectionConfig()
 
     var config: [NFTCollectionInfo] = []
 

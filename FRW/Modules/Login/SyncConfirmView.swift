@@ -9,18 +9,25 @@ import Kingfisher
 import SwiftUI
 import SwiftUIX
 
+// MARK: - SyncConfirmView
+
 struct SyncConfirmView: RouteableView {
-    @StateObject var viewModel: SyncConfirmViewModel
+    // MARK: Lifecycle
+
+    init(user: SyncInfo.User) {
+        self.user = user
+        _viewModel = StateObject(wrappedValue: SyncConfirmViewModel(userId: user.userId ?? ""))
+    }
+
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: SyncConfirmViewModel
 
     var user: SyncInfo.User
 
     var title: String {
         ""
-    }
-
-    init(user: SyncInfo.User) {
-        self.user = user
-        _viewModel = StateObject(wrappedValue: SyncConfirmViewModel(userId: user.userId ?? ""))
     }
 
     var body: some View {
@@ -53,10 +60,13 @@ struct SyncConfirmView: RouteableView {
 
             Spacer()
 
-            VPrimaryButton(model: ButtonStyle.primary,
-                           action: {
-                               onConfirm()
-                           }, title: "confirm_tag".localized)
+            VPrimaryButton(
+                model: ButtonStyle.primary,
+                action: {
+                    onConfirm()
+                },
+                title: "confirm_tag".localized
+            )
         }
         .padding(.horizontal, 24)
         .applyRouteable(self)
@@ -103,15 +113,26 @@ struct SyncConfirmView: RouteableView {
 }
 
 #Preview {
-    SyncConfirmView(user: SyncInfo.User(userAvatar: "", userName: "six", walletAddress: "0x1231231", userId: "123123"))
+    SyncConfirmView(user: SyncInfo.User(
+        userAvatar: "",
+        userName: "six",
+        walletAddress: "0x1231231",
+        userId: "123123"
+    ))
 }
 
+// MARK: - ClearBackgroundView
+
 struct ClearBackgroundView: UIViewRepresentable {
+    // MARK: Internal
+
     func makeUIView(context _: Context) -> UIView {
-        return InnerView()
+        InnerView()
     }
 
     func updateUIView(_: UIView, context _: Context) {}
+
+    // MARK: Private
 
     private class InnerView: UIView {
         override func didMoveToWindow() {

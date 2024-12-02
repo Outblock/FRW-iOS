@@ -8,9 +8,17 @@
 import SwiftUI
 
 extension AlertView {
+    enum ButtonsLayout {
+        case horizontal, vertical
+    }
+    
     enum ButtonType {
         case normal
         case confirm
+        case primaryAction
+        case secondaryAction
+
+        // MARK: Internal
 
         var titleColor: Color {
             switch self {
@@ -18,6 +26,10 @@ extension AlertView {
                 return Color.LL.Button.color
             case .confirm:
                 return Color.LL.Button.text
+            case .primaryAction:
+                return Color.LL.Button.Primary.text
+            case .secondaryAction:
+                return Color.LL.Button.Elevated.text
             }
         }
 
@@ -27,11 +39,15 @@ extension AlertView {
                 return Color.LL.Button.text
             case .confirm:
                 return Color.LL.Neutrals.neutrals1
+            case .primaryAction:
+                return Color.Theme.Accent.green
+            case .secondaryAction:
+                return Color.LL.Button.Elevated.Secondary.background
             }
         }
 
         var font: Font {
-            return .inter(size: 14, weight: .semibold)
+            .inter(size: 14, weight: .semibold)
         }
     }
 
@@ -43,17 +59,34 @@ extension AlertView {
     }
 }
 
+// MARK: - AlertView
+
 struct AlertView: ViewModifier {
-    @Binding var isPresented: Bool
+    @Binding
+    var isPresented: Bool
     let title: String?
     let desc: String?
     let attributedDesc: NSAttributedString?
+    let customContentView: AnyView?
     let buttons: [AlertView.ButtonItem]
     let useDefaultCancelButton: Bool
+    let showCloseButton: Bool
+    let buttonsLayout: ButtonsLayout
+    let textAlignment: TextAlignment
+    var onClose: ((_ completion: (() -> Void)?) -> Void)?
+    
+    private var _textAlignment: Alignment {
+        switch self.textAlignment {
+        case .center: return .center
+        case .leading: return .leading
+        case .trailing: return .trailing
+        }
+    }
 
     let testString: AttributedString = {
         let normalDict = [NSAttributedString.Key.foregroundColor: UIColor.LL.Neutrals.text]
-        let highlightDict = [NSAttributedString.Key.foregroundColor: UIColor.LL.Primary.salmonPrimary]
+        let highlightDict =
+            [NSAttributedString.Key.foregroundColor: UIColor.LL.Primary.salmonPrimary]
 
         var str = NSMutableAttributedString(string: "this is a ", attributes: normalDict)
         str.append(NSMutableAttributedString(string: "highlight", attributes: highlightDict))
@@ -75,6 +108,7 @@ struct AlertView: ViewModifier {
                 .padding(.bottom, 45)
                 .visibility(isPresented ? .visible : .gone)
         }
+        .multilineTextAlignment(self.textAlignment)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
@@ -86,28 +120,37 @@ extension AlertView {
                 Text(title ?? "")
                     .foregroundColor(Color.LL.Neutrals.text)
                     .font(.inter(size: 20, weight: .semibold))
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: self._textAlignment)
+                    .padding(.horizontal, 8)
                     .visibility(title != nil ? .visible : .gone)
 
-                Text(AttributedString(attributedDesc ?? NSAttributedString(string: desc ?? "")))
-                    .foregroundColor(Color.LL.Neutrals.text)
-                    .font(.inter(size: 14, weight: .regular))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .visibility((desc != nil || attributedDesc != nil) ? .visible : .gone)
-            }
-
-            VStack(spacing: 8) {
-                ForEach(buttons, id: \.id) { btn in
-                    Button {
-                        closeAction()
-                        btn.action()
-                    } label: {
-                        createButtonLabel(item: btn)
+                VStack(spacing: 0) {
+                    if let customContentView {
+                        customContentView
+                    } else {
+                        if let desc {
+                            // The explicit `.init` call enables markdown. SwiftUI bug.
+                            Text(.init(desc))
+                        } else if let attributedDesc {
+                            Text(AttributedString(attributedDesc))
+                        }
                     }
                 }
+                .foregroundColor(Color.LL.Neutrals.text)
+                .font(.inter(size: 14, weight: .regular))
+                .frame(maxWidth: .infinity, alignment: self._textAlignment)
+                .visibility((desc != nil || attributedDesc != nil || customContentView != nil) ? .visible : .gone)
+            }
 
-                defaultCancelButton
-                    .visibility(useDefaultCancelButton ? .visible : .gone)
+            switch self.buttonsLayout {
+            case .vertical:
+                VStack(spacing: 8) {
+                    self.buttonsList
+                }
+            case .horizontal:
+                HStack(spacing: 16) {
+                    self.buttonsList
+                }
             }
         }
         .padding(.horizontal, 24)
@@ -118,18 +161,48 @@ extension AlertView {
         .padding(.horizontal, 28)
         .zIndex(.infinity)
         .transition(.scale)
+        .overlay(alignment: .topTrailing) {
+            Button {
+                closeAction(completion: nil)
+            } label: {
+                Image("icon_close_circle_gray")
+                    .foregroundColor(.gray)
+                    .frame(width: 16, height: 16)
+                    .padding(12)
+            }
+            .visibility(self.showCloseButton ? .visible : .gone)
+            .padding(.trailing, 36)
+            .padding(.top, 18)
+        }
     }
 
+    @ViewBuilder
+    private var buttonsList: some View {
+        ForEach(buttons, id: \.id) { btn in
+            Button {
+                closeAction {
+                    btn.action()
+                }
+            } label: {
+                createButtonLabel(item: btn)
+            }
+        }
+        
+        defaultCancelButton
+            .visibility(useDefaultCancelButton ? .visible : .gone)
+    }
+    
     var defaultCancelButton: some View {
         let btn = AlertView.ButtonItem(type: .normal, title: "cancel".localized, action: {})
         return Button {
-            closeAction()
+            closeAction(completion: nil)
         } label: {
             createButtonLabel(item: btn)
         }
     }
 
-    @ViewBuilder func createButtonLabel(item: AlertView.ButtonItem) -> some View {
+    @ViewBuilder
+    func createButtonLabel(item: AlertView.ButtonItem) -> some View {
         Text(item.title)
             .font(item.type.font)
             .foregroundColor(item.type.titleColor)
@@ -142,28 +215,49 @@ extension AlertView {
 }
 
 extension AlertView {
-    private func closeAction() {
+    private func closeAction(completion: (() -> Void)?) {
+        let closeAction = {
+            completion?()
+            self.isPresented = false
+        }
+        
         withAnimation(.alertViewSpring) {
-            isPresented = false
+            if let onClose {
+                onClose {
+                    closeAction()
+                }
+            } else {
+                closeAction()
+            }
         }
     }
 }
 
 extension View {
-    func customAlertView(isPresented: Binding<Bool>,
-                         title: String? = nil,
-                         desc: String? = nil,
-                         attributedDesc: NSAttributedString? = nil,
-                         buttons: [AlertView.ButtonItem] = [],
-                         useDefaultCancelButton: Bool = true) -> some View
-    {
-        modifier(AlertView(isPresented: isPresented, title: title, desc: desc, attributedDesc: attributedDesc, buttons: buttons, useDefaultCancelButton: useDefaultCancelButton))
+    func customAlertView(
+        isPresented: Binding<Bool>,
+        title: String? = nil,
+        desc: String? = nil,
+        attributedDesc: NSAttributedString? = nil,
+        customContentView: AnyView? = nil,
+        buttons: [AlertView.ButtonItem] = [],
+        useDefaultCancelButton: Bool = true,
+        showCloseButton: Bool = false,
+        buttonsLayout: AlertView.ButtonsLayout = .vertical,
+        textAlignment: TextAlignment = .leading,
+        onClose: ((_ completion: (() -> Void)?) -> Void)? = nil
+    ) -> some View {
+        modifier(AlertView(isPresented: isPresented, title: title, desc: desc, attributedDesc: attributedDesc, customContentView: customContentView, buttons: buttons, useDefaultCancelButton: useDefaultCancelButton, showCloseButton: showCloseButton, buttonsLayout: buttonsLayout, textAlignment: textAlignment, onClose: onClose))
     }
 }
 
+// MARK: - AlertViewTestView
+
 struct AlertViewTestView: View {
-    @State var isPresented: Bool = true
-    let desc = "No account found with the recoveray phrase. Do you want to create a new account with your phrase?"
+    @State
+    var isPresented: Bool = true
+    let desc =
+        "No account found with the recoveray phrase. Do you want to create a new account with your phrase?"
 
     var body: some View {
         Button {
@@ -173,7 +267,12 @@ struct AlertViewTestView: View {
         } label: {
             Text("test")
         }
-        .customAlertView(isPresented: $isPresented, title: "Account not Found", desc: desc, buttons: [confirmBtn])
+        .customAlertView(
+            isPresented: $isPresented,
+            title: "Account not Found",
+            desc: desc,
+            buttons: [confirmBtn]
+        )
     }
 
     var confirmBtn: AlertView.ButtonItem {
@@ -183,8 +282,102 @@ struct AlertViewTestView: View {
     }
 }
 
+// MARK: - AlertView_Previews
+
 struct AlertView_Previews: PreviewProvider {
     static var previews: some View {
         AlertViewTestView()
+    }
+}
+
+#Preview("Insufficient Storage") {
+    let customContentView: () -> some View = {
+        VStack(alignment: .center, spacing: 8) {
+            Text(.init("insufficient_storage::error::content::first".localized))
+            Text(.init("insufficient_storage::error::content::second".localized(0.021)))
+                .foregroundColor(Color.LL.Button.Warning.background)
+            Text(.init("insufficient_storage::error::content::third".localized))
+                .padding(.top, 8)
+        }
+        .padding(.vertical, 8)
+    }
+    
+    EmptyView()
+        .customAlertView(
+            isPresented: .constant(true),
+            title: .init("insufficient_storage::error::title".localized),
+            customContentView: AnyView(customContentView()),
+            buttons: [
+                AlertView.ButtonItem(type: .secondaryAction, title: "Deposit", action: {}),
+                AlertView.ButtonItem(type: .primaryAction, title: "Buy FLOW", action: {})
+            ],
+            useDefaultCancelButton: false,
+            buttonsLayout: .horizontal,
+            textAlignment: .center
+        )
+}
+
+final class AlertViewController: UIHostingController<AlertViewController.AlertContainerView> {
+    struct AlertContainerView: View {
+        let isPresented: Binding<Bool>
+        let title: String?
+        let customContentView: AnyView?
+        let buttons: [AlertView.ButtonItem]
+        let useDefaultCancelButton: Bool
+        let showCloseButton: Bool
+        let buttonsLayout: AlertView.ButtonsLayout
+        let textAlignment: TextAlignment
+        var onClose: ((_ completion: (() -> Void)?) -> Void)?
+        
+        var body: some View {
+            EmptyView()
+                .background(Color.clear)
+                .customAlertView(
+                    isPresented: self.isPresented,
+                    title: title,
+                    customContentView: customContentView,
+                    buttons: buttons,
+                    useDefaultCancelButton: useDefaultCancelButton,
+                    showCloseButton: showCloseButton,
+                    buttonsLayout: buttonsLayout,
+                    textAlignment: textAlignment,
+                    onClose: onClose
+                )
+        }
+    }
+    
+    static func presentOnRoot(
+        title: String? = nil,
+        customContentView: AnyView? = nil,
+        buttons: [AlertView.ButtonItem] = [],
+        useDefaultCancelButton: Bool = true,
+        showCloseButton: Bool = false,
+        buttonsLayout: AlertView.ButtonsLayout = .vertical,
+        textAlignment: TextAlignment = .leading
+    ) {
+        let topController = Router.topPresentedController()
+        var view = AlertContainerView(
+            isPresented: Binding.constant(true),
+            title: title,
+            customContentView: customContentView,
+            buttons: buttons,
+            useDefaultCancelButton: useDefaultCancelButton,
+            showCloseButton: showCloseButton,
+            buttonsLayout: buttonsLayout,
+            textAlignment: textAlignment
+        )
+        let viewController = Self(rootView: view)
+        viewController.modalTransitionStyle = .crossDissolve
+        viewController.modalPresentationStyle = .overFullScreen
+        view.onClose = { [weak viewController] completion in
+            viewController?.dismiss(animated: true) {
+                completion?()
+            }
+        }
+        viewController.rootView = view
+        viewController.view.backgroundColor = UIColor.clear
+        viewController.view.subviews.first?.backgroundColor = UIColor.clear
+
+        topController.present(viewController, animated: true)
     }
 }

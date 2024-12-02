@@ -15,12 +15,10 @@ extension View {
     }
 }
 
-// MARK: - V Navigation View Appearance
+// MARK: - VTabNavigationViewAppearance
 
 struct VTabNavigationViewAppearance: ViewModifier {
-    // MARK: Properties
-
-    private let model: VTabNavigationViewModel
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -34,10 +32,18 @@ struct VTabNavigationViewAppearance: ViewModifier {
         UITabBar.appearance().unselectedItemTintColor = .init(model.colors.item)
     }
 
+    // MARK: Internal
+
     // MARK: Body
 
     func body(content: Content) -> some View {
         content
             .accentColor(model.colors.selectedItem)
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VTabNavigationViewModel
 }

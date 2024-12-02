@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Text Field Highlight
+// MARK: - VTextFieldHighlight
 
 /// State that describes highlight state, such as `none`, `success`, or `error`.
 public enum VTextFieldHighlight: Int, CaseIterable {
@@ -24,6 +24,8 @@ public enum VTextFieldHighlight: Int, CaseIterable {
 
     /// Loading
     case loading
+
+    // MARK: Public
 
     // MARK: Initailizers
 

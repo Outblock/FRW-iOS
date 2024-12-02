@@ -139,6 +139,14 @@ class TokenDetailViewModel: ObservableObject {
     // MARK: Internal
 
     @Published
+    var storageUsedRatio: Double = 0
+    @Published
+    var storageUsedDesc: String = ""
+    @Published
+    var storageFlow: Double = 0
+    @Published
+    var totalBalance: Double = 0
+    @Published
     var token: TokenModel
     @Published
     var market: QuoteMarket = LocalUserDefaults.shared.market
@@ -167,7 +175,10 @@ class TokenDetailViewModel: ObservableObject {
     @Published
     var showSheet: Bool = false
     var buttonAction: TokenDetailViewModel.Action = .none
+    var showStorageView: Bool { return self.token.isFlowCoin }
 
+    var isTokenDetailsButtonEnabled: Bool { self.token.website.isNotNullNorEmpty }
+    
     // MARK: Private
 
     private var cancelSets = Set<AnyCancellable>()
@@ -306,7 +317,25 @@ extension TokenDetailViewModel {
 extension TokenDetailViewModel {
     private func fetchAllData() {
         Task {
-            try? await WalletManager.shared.fetchBalance()
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask {
+                    try? await WalletManager.shared.fetchBalance()
+                }
+                
+                group.addTask {
+                    let accountInfo = try? await FlowNetwork.checkAccountInfo()
+                    if let accountInfo {
+                        await MainActor.run {
+                            self.storageFlow = accountInfo.storageFlow.doubleValue
+                            self.totalBalance = accountInfo.balance.doubleValue
+                            self.storageUsedRatio = accountInfo.storageUsedRatio
+                            self.storageUsedDesc = accountInfo.storageUsedString
+                        }
+                    }
+                }
+                
+                await group.waitForAll()
+            }
         }
 
         if hasRateAndChartData {
@@ -317,14 +346,14 @@ extension TokenDetailViewModel {
     }
 
     private func refreshSummary() {
-        guard let symbol = token.symbol else {
-            return
-        }
-
-        balance = WalletManager.shared.getBalance(bySymbol: symbol)
-        rate = CoinRateCache.cache.getSummary(for: symbol)?.getLastRate() ?? 0
+        balance = WalletManager.shared
+            .getBalance(byId: token.contractId).doubleValue
+        rate = CoinRateCache.cache
+            .getSummary(by: token.contractId)?
+            .getLastRate() ?? 0
         balanceAsUSD = balance * rate
-        changePercent = CoinRateCache.cache.getSummary(for: symbol)?.getChangePercentage() ?? 0
+        changePercent = CoinRateCache.cache.getSummary(by: token.contractId)?
+            .getChangePercentage() ?? 0
     }
 
     private func fetchChartData() {

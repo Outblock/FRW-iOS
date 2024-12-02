@@ -7,14 +7,19 @@
 
 import Foundation
 
+// MARK: - MoveAssetsAction
+
 class MoveAssetsAction {
+    // MARK: Lifecycle
+
+    private init() {}
+
+    // MARK: Internal
+
     static let shared = MoveAssetsAction()
 
-    private var browserCallback: EmptyClosure?
-    private var appName: String?
-
     var allowMoveAssets: Bool {
-        return true
+        true
     }
 
     var showNote: String? {
@@ -24,7 +29,9 @@ class MoveAssetsAction {
         return "move_asset_browser_title_x".localized(name)
     }
 
-    private init() {}
+    var showCheckOnMoveAsset: Bool {
+        browserCallback != nil
+    }
 
     func startBrowserWithMoveAssets(appName: String?, callback: @escaping EmptyClosure) {
         if !allowMoveAssets || !LocalUserDefaults.shared.showMoveAssetOnBrowser {
@@ -42,9 +49,10 @@ class MoveAssetsAction {
         appName = ""
     }
 
-    var showCheckOnMoveAsset: Bool {
-        browserCallback != nil
-    }
+    // MARK: Private
+
+    private var browserCallback: EmptyClosure?
+    private var appName: String?
 }
 
 extension MoveAssetsAction {}

@@ -14,9 +14,16 @@ extension Sign {
             Blockchain(currentNetwork.isMainnet ? "flow:mainnet" : "flow:testnet")!
         }
 
-        static func namespaces(_ methods: Set<String>, event: Set<String> = []) -> [String: ProposalNamespace] {
+        static func namespaces(
+            _ methods: Set<String>,
+            event: Set<String> = []
+        ) -> [String: ProposalNamespace] {
             let blockchains: [Blockchain] = [FlowWallet.blockchain]
-            let namespaces: [String: ProposalNamespace] = [blockchain.namespace: ProposalNamespace(chains: blockchains, methods: methods, events: event)]
+            let namespaces: [String: ProposalNamespace] = [blockchain.namespace: ProposalNamespace(
+                chains: blockchains,
+                methods: methods,
+                events: event
+            )]
             return namespaces
         }
     }

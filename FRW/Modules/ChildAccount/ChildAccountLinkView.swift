@@ -9,12 +9,16 @@ import Combine
 import Kingfisher
 import SwiftUI
 
+// MARK: - ChildAccountLinkView
+
 struct ChildAccountLinkView: View {
-    @StateObject private var vm: ChildAccountLinkViewModel
+    // MARK: Lifecycle
 
     init(vm: ChildAccountLinkViewModel) {
         _vm = StateObject(wrappedValue: vm)
     }
+
+    // MARK: Internal
 
     var body: some View {
         VStack(spacing: 0) {
@@ -29,7 +33,10 @@ struct ChildAccountLinkView: View {
             .padding(.vertical, 8)
 
             Group {
-                WalletSendButtonView(allowEnable: .constant(true), buttonText: "hold_to_link".localized) {
+                WalletSendButtonView(
+                    allowEnable: .constant(true),
+                    buttonText: "hold_to_link".localized
+                ) {
                     log.info("user long tap link button")
                     vm.linkAction()
                 }
@@ -43,6 +50,11 @@ struct ChildAccountLinkView: View {
         }
         .backgroundFill(Color.LL.Neutrals.background)
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm: ChildAccountLinkViewModel
 }
 
 // MARK: - Step view
@@ -123,7 +135,10 @@ extension ChildAccountLinkView {
             HStack {
                 ChildAccountTargetView(iconURL: vm.logo, name: vm.fromTitle)
                 Spacer()
-                ChildAccountTargetView(iconURL: UserManager.shared.userInfo?.avatar.convertedAvatarString() ?? "", name: UserManager.shared.userInfo?.meowDomain ?? "")
+                ChildAccountTargetView(
+                    iconURL: UserManager.shared.userInfo?.avatar.convertedAvatarString() ?? "",
+                    name: UserManager.shared.userInfo?.meowDomain ?? ""
+                )
             }
 
             ProcessingIndicator(state: vm.state)
@@ -163,8 +178,10 @@ extension ChildAccountLinkView {
     }
 
     struct ChildAccountTargetView: View {
-        @State var iconURL: String
-        @State var name: String
+        @State
+        var iconURL: String
+        @State
+        var name: String
 
         var body: some View {
             VStack(spacing: 10) {
@@ -188,14 +205,15 @@ extension ChildAccountLinkView {
     }
 
     struct ProcessingIndicator: View {
-        @State var state: ChildAccountLinkViewModel.State
+        @State
+        var state: ChildAccountLinkViewModel.State
 
         var styleColor: Color {
-            return state == .fail ? Color(hex: "#C44536") : Color(hex: "#2AE245")
+            state == .fail ? Color(hex: "#C44536") : Color(hex: "#2AE245")
         }
 
         var barColors: [Color] {
-            return [.clear, styleColor, .clear]
+            [.clear, styleColor, .clear]
         }
 
         var body: some View {

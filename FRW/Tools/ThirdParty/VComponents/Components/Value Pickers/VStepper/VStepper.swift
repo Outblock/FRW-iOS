@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Stepper
+// MARK: - VStepper
 
 /// Value picker component that selects value from a bounded linear range of values.
 ///
@@ -23,29 +23,7 @@ import SwiftUI
 ///     }
 ///
 public struct VStepper: View {
-    // MARK: Properties
-
-    private let model: VStepperModel
-
-    private let range: ClosedRange<Int>
-    private let step: Int
-
-    private let state: VStepperState
-    @State private var pressedButton: VStepperButton?
-    private func pressedButtonState(_ button: VStepperButton) -> VStepperButtonState {
-        .init(
-            isEnabled: buttonState(for: button).isEnabled,
-            isPressed: pressedButton == button
-        )
-    }
-
-    @Binding private var value: Int
-
-    @State private var longPressSchedulerTimer: Timer?
-    @State private var longPressIncrementTimer: Timer?
-    @State private var longPressIncrementTimerIncremental: Timer?
-    @State private var longPressIncrementTimeElapsed: TimeInterval = 0
-    @State private var shouldSkipIncrementBecauseOfLongPressIncrementFinish: Bool = false
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -64,6 +42,8 @@ public struct VStepper: View {
         _value = value
     }
 
+    // MARK: Public
+
     // MARK: Body
 
     public var body: some View {
@@ -73,6 +53,32 @@ public struct VStepper: View {
         })
         .frame(size: model.layout.size)
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VStepperModel
+
+    private let range: ClosedRange<Int>
+    private let step: Int
+
+    private let state: VStepperState
+    @State
+    private var pressedButton: VStepperButton?
+    @Binding
+    private var value: Int
+
+    @State
+    private var longPressSchedulerTimer: Timer?
+    @State
+    private var longPressIncrementTimer: Timer?
+    @State
+    private var longPressIncrementTimerIncremental: Timer?
+    @State
+    private var longPressIncrementTimeElapsed: TimeInterval = 0
+    @State
+    private var shouldSkipIncrementBecauseOfLongPressIncrementFinish: Bool = false
 
     private var background: some View {
         RoundedRectangle(cornerRadius: model.layout.cornerRadius)
@@ -88,6 +94,19 @@ public struct VStepper: View {
         .frame(maxWidth: .infinity)
     }
 
+    private var divider: some View {
+        Rectangle()
+            .frame(size: model.layout.divider)
+            .foregroundColor(model.colors.divider.for(state))
+    }
+
+    private func pressedButtonState(_ button: VStepperButton) -> VStepperButtonState {
+        .init(
+            isEnabled: buttonState(for: button).isEnabled,
+            isPressed: pressedButton == button
+        )
+    }
+
     private func button(_ button: VStepperButton) -> some View {
         VBaseButton(
             state: buttonState(for: button),
@@ -98,7 +117,10 @@ public struct VStepper: View {
             content: {
                 ZStack(content: {
                     RoundedRectangle(cornerRadius: model.layout.cornerRadius)
-                        .foregroundColor(model.colors.buttonBackground.for(pressedButtonState(button)))
+                        .foregroundColor(
+                            model.colors.buttonBackground
+                                .for(pressedButtonState(button))
+                        )
 
                     button.icon
                         .resizable()
@@ -109,12 +131,6 @@ public struct VStepper: View {
                 .frame(maxWidth: .infinity)
             }
         )
-    }
-
-    private var divider: some View {
-        Rectangle()
-            .frame(size: model.layout.divider)
-            .foregroundColor(model.colors.divider.for(state))
     }
 
     // MARK: Button State
@@ -166,18 +182,26 @@ public struct VStepper: View {
     private func scheduleLongPressIncrementSchedulerTimer(for _: VStepperButton) {
         zeroLongPressTimers()
 
-        longPressSchedulerTimer = .scheduledTimer(withTimeInterval: model.misc.intervalToStartLongPressIncrement, repeats: false, block: { _ in
-            scheduleLongPressIncrementTimer()
-        })
+        longPressSchedulerTimer = .scheduledTimer(
+            withTimeInterval: model.misc.intervalToStartLongPressIncrement,
+            repeats: false,
+            block: { _ in
+                scheduleLongPressIncrementTimer()
+            }
+        )
     }
 
     private func scheduleLongPressIncrementTimer() {
         zeroLongPressTimers()
 
-        longPressIncrementTimer = .scheduledTimer(withTimeInterval: 1, repeats: true, block: { timer in
-            longPressIncrementTimeElapsed += timer.timeInterval
-            incrementFromLongPress()
-        })
+        longPressIncrementTimer = .scheduledTimer(
+            withTimeInterval: 1,
+            repeats: true,
+            block: { timer in
+                longPressIncrementTimeElapsed += timer.timeInterval
+                incrementFromLongPress()
+            }
+        )
 
         longPressIncrementTimeElapsed = 1
         longPressIncrementTimer?.fire()
@@ -188,17 +212,24 @@ public struct VStepper: View {
         longPressIncrementTimerIncremental = nil
 
         let interval: TimeInterval = {
-            let adjustedStep: Int = .init(pow(.init(model.misc.longPressIncrementExponent), longPressIncrementTimeElapsed)) * step
+            let adjustedStep: Int = .init(pow(
+                .init(model.misc.longPressIncrementExponent),
+                longPressIncrementTimeElapsed
+            )) * step
             let interval: TimeInterval = 1 / .init(adjustedStep)
             return interval
         }()
 
-        longPressIncrementTimerIncremental = .scheduledTimer(withTimeInterval: interval, repeats: true, block: { _ in
-            switch pressedButton {
-            case nil: zeroLongPressTimers()
-            case let button?: incrementValue(from: button)
+        longPressIncrementTimerIncremental = .scheduledTimer(
+            withTimeInterval: interval,
+            repeats: true,
+            block: { _ in
+                switch pressedButton {
+                case nil: zeroLongPressTimers()
+                case let button?: incrementValue(from: button)
+                }
             }
-        })
+        )
 
         longPressIncrementTimerIncremental?.fire()
     }
@@ -217,12 +248,17 @@ public struct VStepper: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - VStepper_Previews
 
 struct VStepper_Previews: PreviewProvider {
-    @State private static var value: Int = 5
+    // MARK: Internal
 
     static var previews: some View {
-        VStepper(range: 1 ... 10, value: $value)
+        VStepper(range: 1...10, value: $value)
     }
+
+    // MARK: Private
+
+    @State
+    private static var value: Int = 5
 }

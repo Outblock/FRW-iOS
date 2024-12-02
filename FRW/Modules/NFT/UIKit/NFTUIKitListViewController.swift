@@ -12,14 +12,101 @@ import SwiftUI
 import UIKit
 
 class NFTUIKitListViewController: UIViewController {
+    // MARK: Internal
+
+    var listStyleHandler = NFTUIKitListStyleHandler()
+    var gridStyleHandler = NFTUIKitGridStyleHandler()
+
     var style: NFTTabScreen.ViewStyle = .normal {
         didSet {
             reloadViews()
         }
     }
 
-    var listStyleHandler = NFTUIKitListStyleHandler()
-    var gridStyleHandler = NFTUIKitGridStyleHandler()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupViews()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onCustomAddressChanged),
+            name: .watchAddressDidChanged,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didReset),
+            name: .didResetWallet,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onChildAccountChanged),
+            name: .childAccountChanged,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onNFTDidChangedByMoving),
+            name: .nftDidChangedByMoving,
+            object: nil
+        )
+
+        WalletManager.shared.$walletInfo
+            .dropFirst()
+            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                log.debug("[NFT] wallet info refresh triggerd a upload token action")
+                self.walletInfoDidChanged()
+            }.store(in: &cancelSets)
+        EVMAccountManager.shared.$selectedAccount
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .map { $0 }
+            .sink { _ in
+                log.debug("[NFT] refresh NFTs when EVM account did change ")
+                self.walletInfoDidChanged()
+            }.store(in: &cancelSets)
+        listStyleHandler.refreshAction()
+        gridStyleHandler.refreshAction()
+
+        addButton.isHidden = ChildAccountManager.shared.selectedChildAccount != nil
+    }
+
+    func reloadViews() {
+        switch style {
+        case .normal:
+            gridStyleHandler.containerView.removeFromSuperview()
+
+            if listStyleHandler.containerView.superview != contentView {
+                contentView.addSubview(listStyleHandler.containerView)
+                listStyleHandler.containerView.snp.makeConstraints { make in
+                    make.left.right.top.bottom.equalToSuperview()
+                }
+
+                listStyleHandler.requestDataIfNeeded()
+            }
+
+            offsetDidChanged(max(0.0, listStyleHandler.collectionView.contentOffset.y))
+        case .grid:
+            listStyleHandler.containerView.removeFromSuperview()
+
+            if gridStyleHandler.containerView.superview != contentView {
+                contentView.addSubview(gridStyleHandler.containerView)
+                gridStyleHandler.containerView.snp.makeConstraints { make in
+                    make.left.right.top.bottom.equalToSuperview()
+                }
+
+                gridStyleHandler.requestDataIfNeeded()
+            }
+
+            offsetDidChanged(0)
+        }
+    }
+
+    // MARK: Private
+
     private var cancelSets = Set<AnyCancellable>()
 
     private lazy var contentView: UIView = {
@@ -97,54 +184,27 @@ class NFTUIKitListViewController: UIViewController {
         return btn
     }()
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupViews()
-
-        NotificationCenter.default.addObserver(self, selector: #selector(onCustomAddressChanged), name: .watchAddressDidChanged, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(didReset), name: .didResetWallet, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(onChildAccountChanged), name: .childAccountChanged, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(onNFTDidChangedByMoving), name: .nftDidChangedByMoving, object: nil)
-
-        WalletManager.shared.$walletInfo
-            .dropFirst()
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
-            .receive(on: DispatchQueue.main)
-            .sink { _ in
-                log.debug("[NFT] wallet info refresh triggerd a upload token action")
-                self.walletInfoDidChanged()
-            }.store(in: &cancelSets)
-        EVMAccountManager.shared.$selectedAccount
-            .dropFirst()
-            .receive(on: DispatchQueue.main)
-            .map { $0 }
-            .sink { _ in
-                log.debug("[NFT] refresh NFTs when EVM account did change ")
-                self.walletInfoDidChanged()
-            }.store(in: &cancelSets)
-        listStyleHandler.refreshAction()
-        gridStyleHandler.refreshAction()
-
-        addButton.isHidden = ChildAccountManager.shared.selectedChildAccount != nil
-    }
-
-    @objc private func didReset() {
+    @objc
+    private func didReset() {
         listStyleHandler.collectionView.beginRefreshing()
         gridStyleHandler.collectionView.beginRefreshing()
     }
 
-    @objc private func onCustomAddressChanged() {
+    @objc
+    private func onCustomAddressChanged() {
         listStyleHandler.collectionView.beginRefreshing()
         gridStyleHandler.collectionView.beginRefreshing()
     }
 
-    @objc private func onChildAccountChanged() {
+    @objc
+    private func onChildAccountChanged() {
         addButton.isHidden = ChildAccountManager.shared.selectedChildAccount != nil
         listStyleHandler.collectionView.beginRefreshing()
         gridStyleHandler.collectionView.beginRefreshing()
     }
 
-    @objc private func onNFTDidChangedByMoving() {
+    @objc
+    private func onNFTDidChangedByMoving() {
         log.debug("[NFT] move NFT notification")
         listStyleHandler.refreshAction()
         gridStyleHandler.refreshAction()
@@ -215,38 +275,8 @@ class NFTUIKitListViewController: UIViewController {
         offsetDidChanged(0)
     }
 
-    func reloadViews() {
-        switch style {
-        case .normal:
-            gridStyleHandler.containerView.removeFromSuperview()
-
-            if listStyleHandler.containerView.superview != contentView {
-                contentView.addSubview(listStyleHandler.containerView)
-                listStyleHandler.containerView.snp.makeConstraints { make in
-                    make.left.right.top.bottom.equalToSuperview()
-                }
-
-                listStyleHandler.requestDataIfNeeded()
-            }
-
-            offsetDidChanged(max(0.0, listStyleHandler.collectionView.contentOffset.y))
-        case .grid:
-            listStyleHandler.containerView.removeFromSuperview()
-
-            if gridStyleHandler.containerView.superview != contentView {
-                contentView.addSubview(gridStyleHandler.containerView)
-                gridStyleHandler.containerView.snp.makeConstraints { make in
-                    make.left.right.top.bottom.equalToSuperview()
-                }
-
-                gridStyleHandler.requestDataIfNeeded()
-            }
-
-            offsetDidChanged(0)
-        }
-    }
-
-    @objc private func onAddButtonClick() {
+    @objc
+    private func onAddButtonClick() {
         Router.route(to: RouteMap.NFT.addCollection)
     }
 }

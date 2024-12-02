@@ -9,19 +9,26 @@ import SwiftUI
 import SwiftUIPager
 import SwiftUIX
 
+// MARK: - CreateProfileWaitingView
+
 struct CreateProfileWaitingView: RouteableView {
-    @StateObject var viewModel: CreateProfileWaitingViewModel
+    // MARK: Lifecycle
+
+    init(_ viewModel: CreateProfileWaitingViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
+
+    // MARK: Internal
+
+    @StateObject
+    var viewModel: CreateProfileWaitingViewModel
 
     var title: String {
-        return ""
+        ""
     }
 
     var isNavigationBarHidden: Bool {
         true
-    }
-
-    init(_ viewModel: CreateProfileWaitingViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     var body: some View {
@@ -49,7 +56,10 @@ struct CreateProfileWaitingView: RouteableView {
                         ForEach(items.indices, id: \.self) { index in
                             let item = items[viewModel.currentPage]
                             Capsule()
-                                .fill(viewModel.currentPage == index ? item.color : Color.Theme.Line.line)
+                                .fill(
+                                    viewModel.currentPage == index ? item.color : Color.Theme.Line
+                                        .line
+                                )
                                 .frame(width: viewModel.currentPage == index ? 20 : 7, height: 7)
                         }
                     }
@@ -116,10 +126,6 @@ struct CreateProfileWaitingView: RouteableView {
         .applyRouteable(self)
     }
 
-    func getOffset() -> CGFloat {
-        return CGFloat(22 * viewModel.currentPage)
-    }
-
     var items: [CreateProfileWaitingView.Item] {
         CreateProfileWaitingView.Item.default()
     }
@@ -129,11 +135,19 @@ struct CreateProfileWaitingView: RouteableView {
         model.colors.spinner = Color.Theme.Accent.green
         return model
     }
+
+    func getOffset() -> CGFloat {
+        CGFloat(22 * viewModel.currentPage)
+    }
 }
 
 extension CreateProfileWaitingView {
     var bodyContainer: some View {
-        Pager(page: viewModel.page, data: CreateProfileWaitingView.Item.default(), id: \.self) { item in
+        Pager(
+            page: viewModel.page,
+            data: CreateProfileWaitingView.Item.default(),
+            id: \.self
+        ) { item in
             createPageView(item: item)
         }
         .bounces(false)
@@ -187,9 +201,12 @@ extension CreateProfileWaitingView {
     }
 }
 
+// MARK: CreateProfileWaitingView.SuccessView
+
 extension CreateProfileWaitingView {
     struct SuccessView: View {
         let item = CreateProfileWaitingView.Item.finishedItem
+
         var body: some View {
             VStack(alignment: .leading) {
                 Spacer()
@@ -237,22 +254,44 @@ extension CreateProfileWaitingView {
     }
 }
 
+// MARK: CreateProfileWaitingView.Item
+
 extension CreateProfileWaitingView {
     struct Item: Equatable, Hashable {
+        static var finishedItem = Item(
+            title: "ready to\nget started",
+            desc: "Your Flow account is ready,let’s get started!",
+            image: "create_profile_bg",
+            color: .Theme.Background.pureWhite
+        )
+
         let title: String
         let desc: String
         let image: String
         let color: Color
 
         static func `default`() -> [CreateProfileWaitingView.Item] {
-            return [
-                Item(title: "security,\npowered by\nSecure\nEnclave.", desc: "Flow Wallet uses your device’s Secure Enclave to secure your Flow account.", image: "create_profile_bg_0", color: Color.Theme.Accent.green),
-                Item(title: "your device,\nis now a\nHardware\nWallet.", desc: "Secure Enclave is special hardware on your device that Flow Wallet uses to turn your device into a hardware wallet.", image: "create_profile_bg_1", color: Color.Theme.Accent.purple),
-                Item(title: "you just,\nunlocked\nTrue\nOwnership.", desc: "Your assets are secured by your device, unlocking true ownership of your assets on Flow.", image: "create_profile_bg_2", color: Color.Theme.Accent.blue),
+            [
+                Item(
+                    title: "security,\npowered by\nSecure\nEnclave.",
+                    desc: "Flow Wallet uses your device’s Secure Enclave to secure your Flow account.",
+                    image: "create_profile_bg_0",
+                    color: Color.Theme.Accent.green
+                ),
+                Item(
+                    title: "your device,\nis now a\nHardware\nWallet.",
+                    desc: "Secure Enclave is special hardware on your device that Flow Wallet uses to turn your device into a hardware wallet.",
+                    image: "create_profile_bg_1",
+                    color: Color.Theme.Accent.purple
+                ),
+                Item(
+                    title: "you just,\nunlocked\nTrue\nOwnership.",
+                    desc: "Your assets are secured by your device, unlocking true ownership of your assets on Flow.",
+                    image: "create_profile_bg_2",
+                    color: Color.Theme.Accent.blue
+                ),
             ]
         }
-
-        static var finishedItem = Item(title: "ready to\nget started", desc: "Your Flow account is ready,let’s get started!", image: "create_profile_bg", color: .Theme.Background.pureWhite)
     }
 }
 

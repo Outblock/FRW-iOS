@@ -12,6 +12,8 @@ import Foundation
 import Haneke
 import Moya
 
+// MARK: - NetworkError
+
 public enum NetworkError: Error {
     case unAuth
     case emptyIDToken
@@ -19,29 +21,31 @@ public enum NetworkError: Error {
     case emptyData
 }
 
+// MARK: - Network
+
 enum Network {
 //    var cancelllables: [AnyCancellable] = []
 
     struct Response<T: Decodable>: Decodable {
-        let httpCode: Int
-        let message: String?
-        let data: T?
-
         enum CodingKeys: String, CodingKey {
             case httpCode = "status"
             case message
             case data
         }
+
+        let httpCode: Int
+        let message: String?
+        let data: T?
     }
 
     struct EmptyResponse: Decodable {
-        let httpCode: Int
-        let message: String
-
         enum CodingKeys: String, CodingKey {
             case httpCode = "status"
             case message
         }
+
+        let httpCode: Int
+        let message: String
     }
 
     static func fetchIDToken() async throws -> String {
@@ -53,7 +57,11 @@ enum Network {
         return try await result.user.getIDToken()
     }
 
-    static func request<T: Decodable, U: TargetType>(_ target: U, decoder: JSONDecoder = FRWAPI.jsonDecoder, needToken: Bool = true) async throws -> T {
+    static func request<T: Decodable, U: TargetType>(
+        _ target: U,
+        decoder: JSONDecoder = FRWAPI.jsonDecoder,
+        needToken: Bool = true
+    ) async throws -> T {
         let token = try await fetchIDToken()
         let authPlugin = AccessTokenPlugin { _ in token }
         let logPlugin = NetworkLoggerPlugin(configuration: .init(logOptions: .verbose))
@@ -78,10 +86,18 @@ enum Network {
         }
     }
 
-    static func requestWithRawModel<T: Decodable, U: TargetType>(_ target: U, decoder: JSONDecoder = FRWAPI.jsonDecoder, needToken: Bool = true) async throws -> T {
+    static func requestWithRawModel<T: Decodable, U: TargetType>(
+        _ target: U,
+        decoder: JSONDecoder = FRWAPI.jsonDecoder,
+        needToken: Bool = true
+    ) async throws -> T {
         let token = try await fetchIDToken()
         let authPlugin = AccessTokenPlugin { _ in token }
-        let provider = MoyaProvider<U>(plugins: needToken ? [NetworkLoggerPlugin(), authPlugin] : [NetworkLoggerPlugin()])
+        let provider =
+            MoyaProvider<U>(
+                plugins: needToken ? [NetworkLoggerPlugin(), authPlugin] :
+                    [NetworkLoggerPlugin()]
+            )
         let result = await provider.asyncRequest(target)
         switch result {
         case let .success(response):

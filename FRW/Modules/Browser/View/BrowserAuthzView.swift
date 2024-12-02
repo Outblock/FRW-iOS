@@ -9,29 +9,31 @@ import Highlightr
 import Kingfisher
 import SwiftUI
 
+// MARK: - BrowserAuthzView
+
 struct BrowserAuthzView: View {
-    enum Selection: String, CaseIterable, Identifiable {
-        case cadence
-        case arguments
-        var id: Self { self }
-    }
-
-    @StateObject var vm: BrowserAuthzViewModel
-
-    @State var selection: Selection = .cadence
-
-    func attributeString() -> AttributedString {
-        switch selection {
-        case .cadence:
-            vm.cadenceFormatted ?? AttributedString(vm.cadence.trim())
-        case .arguments:
-            vm.argumentsFormatted ?? AttributedString(vm.arguments?.jsonPrettyPrint()?.trim() ?? "")
-        }
-    }
+    // MARK: Lifecycle
 
     init(vm: BrowserAuthzViewModel) {
         _vm = StateObject(wrappedValue: vm)
     }
+
+    // MARK: Internal
+
+    enum Selection: String, CaseIterable, Identifiable {
+        case cadence
+        case arguments
+
+        // MARK: Internal
+
+        var id: Self { self }
+    }
+
+    @StateObject
+    var vm: BrowserAuthzViewModel
+
+    @State
+    var selection: Selection = .cadence
 
     var body: some View {
         ZStack {
@@ -193,8 +195,13 @@ struct BrowserAuthzView: View {
     }
 
     var actionView: some View {
-        WalletSendButtonView(allowEnable: .constant(true)) {
-            vm.didChooseAction(true)
+        VStack(spacing: 0) {
+            InsufficientStorageToastView<BrowserAuthzViewModel>()
+                .environmentObject(self.vm)
+            
+            WalletSendButtonView(allowEnable: .constant(true)) {
+                vm.didChooseAction(true)
+            }
         }
     }
 
@@ -229,8 +236,10 @@ struct BrowserAuthzView: View {
 
             ScrollView(.vertical, showsIndicators: false) {
                 Text(attributeString())
-                    .font(.inter(size: selection == .cadence ? 8 : 14,
-                                 weight: selection == .cadence ? .light : .regular))
+                    .font(.inter(
+                        size: selection == .cadence ? 8 : 14,
+                        weight: selection == .cadence ? .light : .regular
+                    ))
                     .foregroundColor(Color(hex: "#B2B2B2"))
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                     .padding(.all, 18)
@@ -244,26 +253,42 @@ struct BrowserAuthzView: View {
         .backgroundFill(Color(hex: "#282828", alpha: 1))
         .transition(.move(edge: .trailing))
     }
+
+    func attributeString() -> AttributedString {
+        switch selection {
+        case .cadence:
+            vm.cadenceFormatted ?? AttributedString(vm.cadence.trim())
+        case .arguments:
+            vm.argumentsFormatted ?? AttributedString(vm.arguments?.jsonPrettyPrint()?.trim() ?? "")
+        }
+    }
 }
 
+// MARK: - BrowserAuthzView_Previews
+
 struct BrowserAuthzView_Previews: PreviewProvider {
-    static let vm = BrowserAuthzViewModel(title: "This is title", url: "This is URL", logo: "https://lilico.app/logo.png", cadence: """
-    import FungibleToken from 0x9a0766d93b6608b7
-    transaction(amount: UFix64, to: Address) {
-    let vault: @FungibleToken.Vault
-    prepare(signer: AuthAccount) {
-    self.vault <- signer
-    .borrow<&{FungibleToken.Provider}>(from: /storage/flowTokenVault)!
-    .withdraw(amount: amount)
-    }
-    execute {
-    getAccount(to)
-    .getCapability(/public/flowTokenReceiver)!
-    .borrow<&{FungibleToken.Receiver}>()!
-    .deposit(from: <-self.vault)
-    }
-    }
-    """) { _ in }
+    static let vm = BrowserAuthzViewModel(
+        title: "This is title",
+        url: "This is URL",
+        logo: "https://lilico.app/logo.png",
+        cadence: """
+        import FungibleToken from 0x9a0766d93b6608b7
+        transaction(amount: UFix64, to: Address) {
+        let vault: @FungibleToken.Vault
+        prepare(signer: AuthAccount) {
+        self.vault <- signer
+        .borrow<&{FungibleToken.Provider}>(from: /storage/flowTokenVault)!
+        .withdraw(amount: amount)
+        }
+        execute {
+        getAccount(to)
+        .getCapability(/public/flowTokenReceiver)!
+        .borrow<&{FungibleToken.Receiver}>()!
+        .deposit(from: <-self.vault)
+        }
+        }
+        """
+    ) { _ in }
 
     static var previews: some View {
         BrowserAuthzView(vm: vm)

@@ -23,8 +23,7 @@ import SwiftUI
 import UIKit
 
 class SPQRFrameLayer: CAShapeLayer {
-    private let cLength: CGFloat
-    private let cRadius: CGFloat
+    // MARK: Lifecycle
 
     // MARK: - Init
 
@@ -34,8 +33,8 @@ class SPQRFrameLayer: CAShapeLayer {
         lineWidth: CGFloat = 3.0,
         lineColor: UIColor = UIColor.LL.Primary.salmonPrimary
     ) {
-        cLength = length
-        cRadius = radius
+        self.cLength = length
+        self.cRadius = radius
 
         super.init()
 
@@ -46,8 +45,8 @@ class SPQRFrameLayer: CAShapeLayer {
     }
 
     override init(layer: Any) {
-        cLength = 16
-        cRadius = 16
+        self.cLength = 16
+        self.cRadius = 16
         super.init(layer: layer)
     }
 
@@ -55,6 +54,8 @@ class SPQRFrameLayer: CAShapeLayer {
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Internal
 
     override func action(forKey event: String) -> CAAction? {
         if event == "path" {
@@ -95,6 +96,11 @@ class SPQRFrameLayer: CAShapeLayer {
     func dissapear() {
         path = nil
     }
+
+    // MARK: Private
+
+    private let cLength: CGFloat
+    private let cRadius: CGFloat
 
     private func buildCorners(for points: [CGPoint]) -> [SPQRCorner] {
         var corners: [SPQRCorner] = .init()

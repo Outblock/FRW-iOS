@@ -10,6 +10,8 @@ import UIKit
 
 private let accountProofTag = Flow.DomainTag.custom("FCL-ACCOUNT-PROOF-V0.0").normalize
 
+// MARK: - FCLAuthnResponse
+
 struct FCLAuthnResponse: Codable, FCLResponseProtocol {
     let body: Body
     let service: FCLSimpleService
@@ -17,7 +19,7 @@ struct FCLAuthnResponse: Codable, FCLResponseProtocol {
     let type: String
 
     func uniqueId() -> String {
-        return "\(service.type.rawValue)-\(type)"
+        "\(service.type.rawValue)-\(type)"
     }
 
     func encodeAccountProof(address: String, includeDomaintag: Bool = true) -> Data? {
@@ -42,6 +44,8 @@ struct FCLAuthnResponse: Codable, FCLResponseProtocol {
         }
     }
 }
+
+// MARK: FCLAuthnResponse.Body
 
 extension FCLAuthnResponse {
     struct Body: Codable {

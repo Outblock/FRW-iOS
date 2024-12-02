@@ -8,27 +8,31 @@
 import Kingfisher
 import SwiftUI
 
+// MARK: - StakeAmountView
+
 struct StakeAmountView: RouteableView {
-    @StateObject private var vm: StakeAmountViewModel
-    private var isUnstake: Bool = false
+    // MARK: Lifecycle
+
+    init(provider: StakingProvider, isUnstake: Bool) {
+        _vm = StateObject(wrappedValue: StakeAmountViewModel(
+            provider: provider,
+            isUnstake: isUnstake
+        ))
+        self.isUnstake = isUnstake
+    }
+
+    // MARK: Internal
 
     enum FocusField: Hashable {
         case field
     }
 
-    @FocusState private var focusedField: FocusField?
-
-    init(provider: StakingProvider, isUnstake: Bool) {
-        _vm = StateObject(wrappedValue: StakeAmountViewModel(provider: provider, isUnstake: isUnstake))
-        self.isUnstake = isUnstake
-    }
-
     var title: String {
-        return isUnstake ? "unstake_amount".localized : "stake_amount".localized
+        isUnstake ? "unstake_amount".localized : "stake_amount".localized
     }
 
     var navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
-        return .large
+        .large
     }
 
     var body: some View {
@@ -57,10 +61,12 @@ struct StakeAmountView: RouteableView {
                 TextField("", text: $vm.inputText)
                     .keyboardType(.decimalPad)
                     .disableAutocorrection(true)
-                    .modifier(PlaceholderStyle(showPlaceHolder: vm.inputText.isEmpty,
-                                               placeholder: "stake_amount_flow".localized,
-                                               font: .inter(size: 14, weight: .medium),
-                                               color: Color.LL.Neutrals.note))
+                    .modifier(PlaceholderStyle(
+                        showPlaceHolder: vm.inputText.isEmpty,
+                        placeholder: "stake_amount_flow".localized,
+                        font: .inter(size: 14, weight: .medium),
+                        color: Color.LL.Neutrals.note
+                    ))
                     .font(.inter(size: 24, weight: .bold))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .onChange(of: vm.inputText) { text in
@@ -89,9 +95,11 @@ struct StakeAmountView: RouteableView {
                     .resizable()
                     .frame(width: 12, height: 12)
 
-                Text("\(vm.balance.formatCurrencyString()) \(vm.isUnstake ? "staked_flow".localized : "stake_flow_available".localized)")
-                    .font(.inter(size: 14, weight: .medium))
-                    .foregroundColor(Color.LL.Neutrals.text2)
+                Text(
+                    "\(vm.balance.formatCurrencyString()) \(vm.isUnstake ? "staked_flow".localized : "stake_flow_available".localized)"
+                )
+                .font(.inter(size: 14, weight: .medium))
+                .foregroundColor(Color.LL.Neutrals.text2)
 
                 Spacer()
             }
@@ -132,19 +140,6 @@ struct StakeAmountView: RouteableView {
         .padding(.top, -18)
         .padding(.horizontal, 4)
         .zIndex(-1)
-    }
-
-    func createAmountPercentBtn(_ title: String) -> some View {
-        Text(title)
-            .font(.inter(size: 14, weight: .bold))
-            .foregroundColor(Color.LL.stakeMain)
-            .frame(height: 32)
-            .frame(maxWidth: .infinity)
-            .background {
-                Color.LL.stakeMain
-                    .opacity(0.12)
-            }
-            .cornerRadius(16)
     }
 
     var rateContainerView: some View {
@@ -197,12 +192,15 @@ struct StakeAmountView: RouteableView {
     }
 
     var stakeBtn: some View {
-        VPrimaryButton(model: ButtonStyle.stakePrimary,
-                       state: vm.isReadyForStake ? .enabled : .disabled,
-                       action: {
-                           vm.stakeBtnAction()
-                       }, title: "next".localized)
-            .padding(.bottom)
+        VPrimaryButton(
+            model: ButtonStyle.stakePrimary,
+            state: vm.isReadyForStake ? .enabled : .disabled,
+            action: {
+                vm.stakeBtnAction()
+            },
+            title: "next".localized
+        )
+        .padding(.bottom)
     }
 
     var errorTipsView: some View {
@@ -219,15 +217,43 @@ struct StakeAmountView: RouteableView {
         .padding(.top, 12)
         .visibility(vm.errorType == .none ? .gone : .visible)
     }
+
+    func createAmountPercentBtn(_ title: String) -> some View {
+        Text(title)
+            .font(.inter(size: 14, weight: .bold))
+            .foregroundColor(Color.LL.stakeMain)
+            .frame(height: 32)
+            .frame(maxWidth: .infinity)
+            .background {
+                Color.LL.stakeMain
+                    .opacity(0.12)
+            }
+            .cornerRadius(16)
+    }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm: StakeAmountViewModel
+    private var isUnstake: Bool = false
+
+    @FocusState
+    private var focusedField: FocusField?
 }
+
+// MARK: StakeAmountView.StakeConfirmView
 
 extension StakeAmountView {
     struct StakeConfirmView: View {
-        @EnvironmentObject var vm: StakeAmountViewModel
+        @EnvironmentObject
+        var vm: StakeAmountViewModel
 
         var body: some View {
             VStack {
-                SheetHeaderView(title: vm.isUnstake ? "unstake_confirm_title".localized : "stake_confirm_title".localized)
+                SheetHeaderView(
+                    title: vm.isUnstake ? "unstake_confirm_title"
+                        .localized : "stake_confirm_title".localized
+                )
 
                 VStack(spacing: 18) {
                     detailView
@@ -350,13 +376,18 @@ extension StakeAmountView {
         }
 
         var confirmBtn: some View {
-            WalletSendButtonView(allowEnable: .constant(true), buttonText: vm.isUnstake ? "hold_to_unstake".localized : "hold_to_stake".localized) {
+            WalletSendButtonView(
+                allowEnable: .constant(true),
+                buttonText: vm.isUnstake ? "hold_to_unstake".localized : "hold_to_stake".localized
+            ) {
                 vm.confirmStakeAction()
             }
             .padding(.bottom)
         }
     }
 }
+
+// MARK: StakeAmountView.StakeSetupView
 
 extension StakeAmountView {
     struct StakeSetupView: View {
@@ -402,12 +433,15 @@ extension StakeAmountView {
         }
 
         var confirmBtn: some View {
-            VPrimaryButton(model: ButtonStyle.stakePrimary,
-                           state: .enabled,
-                           action: {
-                               vm.confirmSetupAction()
-                           }, title: "staking_confirm".localized)
-                .padding(.bottom)
+            VPrimaryButton(
+                model: ButtonStyle.stakePrimary,
+                state: .enabled,
+                action: {
+                    vm.confirmSetupAction()
+                },
+                title: "staking_confirm".localized
+            )
+            .padding(.bottom)
         }
     }
 }

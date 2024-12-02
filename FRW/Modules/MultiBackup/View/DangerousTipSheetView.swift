@@ -31,7 +31,11 @@ struct DangerousTipSheetView: View {
 
                 Spacer()
 
-                WalletSendButtonView(allowEnable: .constant(true), buttonText: buttonTitle, activeColor: Color.Theme.Accent.red) {
+                WalletSendButtonView(
+                    allowEnable: .constant(true),
+                    buttonText: buttonTitle,
+                    activeColor: Color.Theme.Accent.red
+                ) {
                     onConfirm()
                 }
                 .padding(.bottom, 10)
@@ -51,5 +55,9 @@ struct DangerousTipSheetView: View {
 }
 
 #Preview {
-    DangerousTipSheetView(title: "account_key_revoke_title".localized, detail: "account_key_revoke_content".localized, buttonTitle: "hold_to_revoke".localized) {} onCancel: {}
+    DangerousTipSheetView(
+        title: "account_key_revoke_title".localized,
+        detail: "account_key_revoke_content".localized,
+        buttonTitle: "hold_to_revoke".localized
+    ) {} onCancel: {}
 }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Sheet
+// MARK: - VSheet
 
 /// Container component that draws a background and hosts content.
 ///
@@ -32,10 +32,7 @@ import SwiftUI
 ///     }
 ///
 public struct VSheet<Content>: View where Content: View {
-    // MARK: Properties
-
-    private let model: VSheetModel
-    private let content: () -> Content
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
@@ -52,11 +49,12 @@ public struct VSheet<Content>: View where Content: View {
     public init(
         model: VSheetModel = .init()
     )
-        where Content == Color
-    {
+        where Content == Color {
         self.model = model
-        content = { .clear }
+        self.content = { .clear }
     }
+
+    // MARK: Public
 
     // MARK: Body
 
@@ -64,6 +62,13 @@ public struct VSheet<Content>: View where Content: View {
         contentView
             .background(sheetView)
     }
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VSheetModel
+    private let content: () -> Content
 
     private var sheetView: some View {
         model.colors.background
@@ -79,7 +84,7 @@ public struct VSheet<Content>: View where Content: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - VSheet_Previews
 
 struct VSheet_Previews: PreviewProvider {
     static var previews: some View {
@@ -88,7 +93,7 @@ struct VSheet_Previews: PreviewProvider {
                 .edgesIgnoringSafeArea(.all)
 
             VSheet(content: {
-                VLazyScrollView(range: 1 ..< 100, content: { num in
+                VLazyScrollView(range: 1..<100, content: { num in
                     Text(String(num))
                         .padding(.vertical, 10)
                 })

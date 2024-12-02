@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Slider
+// MARK: - VSlider
 
 /// Value picker component that selects value from a bounded linear range of values.
 ///
@@ -23,27 +23,14 @@ import SwiftUI
 ///     }
 ///
 public struct VSlider: View {
-    // MARK: Properties
-
-    private let model: VSliderModel
-
-    private let min, max: Double
-    private var range: ClosedRange<Double> { min ... max }
-    private let step: Double?
-
-    private let state: VSliderState
-
-    @Binding private var value: Double
-    @State private var animatableValue: Double?
-
-    private let action: ((Bool) -> Void)?
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes component with value.
     public init<V>(
         model: VSliderModel = .init(),
-        range: ClosedRange<V> = 0 ... 1,
+        range: ClosedRange<V> = 0...1,
         step: V? = nil,
         state: VSliderState = .enabled,
         value: Binding<V>,
@@ -51,8 +38,7 @@ public struct VSlider: View {
     )
         where
         V: BinaryFloatingPoint,
-        V.Stride: BinaryFloatingPoint
-    {
+        V.Stride: BinaryFloatingPoint {
         self.model = model
         self.min = .init(range.lowerBound)
         self.max = .init(range.upperBound)
@@ -61,6 +47,8 @@ public struct VSlider: View {
         _value = .init(from: value, range: range, step: step)
         self.action = action
     }
+
+    // MARK: Public
 
     // MARK: Body
 
@@ -85,6 +73,25 @@ public struct VSlider: View {
         .padding(.horizontal, model.layout.thumbDimension / 2)
     }
 
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VSliderModel
+
+    private let min, max: Double
+    private let step: Double?
+
+    private let state: VSliderState
+
+    @Binding
+    private var value: Double
+    @State
+    private var animatableValue: Double?
+
+    private let action: ((Bool) -> Void)?
+
+    private var range: ClosedRange<Double> { min...max }
     private var track: some View {
         Rectangle()
             .foregroundColor(model.colors.track.for(state))
@@ -96,21 +103,31 @@ public struct VSlider: View {
             .foregroundColor(model.colors.progress.for(state))
     }
 
-    @ViewBuilder private func thumb(in proxy: GeometryProxy) -> some View {
+    @ViewBuilder
+    private func thumb(in proxy: GeometryProxy) -> some View {
         if model.layout.hasThumb {
             Group(content: {
                 ZStack(content: {
                     RoundedRectangle(cornerRadius: model.layout.thumbCornerRadius)
                         .foregroundColor(model.colors.thumb.for(state))
-                        .shadow(color: model.colors.thumbShadow.for(state), radius: model.layout.thumbShadowRadius)
+                        .shadow(
+                            color: model.colors.thumbShadow.for(state),
+                            radius: model.layout.thumbShadowRadius
+                        )
 
                     RoundedRectangle(cornerRadius: model.layout.thumbCornerRadius)
-                        .strokeBorder(model.colors.thumbBorder.for(state), lineWidth: model.layout.thumbBorderWidth)
+                        .strokeBorder(
+                            model.colors.thumbBorder.for(state),
+                            lineWidth: model.layout.thumbBorderWidth
+                        )
                 })
                 .frame(dimension: model.layout.thumbDimension)
                 .offset(x: thumbOffset(in: proxy))
             })
-            .frame(maxWidth: .infinity, alignment: .leading) // Must be put into group, as content already has frame
+            .frame(
+                maxWidth: .infinity,
+                alignment: .leading
+            ) // Must be put into group, as content already has frame
             .allowsHitTesting(false)
         }
     }
@@ -175,13 +192,18 @@ public struct VSlider: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - VSlider_Previews
 
 struct VSlider_Previews: PreviewProvider {
-    @State private static var value: Double = 0.5
+    // MARK: Internal
 
     static var previews: some View {
         VSlider(value: $value)
             .padding()
     }
+
+    // MARK: Private
+
+    @State
+    private static var value: Double = 0.5
 }

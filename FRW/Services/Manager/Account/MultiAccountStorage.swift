@@ -10,17 +10,31 @@ import Firebase
 import FirebaseAuth
 import Foundation
 
+// MARK: - MultiAccountStorage.UserDefaults
+
 extension MultiAccountStorage {
     struct UserDefaults: Codable {
         var backupType: BackupManager.BackupType = .none
     }
 }
 
+// MARK: - MultiAccountStorage
+
 class MultiAccountStorage: ObservableObject {
-    static let shared = MultiAccountStorage()
+    // MARK: Lifecycle
+
     private init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(willReset), name: .willResetWallet, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(willReset),
+            name: .willResetWallet,
+            object: nil
+        )
     }
+
+    // MARK: Internal
+
+    static let shared = MultiAccountStorage()
 
     func upgradeFromOldVersionIfNeeded() {
         if LocalUserDefaults.shared.multiAccountUpgradeFlag {
@@ -62,7 +76,8 @@ class MultiAccountStorage: ObservableObject {
 // MARK: -
 
 extension MultiAccountStorage {
-    @objc private func willReset() {
+    @objc
+    private func willReset() {
         guard let uid = UserManager.shared.activatedUID else { return }
         delete(uid: uid)
     }
@@ -199,10 +214,14 @@ extension MultiAccountStorage {
 
 extension MultiAccountStorage {
     func getBackupType(_ uid: String) -> BackupManager.BackupType {
-        return getUserDefaults(uid)?.backupType ?? .none
+        getUserDefaults(uid)?.backupType ?? .none
     }
 
-    func setBackupType(_ type: BackupManager.BackupType, uid: String, postNotification: Bool = true) {
+    func setBackupType(
+        _ type: BackupManager.BackupType,
+        uid: String,
+        postNotification: Bool = true
+    ) {
         var ud = getUserDefaults(uid) ?? MultiAccountStorage.UserDefaults()
         ud.backupType = type
 

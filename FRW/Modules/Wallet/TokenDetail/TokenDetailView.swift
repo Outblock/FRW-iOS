@@ -11,6 +11,8 @@ import SwiftUI
 import SwiftUICharts
 import SwiftUIX
 
+// MARK: - TokenDetailView
+
 struct TokenDetailView: RouteableView {
     @Environment(\.colorScheme) var colorScheme
     @StateObject private var vm: TokenDetailViewModel
@@ -25,25 +27,46 @@ struct TokenDetailView: RouteableView {
         return ""
     }
 
+    // MARK: Lifecycle
+
     init(token: TokenModel, accessible: Bool) {
         _vm = StateObject(wrappedValue: TokenDetailViewModel(token: token))
-        isAccessible = accessible
+        self.isAccessible = accessible
     }
+
+    // MARK: Internal
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 12) {
-                CalloutView(type: .tip, corners: [.topLeading, .topTrailing, .bottomTrailing, .bottomLeading], content: naccessibleDesc())
-                    .padding(.bottom, 12)
-                    .visibility(showAccessibleWarning() ? .visible : .gone)
+                CalloutView(
+                    type: .tip,
+                    corners: [.topLeading, .topTrailing, .bottomTrailing, .bottomLeading],
+                    content: naccessibleDesc()
+                )
+                .padding(.bottom, 12)
+                .visibility(showAccessibleWarning() ? .visible : .gone)
 
                 summaryView
                 stakeAdView
-                    .visibility(stakingManager.isStaked || !vm.token.isFlowCoin || LocalUserDefaults.shared.stakingGuideDisplayed || WalletManager.shared.isSelectedChildAccount ? .gone : .visible)
+                    .visibility(
+                        stakingManager.isStaked || !vm.token.isFlowCoin || LocalUserDefaults
+                            .shared.stakingGuideDisplayed || WalletManager.shared
+                            .isSelectedChildAccount ? .gone : .visible
+                    )
                 stakeRewardView
-                    .visibility(stakingManager.isStaked && vm.token.isFlowCoin && !WalletManager.shared.isSelectedChildAccount ? .visible : .gone)
-                activitiesView.visibility(vm.recentTransfers.isEmpty || WalletManager.shared.isSelectedChildAccount ? .gone : .visible)
+                    .visibility(
+                        stakingManager.isStaked && vm.token.isFlowCoin && !WalletManager
+                            .shared.isSelectedChildAccount ? .visible : .gone
+                    )
+                activitiesView
+                    .visibility(
+                        vm.recentTransfers.isEmpty || WalletManager.shared
+                            .isSelectedChildAccount ? .gone : .visible
+                    )
                 chartContainerView.visibility(vm.hasRateAndChartData ? .visible : .gone)
+                storageView
+                    .visibility(self.vm.showStorageView ? .visible : .gone)
             }
             .padding(.horizontal, 18)
 //            .padding(.top, 12)
@@ -81,6 +104,7 @@ struct TokenDetailView: RouteableView {
                                 .foregroundColor(.LL.Neutrals.neutrals1)
                                 .font(.inter(size: 16, weight: .semibold))
                             Image("icon-right-arrow")
+                                .visibility(self.vm.isTokenDetailsButtonEnabled ? .visible: .gone)
                         }
                         .frame(height: 32)
                         .padding(.trailing, 10)
@@ -88,7 +112,8 @@ struct TokenDetailView: RouteableView {
                         .background {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(.linearGradient(
-                                    colors: colorScheme == .dark ? darkGradientColors : lightGradientColors,
+                                    colors: colorScheme == .dark ? darkGradientColors :
+                                        lightGradientColors,
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 ))
@@ -108,6 +133,7 @@ struct TokenDetailView: RouteableView {
                     }
                     .padding(.leading, -18)
                 }
+                .allowsHitTesting(self.vm.isTokenDetailsButtonEnabled)
 
                 Spacer()
 
@@ -136,16 +162,21 @@ struct TokenDetailView: RouteableView {
                     .font(.inter(size: 32, weight: .semibold))
 
                 Text(vm.token.symbol?.uppercased() ?? "?")
-                    .foregroundColor(colorScheme == .dark ? .LL.Neutrals.neutrals9 : .LL.Neutrals.neutrals8)
+                    .foregroundColor(
+                        colorScheme == .dark ? .LL.Neutrals.neutrals9 : .LL.Neutrals
+                            .neutrals8
+                    )
                     .font(.inter(size: 14, weight: .medium))
                     .padding(.bottom, 5)
             }
             .padding(.top, 15)
 
-            Text("\(CurrencyCache.cache.currencySymbol)\(vm.balanceAsCurrentCurrencyString) \(CurrencyCache.cache.currentCurrency.rawValue)")
-                .foregroundColor(.LL.Neutrals.text)
-                .font(.inter(size: 16, weight: .medium))
-                .padding(.top, 3)
+            Text(
+                "\(CurrencyCache.cache.currencySymbol)\(vm.balanceAsCurrentCurrencyString) \(CurrencyCache.cache.currentCurrency.rawValue)"
+            )
+            .foregroundColor(.LL.Neutrals.text)
+            .font(.inter(size: 16, weight: .medium))
+            .padding(.top, 3)
 
             HStack(spacing: 2) {
                 Button {
@@ -247,7 +278,7 @@ struct TokenDetailView: RouteableView {
 
             // transfer list
             VStack(spacing: 8) {
-                ForEach(0 ..< vm.recentTransfers.count, id: \.self) { index in
+                ForEach(0..<vm.recentTransfers.count, id: \.self) { index in
                     let transfer = vm.recentTransfers[index]
                     Button {
                         vm.transferDetailAction(transfer)
@@ -274,16 +305,21 @@ struct TokenDetailView: RouteableView {
                         .font(.inter(size: 16, weight: .semibold))
 
                     HStack(spacing: 4) {
-                        Text("\(CurrencyCache.cache.currencySymbol)\(vm.rate.formatCurrencyString(considerCustomCurrency: true))")
-                            .foregroundColor(.LL.Neutrals.text)
-                            .font(.inter(size: 14, weight: .regular))
+                        Text(
+                            "\(CurrencyCache.cache.currencySymbol)\(vm.rate.formatCurrencyString(considerCustomCurrency: true))"
+                        )
+                        .foregroundColor(.LL.Neutrals.text)
+                        .font(.inter(size: 14, weight: .regular))
 
                         HStack(spacing: 4) {
-                            Image(systemName: vm.changeIsNegative ? .arrowTriangleDown : .arrowTriangleUp)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 9, height: 7)
-                                .foregroundColor(vm.changeColor)
+                            Image(
+                                systemName: vm
+                                    .changeIsNegative ? .arrowTriangleDown : .arrowTriangleUp
+                            )
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 9, height: 7)
+                            .foregroundColor(vm.changeColor)
 
                             Text(vm.changePercentString)
                                 .foregroundColor(vm.changeColor)
@@ -306,15 +342,7 @@ struct TokenDetailView: RouteableView {
             }
             .padding(.horizontal, 18)
 
-            if colorScheme == .dark {
-                Color(hex: "#262626")
-                    .opacity(0.64)
-                    .frame(height: 1)
-            } else {
-                Color.LL.Neutrals.neutrals10
-                    .opacity(0.64)
-                    .frame(height: 1)
-            }
+            separator()
 
             chartRangeView
             chartView
@@ -339,6 +367,59 @@ struct TokenDetailView: RouteableView {
         }
         .padding(.vertical, 7)
     }
+    
+    var storageView: some View {
+        HStack(spacing: 0) {
+            StorageUsageView(
+                usage: $vm.storageUsedDesc,
+                usageRatio: $vm.storageUsedRatio,
+                invertedVerticalOrder: true
+            )
+            .headerView(
+                HStack {
+                    Text("storage_usage".localized)
+                        .font(.inter(size: 16, weight: .semibold))
+                    
+                    Spacer()
+                    
+                    Text(String(format: "%.3f FLOW", vm.storageFlow))
+                }
+            )
+            .footerView(
+                VStack(spacing: 8) {
+                    separator()
+                    
+                    HStack {
+                        Text("total_balance".localized)
+                            .font(.inter(size: 16, weight: .semibold))
+                        
+                        Spacer()
+                        
+                        Text(String(format: "%.3f FLOW", vm.totalBalance))
+                    }
+                }
+            )
+            .padding(.top, 16)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 22)
+            .background {
+                Color.LL.Neutrals.background.cornerRadius(16)
+            }
+        }
+        .padding(.bottom, 12)
+    }
+    
+    private func separator() -> some View {
+        if colorScheme == .dark {
+            Color(hex: "#262626")
+                .opacity(0.64)
+                .frame(height: 1)
+        } else {
+            Color.LL.Neutrals.neutrals10
+                .opacity(0.64)
+                .frame(height: 1)
+        }
+    }
 }
 
 // MARK: - Chart
@@ -351,9 +432,11 @@ extension TokenDetailView {
 
         let c =
             FilledLineChart(chartData: chartData)
-                .filledTopLine(chartData: chartData,
-                               lineColour: ColourStyle(colour: Color.LL.Primary.salmonPrimary),
-                               strokeStyle: StrokeStyle(lineWidth: 1, lineCap: .round))
+                .filledTopLine(
+                    chartData: chartData,
+                    lineColour: ColourStyle(colour: Color.LL.Primary.salmonPrimary),
+                    strokeStyle: StrokeStyle(lineWidth: 1, lineCap: .round)
+                )
                 .touchOverlay(chartData: chartData, specifier: "%.2f")
                 .floatingInfoBox(chartData: chartData)
                 .yAxisLabels(chartData: chartData, specifier: "%.2f")
@@ -438,7 +521,10 @@ extension TokenDetailView {
 
 extension TokenDetailView {
     struct SelectButton: View {
-        @Environment(\.colorScheme) var colorScheme
+        // MARK: Internal
+
+        @Environment(\.colorScheme)
+        var colorScheme
         let title: String
         let isSelect: Bool
 
@@ -455,8 +541,10 @@ extension TokenDetailView {
                 }
         }
 
+        // MARK: Private
+
         private var labelBgColor: Color {
-            return colorScheme == .dark ? Color.LL.Neutrals.neutrals10 : Color.LL.Neutrals.outline
+            colorScheme == .dark ? Color.LL.Neutrals.neutrals10 : Color.LL.Neutrals.outline
         }
 
         private var labelColor: Color {
@@ -468,7 +556,7 @@ extension TokenDetailView {
         }
 
         private var labelFont: Font {
-            return isSelect ? .inter(size: 12, weight: .semibold) : .inter(size: 12, weight: .regular)
+            isSelect ? .inter(size: 12, weight: .semibold) : .inter(size: 12, weight: .regular)
         }
     }
 
@@ -489,11 +577,14 @@ extension TokenDetailView {
 
                 VStack(alignment: .leading, spacing: 5) {
                     HStack(spacing: 5) {
-                        Image(systemName: model.transferType == .send ? "arrow.up.right" : "arrow.down.left")
-                            .resizable()
-                            .foregroundColor(Color.LL.Neutrals.text)
-                            .frame(width: 12, height: 12)
-                            .aspectRatio(contentMode: .fit)
+                        Image(
+                            systemName: model
+                                .transferType == .send ? "arrow.up.right" : "arrow.down.left"
+                        )
+                        .resizable()
+                        .foregroundColor(Color.LL.Neutrals.text)
+                        .frame(width: 12, height: 12)
+                        .aspectRatio(contentMode: .fit)
 
                         Text(model.title ?? "")
                             .font(.inter(size: 14, weight: .semibold))
@@ -544,9 +635,11 @@ extension TokenDetailView {
                     Spacer()
 
                     HStack(spacing: 10) {
-                        Text("\(stakingManager.stakingCount.formatCurrencyString(digits: 3)) \(vm.token.symbol?.uppercased() ?? "?")")
-                            .font(.inter(size: 14))
-                            .foregroundColor(Color.LL.Neutrals.text)
+                        Text(
+                            "\(stakingManager.stakingCount.formatCurrencyString(digits: 3)) \(vm.token.symbol?.uppercased() ?? "?")"
+                        )
+                        .font(.inter(size: 14))
+                        .foregroundColor(Color.LL.Neutrals.text)
 
                         Image("icon-account-arrow-right")
                             .renderingMode(.template)
@@ -565,13 +658,17 @@ extension TokenDetailView {
                             .font(.inter(size: 14, weight: .bold))
                             .foregroundColor(Color.LL.Neutrals.text)
 
-                        Text("\(CurrencyCache.cache.currentCurrency.symbol)\(stakingManager.dayRewardsASUSD.formatCurrencyString(digits: 3, considerCustomCurrency: true))")
-                            .font(.inter(size: 24, weight: .bold))
-                            .foregroundColor(Color.LL.Neutrals.text)
+                        Text(
+                            "\(CurrencyCache.cache.currentCurrency.symbol)\(stakingManager.dayRewardsASUSD.formatCurrencyString(digits: 3, considerCustomCurrency: true))"
+                        )
+                        .font(.inter(size: 24, weight: .bold))
+                        .foregroundColor(Color.LL.Neutrals.text)
 
-                        Text("\(stakingManager.dayRewards.formatCurrencyString(digits: 3)) \(vm.token.symbol?.uppercased() ?? "?")")
-                            .font(.inter(size: 12, weight: .semibold))
-                            .foregroundColor(Color.LL.Neutrals.text3)
+                        Text(
+                            "\(stakingManager.dayRewards.formatCurrencyString(digits: 3)) \(vm.token.symbol?.uppercased() ?? "?")"
+                        )
+                        .font(.inter(size: 12, weight: .semibold))
+                        .foregroundColor(Color.LL.Neutrals.text3)
                     }
                     .padding(.all, 13)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
@@ -584,13 +681,17 @@ extension TokenDetailView {
                             .font(.inter(size: 14, weight: .bold))
                             .foregroundColor(Color.LL.Neutrals.text)
 
-                        Text("\(CurrencyCache.cache.currentCurrency.symbol)\(stakingManager.monthRewardsASUSD.formatCurrencyString(digits: 3, considerCustomCurrency: true))")
-                            .font(.inter(size: 24, weight: .bold))
-                            .foregroundColor(Color.LL.Neutrals.text)
+                        Text(
+                            "\(CurrencyCache.cache.currentCurrency.symbol)\(stakingManager.monthRewardsASUSD.formatCurrencyString(digits: 3, considerCustomCurrency: true))"
+                        )
+                        .font(.inter(size: 24, weight: .bold))
+                        .foregroundColor(Color.LL.Neutrals.text)
 
-                        Text("\(stakingManager.monthRewards.formatCurrencyString(digits: 3)) \(vm.token.symbol?.uppercased() ?? "?")")
-                            .font(.inter(size: 12, weight: .semibold))
-                            .foregroundColor(Color.LL.Neutrals.text3)
+                        Text(
+                            "\(stakingManager.monthRewards.formatCurrencyString(digits: 3)) \(vm.token.symbol?.uppercased() ?? "?")"
+                        )
+                        .font(.inter(size: 12, weight: .semibold))
+                        .foregroundColor(Color.LL.Neutrals.text3)
                     }
                     .padding(.all, 13)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
@@ -628,7 +729,11 @@ extension TokenDetailView {
                                 .foregroundColor(Color.clear)
                                 .background {
                                     Rectangle()
-                                        .fill(.linearGradient(colors: [Color(hex: "#FFC062"), Color(hex: "#0BD3FF")], startPoint: .leading, endPoint: .trailing))
+                                        .fill(.linearGradient(
+                                            colors: [Color(hex: "#FFC062"), Color(hex: "#0BD3FF")],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        ))
                                         .mask {
                                             Text("stake_ad_title_2".localized)
                                                 .font(.inter(size: 16, weight: .bold))
@@ -641,7 +746,10 @@ extension TokenDetailView {
 
                         Text("stake_ad_desc".localized)
                             .font(.inter(size: 14, weight: .medium))
-                            .foregroundColor(colorScheme == .dark ? .LL.Neutrals.neutrals9 : .LL.Neutrals.neutrals8)
+                            .foregroundColor(
+                                colorScheme == .dark ? .LL.Neutrals.neutrals9 : .LL
+                                    .Neutrals.neutrals8
+                            )
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -675,6 +783,6 @@ extension TokenDetailView {
     }
 
     func showAccessibleWarning() -> Bool {
-        return !isAccessible
+        !isAccessible
     }
 }

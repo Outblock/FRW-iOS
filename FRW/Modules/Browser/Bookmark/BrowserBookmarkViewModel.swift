@@ -8,18 +8,25 @@
 import SwiftUI
 
 class BrowserBookmarkViewModel: ObservableObject {
-    @Published var bookmarkList: [WebBookmark] = []
+    // MARK: Lifecycle
 
     init() {
         reloadBookmarkList()
     }
 
-    private func reloadBookmarkList() {
-        bookmarkList = DBManager.shared.getAllWebBookmark()
-    }
+    // MARK: Internal
+
+    @Published
+    var bookmarkList: [WebBookmark] = []
 
     func deleteBookmarkAction(_ bookmark: WebBookmark) {
         DBManager.shared.delete(webBookmark: bookmark)
         reloadBookmarkList()
+    }
+
+    // MARK: Private
+
+    private func reloadBookmarkList() {
+        bookmarkList = DBManager.shared.getAllWebBookmark()
     }
 }

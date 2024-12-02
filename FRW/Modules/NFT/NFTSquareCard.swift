@@ -8,7 +8,11 @@
 import Kingfisher
 import SwiftUI
 
+// MARK: - NFTSquareCard
+
 struct NFTSquareCard: View {
+    // MARK: Internal
+
     var nft: NFTModel
     var imageEffect: Namespace.ID
     var onClick: (NFTModel) -> Void
@@ -56,6 +60,8 @@ struct NFTSquareCard: View {
         }
     }
 
+    // MARK: Private
+
     private func isAccessible() -> Bool {
         let nftAccessible = WalletManager.shared.accessibleManager.isAccessible(nft)
         guard let collection = nft.collection else {
@@ -66,8 +72,12 @@ struct NFTSquareCard: View {
     }
 }
 
+// MARK: - NFTSquareCard_Previews
+
 struct NFTSquareCard_Previews: PreviewProvider {
-    @Namespace static var namespace
+    @Namespace
+    static var namespace
+
     static var previews: some View {
         NFTSquareCard(nft: NFTTabViewModel.testNFT(), imageEffect: namespace, onClick: { _ in
 

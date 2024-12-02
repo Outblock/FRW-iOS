@@ -18,6 +18,7 @@ class CreateProfileWaitingViewModel: ObservableObject {
         EventTrack.Account.createdTimeEnd()
     }
 
+
     init(txId: String, callback: @escaping (Bool) -> Void) {
         self.txId = Flow.ID(hex: txId)
         self.callback = callback

@@ -12,7 +12,31 @@ import UIKit
 
 private let IconImageWidth: CGFloat = 32
 
+// MARK: - FlowTransactionItemCell
+
 class FlowTransactionItemCell: UICollectionViewCell {
+    // MARK: Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError()
+    }
+
+    // MARK: Internal
+
+    func config(_ model: FlowScanTransaction) {
+        statusLabel.textColor = model.statusColor
+        statusLabel.text = model.statusText
+        descLabel.text = model.transactionDesc
+    }
+
+    // MARK: Private
+
     private lazy var iconImageView: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(named: "icon-transaction-default")
@@ -55,16 +79,6 @@ class FlowTransactionItemCell: UICollectionViewCell {
         return view
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError()
-    }
-
     private func setup() {
         contentView.backgroundColor = .clear
 
@@ -92,11 +106,5 @@ class FlowTransactionItemCell: UICollectionViewCell {
             make.centerY.equalToSuperview()
             make.right.equalToSuperview().offset(-18)
         }
-    }
-
-    func config(_ model: FlowScanTransaction) {
-        statusLabel.textColor = model.statusColor
-        statusLabel.text = model.statusText
-        descLabel.text = model.transactionDesc
     }
 }

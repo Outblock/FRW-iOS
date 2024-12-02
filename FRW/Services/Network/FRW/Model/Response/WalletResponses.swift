@@ -41,40 +41,58 @@ extension CryptoSummaryResponse {
     }
 }
 
+// MARK: - CryptoSummaryResponse
+
 struct CryptoSummaryResponse: Codable {
     let result: CryptoSummaryResponse.Result
-
-    func getLastRate() -> Double {
-        return result.price.last
-    }
-
-    func getChangePercentage() -> Double {
-        return result.price.change.percentage
-    }
 
     static func createFixedRateResponse(fixedRate: Decimal) -> CryptoSummaryResponse {
 //        let allowance = CryptoSummaryResponse.Allowance(cost: 0, remaining: 0)
         let change = Change(absolute: 0, percentage: 0)
-        let price = Price(last: fixedRate.doubleValue, low: fixedRate.doubleValue, high: fixedRate.doubleValue, change: change)
+        let price = Price(
+            last: fixedRate.doubleValue,
+            low: fixedRate.doubleValue,
+            high: fixedRate.doubleValue,
+            change: change
+        )
         let result = CryptoSummaryResponse.Result(price: price)
         return CryptoSummaryResponse(result: result)
     }
+
+    func getLastRate() -> Double {
+        result.price.last
+    }
+
+    func getChangePercentage() -> Double {
+        result.price.change.percentage
+    }
 }
 
-// MARK: -
+// MARK: - CryptoHistoryResponse
 
 struct CryptoHistoryResponse: Codable {
 //    let allowance: CryptoSummaryResponse.Allowance
     let result: [String: [[Double]]]
 
-    func parseMarketQuoteData(rangeType: TokenDetailView.ChartRangeType) -> [TokenDetailView.Quote] {
+    func parseMarketQuoteData(
+        rangeType: TokenDetailView
+            .ChartRangeType
+    ) -> [TokenDetailView.Quote] {
         guard let array = result["\(rangeType.frequency.rawValue)"] else {
             return []
         }
 
         var quotes = [TokenDetailView.Quote]()
         for l in array {
-            let quote = TokenDetailView.Quote(closeTime: l[0], openPrice: l[1], highPrice: l[2], lowPrice: l[3], closePrice: l[4], volume: l[5], quoteVolume: l[6])
+            let quote = TokenDetailView.Quote(
+                closeTime: l[0],
+                openPrice: l[1],
+                highPrice: l[2],
+                lowPrice: l[3],
+                closePrice: l[4],
+                volume: l[5],
+                quoteVolume: l[6]
+            )
             quotes.append(quote)
         }
 

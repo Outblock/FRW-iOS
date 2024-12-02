@@ -8,16 +8,20 @@
 import Kingfisher
 import SwiftUI
 
+// MARK: - NFTAddCollectionView
+
 struct NFTAddCollectionView: RouteableView {
-    @State private var offset: CGFloat = 0
+    @State
+    private var offset: CGFloat = 0
 
     @StateObject
     var addViewModel = AddCollectionViewModel()
 
-    @State private var selectItem: NFTCollectionItem?
+    @State
+    private var selectItem: NFTCollectionItem?
 
     var title: String {
-        return "add_collection".localized
+        "add_collection".localized
     }
 
     var body: some View {
@@ -28,7 +32,12 @@ struct NFTAddCollectionView: RouteableView {
                 LazyVStack(alignment: .leading, spacing: 0) {
                     ForEach(addViewModel.liveList, id: \.self) { it in
                         NFTAddCollectionView.CollectionItem(item: it) { item in
-                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                            UIApplication.shared.sendAction(
+                                #selector(UIResponder.resignFirstResponder),
+                                to: nil,
+                                from: nil,
+                                for: nil
+                            )
                             self.selectItem = item
                             if self.selectItem != nil {
                                 addViewModel.isConfirmSheetPresented.toggle()
@@ -51,22 +60,26 @@ struct NFTAddCollectionView: RouteableView {
     }
 
     private func title(title: String) -> some View {
-        return Text(title.localized.uppercased())
+        Text(title.localized.uppercased())
             .foregroundColor(.LL.Neutrals.neutrals6)
             .font(.LL.body.weight(.w600))
     }
 }
 
+// MARK: NFTAddCollectionView.CollectionItem
+
 extension NFTAddCollectionView {
     struct CollectionItem: View {
+        // MARK: Internal
+
         var item: NFTCollectionItem
         var onAdd: (_ item: NFTCollectionItem) -> Void
-        @State private var isPresented = false
 
         var body: some View {
             HStack(alignment: .center) {
                 Button {
-                    if let website = item.collection.officialWebsite, let url = URL(string: website) {
+                    if let website = item.collection.officialWebsite,
+                       let url = URL(string: website) {
                         if let isOn = RemoteConfigManager.shared.config?.features.browser, isOn {
                             Router.route(to: RouteMap.Explore.browser(url))
                         }
@@ -112,7 +125,10 @@ extension NFTAddCollectionView {
                         .clipShape(Circle())
                 }
                 .padding(.trailing, 16)
-                .visibility(isEVMAccount ? .invisible : (item.status == .own ? .invisible : .visible))
+                .visibility(
+                    isEVMAccount ? .invisible :
+                        (item.status == .own ? .invisible : .visible)
+                )
             }
             .frame(height: 88)
             .background(
@@ -132,7 +148,8 @@ extension NFTAddCollectionView {
                     }
                     .blur(radius: 6)
 
-                    LinearGradient(colors:
+                    LinearGradient(
+                        colors:
                         [
                             .LL.Shades.front,
                             .LL.Shades.front.opacity(0.88),
@@ -140,7 +157,8 @@ extension NFTAddCollectionView {
 
                         ],
                         startPoint: .leading,
-                        endPoint: .trailing)
+                        endPoint: .trailing
+                    )
                 }
             )
             .clipShape(
@@ -153,6 +171,11 @@ extension NFTAddCollectionView {
         var isEVMAccount: Bool {
             EVMAccountManager.shared.selectedAccount != nil
         }
+
+        // MARK: Private
+
+        @State
+        private var isPresented = false
     }
 }
 
@@ -160,13 +183,13 @@ extension NFTAddCollectionView {
     // TODO:
     struct ErrorView: View {
         var body: some View {
-            return Text("Error Net")
+            Text("Error Net")
         }
     }
 
     struct EmptyView: View {
         var body: some View {
-            return Text("Empty")
+            Text("Empty")
         }
     }
 }

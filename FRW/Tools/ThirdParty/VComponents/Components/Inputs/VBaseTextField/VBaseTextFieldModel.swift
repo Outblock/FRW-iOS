@@ -11,38 +11,27 @@ import SwiftUI
 
 /// Model that describes UI.
 public struct VBaseTextFieldModel {
-    // MARK: Properties
-
-    /// Sub-model containing layout properties.
-    public var layout: Layout = .init()
-
-    /// Sub-model containing color properties.
-    public var colors: Colors = .init()
-
-    /// Sub-model containing font properties.
-    public var fonts: Fonts = .init()
-
-    /// Sub-model containing misc properties.
-    public var misc: Misc = .init()
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes model with default values.
     public init() {}
 
+    // MARK: Public
+
     // MARK: Layout
 
     /// Sub-model containing layout properties.
     public struct Layout {
-        // MARK: Properties
-
-        /// Textfield text alignment. Defaults to `default`.
-        public var textAlignment: TextAlignment = .default
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
         /// Initializes sub-model with default values.
         public init() {}
+
+        // MARK: Public
 
         // MARK: Text Alignment
 
@@ -62,6 +51,15 @@ public struct VBaseTextFieldModel {
             /// Auto alignment based on the current localization of the app.
             case auto
 
+            // MARK: Public
+
+            // MARK: Initailizers
+
+            /// Default value. Set to `leading`.
+            public static var `default`: Self { .leading }
+
+            // MARK: Internal
+
             // MARK: Properties
 
             var nsTextAlignment: NSTextAlignment {
@@ -72,18 +70,32 @@ public struct VBaseTextFieldModel {
                 case .auto: return .natural
                 }
             }
-
-            // MARK: Initailizers
-
-            /// Default value. Set to `leading`.
-            public static var `default`: Self { .leading }
         }
+
+        // MARK: Properties
+
+        /// Textfield text alignment. Defaults to `default`.
+        public var textAlignment: TextAlignment = .default
     }
 
     // MARK: Colors
 
     /// Sub-model containing color properties.
     public struct Colors {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: State Colors and Opacities
+
+        /// Sub-model containing colors and opacities for component states.
+        public typealias StateColorsAndOpacities = StateColorsAndOpacities_EP_D
+
         // MARK: Properties
 
         /// Text colors and opacities.
@@ -92,37 +104,40 @@ public struct VBaseTextFieldModel {
             disabled: ColorBook.primary,
             disabledOpacity: 0.5
         )
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: State Colors and Opacities
-
-        /// Sub-model containing colors and opacities for component states.
-        public typealias StateColorsAndOpacities = StateColorsAndOpacities_EP_D
     }
 
     // MARK: Fonts
 
     /// Sub-model containing font properties.
     public struct Fonts {
-        // MARK: Properties
-
-        /// Text font. Defaults to system font of size `16`.
-        public var text: UIFont = .systemFont(ofSize: 16)
+        // MARK: Lifecycle
 
         // MARK: Initializers
 
         /// Initializes sub-model with default values.
         public init() {}
+
+        // MARK: Public
+
+        // MARK: Properties
+
+        /// Text font. Defaults to system font of size `16`.
+        public var text: UIFont = .systemFont(ofSize: 16)
     }
 
     // MARK: Misc
 
     /// Sub-model containing misc properties.
     public struct Misc {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Indicates if secure entry is enabled. Defaults to `false`.
@@ -145,10 +160,19 @@ public struct VBaseTextFieldModel {
 
         /// Default button type. Defaults to `default`.
         public var returnButton: UIReturnKeyType = .default
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
+
+    // MARK: Properties
+
+    /// Sub-model containing layout properties.
+    public var layout: Layout = .init()
+
+    /// Sub-model containing color properties.
+    public var colors: Colors = .init()
+
+    /// Sub-model containing font properties.
+    public var fonts: Fonts = .init()
+
+    /// Sub-model containing misc properties.
+    public var misc: Misc = .init()
 }

@@ -17,9 +17,13 @@ extension FlowScanAccountTransferCountResponse {
     }
 }
 
+// MARK: - FlowScanAccountTransferCountResponse
+
 struct FlowScanAccountTransferCountResponse: Codable {
     let data: FlowScanAccountTransferCountResponse.Data?
 }
+
+// MARK: - FlowTransferCountResponse
 
 struct FlowTransferCountResponse: Codable {
     let data: FlowTransferCountResponse.Data?
@@ -86,6 +90,8 @@ extension FlowScanTokenTransferResponse {
     }
 }
 
+// MARK: - FlowScanTokenTransferResponse
+
 struct FlowScanTokenTransferResponse: Codable {
     let data: FlowScanTokenTransferResponse.Data?
 }
@@ -111,11 +117,13 @@ extension FlowScanAccountTransferResponse {
     }
 }
 
+// MARK: - FlowScanAccountTransferResponse
+
 struct FlowScanAccountTransferResponse: Codable {
     let data: FlowScanAccountTransferResponse.Data?
 }
 
-// MARK: -
+// MARK: - TransfersResponse
 
 struct TransfersResponse: Codable {
     let next: Bool?

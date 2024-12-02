@@ -43,4 +43,5 @@ public extension Notification.Name {
     static let nftDidChangedByMoving = Notification.Name("nftDidChangedByMoving")
 
     static let remoteConfigDidUpdate = Notification.Name("remoteConfigDidUpdate")
+    static let accountDataDidUpdate = Notification.Name("accountDataDidUpdate")
 }

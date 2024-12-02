@@ -11,6 +11,137 @@ import SwiftUI
 
 /// Model that describes UI.
 public struct VBaseViewModel {
+    // MARK: Lifecycle
+
+    // MARK: Initializers
+
+    /// Initializes model with default values.
+    public init() {}
+
+    // MARK: Public
+
+    // MARK: Layout
+
+    /// Sub-model containing layout properties.
+    public struct Layout {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: Title Position
+
+        /// Enum that describes title position, such as `center` or `leading`.
+        public enum TitlePosition: Int, CaseIterable {
+            // MARK: Cases
+
+            /// Center alignment.
+            case center
+
+            /// Leading alignment.
+            case leading
+
+            // MARK: Public
+
+            // MARK: Initailizers
+
+            /// Default value. Set to `center`.
+            public static var `default`: Self { .center }
+        }
+
+        // MARK: Properties
+
+        /// Navigation bar horizontal margin. Defaults to `15`.
+        public var navBarMarginHorizontal: CGFloat = 15
+
+        /// Navigation bar item spacing. Defaults to `10`.
+        public var navBarSpacing: CGFloat = 10
+
+        /// Navigation bar title position. Defaults to `default`.
+        public var titlePosition: TitlePosition = .default
+
+        /// Back button dimension. Default to `32`.
+        public var backButtonDimension: CGFloat = VBaseViewModel.chevronButtonModel.layout.dimension
+
+        /// Back button icon dimension. Default to `12`.
+        public var backButtonIconDimension: CGFloat = VBaseViewModel.chevronButtonModel.layout
+            .iconDimension
+
+        /// Back button icon x offset. Defaults to `0`.
+        ///
+        /// - Positive values shift icon to the right, while negative, to the left.
+        /// - Can be used to shift back button to left, when it's background is set to transparent, similar to native back button in iOS.
+        public var backButtonIconOffsetX: CGFloat = 0
+
+        // MARK: Internal
+
+        var width: CGFloat { UIScreen.main.bounds.width - 2 * navBarMarginHorizontal }
+    }
+
+    // MARK: Colors
+
+    /// Sub-model containing color properties.
+    public struct Colors {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: State Colors
+
+        /// Sub-model containing colors for component states.
+        public typealias StateColors = StateColors_EPD
+
+        // MARK: State Colors and Opacities
+
+        /// Sub-model containing colors and opacities for component states.
+        public typealias StateColorsAndOpacities = StateColorsAndOpacities_EPD_PD
+
+        // MARK: Properties
+
+        /// Title color.
+        ///
+        /// Only applicable when using init with title.
+        public var titleText: Color = ColorBook.primary
+
+        /// Back button background colors.
+        public var backButtonBackground: StateColors = VBaseViewModel.chevronButtonModel.colors
+            .background
+
+        /// Back button background colors and opacities.
+        public var backButtonIcon: StateColorsAndOpacities = VBaseViewModel.chevronButtonModel
+            .colors.content
+    }
+
+    // MARK: Fonts
+
+    /// Sub-model containing font properties.
+    public struct Fonts {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: Properties
+
+        /// Title font.
+        ///
+        /// Only applicable when using init with title.
+        public var title: Font = .system(size: 17, weight: .semibold)
+    }
+
     // MARK: Properties
 
     /// Reference to `VChevronButtonModel`.
@@ -25,113 +156,7 @@ public struct VBaseViewModel {
     /// Sub-model containing font properties.
     public var fonts: Fonts = .init()
 
-    // MARK: Initializers
-
-    /// Initializes model with default values.
-    public init() {}
-
-    // MARK: Layout
-
-    /// Sub-model containing layout properties.
-    public struct Layout {
-        // MARK: Properties
-
-        /// Navigation bar horizontal margin. Defaults to `15`.
-        public var navBarMarginHorizontal: CGFloat = 15
-
-        /// Navigation bar item spacing. Defaults to `10`.
-        public var navBarSpacing: CGFloat = 10
-
-        var width: CGFloat { UIScreen.main.bounds.width - 2 * navBarMarginHorizontal }
-
-        /// Navigation bar title position. Defaults to `default`.
-        public var titlePosition: TitlePosition = .default
-
-        /// Back button dimension. Default to `32`.
-        public var backButtonDimension: CGFloat = VBaseViewModel.chevronButtonModel.layout.dimension
-
-        /// Back button icon dimension. Default to `12`.
-        public var backButtonIconDimension: CGFloat = VBaseViewModel.chevronButtonModel.layout.iconDimension
-
-        /// Back button icon x offset. Defaults to `0`.
-        ///
-        /// - Positive values shift icon to the right, while negative, to the left.
-        /// - Can be used to shift back button to left, when it's background is set to transparent, similar to native back button in iOS.
-        public var backButtonIconOffsetX: CGFloat = 0
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: Title Position
-
-        /// Enum that describes title position, such as `center` or `leading`.
-        public enum TitlePosition: Int, CaseIterable {
-            // MARK: Cases
-
-            /// Center alignment.
-            case center
-
-            /// Leading alignment.
-            case leading
-
-            // MARK: Initailizers
-
-            /// Default value. Set to `center`.
-            public static var `default`: Self { .center }
-        }
-    }
-
-    // MARK: Colors
-
-    /// Sub-model containing color properties.
-    public struct Colors {
-        // MARK: Properties
-
-        /// Title color.
-        ///
-        /// Only applicable when using init with title.
-        public var titleText: Color = ColorBook.primary
-
-        /// Back button background colors.
-        public var backButtonBackground: StateColors = VBaseViewModel.chevronButtonModel.colors.background
-
-        /// Back button background colors and opacities.
-        public var backButtonIcon: StateColorsAndOpacities = VBaseViewModel.chevronButtonModel.colors.content
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: State Colors
-
-        /// Sub-model containing colors for component states.
-        public typealias StateColors = StateColors_EPD
-
-        // MARK: State Colors and Opacities
-
-        /// Sub-model containing colors and opacities for component states.
-        public typealias StateColorsAndOpacities = StateColorsAndOpacities_EPD_PD
-    }
-
-    // MARK: Fonts
-
-    /// Sub-model containing font properties.
-    public struct Fonts {
-        // MARK: Properties
-
-        /// Title font.
-        ///
-        /// Only applicable when using init with title.
-        public var title: Font = .system(size: 17, weight: .semibold)
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-    }
+    // MARK: Internal
 
     // MARK: Sub-Models
 

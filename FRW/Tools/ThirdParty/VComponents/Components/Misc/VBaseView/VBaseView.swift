@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Base View
+// MARK: - VBaseView
 
 /// Core component that is used throughout the library as `SwiftUI`'s equivalent of `UIViewController`.
 ///
@@ -38,25 +38,18 @@ import SwiftUI
 ///         })
 ///     }
 ///
-public struct VBaseView<NavBarLeadingItemContent, NavBarTitleContent, NavBarTrailingItemContent, Content>: View
+public struct VBaseView<
+    NavBarLeadingItemContent,
+    NavBarTitleContent,
+    NavBarTrailingItemContent,
+    Content
+>: View
     where
     NavBarLeadingItemContent: View,
     NavBarTitleContent: View,
     NavBarTrailingItemContent: View,
-    Content: View
-{
-    // MARK: Properties
-
-    @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
-    @Environment(\.vNavigationViewBackButtonHidden) private var vNavigationViewBackButtonHidden: Bool
-
-    private let model: VBaseViewModel
-
-    private let navBarLeadingItemContent: (() -> NavBarLeadingItemContent)?
-    private let navBarTitleContent: () -> NavBarTitleContent
-    private let navBarTrailingItemContent: (() -> NavBarTrailingItemContent)?
-
-    private let content: () -> Content
+    Content: View {
+    // MARK: Lifecycle
 
     // MARK: Initializers - Leading and Trailing
 
@@ -65,7 +58,8 @@ public struct VBaseView<NavBarLeadingItemContent, NavBarTitleContent, NavBarTrai
         model: VBaseViewModel = .init(),
         @ViewBuilder titleContent navBarTitleContent: @escaping () -> NavBarTitleContent,
         @ViewBuilder leadingItem navBarLeadingItemContent: @escaping () -> NavBarLeadingItemContent,
-        @ViewBuilder trailingItem navBarTrailingItemContent: @escaping () -> NavBarTrailingItemContent,
+        @ViewBuilder trailingItem navBarTrailingItemContent: @escaping ()
+            -> NavBarTrailingItemContent,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.model = model
@@ -80,11 +74,11 @@ public struct VBaseView<NavBarLeadingItemContent, NavBarTitleContent, NavBarTrai
         model: VBaseViewModel = .init(),
         title navBarTitleContent: String,
         @ViewBuilder leadingItem navBarLeadingItemContent: @escaping () -> NavBarLeadingItemContent,
-        @ViewBuilder trailingItem navBarTrailingItemContent: @escaping () -> NavBarTrailingItemContent,
+        @ViewBuilder trailingItem navBarTrailingItemContent: @escaping ()
+            -> NavBarTrailingItemContent,
         @ViewBuilder content: @escaping () -> Content
     )
-        where NavBarTitleContent == VBaseHeaderFooter
-    {
+        where NavBarTitleContent == VBaseHeaderFooter {
         self.init(
             model: model,
             titleContent: {
@@ -110,12 +104,11 @@ public struct VBaseView<NavBarLeadingItemContent, NavBarTitleContent, NavBarTrai
         @ViewBuilder leadingItem navBarLeadingItemContent: @escaping () -> NavBarLeadingItemContent,
         @ViewBuilder content: @escaping () -> Content
     )
-        where NavBarTrailingItemContent == Never
-    {
+        where NavBarTrailingItemContent == Never {
         self.model = model
         self.navBarTitleContent = navBarTitleContent
         self.navBarLeadingItemContent = navBarLeadingItemContent
-        navBarTrailingItemContent = nil
+        self.navBarTrailingItemContent = nil
         self.content = content
     }
 
@@ -128,8 +121,7 @@ public struct VBaseView<NavBarLeadingItemContent, NavBarTitleContent, NavBarTrai
     )
         where
         NavBarTitleContent == VBaseHeaderFooter,
-        NavBarTrailingItemContent == Never
-    {
+        NavBarTrailingItemContent == Never {
         self.init(
             model: model,
             titleContent: {
@@ -151,14 +143,14 @@ public struct VBaseView<NavBarLeadingItemContent, NavBarTitleContent, NavBarTrai
     public init(
         model: VBaseViewModel = .init(),
         @ViewBuilder titleContent navBarTitleContent: @escaping () -> NavBarTitleContent,
-        @ViewBuilder trailingItem navBarTrailingItemContent: @escaping () -> NavBarTrailingItemContent,
+        @ViewBuilder trailingItem navBarTrailingItemContent: @escaping ()
+            -> NavBarTrailingItemContent,
         @ViewBuilder content: @escaping () -> Content
     )
-        where NavBarLeadingItemContent == Never
-    {
+        where NavBarLeadingItemContent == Never {
         self.model = model
         self.navBarTitleContent = navBarTitleContent
-        navBarLeadingItemContent = nil
+        self.navBarLeadingItemContent = nil
         self.navBarTrailingItemContent = navBarTrailingItemContent
         self.content = content
     }
@@ -167,13 +159,13 @@ public struct VBaseView<NavBarLeadingItemContent, NavBarTitleContent, NavBarTrai
     public init(
         model: VBaseViewModel = .init(),
         title navBarTitleContent: String,
-        @ViewBuilder trailingItem navBarTrailingItemContent: @escaping () -> NavBarTrailingItemContent,
+        @ViewBuilder trailingItem navBarTrailingItemContent: @escaping ()
+            -> NavBarTrailingItemContent,
         @ViewBuilder content: @escaping () -> Content
     )
         where
         NavBarLeadingItemContent == Never,
-        NavBarTitleContent == VBaseHeaderFooter
-    {
+        NavBarTitleContent == VBaseHeaderFooter {
         self.init(
             model: model,
             titleContent: {
@@ -199,12 +191,11 @@ public struct VBaseView<NavBarLeadingItemContent, NavBarTitleContent, NavBarTrai
     )
         where
         NavBarLeadingItemContent == Never,
-        NavBarTrailingItemContent == Never
-    {
+        NavBarTrailingItemContent == Never {
         self.model = model
         self.navBarTitleContent = navBarTitleContent
-        navBarLeadingItemContent = nil
-        navBarTrailingItemContent = nil
+        self.navBarLeadingItemContent = nil
+        self.navBarTrailingItemContent = nil
         self.content = content
     }
 
@@ -217,8 +208,7 @@ public struct VBaseView<NavBarLeadingItemContent, NavBarTitleContent, NavBarTrai
         where
         NavBarLeadingItemContent == Never,
         NavBarTitleContent == VBaseHeaderFooter,
-        NavBarTrailingItemContent == Never
-    {
+        NavBarTrailingItemContent == Never {
         self.init(
             model: model,
             titleContent: {
@@ -233,9 +223,12 @@ public struct VBaseView<NavBarLeadingItemContent, NavBarTitleContent, NavBarTrai
         )
     }
 
+    // MARK: Public
+
     // MARK: Body
 
-    @ViewBuilder public var body: some View {
+    @ViewBuilder
+    public var body: some View {
         switch model.layout.titlePosition {
         case .center:
             baseViewFrame
@@ -261,6 +254,25 @@ public struct VBaseView<NavBarLeadingItemContent, NavBarTitleContent, NavBarTrai
         }
     }
 
+    // MARK: Private
+
+    // MARK: Properties
+
+    @Environment(\.presentationMode)
+    private var presentationMode: Binding<PresentationMode>
+    @Environment(
+        \.vNavigationViewBackButtonHidden
+    )
+    private var vNavigationViewBackButtonHidden: Bool
+
+    private let model: VBaseViewModel
+
+    private let navBarLeadingItemContent: (() -> NavBarLeadingItemContent)?
+    private let navBarTitleContent: () -> NavBarTitleContent
+    private let navBarTrailingItemContent: (() -> NavBarTrailingItemContent)?
+
+    private let content: () -> Content
+
     private var baseViewFrame: some View {
         content()
             .navigationBarBackButtonHidden(true)
@@ -275,25 +287,33 @@ public struct VBaseView<NavBarLeadingItemContent, NavBarTitleContent, NavBarTrai
     }
 }
 
-// MARK: - Preview
+// MARK: - VBaseView_Previews
 
 struct VBaseView_Previews: PreviewProvider {
+    // MARK: Internal
+
     static var previews: some View {
         VNavigationView(content: {
             VBaseView(
                 title: "Home",
                 trailingItem: { Button("Search", action: {}) },
                 content: {
-                    ZStack(content: {
-                        Color.pink.edgesIgnoringSafeArea(.bottom)
+                    ZStack(
+                        content: {
+                            Color.pink.edgesIgnoringSafeArea(.bottom)
 
-                        VNavigationLink(destination: Destination(), content: { Text("Go to Details") })
-                    }
+                            VNavigationLink(
+                                destination: Destination(),
+                                content: { Text("Go to Details") }
+                            )
+                        }
                     )
                 }
             )
         })
     }
+
+    // MARK: Private
 
     private struct Destination: View {
         var body: some View {

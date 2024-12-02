@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Navigation View Back Button Hidden
+// MARK: - VNavigationViewBackButtonHidden
 
 struct VNavigationViewBackButtonHidden: EnvironmentKey {
     static var defaultValue: Bool = true

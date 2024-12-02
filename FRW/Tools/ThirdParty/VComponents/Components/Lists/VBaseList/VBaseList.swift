@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - V Base List
+// MARK: - VBaseList
 
 /// Core component that is used throughout the library as a structure that either hosts content, or computes views on demad from an underlying collection of identified data.
 ///
@@ -53,18 +53,8 @@ public struct VBaseList<Data, ID, RowContent>: View
     where
     Data: RandomAccessCollection,
     ID: Hashable,
-    RowContent: View
-{
-    // MARK: Properties
-
-    private let model: VBaseListModel
-
-    private let layoutType: VBaseListLayoutType
-
-    private let data: [Element]
-    private let rowContent: (Data.Element) -> RowContent
-
-    typealias Element = VBaseListElement<ID, Data.Element>
+    RowContent: View {
+    // MARK: Lifecycle
 
     // MARK: Initializers - View Builder
 
@@ -93,17 +83,19 @@ public struct VBaseList<Data, ID, RowContent>: View
     )
         where
         Data.Element: Identifiable,
-        ID == Data.Element.ID
-    {
+        ID == Data.Element.ID {
         self.model = model
         self.layoutType = layoutType
         self.data = data.map { .init(id: $0[keyPath: \Data.Element.id], value: $0) }
         self.rowContent = rowContent
     }
 
+    // MARK: Public
+
     // MARK: Body
 
-    @ViewBuilder public var body: some View {
+    @ViewBuilder
+    public var body: some View {
         switch layoutType {
         case .fixed:
             VStack(spacing: 0, content: {
@@ -123,6 +115,21 @@ public struct VBaseList<Data, ID, RowContent>: View
             )
         }
     }
+
+    // MARK: Internal
+
+    typealias Element = VBaseListElement<ID, Data.Element>
+
+    // MARK: Private
+
+    // MARK: Properties
+
+    private let model: VBaseListModel
+
+    private let layoutType: VBaseListLayoutType
+
+    private let data: [Element]
+    private let rowContent: (Data.Element) -> RowContent
 
     private func contentView(i: Int, element: Element) -> some View {
         VStack(spacing: 0, content: {
@@ -148,19 +155,21 @@ public struct VBaseList<Data, ID, RowContent>: View
     }
 }
 
-// MARK: - Preview
+// MARK: - VBaseList_Previews
 
 struct VBaseList_Previews: PreviewProvider {
+    // MARK: Internal
+
     struct Row: Identifiable {
+        static var count: Int { 10 }
+
         let id: Int
         let color: Color
         let title: String
-
-        static var count: Int { 10 }
     }
 
     static var rows: [Row] {
-        (0 ..< Row.count).map { i in
+        (0..<Row.count).map { i in
             .init(
                 id: i,
                 color: [.red, .green, .blue][i % 3],
@@ -169,10 +178,12 @@ struct VBaseList_Previews: PreviewProvider {
         }
     }
 
-    private static func spellOut(_ i: Int) -> String {
-        let formatter: NumberFormatter = .init()
-        formatter.numberStyle = .spellOut
-        return formatter.string(from: .init(value: i))?.capitalized ?? ""
+    static var previews: some View {
+        VBaseList(data: rows, rowContent: { row in
+            rowContent(title: row.title, color: row.color)
+        })
+        .frame(maxHeight: .infinity, alignment: .top)
+        .padding(20)
     }
 
     static func rowContent(title: String, color: Color) -> some View {
@@ -188,11 +199,11 @@ struct VBaseList_Previews: PreviewProvider {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    static var previews: some View {
-        VBaseList(data: rows, rowContent: { row in
-            rowContent(title: row.title, color: row.color)
-        })
-        .frame(maxHeight: .infinity, alignment: .top)
-        .padding(20)
+    // MARK: Private
+
+    private static func spellOut(_ i: Int) -> String {
+        let formatter: NumberFormatter = .init()
+        formatter.numberStyle = .spellOut
+        return formatter.string(from: .init(value: i))?.capitalized ?? ""
     }
 }

@@ -8,18 +8,29 @@
 import Foundation
 import MapKit
 
-class DevicesViewModel: ObservableObject {
-    @Published var devices: [DeviceInfoModel] = []
-    @Published var status: PageStatus = .loading
-    @Published var showCurrent: Bool = false
-    @Published var showOther: Bool = false
+// MARK: - DevicesViewModel
 
-    @Published var current: DeviceInfoModel?
+class DevicesViewModel: ObservableObject {
+    // MARK: Lifecycle
 
     init() {
-        devices = [DeviceInfoModel.empty()]
+        self.devices = [DeviceInfoModel.empty()]
         fetch()
     }
+
+    // MARK: Internal
+
+    @Published
+    var devices: [DeviceInfoModel] = []
+    @Published
+    var status: PageStatus = .loading
+    @Published
+    var showCurrent: Bool = false
+    @Published
+    var showOther: Bool = false
+
+    @Published
+    var current: DeviceInfoModel?
 
     func fetch() {
         Task {
@@ -48,6 +59,8 @@ class DevicesViewModel: ObservableObject {
     }
 }
 
+// MARK: - DeviceInfoModel
+
 struct DeviceInfoModel: Codable, Identifiable {
     let city: String?
     let continent: String?
@@ -74,21 +87,45 @@ struct DeviceInfoModel: Codable, Identifiable {
     let country: String?
 
     static func empty() -> DeviceInfoModel {
-        DeviceInfoModel(city: "", continent: "", continentCode: "", createdAt: "", currency: "", deviceName: "", deviceType: nil, district: "", id: "", ip: "", isp: "", lat: 0.0, lon: 0.0, org: "", regionName: "", updatedAt: "", userAgent: "", userId: "", walletId: nil, walletsandId: nil, wallettestId: nil, zip: "", country: "")
+        DeviceInfoModel(
+            city: "",
+            continent: "",
+            continentCode: "",
+            createdAt: "",
+            currency: "",
+            deviceName: "",
+            deviceType: nil,
+            district: "",
+            id: "",
+            ip: "",
+            isp: "",
+            lat: 0.0,
+            lon: 0.0,
+            org: "",
+            regionName: "",
+            updatedAt: "",
+            userAgent: "",
+            userId: "",
+            walletId: nil,
+            walletsandId: nil,
+            wallettestId: nil,
+            zip: "",
+            country: ""
+        )
     }
 
     // like iPhone 15 Pro Max
     func showName() -> String {
-        return deviceName ?? ""
+        deviceName ?? ""
     }
 
     // like Flow Wallet macOS 8.4.1
     func showApp() -> String {
-        return userAgent ?? ""
+        userAgent ?? ""
     }
 
     func showIP() -> String {
-        return ip ?? ""
+        ip ?? ""
     }
 
     func showLocation() -> String {

@@ -24,6 +24,8 @@ import Foundation
 import UIKit
 
 public class SPQRCode {
+    // MARK: Public
+
     public static func scanning(
         detect: ((SPQRCodeData?, SPQRCameraController) -> SPQRCodeData?)? = nil,
         handled: SPQRCodeCallback?,
@@ -44,6 +46,8 @@ public class SPQRCode {
         qrController.modalPresentationStyle = .fullScreen
         controller.present(qrController)
     }
+
+    // MARK: Private
 
     private class func deviceIsValid() -> Bool {
         guard let device = AVCaptureDevice.default(for: AVMediaType.video) else {

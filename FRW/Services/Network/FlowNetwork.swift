@@ -711,6 +711,18 @@ extension FlowNetwork {
         ).decode(Flow.StorageInfo.self)
         return response
     }
+    
+    static func checkAccountInfo() async throws -> Flow.AccountInfo {
+        guard let address = WalletManager.shared.getPrimaryWalletAddress().map(Flow.Address.init(hex:)) else {
+            throw LLError.invalidAddress
+        }
+                                                           
+        guard let cadence = CadenceManager.shared.current.basic?.getAccountInfo?.toFunc() else {
+            throw LLError.invalidCadence
+        }
+        
+        return try await flow.accessAPI.executeScriptAtLatestBlock(cadence: cadence, arguments: [.address(address)]).decode(Flow.AccountInfo.self)
+    }
 }
 
 // MARK: - Extension
@@ -927,7 +939,8 @@ extension FlowNetwork {
             .bridgeTokensFromEvmV2 : \.bridge?.bridgeTokensToEvmV2
 
         var amountValue = Flow.Cadence.FValue.ufix64(amount)
-        if let result = Utilities.parseToBigUInt(amount.description, decimals: decimals), fromEvm {
+
+        if let result = amount.description.parseToBigUInt(decimals: decimals), fromEvm {
             amountValue = Flow.Cadence.FValue.uint256(result)
         }
         return try await sendTransaction(by: keyPath, argumentList: [
@@ -1114,9 +1127,13 @@ extension FlowNetwork {
     static func bridgeChildTokenFromCoa(
         vaultIdentifier: String,
         child: String,
-        amount: Decimal
+        amount: Decimal,
+        decimals: Int
     ) async throws -> Flow.ID {
-        let amountValue = Flow.Cadence.FValue.ufix64(amount)
+        guard let result = amount.description.parseToBigUInt(decimals: decimals) else {
+            throw WalletError.insufficientBalance
+        }
+        let amountValue = Flow.Cadence.FValue.uint256(result)
         return try await sendTransaction(by: \.hybridCustody?.bridgeChildFTFromEvm, argumentList: [
             .string(vaultIdentifier),
             .address(Flow.Address(hex: child)),
@@ -1320,6 +1337,29 @@ extension UInt8 {
 extension String {
     func compareVersion(to version: String) -> ComparisonResult {
         compare(version, options: .numeric)
+    }
+
+    public func parseToBigUInt(decimals: Int = 18) -> BigUInt? {
+        let separators = CharacterSet(charactersIn: ".,")
+        let components = trimmingCharacters(in: .whitespacesAndNewlines).components(
+            separatedBy: separators
+        )
+        guard components.count == 1 || components.count == 2 else { return nil }
+        let unitDecimals = decimals
+        guard let beforeDecPoint = BigUInt(components[0], radix: 10) else { return nil }
+        var mainPart = beforeDecPoint * BigUInt(10).power(unitDecimals)
+        if components.count == 2 {
+            var part = components[1]
+            var numDigits = part.count
+            if numDigits > unitDecimals {
+                part = String(part.prefix(unitDecimals))
+                numDigits = part.count
+            }
+            guard let afterDecPoint = BigUInt(part, radix: 10) else { return nil }
+            let extraPart = afterDecPoint * BigUInt(10).power(unitDecimals - numDigits)
+            mainPart += extraPart
+        }
+        return mainPart
     }
 }
 

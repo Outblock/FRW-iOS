@@ -10,10 +10,14 @@ import Flow
 import Foundation
 import Moya
 
+// MARK: - FirebaseAPI
+
 enum FirebaseAPI {
     case signAsPayer(SignPayerRequest)
     case moonPay(MoonPayRequest)
 }
+
+// MARK: TargetType, AccessTokenAuthorizable
 
 extension FirebaseAPI: TargetType, AccessTokenAuthorizable {
     var authorizationType: AuthorizationType? {
@@ -50,6 +54,6 @@ extension FirebaseAPI: TargetType, AccessTokenAuthorizable {
     }
 
     var headers: [String: String]? {
-        return FRWAPI.commonHeaders
+        FRWAPI.commonHeaders
     }
 }

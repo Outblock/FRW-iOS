@@ -6,8 +6,8 @@
 
 import SwiftUI
 
-public extension EnvironmentValues {
-    var indexBarInsets: EdgeInsets? {
+extension EnvironmentValues {
+    public var indexBarInsets: EdgeInsets? {
         internalIndexBarInsets
     }
 }

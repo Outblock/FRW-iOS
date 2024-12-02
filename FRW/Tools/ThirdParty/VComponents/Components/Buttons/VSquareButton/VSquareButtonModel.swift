@@ -11,29 +11,38 @@ import SwiftUI
 
 /// Model that describes UI.
 public struct VSquareButtonModel {
-    // MARK: Properties
-
-    /// Reference to `VPrimaryButtonModel`.
-    public static let primaryButtonReference: VPrimaryButtonModel = .init()
-
-    /// Sub-model containing layout properties.
-    public var layout: Layout = .init()
-
-    /// Sub-model containing color properties.
-    public var colors: Colors = .init()
-
-    /// Sub-model containing font properties.
-    public var fonts: Fonts = .init()
+    // MARK: Lifecycle
 
     // MARK: Initializers
 
     /// Initializes model with default values.
     public init() {}
 
+    // MARK: Public
+
     // MARK: Layout
 
     /// Sub-model containing layout properties.
     public struct Layout {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: Content Margin
+
+        /// Sub-model containing `horizontal` and `vertical` margins.
+        public typealias ContentMargin = LayoutGroup_HV
+
+        // MARK: Hit Box
+
+        /// Sub-model containing `horizontal` and `vertical` hit boxes.
+        public typealias HitBox = LayoutGroup_HV
+
         // MARK: Properties
 
         /// Button dimension. Defaults to `56`.
@@ -44,8 +53,6 @@ public struct VSquareButtonModel {
 
         /// Button border width. Defaults to `0`.
         public var borderWidth: CGFloat = 0
-
-        var hasBorder: Bool { borderWidth > 0 }
 
         /// Content margin. Defaults to `3` horizontally and `3` vertically.
         public var contentMargins: ContentMargin = .init(
@@ -59,26 +66,34 @@ public struct VSquareButtonModel {
             vertical: 0
         )
 
-        // MARK: Initializers
+        // MARK: Internal
 
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: Content Margin
-
-        /// Sub-model containing `horizontal` and `vertical` margins.
-        public typealias ContentMargin = LayoutGroup_HV
-
-        // MARK: Hit Box
-
-        /// Sub-model containing `horizontal` and `vertical` hit boxes.
-        public typealias HitBox = LayoutGroup_HV
+        var hasBorder: Bool { borderWidth > 0 }
     }
 
     // MARK: Colors
 
     /// Sub-model containing color properties.
     public struct Colors {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
+        // MARK: State Colors
+
+        /// Sub-model containing colors for component states.
+        public typealias StateColors = StateColors_EPD
+
+        // MARK: State Opacities
+
+        /// Sub-model containing opacities for component states.
+        public typealias StateOpacities = StateOpacities_PD
+
         // MARK: Properties
 
         /// Content opacities.
@@ -109,37 +124,40 @@ public struct VSquareButtonModel {
             pressed: primaryButtonReference.colors.border.pressed,
             disabled: primaryButtonReference.colors.border.disabled
         )
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
-
-        // MARK: State Colors
-
-        /// Sub-model containing colors for component states.
-        public typealias StateColors = StateColors_EPD
-
-        // MARK: State Opacities
-
-        /// Sub-model containing opacities for component states.
-        public typealias StateOpacities = StateOpacities_PD
     }
 
     // MARK: Fonts
 
     /// Sub-model containing font properties.
     public struct Fonts {
+        // MARK: Lifecycle
+
+        // MARK: Initializers
+
+        /// Initializes sub-model with default values.
+        public init() {}
+
+        // MARK: Public
+
         // MARK: Properties
 
         /// Title font. Defaults to system font of size `14` with `semibold` weight.
         ///
         /// Only applicable when using init with title.
         public var title: Font = .system(size: 14, weight: .semibold)
-
-        // MARK: Initializers
-
-        /// Initializes sub-model with default values.
-        public init() {}
     }
+
+    // MARK: Properties
+
+    /// Reference to `VPrimaryButtonModel`.
+    public static let primaryButtonReference: VPrimaryButtonModel = .init()
+
+    /// Sub-model containing layout properties.
+    public var layout: Layout = .init()
+
+    /// Sub-model containing color properties.
+    public var colors: Colors = .init()
+
+    /// Sub-model containing font properties.
+    public var fonts: Fonts = .init()
 }
