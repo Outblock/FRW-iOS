@@ -212,7 +212,7 @@ class BackupUploadViewModel: ObservableObject {
                     buttonState = .enabled
                     HUD.dismissLoading()
                     log.error(error)
-                    trackCreatFailed(message: "regist:" + error.localizedDescription)
+                    trackCreatFailed(message: "register:" + error.localizedDescription)
                 }
             }
         case .finish:
@@ -239,18 +239,7 @@ class BackupUploadViewModel: ObservableObject {
 
 extension BackupUploadViewModel {
     private func trackSource() -> String {
-        var provider = "google_drive"
-        switch currentType {
-        case .google:
-            break
-        case .passkey:
-            provider = ""
-        case .icloud:
-            provider = "icloud"
-        case .phrase:
-            provider = "seed_phrase"
-        }
-        return provider
+        return currentType.methodName()
     }
 
     func trackCreatSuccess() {
