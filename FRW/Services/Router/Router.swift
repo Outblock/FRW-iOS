@@ -47,6 +47,28 @@ extension Router {
         }
     }
 
+    static func popToRootAndRoute(to target: RouterTarget) {
+        safeMainThreadCall {
+            if let navi = topNavigationController() {
+                let viewControllers = navi.popToRootViewController(animated: false)
+                
+                let window = UIApplication
+                    .shared
+                    .connectedScenes
+                    .compactMap({ $0 as? UIWindowScene })
+                    .first?
+                    .windows
+                    .first { $0.isKeyWindow == true }
+                
+                window?.alpha = 0
+                target.onPresent(navi: navi)
+                UIView.animate(withDuration: 0.4, delay: 0.1) {
+                    window?.alpha = 1
+                }
+            }
+        }
+    }
+    
     static func dismiss(animated: Bool = true, completion: (() -> Void)? = nil) {
         safeMainThreadCall {
             topPresentedController().presentingViewController?.dismiss(
@@ -84,12 +106,8 @@ enum Router {
     // MARK: Private
 
     private static func safeMainThreadCall(_ call: @escaping () -> Void) {
-        if Thread.isMainThread {
+        runOnMain {
             call()
-        } else {
-            DispatchQueue.main.async {
-                call()
-            }
         }
     }
 }

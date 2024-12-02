@@ -104,10 +104,11 @@ class UsernameViewModel: ViewModel {
                     DispatchQueue.main.async {
                         self.changeBackupTypeIfNeeded()
                         self.state.isRegisting = false
-                        Router.popToRoot()
                         
                         if createBackup {
-                            Router.route(to: RouteMap.Backup.backupList)
+                            Router.popToRootAndRoute(to: RouteMap.Backup.backupList)
+                        } else {
+                            Router.popToRoot()
                         }
                     }
                 }
