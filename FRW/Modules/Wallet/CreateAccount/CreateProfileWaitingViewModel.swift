@@ -67,7 +67,7 @@ class CreateProfileWaitingViewModel: ObservableObject {
         HUD.success(title: "create_user_success".localized)
         stopTimer()
         callback(true, createBackup)
-        ConfettiManager.show()
+        LocalUserDefaults.shared.shouldShowConfettiOnHome = true
     }
 
     func onGoHome() {
