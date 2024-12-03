@@ -21,11 +21,12 @@ class ProfileSecureViewModel: ObservableObject {
         }
 
         if !isEnabled {
+            EventTrack.General.security(type: .none)
             SecurityManager.shared.disableBionic()
             isBionicEnabled = false
             return
         }
-
+        EventTrack.General.security(type: .bionic)
         Task {
             let result = await SecurityManager.shared.enableBionic()
             if !result {
@@ -47,12 +48,12 @@ class ProfileSecureViewModel: ObservableObject {
                 HUD.error(title: "disable_pin_code_failed".localized)
                 return
             }
-
+            EventTrack.General.security(type: .none)
             HUD.success(title: "pin_code_disabled".localized)
             isPinCodeEnabled = false
             return
         }
-
+        EventTrack.General.security(type: .pin)
         Router.route(to: RouteMap.PinCode.pinCode)
     }
 

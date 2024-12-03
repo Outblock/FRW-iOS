@@ -127,6 +127,19 @@ class NFTTransferViewModel: ObservableObject {
             case coa
             case eoa
             case linked
+
+            var trackName: String {
+                switch self {
+                case .flow:
+                    "flow"
+                case .coa:
+                    "coa"
+                case .eoa:
+                    "evm"
+                case .linked:
+                    "child"
+                }
+            }
         }
 
         if isRequesting {
@@ -335,7 +348,16 @@ class NFTTransferViewModel: ObservableObject {
                     failedBlock()
                     return
                 }
-
+                EventTrack.Transaction
+                    .NFTTransfer(
+                        from: currentAddress,
+                        to: toAddress,
+                        identifier: nft.response.flowIdentifier ?? "",
+                        txId: tid?.hex ?? "",
+                        fromType: fromAccountType.trackName,
+                        toType: toAccountType.trackName,
+                        isMove: false
+                    )
                 let model = NFTTransferModel(
                     nft: nft,
                     target: self.targetContact,

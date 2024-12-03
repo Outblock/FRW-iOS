@@ -474,6 +474,15 @@ extension WalletSendAmountViewModel {
                     return
                 }
 
+                EventTrack.Transaction
+                    .ftTransfer(
+                        from: address,
+                        to: targetAddress,
+                        type: token.symbol ?? "",
+                        amount: self.inputTokenNum,
+                        identifier: token.contractId
+                    )
+
                 DispatchQueue.main.async {
                     let obj = CoinTransferModel(
                         amount: self.inputTokenNum,

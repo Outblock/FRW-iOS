@@ -173,6 +173,7 @@ class BackupUploadViewModel: ObservableObject {
                     }
                 } catch {
                     buttonState = .enabled
+                    trackCreatFailed(message: "idle:" + error.localizedDescription)
                 }
             }
         case .upload:
@@ -189,6 +190,7 @@ class BackupUploadViewModel: ObservableObject {
                     buttonState = .enabled
                     hasError = true
                     log.error(error)
+                    trackCreatFailed(message: "upload:" + error.localizedDescription)
                 }
             }
         case .regist:
@@ -204,12 +206,13 @@ class BackupUploadViewModel: ObservableObject {
                         self.buttonState = .enabled
                     }
                     toggleProcess(process: .finish)
-//                    onClickButton()
+                    trackCreatSuccess()
 
                 } catch {
                     buttonState = .enabled
                     HUD.dismissLoading()
                     log.error(error)
+                    trackCreatFailed(message: "register:" + error.localizedDescription)
                 }
             }
         case .finish:
@@ -231,5 +234,20 @@ class BackupUploadViewModel: ObservableObject {
             self.hasError = false
             self.process = process
         }
+    }
+}
+
+extension BackupUploadViewModel {
+    private func trackSource() -> String {
+        return currentType.methodName()
+    }
+
+    func trackCreatSuccess() {
+        EventTrack.Backup.multiCreated(source: trackSource())
+    }
+
+    func trackCreatFailed(message: String) {
+        EventTrack.Backup
+            .multiCreatedFailed(source: trackSource(), reason: message)
     }
 }

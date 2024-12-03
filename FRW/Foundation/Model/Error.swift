@@ -114,3 +114,18 @@ enum EVMError: Error {
     case findAddress
     case transactionResult
 }
+
+// MARK: - CadenceError
+
+enum CadenceError: Error {
+    case empty
+
+    // MARK: Internal
+
+    var message: String {
+        switch self {
+        case .empty:
+            "empty script"
+        }
+    }
+}

@@ -34,11 +34,11 @@ extension EventTrack.Account {
         EventTrack.timeEnd(event: EventTrack.Account.createdTime)
     }
 
-    static func recovered(address: String, machanism: String, methods: [String]) {
+    static func recovered(address: String, mechanism: String, methods: [String]) {
         EventTrack
             .send(event: EventTrack.Account.recovered, properties: [
                 "address": address,
-                "mechanism": machanism,
+                "mechanism": mechanism,
                 "methods": methods,
             ])
     }
