@@ -8,6 +8,10 @@
 import Foundation
 
 extension EventTrack.General {
+    enum RampSource: String {
+        case coinbase
+        case moonpay
+    }
     static func rpcError(error: String, scriptId: String) {
         EventTrack.send(event: EventTrack.General.rpcError, properties: [
             "error": error,
@@ -29,10 +33,10 @@ extension EventTrack.General {
     }
 
     ///  BuyProvderView button action
-    static func rampClick(source: String) {
+    static func rampClick(source: RampSource) {
         EventTrack
             .send(event: EventTrack.General.rampClicked, properties: [
-                "source": source,
+                "source": source.rawValue,
             ])
     }
 
