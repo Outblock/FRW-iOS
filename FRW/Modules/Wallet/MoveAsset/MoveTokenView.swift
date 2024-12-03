@@ -25,7 +25,6 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
 
     var changeHeight: (() -> Void)?
     @StateObject private var viewModel: MoveTokenViewModel
-    @State private var primaryButtonSize: CGSize = .zero
 
     var title: String {
         ""
@@ -70,17 +69,9 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                                 .toContact.walletType
                         ) { _ in
                         }
+
                 }
-                .padding(.bottom, self.primaryButtonSize.height)
-            }
-            .padding(18)
-        }
-        .hideKeyboardWhenTappedAround()
-        .backgroundFill(Color.Theme.BG.bg1)
-        .cornerRadius([.topLeading, .topTrailing], 16)
-        .environmentObject(viewModel)
-        .edgesIgnoringSafeArea(.bottom)
-        .overlay(alignment: .bottom) {
+
                 VStack(spacing: 0) {
                     InsufficientStorageToastView<MoveTokenViewModel>()
                         .environmentObject(self.viewModel)
@@ -93,11 +84,16 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                         viewModel.onNext()
                         UIApplication.shared.endEditing()
                     }, title: "move".localized)
-                    .padding(.horizontal, 18)
-                    .padding(.bottom, 8)
-                    .sizeGetter($primaryButtonSize)
                 }
+                .padding(.top, 8)
+            }
+            .padding(18)
         }
+        .hideKeyboardWhenTappedAround()
+        .backgroundFill(Color.Theme.BG.bg1)
+        .cornerRadius([.topLeading, .topTrailing], 16)
+        .environmentObject(viewModel)
+        .edgesIgnoringSafeArea(.bottom)
         .applyRouteable(self)
     }
 

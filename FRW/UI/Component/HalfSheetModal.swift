@@ -123,10 +123,15 @@ struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         if showSheet {
             if uiViewController.view.tag == 0 {
-                let rootView = sheetView
-                    .readSize { size in
-                        self.sheetSize = size
-                    }
+                let rootView = VStack(spacing: 0) {
+                    Spacer()
+                        .layoutPriority(-1)
+                    sheetView
+                        .layoutPriority(1)
+                        .readSize { size in
+                            self.sheetSize = size
+                        }
+                }
                 
                 let sheetController = CustomHostingController(
                     rootView: rootView,
@@ -212,7 +217,6 @@ final class CustomHostingController<Content: View>: UIHostingController<Content>
             if self.autoResizing {
                 sheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge = false
             }
-
         }
     }
 
@@ -223,6 +227,7 @@ final class CustomHostingController<Content: View>: UIHostingController<Content>
             if let sheetPresentationController {
                 sheetPresentationController.animateChanges {
                     sheetPresentationController.invalidateDetents()
+                    self.view.setNeedsLayout()
                 }
             }
         }
