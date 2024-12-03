@@ -19,7 +19,7 @@ extension EventTrack.Backup {
             ])
     }
 
-    static func multiCreatedFailed(source: String) {
+    static func multiCreatedFailed(source: String, reason: String) {
         guard let address = WalletManager.shared.getPrimaryWalletAddress() else {
             return
         }
@@ -27,6 +27,7 @@ extension EventTrack.Backup {
             .send(event: EventTrack.Backup.multiCreationFailed, properties: [
                 "address": address,
                 "providers": source,
+                "message": reason,
             ])
     }
 }

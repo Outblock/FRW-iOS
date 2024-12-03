@@ -190,6 +190,13 @@ extension StakeAmountViewModel {
                 "StakeAmountViewModel: provider.delegatorId is nil, will create delegator id"
             )
             // create delegator id to stake (only first time)
+            let address = WalletManager.shared.getPrimaryWalletAddress() ?? ""
+            EventTrack.General
+                .delegationCreated(
+                    address: address,
+                    nodeId: provider.id,
+                    amount: inputTextNum
+                )
             return try await FlowNetwork.createDelegatorId(
                 providerId: provider.id,
                 amount: inputTextNum
