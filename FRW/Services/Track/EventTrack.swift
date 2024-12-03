@@ -70,11 +70,13 @@ extension EventTrack {
         Mixpanel
             .mainInstance()
             .registerSuperProperties([Superkey.deviceId: UUIDManager.appUUID()])
-        var env = "production"
+        let env: String
         if RemoteConfigManager.shared.isStaging {
             env = "staging"
         } else if isDevModel {
             env = "development"
+        } else {
+            env = "production"
         }
 
         Mixpanel.mainInstance().registerSuperProperties([Superkey.env: env])
