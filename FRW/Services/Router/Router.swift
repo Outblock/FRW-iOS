@@ -47,10 +47,10 @@ extension Router {
         }
     }
 
-    static func popToRootAndRoute(to target: RouterTarget) {
+    static func popToRootAndRoute(to target: RouterTarget, animated: Bool = true) {
         safeMainThreadCall {
             if let navi = topNavigationController() {
-                let viewControllers = navi.popToRootViewController(animated: false)
+                navi.popToRootViewController(animated: false)
                 
                 let window = UIApplication
                     .shared
@@ -62,8 +62,15 @@ extension Router {
                 
                 window?.alpha = 0
                 target.onPresent(navi: navi)
-                UIView.animate(withDuration: 0.4, delay: 0.1) {
-                    window?.alpha = 1
+                
+                if animated {
+                    UIView.animate(withDuration: 0.4, delay: 0.1) {
+                        window?.alpha = 1
+                    }
+                } else {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        window?.alpha = 1
+                    }
                 }
             }
         }

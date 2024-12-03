@@ -1004,7 +1004,7 @@
 "create_profile::waiting::carousel::3::description" = "Your assets are secured by your device, unlocking true ownership of your assets on Flow.";
 
 "create_profile::waiting::finished:title" = "ready to\nget started";
-"create_profile::waiting::finished:description" = "Congratulations! Your Flow account is now ready. To best secure your account, you can backup it now.";
+"create_profile::waiting::finished:description" = "Congratulations! Your Flow account is now ready. To best secure your account, you can back it up now.";
 
 "what_is" = "What is a";
 "multi_backup_detail" = "A multi-backup stores multiple partial-weight keys across your accounts on trusted providers like Google Drive and iCloud, or a Recovery Phrase.

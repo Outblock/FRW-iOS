@@ -331,7 +331,7 @@ extension ProfileView {
                             if !isDevModel && LocalUserDefaults.shared.flowNetwork != .mainnet {
                                 showAlert = true
                             } else {
-                                Router.route(to: RouteMap.Backup.backupList)
+                                Router.route(to: RouteMap.Backup.backupList(true))
                             }
                         } label: {
                             ProfileView.SettingItemCell(

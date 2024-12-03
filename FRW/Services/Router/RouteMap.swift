@@ -111,7 +111,7 @@ extension RouteMap {
         case backupToCloud(BackupManager.BackupType)
         case backupManual
 
-        case backupList
+        case backupList(_ animated: Bool)
         case multiBackup([MultiBackupType])
         case uploadMulti([MultiBackupType])
         case showPhrase(String)
@@ -151,8 +151,8 @@ extension RouteMap.Backup: RouterTarget {
             navi.push(content: BackupPasswordView(backupType: type))
         case .backupManual:
             navi.push(content: ManualBackupView())
-        case .backupList:
-            navi.push(content: BackupListView())
+        case let .backupList(animated):
+            navi.push(content: BackupListView(), animated: animated)
         case let .multiBackup(items):
             navi.push(content: BackupMultiView(items: items))
         case let .uploadMulti(items):
