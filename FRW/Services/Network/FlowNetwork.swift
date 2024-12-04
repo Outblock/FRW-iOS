@@ -10,6 +10,7 @@ import Combine
 import Flow
 import Foundation
 import Web3Core
+import CryptoKit
 
 // MARK: - FlowNetwork
 
@@ -863,6 +864,7 @@ extension FlowNetwork {
         gas: UInt64
     ) async throws -> Flow.ID {
         guard let amountParse = Decimal(string: amount) else {
+            EventTrack.Transaction.evmSigned(txId: "", success: false)
             throw WalletError.insufficientBalance
         }
 
@@ -870,12 +872,20 @@ extension FlowNetwork {
         if let toValue = data?.cadenceValue {
             argData = toValue
         }
-        return try await sendTransaction(by: \.evm?.callContract, argumentList: [
-            .string(toAddress),
-            .ufix64(amountParse),
-            argData,
-            .uint64(gas),
-        ])
+        do {
+            let txid = try await sendTransaction(by: \.evm?.callContract, argumentList: [
+                .string(toAddress),
+                .ufix64(amountParse),
+                argData,
+                .uint64(gas),
+            ])
+            EventTrack.Transaction.evmSigned(txId: txid.hex, success: true)
+            return txid
+        }catch {
+            EventTrack.Transaction.evmSigned(txId: "", success: false)
+            throw error
+        }
+
     }
 
     static func fetchEVMTransactionResult(txid: String) async throws -> EVMTransactionExecuted {
@@ -1273,12 +1283,12 @@ extension FlowNetwork {
         cadenceStr: String,
         argumentList: [Flow.Cadence.FValue]
     ) async throws -> Flow.ID {
+        guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
+            log.error("[Cadence] transaction invalid address on \(funcName)")
+            throw LLError.invalidAddress
+        }
         do {
             let fromKeyIndex = WalletManager.shared.keyIndex
-            guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
-                log.error("[Cadence] transaction invalid address on \(funcName)")
-                throw LLError.invalidAddress
-            }
             let tranId = try await flow
                 .sendTransaction(signers: WalletManager.shared.defaultSigners) {
                     cadence {
@@ -1307,6 +1317,15 @@ extension FlowNetwork {
                     }
                 }
             log.info("[Flow] transaction Id:\(tranId.description)")
+            EventTrack.Transaction
+                .flowSigned(
+                    cadence: hashCadence(cadence: cadenceStr.toHexEncodedString()),
+                    txId: tranId.hex,
+                    authorizers: [fromAddress],
+                    proposer: fromAddress,
+                    payer: RemoteConfigManager.shared.payer,
+                    success: true
+                )
             return tranId
         } catch {
             EventTrack.General
@@ -1314,9 +1333,28 @@ extension FlowNetwork {
                     error: error.localizedDescription,
                     scriptId: funcName
                 )
+            EventTrack.Transaction
+                .flowSigned(
+                    cadence: hashCadence(cadence: cadenceStr.toHexEncodedString()),
+                    txId: "",
+                    authorizers: [fromAddress],
+                    proposer: fromAddress,
+                    payer: RemoteConfigManager.shared.payer,
+                    success: false
+                )
             log.error("[Cadence] transaction error:\(error.localizedDescription)")
             throw error
         }
+    }
+
+    private static func hashCadence(cadence: String) -> String {
+        guard !cadence.isEmpty else {
+            return ""
+        }
+        let data = Data(cadence.utf8)
+        let hash = SHA256.hash(data: data)
+        let hashString = hash.compactMap { String(format: "%02x", $0) }.joined()
+        return hashString
     }
 }
 

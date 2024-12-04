@@ -103,24 +103,6 @@ extension JSMessageHandler {
                 data: data
             )
             TransactionManager.shared.newTransaction(holder: holder)
-            Task {
-                do {
-                    let result = try await id.onceSealed()
-                    let voucher = authzResponse?.body.voucher
-                    EventTrack.Transaction
-                        .flowSigned(
-                            cadence: hashCadence(
-                                cadence: voucher?.cadence?
-                                    .toHexEncodedString() ?? ""
-                            ),
-                            txId: tid,
-                            authorizers: voucher?.authorizers ?? [],
-                            proposer: voucher?.proposalKey.address ?? "",
-                            payer: voucher?.payer ?? "",
-                            success: !result.isFailed
-                        )
-                } catch {}
-            }
 
             if let linkAccountVM = processingLinkAccountViewModel {
                 linkAccountVM.onTxID(id)
@@ -128,16 +110,6 @@ extension JSMessageHandler {
         } catch {
             log.error("invalid message", context: error)
         }
-    }
-
-    private func hashCadence(cadence: String) -> String {
-        guard !cadence.isEmpty else {
-            return ""
-        }
-        let data = Data(cadence.utf8)
-        let hash = SHA256.hash(data: data)
-        let hashString = hash.compactMap { String(format: "%02x", $0) }.joined()
-        return hashString
     }
 }
 
