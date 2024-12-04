@@ -14,7 +14,7 @@ import WalletCore
 
 // MARK: - PrivateKeyLoginViewModel
 
-class PrivateKeyLoginViewModel: ObservableObject {
+final class PrivateKeyLoginViewModel: ObservableObject {
     // MARK: Internal
 
     @Published

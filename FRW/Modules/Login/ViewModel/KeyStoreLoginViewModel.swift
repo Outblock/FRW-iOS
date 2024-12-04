@@ -15,7 +15,7 @@ import SwiftUI
 
 // MARK: - KeyStoreLoginViewModel
 
-class KeyStoreLoginViewModel: ObservableObject {
+final class KeyStoreLoginViewModel: ObservableObject {
     // MARK: Internal
 
     @Published
@@ -58,7 +58,7 @@ class KeyStoreLoginViewModel: ObservableObject {
                     password: password,
                     storage: FlowWalletKit.PrivateKey.PKStorage
                 )
-                guard let privateKey = privateKey else {
+                guard let privateKey else {
                     HUD.error(title: "invalid_data".localized)
                     return
                 }

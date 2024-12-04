@@ -7,7 +7,7 @@
 
 import Foundation
 
-class ImportUserNameViewModel: ObservableObject {
+final class ImportUserNameViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(callback: @escaping (String) -> Void) {

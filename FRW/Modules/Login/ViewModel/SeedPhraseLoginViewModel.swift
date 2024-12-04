@@ -13,7 +13,7 @@ import WalletCore
 
 // MARK: - SeedPhraseLoginViewModel
 
-class SeedPhraseLoginViewModel: ObservableObject {
+final class SeedPhraseLoginViewModel: ObservableObject {
     // MARK: Internal
 
     @Published
