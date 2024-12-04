@@ -84,12 +84,8 @@ enum Router {
     // MARK: Private
 
     private static func safeMainThreadCall(_ call: @escaping () -> Void) {
-        if Thread.isMainThread {
+        runOnMain {
             call()
-        } else {
-            DispatchQueue.main.async {
-                call()
-            }
         }
     }
 }

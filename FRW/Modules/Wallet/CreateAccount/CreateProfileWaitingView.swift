@@ -79,19 +79,36 @@ struct CreateProfileWaitingView: RouteableView {
             HStack(alignment: .center) {
                 Spacer()
                 if viewModel.createFinished {
-                    Button {
-                        viewModel.onConfirm()
-                    } label: {
-                        HStack {
-                            Text("Go with the FLOW")
-                                .font(.inter(size: 14, weight: .bold))
-                                .foregroundStyle(Color.Theme.Text.white9)
+                    VStack(spacing: 0) {
+                        Button {
+                            viewModel.onCreateBackup()
+                        } label: {
+                            HStack {
+                                Text("create_backup".localized)
+                                    .font(.inter(size: 14, weight: .bold))
+                                    .foregroundStyle(Color.Theme.Text.white9)
+                            }
+                            .padding(.vertical, 16)
+                            .frame(maxWidth: .infinity)
+                            .background(Color.Theme.Accent.green)
+                            .cornerRadius(16)
                         }
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 16)
-                        .background(Color.Theme.Accent.green)
-                        .cornerRadius(16)
+                        
+                        Button {
+                            viewModel.onGoHome()
+                        } label: {
+                            HStack {
+                                Text("maybe_later_text".localized)
+                                    .font(.inter(size: 14, weight: .bold))
+                                    .foregroundStyle(Color.Theme.Text.black8)
+                            }
+                            .padding(.vertical, 16)
+                            .frame(maxWidth: .infinity)
+                            .background(Color.Theme.Background.grey)
+                            .cornerRadius(16)
+                        }
                     }
+                    .padding(.horizontal, 16)
                 } else {
                     VStack {
                         HStack {
@@ -107,7 +124,7 @@ struct CreateProfileWaitingView: RouteableView {
                         .cornerRadius(8)
 
                         HStack {
-                            Text("Creating your Profile")
+                            Text("create_profile::creating".localized)
                                 .font(.inter(size: 14, weight: .bold))
                                 .foregroundStyle(Color.Theme.Accent.green)
                             ActivityIndicator()
@@ -259,8 +276,8 @@ extension CreateProfileWaitingView {
 extension CreateProfileWaitingView {
     struct Item: Equatable, Hashable {
         static var finishedItem = Item(
-            title: "ready to\nget started",
-            desc: "Your Flow account is ready,let’s get started!",
+            title: "create_profile::waiting::finished:title".localized,
+            desc: "create_profile::waiting::finished:description".localized,
             image: "create_profile_bg",
             color: .Theme.Background.pureWhite
         )
@@ -273,30 +290,50 @@ extension CreateProfileWaitingView {
         static func `default`() -> [CreateProfileWaitingView.Item] {
             [
                 Item(
-                    title: "security,\npowered by\nSecure\nEnclave.",
-                    desc: "Flow Wallet uses your device’s Secure Enclave to secure your Flow account.",
+                    title: "create_profile::waiting::carousel::1::title".localized,
+                    desc: "create_profile::waiting::carousel::1::description".localized,
                     image: "create_profile_bg_0",
                     color: Color.Theme.Accent.green
                 ),
                 Item(
-                    title: "your device,\nis now a\nHardware\nWallet.",
-                    desc: "Secure Enclave is special hardware on your device that Flow Wallet uses to turn your device into a hardware wallet.",
+                    title: "create_profile::waiting::carousel::2::title".localized,
+                    desc: "create_profile::waiting::carousel::2::description".localized,
                     image: "create_profile_bg_1",
                     color: Color.Theme.Accent.purple
                 ),
                 Item(
-                    title: "you just,\nunlocked\nTrue\nOwnership.",
-                    desc: "Your assets are secured by your device, unlocking true ownership of your assets on Flow.",
+                    title: "create_profile::waiting::carousel::3::title".localized,
+                    desc: "create_profile::waiting::carousel::3::description".localized,
                     image: "create_profile_bg_2",
                     color: Color.Theme.Accent.blue
-                ),
+                )
             ]
         }
     }
 }
 
-#Preview {
-    CreateProfileWaitingView(CreateProfileWaitingViewModel(txId: "", callback: { _ in
+#Preview("default") {
+    CreateProfileWaitingView(CreateProfileWaitingViewModel(txId: "", callback: { _, _ in
 
     }))
+}
+
+#Preview("finished dark") {
+    let viewModel: CreateProfileWaitingViewModel =  {
+        let vm = CreateProfileWaitingViewModel(txId: "", callback: { _, _ in })
+        vm.createFinished = true
+        return vm
+    }()
+    CreateProfileWaitingView(viewModel)
+        .preferredColorScheme(.dark)
+}
+
+#Preview("finished light") {
+    let viewModel: CreateProfileWaitingViewModel =  {
+        let vm = CreateProfileWaitingViewModel(txId: "", callback: { _, _ in })
+        vm.createFinished = true
+        return vm
+    }()
+    CreateProfileWaitingView(viewModel)
+        .preferredColorScheme(.light)
 }

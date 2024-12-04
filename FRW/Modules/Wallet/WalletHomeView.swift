@@ -55,7 +55,7 @@ struct WalletHomeView: View {
     private var walletCardBackrgound: String = "fade:0"
 
     @State
-    var selectedNewsId: String? = nil
+    var selectedNewsId: String?
     @State
     var scrollNext: Bool = false
 
@@ -76,10 +76,11 @@ struct WalletHomeView: View {
                     vm.backupTipsPresent = false
                 })
             }
-            .onAppear(perform: {
+            .onAppear {
                 safeArea = proxy.safeAreaInsets
                 size = proxy.size
-            })
+                self.vm.viewWillAppear()
+            }
             .navigationBarHidden(true)
             .ignoresSafeArea(.container, edges: .top)
         }

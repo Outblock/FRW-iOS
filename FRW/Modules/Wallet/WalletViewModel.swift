@@ -75,7 +75,7 @@ extension WalletViewModel {
 
 // MARK: - WalletViewModel
 
-class WalletViewModel: ObservableObject {
+final class WalletViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init() {
@@ -484,6 +484,13 @@ extension WalletViewModel {
         withAnimation(.default) {
             log.info("[Index] \(index)")
             currentPage = index
+        }
+    }
+    
+    func viewWillAppear() {
+        if LocalUserDefaults.shared.shouldShowConfettiOnHome {
+            LocalUserDefaults.shared.shouldShowConfettiOnHome = false
+            ConfettiManager.show()
         }
     }
 }
