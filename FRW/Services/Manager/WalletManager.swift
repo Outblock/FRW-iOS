@@ -829,13 +829,10 @@ extension WalletManager {
     
     var isStorageInsufficient: Bool {
         guard let accountInfo else { return false }
+        guard accountInfo.storageCapacity >= accountInfo.storageUsed else { return true }
         return accountInfo.storageCapacity - accountInfo.storageUsed < Self.mininumStorageThreshold
     }
 
-    var isBalanceInsufficient: Bool {
-        return isBalanceInsufficient(for: 0)
-    }
-    
     func isBalanceInsufficient(for amount: Decimal) -> Bool {
         guard let accountInfo else { return false }
         return accountInfo.availableBalance - amount < Self.averageTransactionFee
