@@ -47,35 +47,6 @@ extension Router {
         }
     }
 
-    static func popToRootAndRoute(to target: RouterTarget, animated: Bool = true) {
-        safeMainThreadCall {
-            if let navi = topNavigationController() {
-                navi.popToRootViewController(animated: false)
-                
-                let window = UIApplication
-                    .shared
-                    .connectedScenes
-                    .compactMap({ $0 as? UIWindowScene })
-                    .first?
-                    .windows
-                    .first { $0.isKeyWindow == true }
-                
-                window?.alpha = 0
-                target.onPresent(navi: navi)
-                
-                if animated {
-                    UIView.animate(withDuration: 0.4, delay: 0.1) {
-                        window?.alpha = 1
-                    }
-                } else {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        window?.alpha = 1
-                    }
-                }
-            }
-        }
-    }
-    
     static func dismiss(animated: Bool = true, completion: (() -> Void)? = nil) {
         safeMainThreadCall {
             topPresentedController().presentingViewController?.dismiss(

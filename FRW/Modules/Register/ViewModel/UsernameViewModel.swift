@@ -106,7 +106,7 @@ class UsernameViewModel: ViewModel {
                         self.state.isRegisting = false
                         
                         if createBackup {
-                            Router.popToRootAndRoute(to: RouteMap.Backup.backupList(false))
+                            Router.route(to: RouteMap.Backup.rootToBackupList)
                         } else {
                             Router.popToRoot()
                         }
