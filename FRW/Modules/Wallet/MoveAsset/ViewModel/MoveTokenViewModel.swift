@@ -368,6 +368,14 @@ extension MoveTokenViewModel {
                             type: .moveAsset
                         )
                         TransactionManager.shared.newTransaction(holder: holder)
+                        EventTrack.Transaction
+                            .ftTransfer(
+                                from: fromContact.address ?? "",
+                                to: toContact.address ?? "",
+                                type: token.symbol ?? "",
+                                amount: amount.doubleValue,
+                                identifier: token.contractId
+                            )
                     }
                     DispatchQueue.main.async {
                         self.closeAction()
@@ -408,7 +416,14 @@ extension MoveTokenViewModel {
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
                 HUD.dismissLoading()
-
+                EventTrack.Transaction
+                    .ftTransfer(
+                        from: fromContact.address ?? "",
+                        to: toContact.address ?? "",
+                        type: token.symbol ?? "",
+                        amount: amount.doubleValue,
+                        identifier: token.contractId
+                    )
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
                     self.closeAction()
@@ -443,7 +458,14 @@ extension MoveTokenViewModel {
                 let txid = try await FlowNetwork.fundCoa(amount: amount)
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
-
+                EventTrack.Transaction
+                    .ftTransfer(
+                        from: fromContact.address ?? "",
+                        to: toContact.address ?? "",
+                        type: token.symbol ?? "",
+                        amount: amount.doubleValue,
+                        identifier: token.contractId
+                    )
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
                     self.closeAction()
@@ -487,6 +509,15 @@ extension MoveTokenViewModel {
                     self.closeAction()
                     self.buttonState = .enabled
                 }
+                EventTrack.Transaction
+                    .ftTransfer(
+                        from: fromContact.address ?? "",
+                        to: toContact.address ?? "",
+                        type: token.symbol ?? "",
+                        amount: amount.doubleValue,
+                        identifier: token.contractId
+                    )
+
             } catch {
                 DispatchQueue.main.async {
                     self.buttonState = .enabled

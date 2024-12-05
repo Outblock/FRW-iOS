@@ -383,11 +383,8 @@ extension TrustJSMessageHandler {
                     if result.isFailed {
                         HUD.error(title: "transaction failed")
                         self.cancel(id: id)
-                        EventTrack.Transaction
-                            .evmSigned(txId: txid.hex, success: false)
                         return
                     }
-                    EventTrack.Transaction.evmSigned(txId: txid.hex, success: true)
                     let model = try await FlowNetwork.fetchEVMTransactionResult(txid: txid.hex)
                     DispatchQueue.main.async {
                         self.webVC?.webView.tw

@@ -47,6 +47,17 @@ struct Contact: Codable, Identifiable {
         case flow
         case evm
         case link
+
+        var trackName: String {
+            switch self {
+            case .flow:
+                "flow"
+            case .evm:
+                "coa"
+            case .link:
+                "child"
+            }
+        }
     }
 
     let address, avatar, contactName: String?
