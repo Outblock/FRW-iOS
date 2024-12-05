@@ -26,7 +26,7 @@ extension WalletManager {
     
     static let minDefaultBlance: Decimal = 0.001
     static let fixedMoveFee: Decimal = 0.001
-    static let averageTransactionFee: Decimal = 0.001
+    static var averageTransactionFee: Decimal { RemoteConfigManager.shared.freeGasEnabled ? 0 : 0.0005 }
     static let mininumStorageThreshold = 10000
     
     private static let defaultBundleID = "com.flowfoundation.wallet"
