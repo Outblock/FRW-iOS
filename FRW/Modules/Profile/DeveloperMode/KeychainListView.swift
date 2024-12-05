@@ -19,10 +19,7 @@ struct KeychainListView: RouteableView {
             Section {
                 ForEach(0..<viewModel.seList.count, id: \.self) { index in
                     let item = viewModel.seList[index]
-                    seItemView(key: item.keys.first ?? "", value: item.values.first ?? "")
-                        .onTapGesture {
-                            viewModel.radomUpdatePrivateKey(index: index)
-                        }
+                    KeychainListView.Item(info: item, isCurrent: isCurrentKey(info: item))
                 }
             } header: {
                 HStack {
@@ -36,10 +33,7 @@ struct KeychainListView: RouteableView {
             Section {
                 ForEach(0..<viewModel.seItem.count, id: \.self) { index in
                     let item = viewModel.seItem[index]
-                    seItemView(key: item.keys.first ?? "", value: item.values.first ?? "")
-                        .onTapGesture {
-
-                        }
+                    KeychainListView.Item(info: item, isCurrent: isCurrentKey(info: item))
                 }
             } header: {
                 HStack {
@@ -53,14 +47,11 @@ struct KeychainListView: RouteableView {
             Section {
                 ForEach(0..<viewModel.spItem.count, id: \.self) { index in
                     let item = viewModel.spItem[index]
-                    seItemView(key: item.keys.first ?? "", value: item.values.first ?? "")
-                        .onTapGesture {
-                            viewModel.deleteSeedPhrase(index)
-                        }
+                    KeychainListView.Item(info: item, isCurrent: isCurrentKey(info: item))
                 }
             } header: {
                 HStack {
-                    Text("SeedPhrase (\(viewModel.spItem.count))")
+                    Text("Seed Phrase (\(viewModel.spItem.count))")
                     Spacer()
                 }
                 .frame(height: 52)
@@ -71,14 +62,11 @@ struct KeychainListView: RouteableView {
             Section {
                 ForEach(0..<viewModel.pkItem.count, id: \.self) { index in
                     let item = viewModel.pkItem[index]
-                    seItemView(key: item.keys.first ?? "", value: item.values.first ?? "")
-                        .onTapGesture {
-
-                        }
+                    KeychainListView.Item(info: item, isCurrent: isCurrentKey(info: item))
                 }
             } header: {
                 HStack {
-                    Text("PrivateKey (\(viewModel.pkItem.count))")
+                    Text("Private Key (\(viewModel.pkItem.count))")
                     Spacer()
                 }
                 .frame(height: 52)
@@ -118,7 +106,7 @@ struct KeychainListView: RouteableView {
             Section {
                 ForEach(0..<$viewModel.multiICloudBackUpList.count, id: \.self) { index in
                     let item = viewModel.multiICloudBackUpList[index]
-                    seItemView(key: item.keys.first ?? "", value: item.values.first ?? "")
+                    KeychainListView.Item(info: item, isCurrent: isCurrentKey(info: item))
                 }
             } header: {
                 HStack {
@@ -129,6 +117,7 @@ struct KeychainListView: RouteableView {
             }
             .visibility(!$viewModel.remoteList.isEmpty ? .visible : .gone)
         }
+        .padding(.horizontal, 16)
         .applyRouteable(self)
     }
 
@@ -154,42 +143,14 @@ struct KeychainListView: RouteableView {
                     .frame(width: 24, height: 24)
             }
         }
-        .padding(.horizontal, 16)
         .frame(height: 80)
         .background(Color.Theme.Background.silver)
     }
 
-    func seItemView(key: String, value: String) -> some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text("userId:\(key)")
-                    .font(.inter(size: 16))
-                    .foregroundStyle(Color.Theme.Accent.red)
-                    .lineLimit(2)
-                Text("publickKey: \(value)")
-                    .font(.inter(size: 16))
-                    .foregroundStyle(
-                        isCurrentKey(key: key) ? Color.Theme.Text.black8 : Color.Theme
-                            .evm
-                    )
-                    .lineLimit(2)
-            }
-            Spacer()
-            Button {
-                UIPasteboard.general.string =
-                    key + "\n" + value
-            } label: {
-                Image(systemName: "doc.on.doc.fill")
-                    .frame(width: 24, height: 24)
-            }
-        }
-        .padding(.horizontal, 16)
-        .frame(height: 80)
-        .background(Color.Theme.Background.silver)
-    }
 
-    func isCurrentKey(key: String) -> Bool {
-        UserManager.shared.activatedUID == key
+    func isCurrentKey(info: [String: String]) -> Bool {
+        let key = info["userId"]
+        return UserManager.shared.activatedUID == key
     }
 
     // MARK: Private
@@ -198,6 +159,59 @@ struct KeychainListView: RouteableView {
     private var viewModel = KeychainListViewModel()
 }
 
+extension KeychainListView {
+    struct Item: View {
+        var info: [String: String]
+        var isCurrent: Bool
+        var onClick:(([String: String]) -> Void)?
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    Text(info["userId"] ?? "")
+                        .font(.inter(size: 16))
+                        .foregroundStyle(isCurrent ? Color.Theme.Accent.orange : Color.Theme.Text.black8)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity)
+                .padding(16)
+                .background(Color.Theme.Background.grey)
+
+                VStack {
+                    ForEach(sorting: info,id: \.self) { key,value in
+                        if key != "userId" {
+                            HStack {
+                                Text(key.uppercasedFirstLetter())
+                                    .font(.inter(size: 14))
+                                    .foregroundStyle(Color.Theme.Text.black8)
+                                    .lineLimit(1)
+                                    .truncationMode(.middle)
+                                Spacer()
+                                Text(value)
+                                    .font(.inter(size: 14, weight: .bold))
+                                    .foregroundStyle(Color.Theme.Text.black3)
+                                    .lineLimit(1)
+                                    .truncationMode(.middle)
+                            }
+                            .padding(.vertical, 2)
+                        }
+                    }
+                }
+                .padding(16)
+                .background(Color.Theme.Background.grey.opacity(0.6))
+
+            }
+            .cornerRadius(16)
+            .onTapGesture {
+                UIPasteboard.general.string = info.toJSONString()
+                HUD.success(title: "Copy Success")
+                onClick?(info)
+            }
+        }
+    }
+}
+
 #Preview {
-    KeychainListView()
+    KeychainListView.Item(info: ["userId": "ac12312312", "public Key": "123123","index": "2"], isCurrent: false)
 }
