@@ -123,23 +123,23 @@ struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         if showSheet {
             if uiViewController.view.tag == 0 {
-                let rootView = VStack(spacing: 0) {
-                    Spacer()
-                        .layoutPriority(-1)
+                let rootView = NavigationView {
                     sheetView
-                        .layoutPriority(1)
+                        .padding(.bottom, 8)
                         .readSize { size in
                             self.sheetSize = size
                         }
                 }
-                
+                .cornerRadius([.topLeading, .topTrailing], 16)
+                .ignoresSafeArea()
+                .persistentSystemOverlays(.hidden)
+                .backgroundFill(Color.Theme.BG.bg1)
+
                 let sheetController = CustomHostingController(
                     rootView: rootView,
                     sheetSize: self.autoResizing ? _sheetSize.projectedValue : nil
                 )
-                if #available(iOS 16.4, *), self.autoResizing {
-                    sheetController.safeAreaRegions = []
-                }
+
                 sheetController.presentationController?.delegate = context.coordinator
                 uiViewController.present(sheetController, animated: true)
                 uiViewController.view.tag = 1
@@ -192,7 +192,6 @@ final class CustomHostingController<Content: View>: UIHostingController<Content>
     private var customDetent: UISheetPresentationController.Detent {
         if #available(iOS 16, *), let sheetSize {
             return UISheetPresentationController.Detent.custom(identifier: self.customDetentId) { _ in
-                print("[SHEET SIZE] \(sheetSize.height.wrappedValue)")
                 return sheetSize.height.wrappedValue
             }
         } else {
@@ -232,4 +231,10 @@ final class CustomHostingController<Content: View>: UIHostingController<Content>
             }
         }
     }
+    
+//    override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//        
+//        view.setNeedsUpdateConstraints()
+//    }
 }
