@@ -72,10 +72,12 @@ final class KeyStoreLoginViewModel: ObservableObject {
                 } else {
                     let chainId = LocalUserDefaults.shared.flowNetwork.toFlowType()
                     guard let keys = wallet?.flowAccounts?[chainId] else {
+                        HUD.error(title: "not_find_address".localized)
                         return
                     }
                     guard let account = keys.filter({ $0.address.hex == wantedAddress }).first
                     else {
+                        HUD.error(title: "not_find_address".localized)
                         return
                     }
                     selectedAccount(by: account)

@@ -23,7 +23,7 @@ class KeychainListViewModel: ObservableObject {
             .label("Flow Wallet Backup")
 
         self.seKeychain = Keychain(service: "com.flowfoundation.wallet.securekey")
-
+        
         fecth()
     }
 
@@ -51,6 +51,19 @@ class KeychainListViewModel: ObservableObject {
     func radomUpdatePrivateKey(index _: Int) {
         if isDevModel {
             // Modifying private key for test
+        }
+    }
+
+    func deleteSeedPhrase(_ index: Int) {
+        do {
+            let keychain = SeedPhraseKey.seedPhraseStorage
+            guard let key = spItem[safe:index]?.keys.first else {
+                return
+            }
+            try keychain.remove(key)
+            HUD.success(title: "remove Seed Phrase key")
+        }catch {
+            HUD.error(title: error.localizedDescription)
         }
     }
 
@@ -88,7 +101,55 @@ class KeychainListViewModel: ObservableObject {
     private let seKeychain: Keychain
     private let mnemonicPrefix = "lilico.mnemonic."
 
+    var seItem: [[String: String]] = []
+    var spItem: [[String: String]] = []
+    var pkItem: [[String: String]] = []
+
     private func fecth() {
-        // fetch all key
+        fetchSecureEnclave()
+        fetchSeedphrase()
+        fetchPrivateKey()
+    }
+
+    private func fetchSecureEnclave() {
+        let keychain = SecureEnclaveKey.KeychainStorage
+        let keys = keychain.allKeys
+        for key in keys {
+            let wallet = try? SecureEnclaveKey.wallet(id: key)
+            if let wallet {
+                let publicKey = (try? wallet.publicKey()?.hexString) ?? ""
+                seItem.append([key: publicKey])
+            }else {
+                seItem.append([key: "public key is Error"])
+            }
+        }
+    }
+
+    private func fetchSeedphrase() {
+        let keychain = SeedPhraseKey.seedPhraseStorage
+        let keys = keychain.allKeys
+        for key in keys {
+            let wallet = try? SeedPhraseKey.wallet(id: key)
+            if let wallet {
+                let mnemonic = wallet.hdWallet.mnemonic
+                spItem.append([key : mnemonic])
+            }else {
+                spItem.append([key: "public key is Error"])
+            }
+        }
+    }
+
+    private func fetchPrivateKey() {
+        let keychain = PrivateKey.PKStorage
+        let keys = keychain.allKeys
+        for key in keys {
+            let wallet = try? PrivateKey.wallet(id: key)
+            if let wallet {
+                let publicKey = (try? wallet.publicKey(signAlgo: .ECDSA_P256)?.hexString) ?? ""
+                pkItem.append([key: publicKey])
+            }else {
+                pkItem.append([key: "public key is Error"])
+            }
+        }
     }
 }

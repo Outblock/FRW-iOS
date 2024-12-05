@@ -1279,8 +1279,7 @@ extension FlowNetwork {
                 log.error("[Cadence] transaction invalid address on \(funcName)")
                 throw LLError.invalidAddress
             }
-            let tranId = try await flow
-                .sendTransaction(signers: WalletManager.shared.defaultSigners) {
+            let tranId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners) {
                     cadence {
                         cadenceStr
                     }

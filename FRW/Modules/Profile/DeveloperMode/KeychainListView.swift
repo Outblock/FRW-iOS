@@ -31,7 +31,61 @@ struct KeychainListView: RouteableView {
                 }
                 .frame(height: 52)
             }
-            .visibility(!viewModel.localList.isEmpty ? .visible : .gone)
+            .visibility(!viewModel.seList.isEmpty ? .visible : .gone)
+
+            Section {
+                ForEach(0..<viewModel.seItem.count, id: \.self) { index in
+                    let item = viewModel.seItem[index]
+                    seItemView(key: item.keys.first ?? "", value: item.values.first ?? "")
+                        .onTapGesture {
+
+                        }
+                }
+            } header: {
+                HStack {
+                    Text("New Secret Key (\(viewModel.seItem.count))")
+                    Spacer()
+                }
+                .frame(height: 52)
+            }
+            .visibility(!viewModel.seItem.isEmpty ? .visible : .gone)
+
+            Section {
+                ForEach(0..<viewModel.spItem.count, id: \.self) { index in
+                    let item = viewModel.spItem[index]
+                    seItemView(key: item.keys.first ?? "", value: item.values.first ?? "")
+                        .onTapGesture {
+                            viewModel.deleteSeedPhrase(index)
+                        }
+                }
+            } header: {
+                HStack {
+                    Text("SeedPhrase (\(viewModel.spItem.count))")
+                    Spacer()
+                }
+                .frame(height: 52)
+            }
+            .visibility(!viewModel.spItem.isEmpty ? .visible : .gone)
+
+
+            Section {
+                ForEach(0..<viewModel.pkItem.count, id: \.self) { index in
+                    let item = viewModel.pkItem[index]
+                    seItemView(key: item.keys.first ?? "", value: item.values.first ?? "")
+                        .onTapGesture {
+
+                        }
+                }
+            } header: {
+                HStack {
+                    Text("PrivateKey (\(viewModel.pkItem.count))")
+                    Spacer()
+                }
+                .frame(height: 52)
+            }
+            .visibility(!viewModel.pkItem.isEmpty ? .visible : .gone)
+
+
 
             Section {
                 ForEach(0..<viewModel.localList.count, id: \.self) { index in
