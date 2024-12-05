@@ -408,7 +408,7 @@ extension NFTTransferViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
     
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheckForTransfer()
+        self._insufficientStorageFailure = insufficientStorageCheckForTransfer(token: .nft(self.nft))
     }
 }
 
