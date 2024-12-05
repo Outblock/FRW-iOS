@@ -1411,12 +1411,12 @@
 		573429B72CDC4B2E00BDE016 /* AccountModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 573429B52CDC4B2E00BDE016 /* AccountModels.swift */; };
 		576F9E5A2CDB28590038E9CA /* StorageUsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576F9E592CDB28590038E9CA /* StorageUsageView.swift */; };
 		576F9E5B2CDB28590038E9CA /* StorageUsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576F9E592CDB28590038E9CA /* StorageUsageView.swift */; };
+		57999B7C2CF4267400C342D7 /* Helper+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57999B7B2CF4267400C342D7 /* Helper+Extensions.swift */; };
+		57999B7D2CF4267400C342D7 /* Helper+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57999B7B2CF4267400C342D7 /* Helper+Extensions.swift */; };
 		57ACE9AE2CE17901004DCA3E /* PersistentToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57ACE9AD2CE17901004DCA3E /* PersistentToastView.swift */; };
 		57ACE9AF2CE17901004DCA3E /* PersistentToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57ACE9AD2CE17901004DCA3E /* PersistentToastView.swift */; };
 		57E9AB772CE40B2600F04CE5 /* InsufficientStorageToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E9AB762CE40B2600F04CE5 /* InsufficientStorageToastView.swift */; };
 		57E9AB782CE40B2600F04CE5 /* InsufficientStorageToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E9AB762CE40B2600F04CE5 /* InsufficientStorageToastView.swift */; };
-		57999B7C2CF4267400C342D7 /* Helper+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57999B7B2CF4267400C342D7 /* Helper+Extensions.swift */; };
-		57999B7D2CF4267400C342D7 /* Helper+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57999B7B2CF4267400C342D7 /* Helper+Extensions.swift */; };
 		6A0137662897E7A0009BEF20 /* HalfSheetModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0137652897E7A0009BEF20 /* HalfSheetModal.swift */; };
 		6A0137672897E7A0009BEF20 /* HalfSheetModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0137652897E7A0009BEF20 /* HalfSheetModal.swift */; };
 		6A0454CD28768E9E00A9131C /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 6A0454CC28768E9E00A9131C /* SwiftUIPager */; };
@@ -2626,9 +2626,9 @@
 		571A806C2CF54C12009112EE /* InsufficientStorageAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsufficientStorageAlert.swift; sourceTree = "<group>"; };
 		573429B52CDC4B2E00BDE016 /* AccountModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountModels.swift; sourceTree = "<group>"; };
 		576F9E592CDB28590038E9CA /* StorageUsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageUsageView.swift; sourceTree = "<group>"; };
+		57999B7B2CF4267400C342D7 /* Helper+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Helper+Extensions.swift"; sourceTree = "<group>"; };
 		57ACE9AD2CE17901004DCA3E /* PersistentToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentToastView.swift; sourceTree = "<group>"; };
 		57E9AB762CE40B2600F04CE5 /* InsufficientStorageToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsufficientStorageToastView.swift; sourceTree = "<group>"; };
-		57999B7B2CF4267400C342D7 /* Helper+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Helper+Extensions.swift"; sourceTree = "<group>"; };
 		6A0137652897E7A0009BEF20 /* HalfSheetModal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HalfSheetModal.swift; sourceTree = "<group>"; };
 		6A06CB0528AA25F400C81BE1 /* NFTUIKitListDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTUIKitListDataSource.swift; sourceTree = "<group>"; };
 		6A06CB0928AA485200C81BE1 /* NFTUIKitListStyleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTUIKitListStyleHandler.swift; sourceTree = "<group>"; };
@@ -9573,8 +9573,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/outblock/flow-swift";
 			requirement = {
-				kind = exactVersion;
-				version = 0.3.9;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.9;
 			};
 		};
 		15F517F928C6574C00504FDC /* XCRemoteSwiftPackageReference "atlantis" */ = {
