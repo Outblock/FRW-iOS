@@ -356,7 +356,7 @@ extension FlowNetwork {
     static func queryStakeInfo() async throws -> [StakingNode]? {
         let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
         let response: [StakingNode] = try await fetch(
-            by: \.staking?.getDelegatesInfoArray,
+            by: \.staking?.getDelegatesInfoArrayV2,
             arguments: [.address(address)]
         )
         debugPrint("FlowNetwork -> queryStakeInfo, response = \(response)")

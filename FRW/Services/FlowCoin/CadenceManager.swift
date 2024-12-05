@@ -301,7 +301,7 @@ extension CadenceModel {
         let getNodeInfo: String?
         let getNodesInfo: String?
 
-        let getDelegatesInfoArray: String?
+        let getDelegatesInfoArrayV2: String?
         let getApyWeekly: String?
 
         let getStakeInfo: String?
