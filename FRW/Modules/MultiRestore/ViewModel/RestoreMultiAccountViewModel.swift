@@ -30,6 +30,12 @@ class RestoreMultiAccountViewModel: ObservableObject {
             return
         }
 
+        if let item = selectedUser.first {
+            let methods = selectedUser.map { $0.backupType?.methodName() ?? "" }
+            EventTrack.Account
+                .recovered(address: item.address, mechanism: "multi-backup", methods: methods)
+        }
+
         // If it is the current user, do nothing and return directly.
         if let userId = UserManager.shared.activatedUID, userId == selectedUserId {
             Router.popToRoot()
@@ -56,6 +62,7 @@ class RestoreMultiAccountViewModel: ObservableObject {
         guard selectedUser.count > 1 else {
             return
         }
+
         Task {
             do {
                 HUD.loading()

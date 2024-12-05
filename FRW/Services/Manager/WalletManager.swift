@@ -23,8 +23,12 @@ extension WalletManager {
     static let flowPath = "m/44'/539'/0'/0/0"
     static let mnemonicStrength: Int32 = 160
     static let defaultGas: UInt64 = 30_000_000
-    static let moveFee = 0.001
-    static let minDefaultBlance = 0.001
+    
+    static let minDefaultBlance: Decimal = 0.001
+    static let fixedMoveFee: Decimal = 0.001
+    static let averageTransactionFee: Decimal = 0.001
+    static let mininumStorageThreshold = 10000
+    
     private static let defaultBundleID = "com.flowfoundation.wallet"
     private static let mnemonicStoreKeyPrefix = "lilico.mnemonic"
     private static let walletFetchInterval: TimeInterval = 5
@@ -81,6 +85,8 @@ class WalletManager: ObservableObject {
     var childAccount: ChildAccount? = nil
     @Published
     var evmAccount: EVMAccountManager.Account? = nil
+    @Published
+    var accountInfo: Flow.AccountInfo?
 
     var accessibleManager: ChildAccountManager.AccessibleManager = .init()
 
@@ -809,6 +815,8 @@ extension WalletManager {
 
         flowAccountKey = nil
         try await findFlowAccount()
+        
+        try? await self.fetchAccountInfo()
     }
 
     private func fetchSupportedCoins() async throws {
@@ -883,6 +891,39 @@ extension WalletManager {
         }
     }
 
+    func fetchAccountInfo() async throws {
+        do {
+            let accountInfo = try await FlowNetwork.checkAccountInfo()
+            await MainActor.run {
+                self.accountInfo = accountInfo
+            }
+            
+            NotificationCenter.default.post(name: .accountDataDidUpdate, object: nil)
+        } catch let error {
+            log.error("[WALLET] fetch account info failed.\(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    var minimumStorageBalance: Decimal {
+        guard let accountInfo else { return Self.fixedMoveFee }
+        return accountInfo.storageFlow * Self.fixedMoveFee
+    }
+    
+    var isStorageInsufficient: Bool {
+        guard let accountInfo else { return false }
+        return accountInfo.storageCapacity - accountInfo.storageUsed < Self.mininumStorageThreshold
+    }
+
+    var isBalanceInsufficient: Bool {
+        return isBalanceInsufficient(for: 0)
+    }
+    
+    func isBalanceInsufficient(for amount: Decimal) -> Bool {
+        guard let accountInfo else { return false }
+        return accountInfo.availableBalance - amount < Self.averageTransactionFee
+    }
+    
     func fetchBalance() async throws {
         let address = selectedAccountAddress
         if address.isEmpty {
@@ -899,7 +940,7 @@ extension WalletManager {
 
         var newBalanceMap: [String: Decimal] = [:]
 
-        for (_, value) in activatedCoins.enumerated() {
+        for value in activatedCoins {
             let contractId = value.contractId
             if let balance = balanceList[contractId] {
                 newBalanceMap[contractId] = Decimal(balance)

@@ -43,7 +43,12 @@ class CadenceManager {
         if let response = loadCache() {
             scripts = response.scripts
             version = response.version ?? localVersion
-            log.info("[Cadence] local cache version is \(String(describing: response.version))")
+            log.info("[Cadence] cache version is \(String(describing: response.version))")
+            EventTrack.shared
+                .registerCadence(
+                    scriptVersion: version,
+                    cadenceVersion: current.version ?? ""
+                )
         } else {
             do {
                 guard let filePath = Bundle.main
@@ -57,7 +62,12 @@ class CadenceManager {
                 let providers = try JSONDecoder().decode(CadenceResponse.self, from: data)
                 scripts = providers.scripts
                 version = providers.version ?? localVersion
-                log.info("[Cadence] local file version is \(String(describing: providers.version))")
+                EventTrack.shared
+                    .registerCadence(
+                        scriptVersion: version,
+                        cadenceVersion: current.version ?? ""
+                    )
+                log.info("[Cadence] local version is \(String(describing: providers.version))")
             } catch {
                 log.error("CadenceManager -> decode failed", context: error)
             }
@@ -77,6 +87,11 @@ class CadenceManager {
                         self.version = version
                         log.info("[Cadence] remote version is \(String(describing: version))")
                     }
+                    EventTrack.shared
+                        .registerCadence(
+                            scriptVersion: self.version,
+                            cadenceVersion: self.current.version ?? ""
+                        )
                 }
             } catch {
                 log.error("CadenceManager -> fetch failed", context: error)
@@ -98,8 +113,6 @@ class CadenceManager {
     }
 
     private func loadCache() -> CadenceResponse? {
-        return nil
-
         guard let file = filePath() else {
             return nil
         }
@@ -400,10 +413,10 @@ extension String {
         return String(data: data, encoding: .utf8)
     }
 
-    public func toFunc() -> String {
+    public func toFunc() -> String? {
         guard let decodeStr = fromBase64() else {
             log.error("[Cadence] base decode failed")
-            return ""
+            return nil
         }
 
         let result = decodeStr.replacingOccurrences(of: "<platform_info>", with: platformInfo())

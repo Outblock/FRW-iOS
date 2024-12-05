@@ -18,6 +18,7 @@ struct BuyProvderView: View {
             Divider()
 
             Button {
+                EventTrack.General.rampClick(source: .moonpay)
                 Task {
                     await launchMoonPay()
                 }
@@ -37,6 +38,7 @@ struct BuyProvderView: View {
 
             if LocalUserDefaults.shared.flowNetwork == .mainnet {
                 Button {
+                    EventTrack.General.rampClick(source: .coinbase)
                     guard let address = WalletManager.shared.getPrimaryWalletAddress(),
                           let url =
                           URL(

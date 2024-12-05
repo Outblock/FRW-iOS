@@ -15,6 +15,11 @@ class WalletNewsHandler: ObservableObject {
 
     private init() {
         self.removeIds = LocalUserDefaults.shared.removedNewsIds
+        NotificationCenter.default.addObserver(self, selector: #selector(self.onAccountDataUpdate), name: .accountDataDidUpdate, object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     // MARK: Internal
@@ -39,7 +44,7 @@ class WalletNewsHandler: ObservableObject {
             self.list.append(contentsOf: news)
             self.removeExpiryNew()
             self.removeMarkedNews()
-            self.handleConfition()
+            self.handleCondition()
             self.orderNews()
             log.debug("[NEWS] count:\(list.count)")
         }
@@ -94,11 +99,16 @@ class WalletNewsHandler: ObservableObject {
     }
 
     // MARK: Private
-
+    
     private let accessQueue = DispatchQueue(
         label: "SynchronizedArrayAccess",
         attributes: .concurrent
     )
+
+    @objc
+    private func onAccountDataUpdate() {
+        handleCondition(force: true)
+    }
 
     private func removeExpiryNew() {
         accessQueue.sync {
@@ -115,10 +125,10 @@ class WalletNewsHandler: ObservableObject {
         }
     }
 
-    private func handleConfition() {
+    private func handleCondition(force: Bool = false) {
         accessQueue.sync {
             list = list.filter { model in
-                guard let conditionList = model.conditions, !conditionList.isEmpty else {
+                guard let conditionList = model.conditions, !conditionList.isEmpty, force == false else {
                     return true
                 }
                 return !conditionList.map { $0.type.boolValue() }.contains(false)

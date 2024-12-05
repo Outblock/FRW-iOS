@@ -248,7 +248,7 @@ extension TransactionManager {
                     let result = try await FlowNetwork.getTransactionResult(by: transactionId.hex)
                     debugPrint("TransactionHolder -> onCheck status: \(result.status)")
 
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.async { [self] in
                         if result.status == self.flowStatus, result.status < .sealed {
                             self.startTimer()
                             return
@@ -258,11 +258,25 @@ extension TransactionManager {
                         if result.isFailed {
                             self.errorMsg = result.errorMessage
                             self.internalStatus = .failed
-                            debugPrint(
-                                "TransactionHolder -> onCheck result failed: \(result.errorMessage)"
+
+                            self.trackResult(
+                                result: result,
+                                fromId: self.transactionId.hex
                             )
+                            debugPrint("TransactionHolder -> onCheck result failed: \(result.errorMessage)")
+                            
+                            switch result.errorCode {
+                            case .storageCapacityExceeded:
+                                AlertViewController.showInsufficientStorageError(minimumBalance: WalletManager.shared.minimumStorageBalance.doubleValue)
+                            default:
+                                break
+                            }
                         } else if result.isComplete {
                             self.internalStatus = .success
+                            self.trackResult(
+                                result: result,
+                                fromId: self.transactionId.hex
+                            )
                         } else {
                             self.internalStatus = .pending
                             self.startTimer()
@@ -278,6 +292,15 @@ extension TransactionManager {
                     }
                 }
             }
+        }
+
+        private func trackResult(result: Flow.TransactionResult, fromId: String) {
+            EventTrack.Transaction
+                .transactionResult(
+                    txId: transactionId.hex,
+                    successful: result.isComplete,
+                    message: result.errorMessage
+                )
         }
 
         private func postNotification() {

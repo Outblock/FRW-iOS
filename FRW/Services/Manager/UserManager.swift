@@ -223,6 +223,12 @@ extension UserManager {
         WalletManager.shared.updateKeyProvider(provider: secureKey, user: store)
         LocalUserDefaults.shared.addUser(user: store)
 
+        EventTrack.Account
+            .create(
+                key: key.publicKey.description,
+                signAlgo: key.signAlgo.id,
+                hashAlgo: key.hashAlgo.id
+            )
         return model.txId
     }
 }

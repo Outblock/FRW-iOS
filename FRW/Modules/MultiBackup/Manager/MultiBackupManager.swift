@@ -80,6 +80,7 @@ extension MultiBackupManager {
         var updatedTime: Double? = Date.now.timeIntervalSince1970
         let deviceInfo: DeviceInfoRequest?
         var code: String?
+        var backupType: MultiBackupType? = .phrase
 
         func showDate() -> String {
             guard let updatedTime = updatedTime else { return "" }
@@ -266,11 +267,23 @@ extension MultiBackupManager {
         switch type {
         case .google:
             try await login(from: type)
-            return try await gdTarget.getCurrentDriveItems()
+            var list = try await gdTarget.getCurrentDriveItems()
+            list = list.map { item in
+                var model = item
+                model.backupType = type
+                return model
+            }
+            return list
         case .passkey:
             return []
         case .icloud:
-            return try await iCloudTarget.getCurrentDriveItems()
+            var list = try await iCloudTarget.getCurrentDriveItems()
+            list = list.map { item in
+                var model = item
+                model.backupType = type
+                return model
+            }
+            return list
         case .phrase:
             return []
         }
