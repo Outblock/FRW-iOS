@@ -209,7 +209,7 @@ extension RemoteConfigManager {
                 return true
             case .insufficientStorage:
                 // TODO: [AB] Not very elegant adding a dependency here, but implementing in a different way would probably require major refactoring
-                return WalletManager.shared.isStorageInsufficient && RemoteConfigManager.shared.config?.features.insufficientStorage ?? true
+                return WalletManager.shared.isStorageInsufficient && RemoteConfigManager.shared.config?.features.insufficientStorage ?? false
             default:
                 return false
             }
