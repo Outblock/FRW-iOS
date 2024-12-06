@@ -147,10 +147,15 @@ struct WalletSettingView: RouteableView {
                         .padding(.horizontal, 16)
                         .roundedBg()
 
-                        storageView
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 16)
-                            .roundedBg()
+                        StorageUsageView(
+                            title: "storage".localized,
+                            usage: $vm.storageUsedDesc,
+                            usageRatio: $vm.storageUsedRatio
+                        )
+                        .titleFont(.inter(size: 16, weight: .medium))
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 16)
+                        .roundedBg()
                     }
                     .visibility(onlyShowInfo() ? .gone : .visible)
                 }
@@ -185,31 +190,6 @@ struct WalletSettingView: RouteableView {
                 .closeOnTap(false)
                 .closeOnTapOutside(true)
                 .backgroundColor(.black.opacity(0.4))
-        }
-    }
-
-    var storageView: some View {
-        VStack {
-            Text("storage".localized)
-                .font(.inter(size: 16, weight: .medium))
-                .foregroundColor(Color.LL.Neutrals.text)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            HStack {
-                Text(vm.usagePercentString)
-                    .font(.inter(size: 12, weight: .regular))
-                    .foregroundColor(Color.LL.Neutrals.neutrals7)
-
-                Spacer()
-
-                Text(vm.storageUsageDesc)
-                    .font(.inter(size: 12, weight: .regular))
-                    .foregroundColor(Color.LL.Neutrals.neutrals7)
-            }
-            .padding(.top, 5)
-
-            ProgressView(value: vm.storageUsagePercent, total: 1.0)
-                .tint(Color.LL.Primary.salmonPrimary)
         }
     }
 

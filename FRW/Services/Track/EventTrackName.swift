@@ -20,6 +20,7 @@ extension EventTrack {
         case rpcError = "script_error"
         case delegationCreated = "delegation_created"
         case rampClicked = "on_ramp_clicked"
+        case coaCreation = "coa_creation"
         case securityTool = "security_tool"
 
         // MARK: Internal
@@ -53,6 +54,7 @@ extension EventTrack {
         case evmSigned = "evm_transaction_signed"
         case FTTransfer = "ft_transfer"
         case NFTTransfer = "nft_transfer"
+        case result = "transaction_result"
 
         // MARK: Internal
 

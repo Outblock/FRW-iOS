@@ -20,7 +20,7 @@ extension EventTrack.Transaction {
         EventTrack
             .send(event: EventTrack.Transaction.flowSigned, properties: [
                 "cadence": cadence,
-                "id": txId,
+                "tx_id": txId,
                 "authorizers": authorizers,
                 "proposer": proposer,
                 "payer": payer,
@@ -28,12 +28,16 @@ extension EventTrack.Transaction {
             ])
     }
 
-    static func evmSigned(flowAddress: String, evmAddress: String, txId: String, success: Bool) {
+    static func evmSigned(txId: String, success: Bool) {
+        guard let primaryAddress = WalletManager.shared.getPrimaryWalletAddress(),
+              let evmAddress = EVMAccountManager.shared.accounts.first?.showAddress else {
+            return
+        }
         EventTrack
-            .send(event: EventTrack.Transaction.flowSigned, properties: [
-                "flow_address": flowAddress,
+            .send(event: EventTrack.Transaction.evmSigned, properties: [
+                "flow_address": primaryAddress,
                 "evm_address": evmAddress,
-                "id": txId,
+                "tx_id": txId,
                 "success": success,
             ])
     }
@@ -58,16 +62,30 @@ extension EventTrack.Transaction {
     static func NFTTransfer(
         from: String,
         to: String,
-        type: String,
-        amount _: Double,
-        identifier: String
+        identifier: String,
+        txId: String,
+        fromType: String,
+        toType: String,
+        isMove: Bool
     ) {
         EventTrack
-            .send(event: EventTrack.Transaction.FTTransfer, properties: [
+            .send(event: EventTrack.Transaction.NFTTransfer, properties: [
                 "from_address": from,
                 "to_address": to,
-                "type": type,
-                "ft_identifier": identifier,
+                "nft_identifier": identifier,
+                "tx_id": txId,
+                "from_type": fromType,
+                "to_type": toType,
+                "isMove": isMove,
+            ])
+    }
+
+    static func transactionResult(txId: String, successful: Bool, message: String? = nil) {
+        EventTrack
+            .send(event: EventTrack.Transaction.result, properties: [
+                "tx_id": txId,
+                "is_successful": successful,
+                "error_message": message ?? "",
             ])
     }
 }

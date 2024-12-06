@@ -333,7 +333,6 @@ extension ProfileView {
                             } else {
                                 Router.route(to: RouteMap.Backup.backupList)
                             }
-
                         } label: {
                             ProfileView.SettingItemCell(
                                 iconName: Row.backup(vm).iconName,

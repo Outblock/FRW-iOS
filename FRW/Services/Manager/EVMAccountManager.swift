@@ -216,11 +216,36 @@ extension EVMAccountManager {
 
 extension EVMAccountManager {
     func enableEVM() async throws {
-        let tid = try await FlowNetwork.createEVM()
-        let result = try await tid.onceSealed()
-        if result.isFailed {
-            log.error("[EVM] create EVM result: Failed")
-            throw EVMError.createAccount
+        let address = WalletManager.shared.getPrimaryWalletAddress() ?? ""
+
+        do {
+            let tid = try await FlowNetwork.createEVM()
+            let result = try await tid.onceSealed()
+            if result.isFailed {
+                log.error("[EVM] create EVM result: Failed")
+                EventTrack.General
+                    .coaCreation(
+                        txId: tid.description,
+                        flowAddress: address,
+                        message: result.errorMessage
+                    )
+                throw EVMError.createAccount
+            } else {
+                EventTrack.General
+                    .coaCreation(
+                        txId: tid.description,
+                        flowAddress: address,
+                        message: ""
+                    )
+            }
+        } catch {
+            EventTrack.General
+                .coaCreation(
+                    txId: "",
+                    flowAddress: address,
+                    message: error.localizedDescription
+                )
+            throw error
         }
     }
 

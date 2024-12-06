@@ -7,9 +7,9 @@
 
 import CryptoKit
 import Intents
+import ReownWalletKit
 import UserNotifications
 import WalletConnectNotify
-import Web3Wallet
 
 // MARK: - NotificationService
 
@@ -96,7 +96,7 @@ extension NotificationService {
            let topic = content.userInfo["topic"] as? String,
            let ciphertext = content.userInfo["message"] as? String,
            let tag = content.userInfo["tag"] as? UInt {
-            if Web3WalletDecryptionService.canHandle(tag: tag) {
+            if WalletKitDecryptionService.canHandle(tag: tag) {
                 let mutableContent = handleWeb3WalletNotification(
                     content: content,
                     topic: topic,
@@ -130,7 +130,7 @@ extension NotificationService {
     ) -> UNMutableNotificationContent {
         do {
             let web3WalletDecryptionService =
-                try Web3WalletDecryptionService(groupIdentifier: "group.com.walletconnect.sdk")
+                try WalletKitDecryptionService(groupIdentifier: "group.com.walletconnect.sdk")
 
             let decryptedPayload = try web3WalletDecryptionService.decryptMessage(
                 topic: topic,

@@ -8,6 +8,10 @@
 import Foundation
 
 extension EventTrack.General {
+    enum RampSource: String {
+        case coinbase
+        case moonpay
+    }
     static func rpcError(error: String, scriptId: String) {
         EventTrack.send(event: EventTrack.General.rpcError, properties: [
             "error": error,
@@ -15,7 +19,6 @@ extension EventTrack.General {
         ])
     }
 
-    /// StakeAmountViewModel  stake
     static func delegationCreated(
         address: String,
         nodeId: String,
@@ -30,18 +33,41 @@ extension EventTrack.General {
     }
 
     ///  BuyProvderView button action
-    static func rampClick(source: String) {
+    static func rampClick(source: RampSource) {
         EventTrack
             .send(event: EventTrack.General.rampClicked, properties: [
-                "source": source,
+                "source": source.rawValue,
             ])
     }
 
-    /// home page buy button clicked
-    static func security(type: String) {
+    static func coaCreation(txId: String, flowAddress: String, message: String) {
+        EventTrack
+            .send(event: EventTrack.General.coaCreation, properties: [
+                "tx_id": txId,
+                "flow_address": flowAddress,
+                "error_message": message,
+            ])
+    }
+
+    static func security(type: SecurityManager.SecurityType) {
         EventTrack
             .send(event: EventTrack.General.securityTool, properties: [
-                "type": type,
+                "type": type.trackLabel(),
             ])
+    }
+}
+
+extension SecurityManager.SecurityType {
+    func trackLabel() -> String {
+        switch self {
+        case .none:
+            "none"
+        case .pin:
+            "pin"
+        case .bionic:
+            "biometric"
+        case .both:
+            "both"
+        }
     }
 }

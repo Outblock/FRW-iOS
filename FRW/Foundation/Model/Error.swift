@@ -23,6 +23,7 @@ enum LLError: Error {
     case accountNotFound
     case fetchUserInfoFailed
     case invalidAddress
+    case invalidCadence
     case signFailed
     case decodeFailed
     case unknown
@@ -112,4 +113,19 @@ enum EVMError: Error {
     case createAccount
     case findAddress
     case transactionResult
+}
+
+// MARK: - CadenceError
+
+enum CadenceError: Error {
+    case empty
+
+    // MARK: Internal
+
+    var message: String {
+        switch self {
+        case .empty:
+            "empty script"
+        }
+    }
 }

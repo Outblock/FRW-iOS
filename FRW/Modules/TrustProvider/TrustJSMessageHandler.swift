@@ -10,11 +10,11 @@ import Combine
 import CryptoKit
 import Flow
 import Foundation
+import ReownWalletKit
 import TrustWeb3Provider
 import WalletCore
 import Web3Core
 import web3swift
-import Web3Wallet
 import WebKit
 
 // MARK: - TrustJSMessageHandler
@@ -383,8 +383,11 @@ extension TrustJSMessageHandler {
                     if result.isFailed {
                         HUD.error(title: "transaction failed")
                         self.cancel(id: id)
+                        EventTrack.Transaction
+                            .evmSigned(txId: txid.hex, success: false)
                         return
                     }
+                    EventTrack.Transaction.evmSigned(txId: txid.hex, success: true)
                     let model = try await FlowNetwork.fetchEVMTransactionResult(txid: txid.hex)
                     DispatchQueue.main.async {
                         self.webVC?.webView.tw

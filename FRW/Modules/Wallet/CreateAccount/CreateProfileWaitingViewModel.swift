@@ -14,6 +14,11 @@ import SwiftUIPager
 class CreateProfileWaitingViewModel: ObservableObject {
     // MARK: Lifecycle
 
+    deinit {
+        EventTrack.Account.createdTimeEnd()
+    }
+
+
     init(txId: String, callback: @escaping (Bool) -> Void) {
         self.txId = Flow.ID(hex: txId)
         self.callback = callback
@@ -27,12 +32,14 @@ class CreateProfileWaitingViewModel: ObservableObject {
                     .isEmptyBlockChain ?? true
                 if !isEmptyBlockChain {
                     self.createFinished = true
+                    EventTrack.Account.createdTimeEnd()
                 }
 
             }.store(in: &cancellableSet)
         DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: DispatchWorkItem(block: {
             self.startTimer()
         }))
+        EventTrack.Account.createdTimeStart()
     }
 
     // MARK: Internal

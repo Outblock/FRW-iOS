@@ -203,6 +203,7 @@ extension UserManager {
             accountKey: key.toCodableModel(),
             deviceInfo: IPManager.shared.toParams()
         )
+
         let model: RegisterResponse = try await Network.request(FRWAPI.User.register(request))
 
         try await finishLogin(mnemonic: "", customToken: model.customToken, isRegiter: true)
@@ -213,10 +214,16 @@ extension UserManager {
                 key: model.id,
                 value: privateKey.dataRepresentation
             )
+
         } else {
             log.error("store public key on iPhone failed")
         }
-
+        EventTrack.Account
+            .create(
+                key: sec.key.publickeyValue ?? "",
+                signAlgo: key.signAlgo.id,
+                hashAlgo: key.hashAlgo.id
+            )
         return model.txId
     }
 }

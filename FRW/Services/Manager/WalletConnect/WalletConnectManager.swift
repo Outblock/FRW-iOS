@@ -9,17 +9,17 @@ import Combine
 import Flow
 import Foundation
 import Gzip
+import ReownRouter
+import ReownWalletKit
 import Starscream
 import UIKit
 import WalletConnectNetworking
 import WalletConnectNotify
 import WalletConnectPairing
 import WalletConnectRelay
-import WalletConnectRouter
 import WalletConnectSign
 import WalletConnectUtils
 import WalletCore
-import Web3Wallet
 
 // MARK: - WalletConnectManager
 
@@ -45,7 +45,8 @@ class WalletConnectManager: ObservableObject {
         )
         Pair.configure(metadata: metadata)
         Sign.configure(crypto: DefaultCryptoProvider())
-        Web3Wallet.configure(metadata: metadata, crypto: DefaultCryptoProvider())
+
+        WalletKit.configure(metadata: metadata, crypto: DefaultCryptoProvider())
 
         Notify.configure(environment: .production, crypto: DefaultCryptoProvider())
         Notify.instance.setLogging(level: .debug)
@@ -263,10 +264,9 @@ class WalletConnectManager: ObservableObject {
     private var cacheReqeust: [String] = []
 
     private func navigateBackTodApp(topic: String) {
-        // TODO: #six
-//        WalletConnectRouter.Router.goBack()
         if let session = findSession(topic: topic), let url = session.peer.redirect?.native {
-            WalletConnectRouter.goBack(uri: url)
+            ReownRouter.goBack(uri: url)
+//            WalletConnectRouter.goBack(uri: url)
         }
     }
 }
