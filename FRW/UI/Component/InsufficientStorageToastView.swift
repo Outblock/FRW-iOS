@@ -23,7 +23,11 @@ protocol InsufficientStorageToastViewModel: ObservableObject {
 }
 
 extension InsufficientStorageToastViewModel {
-    var showInsufficientFundsToast: Bool { self.variant != nil }
+    private var isInsufficientStorageEnabled: Bool { RemoteConfigManager.shared.config?.features.insufficientStorage ?? true }
+    
+    var showInsufficientFundsToast: Bool {
+        self.isInsufficientStorageEnabled && self.variant != nil
+    }
     
     func insufficientStorageCheckForMove(token: TokenType, from fromWallet: Contact.WalletType?, to toWallet: Contact.WalletType?) -> InsufficientStorageFailure? {
         insufficientStorageCheck(amount: 0, token: token, from: fromWallet, to: toWallet)
@@ -42,6 +46,8 @@ extension InsufficientStorageToastViewModel {
     }
     
     private func insufficientStorageCheck(amount: Decimal, token: TokenType, from fromWallet: Contact.WalletType?, to toWallet: Contact.WalletType?) -> InsufficientStorageFailure? {
+        guard self.isInsufficientStorageEnabled == true else { return .none }
+        
         let wm = WalletManager.shared
         guard wm.isStorageInsufficient == false else {
             return .some(.beforeTransfer)
