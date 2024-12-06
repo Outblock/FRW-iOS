@@ -23,7 +23,7 @@ protocol InsufficientStorageToastViewModel: ObservableObject {
 }
 
 extension InsufficientStorageToastViewModel {
-    private var isInsufficientStorageEnabled: Bool { RemoteConfigManager.shared.config?.features.insufficientStorage ?? true }
+    private var isInsufficientStorageEnabled: Bool { RemoteConfigManager.shared.config?.features.insufficientStorage ?? false }
     
     var showInsufficientFundsToast: Bool {
         self.isInsufficientStorageEnabled && self.variant != nil
