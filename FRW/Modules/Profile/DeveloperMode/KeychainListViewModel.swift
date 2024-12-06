@@ -57,7 +57,7 @@ class KeychainListViewModel: ObservableObject {
     func deleteSeedPhrase(_ index: Int) {
         do {
             let keychain = SeedPhraseKey.seedPhraseStorage
-            guard let key = spItem[safe:index]?.keys.first else {
+            guard let key = spItem[safe:index]?["userId"] else {
                 return
             }
             try keychain.remove(key)

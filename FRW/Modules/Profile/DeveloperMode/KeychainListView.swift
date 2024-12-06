@@ -164,6 +164,7 @@ extension KeychainListView {
         var info: [String: String]
         var isCurrent: Bool
         var onClick:(([String: String]) -> Void)?
+        var onDelete:((String) -> Void)?
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
@@ -201,11 +202,31 @@ extension KeychainListView {
                 .padding(16)
                 .background(Color.Theme.Background.grey.opacity(0.6))
 
+                HStack(spacing: 12){
+                    Button {
+                        onDelete?(info["userId"] ?? "")
+                    } label: {
+                        Text("Delete")
+                            .font(.inter(size: 12))
+                            .padding(4)
+                    }
+
+                    Button {
+                        UIPasteboard.general.string = info.toJSONString()
+                        HUD.success(title: "Copy Success")
+                    } label: {
+                        Text("Copy")
+                            .font(.inter(size: 12))
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal,16)
+                .background(Color.Theme.Background.grey.opacity(0.6))
+                .frame(maxWidth: .infinity)
+
             }
             .cornerRadius(16)
             .onTapGesture {
-                UIPasteboard.general.string = info.toJSONString()
-                HUD.success(title: "Copy Success")
                 onClick?(info)
             }
         }
