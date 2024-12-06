@@ -19,7 +19,11 @@ struct KeychainListView: RouteableView {
             Section {
                 ForEach(0..<viewModel.seList.count, id: \.self) { index in
                     let item = viewModel.seList[index]
-                    KeychainListView.Item(info: item, isCurrent: isCurrentKey(info: item))
+                    KeychainListView.Item(info: item, isCurrent: isCurrentKey(info: item)) { item in
+
+                    } onDelete: { userId in
+
+                    }
                 }
             } header: {
                 HStack {
@@ -33,7 +37,8 @@ struct KeychainListView: RouteableView {
             Section {
                 ForEach(0..<viewModel.seItem.count, id: \.self) { index in
                     let item = viewModel.seItem[index]
-                    KeychainListView.Item(info: item, isCurrent: isCurrentKey(info: item))
+                    KeychainListView.Item(info: item, isCurrent: isCurrentKey(info: item)) { item in
+                    } onDelete: { userId in}
                 }
             } header: {
                 HStack {
@@ -47,7 +52,11 @@ struct KeychainListView: RouteableView {
             Section {
                 ForEach(0..<viewModel.spItem.count, id: \.self) { index in
                     let item = viewModel.spItem[index]
-                    KeychainListView.Item(info: item, isCurrent: isCurrentKey(info: item))
+                    KeychainListView.Item(info: item, isCurrent: isCurrentKey(info: item),onClick: { item in
+
+                    }){ userId in
+                        
+                    }
                 }
             } header: {
                 HStack {
@@ -62,7 +71,9 @@ struct KeychainListView: RouteableView {
             Section {
                 ForEach(0..<viewModel.pkItem.count, id: \.self) { index in
                     let item = viewModel.pkItem[index]
-                    KeychainListView.Item(info: item, isCurrent: isCurrentKey(info: item))
+                    KeychainListView.Item(info: item, isCurrent: isCurrentKey(info: item)) { item in
+                    } onDelete: { userId in
+                    }
                 }
             } header: {
                 HStack {
@@ -106,7 +117,8 @@ struct KeychainListView: RouteableView {
             Section {
                 ForEach(0..<$viewModel.multiICloudBackUpList.count, id: \.self) { index in
                     let item = viewModel.multiICloudBackUpList[index]
-                    KeychainListView.Item(info: item, isCurrent: isCurrentKey(info: item))
+                    KeychainListView.Item(info: item, isCurrent: isCurrentKey(info: item)) { item in
+                    } onDelete: { userId in}
                 }
             } header: {
                 HStack {
@@ -163,8 +175,8 @@ extension KeychainListView {
     struct Item: View {
         var info: [String: String]
         var isCurrent: Bool
-        var onClick:(([String: String]) -> Void)?
-        var onDelete:((String) -> Void)?
+        var onClick:(([String: String]) -> Void)
+        var onDelete:((String) -> Void)
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
@@ -204,7 +216,7 @@ extension KeychainListView {
 
                 HStack(spacing: 12){
                     Button {
-                        onDelete?(info["userId"] ?? "")
+                        onDelete(info["userId"] ?? "")
                     } label: {
                         Text("Delete")
                             .font(.inter(size: 12))
@@ -227,12 +239,14 @@ extension KeychainListView {
             }
             .cornerRadius(16)
             .onTapGesture {
-                onClick?(info)
+                onClick(info)
             }
         }
     }
 }
 
 #Preview {
-    KeychainListView.Item(info: ["userId": "ac12312312", "public Key": "123123","index": "2"], isCurrent: false)
+    KeychainListView.Item(info: ["userId": "ac12312312", "public Key": "123123","index": "2"], isCurrent: false){ item in
+    } onDelete: { userId in
+    }
 }
