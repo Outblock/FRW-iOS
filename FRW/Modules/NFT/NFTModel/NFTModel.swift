@@ -22,6 +22,10 @@ struct NFTCollection: Codable {
 
     var evmNFTs: [NFTModel]?
 
+    var isEmpty: Bool {
+        count == 0
+    }
+
     static func mock() -> NFTCollection {
         NFTCollection(collection: NFTCollectionInfo.mock(), count: 13)
     }
