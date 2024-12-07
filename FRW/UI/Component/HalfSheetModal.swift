@@ -13,7 +13,7 @@ struct SheetHeaderView: View {
     // MARK: Internal
 
     let title: String
-    var closeAction: (() -> Void)? = nil
+    var closeAction: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -65,13 +65,14 @@ extension View {
     // Binding Show Variable...
     func halfSheet<SheetView: View>(
         showSheet: Binding<Bool>,
+        autoResizing: Bool = false,
         @ViewBuilder sheetView: @escaping () -> SheetView,
         onEnd: (() -> Void)? = nil
     ) -> some View {
         // why we using overlay or background...
         // bcz it will automatically use the swiftui frame Size only....
         background(
-            HalfSheetHelper(sheetView: sheetView(), showSheet: showSheet)
+            HalfSheetHelper(sheetView: sheetView(), autoResizing: autoResizing, showSheet: showSheet)
         )
         .onChange(of: showSheet.wrappedValue) { newValue in
             if let onEnd = onEnd, !newValue {
@@ -86,7 +87,7 @@ extension View {
 // UIKit Integration...
 struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
     // On Dismiss...
-    class Coordinator: NSObject, UISheetPresentationControllerDelegate {
+    final class Coordinator: NSObject, UISheetPresentationControllerDelegate {
         // MARK: Lifecycle
 
         init(parent: HalfSheetHelper) {
@@ -103,8 +104,9 @@ struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
     }
 
     var sheetView: SheetView
-    @Binding
-    var showSheet: Bool
+    let autoResizing: Bool
+    @Binding var showSheet: Bool
+    @State private var sheetSize: CGSize = .zero
 
     let controller = UIViewController()
 
@@ -121,7 +123,18 @@ struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         if showSheet {
             if uiViewController.view.tag == 0 {
-                let sheetController = CustomHostingController(rootView: sheetView)
+                let rootView = sheetView
+                    .readSize { size in
+                        self.sheetSize = size
+                    }
+                
+                let sheetController = CustomHostingController(
+                    rootView: rootView,
+                    sheetSize: self.autoResizing ? _sheetSize.projectedValue : nil
+                )
+                if #available(iOS 16.4, *), self.autoResizing {
+                    sheetController.safeAreaRegions = []
+                }
                 sheetController.presentationController?.delegate = context.coordinator
                 uiViewController.present(sheetController, animated: true)
                 uiViewController.view.tag = 1
@@ -139,19 +152,23 @@ struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
 // MARK: - CustomHostingController
 
 // Custom UIHostingController for halfSheet....
-class CustomHostingController<Content: View>: UIHostingController<Content> {
+final class CustomHostingController<Content: View>: UIHostingController<Content> {
+    private let sheetSize: Binding<CGSize>?
+    
     // MARK: Lifecycle
 
     public init(
         rootView: Content,
+        sheetSize: Binding<CGSize>? = nil,
         showLarge: Bool = false,
         showGrabber: Bool = true,
         onlyLarge: Bool = false
     ) {
-        super.init(rootView: rootView)
+        self.sheetSize = sheetSize
         self.showLarge = showLarge
         self.showGrabber = showGrabber
         self.onlyLarge = onlyLarge
+        super.init(rootView: rootView)
         overrideUserInterfaceStyle = ThemeManager.shared.getUIKitStyle()
     }
 
@@ -162,24 +179,52 @@ class CustomHostingController<Content: View>: UIHostingController<Content> {
     }
 
     // MARK: Internal
-
-    var showLarge: Bool = false
-    var showGrabber: Bool = true
-    var onlyLarge: Bool = false
+    private var autoResizing: Bool { return self.sheetSize != nil }
+    private let showLarge: Bool
+    private let showGrabber: Bool
+    private let onlyLarge: Bool
+    private let customDetentId = UISheetPresentationController.Detent.Identifier(rawValue: "custom-detent")
+    private var customDetent: UISheetPresentationController.Detent {
+        if #available(iOS 16, *), let sheetSize {
+            return UISheetPresentationController.Detent.custom(identifier: self.customDetentId) { _ in
+                print("[SHEET SIZE] \(sheetSize.height.wrappedValue)")
+                return sheetSize.height.wrappedValue
+            }
+        } else {
+            return UISheetPresentationController.Detent.medium()
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
 
         // setting presentation controller properties...
-        if let presentationController = presentationController as? UISheetPresentationController {
+        if let sheetPresentationController {
             if onlyLarge {
-                presentationController.detents = [.large()]
+                sheetPresentationController.detents = [.large()]
             } else {
-                presentationController.detents = showLarge ? [.medium(), .large()] : [.medium()]
+                sheetPresentationController.detents = showLarge ? [customDetent, .large()] : [customDetent]
             }
             // to show grab protion...
-            presentationController.prefersGrabberVisible = true
+            sheetPresentationController.prefersGrabberVisible = self.showLarge || self.onlyLarge
+            
+            if self.autoResizing {
+                sheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge = false
+            }
+
+        }
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if #available(iOS 16, *) {
+            if let sheetPresentationController {
+                sheetPresentationController.animateChanges {
+                    sheetPresentationController.invalidateDetents()
+                }
+            }
         }
     }
 }
