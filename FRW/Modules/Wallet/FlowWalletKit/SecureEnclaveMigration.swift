@@ -28,8 +28,8 @@ enum SecureEnclaveMigration {
     }
 
     private static func migrationFromOldSE() {
-        var service: String = "com.flowfoundation.wallet.securekey"
-        var userKey: String = "user.keystore"
+        let service: String = "com.flowfoundation.wallet.securekey"
+        let userKey: String = "user.keystore"
         let keychain = Keychain(service: service)
         guard let data = try? keychain.getData(userKey) else {
             print("[Migration] SecureEnclave get value from keychain empty,\(service)")
@@ -60,7 +60,7 @@ enum SecureEnclaveMigration {
 
     private static func migration(users: [StoreInfo]) {
         var userIds = LocalUserDefaults.shared.loginUIDList
-        var allKeys = SecureEnclaveKey.KeychainStorage.allKeys
+        let allKeys = SecureEnclaveKey.KeychainStorage.allKeys
         let startAt = CFAbsoluteTimeGetCurrent()
         var finishCount = 0
         for model in users {
@@ -114,31 +114,31 @@ enum SecureEnclaveMigration {
 
 //MARK: - phrase
     private static func migration12() {
-        var mainKeychain =
+        let mainKeychain =
         Keychain(service: (Bundle.main.bundleIdentifier ?? "com.flowfoundation.wallet") + ".local")
             .label("Lilico app backup")
             .synchronizable(false)
             .accessibility(.whenUnlocked)
         var userIds = LocalUserDefaults.shared.loginUIDList
         let allKeys = mainKeychain.allKeys()
-        for userId in allKeys {
-            let key = userId.removePrefix("lilico.mnemonic.")
-            guard let data = try? mainKeychain.getData(userId),
-                  let decryptedData = try? WalletManager.decryptionChaChaPoly(key: key, data: data),
-                  var mnemonic = String(data: decryptedData, encoding: .utf8),
+        for theKey in allKeys {
+            let uid = theKey.removePrefix("lilico.mnemonic.")
+            guard let data = try? mainKeychain.getData(theKey),
+                  let decryptedData = try? WalletManager.decryptionChaChaPoly(key: uid, data: data),
+                  let mnemonic = String(data: decryptedData, encoding: .utf8),
                   !mnemonic.isEmpty
             else {
-                log.debug("[Mig] invalid userId:\(userId)")
+                log.debug("[Mig] invalid userId:\(uid)")
                 continue
             }
 
             guard mnemonic.split(separator: " ").count == 12 else {
-                log.debug("[Mig] invalid userId:\(userId),\(mnemonic)")
+                log.debug("[Mig] invalid userId:\(uid),\(mnemonic)")
                 continue
             }
 
             guard let hdWallet = HDWallet(mnemonic: mnemonic, passphrase: "") else {
-                log.debug("[Mig] invalid mnemonic:\(userId),\(mnemonic)")
+                log.debug("[Mig] invalid mnemonic:\(uid),\(mnemonic)")
                 continue
             }
             let providerKey = FlowWalletKit.SeedPhraseKey(
@@ -148,19 +148,19 @@ enum SecureEnclaveMigration {
             guard let publicKey = try? providerKey.publicKey(signAlgo: .ECDSA_SECP256k1)?.hexValue else {
                 continue
             }
-            let address = address(by: userId)
-            let storeUser = UserManager.StoreUser(publicKey: publicKey, address: address, userId: userId, keyType: .secureEnclave, account: nil)
+            let address = address(by: uid)
+            let storeUser = UserManager.StoreUser(publicKey: publicKey, address: address, userId: uid, keyType: .secureEnclave, account: nil)
             LocalUserDefaults.shared.addUser(user: storeUser)
 
-            try? providerKey.store(id: userId)
-            if !userIds.contains(userId) {
-                userIds.append(userId)
+            try? providerKey.store(id: uid)
+            if !userIds.contains(uid) {
+                userIds.append(uid)
             }
         }
     }
 
     private static func migration12Backup() {
-        var mainKeychain =
+        let mainKeychain =
         Keychain(service: (Bundle.main.bundleIdentifier ?? "com.flowfoundation.wallet") + ".backup.phrase")
             .label("Lilico app backup")
             .synchronizable(false)
@@ -170,7 +170,7 @@ enum SecureEnclaveMigration {
         for userId in allKeys {
             guard let data = try? mainKeychain.getData(userId) ,
                   let decryptedData = try? WalletManager.decryptionChaChaPoly(key: userId, data: data),
-                  var mnemonic = String(data: decryptedData, encoding: .utf8),
+                  let mnemonic = String(data: decryptedData, encoding: .utf8),
                   !mnemonic.isEmpty
             else {
                 log.debug("[Mig] invalid userId:\(userId)")

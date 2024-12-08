@@ -266,14 +266,20 @@ extension UserManager {
                     }
                 }
                 // FIXME: all key type
-
-                let uidList = addressList.map { $0.key }
-
-                let userAddress = addressList
+                var result: [String: String] = [:]
+                for (key,value) in addressList {
+                    if key.contains(".key."), let newKey = key.components(separatedBy: ".key.").first {
+                        result[newKey] = value
+                    }else {
+                        result[key] = value
+                    }
+                }
+                let uidList = result.map { $0.key }
+                let userAddress = result
                 DispatchQueue.main.async {
-                    self.loginUIDList = uidList
                     LocalUserDefaults.shared.userAddressOfDeletedApp = userAddress
                     LocalUserDefaults.shared.tryToRestoreAccountFlag = true
+                    self.loginUIDList = uidList
                 }
 
                 HUD.dismissLoading()
