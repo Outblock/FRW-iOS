@@ -122,14 +122,16 @@ enum SecureEnclaveMigration {
         var userIds = LocalUserDefaults.shared.loginUIDList
         let allKeys = mainKeychain.allKeys()
         for userId in allKeys {
-            guard let data = try? mainKeychain.getData(userId) ,
-                  let decryptedData = try? WalletManager.decryptionAES(key: userId, data: data),
+            let key = userId.removePrefix("lilico.mnemonic.")
+            guard let data = try? mainKeychain.getData(userId),
+                  let decryptedData = try? WalletManager.decryptionChaChaPoly(key: key, data: data),
                   var mnemonic = String(data: decryptedData, encoding: .utf8),
                   !mnemonic.isEmpty
             else {
                 log.debug("[Mig] invalid userId:\(userId)")
                 continue
             }
+
             guard mnemonic.split(separator: " ").count == 12 else {
                 log.debug("[Mig] invalid userId:\(userId),\(mnemonic)")
                 continue
@@ -167,7 +169,7 @@ enum SecureEnclaveMigration {
         let allKeys = mainKeychain.allKeys()
         for userId in allKeys {
             guard let data = try? mainKeychain.getData(userId) ,
-                  let decryptedData = try? WalletManager.decryptionAES(key: userId, data: data),
+                  let decryptedData = try? WalletManager.decryptionChaChaPoly(key: userId, data: data),
                   var mnemonic = String(data: decryptedData, encoding: .utf8),
                   !mnemonic.isEmpty
             else {
