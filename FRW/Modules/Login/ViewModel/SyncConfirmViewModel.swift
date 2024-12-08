@@ -22,8 +22,9 @@ enum SyncAccountStatus {
 class SyncConfirmViewModel: ObservableObject {
     // MARK: Lifecycle
 
-    init(userId: String) {
+    init(userId: String, address: String?) {
         self.userId = userId
+        self.address = address
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(onSyncStatusChanged),
@@ -40,6 +41,7 @@ class SyncConfirmViewModel: ObservableObject {
     var isPresented: Bool = false
 
     var userId: String
+    var address: String?
 
     func onAddDevice() {
         isPresented = true
@@ -54,7 +56,7 @@ class SyncConfirmViewModel: ObservableObject {
                 let blockchain = Sign.FlowWallet.blockchain
 
                 let params = try await WalletConnectSyncDevice
-                    .packageDeviceInfo(userId: self.userId)
+                    .packageDeviceInfo(userId: self.userId, address: address)
                 let request = try Request(
                     topic: currentSession.topic,
                     method: methods,

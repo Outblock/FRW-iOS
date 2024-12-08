@@ -116,7 +116,7 @@ extension WalletConnectSyncDevice {
             (request.topic == response.topic)
     }
 
-    static func packageDeviceInfo(userId: String) async throws -> AnyCodable {
+    static func packageDeviceInfo(userId: String, address: String?) async throws -> AnyCodable {
         if IPManager.shared.info == nil {
             await IPManager.shared.fetch()
         }
@@ -132,6 +132,8 @@ extension WalletConnectSyncDevice {
             data: requestParam
         )
         try secureKey.store(id: userId)
+        let storeUser = UserManager.StoreUser(publicKey: key.publicKey.description, address: address, userId: userId, keyType: .secureEnclave, account: nil)
+        LocalUserDefaults.shared.addUser(user: storeUser)
         log.debug("[Sync] Public Key: \(key.publicKey.data.hexString)")
         return AnyCodable(response)
     }

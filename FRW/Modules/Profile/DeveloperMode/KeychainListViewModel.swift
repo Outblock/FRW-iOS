@@ -162,4 +162,13 @@ class KeychainListViewModel: ObservableObject {
             }
         }
     }
+
+    func clearAllKey() {
+        let seKeychain = SecureEnclaveKey.KeychainStorage
+        try? seKeychain.removeAll()
+        let spKeychain = SeedPhraseKey.seedPhraseStorage
+        try? spKeychain.removeAll()
+        let pKeychain = PrivateKey.PKStorage
+        try? pKeychain.removeAll()
+    }
 }

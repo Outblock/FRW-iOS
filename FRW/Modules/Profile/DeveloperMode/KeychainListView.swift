@@ -129,6 +129,15 @@ struct KeychainListView: RouteableView {
             }
             .visibility(!$viewModel.remoteList.isEmpty ? .visible : .gone)
         }
+        .safeAreaInset(edge: .bottom, content: {
+            Button {
+                viewModel.clearAllKey()
+            } label: {
+                Text("Clear All")
+            }
+
+
+        })
         .padding(.horizontal, 16)
         .applyRouteable(self)
     }

@@ -27,11 +27,12 @@ class CreateProfileWaitingViewModel: ObservableObject {
             .dropFirst()
             .receive(on: DispatchQueue.main)
             .map { $0 }
-            .sink { walletInfo in
+            .sink { [weak self] walletInfo in
                 let isEmptyBlockChain = walletInfo?.currentNetworkWalletModel?
                     .isEmptyBlockChain ?? true
                 if !isEmptyBlockChain {
-                    self.createFinished = true
+                    self?.updateWalletInfo()
+                    self?.createFinished = true
                     EventTrack.Account.createdTimeEnd()
                 }
 
@@ -127,5 +128,12 @@ class CreateProfileWaitingViewModel: ObservableObject {
             }
         }
         currentPage = page.index
+    }
+
+    private func updateWalletInfo() {
+        guard let uid = UserManager.shared.activatedUID, let address = WalletManager.shared.getPrimaryWalletAddress() else {
+            return
+        }
+        LocalUserDefaults.shared.updateUser(by: uid, address: address)
     }
 }

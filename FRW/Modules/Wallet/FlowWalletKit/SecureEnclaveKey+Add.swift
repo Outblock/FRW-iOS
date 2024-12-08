@@ -19,8 +19,9 @@ extension SecureEnclaveKey {
 
     static func wallet(id: String) throws -> SecureEnclaveKey {
         let pw = KeyProvider.password(with: id)
+        let key = KeyProvider.lastKey(with: id, in: SecureEnclaveKey.KeychainStorage) ?? id
         let secureEnclaveKey = try SecureEnclaveKey.get(
-            id: id,
+            id: key,
             password: pw,
             storage: SecureEnclaveKey.KeychainStorage
         )
@@ -28,6 +29,7 @@ extension SecureEnclaveKey {
     }
 
     func flowAccountKey(
+        index: Int = -1,
         signAlgo: Flow.SignatureAlgorithm = .ECDSA_P256,
         weight: Int = 1000
     ) throws -> Flow.AccountKey {
@@ -35,6 +37,7 @@ extension SecureEnclaveKey {
             throw WalletError.emptyPublicKey
         }
         let key = Flow.AccountKey(
+            index: index,
             publicKey: .init(data: publicData),
             signAlgo: signAlgo,
             hashAlgo: .SHA2_256,
@@ -45,7 +48,8 @@ extension SecureEnclaveKey {
 
     func store(id: String) throws {
         let pw = KeyProvider.password(with: id)
-        try store(id: id, password: pw)
+        let key = self.createKey(uid: id)
+        try store(id: key, password: pw)
     }
 }
 

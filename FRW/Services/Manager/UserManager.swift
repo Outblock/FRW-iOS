@@ -197,7 +197,7 @@ extension UserManager {
         }
 
         let secureKey = try SecureEnclaveKey.create()
-        let key = try secureKey.flowAccountKey()
+        let key = try secureKey.flowAccountKey(index: 0)
         if IPManager.shared.info == nil {
             await IPManager.shared.fetch()
         }
@@ -213,14 +213,14 @@ extension UserManager {
         userType = .secure
 
         try secureKey.store(id: model.id)
-        // FIXME: what is doing? need update address
         let store = UserManager.StoreUser(
             publicKey: key.publicKey.description,
             address: nil,
             userId: model.id,
-            keyType: .secureEnclave
+            keyType: .secureEnclave,
+            account: key
         )
-        WalletManager.shared.updateKeyProvider(provider: secureKey, user: store)
+        WalletManager.shared.updateKeyProvider(provider: secureKey, storeUser: store)
         LocalUserDefaults.shared.addUser(user: store)
 
         EventTrack.Account
@@ -248,15 +248,10 @@ extension UserManager {
         HUD.loading()
         Task {
             do {
-                let secureKey = try SecureEnclaveKey.create()
-                let list = secureKey.allKeys()
-                // TODO: The filter field `isshow` is true
-//                var list = try WallectSecureEnclave.Store.fetch()
-//                list = list.filter({ $0.isShow ?? true })
-
                 var addressList: [String: String] = [:]
-                // FIXME: all key type
-                for userId in list {
+                //Secure Enclave Key
+                let seKeylist = SecureEnclaveKey.KeychainStorage.allKeys
+                for userId in seKeylist {
                     if let se = try? SecureEnclaveKey.wallet(id: userId),
                        let publicKey = try? se.publicKey()?.hexValue {
                         let response: AccountResponse = try await Network
@@ -270,22 +265,7 @@ extension UserManager {
                         log.error("[Launch] first login check failed:\(userId)")
                     }
                 }
-
-//                let list = try WallectSecureEnclave.Store.fetch()
-//                var addressList: [String: String] = [:]
-//                for item in list {
-//                    do {
-//                        let sec = try WallectSecureEnclave(privateKey: item.publicKey)
-//                        guard let publicKey = sec.key.publickeyValue else { continue }
-//                        let response: AccountResponse = try await Network.requestWithRawModel(FRWAPI.Utils.flowAddress(publicKey))
-//                        let account = response.accounts?.filter { ($0.weight ?? 0) >= 1000 && $0.address != nil }.first
-//                        if let model = account {
-//                            addressList[item.uniq] = model.address ?? "0x"
-//                        }
-//                    } catch {
-//                        log.error("[Launch] first login check failed:\(item.uniq):\(error)")
-//                    }
-//                }
+                // FIXME: all key type
 
                 let uidList = addressList.map { $0.key }
 
@@ -300,9 +280,6 @@ extension UserManager {
             } catch {
                 HUD.dismissLoading()
                 log.info("restore_account_failed".localized)
-//                HUD.showAlert(title: "", msg: "restore_account_failed".localized, cancelAction: {}, confirmTitle: "retry".localized) {
-//                    self.tryToRestoreOldAccountOnFirstLaunch()
-//                }
             }
         }
     }
@@ -416,19 +393,21 @@ extension UserManager {
         guard let customToken = response.data?.customToken, !customToken.isEmpty else {
             throw LLError.restoreLoginFailed
         }
-
+        
         let storeUser = StoreUser(
             publicKey: publicKey,
             address: nil,
             userId: userId,
-            keyType: keyProvider.keyType
+            keyType: keyProvider.keyType,
+            account: accountKey
         )
-        WalletManager.shared.updateKeyProvider(provider: keyProvider, user: storeUser)
+        WalletManager.shared.updateKeyProvider(provider: keyProvider, storeUser: storeUser)
 
         try await finishLogin(mnemonic: "", customToken: customToken)
     }
 
     func restoreLogin(userId: String) async throws {
+        EventTrack.Dev.restoreLogin(userId: userId)
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
             DispatchQueue.main.async {
@@ -436,7 +415,7 @@ extension UserManager {
                 self.userInfo = nil
             }
         }
-
+        
         guard let token = try? await getIDToken(), !token.isEmpty else {
             loginAnonymousIfNeeded()
             throw LLError.restoreLoginFailed
@@ -453,7 +432,6 @@ extension UserManager {
         let signature = try secureKey.sign(data: signData, hashAlgo: .SHA2_256)
 
         await IPManager.shared.fetch()
-        // FIXME: hash and sign algo is dynamic
         let key = AccountKey(
             hashAlgo: Flow.HashAlgorithm.SHA2_256.index,
             publicKey: publicKey,
@@ -553,15 +531,16 @@ extension UserManager {
             throw LLError.restoreLoginFailed
         }
         try await finishLogin(mnemonic: "", customToken: customToken)
-        try privateKey.store(id: uid, password: KeyProvider.password(with: uid))
+        try privateKey.store(id: privateKey.createKey(uid: uid), password: KeyProvider.password(with: uid))
         DispatchQueue.main.async {
             let store = StoreUser(
                 publicKey: publicKey,
                 address: address,
                 userId: uid,
-                keyType: privateKey.keyType
+                keyType: privateKey.keyType,
+                account: flowKey
             )
-            WalletManager.shared.updateKeyProvider(provider: privateKey, user: store)
+            WalletManager.shared.updateKeyProvider(provider: privateKey, storeUser: store)
             LocalUserDefaults.shared.addUser(user: store)
         }
     }
@@ -840,5 +819,16 @@ extension UserManager {
         let userId: String
         let keyType: FlowWalletKit.KeyType
         var updateAt: TimeInterval = Date().timeIntervalSince1970
+
+        let account: Flow.AccountKey?
+
+        func copy(address: String? = nil, account: Flow.AccountKey? = nil) -> StoreUser {
+            return StoreUser(publicKey: publicKey,
+                             address: address ?? self.address,
+                             userId: userId,
+                             keyType: keyType,
+                             updateAt: updateAt,
+                             account: account ?? self.account)
+        }
     }
 }

@@ -53,6 +53,7 @@ extension LocalUserDefaults {
         case checkCoa
 
         case customToken
+        case migrationFinished
     }
 
     enum FlowNetworkType: String, CaseIterable, Codable {
@@ -436,6 +437,21 @@ class LocalUserDefaults: ObservableObject {
         }
         userList = list
     }
+
+    func updateUser(by userId: String, address: String? = nil, account: Flow.AccountKey? = nil) {
+        var users = userList
+        var index = users.lastIndex(where: { $0.userId == userId })
+        guard let index = index else {
+            return
+        }
+        var user = users[index]
+        let newUser = user.copy(address: address, account: account)
+        users[index] = newUser
+        self.userList = users
+    }
+
+    @AppStorage(Keys.migrationFinished.rawValue)
+    var migrationFinished: Bool = false
 }
 
 extension LocalUserDefaults {

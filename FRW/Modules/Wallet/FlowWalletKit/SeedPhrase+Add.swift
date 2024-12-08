@@ -13,6 +13,7 @@ extension SeedPhraseKey {
     private static let suffix = ".SP"
     static func wallet(id: String) throws -> SeedPhraseKey {
         let pw = KeyProvider.password(with: id)
+        let key = KeyProvider.lastKey(with: id, in: seedPhraseStorage) ?? id
         let seedPhraseKey = try SeedPhraseKey.get(
             id: id,
             password: pw,
@@ -21,11 +22,42 @@ extension SeedPhraseKey {
         return seedPhraseKey
     }
 
+    func store(id: String) throws {
+        let pw = KeyProvider.password(with: id)
+        let key = self.createKey(uid: id)
+        try store(id: key, password: pw)
+    }
+
     static var seedPhraseStorage: FlowWalletKit.KeychainStorage {
         let service = (Bundle.main.bundleIdentifier ?? AppBundleName) + suffix
         let storage = FlowWalletKit.KeychainStorage(
             service: service,
             label: "SeedPhraseKey",
+            synchronizable: false
+        )
+        return storage
+    }
+}
+
+//MARK: - For Backup
+extension SeedPhraseKey {
+
+    static func createBackup(uid: String) throws -> SeedPhraseKey {
+        let pw = KeyProvider.password(with: uid)
+        let key = try SeedPhraseKey.create(storage: seedPhraseBackupStorage)
+        return key
+    }
+
+    func storeBackup(id: String) throws {
+        let pw = KeyProvider.password(with: id)
+        try store(id: id, password: pw)
+    }
+
+    static var seedPhraseBackupStorage: FlowWalletKit.KeychainStorage {
+        let service = (Bundle.main.bundleIdentifier ?? AppBundleName) + suffix + ".backup"
+        let storage = FlowWalletKit.KeychainStorage(
+            service: service,
+            label: "SeedPhraseKey Backup",
             synchronizable: false
         )
         return storage

@@ -512,8 +512,6 @@ extension MultiBackupManager {
 
         let secureKey = try SecureEnclaveKey.create()
         let key = try secureKey.flowAccountKey()
-//        let sec = try WallectSecureEnclave()
-//        let key = try sec.accountKey()
 
         do {
             HUD.loading()
@@ -551,8 +549,7 @@ extension MultiBackupManager {
                 let request = SignedRequest(
                     accountKey: AccountKey(
                         hashAlgo: key.hashAlgo.index,
-                        publicKey: key.publicKey
-                            .description,
+                        publicKey: key.publicKey.description,
                         signAlgo: key.signAlgo.index,
                         weight: key.weight
                     ),
@@ -561,14 +558,12 @@ extension MultiBackupManager {
                 let response: Network.EmptyResponse = try await Network
                     .requestWithRawModel(FRWAPI.User.addSigned(request))
                 if response.httpCode != 200 {
-                    log.info("[Multi-backup] sync failed")
+                    log.error("[Multi-backup] sync failed")
                 } else {
                     try secureKey.store(id: firstItem.userId)
-//                    if let privateKey = sec.key.privateKey {
-//                        try WallectSecureEnclave.Store.store(key: firstItem.userId, value: privateKey.dataRepresentation)
-//                    }
-
-                    try await UserManager.shared.restoreLogin(userId: firstItem.userId)
+                    let storeUser = UserManager.StoreUser(publicKey: key.publicKey.description, address: firstItem.address, userId: firstItem.userId, keyType: .secureEnclave, account: nil)
+                    LocalUserDefaults.shared.addUser(user: storeUser)
+                    try await UserManager.shared.restoreLogin(with: firstItem.userId)
                     Router.popToRoot()
                 }
             } else {

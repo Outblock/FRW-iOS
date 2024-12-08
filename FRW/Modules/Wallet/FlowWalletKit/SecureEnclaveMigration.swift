@@ -9,19 +9,41 @@ import CryptoKit
 import FlowWalletKit
 import Foundation
 import KeychainAccess
-
+import WalletCore
 // MARK: - SecureEnclaveMigration
 
 enum SecureEnclaveMigration {
     // MARK: Internal
 
     static func start() {
+        guard !LocalUserDefaults.shared.migrationFinished else {
+            return
+        }
+        LocalUserDefaults.shared.loginUIDList = []
         migrationFromOldSE()
         migrationFromLilicoTag()
+        migration12()
+        migration12Backup()
+        LocalUserDefaults.shared.migrationFinished = true
+    }
+
+    private static func migrationFromOldSE() {
+        var service: String = "com.flowfoundation.wallet.securekey"
+        var userKey: String = "user.keystore"
+        let keychain = Keychain(service: service)
+        guard let data = try? keychain.getData(userKey) else {
+            print("[Migration] SecureEnclave get value from keychain empty,\(service)")
+            return
+        }
+        guard let users = try? JSONDecoder().decode([StoreInfo].self, from: data) else {
+            print("[Migration] SecureEnclave list decoder failed ")
+            return
+        }
+        migration(users: users)
     }
 
     // migrate from lilico tag,Caused by a misquote
-    static func migrationFromLilicoTag() {
+    private static func migrationFromLilicoTag() {
         let lilicoService = "io.outblock.lilico.securekey"
         let userKey = "user.keystore"
         let keychain = Keychain(service: lilicoService)
@@ -33,14 +55,53 @@ enum SecureEnclaveMigration {
             log.info("[SecureEnclave] decoder failed on loginedUser ")
             return
         }
+        migration(users: users)
+    }
+
+    private static func migration(users: [StoreInfo]) {
+        var userIds = LocalUserDefaults.shared.loginUIDList
+        var allKeys = SecureEnclaveKey.KeychainStorage.allKeys
+        let startAt = CFAbsoluteTimeGetCurrent()
+        var finishCount = 0
         for model in users {
-            let se = try? SecureEnclaveKey.restore(
-                secret: model.publicKey,
-                storage: SecureEnclaveKey.KeychainStorage
-            )
-            try? se?.store(id: model.uniq)
+            do {
+                guard let privateKey = try? SecureEnclave.P256.Signing
+                    .PrivateKey(dataRepresentation: model.publicKey) else {
+                    log.error("[Mig] migration from Lilico Tag error: private key")
+                    continue
+                }
+                let secureKey = SecureEnclaveKey(
+                    key: privateKey,
+                    storage: SecureEnclaveKey.KeychainStorage
+                )
+                let storeKey = secureKey.createKey(uid: model.uniq)
+                if allKeys.contains(storeKey) {
+                    continue
+                }
+                if canKeySign(privateKey: secureKey) {
+                    guard let publicKey = try secureKey.publicKey()?.hexString else {
+                        log.warning("[Mig] migration from Lilico Tag error: public key is empty")
+                        continue
+                    }
+                    let address = address(by: model.uniq)
+                    let storeUser = UserManager.StoreUser(publicKey: publicKey, address: address, userId: model.uniq, keyType: .secureEnclave, account: nil)
+                    LocalUserDefaults.shared.addUser(user: storeUser)
+                    try secureKey.store(id: model.uniq)
+                    if !userIds.contains(model.uniq) {
+                        userIds.append(model.uniq)
+                    }
+                    finishCount += 1
+                } else {
+                    log.warning("[Mig] migration from Lilico Tag error: not sign")
+                }
+            } catch {
+                log.error("[Mig] migration from Lilico Tag error:\(error.localizedDescription)")
+                continue
+            }
         }
-        log.debug("[Migration] total: \(users.count)")
+        LocalUserDefaults.shared.loginUIDList = userIds
+        let endAt = CFAbsoluteTimeGetCurrent()
+        log.debug("[Migration] total: \(users.count), finish: \(finishCount), time:\(endAt - startAt)")
     }
 
     static func canKeySign(privateKey: SecureEnclaveKey) -> Bool {
@@ -51,45 +112,97 @@ enum SecureEnclaveMigration {
         return true
     }
 
-    // MARK: Private
+//MARK: - phrase
+    private static func migration12() {
+        var mainKeychain =
+        Keychain(service: (Bundle.main.bundleIdentifier ?? "com.flowfoundation.wallet") + ".local")
+            .label("Lilico app backup")
+            .synchronizable(false)
+            .accessibility(.whenUnlocked)
+        var userIds = LocalUserDefaults.shared.loginUIDList
+        let allKeys = mainKeychain.allKeys()
+        for userId in allKeys {
+            guard let data = try? mainKeychain.getData(userId) ,
+                  let decryptedData = try? WalletManager.decryptionAES(key: userId, data: data),
+                  var mnemonic = String(data: decryptedData, encoding: .utf8),
+                  !mnemonic.isEmpty
+            else {
+                log.debug("[Mig] invalid userId:\(userId)")
+                continue
+            }
+            guard mnemonic.split(separator: " ").count == 12 else {
+                log.debug("[Mig] invalid userId:\(userId),\(mnemonic)")
+                continue
+            }
 
-    private static var service: String = "com.flowfoundation.wallet.securekey"
-    private static var userKey: String = "user.keystore"
+            guard let hdWallet = HDWallet(mnemonic: mnemonic, passphrase: "") else {
+                log.debug("[Mig] invalid mnemonic:\(userId),\(mnemonic)")
+                continue
+            }
+            let providerKey = FlowWalletKit.SeedPhraseKey(
+                hdWallet: hdWallet,
+                storage: FlowWalletKit.SeedPhraseKey.seedPhraseStorage
+            )
+            guard let publicKey = try? providerKey.publicKey(signAlgo: .ECDSA_SECP256k1)?.hexValue else {
+                continue
+            }
+            let address = address(by: userId)
+            let storeUser = UserManager.StoreUser(publicKey: publicKey, address: address, userId: userId, keyType: .secureEnclave, account: nil)
+            LocalUserDefaults.shared.addUser(user: storeUser)
 
-    private static func migrationFromOldSE() {
-        let keychain = Keychain(service: service)
-        guard let data = try? keychain.getData(userKey) else {
-            print("[Migration] SecureEnclave get value from keychain empty,\(service)")
-            return
-        }
-        guard let users = try? JSONDecoder().decode([StoreInfo].self, from: data) else {
-            print("[Migration] SecureEnclave list decoder failed ")
-            return
-        }
-        let startAt = CFAbsoluteTimeGetCurrent()
-        var finishCount = 0
-        for item in users {
-            if let privateKey = try? SecureEnclave.P256.Signing
-                .PrivateKey(dataRepresentation: item.publicKey) {
-                let secureKey = SecureEnclaveKey(
-                    key: privateKey,
-                    storage: SecureEnclaveKey.KeychainStorage
-                )
-                if canKeySign(privateKey: secureKey) {
-                    try? secureKey.store(
-                        id: item.uniq,
-                        password: KeyProvider.password(with: item.uniq)
-                    )
-                    finishCount += 1
-                }
+            try? providerKey.store(id: userId)
+            if !userIds.contains(userId) {
+                userIds.append(userId)
             }
         }
-        let endAt = CFAbsoluteTimeGetCurrent()
-        log
-            .debug(
-                "[Migration] total: \(users.count), finish: \(finishCount), time:\(endAt - startAt)"
-            )
     }
+
+    private static func migration12Backup() {
+        var mainKeychain =
+        Keychain(service: (Bundle.main.bundleIdentifier ?? "com.flowfoundation.wallet") + ".backup.phrase")
+            .label("Lilico app backup")
+            .synchronizable(false)
+            .accessibility(.whenUnlocked)
+
+        let allKeys = mainKeychain.allKeys()
+        for userId in allKeys {
+            guard let data = try? mainKeychain.getData(userId) ,
+                  let decryptedData = try? WalletManager.decryptionAES(key: userId, data: data),
+                  var mnemonic = String(data: decryptedData, encoding: .utf8),
+                  !mnemonic.isEmpty
+            else {
+                log.debug("[Mig] invalid userId:\(userId)")
+                continue
+            }
+            guard mnemonic.split(separator: " ").count == 12 else {
+                log.debug("[Mig] invalid userId:\(userId),\(mnemonic)")
+                continue
+            }
+
+            guard let hdWallet = HDWallet(mnemonic: mnemonic, passphrase: "") else {
+                log.debug("[Mig] invalid mnemonic:\(userId),\(mnemonic)")
+                continue
+            }
+            let providerKey = FlowWalletKit.SeedPhraseKey(
+                hdWallet: hdWallet,
+                storage: FlowWalletKit.SeedPhraseKey.seedPhraseBackupStorage
+            )
+            let uid = userId.components(separatedBy: "-backup-").first ?? userId
+
+            try? providerKey.store(id: uid)
+        }
+    }
+
+    static func address(by uid: String) -> String? {
+        var address = MultiAccountStorage.shared.getWalletInfo(uid)?
+            .getNetworkWalletModel(network: .mainnet)?.getAddress
+        if address == nil {
+            address = LocalUserDefaults.shared.userAddressOfDeletedApp[uid]
+        }
+        return address
+    }
+
+    // MARK: Private
 
     private static func generateRandomBytes(length: Int = 32) -> Data? {
         var keyData = Data(count: length)

@@ -226,51 +226,87 @@ extension WalletManager {
         if let uid = UserManager.shared.activatedUID {
             keyProvider = keyProvider(with: uid)
             if let provider = keyProvider, let user = userStore(with: uid) {
-                updateKeyProvider(provider: provider, user: user)
+                updateKeyProvider(provider: provider, storeUser: user)
+            }else {
+                log.error("[Wallet] not found provider or user at \(uid)")
             }
         }
     }
 
-    func updateKeyProvider(provider: any KeyProtocol, user: UserManager.StoreUser) {
+    func updateKeyProvider(provider: any KeyProtocol, storeUser: UserManager.StoreUser) {
+        keyProvider = provider
+        self.accountKey = storeUser.account
+        guard self.accountKey == nil else {
+            return
+        }
         Task {
-            keyProvider = provider
-            let publicKey = user.publicKey
-            let chainId = LocalUserDefaults.shared.flowNetwork.toFlowType()
-            self.walletEntity = FlowWalletKit.Wallet(type: .key(provider), networks: [chainId])
-            _ = try? await self.walletEntity?.fetchAllNetworkAccounts()
-            let list = self.walletEntity?.flowAccounts?[chainId]
-            list?.forEach { account in
-                for key in account.keys {
-                    if key.publicKey.description == publicKey {
-                        accountKey = key
-                    }
+            if let address = storeUser.address {
+                do {
+                    let accountKey = try await findKey(address: address, with: storeUser.publicKey)
+                    self.accountKey = accountKey
+                    LocalUserDefaults.shared.updateUser(by: storeUser.userId, account: accountKey)
+                }catch {
+                    log.error("[Wallet] not find account key by \(address) with \(storeUser.publicKey)")
+                }
+            }
+            if self.accountKey == nil {
+                do {
+                    let result = try await findKey(provider: provider, with: storeUser.publicKey)
+                    self.accountKey = result.1
+                    let address = result.0?.address.description
+                    LocalUserDefaults.shared.updateUser(by: storeUser.userId, address: address,account: accountKey)
+                }catch {
+                    log.error("[Wallet] not find account key by \(provider.keyType) with \(storeUser.publicKey)")
                 }
             }
         }
+
+    }
+
+    func accountKey(with uid: String) async -> Flow.AccountKey? {
+        guard let user = userStore(with: uid) else {
+            return nil
+        }
+        var accountKey = user.account
+
+        if accountKey == nil, let address = user.address {
+            accountKey = try? await findKey(address: address, with: user.publicKey)
+        }
+        if accountKey == nil, let keyProvider = keyProvider(with: uid) {
+            accountKey = try? await findKey(provider: keyProvider, with: user.publicKey).1
+        }
+
+        return accountKey
+    }
+
+    private func findKey(address: String, with publicKey: String) async throws -> Flow.AccountKey? {
+        let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
+        let sortedAccount = account.keys.filter { $0.weight >= 1000 }
+        let accountKey = sortedAccount.filter { $0.publicKey.description == publicKey }.first
+        return accountKey
+    }
+
+    private func findKey(provider: any KeyProtocol, with publicKey: String) async throws -> (Flow.Account?,Flow.AccountKey?) {
+        let chainId = LocalUserDefaults.shared.flowNetwork.toFlowType()
+        let walletEntity = FlowWalletKit.Wallet(type: .key(provider), networks: [chainId])
+        _ = try? await walletEntity.fetchAllNetworkAccounts()
+        let list = walletEntity.flowAccounts?[chainId]
+        var flowAccount: Flow.Account? = nil
+        var accountKey: Flow.AccountKey? = nil
+        list?.forEach { account in
+            for key in account.keys {
+                if key.publicKey.description == publicKey {
+                    flowAccount = account
+                    accountKey = key
+                    break
+                }
+            }
+        }
+        return (flowAccount,accountKey)
     }
 
     func userStore(with uid: String) -> UserManager.StoreUser? {
         LocalUserDefaults.shared.userList.last { $0.userId == uid }
-    }
-
-    func accountKey(with uid: String) async -> Flow.AccountKey? {
-        let keyProvider = keyProvider(with: uid)
-        var accountKey: Flow.AccountKey?
-        if let provider = keyProvider, let user = userStore(with: uid) {
-            let publicKey = user.publicKey
-            let chainId = LocalUserDefaults.shared.flowNetwork.toFlowType()
-            let walletEntity = FlowWalletKit.Wallet(type: .key(provider))
-            _ = try? await walletEntity.fetchAllNetworkAccounts()
-            let list = walletEntity.flowAccounts?[chainId]
-            list?.forEach { account in
-                for key in account.keys {
-                    if key.publicKey.description == publicKey {
-                        accountKey = key
-                    }
-                }
-            }
-        }
-        return accountKey
     }
 
     func keyProvider(with uid: String) -> (any KeyProtocol)? {

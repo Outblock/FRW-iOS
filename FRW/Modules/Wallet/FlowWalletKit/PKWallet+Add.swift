@@ -13,8 +13,9 @@ extension FlowWalletKit.PrivateKey {
     private static let suffix = ".PK"
     static func wallet(id: String) throws -> FlowWalletKit.PrivateKey {
         let pw = KeyProvider.password(with: id)
+        let key = KeyProvider.lastKey(with: id, in: PKStorage) ?? id
         let privateKey = try FlowWalletKit.PrivateKey.get(
-            id: id,
+            id: key,
             password: pw,
             storage: PrivateKey.PKStorage
         )
@@ -23,7 +24,8 @@ extension FlowWalletKit.PrivateKey {
 
     func store(id: String) throws {
         let pw = KeyProvider.password(with: id)
-        try store(id: id, password: pw)
+        let key = self.createKey(uid: id)
+        try store(id: key, password: pw)
     }
 }
 

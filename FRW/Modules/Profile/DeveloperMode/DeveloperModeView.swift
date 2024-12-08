@@ -309,6 +309,19 @@ struct DeveloperModeView: RouteableView {
                             }
                             .frame(height: 64)
                             .padding(.horizontal, 16)
+
+                            HStack {
+                                Button {
+                                    LocalUserDefaults.shared.migrationFinished = false
+                                } label: {
+                                    Text("reset migration flag")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                }
+                                Spacer()
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
                         }
                         .background(.LL.bgForIcon)
                         .cornerRadius(16)
