@@ -21,51 +21,51 @@ pwd
 
 if [ -f $LOCAL_ENV_FILE ] 
 then
-	echo "===== LocalEnv ====="
+	echo "===== LOCAL_ENV ====="
 	base64 -i $LOCAL_ENV_FILE
-	echo -e "===== LocalEnv =====\n"
+	echo -e "===== LOCAL_ENV =====\n"
 fi
 
 if [ -f $GOOGLE_OAUTH2_FILE_DEV ] 
 then
-	echo "===== GoogleOAuth2_DEV ====="
+	echo "===== GOOGLE_OAUTH2_DEV ====="
 	base64 -i $GOOGLE_OAUTH2_FILE_DEV
-	echo -e "===== GoogleOAuth2_DEV =====\n"
+	echo -e "===== GOOGLE_OAUTH2_DEV =====\n"
 fi
 
 if [ -f $GOOGLE_SERVICE_FILE_DEV ] 
 then
-	echo "===== GoogleService_DEV ====="
+	echo "===== GOOGLE_SERVICE_DEV ====="
 	base64 -i $GOOGLE_SERVICE_FILE_DEV
-	echo -e "===== GoogleService_DEV =====\n"
+	echo -e "===== GOOGLE_SERVICE_DEV =====\n"
 fi
 
 if [ -f $SERVICE_CONFIG_FILE_DEV ] 
 then
-	echo "===== ServiceConfig_DEV ====="
+	echo "===== SERVICE_CONFIG_DEV ====="
 	base64 -i $SERVICE_CONFIG_FILE_DEV
-	echo -e "===== ServiceConfig_DEV =====\n"
+	echo -e "===== SERVICE_CONFIG_DEV =====\n"
 fi
 
 if [ -f $GOOGLE_OAUTH2_FILE_PROD ] 
 then
-	echo "===== GoogleOAuth2_PROD ====="
+	echo "===== GOOGLE_OAUTH2_PROD ====="
 	base64 -i $GOOGLE_OAUTH2_FILE_PROD
-	echo -e "===== GoogleOAuth2_PROD =====\n"
+	echo -e "===== GOOGLE_OAUTH2_PROD =====\n"
 fi
 
 if [ -f $GOOGLE_SERVICE_FILE_PROD ] 
 then
-	echo "===== GoogleService_PROD ====="
+	echo "===== GOOGLE_SERVICE_PROD ====="
 	base64 -i $GOOGLE_SERVICE_FILE_PROD
-	echo -e "===== GoogleService_PROD =====\n"
+	echo -e "===== GOOGLE_SERVICE_PROD =====\n"
 fi
 
 if [ -f $SERVICE_CONFIG_FILE_PROD ] 
 then
-	echo "===== ServiceConfig_PROD ====="
+	echo "===== SERVICE_CONFIG_PROD ====="
 	base64 -i $SERVICE_CONFIG_FILE_PROD
-	echo -e "===== ServiceConfig_PROD =====\n"
+	echo -e "===== SERVICE_CONFIG_PROD =====\n"
 fi
 
 
