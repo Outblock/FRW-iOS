@@ -17,7 +17,7 @@ extension BrowserAuthzViewModel {
 
 // MARK: - BrowserAuthzViewModel
 
-class BrowserAuthzViewModel: ObservableObject {
+final class BrowserAuthzViewModel: ObservableObject {
     @Published var title: String
     @Published var urlString: String
     @Published var logo: String?
@@ -114,6 +114,6 @@ extension BrowserAuthzViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
     
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheckForTransfer()
+        self._insufficientStorageFailure = insufficientStorageCheckForTransfer(token: .none)
     }
 }

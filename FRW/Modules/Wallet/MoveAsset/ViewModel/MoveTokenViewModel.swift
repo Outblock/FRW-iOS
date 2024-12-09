@@ -11,7 +11,7 @@ import SwiftUI
 
 // MARK: - MoveTokenViewModel
 
-class MoveTokenViewModel: ObservableObject {
+final class MoveTokenViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(token: TokenModel, isPresent: Binding<Bool>) {
@@ -68,9 +68,8 @@ class MoveTokenViewModel: ObservableObject {
         username: nil
     )
 
-    var token: TokenModel
-    @Binding
-    var isPresent: Bool
+    private(set) var token: TokenModel
+    @Binding var isPresent: Bool
 
     var isReadyForSend: Bool {
         errorType == .none && showBalance.isNumber && !showBalance.isEmpty
@@ -307,7 +306,7 @@ extension MoveTokenViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
     
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheckForMove(amount: self.inputTokenNum, from: self.fromContact.walletType, to: self.toContact.walletType)
+        self._insufficientStorageFailure = insufficientStorageCheckForMove(amount: self.inputTokenNum, token: .ft(self.token), from: self.fromContact.walletType, to: self.toContact.walletType)
     }
 }
 

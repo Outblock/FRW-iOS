@@ -11,7 +11,7 @@ import SwiftUI
 
 // MARK: - MoveSingleNFTViewModel
 
-class MoveSingleNFTViewModel: ObservableObject {
+final class MoveSingleNFTViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(nft: NFTModel, fromChildAccount: ChildAccount? = nil, callback: @escaping () -> Void) {
@@ -27,12 +27,12 @@ class MoveSingleNFTViewModel: ObservableObject {
 
     // MARK: Internal
 
-    var nft: NFTModel
-    var fromChildAccount: ChildAccount?
-    var callback: () -> Void
+    private(set) var nft: NFTModel
+    private(set) var fromChildAccount: ChildAccount?
+    private(set) var callback: () -> Void
 
     @Published
-    var fromContact = Contact(
+    private(set) var fromContact = Contact(
         address: "",
         avatar: "",
         contactName: "",
@@ -42,7 +42,7 @@ class MoveSingleNFTViewModel: ObservableObject {
         username: nil
     )
     @Published
-    var toContact = Contact(
+    private(set) var toContact = Contact(
         address: "",
         avatar: "",
         contactName: "",
@@ -52,9 +52,9 @@ class MoveSingleNFTViewModel: ObservableObject {
         username: nil
     )
     @Published
-    var buttonState: VPrimaryButtonState = .enabled
+    private(set) var buttonState: VPrimaryButtonState = .enabled
 
-    var accountCount: Int = 0
+    private(set) var accountCount: Int = 0
 
     func closeAction() {
         Router.dismiss()
@@ -311,7 +311,7 @@ extension MoveSingleNFTViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
     
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheckForMove(from: self.fromContact.walletType, to: self.toContact.walletType)
+        self._insufficientStorageFailure = insufficientStorageCheckForMove(token: .nft(self.nft), from: self.fromContact.walletType, to: self.toContact.walletType)
     }
 }
 
