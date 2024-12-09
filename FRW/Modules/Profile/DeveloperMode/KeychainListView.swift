@@ -130,13 +130,11 @@ struct KeychainListView: RouteableView {
             .visibility(!$viewModel.remoteList.isEmpty ? .visible : .gone)
         }
         .safeAreaInset(edge: .bottom, content: {
-            Button {
-                viewModel.clearAllKey()
-            } label: {
-                Text("Clear All")
-            }
-
-
+//            Button {
+//                viewModel.clearAllKey()
+//            } label: {
+//                Text("Clear All")
+//            }
         })
         .padding(.horizontal, 16)
         .applyRouteable(self)
@@ -224,13 +222,13 @@ extension KeychainListView {
                 .background(Color.Theme.Background.grey.opacity(0.6))
 
                 HStack(spacing: 12){
-                    Button {
-                        onDelete(info["userId"] ?? "")
-                    } label: {
-                        Text("Delete")
-                            .font(.inter(size: 12))
-                            .padding(4)
-                    }
+//                    Button {
+//                        onDelete(info["userId"] ?? "")
+//                    } label: {
+//                        Text("Delete")
+//                            .font(.inter(size: 12))
+//                            .padding(4)
+//                    }
 
                     Button {
                         UIPasteboard.general.string = info.toJSONString()

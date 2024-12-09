@@ -10,34 +10,39 @@ import Foundation
 import KeychainAccess
 import UIKit
 import WalletCore
+import FlowWalletKit
 
 class ThingsNeedKnowViewModel: ObservableObject {
     // MARK: Lifecycle
-
+    
     init() {
-        self.hdWallet = HDWallet(strength: mnemonicStrength, passphrase: "")
+        self.keyProvider = try? SeedPhraseKey.createBackup()
     }
 
     // MARK: Internal
 
     func onCreate() {
-        guard let hdWallet = hdWallet else {
+        guard let keyProvider = keyProvider else {
+            HUD.error(title: "init keyProvider failed.")
+            return
+        }
+        guard let publicKey = try? keyProvider.publicKey(signAlgo: signAlgo)?.hexString else {
             HUD.error(title: "fetch public key failed.")
             return
         }
         HUD.loading()
         Task {
             do {
-                let addStatus = try await addKeyToFlow(hdWallet: hdWallet)
+                let addStatus = try await addKeyToFlow(publicKey: publicKey)
                 if !addStatus {
                     HUD.error(title: "add key failed.")
                     return
                 }
-                try await addKeyToService(hdWallet: hdWallet)
-                try addKeyToLocal(hdWallet: hdWallet)
+                try await addKeyToService(publicKey: publicKey)
+                try addKeyToLocal()
                 DispatchQueue.main.async {
                     HUD.dismissLoading()
-                    Router.route(to: RouteMap.Backup.showRecoveryPhraseBackup(hdWallet.mnemonic))
+                    Router.route(to: RouteMap.Backup.showRecoveryPhraseBackup(keyProvider.hdWallet.mnemonic))
                 }
             } catch {
                 HUD.error(title: "\(error.localizedDescription)")
@@ -50,12 +55,11 @@ class ThingsNeedKnowViewModel: ObservableObject {
 
     // MARK: Private
 
-    private var hdWallet: HDWallet?
-    private let mnemonicStrength: Int32 = 128
-    private let store = PhraseKeyStore()
+    private var keyProvider: SeedPhraseKey?
+    private var signAlgo: Flow.SignatureAlgorithm = .ECDSA_SECP256k1
 
-    private func addKeyToFlow(hdWallet: HDWallet) async throws -> Bool {
-        let publicKey = hdWallet.getPublicKey()
+    private func addKeyToFlow(publicKey: String) async throws -> Bool {
+
         let address = WalletManager.shared.address
 
         let flowKey = flowKey(with: publicKey)
@@ -76,11 +80,10 @@ class ThingsNeedKnowViewModel: ObservableObject {
         return true
     }
 
-    private func addKeyToService(hdWallet: HDWallet) async throws {
-        let publicKey = hdWallet.getPublicKey()
+    private func addKeyToService(publicKey: String) async throws {
+
         let type = BackupType.fullWeightSeedPhrase
         let backupName = type.title
-
         let flowKey = flowKey(with: publicKey)
         let deviceInfo = SyncInfo.DeviceInfo(
             accountKey: flowKey.toCodableModel(),
@@ -103,7 +106,7 @@ class ThingsNeedKnowViewModel: ObservableObject {
         let flowPublicKey = Flow.PublicKey(hex: publicKey)
         let flowKey = Flow.AccountKey(
             publicKey: flowPublicKey,
-            signAlgo: .ECDSA_SECP256k1,
+            signAlgo: signAlgo,
             hashAlgo: .SHA2_256,
             weight: 1000
         )
@@ -120,10 +123,15 @@ class ThingsNeedKnowViewModel: ObservableObject {
         return accountModel.index
     }
 
-    private func addKeyToLocal(hdWallet: HDWallet) throws {
+    private func addKeyToLocal() throws {
         guard let uid = UserManager.shared.activatedUID else {
             throw BackupError.missingUid
         }
-        try? store.addMnemonic(mnemonic: hdWallet.mnemonic, userId: uid)
+        do {
+            try keyProvider?.storeBackup(id: uid)
+        } catch {
+            log.error("[Back] create 12 Phrase backup failed.\(error.localizedDescription)")
+        }
+
     }
 }
