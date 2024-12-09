@@ -22,8 +22,8 @@ enum SecureEnclaveMigration {
         LocalUserDefaults.shared.loginUIDList = []
         migrationFromOldSE()
         migrationFromLilicoTag()
-        migration12()
-        migration12Backup()
+        migrationOldSeedPhrase()
+        migrationSeedPhraseBackup()
         LocalUserDefaults.shared.migrationFinished = true
     }
 
@@ -113,7 +113,7 @@ enum SecureEnclaveMigration {
     }
 
 //MARK: - phrase
-    private static func migration12() {
+    private static func migrationOldSeedPhrase() {
         let mainKeychain =
         Keychain(service: (Bundle.main.bundleIdentifier ?? "com.flowfoundation.wallet") + ".local")
             .label("Lilico app backup")
@@ -159,7 +159,7 @@ enum SecureEnclaveMigration {
         }
     }
 
-    private static func migration12Backup() {
+    private static func migrationSeedPhraseBackup() {
         let mainKeychain =
         Keychain(service: (Bundle.main.bundleIdentifier ?? "com.flowfoundation.wallet") + ".backup.phrase")
             .label("Lilico app backup")
