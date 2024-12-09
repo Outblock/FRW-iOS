@@ -15,8 +15,6 @@ class CadenceManager {
     private init() {
         loadLocalCache()
         fetchScript()
-
-        log.info("[Cadence] current version is \(String(describing: version))")
     }
 
     // MARK: Internal
@@ -54,7 +52,8 @@ class CadenceManager {
         } else {
             do {
                 guard let filePath = Bundle.main
-                    .path(forResource: "cloudfunctions", ofType: "json") else {
+                    .path(forResource: "cloudfunctions", ofType: "json")
+                else {
                     log.error("CadenceManager -> loadFromLocalFile error: no local file")
                     return
                 }
@@ -86,6 +85,7 @@ class CadenceManager {
                     self.scripts = response.data.scripts
                     if let version = response.data.version {
                         self.version = version
+                        log.info("[Cadence] remote version is \(String(describing: version))")
                     }
                     EventTrack.shared
                         .registerCadence(
@@ -301,7 +301,7 @@ extension CadenceModel {
         let getNodeInfo: String?
         let getNodesInfo: String?
 
-        let getDelegatesInfoArray: String?
+        let getDelegatesInfoArrayV2: String?
         let getApyWeekly: String?
 
         let getStakeInfo: String?

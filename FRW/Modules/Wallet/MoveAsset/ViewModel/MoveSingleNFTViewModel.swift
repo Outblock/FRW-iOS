@@ -205,6 +205,16 @@ final class MoveSingleNFTViewModel: ObservableObject {
             )
             let holder = TransactionManager.TransactionHolder(id: tid, type: .moveAsset)
             TransactionManager.shared.newTransaction(holder: holder)
+            EventTrack.Transaction
+                .NFTTransfer(
+                    from: fromContact.address ?? "",
+                    to: toContact.address ?? "",
+                    identifier: nft.response.flowIdentifier ?? "",
+                    txId: tid.hex,
+                    fromType: fromContact.walletType?.trackName ?? "",
+                    toType: toContact.walletType?.trackName ?? "",
+                    isMove: true
+                )
             closeAction()
         } catch {
             log.error(" Move NFT =====")
@@ -220,6 +230,7 @@ final class MoveSingleNFTViewModel: ObservableObject {
         }
         guard let collection = collection else {
             log.error("[NFT] nft \(nft.collectionName) not found")
+
             return
         }
         let identifier = nft.publicIdentifier
@@ -275,6 +286,17 @@ final class MoveSingleNFTViewModel: ObservableObject {
             }
             let holder = TransactionManager.TransactionHolder(id: tid, type: .moveAsset)
             TransactionManager.shared.newTransaction(holder: holder)
+            EventTrack.Transaction
+                .NFTTransfer(
+                    from: fromContact.address ?? "",
+                    to: toContact.address ?? "",
+                    identifier: nft.response.flowIdentifier ?? "",
+                    txId: tid.hex,
+                    fromType: fromContact.walletType?.trackName ?? "",
+                    toType: toContact.walletType?.trackName ?? "",
+                    isMove: true
+                )
+
             closeAction()
         } catch {
             log.error("[Move NFT] Move NFT failed on Linked Account. ")

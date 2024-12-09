@@ -7,7 +7,7 @@
 
 import Combine
 import Flow
-import FlowWalletCore
+import FlowWalletKit
 import Foundation
 import SwiftUI
 import SwiftUIPager

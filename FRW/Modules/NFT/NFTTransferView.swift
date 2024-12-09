@@ -149,7 +149,8 @@ class NFTTransferViewModel: ObservableObject {
         guard let toAddress = targetContact.address,
               let primaryAddress = WalletManager.shared.getPrimaryWalletAddress(),
               let currentAddress = WalletManager.shared
-              .getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
+              .getWatchAddressOrChildAccountAddressOrPrimaryAddress()
+        else {
             return
         }
 
@@ -226,7 +227,8 @@ class NFTTransferViewModel: ObservableObject {
                 case (.coa, .flow):
                     let nftId = nft.response.id
                     guard let identifier = nft.collection?.flowIdentifier ?? nft.response
-                        .flowIdentifier else {
+                        .flowIdentifier
+                    else {
                         throw NFTError.noCollectionInfo
                     }
                     if primaryAddress.lowercased() == toAddress.lowercased() {
@@ -321,7 +323,8 @@ class NFTTransferViewModel: ObservableObject {
                     )
                 case (.linked, .coa):
                     guard let nftIdentifier = nft.response.flowIdentifier,
-                          let nftId = UInt64(nft.response.id) else {
+                          let nftId = UInt64(nft.response.id)
+                    else {
                         return
                     }
                     let childAddr = fromChildAccount?.addr ?? currentAddress

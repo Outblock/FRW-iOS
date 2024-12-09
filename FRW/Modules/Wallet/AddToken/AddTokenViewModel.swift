@@ -255,7 +255,10 @@ extension AddTokenViewModel {
                 }
             } catch {
                 debugPrint("AddTokenViewModel -> confirmActiveTokenAction error: \(error)")
-                isRequesting = false
+                DispatchQueue.main.async {
+                    self.isRequesting = false
+                }
+
                 failedBlock()
             }
         }

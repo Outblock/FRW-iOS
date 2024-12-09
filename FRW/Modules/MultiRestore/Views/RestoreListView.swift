@@ -20,7 +20,7 @@ struct RestoreListView: RouteableView {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
-                    Text("restore".localized)
+                    Text("import_btn_text".localized)
                         .foregroundColor(Color.Theme.Accent.green)
                         .bold()
                     Text("wallet".localized)
@@ -39,7 +39,7 @@ struct RestoreListView: RouteableView {
                 RestoreListView.CardView(
                     icon: "restore.icon.device",
                     title: "restore_device_title".localized,
-                    des: "restore_device_desc".localized
+                    des: "restore_device_desc_2".localized
                 ) {
                     if LocalUserDefaults.shared.flowNetwork != .mainnet {
                         showSwitchUserAlert = true
@@ -62,8 +62,8 @@ struct RestoreListView: RouteableView {
 
                 RestoreListView.CardView(
                     icon: "restore.icon.phrase",
-                    title: "restore_phrase_title".localized,
-                    des: "restore_phrase_desc".localized
+                    title: "restore_phrase_title_2".localized,
+                    des: "restore_phrase_desc_2".localized
                 ) {
                     if LocalUserDefaults.shared.flowNetwork != .mainnet {
                         showSwitchUserAlert = true

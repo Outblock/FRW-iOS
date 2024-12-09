@@ -168,11 +168,16 @@ class BackupUploadViewModel: ObservableObject {
                         toggleProcess(process: .upload)
                         onClickButton()
                     } else {
-                        buttonState = .enabled
+                        DispatchQueue.main.async {
+                            self.buttonState = .enabled
+                        }
+
                         HUD.error(title: "create error on chain")
                     }
                 } catch {
-                    buttonState = .enabled
+                    DispatchQueue.main.async {
+                        self.buttonState = .enabled
+                    }
                     trackCreatFailed(message: "idle:" + error.localizedDescription)
                 }
             }
