@@ -35,8 +35,6 @@ struct SwapConfirmView: View {
                     .padding(.horizontal, 28)
                     .zIndex(-1)
 
-                Spacer()
-
                 sendButton
                     .padding(.bottom, 10)
                     .padding(.horizontal, 28)
@@ -45,7 +43,7 @@ struct SwapConfirmView: View {
         .backgroundFill(Color.LL.background)
     }
 
-    var fromToView: some View {
+    private var fromToView: some View {
         HStack(spacing: 16) {
             if let fromToken = vm.fromToken {
                 tokenView(token: fromToken, num: vm.inputFromText)
@@ -60,7 +58,7 @@ struct SwapConfirmView: View {
         .padding(.vertical, 20)
     }
 
-    var swapDetailView: some View {
+    private var swapDetailView: some View {
         VStack(spacing: 10) {
             HStack {
                 Text("swap_best_price".localized)
@@ -130,7 +128,7 @@ struct SwapConfirmView: View {
         .cornerRadius(16)
     }
 
-    var sendButton: some View {
+    private var sendButton: some View {
         VPrimaryButton(
             model: ButtonStyle.primary,
             state: vm.confirmButtonState,
@@ -142,7 +140,7 @@ struct SwapConfirmView: View {
         )
     }
 
-    func tokenView(token: TokenModel, num: String) -> some View {
+    private func tokenView(token: TokenModel, num: String) -> some View {
         VStack(spacing: 5) {
             KFImage.url(token.icon)
                 .placeholder {

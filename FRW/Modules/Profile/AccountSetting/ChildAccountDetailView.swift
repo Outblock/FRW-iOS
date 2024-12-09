@@ -283,7 +283,7 @@ struct ChildAccountDetailView: RouteableView {
         .padding(.bottom, 20)
         .backgroundFill(Color.LL.Neutrals.background)
         .applyRouteable(self)
-        .halfSheet(showSheet: $vm.isPresent) {
+        .halfSheet(showSheet: $vm.isPresent, autoResizing: true, backgroundColor: Color.LL.Neutrals.background) {
             UnlinkConfirmView()
                 .environmentObject(vm)
         }
@@ -578,7 +578,7 @@ extension ChildAccountDetailView {
                         .padding(.horizontal, 28)
                 }
             }
-            .backgroundFill(Color.LL.Neutrals.background)
+            .fixedSize(horizontal: false, vertical: true)
         }
 
         var fromToView: some View {

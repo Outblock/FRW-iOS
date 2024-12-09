@@ -35,6 +35,7 @@ extension WalletView: AppTabBarPageProtocol {
 
 // MARK: - WalletView
 
+@available(*, deprecated, message: "Replaced by `WalletHomeView`, left for future reference")
 struct WalletView: View {
     @StateObject
     var um = UserManager.shared
@@ -152,7 +153,7 @@ struct WalletView: View {
             guestView.visibility(um.isLoggedIn ? .gone : .visible)
             normalView.visibility(um.isLoggedIn ? .visible : .gone)
         }
-        .halfSheet(showSheet: $vm.backupTipsPresent) {
+        .halfSheet(showSheet: $vm.backupTipsPresent, backgroundColor: Color.LL.Neutrals.background) {
             BackupTipsView(closeAction: {
                 vm.backupTipsPresent = false
             })

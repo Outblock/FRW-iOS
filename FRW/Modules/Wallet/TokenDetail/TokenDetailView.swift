@@ -74,7 +74,7 @@ struct TokenDetailView: RouteableView {
         .buttonStyle(.plain)
         .backgroundFill(.LL.deepBg)
         .applyRouteable(self)
-        .halfSheet(showSheet: $vm.showSheet, autoResizing: true) {
+        .halfSheet(showSheet: $vm.showSheet, autoResizing: true, backgroundColor: Color.Theme.BG.bg1) {
             if vm.buttonAction == .move {
                 MoveTokenView(tokenModel: vm.token, isPresent: $vm.showSheet)
             }

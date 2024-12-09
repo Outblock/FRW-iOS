@@ -66,6 +66,7 @@ extension View {
     func halfSheet<SheetView: View>(
         showSheet: Binding<Bool>,
         autoResizing: Bool = false,
+        backgroundColor: Color = .clear,
         @ViewBuilder sheetView: @escaping () -> SheetView,
         onEnd: (() -> Void)? = nil
     ) -> some View {
@@ -74,6 +75,7 @@ extension View {
         background(
             HalfSheetHelper(sheetView: sheetView(), autoResizing: autoResizing, showSheet: showSheet)
         )
+        .background(backgroundColor)
         .onChange(of: showSheet.wrappedValue) { newValue in
             if let onEnd = onEnd, !newValue {
                 onEnd()
@@ -133,7 +135,6 @@ struct HalfSheetHelper<SheetView: View>: UIViewControllerRepresentable {
                 .cornerRadius([.topLeading, .topTrailing], 16)
                 .ignoresSafeArea()
                 .persistentSystemOverlays(.hidden)
-                .backgroundFill(Color.Theme.BG.bg1)
 
                 let sheetController = CustomHostingController(
                     rootView: rootView,
@@ -226,15 +227,10 @@ final class CustomHostingController<Content: View>: UIHostingController<Content>
             if let sheetPresentationController {
                 sheetPresentationController.animateChanges {
                     sheetPresentationController.invalidateDetents()
-                    self.view.setNeedsLayout()
+                    // This seems to cause the sheet not displayed when the parent is presented on the root navigation controller
+                    //self.view.setNeedsLayout()
                 }
             }
         }
     }
-    
-//    override func viewDidLayoutSubviews() {
-//        super.viewDidLayoutSubviews()
-//        
-//        view.setNeedsUpdateConstraints()
-//    }
 }

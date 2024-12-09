@@ -35,11 +35,14 @@ extension PresentActionDelegate {
 
 // MARK: - PresentHostingController
 
-class PresentHostingController<Content: PresentActionView>: UIHostingController<Content>,
+final class PresentHostingController<Content: PresentActionView>: UIHostingController<Content>,
     UISheetPresentationControllerDelegate {
+    private let backgroundColor: Color
+    
     // MARK: Lifecycle
 
-    override public init(rootView: Content) {
+    public init(backgroundColor: Color = .clear, rootView: Content) {
+        self.backgroundColor = backgroundColor
         super.init(rootView: rootView)
         overrideUserInterfaceStyle = ThemeManager.shared.getUIKitStyle()
     }
@@ -54,7 +57,7 @@ class PresentHostingController<Content: PresentActionView>: UIHostingController<
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .clear
+        view.backgroundColor = self.backgroundColor.toUIColor()
 
         // setting presentation controller properties...
         if let presentationController = presentationController as? UISheetPresentationController {
