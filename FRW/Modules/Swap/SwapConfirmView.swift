@@ -40,7 +40,6 @@ struct SwapConfirmView: View {
                     .padding(.horizontal, 28)
             }
         }
-        .backgroundFill(Color.LL.background)
     }
 
     private var fromToView: some View {

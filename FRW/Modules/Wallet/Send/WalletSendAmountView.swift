@@ -440,7 +440,6 @@ extension WalletSendAmountView {
                 }
                 .padding(.horizontal, 28)
             }
-            .backgroundFill(Color.LL.Neutrals.background)
         }
 
         var fromToView: some View {

@@ -266,7 +266,7 @@ extension StakeAmountView {
                 .padding(.horizontal, 18)
                 .padding(.bottom, 20)
             }
-            .backgroundFill(Color.LL.deepBg)
+            .edgesIgnoringSafeArea(.bottom)
         }
 
         var detailView: some View {

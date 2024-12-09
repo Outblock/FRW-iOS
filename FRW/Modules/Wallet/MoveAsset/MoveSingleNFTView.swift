@@ -148,7 +148,6 @@ struct MoveSingleNFTView: RouteableView, PresentActionDelegate {
         }
         .padding(.horizontal, 18)
         .hideKeyboardWhenTappedAround()
-        .backgroundFill(Color.Theme.Background.grey)
         .cornerRadius([.topLeading, .topTrailing], 16)
         .edgesIgnoringSafeArea(.bottom)
         .applyRouteable(self)
