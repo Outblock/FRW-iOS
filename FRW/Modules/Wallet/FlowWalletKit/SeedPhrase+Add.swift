@@ -42,7 +42,7 @@ extension SeedPhraseKey {
 //MARK: - For Backup
 extension SeedPhraseKey {
 
-    static func createBackup(uid: String) throws -> SeedPhraseKey {
+    static func createBackup(uid: String? = nil) throws -> SeedPhraseKey {
         let key = try SeedPhraseKey.create(storage: seedPhraseBackupStorage)
         return key
     }

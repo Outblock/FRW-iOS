@@ -322,6 +322,21 @@ struct DeveloperModeView: RouteableView {
                             }
                             .frame(height: 64)
                             .padding(.horizontal, 16)
+
+                            HStack {
+                                Button {
+                                    let list = LocalUserDefaults.shared.userList
+                                    log.debug("[User] \(list)")
+
+                                } label: {
+                                    Text("copy all user")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                }
+                                Spacer()
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
                         }
                         .background(.LL.bgForIcon)
                         .cornerRadius(16)

@@ -104,6 +104,7 @@ class KeychainListViewModel: ObservableObject {
     var seItem: [[String: String]] = []
     var spItem: [[String: String]] = []
     var pkItem: [[String: String]] = []
+    var ksItem: [[String: String]] = []
 
     private func fecth() {
         fetchSecureEnclave()
@@ -163,6 +164,7 @@ class KeychainListViewModel: ObservableObject {
         }
     }
 
+
     func clearAllKey() {
         let seKeychain = SecureEnclaveKey.KeychainStorage
         try? seKeychain.removeAll()
@@ -170,5 +172,6 @@ class KeychainListViewModel: ObservableObject {
         try? spKeychain.removeAll()
         let pKeychain = PrivateKey.PKStorage
         try? pKeychain.removeAll()
+        LocalUserDefaults.shared.migrationFinished = false
     }
 }

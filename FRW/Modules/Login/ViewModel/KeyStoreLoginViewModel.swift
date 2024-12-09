@@ -123,18 +123,14 @@ final class KeyStoreLoginViewModel: ObservableObject {
     }
 
     func checkPublicKey() {
-        let keys = account?.keys
-            .filter {
+        let keys = account?.keys.filter {
                 $0.publicKey.description == p256PublicKey || $0.publicKey
                     .description == secp256PublicKey
             }
         guard let selectedKey = keys?.first,
               let address = account?.address.hex, let privateKey = privateKey
         else {
-            log
-                .error(
-                    "[Import] keys of account not match the public:\(String(describing: p256PublicKey)) or \(String(describing: secp256PublicKey)) "
-                )
+            log.error("[Import] keys of account not match the public:\(String(describing: p256PublicKey)) or \(String(describing: secp256PublicKey)) ")
             return
         }
         Task {

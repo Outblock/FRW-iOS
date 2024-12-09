@@ -227,7 +227,7 @@ extension WalletManager {
             keyProvider = keyProvider(with: uid)
             if let provider = keyProvider, let user = userStore(with: uid) {
                 updateKeyProvider(provider: provider, storeUser: user)
-            }else {
+            } else {
                 log.error("[Wallet] not found provider or user at \(uid)")
             }
         }
@@ -236,6 +236,7 @@ extension WalletManager {
     func updateKeyProvider(provider: any KeyProtocol, storeUser: UserManager.StoreUser) {
         keyProvider = provider
         self.accountKey = storeUser.account
+        log.debug("[user] \(String(describing: self.accountKey))")
         guard self.accountKey == nil else {
             return
         }
@@ -244,7 +245,7 @@ extension WalletManager {
                 do {
                     let accountKey = try await findKey(address: address, with: storeUser.publicKey)
                     self.accountKey = accountKey?.toStoreKey()
-                    LocalUserDefaults.shared.updateUser(by: storeUser.userId, account: self.accountKey)
+                    LocalUserDefaults.shared.updateUser(by: storeUser.userId,publicKey: storeUser.publicKey, account: self.accountKey)
                 }catch {
                     log.error("[Wallet] not find account key by \(address) with \(storeUser.publicKey)")
                 }
@@ -254,8 +255,8 @@ extension WalletManager {
                     let result = try await findKey(provider: provider, with: storeUser.publicKey)
                     self.accountKey = result.1?.toStoreKey()
                     let address = result.0?.address.description
-                    LocalUserDefaults.shared.updateUser(by: storeUser.userId, address: address,account: accountKey)
-                }catch {
+                    LocalUserDefaults.shared.updateUser(by: storeUser.userId, publicKey: storeUser.publicKey, address: address,account: accountKey)
+                } catch {
                     log.error("[Wallet] not find account key by \(provider.keyType) with \(storeUser.publicKey)")
                 }
             }
@@ -268,7 +269,7 @@ extension WalletManager {
             return nil
         }
         var accountKey = user.account
-
+        log.debug("[user] \(String(describing: self.accountKey))")
         if accountKey == nil, let address = user.address {
             accountKey = try? await findKey(address: address, with: user.publicKey)?.toStoreKey()
         }
@@ -283,6 +284,7 @@ extension WalletManager {
         let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
         let sortedAccount = account.keys.filter { $0.weight >= 1000 }
         let accountKey = sortedAccount.filter { $0.publicKey.description == publicKey }.first
+        log.debug("[user] \(String(describing: accountKey))")
         return accountKey
     }
 
@@ -302,6 +304,7 @@ extension WalletManager {
                 }
             }
         }
+        log.debug("[user] \(String(describing: accountKey))")
         return (flowAccount,accountKey)
     }
 
@@ -313,6 +316,7 @@ extension WalletManager {
         guard let userStore = userStore(with: uid) else {
             return nil
         }
+        log.debug("[user] \(userStore)")
         var provider: (any KeyProtocol)?
         switch userStore.keyType {
         case .secureEnclave:
@@ -505,6 +509,10 @@ extension WalletManager {
     }
 
     func getCurrentPublicKey() -> String? {
+        if let provider = keyProvider, let key = accountKey {
+            let publicKey = try? provider.publicKey(signAlgo: key.signAlgo)
+            return publicKey?.hexString
+        }
         if let accountkey = flowAccountKey {
             return accountkey.publicKey.description
         }

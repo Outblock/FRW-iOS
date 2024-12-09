@@ -134,6 +134,6 @@ class CreateProfileWaitingViewModel: ObservableObject {
         guard let uid = UserManager.shared.activatedUID, let address = WalletManager.shared.getPrimaryWalletAddress() else {
             return
         }
-        LocalUserDefaults.shared.updateUser(by: uid, address: address)
+        LocalUserDefaults.shared.updateSEUser(by: uid, address: address)
     }
 }

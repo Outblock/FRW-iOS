@@ -442,14 +442,26 @@ class LocalUserDefaults: ObservableObject {
         self.userList = list
     }
 
-    func updateUser(by userId: String, address: String? = nil, account: UserManager.Accountkey? = nil) {
+    func updateUser(by userId: String, publicKey: String ,address: String? = nil, account: UserManager.Accountkey? = nil) {
         var users = userList
-        var index = users.lastIndex(where: { $0.userId == userId })
+        let index = users.lastIndex(where: { $0.userId == userId && $0.publicKey == publicKey  })
         guard let index = index else {
             return
         }
-        var user = users[index]
+        let user = users[index]
         let newUser = user.copy(address: address, account: account)
+        users[index] = newUser
+        self.userList = users
+    }
+
+    func updateSEUser(by userId: String, address: String) {
+        var users = userList
+        let index = users.lastIndex(where: { $0.userId == userId && $0.keyType == .secureEnclave  })
+        guard let index = index else {
+            return
+        }
+        let user = users[index]
+        let newUser = user.copy(address: address, account: nil)
         users[index] = newUser
         self.userList = users
     }

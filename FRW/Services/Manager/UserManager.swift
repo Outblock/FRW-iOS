@@ -208,10 +208,6 @@ extension UserManager {
         )
         let model: RegisterResponse = try await Network.request(FRWAPI.User.register(request))
 
-        try await finishLogin(mnemonic: "", customToken: model.customToken, isRegiter: true)
-        WalletManager.shared.asyncCreateWalletAddressFromServer()
-        userType = .secure
-
         try secureKey.store(id: model.id)
         let store = UserManager.StoreUser(
             publicKey: key.publicKey.description,
@@ -222,6 +218,10 @@ extension UserManager {
         )
         WalletManager.shared.updateKeyProvider(provider: secureKey, storeUser: store)
         LocalUserDefaults.shared.addUser(user: store)
+
+        try await finishLogin(mnemonic: "", customToken: model.customToken, isRegiter: true)
+        WalletManager.shared.asyncCreateWalletAddressFromServer()
+        userType = .secure
 
         EventTrack.Account
             .create(
@@ -536,19 +536,20 @@ extension UserManager {
         else {
             throw LLError.restoreLoginFailed
         }
-        try await finishLogin(mnemonic: "", customToken: customToken)
         try privateKey.store(id: privateKey.createKey(uid: uid), password: KeyProvider.password(with: uid))
-        DispatchQueue.main.async {
-            let store = StoreUser(
-                publicKey: publicKey,
-                address: address,
-                userId: uid,
-                keyType: privateKey.keyType,
-                account: flowKey.toStoreKey()
-            )
-            LocalUserDefaults.shared.addUser(user: store)
-            WalletManager.shared.updateKeyProvider(provider: privateKey, storeUser: store)
-        }
+        log.debug("[user] \(flowKey)")
+        let store = StoreUser(
+            publicKey: publicKey,
+            address: address,
+            userId: uid,
+            keyType: privateKey.keyType,
+            account: flowKey.toStoreKey()
+        )
+        LocalUserDefaults.shared.addUser(user: store)
+        WalletManager.shared.updateKeyProvider(provider: privateKey, storeUser: store)
+        log.debug("[user] \(store)")
+        try await finishLogin(mnemonic: "", customToken: customToken)
+
     }
 }
 
@@ -821,7 +822,7 @@ extension UserManager {
 extension UserManager {
 
     struct Accountkey: Codable {
-        public var index: Int = -1
+        public var index: Int
         public let signAlgo: Flow.SignatureAlgorithm
         public let hashAlgo: Flow.HashAlgorithm
         public let weight: Int
