@@ -15,7 +15,7 @@ extension SeedPhraseKey {
         let pw = KeyProvider.password(with: id)
         let key = KeyProvider.lastKey(with: id, in: seedPhraseStorage) ?? id
         let seedPhraseKey = try SeedPhraseKey.get(
-            id: id,
+            id: key,
             password: pw,
             storage: SeedPhraseKey.seedPhraseStorage
         )
@@ -43,14 +43,14 @@ extension SeedPhraseKey {
 extension SeedPhraseKey {
 
     static func createBackup(uid: String) throws -> SeedPhraseKey {
-        let pw = KeyProvider.password(with: uid)
         let key = try SeedPhraseKey.create(storage: seedPhraseBackupStorage)
         return key
     }
 
     func storeBackup(id: String) throws {
         let pw = KeyProvider.password(with: id)
-        try store(id: id, password: pw)
+        let key = self.createKey(uid: id)
+        try store(id: key, password: pw)
     }
 
     static var seedPhraseBackupStorage: FlowWalletKit.KeychainStorage {

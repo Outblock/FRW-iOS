@@ -147,7 +147,6 @@ extension MultiAccountStorage {
 extension MultiAccountStorage {
     func getUserInfo(_ uid: String) -> UserInfo? {
         if !UserStorageFileType.userInfo(uid).isExist {
-            log.warning("user info cache is not exist")
             return nil
         }
 
@@ -163,7 +162,6 @@ extension MultiAccountStorage {
 
     func getWalletInfo(_ uid: String) -> UserWalletResponse? {
         if !UserStorageFileType.walletInfo(uid).isExist {
-            log.warning("wallet info cache is not exist")
             return nil
         }
 
@@ -179,7 +177,6 @@ extension MultiAccountStorage {
 
     func getUserDefaults(_ uid: String) -> MultiAccountStorage.UserDefaults? {
         if !UserStorageFileType.userDefaults(uid).isExist {
-            log.warning("user defaults cache is not exist")
             return nil
         }
 

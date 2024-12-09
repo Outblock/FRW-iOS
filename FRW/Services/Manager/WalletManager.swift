@@ -105,7 +105,7 @@ class WalletManager: ObservableObject {
     var balanceProvider = BalanceProvider()
 
     var walletEntity: FlowWalletKit.Wallet? = nil
-    var accountKey: Flow.AccountKey?
+    var accountKey: UserManager.Accountkey?
     var keyProvider: (any KeyProtocol)? = nil
     // rename to currentAccount
 
@@ -243,8 +243,8 @@ extension WalletManager {
             if let address = storeUser.address {
                 do {
                     let accountKey = try await findKey(address: address, with: storeUser.publicKey)
-                    self.accountKey = accountKey
-                    LocalUserDefaults.shared.updateUser(by: storeUser.userId, account: accountKey)
+                    self.accountKey = accountKey?.toStoreKey()
+                    LocalUserDefaults.shared.updateUser(by: storeUser.userId, account: self.accountKey)
                 }catch {
                     log.error("[Wallet] not find account key by \(address) with \(storeUser.publicKey)")
                 }
@@ -252,7 +252,7 @@ extension WalletManager {
             if self.accountKey == nil {
                 do {
                     let result = try await findKey(provider: provider, with: storeUser.publicKey)
-                    self.accountKey = result.1
+                    self.accountKey = result.1?.toStoreKey()
                     let address = result.0?.address.description
                     LocalUserDefaults.shared.updateUser(by: storeUser.userId, address: address,account: accountKey)
                 }catch {
@@ -263,17 +263,17 @@ extension WalletManager {
 
     }
 
-    func accountKey(with uid: String) async -> Flow.AccountKey? {
+    func accountKey(with uid: String) async -> UserManager.Accountkey? {
         guard let user = userStore(with: uid) else {
             return nil
         }
         var accountKey = user.account
 
         if accountKey == nil, let address = user.address {
-            accountKey = try? await findKey(address: address, with: user.publicKey)
+            accountKey = try? await findKey(address: address, with: user.publicKey)?.toStoreKey()
         }
         if accountKey == nil, let keyProvider = keyProvider(with: uid) {
-            accountKey = try? await findKey(provider: keyProvider, with: user.publicKey).1
+            accountKey = try? await findKey(provider: keyProvider, with: user.publicKey).1?.toStoreKey()
         }
 
         return accountKey

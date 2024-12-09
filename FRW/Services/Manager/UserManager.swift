@@ -218,7 +218,7 @@ extension UserManager {
             address: nil,
             userId: model.id,
             keyType: .secureEnclave,
-            account: key
+            account: key.toStoreKey()
         )
         WalletManager.shared.updateKeyProvider(provider: secureKey, storeUser: store)
         LocalUserDefaults.shared.addUser(user: store)
@@ -285,7 +285,7 @@ extension UserManager {
                 HUD.dismissLoading()
             } catch {
                 HUD.dismissLoading()
-                log.info("restore_account_failed".localized)
+                log.info("restore old failed:\(error)")
             }
         }
     }
@@ -544,10 +544,10 @@ extension UserManager {
                 address: address,
                 userId: uid,
                 keyType: privateKey.keyType,
-                account: flowKey
+                account: flowKey.toStoreKey()
             )
-            WalletManager.shared.updateKeyProvider(provider: privateKey, storeUser: store)
             LocalUserDefaults.shared.addUser(user: store)
+            WalletManager.shared.updateKeyProvider(provider: privateKey, storeUser: store)
         }
     }
 }
@@ -585,7 +585,7 @@ extension UserManager {
                 return
             }
         }
-        if let provider = WalletManager.shared.keyProvider(with: uid) {
+        if WalletManager.shared.keyProvider(with: uid) != nil {
             try await restoreLogin(with: uid)
             return
         }
@@ -819,22 +819,34 @@ extension UserManager {
 // MARK: UserManager.StoreUser
 
 extension UserManager {
+
+    struct Accountkey: Codable {
+        public var index: Int = -1
+        public let signAlgo: Flow.SignatureAlgorithm
+        public let hashAlgo: Flow.HashAlgorithm
+        public let weight: Int
+    }
+
     struct StoreUser: Codable {
         let publicKey: String
         let address: String?
         let userId: String
         let keyType: FlowWalletKit.KeyType
-        var updateAt: TimeInterval = Date().timeIntervalSince1970
+        let account: UserManager.Accountkey?
+        var updateAt: TimeInterval = ceil(Date().timeIntervalSince1970)
 
-        let account: Flow.AccountKey?
-
-        func copy(address: String? = nil, account: Flow.AccountKey? = nil) -> StoreUser {
+        func copy(address: String? = nil, account: UserManager.Accountkey? = nil) -> StoreUser {
             return StoreUser(publicKey: publicKey,
                              address: address ?? self.address,
                              userId: userId,
                              keyType: keyType,
-                             updateAt: updateAt,
                              account: account ?? self.account)
         }
     }
 }
+extension Flow.AccountKey {
+    func toStoreKey() -> UserManager.Accountkey {
+        UserManager.Accountkey(index: index, signAlgo: signAlgo, hashAlgo: hashAlgo, weight: weight)
+    }
+}
+

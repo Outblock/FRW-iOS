@@ -389,11 +389,15 @@ class LocalUserDefaults: ObservableObject {
             }
         }
         get {
-            if let data = UserDefaults.standard.data(forKey: Keys.userList.rawValue),
-               let model = try? JSONDecoder().decode([UserManager.StoreUser].self, from: data) {
-                return model
+            guard let data = UserDefaults.standard.data(forKey: Keys.userList.rawValue) else {
+                return []
             }
-            return []
+            do {
+                let model = try JSONDecoder().decode([UserManager.StoreUser].self, from: data)
+                return model
+            } catch {
+                return []
+            }
         }
     }
 
@@ -435,10 +439,10 @@ class LocalUserDefaults: ObservableObject {
         } else {
             list.append(user)
         }
-        userList = list
+        self.userList = list
     }
 
-    func updateUser(by userId: String, address: String? = nil, account: Flow.AccountKey? = nil) {
+    func updateUser(by userId: String, address: String? = nil, account: UserManager.Accountkey? = nil) {
         var users = userList
         var index = users.lastIndex(where: { $0.userId == userId })
         guard let index = index else {
