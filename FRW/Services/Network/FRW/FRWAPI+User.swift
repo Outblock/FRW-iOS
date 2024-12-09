@@ -27,6 +27,8 @@ extension FRWAPI {
         case syncDevice(SyncInfo.DeviceInfo)
         case addSigned(SignedRequest)
         case updateDevice(String)
+        case checkimport(String)
+        case loginWithImport(RestoreImportRequest)
     }
 }
 
@@ -73,15 +75,19 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
             return "/v1/user/address/network"
         case .updateDevice:
             return "/v1/user/device"
+        case .checkimport:
+            return "/v3/checkimport"
+        case .loginWithImport:
+            return "/v3/import"
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .checkUsername, .userInfo, .userWallet, .search, .keys, .devices:
+        case .checkUsername, .userInfo, .userWallet, .search, .keys, .devices, .checkimport:
             return .get
         case .login, .register, .userAddress, .manualCheck, .crescendo, .syncDevice, .addSigned,
-             .previewnet, .updateDevice:
+             .previewnet, .updateDevice, .loginWithImport:
             return .post
         }
     }
@@ -119,6 +125,10 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
             return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         case let .updateDevice(uuid):
             return .requestJSONEncodable(["device_id": uuid])
+        case let .checkimport(key):
+            return .requestParameters(parameters: ["key": key], encoding: URLEncoding.queryString)
+        case let .loginWithImport(request):
+            return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         }
     }
 

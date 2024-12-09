@@ -8,7 +8,7 @@
 import CryptoKit
 import FirebaseAuth
 import Flow
-import FlowWalletCore
+import FlowWalletKit
 import Foundation
 import GoogleAPIClientForREST_Drive
 import GoogleAPIClientForRESTCore
@@ -80,6 +80,7 @@ extension MultiBackupManager {
         var updatedTime: Double? = Date.now.timeIntervalSince1970
         let deviceInfo: DeviceInfoRequest?
         var code: String?
+        var backupType: MultiBackupType? = .phrase
 
         func showDate() -> String {
             guard let updatedTime = updatedTime else { return "" }
@@ -121,7 +122,8 @@ extension MultiBackupManager {
         }
 
         guard let hdWallet = WalletManager.shared.createHDWallet(),
-              let mnemonicData = hdWallet.mnemonic.data(using: .utf8) else {
+              let mnemonicData = hdWallet.mnemonic.data(using: .utf8)
+        else {
             HUD.error(title: "empty_wallet_key".localized)
             throw BackupError.missingMnemonic
         }
@@ -265,11 +267,23 @@ extension MultiBackupManager {
         switch type {
         case .google:
             try await login(from: type)
-            return try await gdTarget.getCurrentDriveItems()
+            var list = try await gdTarget.getCurrentDriveItems()
+            list = list.map { item in
+                var model = item
+                model.backupType = type
+                return model
+            }
+            return list
         case .passkey:
             return []
         case .icloud:
-            return try await iCloudTarget.getCurrentDriveItems()
+            var list = try await iCloudTarget.getCurrentDriveItems()
+            list = list.map { item in
+                var model = item
+                model.backupType = type
+                return model
+            }
+            return list
         case .phrase:
             return []
         }
@@ -496,8 +510,9 @@ extension MultiBackupManager {
 
         let address = Flow.Address(hex: addressDes)
 
-        let sec = try WallectSecureEnclave()
-        let key = try sec.accountKey()
+        let secureKey = try SecureEnclaveKey.create()
+        let key = try secureKey.flowAccountKey()
+
         do {
             HUD.loading()
             let tx = try await FlowNetwork.addKeyWithMulti(
@@ -534,8 +549,7 @@ extension MultiBackupManager {
                 let request = SignedRequest(
                     accountKey: AccountKey(
                         hashAlgo: key.hashAlgo.index,
-                        publicKey: key.publicKey
-                            .description,
+                        publicKey: key.publicKey.description,
                         signAlgo: key.signAlgo.index,
                         weight: key.weight
                     ),
@@ -544,17 +558,12 @@ extension MultiBackupManager {
                 let response: Network.EmptyResponse = try await Network
                     .requestWithRawModel(FRWAPI.User.addSigned(request))
                 if response.httpCode != 200 {
-                    log.info("[Multi-backup] sync failed")
+                    log.error("[Multi-backup] sync failed")
                 } else {
-                    print("")
-                    if let privateKey = sec.key.privateKey {
-                        try WallectSecureEnclave.Store.store(
-                            key: firstItem.userId,
-                            value: privateKey.dataRepresentation
-                        )
-                    }
-
-                    try await UserManager.shared.restoreLogin(userId: firstItem.userId)
+                    try secureKey.store(id: firstItem.userId)
+                    let storeUser = UserManager.StoreUser(publicKey: key.publicKey.description, address: firstItem.address, userId: firstItem.userId, keyType: .secureEnclave, account: nil)
+                    LocalUserDefaults.shared.addUser(user: storeUser)
+                    try await UserManager.shared.restoreLogin(with: firstItem.userId)
                     Router.popToRoot()
                 }
             } else {

@@ -5,7 +5,7 @@
 //  Created by cat on 2024/4/26.
 //
 
-import FlowWalletCore
+import FlowWalletKit
 import Foundation
 import KeychainAccess
 
@@ -30,8 +30,8 @@ struct Migration {
 
     func start() {
         fetchiCloudRemoteList()
-        WallectSecureEnclave.Store.migrationFromLilicoTag()
-        try? WallectSecureEnclave.Store.twoBackupIfNeed()
+//        WallectSecureEnclave.Store.migrationFromLilicoTag()
+//        try? WallectSecureEnclave.Store.twoBackupIfNeed()
     }
 
     // MARK: Private

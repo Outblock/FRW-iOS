@@ -11,7 +11,7 @@ import SwiftUI
 
 // MARK: - MoveTokenViewModel
 
-class MoveTokenViewModel: ObservableObject {
+final class MoveTokenViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(token: TokenModel, isPresent: Binding<Bool>) {
@@ -22,6 +22,8 @@ class MoveTokenViewModel: ObservableObject {
         Task {
             await fetchMinFlowBalance()
         }
+        
+        checkForInsufficientStorage()
     }
 
     // MARK: Internal
@@ -66,9 +68,8 @@ class MoveTokenViewModel: ObservableObject {
         username: nil
     )
 
-    var token: TokenModel
-    @Binding
-    var isPresent: Bool
+    private(set) var token: TokenModel
+    @Binding var isPresent: Bool
 
     var isReadyForSend: Bool {
         errorType == .none && showBalance.isNumber && !showBalance.isEmpty
@@ -120,6 +121,8 @@ class MoveTokenViewModel: ObservableObject {
         inputDollarNum = inputTokenNum.doubleValue * coinRate * CurrencyCache.cache
             .currentCurrencyRate
 
+        checkForInsufficientStorage()
+
         if inputTokenNum > amountBalance {
             errorType = .insufficientBalance
             return
@@ -147,8 +150,9 @@ class MoveTokenViewModel: ObservableObject {
 
     // MARK: Private
 
-    private var minBalance: Double? = nil
+    private var minBalance: Decimal? = nil
     private var maxButtonClickedOnce = false
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
 
     private func loadUserInfo() {
         guard let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress()
@@ -237,7 +241,7 @@ class MoveTokenViewModel: ObservableObject {
 
     private func fetchMinFlowBalance() async {
         do {
-            minBalance = try await FlowNetwork.minFlowBalance()
+            minBalance = try await FlowNetwork.minFlowBalance().decimalValue
             log.debug("[Flow] min balance:\(minBalance ?? 0.001)")
         } catch {
             minBalance = 0.001
@@ -281,9 +285,9 @@ class MoveTokenViewModel: ObservableObject {
         }
         // move fee
         let num = max(
-            inputAmount -
-                Decimal(minBalance ?? WalletManager.minDefaultBlance)
-                - Decimal(WalletManager.moveFee),
+            inputAmount - (
+                minBalance ?? WalletManager.minDefaultBlance
+            ) - WalletManager.fixedMoveFee,
             0
         )
         return num
@@ -293,6 +297,16 @@ class MoveTokenViewModel: ObservableObject {
         DispatchQueue.main.async {
             self.buttonState = self.isReadyForSend ? .enabled : .disabled
         }
+    }
+}
+
+// MARK: - InsufficientStorageToastViewModel
+
+extension MoveTokenViewModel: InsufficientStorageToastViewModel {
+    var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
+    
+    private func checkForInsufficientStorage() {
+        self._insufficientStorageFailure = insufficientStorageCheckForMove(amount: self.inputTokenNum, token: .ft(self.token), from: self.fromContact.walletType, to: self.toContact.walletType)
     }
 }
 
@@ -353,6 +367,14 @@ extension MoveTokenViewModel {
                             type: .moveAsset
                         )
                         TransactionManager.shared.newTransaction(holder: holder)
+                        EventTrack.Transaction
+                            .ftTransfer(
+                                from: fromContact.address ?? "",
+                                to: toContact.address ?? "",
+                                type: token.symbol ?? "",
+                                amount: amount.doubleValue,
+                                identifier: token.contractId
+                            )
                     }
                     DispatchQueue.main.async {
                         self.closeAction()
@@ -393,7 +415,14 @@ extension MoveTokenViewModel {
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
                 HUD.dismissLoading()
-
+                EventTrack.Transaction
+                    .ftTransfer(
+                        from: fromContact.address ?? "",
+                        to: toContact.address ?? "",
+                        type: token.symbol ?? "",
+                        amount: amount.doubleValue,
+                        identifier: token.contractId
+                    )
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
                     self.closeAction()
@@ -428,7 +457,14 @@ extension MoveTokenViewModel {
                 let txid = try await FlowNetwork.fundCoa(amount: amount)
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
-
+                EventTrack.Transaction
+                    .ftTransfer(
+                        from: fromContact.address ?? "",
+                        to: toContact.address ?? "",
+                        type: token.symbol ?? "",
+                        amount: amount.doubleValue,
+                        identifier: token.contractId
+                    )
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
                     self.closeAction()
@@ -472,6 +508,15 @@ extension MoveTokenViewModel {
                     self.closeAction()
                     self.buttonState = .enabled
                 }
+                EventTrack.Transaction
+                    .ftTransfer(
+                        from: fromContact.address ?? "",
+                        to: toContact.address ?? "",
+                        type: token.symbol ?? "",
+                        amount: amount.doubleValue,
+                        identifier: token.contractId
+                    )
+
             } catch {
                 DispatchQueue.main.async {
                     self.buttonState = .enabled

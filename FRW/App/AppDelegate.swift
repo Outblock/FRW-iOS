@@ -11,13 +11,13 @@ import FirebaseAnalytics
 import FirebaseMessaging
 import Foundation
 import GoogleSignIn
+import ReownWalletKit
 import Resolver
 import SwiftUI
 import SwiftyBeaver
 import UIKit
 import WalletConnectNotify
 import WalletCore
-import Web3Wallet
 
 #if DEBUG
 import Atlantis
@@ -45,7 +45,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         _ = LocalEnvManager.shared
-
+        SecureEnclaveMigration.start()
         FirebaseApp.configure()
 
         Analytics.setAnalyticsCollectionEnabled(true)
@@ -143,7 +143,7 @@ extension AppDelegate {
 
     private func appConfig() {
         MultiAccountStorage.shared.upgradeFromOldVersionIfNeeded()
-
+        _ = CadenceManager.shared
         _ = UserManager.shared
         _ = WalletManager.shared
         _ = BackupManager.shared
@@ -158,7 +158,7 @@ extension AppDelegate {
         _ = ChildAccountManager.shared
         WalletManager.shared.bindChildAccountManager()
         NFTCatalogCache.cache.fetchIfNeed()
-        _ = CadenceManager.shared
+
         if UserManager.shared.isLoggedIn {
             DeviceManager.shared.updateDevice()
         }

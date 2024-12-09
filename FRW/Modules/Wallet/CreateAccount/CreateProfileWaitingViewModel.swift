@@ -14,6 +14,11 @@ import SwiftUIPager
 class CreateProfileWaitingViewModel: ObservableObject {
     // MARK: Lifecycle
 
+    deinit {
+        EventTrack.Account.createdTimeEnd()
+    }
+
+
     init(txId: String, callback: @escaping (Bool) -> Void) {
         self.txId = Flow.ID(hex: txId)
         self.callback = callback
@@ -22,17 +27,20 @@ class CreateProfileWaitingViewModel: ObservableObject {
             .dropFirst()
             .receive(on: DispatchQueue.main)
             .map { $0 }
-            .sink { walletInfo in
+            .sink { [weak self] walletInfo in
                 let isEmptyBlockChain = walletInfo?.currentNetworkWalletModel?
                     .isEmptyBlockChain ?? true
                 if !isEmptyBlockChain {
-                    self.createFinished = true
+                    self?.updateWalletInfo()
+                    self?.createFinished = true
+                    EventTrack.Account.createdTimeEnd()
                 }
 
             }.store(in: &cancellableSet)
         DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: DispatchWorkItem(block: {
             self.startTimer()
         }))
+        EventTrack.Account.createdTimeStart()
     }
 
     // MARK: Internal
@@ -120,5 +128,12 @@ class CreateProfileWaitingViewModel: ObservableObject {
             }
         }
         currentPage = page.index
+    }
+
+    private func updateWalletInfo() {
+        guard let uid = UserManager.shared.activatedUID, let address = WalletManager.shared.getPrimaryWalletAddress() else {
+            return
+        }
+        LocalUserDefaults.shared.updateSEUser(by: uid, address: address)
     }
 }

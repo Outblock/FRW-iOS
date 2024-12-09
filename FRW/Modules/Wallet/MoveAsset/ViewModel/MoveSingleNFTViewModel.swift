@@ -11,7 +11,7 @@ import SwiftUI
 
 // MARK: - MoveSingleNFTViewModel
 
-class MoveSingleNFTViewModel: ObservableObject {
+final class MoveSingleNFTViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(nft: NFTModel, fromChildAccount: ChildAccount? = nil, callback: @escaping () -> Void) {
@@ -22,16 +22,17 @@ class MoveSingleNFTViewModel: ObservableObject {
 
         let accountViewModel = MoveAccountsViewModel(selected: "") { _ in }
         self.accountCount = accountViewModel.list.count
+        checkForInsufficientStorage()
     }
 
     // MARK: Internal
 
-    var nft: NFTModel
-    var fromChildAccount: ChildAccount?
-    var callback: () -> Void
+    private(set) var nft: NFTModel
+    private(set) var fromChildAccount: ChildAccount?
+    private(set) var callback: () -> Void
 
     @Published
-    var fromContact = Contact(
+    private(set) var fromContact = Contact(
         address: "",
         avatar: "",
         contactName: "",
@@ -41,7 +42,7 @@ class MoveSingleNFTViewModel: ObservableObject {
         username: nil
     )
     @Published
-    var toContact = Contact(
+    private(set) var toContact = Contact(
         address: "",
         avatar: "",
         contactName: "",
@@ -51,9 +52,9 @@ class MoveSingleNFTViewModel: ObservableObject {
         username: nil
     )
     @Published
-    var buttonState: VPrimaryButtonState = .enabled
+    private(set) var buttonState: VPrimaryButtonState = .enabled
 
-    var accountCount: Int = 0
+    private(set) var accountCount: Int = 0
 
     func closeAction() {
         Router.dismiss()
@@ -90,9 +91,12 @@ class MoveSingleNFTViewModel: ObservableObject {
 
     func updateToContact(_ contact: Contact) {
         toContact = contact
+        checkForInsufficientStorage()
     }
 
     // MARK: Private
+
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
 
     private func loadUserInfo() {
         guard let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress()
@@ -201,6 +205,16 @@ class MoveSingleNFTViewModel: ObservableObject {
             )
             let holder = TransactionManager.TransactionHolder(id: tid, type: .moveAsset)
             TransactionManager.shared.newTransaction(holder: holder)
+            EventTrack.Transaction
+                .NFTTransfer(
+                    from: fromContact.address ?? "",
+                    to: toContact.address ?? "",
+                    identifier: nft.response.flowIdentifier ?? "",
+                    txId: tid.hex,
+                    fromType: fromContact.walletType?.trackName ?? "",
+                    toType: toContact.walletType?.trackName ?? "",
+                    isMove: true
+                )
             closeAction()
         } catch {
             log.error(" Move NFT =====")
@@ -216,6 +230,7 @@ class MoveSingleNFTViewModel: ObservableObject {
         }
         guard let collection = collection else {
             log.error("[NFT] nft \(nft.collectionName) not found")
+
             return
         }
         let identifier = nft.publicIdentifier
@@ -271,11 +286,32 @@ class MoveSingleNFTViewModel: ObservableObject {
             }
             let holder = TransactionManager.TransactionHolder(id: tid, type: .moveAsset)
             TransactionManager.shared.newTransaction(holder: holder)
+            EventTrack.Transaction
+                .NFTTransfer(
+                    from: fromContact.address ?? "",
+                    to: toContact.address ?? "",
+                    identifier: nft.response.flowIdentifier ?? "",
+                    txId: tid.hex,
+                    fromType: fromContact.walletType?.trackName ?? "",
+                    toType: toContact.walletType?.trackName ?? "",
+                    isMove: true
+                )
+
             closeAction()
         } catch {
             log.error("[Move NFT] Move NFT failed on Linked Account. ")
             log.error(error)
         }
+    }
+}
+
+// MARK: - InsufficientStorageToastViewModel
+
+extension MoveSingleNFTViewModel: InsufficientStorageToastViewModel {
+    var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
+    
+    private func checkForInsufficientStorage() {
+        self._insufficientStorageFailure = insufficientStorageCheckForMove(token: .nft(self.nft), from: self.fromContact.walletType, to: self.toContact.walletType)
     }
 }
 

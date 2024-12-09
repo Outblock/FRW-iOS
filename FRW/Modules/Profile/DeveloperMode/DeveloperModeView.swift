@@ -224,10 +224,11 @@ struct DeveloperModeView: RouteableView {
                                     .font(.inter(size: 17, weight: .medium))
                                     .foregroundStyle(Color.Theme.Text.black8)
                                 Spacer()
-
-                                Text("\(CadenceManager.shared.current.version ?? "")")
-                                    .font(.inter(size: 17))
-                                    .foregroundStyle(Color.Theme.Text.black8)
+                                Text(
+                                    "\(String(describing: CadenceManager.shared.current.version ?? ""))"
+                                )
+                                .font(.inter(size: 17))
+                                .foregroundStyle(Color.Theme.Text.black8)
                             }
                             .frame(height: 64)
                             .padding(.horizontal, 16)
@@ -301,6 +302,34 @@ struct DeveloperModeView: RouteableView {
                                     Router.route(to: RouteMap.Profile.keychain)
                                 } label: {
                                     Text("All Keys on Local")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                }
+                                Spacer()
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+
+                            HStack {
+                                Button {
+                                    LocalUserDefaults.shared.migrationFinished = false
+                                } label: {
+                                    Text("reset migration flag")
+                                        .font(.inter(size: 14, weight: .medium))
+                                        .foregroundStyle(Color.Theme.Text.black8)
+                                }
+                                Spacer()
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+
+                            HStack {
+                                Button {
+                                    let list = LocalUserDefaults.shared.userList
+                                    log.debug("[User] \(list)")
+
+                                } label: {
+                                    Text("copy all user")
                                         .font(.inter(size: 14, weight: .medium))
                                         .foregroundStyle(Color.Theme.Text.black8)
                                 }

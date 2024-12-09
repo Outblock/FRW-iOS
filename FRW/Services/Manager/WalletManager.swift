@@ -8,7 +8,7 @@
 import BigInt
 import Combine
 import Flow
-import FlowWalletCore
+import FlowWalletKit
 import Foundation
 import KeychainAccess
 import Kingfisher
@@ -23,8 +23,12 @@ extension WalletManager {
     static let flowPath = "m/44'/539'/0'/0/0"
     static let mnemonicStrength: Int32 = 160
     static let defaultGas: UInt64 = 30_000_000
-    static let moveFee = 0.001
-    static let minDefaultBlance = 0.001
+    
+    static let minDefaultBlance: Decimal = 0.001
+    static let fixedMoveFee: Decimal = 0.001
+    static var averageTransactionFee: Decimal { RemoteConfigManager.shared.freeGasEnabled ? 0 : 0.0005 }
+    static let mininumStorageThreshold = 10000
+    
     private static let defaultBundleID = "com.flowfoundation.wallet"
     private static let mnemonicStoreKeyPrefix = "lilico.mnemonic"
     private static let walletFetchInterval: TimeInterval = 5
@@ -59,6 +63,7 @@ class WalletManager: ObservableObject {
             .receive(on: DispatchQueue.main)
             .map { $0 }
             .sink { _ in
+                self.reloadWallet()
                 self.clearFlowAccount()
                 self.reloadWalletInfo()
             }.store(in: &cancellableSet)
@@ -80,6 +85,8 @@ class WalletManager: ObservableObject {
     var childAccount: ChildAccount? = nil
     @Published
     var evmAccount: EVMAccountManager.Account? = nil
+    @Published
+    var accountInfo: Flow.AccountInfo?
 
     var accessibleManager: ChildAccountManager.AccessibleManager = .init()
 
@@ -96,6 +103,13 @@ class WalletManager: ObservableObject {
     var walletAccount: WalletAccount = .init()
     @Published
     var balanceProvider = BalanceProvider()
+
+    var walletEntity: FlowWalletKit.Wallet? = nil
+    var accountKey: UserManager.Accountkey?
+    var keyProvider: (any KeyProtocol)? = nil
+    // rename to currentAccount
+
+//    @Published var account: FlowWalletKit.Account? = nil
 
     var customTokenManager: CustomTokenManager = .init()
 
@@ -202,6 +216,119 @@ class WalletManager: ObservableObject {
                 }
             }
         }
+    }
+}
+
+// MARK: Key Protocol
+
+extension WalletManager {
+    private func reloadWallet() {
+        if let uid = UserManager.shared.activatedUID {
+            keyProvider = keyProvider(with: uid)
+            if let provider = keyProvider, let user = userStore(with: uid) {
+                updateKeyProvider(provider: provider, storeUser: user)
+            } else {
+                log.error("[Wallet] not found provider or user at \(uid)")
+            }
+        }
+    }
+
+    func updateKeyProvider(provider: any KeyProtocol, storeUser: UserManager.StoreUser) {
+        keyProvider = provider
+        self.accountKey = storeUser.account
+        log.debug("[user] \(String(describing: self.accountKey))")
+        guard self.accountKey == nil else {
+            return
+        }
+        Task {
+            if let address = storeUser.address {
+                do {
+                    let accountKey = try await findKey(address: address, with: storeUser.publicKey)
+                    self.accountKey = accountKey?.toStoreKey()
+                    LocalUserDefaults.shared.updateUser(by: storeUser.userId,publicKey: storeUser.publicKey, account: self.accountKey)
+                }catch {
+                    log.error("[Wallet] not find account key by \(address) with \(storeUser.publicKey)")
+                }
+            }
+            if self.accountKey == nil {
+                do {
+                    let result = try await findKey(provider: provider, with: storeUser.publicKey)
+                    self.accountKey = result.1?.toStoreKey()
+                    let address = result.0?.address.description
+                    LocalUserDefaults.shared.updateUser(by: storeUser.userId, publicKey: storeUser.publicKey, address: address,account: accountKey)
+                } catch {
+                    log.error("[Wallet] not find account key by \(provider.keyType) with \(storeUser.publicKey)")
+                }
+            }
+        }
+
+    }
+
+    func accountKey(with uid: String) async -> UserManager.Accountkey? {
+        guard let user = userStore(with: uid) else {
+            return nil
+        }
+        var accountKey = user.account
+        log.debug("[user] \(String(describing: self.accountKey))")
+        if accountKey == nil, let address = user.address {
+            accountKey = try? await findKey(address: address, with: user.publicKey)?.toStoreKey()
+        }
+        if accountKey == nil, let keyProvider = keyProvider(with: uid) {
+            accountKey = try? await findKey(provider: keyProvider, with: user.publicKey).1?.toStoreKey()
+        }
+
+        return accountKey
+    }
+
+    private func findKey(address: String, with publicKey: String) async throws -> Flow.AccountKey? {
+        let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
+        let sortedAccount = account.keys.filter { $0.weight >= 1000 }
+        let accountKey = sortedAccount.filter { $0.publicKey.description == publicKey }.first
+        log.debug("[user] \(String(describing: accountKey))")
+        return accountKey
+    }
+
+    private func findKey(provider: any KeyProtocol, with publicKey: String) async throws -> (Flow.Account?,Flow.AccountKey?) {
+        let chainId = LocalUserDefaults.shared.flowNetwork.toFlowType()
+        let walletEntity = FlowWalletKit.Wallet(type: .key(provider), networks: [chainId])
+        _ = try? await walletEntity.fetchAllNetworkAccounts()
+        let list = walletEntity.flowAccounts?[chainId]
+        var flowAccount: Flow.Account? = nil
+        var accountKey: Flow.AccountKey? = nil
+        list?.forEach { account in
+            for key in account.keys {
+                if key.publicKey.description == publicKey {
+                    flowAccount = account
+                    accountKey = key
+                    break
+                }
+            }
+        }
+        log.debug("[user] \(String(describing: accountKey))")
+        return (flowAccount,accountKey)
+    }
+
+    func userStore(with uid: String) -> UserManager.StoreUser? {
+        LocalUserDefaults.shared.userList.last { $0.userId == uid }
+    }
+
+    func keyProvider(with uid: String) -> (any KeyProtocol)? {
+        guard let userStore = userStore(with: uid) else {
+            return nil
+        }
+        log.debug("[user] \(userStore)")
+        var provider: (any KeyProtocol)?
+        switch userStore.keyType {
+        case .secureEnclave:
+            provider = try? SecureEnclaveKey.wallet(id: uid)
+        case .seedPhrase:
+            provider = try? SeedPhraseKey.wallet(id: uid)
+        case .privateKey:
+            provider = try? PrivateKey.wallet(id: uid)
+        case .keyStore:
+            provider = try? PrivateKey.wallet(id: uid)
+        }
+        return provider
     }
 }
 
@@ -321,7 +448,8 @@ extension WalletManager {
 
     func isMain() -> Bool {
         guard let currentAddress = getWatchAddressOrChildAccountAddressOrPrimaryAddress(),
-              !currentAddress.isEmpty else {
+              !currentAddress.isEmpty
+        else {
             return false
         }
         guard let primaryAddress = getPrimaryWalletAddress() else {
@@ -381,6 +509,10 @@ extension WalletManager {
     }
 
     func getCurrentPublicKey() -> String? {
+        if let provider = keyProvider, let key = accountKey {
+            let publicKey = try? provider.publicKey(signAlgo: key.signAlgo)
+            return publicKey?.hexString
+        }
         if let accountkey = flowAccountKey {
             return accountkey.publicKey.description
         }
@@ -645,6 +777,7 @@ extension WalletManager {
             if !restoreMnemonicFromKeychain(uid: uid), UserManager.shared.userType == .phrase {
                 HUD.error(title: "no_private_key".localized)
             }
+            reloadWallet()
             if let hdWallet = hdWallet {
                 // TODO:
             }
@@ -726,6 +859,8 @@ extension WalletManager {
 
         flowAccountKey = nil
         try await findFlowAccount()
+        
+        try? await self.fetchAccountInfo()
     }
 
     private func fetchSupportedCoins() async throws {
@@ -800,6 +935,36 @@ extension WalletManager {
         }
     }
 
+    func fetchAccountInfo() async throws {
+        do {
+            let accountInfo = try await FlowNetwork.checkAccountInfo()
+            await MainActor.run {
+                self.accountInfo = accountInfo
+            }
+            
+            NotificationCenter.default.post(name: .accountDataDidUpdate, object: nil)
+        } catch let error {
+            log.error("[WALLET] fetch account info failed.\(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    var minimumStorageBalance: Decimal {
+        guard let accountInfo else { return Self.fixedMoveFee }
+        return accountInfo.storageFlow * Self.fixedMoveFee
+    }
+    
+    var isStorageInsufficient: Bool {
+        guard let accountInfo else { return false }
+        guard accountInfo.storageCapacity >= accountInfo.storageUsed else { return true }
+        return accountInfo.storageCapacity - accountInfo.storageUsed < Self.mininumStorageThreshold
+    }
+
+    func isBalanceInsufficient(for amount: Decimal) -> Bool {
+        guard let accountInfo else { return false }
+        return accountInfo.availableBalance - amount < Self.averageTransactionFee
+    }
+    
     func fetchBalance() async throws {
         let address = selectedAccountAddress
         if address.isEmpty {
@@ -816,7 +981,7 @@ extension WalletManager {
 
         var newBalanceMap: [String: Decimal] = [:]
 
-        for (_, value) in activatedCoins.enumerated() {
+        for value in activatedCoins {
             let contractId = value.contractId
             if let balance = balanceList[contractId] {
                 newBalanceMap[contractId] = Decimal(balance)
@@ -1016,7 +1181,9 @@ extension WalletManager: FlowSigner {
     }
 
     public var hashAlgo: Flow.HashAlgorithm {
-        // TODO: FIX ME, make it dynamic
+        if let key = accountKey {
+            return key.hashAlgo
+        }
         if userSecretSign() {
             return flowAccountKey?.hashAlgo ?? .SHA2_256
         }
@@ -1024,15 +1191,20 @@ extension WalletManager: FlowSigner {
     }
 
     public var signatureAlgo: Flow.SignatureAlgorithm {
-        // TODO: FIX ME, make it dynamic
+        if let key = accountKey {
+            return key.signAlgo
+        }
+
         if userSecretSign() {
-            return flowAccountKey?.signAlgo ?? .ECDSA_SECP256k1
+            return flowAccountKey?.signAlgo ?? .ECDSA_P256
         }
         return phraseAccountkey?.signAlgo ?? .ECDSA_SECP256k1
     }
 
     public var keyIndex: Int {
-        // TODO: FIX ME, make it dynamic
+        if let key = accountKey {
+            return key.index
+        }
         if userSecretSign() {
             return flowAccountKey?.index ?? 0
         }
@@ -1050,11 +1222,19 @@ extension WalletManager: FlowSigner {
             try await findFlowAccount()
         }
 
+        if let provider = keyProvider, let key = accountKey {
+            let signature = try provider.sign(
+                data: signableData,
+                signAlgo: key.signAlgo,
+                hashAlgo: key.hashAlgo
+            )
+            return signature
+        }
+        // TODO: Ready to delete below
         if userSecretSign() {
-            if let userId = walletInfo?.id,
-               let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey {
-                let sec = try WallectSecureEnclave(privateKey: data)
-                let signature = try sec.sign(data: signableData)
+            if let userId = walletInfo?.id {
+                let secureKey = try SecureEnclaveKey.wallet(id: userId)
+                let signature = try secureKey.sign(data: signableData, hashAlgo: .SHA2_256)
                 return signature
             }
         }
@@ -1091,11 +1271,18 @@ extension WalletManager: FlowSigner {
         if flowAccountKey == nil {
             try await findFlowAccount()
         }
+        if let provider = keyProvider, let key = accountKey {
+            let signature = try provider.sign(
+                data: signableData,
+                signAlgo: key.signAlgo,
+                hashAlgo: key.hashAlgo
+            )
+            return signature
+        }
         if userSecretSign() {
-            if let userId = walletInfo?.id,
-               let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey {
-                let sec = try WallectSecureEnclave(privateKey: data)
-                let signature = try sec.sign(data: signableData)
+            if let userId = walletInfo?.id {
+                let secureKey = try SecureEnclaveKey.wallet(id: userId)
+                let signature = try secureKey.sign(data: signableData, hashAlgo: .SHA2_256)
                 return signature
             }
         }
@@ -1124,12 +1311,24 @@ extension WalletManager: FlowSigner {
     }
 
     public func signSync(signableData: Data) -> Data? {
+        if let provider = keyProvider, let key = accountKey {
+            do {
+                let signature = try provider.sign(
+                    data: signableData,
+                    signAlgo: key.signAlgo,
+                    hashAlgo: key.hashAlgo
+                )
+                return signature
+            } catch {
+                return nil
+            }
+        }
+
         if userSecretSign() {
             do {
-                if let userId = walletInfo?.id,
-                   let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey {
-                    let sec = try WallectSecureEnclave(privateKey: data)
-                    let signature = try sec.sign(data: signableData)
+                if let userId = walletInfo?.id {
+                    let secureKey = try SecureEnclaveKey.wallet(id: userId)
+                    let signature = try secureKey.sign(data: signableData, hashAlgo: .SHA2_256)
                     return signature
                 }
             } catch {
@@ -1173,15 +1372,14 @@ extension WalletManager: FlowSigner {
         try await findFlowAccount(with: userId, at: address)
     }
 
-    func findFlowAccount(with userId: String, at address: String) async throws {
-        guard let data = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey else {
+    func findFlowAccount(with _: String, at address: String) async throws {
+        guard let provider = keyProvider,
+              let key = accountKey,
+              let publicKey = try? provider.publicKey(signAlgo: key.signAlgo)?.hexValue
+        else {
             return
         }
 
-        let sec = try WallectSecureEnclave(privateKey: data)
-        guard let publicKey = sec.key.publickeyValue else {
-            return
-        }
         let account = try await FlowNetwork.getAccountAtLatestBlock(address: address)
         let sortedAccount = account.keys.sorted { $0.weight > $1.weight }
         flowAccountKey = sortedAccount.filter {
@@ -1216,72 +1414,60 @@ extension WalletManager: FlowSigner {
     }
 
     @discardableResult
-    func warningIfKeyIsInvalid(userId: String, markHide: Bool = false) -> Bool {
+    func warningIfKeyIsInvalid(userId: String, markHide _: Bool = false) -> Bool {
         if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: userId),
            !mnemonic.isEmpty, mnemonic.split(separator: " ").count != 15 {
             return false
         }
-        do {
-            let model = try WallectSecureEnclave.Store.fetchModel(by: userId)
-            let list = try WallectSecureEnclave.Store.fetchAllModel(by: userId)
-            if model == nil && !list.isEmpty {
-                DispatchQueue.main.async {
-                    if self.isShow {
-                        return
-                    }
-                    self.isShow = true
-                    let alertVC = BetterAlertController(
-                        title: "Something__is__wrong::message".localized,
-                        message: "profile_key_invalid".localized,
-                        preferredStyle: .alert
-                    )
-
-                    let cancelAction = UIAlertAction(
-                        title: "action_cancel".localized,
-                        style: .cancel
-                    ) { _ in
-                        self.isShow = false
-                    }
-
-                    let restoreAction = UIAlertAction(
-                        title: "Restore Profile".localized,
-                        style: .default
-                    ) { _ in
-                        self.isShow = false
-                        Router.route(to: RouteMap.RestoreLogin.restoreList)
-                    }
-                    alertVC.modalPresentationStyle = .overFullScreen
-                    alertVC.addAction(cancelAction)
-                    alertVC.addAction(restoreAction)
-
-                    if markHide {
-                        let hideAction = UIAlertAction(
-                            title: "Hide Profile".localized,
-                            style: .default
-                        ) { _ in
-                            self.isShow = false
-                            do {
-                                try WallectSecureEnclave.Store.hideInvalidKey(by: userId)
-                                UserManager.shared.deleteLoginUID(userId)
-                            } catch {
-                                log
-                                    .error(
-                                        "[SecureEnclave] hide key for \(userId) failed. \(error.localizedDescription)"
-                                    )
-                            }
-                        }
-                        alertVC.addAction(hideAction)
-                    }
-                    Router.topNavigationController()?.present(alertVC, animated: true)
-                }
-
-                return true
-            }
-        } catch {
-            return true
-        }
-
+        // FIXME: private key migrate from device to device, it's destructive, this only for fix bugs, move to migrate
         return false
+        /*
+         do {
+             let model = try WallectSecureEnclave.Store.fetchModel(by: userId)
+             let list = try WallectSecureEnclave.Store.fetchAllModel(by: userId)
+             if model == nil && list.count > 0 {
+                 DispatchQueue.main.async {
+                     if self.isShow {
+                         return
+                     }
+                     self.isShow = true
+                     let alertVC = BetterAlertController(title: "Something__is__wrong::message".localized, message: "profile_key_invalid".localized, preferredStyle: .alert)
+
+                     let cancelAction = UIAlertAction(title: "action_cancel".localized, style: .cancel) { _ in
+                         self.isShow = false
+                     }
+
+                     let restoreAction = UIAlertAction(title: "Restore Profile".localized, style: .default) { _ in
+                         self.isShow = false
+                         Router.route(to: RouteMap.RestoreLogin.restoreList)
+                     }
+                     alertVC.modalPresentationStyle = .overFullScreen
+                     alertVC.addAction(cancelAction)
+                     alertVC.addAction(restoreAction)
+
+                     if markHide {
+                         let hideAction = UIAlertAction(title: "Hide Profile".localized, style: .default) { _ in
+                             self.isShow = false
+                             do {
+                                 try WallectSecureEnclave.Store.hideInvalidKey(by: userId)
+                                 UserManager.shared.deleteLoginUID(userId)
+                             }catch {
+                                 log.error("[SecureEnclave] hide key for \(userId) failed. \(error.localizedDescription)")
+                             }
+                         }
+                         alertVC.addAction(hideAction)
+                     }
+                     Router.topNavigationController()?.present(alertVC, animated: true)
+                 }
+
+                 return true
+             }
+         }catch {
+             return true
+         }
+
+         return false
+          */
     }
 }
 
