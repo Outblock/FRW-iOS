@@ -193,26 +193,13 @@ struct ChildAccountDetailEditView: RouteableView {
                 .font(.inter(size: 16, weight: .medium))
                 .foregroundColor(Color.LL.Neutrals.text)
 
-            if #available(iOS 16.0, *) {
-                TextEditor(text: $vm.newInfo.name)
-                    .font(.inter(size: 16))
-                    .foregroundColor(Color.LL.Neutrals.note)
-                    .multilineTextAlignment(.trailing)
-                    .frame(maxWidth: .infinity)
-                    .frame(minHeight: 30)
-                    .scrollContentBackground(.hidden)
-            } else {
-                TextEditor(text: $vm.newInfo.name)
-                    .font(.inter(size: 16))
-                    .foregroundColor(Color.LL.Neutrals.note)
-                    .multilineTextAlignment(.trailing)
-                    .frame(maxWidth: .infinity)
-                    .frame(minHeight: 30)
-                    .onAppear {
-                        UITextView.appearance().backgroundColor = .clear
-                    }
-                    .background(.clear)
-            }
+            TextEditor(text: $vm.newInfo.name)
+                .font(.inter(size: 16))
+                .foregroundColor(Color.LL.Neutrals.note)
+                .multilineTextAlignment(.trailing)
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: 30)
+                .scrollContentBackground(.hidden)
         }
         .padding(.all, 16)
     }
@@ -223,26 +210,13 @@ struct ChildAccountDetailEditView: RouteableView {
                 .font(.inter(size: 16, weight: .medium))
                 .foregroundColor(Color.LL.Neutrals.text)
 
-            if #available(iOS 16.0, *) {
-                TextEditor(text: $vm.newInfo.desc)
-                    .font(.inter(size: 16))
-                    .foregroundColor(Color.LL.Neutrals.note)
-                    .multilineTextAlignment(.trailing)
-                    .frame(maxWidth: .infinity)
-                    .frame(minHeight: 30)
-                    .scrollContentBackground(.hidden)
-            } else {
-                TextEditor(text: $vm.newInfo.desc)
-                    .font(.inter(size: 16))
-                    .foregroundColor(Color.LL.Neutrals.note)
-                    .multilineTextAlignment(.trailing)
-                    .frame(maxWidth: .infinity)
-                    .frame(minHeight: 30)
-                    .onAppear {
-                        UITextView.appearance().backgroundColor = .clear
-                    }
-                    .background(.clear)
-            }
+            TextEditor(text: $vm.newInfo.desc)
+                .font(.inter(size: 16))
+                .foregroundColor(Color.LL.Neutrals.note)
+                .multilineTextAlignment(.trailing)
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: 30)
+                .scrollContentBackground(.hidden)
         }
         .padding(.all, 16)
     }

@@ -191,7 +191,7 @@ final class CustomHostingController<Content: View>: UIHostingController<Content>
     private let onlyLarge: Bool
     private let customDetentId = UISheetPresentationController.Detent.Identifier(rawValue: "custom-detent")
     private var customDetent: UISheetPresentationController.Detent {
-        if #available(iOS 16, *), let sheetSize {
+        if let sheetSize {
             return UISheetPresentationController.Detent.custom(identifier: self.customDetentId) { _ in
                 return sheetSize.height.wrappedValue
             }
@@ -223,13 +223,11 @@ final class CustomHostingController<Content: View>: UIHostingController<Content>
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if #available(iOS 16, *) {
-            if let sheetPresentationController {
-                sheetPresentationController.animateChanges {
-                    sheetPresentationController.invalidateDetents()
-                    // This seems to cause the sheet not displayed when the parent is presented on the root navigation controller
-                    //self.view.setNeedsLayout()
-                }
+        if let sheetPresentationController {
+            sheetPresentationController.animateChanges {
+                sheetPresentationController.invalidateDetents()
+                // This seems to cause the sheet not displayed when the parent is presented on the root navigation controller
+                //self.view.setNeedsLayout()
             }
         }
     }
