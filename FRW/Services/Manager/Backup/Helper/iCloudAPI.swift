@@ -71,7 +71,8 @@ class iCloudAPI: UIDocument {
                     self?.cancelSets.removeAll()
 
                     guard let results = query.results as? [NSMetadataItem],
-                          let item = results.first else {
+                          let item = results.first
+                    else {
                         debugPrint("iCloudAPI -> isExist: results or item is nil")
                         config.resume(returning: false)
                         return
@@ -119,7 +120,8 @@ class iCloudAPI: UIDocument {
                     self?.cancelSets.removeAll()
 
                     guard let results = query.results as? [NSMetadataItem],
-                          let item = results.first else {
+                          let item = results.first
+                    else {
                         debugPrint("iCloudAPI -> isExist: results or item is nil")
                         config.resume(returning: false)
                         return

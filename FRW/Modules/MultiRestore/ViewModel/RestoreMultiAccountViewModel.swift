@@ -5,7 +5,7 @@
 //  Created by cat on 2024/1/7.
 //
 
-import FlowWalletCore
+import FlowWalletKit
 import Foundation
 
 class RestoreMultiAccountViewModel: ObservableObject {
@@ -30,50 +30,39 @@ class RestoreMultiAccountViewModel: ObservableObject {
             return
         }
 
+        if let item = selectedUser.first {
+            let methods = selectedUser.map { $0.backupType?.methodName() ?? "" }
+            EventTrack.Account
+                .recovered(address: item.address, mechanism: "multi-backup", methods: methods)
+        }
+
         // If it is the current user, do nothing and return directly.
         if let userId = UserManager.shared.activatedUID, userId == selectedUserId {
-            if (try? WallectSecureEnclave.Store.fetchModel(by: selectedUserId)) != nil {
-                Router.popToRoot()
-                return
-            }
-            if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: selectedUserId),
-               !mnemonic.isEmpty {
-                Router.popToRoot()
-                return
-            }
+            Router.popToRoot()
+            return
         }
 
         // If it is in the login list, switch user
         if UserManager.shared.loginUIDList.contains(selectedUserId) {
-            var isValidKey = false
-            if (try? WallectSecureEnclave.Store.fetchModel(by: selectedUserId)) != nil {
-                isValidKey = true
-            }
-            if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: selectedUserId),
-               !mnemonic.isEmpty {
-                isValidKey = true
-            }
-
-            if isValidKey {
-                Task {
-                    do {
-                        HUD.loading()
-                        try await UserManager.shared.switchAccount(withUID: selectedUserId)
-                        MultiAccountStorage.shared.setBackupType(.multi, uid: selectedUserId)
-                        HUD.dismissLoading()
-                    } catch {
-                        log.error("switch account failed", context: error)
-                        HUD.dismissLoading()
-                        HUD.error(title: error.localizedDescription)
-                    }
+            Task {
+                do {
+                    HUD.loading()
+                    try await UserManager.shared.switchAccount(withUID: selectedUserId)
+                    MultiAccountStorage.shared.setBackupType(.multi, uid: selectedUserId)
+                    HUD.dismissLoading()
+                } catch {
+                    log.error("switch account failed", context: error)
+                    HUD.dismissLoading()
+                    HUD.error(title: error.localizedDescription)
                 }
-                return
             }
+            return
         }
 
         guard selectedUser.count > 1 else {
             return
         }
+
         Task {
             do {
                 HUD.loading()

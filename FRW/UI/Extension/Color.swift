@@ -151,18 +151,18 @@ extension Color {
             static let send = Color("button.send")
 
             enum Elevated {
-                static let text = Color("button/elevated/text")
+                static let text = Color("button.elevated.text")
                 enum Secondary {
-                    static let background = Color("button/elevated/secondary/background")
+                    static let background = Color("button.elevated.secondary.background")
                 }
             }
             
             enum Primary {
-                static let text = Color("button/primary/text")
+                static let text = Color("button.primary.text")
             }
             
             enum Warning {
-                static let background = Color("button/warning/background")
+                static let background = Color("button.warning.background")
             }
         }
 

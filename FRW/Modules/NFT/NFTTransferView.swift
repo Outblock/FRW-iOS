@@ -127,6 +127,19 @@ class NFTTransferViewModel: ObservableObject {
             case coa
             case eoa
             case linked
+
+            var trackName: String {
+                switch self {
+                case .flow:
+                    "flow"
+                case .coa:
+                    "coa"
+                case .eoa:
+                    "evm"
+                case .linked:
+                    "child"
+                }
+            }
         }
 
         if isRequesting {
@@ -136,7 +149,8 @@ class NFTTransferViewModel: ObservableObject {
         guard let toAddress = targetContact.address,
               let primaryAddress = WalletManager.shared.getPrimaryWalletAddress(),
               let currentAddress = WalletManager.shared
-              .getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
+              .getWatchAddressOrChildAccountAddressOrPrimaryAddress()
+        else {
             return
         }
 
@@ -213,7 +227,8 @@ class NFTTransferViewModel: ObservableObject {
                 case (.coa, .flow):
                     let nftId = nft.response.id
                     guard let identifier = nft.collection?.flowIdentifier ?? nft.response
-                        .flowIdentifier else {
+                        .flowIdentifier
+                    else {
                         throw NFTError.noCollectionInfo
                     }
                     if primaryAddress.lowercased() == toAddress.lowercased() {
@@ -308,7 +323,8 @@ class NFTTransferViewModel: ObservableObject {
                     )
                 case (.linked, .coa):
                     guard let nftIdentifier = nft.response.flowIdentifier,
-                          let nftId = UInt64(nft.response.id) else {
+                          let nftId = UInt64(nft.response.id)
+                    else {
                         return
                     }
                     let childAddr = fromChildAccount?.addr ?? currentAddress
@@ -335,7 +351,16 @@ class NFTTransferViewModel: ObservableObject {
                     failedBlock()
                     return
                 }
-
+                EventTrack.Transaction
+                    .NFTTransfer(
+                        from: currentAddress,
+                        to: toAddress,
+                        identifier: nft.response.flowIdentifier ?? "",
+                        txId: tid?.hex ?? "",
+                        fromType: fromAccountType.trackName,
+                        toType: toAccountType.trackName,
+                        isMove: false
+                    )
                 let model = NFTTransferModel(
                     nft: nft,
                     target: self.targetContact,
@@ -386,7 +411,7 @@ extension NFTTransferViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
     
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheckForTransfer()
+        self._insufficientStorageFailure = insufficientStorageCheckForTransfer(token: .nft(self.nft))
     }
 }
 

@@ -52,8 +52,10 @@ struct ReceiveQRView: RouteableView {
                         .lineLimit(1)
 
                     Spacer()
-                    Image("Copy")
+                    Image("icon-address-copy")
                         .resizable()
+                        .renderingMode(.template)
+                        .foregroundStyle(Color.Theme.Text.black3)
                         .frame(width: 24, height: 24)
                 }
                 .frame(height: 48)

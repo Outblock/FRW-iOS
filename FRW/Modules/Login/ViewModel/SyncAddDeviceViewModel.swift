@@ -90,10 +90,7 @@ class SyncAddDeviceViewModel: ObservableObject {
                 let response: Network.EmptyResponse = try await Network
                     .requestWithRawModel(FRWAPI.User.syncDevice(self.model))
                 if response.httpCode != 200 {
-                    log
-                        .info(
-                            "[Sync Device] add device failed. publicKey: \(self.model.accountKey.publicKey)"
-                        )
+                    log.info("[Sync Device] add device failed. publicKey: \(self.model.accountKey.publicKey)")
                     DispatchQueue.main.async {
                         self.result = "add device failed."
                     }

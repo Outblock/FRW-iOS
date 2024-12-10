@@ -47,7 +47,7 @@ extension WalletSendAmountView {
 
 // MARK: - WalletSendAmountViewModel
 
-class WalletSendAmountViewModel: ObservableObject {
+final class WalletSendAmountViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(target: Contact, token: TokenModel) {
@@ -79,36 +79,24 @@ class WalletSendAmountViewModel: ObservableObject {
 
     // MARK: Internal
 
-    @Published
-    var targetContact: Contact
-    @Published
-    var token: TokenModel
-    @Published
-    var amountBalance: Double = 0
-    @Published
-    var coinRate: Double = 0
+    @Published private(set) var targetContact: Contact
+    @Published private(set) var token: TokenModel
+    @Published private(set) var amountBalance: Double = 0
+    @Published private(set) var coinRate: Double = 0
+    
+    @Published var inputText: String = ""
+    @Published private(set) var inputTokenNum: Double = 0
+    @Published private(set) var inputDollarNum: Double = 0
+    private(set) var actualBalance: String = ""
 
-    @Published
-    var inputText: String = ""
-    @Published
-    var inputTokenNum: Double = 0
-    @Published
-    var inputDollarNum: Double = 0
-    var actualBalance: String = ""
+    @Published private(set) var exchangeType: WalletSendAmountView.ExchangeType = .token
+    @Published private(set) var errorType: WalletSendAmountView.ErrorType = .none
 
-    @Published
-    var exchangeType: WalletSendAmountView.ExchangeType = .token
-    @Published
-    var errorType: WalletSendAmountView.ErrorType = .none
+    @Published var showConfirmView: Bool = false
 
-    @Published
-    var showConfirmView: Bool = false
+    @Published private(set) var isValidToken: Bool = true
 
-    @Published
-    var isValidToken: Bool = true
-
-    @Published
-    var isEmptyTransation = true
+    @Published var isEmptyTransation = true
 
     var amountBalanceAsDollar: Double {
         coinRate * amountBalance
@@ -251,7 +239,7 @@ extension WalletSendAmountViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
     
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheckForTransfer(amount: self.inputTokenNum.decimalValue)
+        self._insufficientStorageFailure = insufficientStorageCheckForTransfer(amount: self.inputTokenNum.decimalValue, token: .ft(self.token))
     }
 }
 
@@ -348,7 +336,8 @@ extension WalletSendAmountViewModel {
         }
 
         guard let address = WalletManager.shared.getPrimaryWalletAddress(),
-              let targetAddress = targetContact.address else {
+              let targetAddress = targetContact.address
+        else {
             return
         }
 
@@ -473,6 +462,15 @@ extension WalletSendAmountViewModel {
                     failureBlock()
                     return
                 }
+
+                EventTrack.Transaction
+                    .ftTransfer(
+                        from: address,
+                        to: targetAddress,
+                        type: token.symbol ?? "",
+                        amount: self.inputTokenNum,
+                        identifier: token.contractId
+                    )
 
                 DispatchQueue.main.async {
                     let obj = CoinTransferModel(

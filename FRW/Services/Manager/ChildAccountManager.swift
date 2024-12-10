@@ -165,7 +165,8 @@ class ChildAccountManager: ObservableObject {
 
     func refresh() {
         guard let uid = UserManager.shared.activatedUID,
-              let address = WalletManager.shared.getPrimaryWalletAddress() else {
+              let address = WalletManager.shared.getPrimaryWalletAddress()
+        else {
             log.warning("uid or address is nil")
             clean()
             return
@@ -226,7 +227,8 @@ class ChildAccountManager: ObservableObject {
     @objc
     private func onTransactionStatusChanged(_ noti: Notification) {
         guard let obj = noti.object as? TransactionManager.TransactionHolder,
-              obj.type == .editChildAccount else {
+              obj.type == .editChildAccount
+        else {
             return
         }
 
@@ -250,7 +252,8 @@ class ChildAccountManager: ObservableObject {
         cacheLoaded = true
 
         guard let uid = UserManager.shared.activatedUID,
-              let address = WalletManager.shared.getPrimaryWalletAddress() else {
+              let address = WalletManager.shared.getPrimaryWalletAddress()
+        else {
             log.warning("uid or address is nil")
             return
         }
@@ -309,7 +312,8 @@ extension ChildAccountManager {
         childAccounts = oldList
 
         guard let uid = UserManager.shared.activatedUID,
-              let address = WalletManager.shared.getPrimaryWalletAddress() else {
+              let address = WalletManager.shared.getPrimaryWalletAddress()
+        else {
             log.error("uid or address is nil")
             return
         }
@@ -323,7 +327,8 @@ extension ChildAccountManager {
         childAccounts = oldList
 
         guard let uid = UserManager.shared.activatedUID,
-              let address = WalletManager.shared.getPrimaryWalletAddress() else {
+              let address = WalletManager.shared.getPrimaryWalletAddress()
+        else {
             log.error("uid or address is nil")
             return
         }

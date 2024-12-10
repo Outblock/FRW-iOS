@@ -11,7 +11,7 @@ import SwiftUI
 
 // MARK: - MoveTokenViewModel
 
-class MoveTokenViewModel: ObservableObject {
+final class MoveTokenViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(token: TokenModel, isPresent: Binding<Bool>) {
@@ -68,9 +68,8 @@ class MoveTokenViewModel: ObservableObject {
         username: nil
     )
 
-    var token: TokenModel
-    @Binding
-    var isPresent: Bool
+    private(set) var token: TokenModel
+    @Binding var isPresent: Bool
 
     var isReadyForSend: Bool {
         errorType == .none && showBalance.isNumber && !showBalance.isEmpty
@@ -307,7 +306,7 @@ extension MoveTokenViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
     
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheckForMove(amount: self.inputTokenNum, from: self.fromContact.walletType, to: self.toContact.walletType)
+        self._insufficientStorageFailure = insufficientStorageCheckForMove(amount: self.inputTokenNum, token: .ft(self.token), from: self.fromContact.walletType, to: self.toContact.walletType)
     }
 }
 
@@ -368,6 +367,14 @@ extension MoveTokenViewModel {
                             type: .moveAsset
                         )
                         TransactionManager.shared.newTransaction(holder: holder)
+                        EventTrack.Transaction
+                            .ftTransfer(
+                                from: fromContact.address ?? "",
+                                to: toContact.address ?? "",
+                                type: token.symbol ?? "",
+                                amount: amount.doubleValue,
+                                identifier: token.contractId
+                            )
                     }
                     DispatchQueue.main.async {
                         self.closeAction()
@@ -408,7 +415,14 @@ extension MoveTokenViewModel {
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
                 HUD.dismissLoading()
-
+                EventTrack.Transaction
+                    .ftTransfer(
+                        from: fromContact.address ?? "",
+                        to: toContact.address ?? "",
+                        type: token.symbol ?? "",
+                        amount: amount.doubleValue,
+                        identifier: token.contractId
+                    )
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
                     self.closeAction()
@@ -443,7 +457,14 @@ extension MoveTokenViewModel {
                 let txid = try await FlowNetwork.fundCoa(amount: amount)
                 let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                 TransactionManager.shared.newTransaction(holder: holder)
-
+                EventTrack.Transaction
+                    .ftTransfer(
+                        from: fromContact.address ?? "",
+                        to: toContact.address ?? "",
+                        type: token.symbol ?? "",
+                        amount: amount.doubleValue,
+                        identifier: token.contractId
+                    )
                 WalletManager.shared.reloadWalletInfo()
                 DispatchQueue.main.async {
                     self.closeAction()
@@ -487,6 +508,15 @@ extension MoveTokenViewModel {
                     self.closeAction()
                     self.buttonState = .enabled
                 }
+                EventTrack.Transaction
+                    .ftTransfer(
+                        from: fromContact.address ?? "",
+                        to: toContact.address ?? "",
+                        type: token.symbol ?? "",
+                        amount: amount.doubleValue,
+                        identifier: token.contractId
+                    )
+
             } catch {
                 DispatchQueue.main.async {
                     self.buttonState = .enabled

@@ -15,8 +15,6 @@ class CadenceManager {
     private init() {
         loadLocalCache()
         fetchScript()
-
-        log.info("[Cadence] current version is \(String(describing: version))")
     }
 
     // MARK: Internal
@@ -45,11 +43,17 @@ class CadenceManager {
         if let response = loadCache() {
             scripts = response.scripts
             version = response.version ?? localVersion
-            log.info("[Cadence] local cache version is \(String(describing: response.version))")
+            log.info("[Cadence] cache version is \(String(describing: response.version))")
+            EventTrack.shared
+                .registerCadence(
+                    scriptVersion: version,
+                    cadenceVersion: current.version ?? ""
+                )
         } else {
             do {
                 guard let filePath = Bundle.main
-                    .path(forResource: "cloudfunctions", ofType: "json") else {
+                    .path(forResource: "cloudfunctions", ofType: "json")
+                else {
                     log.error("CadenceManager -> loadFromLocalFile error: no local file")
                     return
                 }
@@ -58,7 +62,12 @@ class CadenceManager {
                 let providers = try JSONDecoder().decode(CadenceResponse.self, from: data)
                 scripts = providers.scripts
                 version = providers.version ?? localVersion
-                log.info("[Cadence] romote version is \(String(describing: providers.version))")
+                EventTrack.shared
+                    .registerCadence(
+                        scriptVersion: version,
+                        cadenceVersion: current.version ?? ""
+                    )
+                log.info("[Cadence] local version is \(String(describing: providers.version))")
             } catch {
                 log.error("CadenceManager -> decode failed", context: error)
             }
@@ -76,7 +85,13 @@ class CadenceManager {
                     self.scripts = response.data.scripts
                     if let version = response.data.version {
                         self.version = version
+                        log.info("[Cadence] remote version is \(String(describing: version))")
                     }
+                    EventTrack.shared
+                        .registerCadence(
+                            scriptVersion: self.version,
+                            cadenceVersion: self.current.version ?? ""
+                        )
                 }
             } catch {
                 log.error("CadenceManager -> fetch failed", context: error)
@@ -286,7 +301,7 @@ extension CadenceModel {
         let getNodeInfo: String?
         let getNodesInfo: String?
 
-        let getDelegatesInfoArray: String?
+        let getDelegatesInfoArrayV2: String?
         let getApyWeekly: String?
 
         let getStakeInfo: String?
@@ -398,10 +413,10 @@ extension String {
         return String(data: data, encoding: .utf8)
     }
 
-    public func toFunc() -> String {
+    public func toFunc() -> String? {
         guard let decodeStr = fromBase64() else {
             log.error("[Cadence] base decode failed")
-            return ""
+            return nil
         }
 
         let result = decodeStr.replacingOccurrences(of: "<platform_info>", with: platformInfo())

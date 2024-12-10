@@ -8,6 +8,7 @@
 import Foundation
 
 let AppGroupName = "group.com.flowfoundation.wallet"
+let AppBundleName = "com.flowfoundation.wallet"
 let isDevModel = false
 let FirstFavNFTImageURL = "FirstFavNFTImageURL"
 

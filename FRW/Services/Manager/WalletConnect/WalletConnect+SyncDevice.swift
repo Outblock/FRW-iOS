@@ -5,7 +5,8 @@
 //  Created by cat on 2023/12/5.
 //
 
-import FlowWalletCore
+import Flow
+import FlowWalletKit
 import Foundation
 import WalletConnectPairing
 import WalletConnectSign
@@ -115,14 +116,12 @@ extension WalletConnectSyncDevice {
             (request.topic == response.topic)
     }
 
-    static func packageDeviceInfo(userId: String) async throws -> AnyCodable {
+    static func packageDeviceInfo(userId: String, address: String?) async throws -> AnyCodable {
         if IPManager.shared.info == nil {
             await IPManager.shared.fetch()
         }
-
-        let sec = try WallectSecureEnclave()
-        let key = try sec.accountKey()
-
+        let secureKey = try SecureEnclaveKey.create()
+        let key = try secureKey.flowAccountKey()
         let requestParam = RegisterRequest(
             username: "",
             accountKey: key.toCodableModel(),
@@ -132,11 +131,10 @@ extension WalletConnectSyncDevice {
             method: FCLWalletConnectMethod.addDeviceInfo.rawValue,
             data: requestParam
         )
-        try WallectSecureEnclave.Store.store(
-            key: userId,
-            value: sec.key.privateKey!.dataRepresentation
-        )
-        log.debug("[Sync] public: \(sec.key.publickeyValue ?? "")")
+        try secureKey.store(id: userId)
+        let storeUser = UserManager.StoreUser(publicKey: key.publicKey.description, address: address, userId: userId, keyType: .secureEnclave, account: nil)
+        LocalUserDefaults.shared.addUser(user: storeUser)
+        log.debug("[Sync] Public Key: \(key.publicKey.data.hexString)")
         return AnyCodable(response)
     }
 }
