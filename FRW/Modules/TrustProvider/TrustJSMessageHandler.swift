@@ -10,11 +10,11 @@ import Combine
 import CryptoKit
 import Flow
 import Foundation
+import ReownWalletKit
 import TrustWeb3Provider
 import WalletCore
 import Web3Core
 import web3swift
-import Web3Wallet
 import WebKit
 
 // MARK: - TrustJSMessageHandler

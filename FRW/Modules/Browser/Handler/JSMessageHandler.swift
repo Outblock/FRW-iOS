@@ -5,6 +5,7 @@
 //  Created by Selina on 5/9/2022.
 //
 
+import CryptoKit
 import Flow
 import TrustWeb3Provider
 import UIKit
@@ -31,7 +32,7 @@ class JSMessageHandler: NSObject {
     private var processingServiceType: FCLServiceType?
     private var processingFCLResponse: FCLResponseProtocol?
     private var readyToSignEnvelope: Bool = false
-
+    private var authzResponse: FCLAuthzResponse?
     private weak var processingLinkAccountViewModel: ChildAccountLinkViewModel?
 }
 
@@ -88,7 +89,8 @@ extension JSMessageHandler {
             }
 
             guard let processingAuthzTransaction = processingAuthzTransaction,
-                  let data = try? JSONEncoder().encode(processingAuthzTransaction) else {
+                  let data = try? JSONEncoder().encode(processingAuthzTransaction)
+            else {
                 log.error("no processingAuthzTransaction")
                 return
             }
@@ -330,7 +332,7 @@ extension JSMessageHandler {
 
             log.debug("handle authz")
             processingFCLResponse = authzResponse
-
+            self.authzResponse = authzResponse
             if readyToSignEnvelope, authzResponse.isSignEnvelope {
                 log.debug("will sign envelope")
                 signEnvelope(authzResponse, url: url)

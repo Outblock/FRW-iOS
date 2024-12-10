@@ -33,6 +33,7 @@ class RemoteConfigManager {
     var contractAddress: ContractAddress?
 
     var isFailed: Bool = false
+    var isStaging: Bool = false
 
     var emptyAddress: String {
         switch LocalUserDefaults.shared.flowNetwork.toFlowType() {
@@ -117,6 +118,7 @@ class RemoteConfigManager {
                 let config = try decoder.decode(ENVConfig.self, from: decodeData)
                 envConfig = config
                 self.config = nil
+                isStaging = false
                 if let currentVersion = Bundle.main
                     .infoDictionary?["CFBundleShortVersionString"] as? String,
                     let version = envConfig?.version {
@@ -127,6 +129,7 @@ class RemoteConfigManager {
 
                 if self.config == nil {
                     self.config = envConfig?.staging
+                    isStaging = true
                 }
             }
             contractAddress = try FirebaseConfig.contractAddress.fetch(decoder: JSONDecoder())

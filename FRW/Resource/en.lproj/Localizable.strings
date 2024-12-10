@@ -430,7 +430,7 @@
 "Incorrect__decrypt__password__please__try__again::message" = "Incorrect decrypt password, please try again.";
 "restore" = "Restore";
 "The__decrypt__password__should__be__8__characters__long::message" = "The decrypt password should be at least 8 characters long.";
-"restore_with_words_desc" = "Restore your wallet with the 12 word \nrecovery phrase that you have written down.";
+"restore_with_words_desc" = "From Flow Wallet legacy backup, Seed Phrase, Key Store and Private Key.";
 "We__ve__found::message" = "We've found";
 "restore_with_icloud" = "Restore with iCloud";
 "matching__accounts::message" = "matching accounts";
@@ -499,6 +499,12 @@
 "max" = "Max";
 "Coinbase::message" = "Coinbase";
 "insufficient_balance" = "Insufficient Balance";
+"insufficient_storage" = "Insufficient storage.";
+"insufficient_storage_after_transfer" = "Insufficient storage after this action.";
+"insufficient_storage::error::title" = "Insufficient Storage Error";
+"insufficient_storage::error::content::first" = "Your transaction failed because it caused your account to fall below the minimum balance of FLOW for your account’s storage usage.";
+"insufficient_storage::error::content::second" = "You must have least %.3f FLOW in your account to cover your storage usage.";
+"insufficient_storage::error::content::third" = "[Learn More](https://developers.flow.com/build/basics/fees#storage)";
 "Kucoin::message" = "Kucoin";
 "amount_balance" = "Amount Balance";
 "Huobi::message" = "Huobi";
@@ -526,6 +532,7 @@
 "USD::message" = "USD";
 "transaction_list_transaction_x" = "Transaction (%d)";
 "Deposit::message" = "Deposit";
+"buy_flow" = "Buy FLOW";
 "transaction_list_transfer_x" = "Transfer";
 "Enable_token::message" = "Enable token";
 "transaction_exec" = "Exec Transaction";
@@ -729,7 +736,7 @@
 "stake_guide_desc_1_3" = " per year.";
 "stake_guide_desc_2_1" = "When you stake ";
 "stake_guide_desc_2_2" = "Flow";
-"stake_guide_desc_2_3" = " you receive";
+"stake_guide_desc_2_3" = " you receive ";
 "stake_guide_desc_2_4" = "Flow";
 "stake_guide_desc_2_5" = ".\n";
 "stake_guide_desc_2_6" = "The amount of Flow will be";
@@ -739,7 +746,7 @@
 "stake_guide_desc_3_2" = "next epoch";
 "stake_guide_desc_3_3" = ".";
 "stake_guide_desc_4_1" = "Rewards are automatically credited to your\n";
-"stake_guide_desc_4_2" = "deposit";
+"stake_guide_desc_4_2" = "deposit ";
 "stake_guide_desc_4_3" = "every week";
 "stake_guide_desc_4_4" = ".";
 "stake_amount" = "Stake Amount";
@@ -785,6 +792,8 @@
 "widget_desc" = "Show your favorite nft.";
 "scan" = "Scan";
 "storage" = "Storage";
+"storage_usage" = "Storage Usage";
+"total_balance" = "Total Balance";
 "sdk_test" = "SDKTesT";
 "skip" = "Skip";
 "start" = "Start";
@@ -901,8 +910,8 @@
 "restore_device_desc" = "Restore from another mobile or extension wallet";
 "restore_multi_title" = "From Multi Backup";
 "restore_multi_desc" = "Google Drive/ Passkey/ iCloud/ Recovery Phrase";
-"restore_phrase_title" = "From Recovery Phrase (legacy)";
-"restore_phrase_desc" = "Restore using a legacy recovery phrase (not multi-backup)";
+"restore_phrase_title" = "From Raw Key";
+"restore_phrase_desc" = "Support legacy Google Drive, iCloud, Seed Phrase, Key Store and Private Key";
 "from_multi_backup" = "From Multi-Backup";
 "from_multi_backup_desc" = "Please Select 2 or More Backup Options";
 "connect_to_x" = "Connect to %@";
@@ -982,6 +991,19 @@
 "my_accounts" = "My Accounts";
 "Inaccessible" = "Inaccessible";
 "View Recovery Phrase" = "View Recovery Phrase";
+"import_google_desc" = "Retrieve the legacy backup from Google Drive.";
+"import_icloud_desc" = "Retrieve the legacy backup from iCloud.";
+"import_phrase_desc" = "Support 12 words seed phrase.";
+"import_keystore_desc" = "Import keystore file (Blocto Backup).";
+"import_privatekey_desc" = "Import with raw hex key.";
+"keystore_json" = "You can import the json file from other wallet (eg. Blockto)";
+"keystore_password" = "Enter password for json file";
+"keystore_address" = "Enter your flow address (Optional)";
+"x_account_found_title" = "%@ Accounts Found";
+"no_account_found" = "No Account Found";
+"import_x_wallet" = "Import %@ Wallet";
+"import_no_account_found" = "Sorry, we can not find your address on flow with this key.\nPlease check your input and try again.";
+"private_key_placeholder" = "Enter your Private key";
 "take_mins" = "It might take 1-2 mins";
 "what_is" = "What is a";
 "multi_backup_detail" = "A multi-backup stores multiple partial-weight keys across your accounts on trusted providers like Google Drive and iCloud, or a Recovery Phrase.
@@ -1024,6 +1046,14 @@ Please create backups for your wallet to ensure you retain access to your Flow a
 "create_phrase_backup_note" = "Create a 12 word recovery phrase";
 "Recommended" = "Recommended";
 
+
+"seedphrase_hint" = "12 or 24 words split with whitespace";
+"Seed Phrase" = "Seed Phrase";
+"advanced" = "Advanced";
+"Derivation Path" = "Derivation Path";
+"Passphrase" = "Passphrase";
+"Optional" = "(Optional)";
+
 "move_fee_hint_cost" = "It appears when moving between VM accounts";
 "move_fee_hint_free" = "No fee between your Flow accounts 🤟";
 "move_fee_cost" = "~ 0.001";
@@ -1046,3 +1076,15 @@ Please create backups for your wallet to ensure you retain access to your Flow a
 "Add Suggested Token" = "Add Suggested Token";
 "like_import_token" = "Would you like to import this token？";
 "invalid_erc20" = "Invalid ERC20 address";
+"choose_account_import" = "Choose an account you want to import";
+
+"restore_device_desc_2" = "Mobile or Extension Devices";
+"restore_phrase_title_2" = "From Raw Key";
+"restore_phrase_desc_2" = "Support legacy Google Drive, Seed Phrase, Key Store and Private Key";
+"import_desc" = "From Flow Wallet legacy backup, Seed Phrase, 
+Key Store and Private Key.";
+"invalid_data" = "Invalid Data";
+"invalid_json" = "Key decryption failed - possibly wrong keystore file";
+"invalid_password" = "Key decryption failed - possibly wrong password";
+"not_find_address" = "cannot find this key under this address";
+"required_info_not" = "Required information has not been entered.";

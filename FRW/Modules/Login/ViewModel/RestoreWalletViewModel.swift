@@ -15,7 +15,8 @@ class RestoreWalletViewModel {}
 
 extension RestoreWalletViewModel {
     func restoreWithManualAction() {
-        Router.route(to: RouteMap.RestoreLogin.restoreManual)
+        Router.route(to: RouteMap.RestoreLogin.seedPhrase)
+//        Router.route(to: RouteMap.RestoreLogin.restoreManual)
     }
 
     func restoreWithCloudAction(type: BackupManager.BackupType) {
@@ -40,5 +41,13 @@ extension RestoreWalletViewModel {
                 HUD.error(title: "restore_with_x_failed".localized(type.descLocalizedString))
             }
         }
+    }
+
+    func restoreWithKeyStore() {
+        Router.route(to: RouteMap.RestoreLogin.keystore)
+    }
+
+    func resteroWithPrivateKey() {
+        Router.route(to: RouteMap.RestoreLogin.privateKey)
     }
 }

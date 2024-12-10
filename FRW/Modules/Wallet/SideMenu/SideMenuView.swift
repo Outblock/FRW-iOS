@@ -506,8 +506,7 @@ class SideContainerViewModel: ObservableObject {
         }
     }
 
-    @objc
-    func onRemoteConfigDidChange() {
+    @objc func onRemoteConfigDidChange() {
         DispatchQueue.main.async {
             self.hideBrowser = RemoteConfigManager.shared.config?.features.hideBrowser ?? true
         }

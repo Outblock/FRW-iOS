@@ -29,11 +29,11 @@ class CustomTokenManager: ObservableObject {
     }
 
     func isInWhite(token: CustomToken) -> Bool {
-        guard let support = WalletManager.shared.supportedCoins else {
+        guard let support = WalletManager.shared.evmSupportedCoins else {
             return true
         }
         let filterList = support.filter { model in
-            model.evmAddress?.lowercased() == token.address.lowercased()
+            model.getAddress()?.lowercased() == token.address.lowercased()
         }
         return !filterList.isEmpty
     }
@@ -89,7 +89,8 @@ class CustomTokenManager: ObservableObject {
     private func findCurrent(list: [CustomToken]) -> [CustomToken] {
         guard let address = WalletManager.shared
             .getWatchAddressOrChildAccountAddressOrPrimaryAddress(),
-            let userId = UserManager.shared.activatedUID else {
+            let userId = UserManager.shared.activatedUID
+        else {
             return []
         }
         let currentNetwork = LocalUserDefaults.shared.flowNetwork

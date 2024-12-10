@@ -94,6 +94,10 @@ extension RestoreMultiConnectViewModel {
                                 return
                             }
                             self.storeItem(list: verifyList)
+                        } else {
+                            DispatchQueue.main.async {
+                                self.enable = true
+                            }
                         }
                     })
                 } else {
@@ -143,7 +147,8 @@ extension RestoreMultiConnectViewModel {
 
     private func createStoreItem(with mnemonic: String) {
         guard let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic),
-              let mnemonicData = hdWallet.mnemonic.data(using: .utf8) else {
+              let mnemonicData = hdWallet.mnemonic.data(using: .utf8)
+        else {
             HUD.error(title: "empty_wallet_key".localized)
             return
         }

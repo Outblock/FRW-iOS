@@ -22,7 +22,7 @@ struct EVMTokenResponse: Codable {
     let balance: String?
     let flowIdentifier: String?
 
-    var flowBalance: Double {
+    var flowBalance: Decimal {
         guard let bal = balance, let value = BigUInt(bal) else {
             return 0
         }
@@ -31,8 +31,12 @@ struct EVMTokenResponse: Codable {
             value,
             units: .custom(decimals),
             formattingDecimals: decimals
-        ).doubleValue
-        return result
+        )
+        return Decimal(string: result) ?? Decimal(0)
+    }
+
+    var uniKey: String {
+        address
     }
 
     func toTokenModel() -> TokenModel {
