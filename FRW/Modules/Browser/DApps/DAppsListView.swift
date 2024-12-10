@@ -13,7 +13,7 @@ struct DAppsListView: RouteableView {
     // MARK: Internal
 
     var title: String {
-        "dApps"
+        "dApps".localized
     }
 
     var body: some View {
