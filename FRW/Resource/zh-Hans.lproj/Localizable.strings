@@ -934,7 +934,6 @@
 "account_key_index" = "密钥索引";
 "account_key_done_revoked_tips" = "密钥已被撤销";
 "other_key" = "其他密钥";
-"enable_previewnet_failed" = "启用预览网失败";
 "evm_on_flow" = "EVM on Flow";
 "other" = "其他";
 "evm_check_balance" = "余额低于0.02，\n请充值您的账户以继续。";

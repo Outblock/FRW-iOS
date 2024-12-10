@@ -399,7 +399,7 @@ extension WalletManager {
         return "0x"
     }
 
-    func changeNetwork(_ type: LocalUserDefaults.FlowNetworkType) {
+    func changeNetwork(_ type: FlowNetworkType) {
         if LocalUserDefaults.shared.flowNetwork == type {
             if isSelectedChildAccount {
                 ChildAccountManager.shared.select(nil)
@@ -531,7 +531,7 @@ extension WalletManager {
         walletInfo?.currentNetworkWalletModel?.getAddress
     }
 
-    func getFlowNetworkTypeAddress(network: LocalUserDefaults.FlowNetworkType) -> String? {
+    func getFlowNetworkTypeAddress(network: FlowNetworkType) -> String? {
         walletInfo?.getNetworkWalletModel(network: network)?.getAddress
     }
 
@@ -559,12 +559,6 @@ extension WalletManager {
         }
 
         return nil
-    }
-
-    var isPreviewEnabled: Bool {
-        walletInfo?.wallets?
-            .first(where: { $0.chainId == LocalUserDefaults.FlowNetworkType.previewnet.rawValue })?
-            .getAddress != nil
     }
 
     func isTokenActivated(symbol: String) -> Bool {

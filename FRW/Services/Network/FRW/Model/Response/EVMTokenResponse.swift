@@ -45,8 +45,7 @@ struct EVMTokenResponse: Codable {
             address: FlowNetworkModel(
                 mainnet: address,
                 testnet: address,
-                crescendo: address,
-                previewnet: address
+                crescendo: address
             ),
             contractName: "",
             storagePath: FlowTokenStoragePath(
