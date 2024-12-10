@@ -105,7 +105,7 @@ extension NFTAddCollectionView {
                                     .LL.Shades.front,
                                     .LL.Shades.front,
                                     .LL.Shades.front.opacity(0.88),
-                                    .LL.Shades.front.opacity(0.32),
+                                    .LL.Shades.front.opacity(0.32)
                                 ],
                                 startPoint: .leading,
                                 endPoint: .trailing
@@ -132,7 +132,7 @@ extension NFTAddCollectionView {
                 }
                 .padding(.horizontal, 18)
             }
-            .backgroundFill(Color.LL.Neutrals.background)
+            .fixedSize(horizontal: false, vertical: true)
         }
 
         // MARK: Private

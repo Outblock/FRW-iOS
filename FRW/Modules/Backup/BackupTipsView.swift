@@ -23,7 +23,6 @@ struct BackupTipsView: View {
 
             contentView
         }
-        .backgroundFill(Color.LL.Neutrals.background)
     }
 
     var contentView: some View {
@@ -85,6 +84,7 @@ struct BackupTipsView: View {
                     .foregroundColor(Color.LL.Neutrals.text2)
             }
         }
+        .fixedSize(horizontal: false, vertical: true)
         .padding(.horizontal, 28)
         .padding(.bottom, 20)
     }

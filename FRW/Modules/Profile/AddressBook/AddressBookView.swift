@@ -211,14 +211,9 @@ extension AddressBookView {
         }
 
         #if compiler(>=5.7)
-        if #available(iOS 16.0, *) {
 //            return anyView.scrollContentBackground(.hidden)
-            return anyView
-                .backgroundFill(.LL.background)
-        } else {
-            return anyView
-                .backgroundFill(.LL.background)
-        }
+        return anyView
+            .backgroundFill(.LL.background)
         #else
         return anyView
         #endif

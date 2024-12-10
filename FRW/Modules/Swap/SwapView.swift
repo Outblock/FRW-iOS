@@ -58,10 +58,10 @@ struct SwapView: RouteableView {
         .frame(maxWidth: .infinity)
         .background(Color.LL.background)
         .applyRouteable(self)
-        .halfSheet(showSheet: $vm.showConfirmView, sheetView: {
+        .halfSheet(showSheet: $vm.showConfirmView, autoResizing: true, backgroundColor: Color.LL.background) {
             SwapConfirmView()
                 .environmentObject(vm)
-        })
+        }
         .onSubmit {
             focusedField = nil
         }

@@ -87,13 +87,14 @@ struct InsufficientStorageToastView<ViewModel: InsufficientStorageToastViewModel
         
     var body: some View {
         PersistentToastView(message: self.viewModel.variant?.message ?? "", imageRes: .Storage.insufficient)
-            .transition(AnyTransition.move(edge: .bottom))
+            .transition(.push(from: .bottom))
+            .hidden(!self.isVisible)
             .task {
-                withAnimation(.easeInOut(duration: 0.8).delay(0.4)) {
+                withAnimation(.easeInOut(duration: 0.8).delay(0.8)) {
                     self.isVisible = self.viewModel.showInsufficientFundsToast
                 }
             }
-            .hidden(!self.isVisible)
+            .visibility(self.viewModel.showInsufficientFundsToast ? .visible : .gone)
     }
 }
 

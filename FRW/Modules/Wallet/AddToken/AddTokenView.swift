@@ -41,7 +41,7 @@ struct AddTokenView: RouteableView {
             listView
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .halfSheet(showSheet: $vm.confirmSheetIsPresented, sheetView: {
+        .halfSheet(showSheet: $vm.confirmSheetIsPresented, autoResizing: true, backgroundColor: Color.LL.Neutrals.background, sheetView: {
             if let token = vm.pendingActiveToken {
                 AddTokenConfirmView(token: token)
                     .environmentObject(vm)
@@ -236,7 +236,7 @@ extension AddTokenView {
                         title: buttonState == .loading ? "working_on_it"
                             .localized : "enable".localized
                     )
-                    .padding(.bottom)
+                    .padding(.vertical)
                 }
                 .padding(.horizontal, 36)
             }
@@ -248,7 +248,6 @@ extension AddTokenView {
                     }
                 }
             }
-            .backgroundFill(Color.LL.Neutrals.background)
         }
     }
 }
