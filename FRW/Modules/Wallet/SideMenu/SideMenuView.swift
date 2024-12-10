@@ -575,9 +575,9 @@ struct SideContainerView: View {
     @ViewBuilder
     private func makeTabView() -> some View {
         let wallet = TabBarPageModel<AppTabType>(
-            tag: WalletView.tabTag(),
-            iconName: WalletView.iconName(),
-            color: WalletView.color()
+            tag: WalletHomeView.tabTag(),
+            iconName: WalletHomeView.iconName(),
+            color: WalletHomeView.color()
         ) {
             AnyView(WalletHomeView())
         }

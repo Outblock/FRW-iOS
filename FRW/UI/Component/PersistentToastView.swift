@@ -21,6 +21,7 @@ struct PersistentToastView: View {
                 Text(self.message)
                     .foregroundColor(Color(.orange1))
                     .font(.inter(size: 12, weight: .w400))
+                    .fixedSize(horizontal: false, vertical: true)
                 Spacer()
             }
             .padding(.vertical, 8)

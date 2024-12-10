@@ -75,7 +75,7 @@ extension WalletViewModel {
 
 // MARK: - WalletViewModel
 
-class WalletViewModel: ObservableObject {
+final class WalletViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init() {
