@@ -94,6 +94,10 @@ extension RestoreMultiConnectViewModel {
                                 return
                             }
                             self.storeItem(list: verifyList)
+                        } else {
+                            DispatchQueue.main.async {
+                                self.enable = true
+                            }
                         }
                     })
                 } else {

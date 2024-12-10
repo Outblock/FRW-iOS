@@ -26,7 +26,7 @@ struct MultiBackupVerifyPinView: RouteableView {
     var callback: MultiBackupVerifyPinViewModel.VerifyCallback?
 
     var title: String {
-        " "
+        ""
     }
 
     var body: some View {
@@ -76,7 +76,7 @@ struct MultiBackupVerifyPinView: RouteableView {
     }
 
     func backButtonAction() {
-        Router.dismiss()
+        Router.pop()
         callback?(false, "")
     }
 
