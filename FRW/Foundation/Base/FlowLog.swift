@@ -18,7 +18,7 @@ class FlowLog {
     private init() {
         let console = ConsoleDestination()
         console.format = "[Flow]$DHH:mm:ss.SSS$d $C$L$c $N.$F:$l - $M - $X"
-
+        file.format = "[Flow]$DHH:mm:ss.SSS$d $C$L$c $N.$F:$l - $M - $X"
         console.logPrintWay = .logger(subsystem: "Main", category: "UI")
         SwiftyBeaver.addDestination(console)
         SwiftyBeaver.addDestination(file)
