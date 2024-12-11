@@ -96,7 +96,7 @@ enum SecureEnclaveMigration {
         }
         LocalUserDefaults.shared.loginUIDList = userIds
         let endAt = CFAbsoluteTimeGetCurrent()
-        log.debug("[Mig] total: \(users.count), finish: \(finishCount), time:\(endAt - startAt)")
+        log.debug("[Mig] Secure Enclave total: \(users.count), finish: \(finishCount), time:\(endAt - startAt)")
     }
 
     static func canKeySign(privateKey: SecureEnclaveKey) -> Bool {
@@ -116,6 +116,7 @@ enum SecureEnclaveMigration {
             .accessibility(.whenUnlocked)
         var userIds = LocalUserDefaults.shared.loginUIDList
         let allKeys = mainKeychain.allKeys()
+        var finishCount = 0
         for theKey in allKeys {
             let uid = theKey.removePrefix("lilico.mnemonic.")
             guard let data = try? mainKeychain.getData(theKey),
@@ -146,12 +147,14 @@ enum SecureEnclaveMigration {
             let address = address(by: uid)
             let storeUser = UserManager.StoreUser(publicKey: publicKey, address: address, userId: uid, keyType: .seedPhrase, account: nil)
             LocalUserDefaults.shared.addUser(user: storeUser)
-
+            finishCount += 1
             try? providerKey.store(id: uid)
             if !userIds.contains(uid) {
                 userIds.append(uid)
             }
         }
+        log.debug("[Mig] Seed Phrase total: \(allKeys.count), finish: \(finishCount)")
+        LocalUserDefaults.shared.loginUIDList = userIds
     }
 
     private static func migrationSeedPhraseBackup() {

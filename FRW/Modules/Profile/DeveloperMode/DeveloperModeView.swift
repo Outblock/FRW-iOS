@@ -312,9 +312,10 @@ struct DeveloperModeView: RouteableView {
 
                             HStack {
                                 Button {
+                                    HUD.success(title: "done")
                                     LocalUserDefaults.shared.migrationFinished = false
                                 } label: {
-                                    Text("reset migration flag")
+                                    Text("Reset Migration Flag")
                                         .font(.inter(size: 14, weight: .medium))
                                         .foregroundStyle(Color.Theme.Text.black8)
                                 }
@@ -323,20 +324,22 @@ struct DeveloperModeView: RouteableView {
                             .frame(height: 64)
                             .padding(.horizontal, 16)
 
-                            HStack {
-                                Button {
-                                    let list = LocalUserDefaults.shared.userList
-                                    log.debug("[User] \(list)")
+//                            HStack {
+//                                Button {
+//                                    HUD.success(title: "done")
+//                                    let list = LocalUserDefaults.shared.userList
+//                                    log.debug("[User] \(list)")
+//
+//                                } label: {
+//                                    Text("Copy all user")
+//                                        .font(.inter(size: 14, weight: .medium))
+//                                        .foregroundStyle(Color.Theme.Text.black8)
+//                                }
+//                                Spacer()
+//                            }
+//                            .frame(height: 64)
+//                            .padding(.horizontal, 16)
 
-                                } label: {
-                                    Text("copy all user")
-                                        .font(.inter(size: 14, weight: .medium))
-                                        .foregroundStyle(Color.Theme.Text.black8)
-                                }
-                                Spacer()
-                            }
-                            .frame(height: 64)
-                            .padding(.horizontal, 16)
                         }
                         .background(.LL.bgForIcon)
                         .cornerRadius(16)
