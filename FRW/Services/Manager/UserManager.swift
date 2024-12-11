@@ -601,26 +601,6 @@ extension UserManager {
             return
         }
 
-        if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid),
-           !mnemonic.isEmpty {
-            var addressStr = LocalUserDefaults.shared.userAddressOfDeletedApp[uid]
-            if addressStr == nil {
-                addressStr = MultiAccountStorage.shared.getWalletInfo(uid)?
-                    .getNetworkWalletModel(network: .mainnet)?.getAddress
-            }
-            guard let address = addressStr else {
-                throw LLError.invalidAddress
-            }
-            var accountKeys: Flow.AccountKey?
-            let account = try? await FlowNetwork.getAccountAtLatestBlock(address: address)
-            let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic)
-            accountKeys = account?.keys
-                .first { $0.publicKey.description == hdWallet?.getPublicKey() }
-            if accountKeys != nil {
-                try await restoreLogin(withMnemonic: mnemonic, userId: uid)
-                return
-            }
-        }
         if WalletManager.shared.keyProvider(with: uid) != nil {
             try await restoreLogin(with: uid)
             return
