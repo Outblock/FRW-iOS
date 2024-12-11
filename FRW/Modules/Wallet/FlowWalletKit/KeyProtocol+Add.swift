@@ -31,6 +31,16 @@ enum KeyProvider {
         }
         return result
     }
+
+    static func getSuffix(with key: String) -> String {
+        guard key.contains(sTag) else {
+            return key
+        }
+        guard let suffix = key.components(separatedBy: sTag).last else {
+            return key
+        }
+        return suffix
+    }
 }
 
 extension KeyProtocol {

@@ -292,6 +292,42 @@ extension UserManager {
                     }
                 }
 
+                let pkKeyList = FlowWalletKit.PrivateKey.PKStorage.allKeys
+                for key in pkKeyList {
+                    do {
+                        guard let provider = try? FlowWalletKit.PrivateKey.wallet(id: key) else {
+                            log.error("[Launch] Private key restore failed.\(key): not found")
+                            continue
+                        }
+                        let secpPublicKey = try? provider.publicKey(signAlgo: .ECDSA_SECP256k1)?.hexString
+                        let p256PublicKey = try? provider.publicKey(signAlgo: .ECDSA_P256)?.hexString
+                        let suffix = KeyProvider.getSuffix(with: key)
+                        var storePublicKey: String?
+                        if let publicKey = secpPublicKey, publicKey.hasPrefix(suffix) {
+                            storePublicKey = publicKey
+                        }
+                        if let publicKey = p256PublicKey, publicKey.hasPrefix(suffix) {
+                            storePublicKey = publicKey
+                        }
+                        guard let publicKey = storePublicKey else {
+                            continue
+                        }
+                        let response: AccountResponse = try await Network
+                            .requestWithRawModel(FRWAPI.Utils.flowAddress(publicKey))
+                        let account = response.accounts?
+                            .filter { ($0.weight ?? 0) >= 1000 && $0.address != nil }.first
+                        if let model = account {
+                            addressList[key] = model.address ?? "0x"
+                        } else {
+                            log.error("[Launch] Private key not found account:\(key)")
+                        }
+
+                    } catch {
+                        log.error("[Launch] Private key restore failed.\(key):\(error)")
+                        continue
+                    }
+                }
+
                 // FIXME: all key type
                 var result: [String: String] = [:]
                 for (key,value) in addressList {
