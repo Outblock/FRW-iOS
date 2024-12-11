@@ -16,10 +16,17 @@ class FlowLog {
     // MARK: Lifecycle
 
     private init() {
+
+        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+        let logFileUrl = url?.appendingPathComponent("FlowWallet.log",isDirectory: false)
+
         let console = ConsoleDestination()
-        console.format = "[Flow]$DHH:mm:ss.SSS$d $C$L$c $N.$F:$l - $M - $X"
-        file.format = "[Flow]$DHH:mm:ss.SSS$d $C$L$c $N.$F:$l - $M - $X"
+        console.format = "[Flow] $DHH:mm:ss.SSS$d $C$L$c $N.$F:$l - $M - $X"
         console.logPrintWay = .logger(subsystem: "Main", category: "UI")
+
+        file = FileDestination(logFileURL: logFileUrl)
+        file.format = console.format
+
         SwiftyBeaver.addDestination(console)
         SwiftyBeaver.addDestination(file)
 
@@ -44,7 +51,7 @@ class FlowLog {
 
     // MARK: Private
 
-    private let file = FileDestination()
+    private let file: FileDestination
 }
 
 extension NSPredicate {
