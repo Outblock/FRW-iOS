@@ -61,7 +61,8 @@ extension SecureEnclaveKey {
         let storage = FlowWalletKit.KeychainStorage(
             service: service,
             label: "SecureEnclaveKey",
-            synchronizable: false
+            synchronizable: false,
+            deviceOnly: true
         )
         return storage
     }
