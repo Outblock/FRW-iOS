@@ -498,13 +498,28 @@
 "Kraken::message" = "Kraken";
 "max" = "Max";
 "Coinbase::message" = "Coinbase";
+
 "insufficient_balance" = "Insufficient Balance";
-"insufficient_storage" = "Insufficient storage.";
-"insufficient_storage_after_transfer" = "Insufficient storage after this action.";
-"insufficient_storage::error::title" = "Insufficient Storage Error";
-"insufficient_storage::error::content::first" = "Your transaction failed because it caused your account to fall below the minimum balance of FLOW for your account’s storage usage.";
-"insufficient_storage::error::content::second" = "You must have least %.3f FLOW in your account to cover your storage usage.";
+"insufficient_storage" = "Insufficient Storage.";
+
+"insufficient_storage_error" = "Storage limit reached. [Learn More](https://developers.flow.com/build/basics/fees#storage)";
+"insufficient_storage_after_transfer_error" = "Storage limit reached after this action. [Learn More](https://developers.flow.com/build/basics/fees#storage)";
+
+"insufficient_storage::error::title" = "Storage Limit Error";
+"insufficient_storage::error::content::first" = "Your transaction failed because it caused your account to fall below the minimum balance of FLOW required for your account’s storage usage.";
+"insufficient_storage::error::content::second" = "You must have at least %.3f FLOW in your account to cover your storage usage.";
 "insufficient_storage::error::content::third" = "[Learn More](https://developers.flow.com/build/basics/fees#storage)";
+
+"insufficient_storage::warning::before::title" = "Storage Limit Warning";
+"insufficient_storage::warning::before::content::first" = "Your account is below the minimum FLOW balance required for its storage usage, which may cause subsequent transactions to fail.";
+"insufficient_storage::warning::before::content::second" = "You must have at least %.3f FLOW in your account to cover your storage usage.";
+"insufficient_storage::warning::before::content::third" = "[Learn More](https://developers.flow.com/build/basics/fees#storage)";
+
+"insufficient_storage::warning::after::title" = "Storage Limit Warning";
+"insufficient_storage::warning::after::content::first" = "This action may fail because it may reduce the amount of FLOW in your account below what is required to cover it’s storage usage.";
+"insufficient_storage::warning::after::content::second" = "You must have at least %.3f FLOW in your account to cover your storage usage.";
+"insufficient_storage::warning::after::content::third" = "[Learn More](https://developers.flow.com/build/basics/fees#storage)";
+
 "Kucoin::message" = "Kucoin";
 "amount_balance" = "Amount Balance";
 "Huobi::message" = "Huobi";

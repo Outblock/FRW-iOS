@@ -11,8 +11,15 @@ enum InsufficientStorageFailure {
     case beforeTransfer, afterTransfer
     var message: String {
         switch self {
-        case .beforeTransfer: return "insufficient_storage".localized
-        case .afterTransfer: return "insufficient_storage_after_transfer".localized
+        case .beforeTransfer: return "insufficient_storage_error".localized
+        case .afterTransfer: return "insufficient_storage_after_transfer_error".localized
+        }
+    }
+    
+    var showAlert: (Double) -> Void {
+        return switch self {
+        case .beforeTransfer: AlertViewController.showInsufficientStorageWarningBefore(minimumBalance:)
+        case .afterTransfer: AlertViewController.showInsufficientStorageWarningAfter(minimumBalance:)
         }
     }
 }
@@ -79,6 +86,11 @@ extension InsufficientStorageToastViewModel {
         
         return .none
     }
+    
+    func showWarningAlert() {
+        guard self.showInsufficientFundsToast else { return }
+        self.variant?.showAlert(WalletManager.shared.minimumStorageBalance.doubleValue)
+    }
 }
 
 struct InsufficientStorageToastView<ViewModel: InsufficientStorageToastViewModel>: View {
@@ -87,6 +99,7 @@ struct InsufficientStorageToastView<ViewModel: InsufficientStorageToastViewModel
         
     var body: some View {
         PersistentToastView(message: self.viewModel.variant?.message ?? "", imageRes: .Storage.insufficient)
+            .padding(.bottom, 20)
             .transition(.push(from: .bottom))
             .hidden(!self.isVisible)
             .task {
@@ -95,6 +108,9 @@ struct InsufficientStorageToastView<ViewModel: InsufficientStorageToastViewModel
                 }
             }
             .visibility(self.viewModel.showInsufficientFundsToast ? .visible : .gone)
+            .task {
+                self.viewModel.showWarningAlert()
+            }
     }
 }
 

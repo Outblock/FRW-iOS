@@ -18,7 +18,7 @@ struct PersistentToastView: View {
                 Image(self.imageRes)
                     .resizable()
                     .frame(width: 20, height: 20)
-                Text(self.message)
+                Text(.init(self.message))
                     .foregroundColor(Color(.orange1))
                     .font(.inter(size: 12, weight: .w400))
                     .fixedSize(horizontal: false, vertical: true)
@@ -29,7 +29,7 @@ struct PersistentToastView: View {
             .background(Color(.orange5))
         }
         .background(Color.LL.Neutrals.background.opacity(0.95))
-        .cornerRadius(8, corners: [.topLeft, .topRight])
+        .cornerRadius(8)
         .padding(.horizontal, 8)
     }
 }
