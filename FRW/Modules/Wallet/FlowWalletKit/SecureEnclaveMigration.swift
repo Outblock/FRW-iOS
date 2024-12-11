@@ -87,10 +87,10 @@ enum SecureEnclaveMigration {
                     }
                     finishCount += 1
                 } else {
-                    log.warning("[Mig] migration from Lilico Tag error: not sign")
+                    log.warning("[Mig] migration error: not sign")
                 }
             } catch {
-                log.error("[Mig] migration from Lilico Tag error:\(error.localizedDescription)")
+                log.error("[Mig] migration error:\(error.localizedDescription)")
                 continue
             }
         }
@@ -144,7 +144,7 @@ enum SecureEnclaveMigration {
                 continue
             }
             let address = address(by: uid)
-            let storeUser = UserManager.StoreUser(publicKey: publicKey, address: address, userId: uid, keyType: .secureEnclave, account: nil)
+            let storeUser = UserManager.StoreUser(publicKey: publicKey, address: address, userId: uid, keyType: .seedPhrase, account: nil)
             LocalUserDefaults.shared.addUser(user: storeUser)
 
             try? providerKey.store(id: uid)
