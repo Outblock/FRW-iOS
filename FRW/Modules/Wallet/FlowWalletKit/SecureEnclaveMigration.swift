@@ -32,11 +32,11 @@ enum SecureEnclaveMigration {
         let userKey: String = "user.keystore"
         let keychain = Keychain(service: service)
         guard let data = try? keychain.getData(userKey) else {
-            print("[Migration] SecureEnclave get value from keychain empty,\(service)")
+            print("[Mig] SecureEnclave get value from keychain empty,\(service)")
             return
         }
         guard let users = try? JSONDecoder().decode([StoreInfo].self, from: data) else {
-            print("[Migration] SecureEnclave list decoder failed ")
+            print("[Mig] SecureEnclave list decoder failed ")
             return
         }
         migration(users: users)
@@ -48,11 +48,11 @@ enum SecureEnclaveMigration {
         let userKey = "user.keystore"
         let keychain = Keychain(service: lilicoService)
         guard let data = try? keychain.getData(userKey) else {
-            log.info("[SecureEnclave] migration empty ")
+            log.info("[Mig] migration empty ")
             return
         }
         guard let users = try? JSONDecoder().decode([StoreInfo].self, from: data) else {
-            log.info("[SecureEnclave] decoder failed on loginedUser ")
+            log.info("[Mig] decoder failed on loginedUser ")
             return
         }
         migration(users: users)
@@ -60,7 +60,6 @@ enum SecureEnclaveMigration {
 
     private static func migration(users: [StoreInfo]) {
         var userIds = LocalUserDefaults.shared.loginUIDList
-        let allKeys = SecureEnclaveKey.KeychainStorage.allKeys
         let startAt = CFAbsoluteTimeGetCurrent()
         var finishCount = 0
         for model in users {
@@ -74,13 +73,9 @@ enum SecureEnclaveMigration {
                     key: privateKey,
                     storage: SecureEnclaveKey.KeychainStorage
                 )
-                let storeKey = secureKey.createKey(uid: model.uniq)
-                if allKeys.contains(storeKey) {
-                    continue
-                }
                 if canKeySign(privateKey: secureKey) {
                     guard let publicKey = try secureKey.publicKey()?.hexString else {
-                        log.warning("[Mig] migration from Lilico Tag error: public key is empty")
+                        log.warning("[Mig] migration error: public key is empty")
                         continue
                     }
                     let address = address(by: model.uniq)
@@ -92,16 +87,16 @@ enum SecureEnclaveMigration {
                     }
                     finishCount += 1
                 } else {
-                    log.warning("[Mig] migration from Lilico Tag error: not sign")
+                    log.warning("[Mig] migration error: not sign")
                 }
             } catch {
-                log.error("[Mig] migration from Lilico Tag error:\(error.localizedDescription)")
+                log.error("[Mig] migration error:\(error.localizedDescription)")
                 continue
             }
         }
         LocalUserDefaults.shared.loginUIDList = userIds
         let endAt = CFAbsoluteTimeGetCurrent()
-        log.debug("[Migration] total: \(users.count), finish: \(finishCount), time:\(endAt - startAt)")
+        log.debug("[Mig] Secure Enclave total: \(users.count), finish: \(finishCount), time:\(endAt - startAt)")
     }
 
     static func canKeySign(privateKey: SecureEnclaveKey) -> Bool {
@@ -121,6 +116,7 @@ enum SecureEnclaveMigration {
             .accessibility(.whenUnlocked)
         var userIds = LocalUserDefaults.shared.loginUIDList
         let allKeys = mainKeychain.allKeys()
+        var finishCount = 0
         for theKey in allKeys {
             let uid = theKey.removePrefix("lilico.mnemonic.")
             guard let data = try? mainKeychain.getData(theKey),
@@ -133,12 +129,12 @@ enum SecureEnclaveMigration {
             }
 
             guard mnemonic.split(separator: " ").count == 12 else {
-                log.debug("[Mig] invalid userId:\(uid),\(mnemonic)")
+                log.debug("[Mig] invalid userId:\(uid)")
                 continue
             }
 
             guard let hdWallet = HDWallet(mnemonic: mnemonic, passphrase: "") else {
-                log.debug("[Mig] invalid mnemonic:\(uid),\(mnemonic)")
+                log.debug("[Mig] invalid mnemonic:\(uid)")
                 continue
             }
             let providerKey = FlowWalletKit.SeedPhraseKey(
@@ -149,14 +145,16 @@ enum SecureEnclaveMigration {
                 continue
             }
             let address = address(by: uid)
-            let storeUser = UserManager.StoreUser(publicKey: publicKey, address: address, userId: uid, keyType: .secureEnclave, account: nil)
+            let storeUser = UserManager.StoreUser(publicKey: publicKey, address: address, userId: uid, keyType: .seedPhrase, account: nil)
             LocalUserDefaults.shared.addUser(user: storeUser)
-
+            finishCount += 1
             try? providerKey.store(id: uid)
             if !userIds.contains(uid) {
                 userIds.append(uid)
             }
         }
+        log.debug("[Mig] Seed Phrase total: \(allKeys.count), finish: \(finishCount)")
+        LocalUserDefaults.shared.loginUIDList = userIds
     }
 
     private static func migrationSeedPhraseBackup() {
@@ -177,12 +175,12 @@ enum SecureEnclaveMigration {
                 continue
             }
             guard mnemonic.split(separator: " ").count == 12 else {
-                log.debug("[Mig] invalid userId:\(userId),\(mnemonic)")
+                log.debug("[Mig] invalid userId:\(userId)")
                 continue
             }
 
             guard let hdWallet = HDWallet(mnemonic: mnemonic, passphrase: "") else {
-                log.debug("[Mig] invalid mnemonic:\(userId),\(mnemonic)")
+                log.debug("[Mig] invalid mnemonic:\(userId)")
                 continue
             }
             let providerKey = FlowWalletKit.SeedPhraseKey(
