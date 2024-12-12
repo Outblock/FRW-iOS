@@ -108,9 +108,10 @@ struct InsufficientStorageToastView<ViewModel: InsufficientStorageToastViewModel
                 }
             }
             .visibility(self.viewModel.showInsufficientFundsToast ? .visible : .gone)
-            .task {
+            .environment(\.openURL, OpenURLAction { _ in
                 self.viewModel.showWarningAlert()
-            }
+                return .handled
+            })
     }
 }
 
