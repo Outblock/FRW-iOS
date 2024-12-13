@@ -470,13 +470,15 @@ extension WalletConnectManager {
 
             Task {
                 do {
+                    log.walletconnect("preAuthz before send")
                     try await Sign.instance.respond(
                         topic: sessionRequest.topic,
                         requestId: sessionRequest.id,
                         response: .response(AnyCodable(result))
                     )
+                    log.walletconnect("preAuthz after send")
                 } catch {
-                    print("[WALLET] Respond Error: \(error.localizedDescription)")
+                    log.walletconnect("[WALLET] Respond Error: \(error.localizedDescription)")
                     rejectRequest(request: sessionRequest)
                 }
             }
