@@ -19,8 +19,11 @@ protocol RouterTarget {
 extension Router {
     static func route(to target: RouterTarget) {
         safeMainThreadCall {
+            log.walletconnect("route")
             if let navi = topNavigationController() {
                 target.onPresent(navi: navi)
+            }else {
+                log.walletconnect("route failed.")
             }
         }
     }

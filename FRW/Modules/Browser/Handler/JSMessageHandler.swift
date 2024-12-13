@@ -127,7 +127,7 @@ extension JSMessageHandler {
 
         processingMessage = message
         log.debug("handle message", context: message)
-
+        
         do {
             if let msgData = message.data(using: .utf8),
                let jsonDict = try JSONSerialization.jsonObject(

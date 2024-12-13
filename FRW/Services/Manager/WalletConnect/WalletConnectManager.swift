@@ -104,8 +104,8 @@ class WalletConnectManager: ObservableObject {
     var setSessions: [Session] = []
 
     func connect(link: String) {
-        debugPrint("WalletConnectManager -> connect(), Thread: \(Thread.isMainThread)")
-        print("[RESPONDER] Pairing to: \(link)")
+        log.debug("WalletConnectManager -> connect(), Thread: \(Thread.isMainThread)")
+        log.debug("[RESPONDER] Pairing to: \(link)")
         Task {
             do {
                 if let removedLink = link.removingPercentEncoding,
@@ -219,10 +219,13 @@ class WalletConnectManager: ObservableObject {
         Sign.instance.sessionRequestPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] data in
-                print("[RESPONDER] WC: Did receive session request")
-                log.info("[Session] request top:\(data.request.topic) ")
+                log.info("[RESPONDER] WC: Did receive session request")
+                log.walletconnect("\n\n [Session] 1 request top:\(data.request.topic) ")
                 if !SecurityManager.shared.isLocked {
+                    log.walletconnect("2 request top:\(data.request.topic) ")
                     self?.handleRequest(data.request)
+                }else {
+                    log.walletconnect("3 request, not call top:\(data.request.topic) ")
                 }
             }.store(in: &publishers)
 
@@ -265,8 +268,11 @@ class WalletConnectManager: ObservableObject {
 
     private func navigateBackTodApp(topic: String) {
         if let session = findSession(topic: topic), let url = session.peer.redirect?.native {
+            log.walletconnect("go back")
             ReownRouter.goBack(uri: url)
 //            WalletConnectRouter.goBack(uri: url)
+        }else {
+            log.walletconnect("go back empty")
         }
     }
 }
@@ -299,15 +305,9 @@ extension WalletConnectManager {
     @objc
     func reloadPendingRequests() {
         if UserManager.shared.isLoggedIn {
-            pendingRequests = Sign.instance.getPendingRequests().map { (
-                request: Request,
-                _: VerifyContext?
-            ) in
-                request
+            pendingRequests = Sign.instance.getPendingRequests().map { (request: Request, _: VerifyContext?) in request
             }
-
-            WalletNewsHandler.shared
-                .refreshWalletConnectNews(pendingRequests.map { $0.toLocalNews() })
+            WalletNewsHandler.shared.refreshWalletConnectNews(pendingRequests.map { $0.toLocalNews() })
         }
     }
 }
@@ -365,8 +365,9 @@ extension WalletConnectManager {
     func handleRequest(_ sessionRequest: WalletConnectSign.Request) {
         let address = WalletManager.shared.address.hex.addHexPrefix()
         let keyId = WalletManager.shared.keyIndex
-
+        log.walletconnect("sessionRequest: \(sessionRequest.method)")
         if cacheReqeust.contains(sessionRequest.id.string) {
+            log.walletconnect("cached: \(sessionRequest.topic.prefix(8))-\(sessionRequest.id.string)")
             return
         }
         cacheReqeust.append(sessionRequest.id.string)
@@ -483,12 +484,14 @@ extension WalletConnectManager {
 
             do {
                 if sessionRequest.id == currentRequest?.id {
+                    log.walletconnect("session is exist:\(sessionRequest.id)")
                     return
                 }
-                currentRequest = sessionRequest
+
                 let jsonString = try sessionRequest.params.get([String].self)
 
                 guard let json = jsonString.first else {
+                    log.walletconnect("[error] json error")
                     throw LLError.decodeFailed
                 }
 
@@ -502,6 +505,7 @@ extension WalletConnectManager {
                 }
 
                 guard let model else {
+                    log.walletconnect("[error] model error")
                     throw LLError.decodeFailed
                 }
 
@@ -512,6 +516,7 @@ extension WalletConnectManager {
                         message: model.message
                     )
                     navigateBackTodApp(topic: sessionRequest.topic)
+                    log.walletconnect("[error] back to dapp")
                     return
                 }
 
@@ -549,12 +554,15 @@ extension WalletConnectManager {
                 }
 
                 if model.roles.payer {
+                    log.walletconnect("model.roles.payer")
                     navigateBackTodApp(topic: sessionRequest.topic)
+                }else {
+                    log.walletconnect("model.roles.payer is empty")
                 }
-
+                currentRequest = sessionRequest
             } catch {
-                print("[WALLET] Respond Error: \(error.localizedDescription)")
-                log.error("WalletConnectManager -> Respond Error:", context: error)
+                log.walletconnect("WalletConnectManager -> Respond Error:\(error.localizedDescription)", context: error)
+                log.error("WalletConnectManager -> Respond Error:\(error.localizedDescription)", context: error)
                 rejectRequest(request: sessionRequest)
             }
         case FCLWalletConnectMethod.userSignature.rawValue:

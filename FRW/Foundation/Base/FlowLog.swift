@@ -66,7 +66,7 @@ extension NSPredicate {
 
 extension FlowLog {
     enum Category: String {
-        case debug, info, warning, error
+        case debug, info, warning, error, wc
     }
 }
 
@@ -171,6 +171,24 @@ extension FlowLog {
             detail: (context as? Error)?
                 .localizedDescription ?? ""
         ))
+    }
+
+    func walletconnect(
+        _ message: @autoclosure () -> Any,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        context: Any? = nil
+    ) {
+        SwiftyBeaver.custom(
+            level: .fault,
+            message: message(),
+            file: file,
+            function: function,
+            line: line,
+            context: context
+        )
+        addLogModel(category: .wc, viewModel: DebugViewModel(name: "[wc] \(message())", detail: " "))
     }
 
     private func addLogModel(category: FlowLog.Category, viewModel: DebugViewModel) {
