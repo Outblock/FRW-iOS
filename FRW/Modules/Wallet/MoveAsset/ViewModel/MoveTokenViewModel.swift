@@ -286,7 +286,7 @@ final class MoveTokenViewModel: ObservableObject {
         // move fee
         let num = max(
             inputAmount - (
-                minBalance ?? WalletManager.minDefaultBlance
+                minBalance ?? WalletManager.minFlowBlance
             ) - WalletManager.fixedMoveFee,
             0
         )

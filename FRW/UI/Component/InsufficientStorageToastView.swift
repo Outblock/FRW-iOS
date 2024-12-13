@@ -30,10 +30,10 @@ protocol InsufficientStorageToastViewModel: ObservableObject {
 }
 
 extension InsufficientStorageToastViewModel {
-    private var isInsufficientStorageEnabled: Bool { RemoteConfigManager.shared.config?.features.insufficientStorage ?? false }
+    private var isTransactionWarningPredictionEnabled: Bool { RemoteConfigManager.shared.config?.features.transactionWarningPrediction ?? false }
     
     var showInsufficientFundsToast: Bool {
-        self.isInsufficientStorageEnabled && self.variant != nil
+        self.variant != nil
     }
     
     func insufficientStorageCheckForMove(token: TokenType, from fromWallet: Contact.WalletType?, to toWallet: Contact.WalletType?) -> InsufficientStorageFailure? {
@@ -53,15 +53,20 @@ extension InsufficientStorageToastViewModel {
     }
     
     private func insufficientStorageCheck(amount: Decimal, token: TokenType, from fromWallet: Contact.WalletType?, to toWallet: Contact.WalletType?) -> InsufficientStorageFailure? {
-        guard self.isInsufficientStorageEnabled == true else { return .none }
-        
         let wm = WalletManager.shared
+        
+        // Pre-transaction warning
+        
         guard wm.isStorageInsufficient == false else {
             return .some(.beforeTransfer)
         }
 
+        // Post-transaction prediction warning
+        
+        guard self.isTransactionWarningPredictionEnabled == true else { return .none }
+
         let isTransferBetweenEvmAndFlow = switch (fromWallet, toWallet) {
-        case (.evm, .flow): true
+        case (.evm, .flow), (.flow, .evm): true
         case (.evm, _): false
         case (.flow, _): false
         case (.link, _): false
@@ -81,6 +86,10 @@ extension InsufficientStorageToastViewModel {
         }
 
         guard wm.isBalanceInsufficient(for: transferAmount) == false else {
+            return .some(.afterTransfer)
+        }
+        
+        guard wm.isFlowInsufficient(for: transferAmount) == false else {
             return .some(.afterTransfer)
         }
         

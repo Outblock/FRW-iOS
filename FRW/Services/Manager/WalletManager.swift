@@ -24,9 +24,9 @@ extension WalletManager {
     static let mnemonicStrength: Int32 = 160
     static let defaultGas: UInt64 = 30_000_000
     
-    static let minDefaultBlance: Decimal = 0.001
+    static let minFlowBlance: Decimal = 0.001
     static let fixedMoveFee: Decimal = 0.001
-    static var averageTransactionFee: Decimal { RemoteConfigManager.shared.freeGasEnabled ? 0 : 0.0005 }
+    static var averageTransactionFee: Decimal { RemoteConfigManager.shared.freeGasEnabled ? 0 : 0.001 }
     static let mininumStorageThreshold = 10000
     
     private static let defaultBundleID = "com.flowfoundation.wallet"
@@ -951,7 +951,7 @@ extension WalletManager {
     
     var minimumStorageBalance: Decimal {
         guard let accountInfo else { return Self.fixedMoveFee }
-        return accountInfo.storageFlow * Self.fixedMoveFee
+        return accountInfo.storageFlow + Self.fixedMoveFee
     }
     
     var isStorageInsufficient: Bool {
@@ -963,6 +963,11 @@ extension WalletManager {
     func isBalanceInsufficient(for amount: Decimal) -> Bool {
         guard let accountInfo else { return false }
         return accountInfo.availableBalance - amount < Self.averageTransactionFee
+    }
+    
+    func isFlowInsufficient(for amount: Decimal) -> Bool {
+        guard let accountInfo else { return false }
+        return accountInfo.balance - amount < Self.minFlowBlance
     }
     
     func fetchBalance() async throws {
