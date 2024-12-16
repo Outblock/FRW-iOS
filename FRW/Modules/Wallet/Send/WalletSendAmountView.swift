@@ -58,7 +58,7 @@ struct WalletSendAmountView: RouteableView {
 //        .interactiveDismissDisabled()
         .buttonStyle(.plain)
         .backgroundFill(Color.LL.background)
-        .halfSheet(showSheet: $vm.showConfirmView, autoResizing: true, backgroundColor: Color.LL.Neutrals.background, sheetView: {
+        .halfSheet(showSheet: $vm.showConfirmView, backgroundColor: Color.LL.Neutrals.background, sheetViewBuilder: {
             SendConfirmView()
                 .environmentObject(vm)
         })

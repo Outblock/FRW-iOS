@@ -66,7 +66,7 @@ extension RouteMap.RestoreLogin: RouterTarget {
         case let .syncAccount(info):
             navi.push(content: SyncConfirmView(user: info))
         case let .syncDevice(vm):
-            let vc = CustomHostingController(rootView: SyncAddDeviceView(viewModel: vm))
+            let vc = makeAutoResizeSheetViewController(SyncAddDeviceView(viewModel: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .restoreList:
             navi.push(content: RestoreListView())
@@ -263,7 +263,7 @@ extension RouteMap.Wallet: RouterTarget {
 //            let rootVC = Router.topPresentedController()
             SPQRCode.scanning(handled: handler, click: click, on: navi)
         case .buyCrypto:
-            let vc = CustomHostingController(rootView: BuyProvderView())
+            let vc = makeAutoResizeSheetViewController(BuyProvderView())
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case let .transactionList(contractId):
             let vc = TransactionListViewController(contractId: contractId)
@@ -289,7 +289,7 @@ extension RouteMap.Wallet: RouterTarget {
         case let .stakeDetail(provider, node):
             navi.push(content: StakingDetailView(provider: provider, node: node))
         case let .stakeSetupConfirm(vm):
-            let vc = CustomHostingController(rootView: StakeAmountView.StakeSetupView(vm: vm))
+            let vc = makeAutoResizeSheetViewController(StakeAmountView.StakeSetupView(vm: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .backToTokenDetail:
             if let existVC = navi.viewControllers
@@ -300,7 +300,7 @@ extension RouteMap.Wallet: RouterTarget {
 
             navi.popToRootViewController(animated: true)
         case .jailbreakAlert:
-            let vc = CustomHostingController(rootView: JailbreakAlertView())
+            let vc = makeAutoResizeSheetViewController(JailbreakAlertView())
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .pushAlert:
             let vc = RouteableUIHostingController(rootView: PushAlertView())
@@ -580,7 +580,7 @@ extension RouteMap.NFT: RouterTarget {
         case .addCollection:
             navi.push(content: NFTAddCollectionView())
         case let .send(nft, contact, childAccount):
-            let vc = CustomHostingController(rootView: NFTTransferView(
+            let vc = makeAutoResizeSheetViewController(NFTTransferView(
                 nft: nft,
                 target: contact,
                 fromChildAccount: childAccount
@@ -657,16 +657,13 @@ extension RouteMap.Explore: RouterTarget {
             let vc = SFSafariViewController(url: url)
             navi.present(vc, animated: true)
         case let .authn(vm):
-            let vc = CustomHostingController(rootView: BrowserAuthnView(vm: vm))
+            let vc = makeAutoResizeSheetViewController(BrowserAuthnView(vm: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case let .authz(vm):
-            let vc = CustomHostingController(rootView: BrowserAuthzView(vm: vm), showLarge: true)
+            let vc = makeAutoResizeSheetViewController(BrowserAuthzView(vm: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case let .signMessage(vm):
-            let vc = CustomHostingController(
-                rootView: BrowserSignMessageView(vm: vm),
-                showLarge: true
-            )
+            let vc = makeAutoResizeSheetViewController(BrowserSignMessageView(vm: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .searchExplore:
             let inputVC = BrowserSearchInputViewController()
@@ -686,18 +683,15 @@ extension RouteMap.Explore: RouterTarget {
         case .bookmark:
             navi.present(content: BrowserBookmarkView())
         case let .linkChildAccount(vm):
-            let vc = CustomHostingController(rootView: ChildAccountLinkView(vm: vm))
+            let vc = makeAutoResizeSheetViewController(ChildAccountLinkView(vm: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .dapps:
             navi.present(content: DAppsListView())
         case let .switchNetwork(from, to, callback):
-            let vc = CustomHostingController(rootView: NetworkSwitchPopView(from: from, to: to))
+            let vc = makeAutoResizeSheetViewController(NetworkSwitchPopView(from: from, to: to))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case let .signTypedMessage(viewModel):
-            let vc = CustomHostingController(
-                rootView: BrowserSignTypedMessageView(viewModel: viewModel),
-                showLarge: true
-            )
+            let vc = makeAutoResizeSheetViewController(BrowserSignTypedMessageView(viewModel: viewModel))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         }
     }
