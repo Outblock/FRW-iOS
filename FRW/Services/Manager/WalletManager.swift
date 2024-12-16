@@ -17,6 +17,17 @@ import WalletCore
 import Web3Core
 import web3swift
 
+protocol TokenManager {
+    func isEvmToken(_ token: TokenModel) -> Bool
+    func isCadenceToken(_ token: TokenModel) -> Bool
+}
+
+extension TokenManager {
+    // Temporary property, will be replaced by DI
+    //    static var instance: Self { get }
+    static var instance: TokenManager { WalletManager.shared }
+}
+
 // MARK: - Define
 
 extension WalletManager {
@@ -43,7 +54,7 @@ extension WalletManager {
 
 // MARK: - WalletManager
 
-class WalletManager: ObservableObject {
+class WalletManager: ObservableObject, TokenManager {
     // MARK: Lifecycle
 
     init() {
@@ -77,8 +88,8 @@ class WalletManager: ObservableObject {
     @Published var evmSupportedCoins: [TokenModel]?
     @Published var activatedCoins: [TokenModel] = []
     @Published var coinBalances: [String: Decimal] = [:]
-    @Published var childAccount: ChildAccount? = nil
-    @Published var evmAccount: EVMAccountManager.Account? = nil
+    @Published var childAccount: ChildAccount?
+    @Published var evmAccount: EVMAccountManager.Account?
     @Published var accountInfo: Flow.AccountInfo?
 
     var accessibleManager: ChildAccountManager.AccessibleManager = .init()
@@ -96,9 +107,9 @@ class WalletManager: ObservableObject {
     var walletAccount: WalletAccount = .init()
     @Published var balanceProvider = BalanceProvider()
 
-    var walletEntity: FlowWalletKit.Wallet? = nil
+    var walletEntity: FlowWalletKit.Wallet?
     var accountKey: UserManager.Accountkey?
-    var keyProvider: (any KeyProtocol)? = nil
+    var keyProvider: (any KeyProtocol)?
     // rename to currentAccount
 
 //    @Published var account: FlowWalletKit.Account? = nil
@@ -1076,6 +1087,16 @@ extension WalletManager {
 
     func fetchAccessible() async throws {
         try await accessibleManager.fetchFT()
+    }
+    
+    func isEvmToken(_ token: TokenModel) -> Bool {
+        guard let symbol = token.symbol else { return false }
+        guard let evmSupportedCoins else { return false }
+        return evmSupportedCoins.contains(where: { symbol == $0.symbol })
+    }
+    
+    func isCadenceToken(_ token: TokenModel) -> Bool {
+        return self.isEvmToken(token) == false
     }
 }
 

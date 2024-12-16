@@ -194,7 +194,7 @@ struct TokenDetailView: RouteableView {
 
                 Button {
                     UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                    Router.route(to: RouteMap.Wallet.swap(nil))
+                    self.vm.onSwapToken()
                 } label: {
                     ZStack {
                         Rectangle()

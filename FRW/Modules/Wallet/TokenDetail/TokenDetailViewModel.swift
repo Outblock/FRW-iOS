@@ -138,42 +138,25 @@ class TokenDetailViewModel: ObservableObject {
 
     // MARK: Internal
 
-    @Published
-    var storageUsedRatio: Double = 0
-    @Published
-    var storageUsedDesc: String = ""
-    @Published
-    var storageFlow: Double = 0
-    @Published
-    var totalBalance: Double = 0
-    @Published
-    var token: TokenModel
-    @Published
-    var market: QuoteMarket = LocalUserDefaults.shared.market
-    @Published
-    var selectedRangeType: TokenDetailView.ChartRangeType = .d1
-    @Published
-    var chartData: LineChartData?
-    @Published
-    var balance: Double = 0
-    @Published
-    var balanceAsUSD: Double = 0
-    @Published
-    var changePercent: Double = 0
-    @Published
-    var rate: Double = 0
-    @Published
-    var recentTransfers: [FlowScanTransfer] = []
+    @Published var storageUsedRatio: Double = 0
+    @Published var storageUsedDesc: String = ""
+    @Published var storageFlow: Double = 0
+    @Published var totalBalance: Double = 0
+    @Published var token: TokenModel
+    @Published var market: QuoteMarket = LocalUserDefaults.shared.market
+    @Published var selectedRangeType: TokenDetailView.ChartRangeType = .d1
+    @Published var chartData: LineChartData?
+    @Published var balance: Double = 0
+    @Published var balanceAsUSD: Double = 0
+    @Published var changePercent: Double = 0
+    @Published var rate: Double = 0
+    @Published var recentTransfers: [FlowScanTransfer] = []
 
-    @Published
-    var showSwapButton: Bool = true
-    @Published
-    var showBuyButton: Bool = true
-    @Published
-    var showDeleteToken: Bool = false
+    @Published var showSwapButton: Bool = true
+    @Published var showBuyButton: Bool = true
+    @Published var showDeleteToken: Bool = false
 
-    @Published
-    var showSheet: Bool = false
+    @Published var showSheet: Bool = false
     var buttonAction: TokenDetailViewModel.Action = .none
     var showStorageView: Bool { return self.token.isFlowCoin }
 
@@ -181,6 +164,7 @@ class TokenDetailViewModel: ObservableObject {
 
     // MARK: Private
 
+    private let tokenManager: TokenManager = WalletManager.instance
     private var cancelSets = Set<AnyCancellable>()
 
     private func setupObserver() {
@@ -292,6 +276,16 @@ extension TokenDetailViewModel {
     func onMoveToken() {
         buttonAction = .move
         showSheetAction()
+    }
+
+    func onSwapToken() {
+        if self.tokenManager.isEvmToken(self.token) {
+            Router.route(to: RouteMap.Wallet.swapEvmToken(self.token))
+        } else if self.tokenManager.isCadenceToken(token) {
+            Router.route(to: RouteMap.Wallet.swapCadenceToken(self.token))
+        } else {
+            log.warning("Unable to detect the token type: \(token)")
+        }
     }
 
     func showSheetAction() {
