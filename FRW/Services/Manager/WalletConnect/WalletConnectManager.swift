@@ -306,8 +306,11 @@ extension WalletConnectManager {
                 request
             }
 
-            WalletNewsHandler.shared
-                .refreshWalletConnectNews(pendingRequests.map { $0.toLocalNews() })
+            WalletNewsHandler.shared.refreshWalletConnectNews(pendingRequests.map { $0.toLocalNews() })
+            if let request = pendingRequests.last {
+                log.warning("handle request from pending.")
+                handleRequest(request)
+            }
         }
     }
 }
