@@ -105,7 +105,8 @@ extension PushHandler {
     private func uploadCurrentToken() {
         guard let address = WalletManager.shared
             .getWatchAddressOrChildAccountAddressOrPrimaryAddress(),
-            let fcmToken = fcmToken else {
+            let fcmToken = fcmToken
+        else {
             return
         }
 
@@ -127,7 +128,8 @@ extension PushHandler {
     func uploadWhenAppUpgrade() {
         guard let address = WalletManager.shared
             .getWatchAddressOrChildAccountAddressOrPrimaryAddress(),
-            let fcmToken = Messaging.messaging().fcmToken else {
+            let fcmToken = Messaging.messaging().fcmToken
+        else {
             return
         }
 

@@ -326,7 +326,8 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         cancel: @escaping () -> Void
     ) {
         guard let model = try? request.params.get(WalletConnectEVMHandler.WatchAsset.self),
-              let address = model.options?.address else {
+              let address = model.options?.address
+        else {
             cancel()
             return
         }

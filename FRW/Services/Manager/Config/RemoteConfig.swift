@@ -46,6 +46,7 @@ extension RemoteConfigManager {
             case browser
             case nftTransfer = "nft_transfer"
             case hideBrowser = "hide_browser"
+            case transactionWarningPrediction = "tx_warning_prediction"
         }
 
         let freeGas: Bool
@@ -56,6 +57,7 @@ extension RemoteConfigManager {
         let browser: Bool?
         let nftTransfer: Bool?
         let hideBrowser: Bool?
+        let transactionWarningPrediction: Bool?
     }
 
     // MARK: - Payer

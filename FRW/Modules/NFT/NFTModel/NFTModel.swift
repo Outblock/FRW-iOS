@@ -259,7 +259,8 @@ struct NFTModel: Codable, Hashable, Identifiable {
 
     var publicIdentifier: String {
         guard let path = collection?.path?.privatePath,
-              let identifier = path.split(separator: "/").last else {
+              let identifier = path.split(separator: "/").last
+        else {
             return ""
         }
         return String(identifier)

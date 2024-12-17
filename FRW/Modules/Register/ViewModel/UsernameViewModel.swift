@@ -98,7 +98,7 @@ class UsernameViewModel: ViewModel {
 
         Task {
             do {
-                let txid = try await UserManager.shared.register(currentText, mnemonic: nil)
+                let txid = try await UserManager.shared.register(currentText)
                 let viewModel = CreateProfileWaitingViewModel(txId: txid ?? "") { _, createBackup in
 
                     DispatchQueue.main.async {

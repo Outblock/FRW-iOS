@@ -79,3 +79,13 @@ extension EventTrack {
         }
     }
 }
+
+extension EventTrack {
+    enum Dev: String,EventTrackNameProtocol {
+        case restoreLogin = "restore_login"
+
+        var name: String {
+            rawValue
+        }
+    }
+}

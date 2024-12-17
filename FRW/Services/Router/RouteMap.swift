@@ -39,6 +39,12 @@ extension RouteMap {
 
         case createProfile(CreateProfileWaitingViewModel)
         case restoreErrorView(RestoreErrorView.RestoreError)
+
+        case keystore
+        case importAddress(ImportAccountsViewModel)
+        case importUserName(ImportUserNameViewModel)
+        case privateKey
+        case seedPhrase
     }
 }
 
@@ -76,6 +82,17 @@ extension RouteMap.RestoreLogin: RouterTarget {
             navi.push(content: CreateProfileWaitingView(vm))
         case let .restoreErrorView(error):
             navi.push(content: RestoreErrorView(error: error))
+        case .keystore:
+            navi.push(content: KeyStoreLoginView())
+        case let .importAddress(viewModel):
+            let vc = PresentHostingController(rootView: ImportAccountsView(viewModel: viewModel))
+            navi.present(vc, animated: true, completion: nil)
+        case let .importUserName(viewModel):
+            navi.push(content: ImportUserNameView(viewModel: viewModel))
+        case .privateKey:
+            navi.push(content: PrivateKeyLoginView())
+        case .seedPhrase:
+            navi.push(content: SeedPhraseLoginView())
         }
     }
 }
@@ -258,11 +275,8 @@ extension RouteMap.Wallet: RouterTarget {
             let vc = TransactionListViewController(contractId: contractId)
             navi.pushViewController(vc, animated: true)
         case let .swap(fromToken):
-            navi
-                .present(
-                    content: fromToken != nil ? SwapView(defaultFromToken: fromToken) :
-                        SwapView()
-                )
+            let view = fromToken != nil ? SwapView(defaultFromToken: fromToken) : SwapView()
+            navi.push(content: view)
         case let .selectToken(selectedToken, disableTokens, callback):
             let vm = AddTokenViewModel(
                 selectedToken: selectedToken,

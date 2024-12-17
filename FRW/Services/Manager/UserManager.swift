@@ -10,8 +10,11 @@ import Combine
 import Firebase
 import FirebaseAuth
 import Flow
-import FlowWalletCore
+import FlowWalletKit
 import Foundation
+
+import Alamofire
+import WalletCore
 
 // MARK: - UserManager.UserType
 
@@ -19,6 +22,7 @@ extension UserManager {
     enum UserType: Codable {
         case phrase
         case secure
+        case fromImport
     }
 }
 
@@ -183,7 +187,7 @@ extension UserManager {
 // MARK: - Register
 
 extension UserManager {
-    func register(_ username: String, mnemonic _: String? = nil) async throws -> String? {
+    func register(_ userName: String) async throws -> String? {
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
             DispatchQueue.main.async {
@@ -192,35 +196,36 @@ extension UserManager {
             }
         }
 
-        let sec = try WallectSecureEnclave()
-        let key = try sec.accountKey()
-
+        let secureKey = try SecureEnclaveKey.create()
+        let key = try secureKey.flowAccountKey(index: 0)
         if IPManager.shared.info == nil {
             await IPManager.shared.fetch()
         }
         let request = RegisterRequest(
-            username: username,
+            username: userName,
             accountKey: key.toCodableModel(),
             deviceInfo: IPManager.shared.toParams()
         )
-
         let model: RegisterResponse = try await Network.request(FRWAPI.User.register(request))
+
+        try secureKey.store(id: model.id)
+        let store = UserManager.StoreUser(
+            publicKey: key.publicKey.description,
+            address: nil,
+            userId: model.id,
+            keyType: .secureEnclave,
+            account: key.toStoreKey()
+        )
+        WalletManager.shared.updateKeyProvider(provider: secureKey, storeUser: store)
+        LocalUserDefaults.shared.addUser(user: store)
 
         try await finishLogin(mnemonic: "", customToken: model.customToken, isRegiter: true)
         WalletManager.shared.asyncCreateWalletAddressFromServer()
         userType = .secure
-        if let privateKey = sec.key.privateKey {
-            try WallectSecureEnclave.Store.store(
-                key: model.id,
-                value: privateKey.dataRepresentation
-            )
 
-        } else {
-            log.error("store public key on iPhone failed")
-        }
         EventTrack.Account
             .create(
-                key: sec.key.publickeyValue ?? "",
+                key: key.publicKey.description,
                 signAlgo: key.signAlgo.id,
                 hashAlgo: key.hashAlgo.id
             )
@@ -243,40 +248,104 @@ extension UserManager {
         HUD.loading()
         Task {
             do {
-                var list = try WallectSecureEnclave.Store.fetch()
-                list = list.filter { $0.isShow ?? true }
                 var addressList: [String: String] = [:]
-                for item in list {
-                    do {
-                        let sec = try WallectSecureEnclave(privateKey: item.publicKey)
-                        guard let publicKey = sec.key.publickeyValue else { continue }
+                //Secure Enclave Key
+                let seKeylist = SecureEnclaveKey.KeychainStorage.allKeys
+                for userId in seKeylist {
+                    if let se = try? SecureEnclaveKey.wallet(id: userId),
+                       let publicKey = try? se.publicKey()?.hexValue {
                         let response: AccountResponse = try await Network
                             .requestWithRawModel(FRWAPI.Utils.flowAddress(publicKey))
                         let account = response.accounts?
                             .filter { ($0.weight ?? 0) >= 1000 && $0.address != nil }.first
                         if let model = account {
-                            addressList[item.uniq] = model.address ?? "0x"
+                            addressList[userId] = model.address ?? "0x"
+                        }
+                    } else {
+                        log.error("[Launch] first login check failed:\(userId)")
+                    }
+                }
+                //
+                let spKeyList = SeedPhraseKey.seedPhraseStorage.allKeys
+                for key in spKeyList {
+                    do {
+                        guard let provider = try? SeedPhraseKey.wallet(id: key) else {
+                            log.error("[Launch] seed phrase restore failed.\(key): not found")
+                            continue
+                        }
+                        guard let publicKey = try? provider.publicKey(signAlgo: .ECDSA_SECP256k1)?.hexString else {
+                            log.error("[Launch] seed phrase restore failed.\(key): public key")
+                            continue
+                        }
+                        let response: AccountResponse = try await Network
+                            .requestWithRawModel(FRWAPI.Utils.flowAddress(publicKey))
+                        let account = response.accounts?
+                            .filter { ($0.weight ?? 0) >= 1000 && $0.address != nil }.first
+                        if let model = account {
+                            addressList[key] = model.address ?? "0x"
+                        } else {
+                            log.error("[Launch] seed phrase not found account:\(key)")
                         }
                     } catch {
-                        log.error("[Launch] first login check failed:\(item.uniq)", context: error)
+                        log.error("[Launch] seed phrase restore failed.\(key):\(error)")
+                        continue
                     }
                 }
 
-                let uidList = addressList.map { $0.key }
-                let userAddress = addressList
+                let pkKeyList = FlowWalletKit.PrivateKey.PKStorage.allKeys
+                for key in pkKeyList {
+                    do {
+                        guard let provider = try? FlowWalletKit.PrivateKey.wallet(id: key) else {
+                            log.error("[Launch] Private key restore failed.\(key): not found")
+                            continue
+                        }
+                        let secpPublicKey = try? provider.publicKey(signAlgo: .ECDSA_SECP256k1)?.hexString
+                        let p256PublicKey = try? provider.publicKey(signAlgo: .ECDSA_P256)?.hexString
+                        let suffix = KeyProvider.getSuffix(with: key)
+                        var storePublicKey: String?
+                        if let publicKey = secpPublicKey, publicKey.hasPrefix(suffix) {
+                            storePublicKey = publicKey
+                        }
+                        if let publicKey = p256PublicKey, publicKey.hasPrefix(suffix) {
+                            storePublicKey = publicKey
+                        }
+                        guard let publicKey = storePublicKey else {
+                            continue
+                        }
+                        let response: AccountResponse = try await Network
+                            .requestWithRawModel(FRWAPI.Utils.flowAddress(publicKey))
+                        let account = response.accounts?
+                            .filter { ($0.weight ?? 0) >= 1000 && $0.address != nil }.first
+                        if let model = account {
+                            addressList[key] = model.address ?? "0x"
+                        } else {
+                            log.error("[Launch] Private key not found account:\(key)")
+                        }
+
+                    } catch {
+                        log.error("[Launch] Private key restore failed.\(key):\(error)")
+                        continue
+                    }
+                }
+
+                // FIXME: all key type
+                var result: [String: String] = [:]
+                for (key,value) in addressList {
+                    let userId = KeyProvider.getId(with: key)
+                    result[userId] = value
+                }
+                let uidList = result.map { $0.key }
+                let userAddress = result
                 DispatchQueue.main.async {
-                    self.loginUIDList = uidList
                     LocalUserDefaults.shared.userAddressOfDeletedApp = userAddress
                     LocalUserDefaults.shared.tryToRestoreAccountFlag = true
+                    self.loginUIDList = uidList
                 }
 
                 HUD.dismissLoading()
             } catch {
                 HUD.dismissLoading()
-                log.info("restore_account_failed".localized)
-//                HUD.showAlert(title: "", msg: "restore_account_failed".localized, cancelAction: {}, confirmTitle: "retry".localized) {
-//                    self.tryToRestoreOldAccountOnFirstLaunch()
-//                }
+                log.info("restore old failed:\(error)")
             }
         }
     }
@@ -301,16 +370,19 @@ extension UserManager {
             loginAnonymousIfNeeded()
             throw LLError.restoreLoginFailed
         }
-        var publicKey = ""
-        var signature = ""
-        var mnemonicStr = ""
-        if let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic) {
-            publicKey = hdWallet.getPublicKey()
-            guard let signToken = hdWallet.sign(token) else {
-                throw LLError.restoreLoginFailed
-            }
-            signature = signToken
-            mnemonicStr = hdWallet.mnemonic
+
+        guard let hdWallet = HDWallet(mnemonic: mnemonic, passphrase: "") else {
+            throw WalletError.mnemonicMissing
+        }
+
+        let provider = FlowWalletKit.SeedPhraseKey(hdWallet: hdWallet, storage: FlowWalletKit.SeedPhraseKey.seedPhraseStorage) 
+        let secpPublicKey = try provider.publicKey(signAlgo: .ECDSA_SECP256k1)
+        guard var publicKey = secpPublicKey?.hexString else {
+            throw WalletError.emptyPublicKey
+        }
+
+        guard var signature = provider.hdWallet.sign(token) else {
+            throw LLError.signFailed
         }
 
         userType = .phrase
@@ -334,14 +406,140 @@ extension UserManager {
             throw LLError.accountNotFound
         }
 
+        guard let customToken = response.data?.customToken, !customToken.isEmpty, let uid = response.data?.id else {
+            throw LLError.restoreLoginFailed
+        }
+        let storeUser = StoreUser(
+            publicKey: publicKey,
+            address: nil,
+            userId: uid,
+            keyType: provider.keyType,
+            account: nil
+        )
+        LocalUserDefaults.shared.addUser(user: storeUser)
+        WalletManager.shared.updateKeyProvider(provider: provider, storeUser: storeUser)
+        try await finishLogin(mnemonic: mnemonic, customToken: customToken)
+    }
+
+    func restoreLogin(with userId: String) async throws {
+        if Auth.auth().currentUser?.isAnonymous != true {
+            try await Auth.auth().signInAnonymously()
+            DispatchQueue.main.async {
+                self.activatedUID = nil
+                self.userInfo = nil
+            }
+        }
+
+        guard let token = try? await getIDToken(), !token.isEmpty else {
+            loginAnonymousIfNeeded()
+            throw LLError.restoreLoginFailed
+        }
+        guard let keyProvider = WalletManager.shared.keyProvider(with: userId) else {
+            throw LLError.restoreLoginFailed
+        }
+        let accountKey = await WalletManager.shared.accountKey(with: userId)
+
+        guard let signData = token.addUserMessage(),
+              let signAlgo = accountKey?.signAlgo,
+              let hashAlgo = accountKey?.hashAlgo,
+              let publicKey = try keyProvider.publicKey(signAlgo: signAlgo)?.hexValue,
+              !publicKey.isEmpty
+        else {
+            throw LLError.signFailed
+        }
+
+        let signature = try keyProvider.sign(data: signData, signAlgo: signAlgo, hashAlgo: hashAlgo)
+
+        await IPManager.shared.fetch()
+        let key = AccountKey(
+            hashAlgo: hashAlgo.index,
+            publicKey: publicKey,
+            signAlgo: signAlgo.index
+        )
+
+        let request = LoginRequest(
+            signature: signature.hexValue,
+            accountKey: key,
+            deviceInfo: IPManager.shared.toParams()
+        )
+        let response: Network.Response<LoginResponse> = try await Network
+            .requestWithRawModel(FRWAPI.User.login(request))
+        if response.httpCode == 404 {
+            throw LLError.accountNotFound
+        }
         guard let customToken = response.data?.customToken, !customToken.isEmpty else {
             throw LLError.restoreLoginFailed
         }
+        
+        let storeUser = StoreUser(
+            publicKey: publicKey,
+            address: nil,
+            userId: userId,
+            keyType: keyProvider.keyType,
+            account: accountKey
+        )
+        WalletManager.shared.updateKeyProvider(provider: keyProvider, storeUser: storeUser)
 
-        try await finishLogin(mnemonic: mnemonicStr, customToken: customToken)
+        try await finishLogin(mnemonic: "", customToken: customToken)
     }
 
     func restoreLogin(userId: String) async throws {
+        EventTrack.Dev.restoreLogin(userId: userId)
+        if Auth.auth().currentUser?.isAnonymous != true {
+            try await Auth.auth().signInAnonymously()
+            DispatchQueue.main.async {
+                self.activatedUID = nil
+                self.userInfo = nil
+            }
+        }
+        
+        guard let token = try? await getIDToken(), !token.isEmpty else {
+            loginAnonymousIfNeeded()
+            throw LLError.restoreLoginFailed
+        }
+        let secureKey = try SecureEnclaveKey.wallet(id: userId)
+
+        guard let signData = token.addUserMessage(),
+              let publicKey = try secureKey.publicKey()?.hexValue,
+              !publicKey.isEmpty
+        else {
+            throw LLError.signFailed
+        }
+
+        let signature = try secureKey.sign(data: signData, hashAlgo: .SHA2_256)
+
+        await IPManager.shared.fetch()
+        let key = AccountKey(
+            hashAlgo: Flow.HashAlgorithm.SHA2_256.index,
+            publicKey: publicKey,
+            signAlgo: Flow.SignatureAlgorithm.ECDSA_P256.index
+        )
+
+        let request = LoginRequest(
+            signature: signature.hexValue,
+            accountKey: key,
+            deviceInfo: IPManager.shared.toParams()
+        )
+
+        let response: Network.Response<LoginResponse> = try await Network
+            .requestWithRawModel(FRWAPI.User.login(request))
+        if response.httpCode == 404 {
+            throw LLError.accountNotFound
+        }
+        userType = .secure
+        guard let customToken = response.data?.customToken, !customToken.isEmpty else {
+            throw LLError.restoreLoginFailed
+        }
+        try await finishLogin(mnemonic: "", customToken: customToken)
+    }
+
+    func importLogin(
+        by address: String,
+        userName: String,
+        flowKey: Flow.AccountKey,
+        privateKey: any KeyProtocol,
+        isImport: Bool = false
+    ) async throws {
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
             DispatchQueue.main.async {
@@ -355,44 +553,74 @@ extension UserManager {
             throw LLError.restoreLoginFailed
         }
 
-        guard let publicData = try WallectSecureEnclave.Store.fetchModel(by: userId)?.publicKey,
-              !publicData.isEmpty else {
-            throw LLError.restoreLoginFailed
-        }
-
-        let sec = try WallectSecureEnclave(privateKey: publicData)
-
-        guard let signData = token.AddUserMessage(),
-              let publicKey = sec.key.publickeyValue,
-              !publicKey.isEmpty
+        guard let signData = token.addUserMessage()
         else {
             throw LLError.signFailed
         }
-        let signature = try sec.sign(data: signData).hexValue
+        let publicKey = flowKey.publicKey.description
+        let signature = try privateKey.sign(
+            data: signData,
+            signAlgo: flowKey.signAlgo,
+            hashAlgo: flowKey.hashAlgo
+        ).hexValue
+
         await IPManager.shared.fetch()
-        // TODO: hash & sign algo
+
         let key = AccountKey(
-            hashAlgo: Flow.HashAlgorithm.SHA2_256.index,
+            hashAlgo: flowKey.hashAlgo.index,
             publicKey: publicKey,
-            signAlgo: Flow.SignatureAlgorithm.ECDSA_P256.index
+            signAlgo: flowKey.signAlgo.index
         )
 
-        let request = LoginRequest(
-            signature: signature,
-            accountKey: key,
-            deviceInfo: IPManager.shared.toParams()
-        )
-        let response: Network.Response<LoginResponse> = try await Network
-            .requestWithRawModel(FRWAPI.User.login(request))
-        if response.httpCode == 404 {
-            throw LLError.accountNotFound
+        var loginResponse: LoginResponse?
+        if isImport {
+            let request = RestoreImportRequest(
+                username: userName,
+                accountKey: key,
+                deviceInfo: IPManager.shared.toParams(),
+                address: address
+            )
+            let response: Network.Response<LoginResponse> = try await Network
+                .requestWithRawModel(FRWAPI.User.loginWithImport(request))
+            if response.httpCode == 404 {
+                throw LLError.accountNotFound
+            }
+            loginResponse = response.data
+        } else {
+            let request = LoginRequest(
+                signature: signature,
+                accountKey: key,
+                deviceInfo: IPManager.shared.toParams(),
+                address: address
+            )
+            let response: Network.Response<LoginResponse> = try await Network
+                .requestWithRawModel(FRWAPI.User.login(request))
+            if response.httpCode == 404 {
+                throw LLError.accountNotFound
+            }
+            loginResponse = response.data
         }
-        userType = .secure
-        guard let customToken = response.data?.customToken, !customToken.isEmpty else {
+
+        userType = .fromImport
+        guard let customToken = loginResponse?.customToken, let uid = loginResponse?.id,
+              !customToken.isEmpty
+        else {
             throw LLError.restoreLoginFailed
         }
-
+        try privateKey.store(id: privateKey.createKey(uid: uid), password: KeyProvider.password(with: uid))
+        log.debug("[user] \(flowKey)")
+        let store = StoreUser(
+            publicKey: publicKey,
+            address: address,
+            userId: uid,
+            keyType: privateKey.keyType,
+            account: flowKey.toStoreKey()
+        )
+        LocalUserDefaults.shared.addUser(user: store)
+        WalletManager.shared.updateKeyProvider(provider: privateKey, storeUser: store)
+        log.debug("[user] \(store)")
         try await finishLogin(mnemonic: "", customToken: customToken)
+
     }
 }
 
@@ -409,39 +637,25 @@ extension UserManager {
             return
         }
 
-        if let mnemonic = WalletManager.shared.getMnemonicFromKeychain(uid: uid),
-           !mnemonic.isEmpty {
-            var addressStr = LocalUserDefaults.shared.userAddressOfDeletedApp[uid]
-            if addressStr == nil {
-                addressStr = MultiAccountStorage.shared.getWalletInfo(uid)?
-                    .getNetworkWalletModel(network: .mainnet)?.getAddress
-            }
-            guard let address = addressStr else {
-                throw LLError.invalidAddress
-            }
-            var accountKeys: Flow.AccountKey?
-            let account = try? await FlowNetwork.getAccountAtLatestBlock(address: address)
-            let hdWallet = WalletManager.shared.createHDWallet(mnemonic: mnemonic)
-            accountKeys = account?.keys
-                .first { $0.publicKey.description == hdWallet?.getPublicKey() }
-            if accountKeys != nil {
-                try await restoreLogin(withMnemonic: mnemonic, userId: uid)
-                return
-            }
-        }
-        let allModel = try WallectSecureEnclave.Store.fetchAllModel(by: uid)
-        let model = try WallectSecureEnclave.Store.fetchModel(by: uid)
-
-        if model != nil {
-            try await restoreLogin(userId: uid)
+        if WalletManager.shared.keyProvider(with: uid) != nil {
+            try await restoreLogin(with: uid)
             return
         }
-        if model == nil, !allModel.isEmpty {
-            WalletManager.shared.warningIfKeyIsInvalid(userId: uid, markHide: true)
-            return
-        }
-
-        throw WalletError.mnemonicMissing
+        try await restoreLogin(userId: uid)
+        // FIXME: data migrate from device to other device,the private key is destructive
+//        let allModel = try WallectSecureEnclave.Store.fetchAllModel(by: uid)
+//        let model = try WallectSecureEnclave.Store.fetchModel(by: uid)
+//
+//        if model != nil {
+//            try await restoreLogin(userId: uid)
+//            return
+//        }
+//        if model == nil && allModel.count > 0 {
+//            WalletManager.shared.warningIfKeyIsInvalid(userId: uid, markHide: true)
+//            return
+//        }
+//
+//        throw WalletError.mnemonicMissing
     }
 }
 
@@ -644,7 +858,7 @@ extension UserManager {
 extension UserManager {
     struct AccountResponse: Codable {
         let publicKey: String?
-        let accounts: [AccountInfo]?
+        var accounts: [AccountInfo]?
     }
 
     struct AccountInfo: Codable {
@@ -653,3 +867,38 @@ extension UserManager {
         let keyId: Int?
     }
 }
+
+// MARK: UserManager.StoreUser
+
+extension UserManager {
+
+    struct Accountkey: Codable {
+        public var index: Int
+        public let signAlgo: Flow.SignatureAlgorithm
+        public let hashAlgo: Flow.HashAlgorithm
+        public let weight: Int
+    }
+
+    struct StoreUser: Codable {
+        let publicKey: String
+        let address: String?
+        let userId: String
+        let keyType: FlowWalletKit.KeyType
+        let account: UserManager.Accountkey?
+        var updateAt: TimeInterval = ceil(Date().timeIntervalSince1970)
+
+        func copy(address: String? = nil, account: UserManager.Accountkey? = nil) -> StoreUser {
+            return StoreUser(publicKey: publicKey,
+                             address: address ?? self.address,
+                             userId: userId,
+                             keyType: keyType,
+                             account: account ?? self.account)
+        }
+    }
+}
+extension Flow.AccountKey {
+    func toStoreKey() -> UserManager.Accountkey {
+        UserManager.Accountkey(index: index, signAlgo: signAlgo, hashAlgo: hashAlgo, weight: weight)
+    }
+}
+

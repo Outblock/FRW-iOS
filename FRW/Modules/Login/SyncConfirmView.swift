@@ -16,7 +16,7 @@ struct SyncConfirmView: RouteableView {
 
     init(user: SyncInfo.User) {
         self.user = user
-        _viewModel = StateObject(wrappedValue: SyncConfirmViewModel(userId: user.userId ?? ""))
+        _viewModel = StateObject(wrappedValue: SyncConfirmViewModel(userId: user.userId ?? "", address: user.walletAddress))
     }
 
     // MARK: Internal

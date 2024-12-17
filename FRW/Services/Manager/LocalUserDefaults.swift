@@ -49,9 +49,12 @@ extension LocalUserDefaults {
 
         case whatIsBack
         case backupSheetNotAsk
+
+        case userList
         case checkCoa
 
         case customToken
+        case migrationFinished
     }
 
     enum FlowNetworkType: String, CaseIterable, Codable {
@@ -381,6 +384,27 @@ class LocalUserDefaults: ObservableObject {
         }
     }
 
+    var userList: [UserManager.StoreUser] {
+        set {
+            if let data = try? JSONEncoder().encode(newValue) {
+                UserDefaults.standard.set(data, forKey: Keys.userList.rawValue)
+            } else {
+                UserDefaults.standard.removeObject(forKey: Keys.userList.rawValue)
+            }
+        }
+        get {
+            guard let data = UserDefaults.standard.data(forKey: Keys.userList.rawValue) else {
+                return []
+            }
+            do {
+                let model = try JSONDecoder().decode([UserManager.StoreUser].self, from: data)
+                return model
+            } catch {
+                return []
+            }
+        }
+    }
+
     var checkCoa: [String] {
         set {
             UserDefaults.standard.setValue(newValue, forKey: Keys.checkCoa.rawValue)
@@ -404,11 +428,50 @@ class LocalUserDefaults: ObservableObject {
             if let data = UserDefaults.standard.data(forKey: Keys.customToken.rawValue),
                let list = try? JSONDecoder().decode([CustomToken].self, from: data) {
                 return list
+
             } else {
                 return []
             }
         }
     }
+
+    func addUser(user: UserManager.StoreUser) {
+        var list = userList
+        let index = list.lastIndex { $0.publicKey == user.publicKey && $0.keyType == user.keyType }
+        if let result = index {
+            list[result] = user
+        } else {
+            list.append(user)
+        }
+        self.userList = list
+    }
+
+    func updateUser(by userId: String, publicKey: String ,address: String? = nil, account: UserManager.Accountkey? = nil) {
+        var users = userList
+        let index = users.lastIndex(where: { $0.userId == userId && $0.publicKey == publicKey  })
+        guard let index = index else {
+            return
+        }
+        let user = users[index]
+        let newUser = user.copy(address: address, account: account)
+        users[index] = newUser
+        self.userList = users
+    }
+
+    func updateSEUser(by userId: String, address: String) {
+        var users = userList
+        let index = users.lastIndex(where: { $0.userId == userId && $0.keyType == .secureEnclave  })
+        guard let index = index else {
+            return
+        }
+        let user = users[index]
+        let newUser = user.copy(address: address, account: nil)
+        users[index] = newUser
+        self.userList = users
+    }
+
+    @AppStorage(Keys.migrationFinished.rawValue)
+    var migrationFinished: Bool = false
 }
 
 extension LocalUserDefaults {

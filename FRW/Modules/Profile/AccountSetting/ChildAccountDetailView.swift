@@ -71,7 +71,7 @@ class ChildAccountDetailViewModel: ObservableObject {
         if index == 0 {
             if var list = collections {
                 if !showEmptyCollection {
-                    list = list.filter { $0.count > 0 }
+                    list = list.filter { $0.count > 0  }
                 }
                 accessibleItems = list
             } else {
@@ -164,7 +164,8 @@ class ChildAccountDetailViewModel: ObservableObject {
 
         Task {
             guard let parent = WalletManager.shared.getPrimaryWalletAddress(),
-                  let child = self.childAccount.addr else {
+                  let child = self.childAccount.addr
+            else {
                 DispatchQueue.main.async {
                     self.collections = []
                     self.accessibleItems = []
@@ -238,7 +239,8 @@ class ChildAccountDetailViewModel: ObservableObject {
 
         Task {
             guard let parent = WalletManager.shared.getPrimaryWalletAddress(),
-                  let child = childAccount.addr else {
+                  let child = childAccount.addr
+            else {
                 DispatchQueue.main.async {
                     self.coins = []
                     self.accessibleItems = []
@@ -283,7 +285,7 @@ struct ChildAccountDetailView: RouteableView {
         .padding(.bottom, 20)
         .backgroundFill(Color.LL.Neutrals.background)
         .applyRouteable(self)
-        .halfSheet(showSheet: $vm.isPresent) {
+        .halfSheet(showSheet: $vm.isPresent, autoResizing: true, backgroundColor: Color.LL.Neutrals.background) {
             UnlinkConfirmView()
                 .environmentObject(vm)
         }
@@ -578,7 +580,7 @@ extension ChildAccountDetailView {
                         .padding(.horizontal, 28)
                 }
             }
-            .backgroundFill(Color.LL.Neutrals.background)
+            .fixedSize(horizontal: false, vertical: true)
         }
 
         var fromToView: some View {
