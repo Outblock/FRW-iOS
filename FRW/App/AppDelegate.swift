@@ -18,6 +18,7 @@ import SwiftyBeaver
 import UIKit
 import WalletConnectNotify
 import WalletCore
+import SwiftyDropbox
 
 #if DEBUG
 import Atlantis
@@ -108,6 +109,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             }
         }
 
+        let oauthCompletion: DropboxOAuthCompletion = {
+            NotificationCenter.default.post(name: .dropboxCallback, object: $0)
+        }
+
+        let canHandleUrl = DropboxClientsManager.handleRedirectURL(url, includeBackgroundClient: false, completion: oauthCompletion)
+        if canHandleUrl {
+            return canHandleUrl
+        }
         return GIDSignIn.sharedInstance.handle(url)
     }
 

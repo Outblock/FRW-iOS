@@ -1105,3 +1105,5 @@ Key Store and Private Key.";
 "invalid_password" = "Key decryption failed - possibly wrong password";
 "not_find_address" = "cannot find this key under this address";
 "required_info_not" = "Required information has not been entered.";
+
+"Dropbox" = "Dropbox";
