@@ -275,7 +275,7 @@ extension RouteMap.Wallet: RouterTarget {
             Router.route(to: RouteMap.Explore.browser(url))
         case .swapCadenceToken(let token):
             guard let symbol = token.symbol else { return }
-            guard let url = URL(string: "https://app.increment.fi/swap?in=A.1654653399040a61.FlowToken&out=\(symbol)") else { return }
+            guard let url = URL(string: "https://app.increment.fi/swap?in=A.1654653399040a61.FlowToken&out=\(token.contractId)") else { return }
             Router.route(to: RouteMap.Explore.browser(url))
             
         case let .selectToken(selectedToken, disableTokens, callback):

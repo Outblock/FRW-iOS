@@ -279,10 +279,10 @@ extension TokenDetailViewModel {
     }
 
     func onSwapToken() {
-        if self.tokenManager.isEvmToken(self.token) {
-            Router.route(to: RouteMap.Wallet.swapEvmToken(self.token))
-        } else if self.tokenManager.isCadenceToken(token) {
+        if self.tokenManager.isCadenceToken(token) {
             Router.route(to: RouteMap.Wallet.swapCadenceToken(self.token))
+        } else if self.tokenManager.isEvmToken(self.token) {
+            Router.route(to: RouteMap.Wallet.swapEvmToken(self.token))
         } else {
             log.warning("Unable to detect the token type: \(token)")
         }
@@ -460,7 +460,7 @@ extension TokenDetailViewModel {
                 .selectedChildAccount != nil {
                 showSwapButton = false
             } else {
-                showSwapButton = true
+                showSwapButton = self.tokenManager.isCadenceToken(self.token) || self.tokenManager.isEvmToken(self.token)
             }
         } else {
             showSwapButton = false
