@@ -270,11 +270,9 @@ extension RouteMap.Wallet: RouterTarget {
             let vc = TransactionListViewController(contractId: contractId)
             navi.pushViewController(vc, animated: true)
         case .swapEvmToken(let token):
-            guard let symbol = token.symbol else { return }
             guard let url = URL(string: "https://swap.kittypunch.xyz/#/swap") else { return }
             Router.route(to: RouteMap.Explore.browser(url))
         case .swapCadenceToken(let token):
-            guard let symbol = token.symbol else { return }
             guard let url = URL(string: "https://app.increment.fi/swap?in=A.1654653399040a61.FlowToken&out=\(token.contractId)") else { return }
             Router.route(to: RouteMap.Explore.browser(url))
             

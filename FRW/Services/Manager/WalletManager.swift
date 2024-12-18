@@ -1091,16 +1091,14 @@ extension WalletManager {
     
     func isEvmToken(_ token: TokenModel) -> Bool {
         guard self.isSelectedEVMAccount else { return false }
-        guard let symbol = token.symbol else { return false }
         guard let evmSupportedCoins else { return false }
-        return evmSupportedCoins.contains(where: { symbol == $0.symbol })
+        return evmSupportedCoins.contains(where: { token.contractId == $0.contractId })
     }
     
     func isCadenceToken(_ token: TokenModel) -> Bool {
         guard self.isSelectedFlowAccount else { return false }
-        guard let symbol = token.symbol else { return false }
         guard let supportedCoins else { return false }
-        return supportedCoins.contains(where: { symbol == $0.symbol })
+        return supportedCoins.contains(where: { token.contractId == $0.contractId })
     }
 }
 
