@@ -51,6 +51,8 @@ struct BackupInfoModel: Codable {
             return .passkey
         case 4:
             return .fullWeightSeedPhrase
+        case 5:
+            return .dropbox
         default:
             return .undefined
         }
@@ -77,6 +79,7 @@ enum BackupType: Int, Codable {
     case manual = 2
     case passkey = 3
     case fullWeightSeedPhrase = 4
+    case dropbox = 5
 
     // MARK: Internal
 
@@ -92,6 +95,8 @@ enum BackupType: Int, Codable {
             return "Recovery Phrase"
         case .fullWeightSeedPhrase:
             return "Full Weight Seed Phrase"
+        case .dropbox:
+            return "Dropbox".localized
         default:
             return "Undefined"
         }
@@ -109,6 +114,8 @@ enum BackupType: Int, Codable {
             return ""
         case .fullWeightSeedPhrase:
             return "icon_key_phrase"
+        case .dropbox:
+            return "icon_key_dropbox"
         case .undefined:
             return ""
         }

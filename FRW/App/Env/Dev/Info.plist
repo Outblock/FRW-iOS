@@ -50,7 +50,21 @@
 				<string>fw</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>db-igsit8jtlhq6dfm</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string></string>
+		</dict>
 	</array>
+	<key>CrowdinDistributionHash</key>
+	<string>f4bff0f0e2ed98c2ba53a29qzvm</string>
+	<key>CrowdinSourceLanguage</key>
+	<string>en</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSAppTransportSecurity</key>
@@ -87,17 +101,16 @@
 		<string>e-Ukraine-Medium.ttf</string>
 		<string>e-Ukraine-Light.ttf</string>
 	</array>
-	<key>CrowdinDistributionHash</key>
-	<string>f4bff0f0e2ed98c2ba53a29qzvm</string>
-	<key>CrowdinSourceLanguage</key>
-	<string>en</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 	</dict>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>dbapi-8-emm</string>
+		<string>dbapi-2</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>processing</string>

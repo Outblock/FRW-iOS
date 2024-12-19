@@ -34,7 +34,7 @@ class ServiceConfig {
     private let dict: [String: String]
 }
 
-// MARK: instabug config
+// MARK: config
 
 extension ServiceConfig {
     private func setupInstabug() {
@@ -50,5 +50,15 @@ extension ServiceConfig {
             fatalError("fatalError ===> Can't find MixPanel Token at ServiceConfig.plist")
         }
         EventTrack.start(token: token)
+    }
+}
+
+extension ServiceConfig {
+
+    var dropboxAppKey: String {
+        guard let appKey = dict["dropbox-appkey"] else {
+            fatalError("Can't find Dropbox appKey at ServiceConfig.plist")
+        }
+        return appKey
     }
 }

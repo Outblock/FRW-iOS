@@ -162,16 +162,17 @@ class BackupUploadViewModel: ObservableObject {
                         self.mnemonicBlur = true
                     }
                     try await MultiBackupManager.shared.preLogin(with: currentType)
-                    let result = try await MultiBackupManager.shared
-                        .registerKeyToChain(on: currentType)
+                    let result = try await MultiBackupManager.shared.registerKeyToChain(on: currentType)
                     if result {
                         toggleProcess(process: .upload)
-                        onClickButton()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            self.onClickButton()
+                        }
+
                     } else {
                         DispatchQueue.main.async {
                             self.buttonState = .enabled
                         }
-
                         HUD.error(title: "create error on chain")
                     }
                 } catch {
@@ -190,10 +191,15 @@ class BackupUploadViewModel: ObservableObject {
 
                     try await MultiBackupManager.shared.backupKey(on: currentType)
                     toggleProcess(process: .regist)
-                    onClickButton()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.onClickButton()
+                    }
                 } catch {
-                    buttonState = .enabled
-                    hasError = true
+                    DispatchQueue.main.async {
+                        self.buttonState = .enabled
+                        self.hasError = true
+                    }
+
                     log.error(error)
                     trackCreatFailed(message: "upload:" + error.localizedDescription)
                 }

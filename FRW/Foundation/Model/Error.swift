@@ -53,6 +53,7 @@ enum BackupError: Error {
     case topVCNotFound
     case fileIsNotExistOnCloud
     case CloudFileData
+    case unauthorized
 }
 
 // MARK: - GoogleBackupError
