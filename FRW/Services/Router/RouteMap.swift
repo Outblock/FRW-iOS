@@ -129,6 +129,7 @@ extension RouteMap {
         case backupManual
 
         case backupList
+        case rootToBackupList
         case multiBackup([MultiBackupType])
         case uploadMulti([MultiBackupType])
         case showPhrase(String)
@@ -170,6 +171,11 @@ extension RouteMap.Backup: RouterTarget {
             navi.push(content: ManualBackupView())
         case .backupList:
             navi.push(content: BackupListView())
+        case .rootToBackupList:
+            guard let rootController = navi.viewControllers.first else { return }
+            let backupController = RouteableUIHostingController(rootView: BackupListView())
+            let viewControllers = [rootController, backupController]
+            navi.setViewControllers(viewControllers, animated: false)
         case let .multiBackup(items):
             navi.push(content: BackupMultiView(items: items))
         case let .uploadMulti(items):

@@ -45,6 +45,7 @@ extension LocalUserDefaults {
         case EVMAddress
         case showMoveAssetOnBrowser
         case removedNewsIds
+        case shouldShowConfettiOnHome
 
         case whatIsBack
         case backupSheetNotAsk
@@ -138,6 +139,9 @@ class LocalUserDefaults: ObservableObject {
     var flowNetwork: FlowNetworkType = .mainnet
     #endif
 
+    @AppStorage(Keys.shouldShowConfettiOnHome.rawValue)
+    var shouldShowConfettiOnHome: Bool = false
+    
     @AppStorage(Keys.activatedUID.rawValue)
     var activatedUID: String?
 

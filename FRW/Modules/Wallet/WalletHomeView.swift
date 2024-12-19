@@ -76,10 +76,11 @@ struct WalletHomeView: View {
                     vm.backupTipsPresent = false
                 })
             }
-            .onAppear(perform: {
+            .onAppear {
                 safeArea = proxy.safeAreaInsets
                 size = proxy.size
-            })
+                self.vm.viewWillAppear()
+            }
             .navigationBarHidden(true)
             .ignoresSafeArea(.container, edges: .top)
         }
