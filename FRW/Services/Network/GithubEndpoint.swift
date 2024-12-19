@@ -35,8 +35,6 @@ extension GithubEndpoint: TargetType {
                     return "/Outblock/token-list-jsons/outblock/jsons/mainnet/flow/dev.json"
                 case .testnet:
                     return "/Outblock/token-list-jsons/outblock/jsons/testnet/flow/dev.json"
-                case .previewnet:
-                    return "/Outblock/token-list-jsons/outblock/jsons/previewnet/flow/default.json"
                 }
             } else {
                 switch LocalUserDefaults.shared.flowNetwork {
@@ -44,8 +42,6 @@ extension GithubEndpoint: TargetType {
                     return "/Outblock/token-list-jsons/outblock/jsons/mainnet/flow/default.json"
                 case .testnet:
                     return "/Outblock/token-list-jsons/outblock/jsons/testnet/flow/default.json"
-                case .previewnet:
-                    return "/Outblock/token-list-jsons/outblock/jsons/previewnet/flow/default.json"
                 }
             }
         case .EVMNFTList:
@@ -54,8 +50,6 @@ extension GithubEndpoint: TargetType {
                 return "/Outblock/token-list-jsons/outblock/jsons/testnet/flow/nfts.json"
             case .mainnet:
                 return "/Outblock/token-list-jsons/outblock/jsons/mainnet/flow/nfts.json"
-            case .previewnet:
-                return "/Outblock/token-list-jsons/outblock/jsons/previewnet/flow/nfts.json"
             }
         case .EVMTokenList:
             switch LocalUserDefaults.shared.flowNetwork {

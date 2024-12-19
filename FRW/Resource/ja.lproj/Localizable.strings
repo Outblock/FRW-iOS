@@ -934,7 +934,6 @@
 "account_key_index" = "キー・インデックス";
 "account_key_done_revoked_tips" = "キーが失効した";
 "other_key" = "その他のキー";
-"enable_previewnet_failed" = "プレビューネットの有効化に失敗";
 "evm_on_flow" = "フロー上のEVM";
 "other" = "その他";
 "evm_check_balance" = "残高が0.02未満です。\n 続行するには口座に入金してください。";

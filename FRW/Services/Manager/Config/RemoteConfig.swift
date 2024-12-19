@@ -12,7 +12,6 @@ extension RemoteConfigManager {
         let mainnet: [String: String]?
         let testnet: [String: String]?
         let crescendo: [String: String]?
-        let previewnet: [String: String]?
     }
 
     struct ENVConfig: Codable {
@@ -66,7 +65,6 @@ extension RemoteConfigManager {
         let mainnet: PayerInfo
         let testnet: PayerInfo
         let crescendo: PayerInfo?
-        let previewnet: PayerInfo?
     }
 
     // MARK: - Net

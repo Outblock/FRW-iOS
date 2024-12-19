@@ -21,7 +21,6 @@ extension FRWAPI {
         case search(String)
         case manualCheck
         case crescendo(NetworkRequest)
-        case previewnet(NetworkRequest)
         case keys
         case devices(String)
         case syncDevice(SyncInfo.DeviceInfo)
@@ -71,8 +70,6 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
             return "/v3/sync"
         case .addSigned:
             return "/v3/signed"
-        case .previewnet:
-            return "/v1/user/address/network"
         case .updateDevice:
             return "/v1/user/device"
         case .checkimport:
@@ -87,7 +84,7 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
         case .checkUsername, .userInfo, .userWallet, .search, .keys, .devices, .checkimport:
             return .get
         case .login, .register, .userAddress, .manualCheck, .crescendo, .syncDevice, .addSigned,
-             .previewnet, .updateDevice, .loginWithImport:
+             .updateDevice, .loginWithImport:
             return .post
         }
     }
@@ -121,8 +118,6 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
             return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         case let .crescendo(request):
             return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
-        case let .previewnet(request):
-            return .requestCustomJSONEncodable(request, encoder: FRWAPI.jsonEncoder)
         case let .updateDevice(uuid):
             return .requestJSONEncodable(["device_id": uuid])
         case let .checkimport(key):
@@ -137,8 +132,6 @@ extension FRWAPI.User: TargetType, AccessTokenAuthorizable {
         switch self {
         case .crescendo:
             headers["Network"] = "crescendo"
-        case .previewnet:
-            headers["Network"] = "previewnet"
         default:
             break
         }
