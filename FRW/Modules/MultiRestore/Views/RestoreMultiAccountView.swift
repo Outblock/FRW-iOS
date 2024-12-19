@@ -42,7 +42,7 @@ struct RestoreMultiAccountView: RouteableView {
                 }
             }
 
-            Text("find_matching_wallet".localized(viewModel.items.count))
+            Text("find_matching_wallet".localized)
                 .font(.inter(size: 16, weight: .semibold))
                 .foregroundStyle(Color.Theme.Accent.grey)
                 .padding(.top, 14)
