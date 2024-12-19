@@ -40,7 +40,7 @@ struct BackupUploadView: RouteableView {
                     if viewModel.process != .end {
                         Image(viewModel.currentIcon)
                             .resizable()
-                            .aspectRatio(contentMode: .fill)
+                            .aspectRatio(contentMode: .fit)
                             .frame(width: 120, height: 120)
                             .background(.Theme.Background.white)
                             .cornerRadius(60)
@@ -373,10 +373,10 @@ extension BackupUploadView {
 }
 
 #Preview {
-//    BackupUploadView(items: [])
+    BackupUploadView.ProgressView(items: [.google, .dropbox], currentIndex: .constant(1))
 //    BackupUploadView.CompletedView(items: [.google,.passkey, .icloud, ])
-    BackupUploadView.PhraseWords(
-        isBlur: true,
-        mnemonic: "timber bulk peace tree cannon vault tomorrow case violin decade bread song song song song"
-    )
+//    BackupUploadView.PhraseWords(
+//        isBlur: true,
+//        mnemonic: "timber bulk peace tree cannon vault tomorrow case violin decade bread song song song song"
+//    )
 }

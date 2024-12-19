@@ -36,17 +36,17 @@ struct BackupMultiView: RouteableView {
             }
             .padding(.horizontal, 40)
 
-            LazyVGrid(columns: columns(), spacing: 40) {
+            VStack(spacing: 8) {
                 ForEach(viewModel.list.indices, id: \.self) { index in
                     let item = $viewModel.list[index]
                     ItemView(item: item) { item in
                         onClick(item: item)
                     }
-                    .frame(height: 136)
+                    .frame(maxWidth: .infinity)
                 }
             }
-            .padding(.horizontal, 64)
-            .padding(.top, 64)
+            .padding(.horizontal, 18)
+            .padding(.top, 24)
 
             Spacer()
 
@@ -134,38 +134,39 @@ extension BackupMultiView {
         var onClick: (BackupMultiViewModel.MultiItem) -> Void
 
         var body: some View {
-            VStack(alignment: .center, spacing: 16) {
-                ZStack(alignment: .topTrailing) {
-                    ZStack(alignment: .center) {
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .inset(by: 1)
-                            .stroke(Color.Theme.Accent.green, lineWidth: isSelected ? 2 : 0)
-                            .background(.Theme.Background.white)
-                            .cornerRadius(24)
-                        Image(item.icon)
-                            .frame(width: 68, height: 68)
-                            .padding(.all, 14)
-                    }
 
-                    Image("check_circle_border")
-                        .resizable()
-                        .frame(width: 24, height: 24)
-                        .offset(x: 6, y: -6)
-                        .visibility(isSelected ? .visible : .gone)
-                }
-                .frame(width: 96, height: 96)
+            HStack(spacing: 12) {
+                Image(item.icon)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 44, height: 44)
+                    .clipped()
 
                 Text(item.name)
                     .font(.inter(size: 14))
                     .foregroundStyle(Color.Theme.Text.black8)
-                    .frame(height: 24)
+
+                Spacer()
+                Image("check_circle_border")
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                    .visibility(isSelected ? .visible : .gone)
             }
+            .padding(.horizontal, 16)
+            .frame(height: 68)
+            .shadow(color: .black.opacity(0.12), radius: 4, x: 0, y: 1)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .inset(by: 0.5)
+                    .stroke(Color.Theme.Accent.green, lineWidth: isSelected ? 1 : 0)
+            )
+            .frame(maxWidth: .infinity)
+            .background(.Theme.Background.pureWhite)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
             .onTapGesture {
                 onClick(item)
             }
         }
-
-        // MARK: Private
 
         @Binding
         private var isSelected: Bool
