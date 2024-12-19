@@ -11,7 +11,9 @@ import SwiftUI
 
 // MARK: - BrowserAuthzView
 
-struct BrowserAuthzView: View {
+struct BrowserAuthzView: View, PresentActionDelegate {
+    var changeHeight: (() -> Void)?
+    
     // MARK: Lifecycle
 
     init(vm: BrowserAuthzViewModel) {

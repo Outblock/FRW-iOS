@@ -28,7 +28,7 @@ struct AccountKeysView: RouteableView {
         }
         .backgroundFill(.Theme.Background.white)
         .mockPlaceholder(vm.status == PageStatus.loading)
-        .halfSheet(showSheet: $vm.showRovekeView, autoResizing: true, backgroundColor: Color.LL.Neutrals.background) {
+        .halfSheet(showSheet: $vm.showRovekeView, backgroundColor: Color.LL.Neutrals.background) {
             AccountKeyRevokeView()
                 .environmentObject(vm)
         }

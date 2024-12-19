@@ -8,16 +8,11 @@
 import SwiftUI
 import SwiftUIX
 
-struct MoveAssetsView: RouteableView, PresentActionDelegate {
+struct MoveAssetsView: RouteableView {
     // MARK: Internal
 
-    var changeHeight: (() -> Void)?
-
     var token: TokenModel?
-
-    var title: String {
-        ""
-    }
+    var title: String { "" }
 
     var showCheck: Bool {
         MoveAssetsAction.shared.showCheckOnMoveAsset
@@ -31,92 +26,90 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
     }
 
     var body: some View {
-        ScrollView {
-            VStack {
-                TitleWithClosedView(title: "move_assets".localized, closeAction: {
-                    Router.dismiss(animated: true, completion: {
-                        MoveAssetsAction.shared.endBrowser()
-                    })
+        VStack {
+            TitleWithClosedView(title: "move_assets".localized, closeAction: {
+                Router.dismiss(animated: true, completion: {
+                    MoveAssetsAction.shared.endBrowser()
                 })
+            })
+            .padding(.top, 24)
+
+            Text(showNote)
+                .font(.inter(size: 14))
+                .multilineTextAlignment(.center)
+                .foregroundStyle(Color.Theme.Text.black8)
+                .frame(height: 72)
+
+            HStack {
+                Button {
+                    onClose()
+                    Router.route(to: RouteMap.Wallet.moveNFTs)
+                } label: {
+                    card(isNFT: true)
+                }
+                .buttonStyle(ScaleButtonStyle())
+
+                Spacer()
+                Button {
+                    if let current = currentToken() {
+                        onClose()
+                        Router.route(to: RouteMap.Wallet.moveToken(current))
+                    } else {
+                        HUD.error(title: "not found token")
+                    }
+                } label: {
+                    card(isNFT: false)
+                }
+                .buttonStyle(ScaleButtonStyle())
+            }
+            .padding(.top, 32)
+
+            if showCheck {
+                VPrimaryButton(
+                    model: ButtonStyle.primary,
+                    state: .enabled,
+                    action: {
+                        Router.dismiss(animated: true, completion: {
+                            MoveAssetsAction.shared.endBrowser()
+                        })
+                    },
+                    title: "skip".localized
+                )
                 .padding(.top, 24)
 
-                Text(showNote)
-                    .font(.inter(size: 14))
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(Color.Theme.Text.black8)
-                    .frame(height: 72)
-
                 HStack {
-                    Button {
-                        onClose()
-                        Router.route(to: RouteMap.Wallet.moveNFTs)
-                    } label: {
-                        card(isNFT: true)
-                    }
-                    .buttonStyle(ScaleButtonStyle())
-
                     Spacer()
-                    Button {
-                        if let current = currentToken() {
-                            onClose()
-                            Router.route(to: RouteMap.Wallet.moveToken(current))
-                        } else {
-                            HUD.error(title: "not found token")
-                        }
-                    } label: {
-                        card(isNFT: false)
-                    }
-                    .buttonStyle(ScaleButtonStyle())
-                }
-                .padding(.top, 32)
-
-                if showCheck {
-                    VPrimaryButton(
-                        model: ButtonStyle.primary,
-                        state: .enabled,
-                        action: {
-                            Router.dismiss(animated: true, completion: {
-                                MoveAssetsAction.shared.endBrowser()
-                            })
-                        },
-                        title: "skip".localized
-                    )
-                    .padding(.top, 24)
-
-                    HStack {
-                        Spacer()
-                        if notAsk {
-                            Image("icon_check_rounde_0")
-                                .resizable()
-                                .renderingMode(.template)
-                                .foregroundStyle(Color.Theme.Text.black8)
-                                .frame(width: 16, height: 16)
-                        } else {
-                            Image("icon_check_rounde_1")
-                                .resizable()
-                                .frame(width: 16, height: 16)
-                        }
-
-                        Text("do_not_ask".localized)
-                            .font(.inter(size: 16))
+                    if notAsk {
+                        Image("icon_check_rounde_0")
+                            .resizable()
+                            .renderingMode(.template)
                             .foregroundStyle(Color.Theme.Text.black8)
-                        Spacer()
+                            .frame(width: 16, height: 16)
+                    } else {
+                        Image("icon_check_rounde_1")
+                            .resizable()
+                            .frame(width: 16, height: 16)
                     }
-                    .padding(.top)
-                    .onTapGesture {
-                        notAsk.toggle()
-                    }
-                    .padding(.bottom, 43)
-                } else {
+
+                    Text("do_not_ask".localized)
+                        .font(.inter(size: 16))
+                        .foregroundStyle(Color.Theme.Text.black8)
                     Spacer()
                 }
+                .padding(.top)
+                .onTapGesture {
+                    notAsk.toggle()
+                }
+                .padding(.bottom, 43)
+            } else {
+                Spacer()
             }
-            .padding(.horizontal, 18)
         }
-        .backgroundFill(Color.Theme.Background.grey)
+        .padding(.horizontal, 18)
         .cornerRadius([.topLeading, .topTrailing], 16)
         .applyRouteable(self)
         .edgesIgnoringSafeArea(.all)
+        .backgroundFill(Color.Theme.Background.grey)
     }
 
     func toName() -> String {
