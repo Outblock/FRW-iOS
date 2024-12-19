@@ -181,7 +181,7 @@ func makeAutoResizeSheetViewController<Container: View>(_ view: Container) -> UI
 // MARK: - CustomHostingController
 
 // Custom UIHostingController for halfSheet....
-final class CustomHostingController<Content: View>: UIHostingController<SheetContainerView<Content>> {
+private final class CustomHostingController<Content: View>: UIHostingController<SheetContainerView<Content>> {
     // MARK: Lifecycle
     private let viewModel = SheetContainerViewModel()
     

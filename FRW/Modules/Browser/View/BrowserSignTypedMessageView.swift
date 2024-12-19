@@ -10,7 +10,9 @@ import SwiftUI
 
 // MARK: - BrowserSignTypedMessageView
 
-struct BrowserSignTypedMessageView: View {
+struct BrowserSignTypedMessageView: View, PresentActionDelegate {
+    var changeHeight: (() -> Void)?
+    
     // MARK: Lifecycle
 
     init(viewModel: BrowserSignTypedMessageViewModel) {

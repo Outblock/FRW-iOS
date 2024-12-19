@@ -317,10 +317,10 @@ extension RouteMap.Wallet: RouterTarget {
             let vc = PresentHostingController(rootView: MoveNFTsView())
             navi.present(vc, animated: true, completion: nil)
         case .moveAssets:
-            let vc = PresentHostingController(rootView: MoveAssetsView())
+            let vc = makeAutoResizeSheetViewController(MoveAssetsView())
             navi.present(vc, animated: true, completion: nil)
         case let .moveToken(tokenModel):
-            let vc = PresentHostingController(rootView: MoveTokenView(
+            let vc = makeAutoResizeSheetViewController(MoveTokenView(
                 tokenModel: tokenModel,
                 isPresent: .constant(true)
             ))
@@ -340,12 +340,7 @@ extension RouteMap.Wallet: RouterTarget {
         case let .showCustomToken(token):
             navi.push(content: CustomTokenDetailView(token: token))
         case let .addTokenSheet(token, callback):
-            let vc = PresentHostingController(
-                rootView: AddTokenSheetView(
-                    customToken: token,
-                    callback: callback
-                )
-            )
+            let vc = PresentHostingController(rootView: AddTokenSheetView(customToken: token, callback: callback))
             navi.present(vc, completion: nil)
         }
     }
@@ -657,13 +652,13 @@ extension RouteMap.Explore: RouterTarget {
             let vc = SFSafariViewController(url: url)
             navi.present(vc, animated: true)
         case let .authn(vm):
-            let vc = makeAutoResizeSheetViewController(BrowserAuthnView(vm: vm))
+            let vc = PresentHostingController(rootView: BrowserAuthnView(vm: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case let .authz(vm):
-            let vc = makeAutoResizeSheetViewController(BrowserAuthzView(vm: vm))
+            let vc = PresentHostingController(rootView: BrowserAuthzView(vm: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case let .signMessage(vm):
-            let vc = makeAutoResizeSheetViewController(BrowserSignMessageView(vm: vm))
+            let vc = PresentHostingController(rootView: BrowserSignMessageView(vm: vm))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .searchExplore:
             let inputVC = BrowserSearchInputViewController()
@@ -687,11 +682,11 @@ extension RouteMap.Explore: RouterTarget {
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .dapps:
             navi.present(content: DAppsListView())
-        case let .switchNetwork(from, to, callback):
+        case let .switchNetwork(from, to, _):
             let vc = makeAutoResizeSheetViewController(NetworkSwitchPopView(from: from, to: to))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case let .signTypedMessage(viewModel):
-            let vc = makeAutoResizeSheetViewController(BrowserSignTypedMessageView(viewModel: viewModel))
+            let vc = PresentHostingController(rootView: BrowserSignTypedMessageView(viewModel: viewModel))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         }
     }
