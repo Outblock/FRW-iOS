@@ -39,6 +39,8 @@ extension Font {
         static let headline = Font.custom("e-Ukraine-Regular", relativeTo: .headline)
         static let subheadline = Font.custom("e-Ukraine-Regular", relativeTo: .subheadline)
         static let body = Font.custom("e-Ukraine-Regular", size: 14, relativeTo: .body)
+        static let body2 = Font.custom("e-Ukraine-Regular", size: 13, relativeTo: .body)
+        static let body3 = Font.custom("e-Ukraine-Regular", size: 12, relativeTo: .body)
         static let callout = Font.custom("e-Ukraine-Regular", relativeTo: .callout)
         static let footnote = Font.custom("e-Ukraine-Regular", relativeTo: .footnote)
         static let caption = Font.custom("e-Ukraine-Regular", relativeTo: .caption)
