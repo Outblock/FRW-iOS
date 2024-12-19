@@ -189,7 +189,6 @@ extension BackupUploadView {
                     isSelected ? itemType.highlightIcon
                         : itemType.normalIcon
                 )
-                .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 40, height: 40)
             }

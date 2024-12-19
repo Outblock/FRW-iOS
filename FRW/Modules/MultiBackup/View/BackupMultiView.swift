@@ -50,32 +50,6 @@ struct BackupMultiView: RouteableView {
 
             Spacer()
 
-            VStack(alignment: .center) {
-                VStack(alignment: .center) {
-                    Text("what_is_multi".localized)
-                        .font(.inter(size: 16, weight: .bold))
-                        .foregroundStyle(Color.Theme.Accent.grey)
-                        .frame(height: 18)
-                    Text("what_is_multi_short".localized)
-                        .font(.inter(size: 14))
-                        .multilineTextAlignment(.center)
-                        .foregroundStyle(Color.Theme.Accent.grey)
-                }
-                .padding(.horizontal, 28)
-
-                Button(action: {
-                    onLearnMore()
-                }, label: {
-                    Text("Learn__more::message".localized)
-                        .font(.inter(size: 14, weight: .semibold))
-                        .foregroundStyle(Color.Theme.Accent.blue)
-
-                })
-                .frame(height: 50)
-            }
-
-            Spacer()
-
             VPrimaryButton(
                 model: ButtonStyle.primary,
                 state: viewModel.nextable ? .enabled : .disabled,
@@ -89,6 +63,18 @@ struct BackupMultiView: RouteableView {
         }
         .applyRouteable(self)
         .backgroundFill(Color.LL.Neutrals.background)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    onLearnMore()
+                } label: {
+                    Image("questionmark.circle")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                        .padding(2)
+                }
+            }
+        }
     }
 
     func columns() -> [GridItem] {
@@ -138,7 +124,7 @@ extension BackupMultiView {
             HStack(spacing: 12) {
                 Image(item.icon)
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
+                    .aspectRatio(contentMode: .fill)
                     .frame(width: 44, height: 44)
                     .clipped()
 
@@ -149,7 +135,7 @@ extension BackupMultiView {
                 Spacer()
                 Image("check_circle_border")
                     .resizable()
-                    .frame(width: 24, height: 24)
+                    .frame(width: 16, height: 16)
                     .visibility(isSelected ? .visible : .gone)
             }
             .padding(.horizontal, 16)
