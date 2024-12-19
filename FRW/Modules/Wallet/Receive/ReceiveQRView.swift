@@ -21,7 +21,8 @@ struct ReceiveQRView: RouteableView {
     var body: some View {
         VStack(spacing: 0) {
             Color.clear
-                .frame(width: 1, height: 72)
+                .frame(width: 1, height: 8)
+            
             VStack(spacing: 8) {
                 Text("current_chain".localized)
                     .font(.inter(size: 14))
@@ -65,11 +66,17 @@ struct ReceiveQRView: RouteableView {
             }
             .padding(.top, 8)
 
-            Spacer()
-
             shareButton
                 .frame(height: 48)
+                .padding(.top, 24)
                 .padding(.bottom)
+            
+            if self.viewModel.isEVM {
+                evmWarning
+                    .padding(.horizontal, -38)
+            }
+
+            Spacer()
         }
         .padding(.horizontal, 54)
         .backgroundFill(.Theme.Background.silver)
@@ -134,6 +141,24 @@ struct ReceiveQRView: RouteableView {
         }
         .buttonStyle(ScaleButtonStyle())
     }
+    
+    var evmWarning: some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image("Warning")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .width(16)
+            
+            Text(.init("deposit_evm_warning"))
+        }
+        .font(Font.LL.body3).fontWeight(.regular)
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: .infinity)
+        .foregroundColor(Color.Theme.Accent.grey)
+        .padding(16)
+        .background(Color.Theme.Background.grey)
+        .cornerRadius(16)
+    }
 
     func backButtonAction() {
         Router.dismiss()
@@ -195,9 +220,15 @@ extension ReceiveQRView {
     }
 }
 
-#Preview {
+#Preview("light") {
     ReceiveQRView()
+        .preferredColorScheme(.light)
 //    ReceiveQRView.SwitchText { isOne in
 //
 //    }
+}
+
+#Preview("dark") {
+    ReceiveQRView()
+        .preferredColorScheme(.dark)
 }

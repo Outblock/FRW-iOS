@@ -986,6 +986,8 @@
 "tokens" = "Tokens";
 "Address Copied" = "Address Copied";
 
+"deposit_evm_warning" = "Please make sure your deposit is on FLOW EVM network, if your deposit is via another network your assets may be lost.";
+
 "Backup_Not_Found" = "Backup Not Found";
 "No_Backup_Account_Found" = "No Backup Account Found";
 "Backup_Decryption_Failed" = "Backup Decryption Failed";
