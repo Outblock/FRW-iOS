@@ -482,7 +482,7 @@
 "Login::message" = "Login";
 "search_the_id" = "Search the ID:";
 "Reset_Your::message" = "Reset Your";
-"no_account_found_msg" = "Sorry, We did not find any related account, please check your enter and search it again.";
+"no_account_found_msg" = "No results. Please check your input and try again.";
 "Enter_the_12_or_24_word_recovery_phrase_given_when_you_first_created_your_wallet::message" = "Enter the 12 or 24 word recovery phrase given when you first created your wallet. ";
 "search_failed_msg" = "Search failed. Please try again.";
 "Enter_your_recovery_phrase_using_spaces_to_separate_each_word::message" = "Enter your recovery phrase, using spaces to separate each wordEnter your recovery phrase";
