@@ -218,7 +218,8 @@ extension RouteMap {
         case scan(SPQRCodeCallback, click: SPQRCodeCallback? = nil)
         case buyCrypto
         case transactionList(String?)
-        case swap(TokenModel?)
+        case swapEvmToken(TokenModel)
+        case swapCadenceToken(TokenModel)
         case selectToken(TokenModel?, [TokenModel], (TokenModel) -> Void)
         case stakingList
         case stakingSelectProvider
@@ -274,9 +275,13 @@ extension RouteMap.Wallet: RouterTarget {
         case let .transactionList(contractId):
             let vc = TransactionListViewController(contractId: contractId)
             navi.pushViewController(vc, animated: true)
-        case let .swap(fromToken):
-            let view = fromToken != nil ? SwapView(defaultFromToken: fromToken) : SwapView()
-            navi.push(content: view)
+        case .swapEvmToken(let token):
+            guard let url = URL(string: "https://swap.kittypunch.xyz/#/swap") else { return }
+            Router.route(to: RouteMap.Explore.browser(url))
+        case .swapCadenceToken(let token):
+            guard let url = URL(string: "https://app.increment.fi/swap?in=A.1654653399040a61.FlowToken&out=\(token.contractId)") else { return }
+            Router.route(to: RouteMap.Explore.browser(url))
+            
         case let .selectToken(selectedToken, disableTokens, callback):
             let vm = AddTokenViewModel(
                 selectedToken: selectedToken,
