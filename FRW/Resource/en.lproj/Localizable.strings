@@ -959,7 +959,6 @@
 "account_key_index" = "Key Index";
 "account_key_done_revoked_tips" = "The key has been revoked";
 "other_key" = "Other Key";
-"enable_previewnet_failed" = "Enable previewnet failed";
 "evm_on_flow" = "EVM on Flow";
 "other" = "other";
 "evm_check_balance" = "Balance is lower than 0.02,\n please fund your account to continue.";

@@ -41,8 +41,6 @@ class RemoteConfigManager {
             return "0x319e67f2ef9d937f"
         case .testnet:
             return "0xcb1cf3196916f9e2"
-        case .previewnet:
-            return "0xa460a24643b45e74"
         default:
             return "0x319e67f2ef9d937f"
         }
@@ -72,8 +70,6 @@ class RemoteConfigManager {
             return config?.payer.mainnet.address ?? emptyAddress
         case .testnet:
             return config?.payer.testnet.address ?? emptyAddress
-        case .previewnet:
-            return config?.payer.previewnet?.address ?? emptyAddress
         default:
             return emptyAddress
         }
@@ -91,21 +87,17 @@ class RemoteConfigManager {
             return config?.payer.testnet.keyID ?? 0
         case .crescendo:
             return config?.payer.crescendo?.keyID ?? 0
-        case .previewnet:
-            return config?.payer.previewnet?.keyID ?? 0
         default:
             return 0
         }
     }
 
-    func getContarctAddress(_ network: LocalUserDefaults.FlowNetworkType) -> [String: String]? {
+    func getContarctAddress(_ network: FlowNetworkType) -> [String: String]? {
         switch network {
         case .mainnet:
             return contractAddress?.mainnet
         case .testnet:
             return contractAddress?.testnet
-        case .previewnet:
-            return contractAddress?.previewnet
         }
     }
 

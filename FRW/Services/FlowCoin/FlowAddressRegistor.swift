@@ -32,7 +32,7 @@ enum ScriptAddress: String, CaseIterable {
     // MARK: Internal
 
     static func addressMap(
-        on network: LocalUserDefaults.FlowNetworkType = LocalUserDefaults.shared
+        on network: FlowNetworkType = LocalUserDefaults.shared
             .flowNetwork
     ) -> [String: String] {
         let dict = ScriptAddress.allCases
@@ -45,7 +45,7 @@ enum ScriptAddress: String, CaseIterable {
     }
 
     func address(
-        on network: LocalUserDefaults.FlowNetworkType = LocalUserDefaults.shared
+        on network: FlowNetworkType = LocalUserDefaults.shared
             .flowNetwork
     ) -> Flow.Address? {
         guard let addressMap = RemoteConfigManager.shared.getContarctAddress(network),

@@ -73,7 +73,7 @@ struct DeveloperModeView: RouteableView {
                                 sysImageTuple: (
                                     isTestnet ? .checkmarkSelected :
                                         .checkmarkUnselected,
-                                    isTestnet ? LocalUserDefaults.FlowNetworkType.testnet
+                                    isTestnet ? FlowNetworkType.testnet
                                         .color : .LL.Neutrals.neutrals1
                                 ),
                                 title: "Testnet",

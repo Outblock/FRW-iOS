@@ -279,8 +279,12 @@ extension TokenDetailViewModel {
     }
 
     func transferDetailAction(_ model: FlowScanTransfer) {
-        if let txid = model.txid, let url = txid.toFlowScanTransactionDetailURL {
-            UIApplication.shared.open(url)
+        if let txid = model.txid {
+            let network = LocalUserDefaults.shared.flowNetwork
+            let accountType = AccountType.current
+            let url = network.getTransactionHistoryUrl(accountType: accountType, transactionId: txid)
+
+            url.map { UIApplication.shared.open($0) }
         }
     }
 
