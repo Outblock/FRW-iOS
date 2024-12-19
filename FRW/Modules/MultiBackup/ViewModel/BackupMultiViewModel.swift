@@ -85,6 +85,7 @@ enum MultiBackupType: Int, CaseIterable, Codable {
     case passkey = 1
     case icloud = 2
     case phrase = 3
+    case dropbox
 
     // MARK: Internal
 
@@ -98,6 +99,8 @@ enum MultiBackupType: Int, CaseIterable, Codable {
             return "iCloud"
         case .phrase:
             return "Recovery Phrase"
+        case .dropbox:
+            return "Dropbox".localized
         }
     }
 
@@ -115,6 +118,8 @@ enum MultiBackupType: Int, CaseIterable, Codable {
             return "Icloud.normal"
         case .phrase:
             return "icon.recovery.normal"
+        case .dropbox:
+            return "icon.dropbox.normal"
         }
     }
 
@@ -128,12 +133,14 @@ enum MultiBackupType: Int, CaseIterable, Codable {
             return "Icloud.highlight"
         case .phrase:
             return "icon.recovery.highlight"
+        case .dropbox:
+            return "dropbox.hightlight"
         }
     }
 
     var needPin: Bool {
         switch self {
-        case .google, .icloud:
+        case .google, .icloud, .dropbox:
             return true
         default:
             return false
@@ -150,6 +157,8 @@ enum MultiBackupType: Int, CaseIterable, Codable {
             return "Icloud"
         case .phrase:
             return "icon.recovery"
+        case .dropbox:
+            return "icon.dropbox"
         }
     }
 
@@ -163,6 +172,8 @@ enum MultiBackupType: Int, CaseIterable, Codable {
             return "icloud"
         case .phrase:
             return "seed_phrase"
+        case .dropbox:
+            return "dropbox"
         }
     }
 }
@@ -195,6 +206,8 @@ extension MultiBackupType {
             return .iCloud
         case .phrase:
             return .manual
+        case .dropbox:
+            return .dropbox
         }
     }
 

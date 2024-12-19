@@ -335,6 +335,8 @@ extension KeyDeviceModel {
             return MultiBackupType.passkey
         case .fullWeightSeedPhrase:
             return MultiBackupType.phrase
+        case .dropbox:
+            return MultiBackupType.dropbox
         default:
             return nil
         }
