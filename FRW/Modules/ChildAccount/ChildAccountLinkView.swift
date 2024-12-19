@@ -48,6 +48,8 @@ struct ChildAccountLinkView: View {
             .padding(.horizontal, 18)
             .padding(.bottom, 20)
         }
+        .fixedSize(horizontal: false, vertical: true)
+        .ignoresSafeArea()
         .backgroundFill(Color.LL.Neutrals.background)
     }
 

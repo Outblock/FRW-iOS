@@ -341,7 +341,7 @@ struct NFTDetailPage: RouteableView {
                     }
                 }
             }
-            .halfSheet(showSheet: $vm.isPresentMove, autoResizing: true, backgroundColor: Color.Theme.Background.grey) {
+            .halfSheet(showSheet: $vm.isPresentMove, backgroundColor: Color.Theme.Background.grey) {
                 MoveSingleNFTView(nft: vm.nft, fromChildAccount: fromChildAccount) {
                     withAnimation {
                         DispatchQueue.main.async {

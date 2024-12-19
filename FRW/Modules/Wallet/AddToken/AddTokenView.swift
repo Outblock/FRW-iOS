@@ -36,17 +36,20 @@ struct AddTokenView: RouteableView {
         }
     }
 
+    @ViewBuilder
+    private func sheetViewBuilder() -> some View {
+        if let token = vm.pendingActiveToken {
+            AddTokenConfirmView(token: token)
+                .environmentObject(vm)
+        }
+    }
+    
     var body: some View {
         ZStack {
             listView
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .halfSheet(showSheet: $vm.confirmSheetIsPresented, autoResizing: true, backgroundColor: Color.LL.Neutrals.background, sheetView: {
-            if let token = vm.pendingActiveToken {
-                AddTokenConfirmView(token: token)
-                    .environmentObject(vm)
-            }
-        })
+        .halfSheet(showSheet: $vm.confirmSheetIsPresented, backgroundColor: Color.LL.Neutrals.background, sheetViewBuilder: sheetViewBuilder)
         .environmentObject(vm)
         .disabled(vm.isRequesting)
         .applyRouteable(self)

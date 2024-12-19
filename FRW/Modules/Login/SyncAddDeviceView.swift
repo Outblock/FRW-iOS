@@ -85,6 +85,8 @@ struct SyncAddDeviceView: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 20)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .fixedSize(horizontal: false, vertical: true)
+        .ignoresSafeArea()
         .backgroundFill(Color(hex: "#282828", alpha: 1))
     }
 
