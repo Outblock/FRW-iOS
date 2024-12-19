@@ -950,6 +950,12 @@ extension WalletManager {
         return accountInfo.storageCapacity - accountInfo.storageUsed < Self.mininumStorageThreshold
     }
 
+    var isBalanceInsufficient: Bool {
+        guard self.isSelectedFlowAccount else { return false }
+        guard let accountInfo else { return false }
+        return accountInfo.balance < Self.minFlowBalance
+    }
+    
     func isBalanceInsufficient(for amount: Decimal) -> Bool {
         guard self.isSelectedFlowAccount else { return false }
         guard let accountInfo else { return false }
