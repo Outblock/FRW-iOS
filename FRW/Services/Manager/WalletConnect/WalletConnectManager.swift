@@ -278,7 +278,7 @@ extension WalletConnectManager {
         stopPendingRequestCheckTimer()
 
         let timer = Timer.scheduledTimer(
-            timeInterval: 5,
+            timeInterval: 3,
             target: self,
             selector: #selector(reloadPendingRequests),
             userInfo: nil,
@@ -306,8 +306,11 @@ extension WalletConnectManager {
                 request
             }
 
-            WalletNewsHandler.shared
-                .refreshWalletConnectNews(pendingRequests.map { $0.toLocalNews() })
+            WalletNewsHandler.shared.refreshWalletConnectNews(pendingRequests.map { $0.toLocalNews() })
+            if let request = pendingRequests.last {
+                log.info("[wc] handle request from pending.")
+                handleRequest(request)
+            }
         }
     }
 }

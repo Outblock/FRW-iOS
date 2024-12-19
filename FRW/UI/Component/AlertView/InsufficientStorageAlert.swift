@@ -9,14 +9,44 @@ import SwiftUI
 
 extension AlertViewController {
     static func showInsufficientStorageError(minimumBalance: Double) {
+        showStorageAlert(
+            minimumBalance: minimumBalance,
+            titleRes: "insufficient_storage::error::title",
+            firstContentRes: "insufficient_storage::error::content::first",
+            secondContentRes: "insufficient_storage::error::content::second",
+            thirdContentRes: "insufficient_storage::error::content::third"
+        )
+    }
+
+    static func showInsufficientStorageWarningBefore(minimumBalance: Double) {
+        showStorageAlert(
+            minimumBalance: minimumBalance,
+            titleRes: "insufficient_storage::warning::before::title",
+            firstContentRes: "insufficient_storage::warning::before::content::first",
+            secondContentRes: "insufficient_storage::warning::before::content::second",
+            thirdContentRes: "insufficient_storage::warning::before::content::third"
+        )
+    }
+
+    static func showInsufficientStorageWarningAfter(minimumBalance: Double) {
+        showStorageAlert(
+            minimumBalance: minimumBalance,
+            titleRes: "insufficient_storage::warning::after::title",
+            firstContentRes: "insufficient_storage::warning::after::content::first",
+            secondContentRes: "insufficient_storage::warning::after::content::second",
+            thirdContentRes: "insufficient_storage::warning::after::content::third"
+        )
+    }
+
+    private static func showStorageAlert(minimumBalance: Double, titleRes: String, firstContentRes: String, secondContentRes: String, thirdContentRes: String) {
         AlertViewController.presentOnRoot(
-            title: .init("insufficient_storage::error::title".localized),
+            title: .init(titleRes.localized),
             customContentView: AnyView(
                 VStack(alignment: .center, spacing: 8) {
-                    Text(.init("insufficient_storage::error::content::first".localized))
-                    Text(.init("insufficient_storage::error::content::second".localized(minimumBalance)))
+                    Text(.init(firstContentRes.localized))
+                    Text(.init(secondContentRes.localized(minimumBalance)))
                         .foregroundColor(Color.LL.Button.Warning.background)
-                    Text(.init("insufficient_storage::error::content::third".localized))
+                    Text(.init(thirdContentRes.localized))
                         .padding(.top, 8)
                 }
                     .padding(.vertical, 8)
@@ -34,5 +64,6 @@ extension AlertViewController {
             buttonsLayout: .horizontal,
             textAlignment: .center
         )
+
     }
 }

@@ -498,13 +498,28 @@
 "Kraken::message" = "Kraken";
 "max" = "Max";
 "Coinbase::message" = "Coinbase";
+
 "insufficient_balance" = "Insufficient Balance";
-"insufficient_storage" = "Insufficient storage.";
-"insufficient_storage_after_transfer" = "Insufficient storage after this action.";
-"insufficient_storage::error::title" = "Insufficient Storage Error";
-"insufficient_storage::error::content::first" = "Your transaction failed because it caused your account to fall below the minimum balance of FLOW for your account’s storage usage.";
-"insufficient_storage::error::content::second" = "You must have least %.3f FLOW in your account to cover your storage usage.";
+"insufficient_storage" = "Insufficient Storage.";
+
+"insufficient_storage_error" = "Storage limit reached. [Learn More](https://developers.flow.com/build/basics/fees#storage)";
+"insufficient_storage_after_transfer_error" = "Storage limit reached after this action. [Learn More](https://developers.flow.com/build/basics/fees#storage)";
+
+"insufficient_storage::error::title" = "Storage Limit Error";
+"insufficient_storage::error::content::first" = "Your transaction failed because it caused your account to fall below the minimum balance of FLOW required for your account’s storage usage.";
+"insufficient_storage::error::content::second" = "You must have at least %.3f FLOW in your account to cover your storage usage.";
 "insufficient_storage::error::content::third" = "[Learn More](https://developers.flow.com/build/basics/fees#storage)";
+
+"insufficient_storage::warning::before::title" = "Storage Limit Warning";
+"insufficient_storage::warning::before::content::first" = "Your account is below the minimum FLOW balance required for its storage usage, which may cause subsequent transactions to fail.";
+"insufficient_storage::warning::before::content::second" = "You must have at least %.3f FLOW in your account to cover your storage usage.";
+"insufficient_storage::warning::before::content::third" = "[Learn More](https://developers.flow.com/build/basics/fees#storage)";
+
+"insufficient_storage::warning::after::title" = "Storage Limit Warning";
+"insufficient_storage::warning::after::content::first" = "This action may fail because it may reduce the amount of FLOW in your account below what is required to cover it’s storage usage.";
+"insufficient_storage::warning::after::content::second" = "You must have at least %.3f FLOW in your account to cover your storage usage.";
+"insufficient_storage::warning::after::content::third" = "[Learn More](https://developers.flow.com/build/basics/fees#storage)";
+
 "Kucoin::message" = "Kucoin";
 "amount_balance" = "Amount Balance";
 "Huobi::message" = "Huobi";
@@ -1006,6 +1021,19 @@
 "import_no_account_found" = "Sorry, we can not find your address on flow with this key.\nPlease check your input and try again.";
 "private_key_placeholder" = "Enter your Private key";
 "take_mins" = "It might take 1-2 mins";
+
+"create_profile::creating" = "Creating your Profile";
+
+"create_profile::waiting::carousel::1::title" = "security,\npowered by\nSecure\nEnclave.";
+"create_profile::waiting::carousel::1::description" = "Flow Wallet uses your device’s Secure Enclave to secure your Flow account.";
+"create_profile::waiting::carousel::2::title" = "your device,\nis now a\nHardware\nWallet.";
+"create_profile::waiting::carousel::2::description" = "Secure Enclave is special hardware on your device that Flow Wallet uses to turn your device into a hardware wallet.";
+"create_profile::waiting::carousel::3::title" = "you just,\nunlocked\nTrue\nOwnership.";
+"create_profile::waiting::carousel::3::description" = "Your assets are secured by your device, unlocking true ownership of your assets on Flow.";
+
+"create_profile::waiting::finished:title" = "ready to\nget started";
+"create_profile::waiting::finished:description" = "Congratulations! Your Flow account is now ready. To best secure your account, you can back it up now.";
+
 "what_is" = "What is a";
 "multi_backup_detail" = "A multi-backup stores multiple partial-weight keys across your accounts on trusted providers like Google Drive and iCloud, or a Recovery Phrase.
 
@@ -1047,6 +1075,7 @@ Please create backups for your wallet to ensure you retain access to your Flow a
 "create_phrase_backup_note" = "Create a 12 word recovery phrase";
 "Recommended" = "Recommended";
 
+"move_fee" = "Move Fee";
 
 "seedphrase_hint" = "12 or 24 words split with whitespace";
 "Seed Phrase" = "Seed Phrase";

@@ -55,7 +55,7 @@ struct WalletHomeView: View {
     private var walletCardBackrgound: String = "fade:0"
 
     @State
-    var selectedNewsId: String? = nil
+    var selectedNewsId: String?
     @State
     var scrollNext: Bool = false
 
@@ -71,15 +71,16 @@ struct WalletHomeView: View {
                 GuestView().visibility(um.isLoggedIn ? .gone : .visible)
                 NormalView().visibility(um.isLoggedIn ? .visible : .gone)
             }
-            .halfSheet(showSheet: $vm.backupTipsPresent) {
+            .halfSheet(showSheet: $vm.backupTipsPresent, autoResizing: true, backgroundColor: Color.LL.Neutrals.background) {
                 BackupTipsView(closeAction: {
                     vm.backupTipsPresent = false
                 })
             }
-            .onAppear(perform: {
+            .onAppear {
                 safeArea = proxy.safeAreaInsets
                 size = proxy.size
-            })
+                self.vm.viewWillAppear()
+            }
             .navigationBarHidden(true)
             .ignoresSafeArea(.container, edges: .top)
         }

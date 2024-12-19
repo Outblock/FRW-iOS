@@ -130,7 +130,7 @@
     {
       "identity" : "flow-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/outblock/flow-swift.git",
+      "location" : "https://github.com/outblock/flow-swift",
       "state" : {
         "revision" : "50b60826c4ce18adaa151946d11d468ac1fc98dd",
         "version" : "0.3.9"
@@ -142,7 +142,7 @@
       "location" : "https://github.com/Outblock/Flow-Wallet-Kit",
       "state" : {
         "branch" : "master",
-        "revision" : "ff1688af156e51ef4257a818ab906301a241508d"
+        "revision" : "b90bd715dbd87d591d9834134f27ef06cb4074ac"
       }
     },
     {

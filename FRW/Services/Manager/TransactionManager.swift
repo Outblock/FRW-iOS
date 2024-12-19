@@ -267,9 +267,7 @@ extension TransactionManager {
                             
                             switch result.errorCode {
                             case .storageCapacityExceeded:
-                                if RemoteConfigManager.shared.config?.features.insufficientStorage ?? false {
-                                    AlertViewController.showInsufficientStorageError(minimumBalance: WalletManager.shared.minimumStorageBalance.doubleValue)
-                                }
+                                AlertViewController.showInsufficientStorageError(minimumBalance: WalletManager.shared.minimumStorageBalance.doubleValue)
                             default:
                                 break
                             }

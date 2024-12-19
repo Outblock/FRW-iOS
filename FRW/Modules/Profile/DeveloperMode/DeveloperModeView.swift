@@ -46,7 +46,7 @@ struct DeveloperModeView: RouteableView {
             if isDeveloperMode {
                 VStack {
                     Text("switch_network".localized)
-                        .font(.LL.footnote)
+                        .font(.inter())
                         .foregroundColor(.LL.Neutrals.neutrals3)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.vertical, 8)
@@ -54,7 +54,6 @@ struct DeveloperModeView: RouteableView {
                         Section {
                             let isMainnet = lud.flowNetwork == .mainnet
                             let isTestnet = lud.flowNetwork == .testnet
-                            let isPreviewnet = lud.flowNetwork == .previewnet
 
                             Cell(
                                 sysImageTuple: (
@@ -89,7 +88,7 @@ struct DeveloperModeView: RouteableView {
                     .cornerRadius(16)
 
                     Text("watch_address".localized)
-                        .font(.LL.footnote)
+                        .font(.inter())
                         .foregroundColor(.LL.Neutrals.neutrals3)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.vertical, 8)
@@ -186,57 +185,6 @@ struct DeveloperModeView: RouteableView {
                     }
                     .cornerRadius(16)
 
-                    Text("other".localized)
-                        .font(.LL.footnote)
-                        .foregroundColor(.LL.Neutrals.neutrals3)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.vertical, 8)
-                    VStack(spacing: 0) {
-                        Section {
-                            HStack {
-                                Button {
-                                    UserManager.shared.tryToRestoreOldAccountOnFirstLaunch()
-                                } label: {
-                                    Text("Reload Local Profile")
-                                        .font(.inter(size: 17, weight: .medium))
-                                        .foregroundStyle(Color.Theme.Text.black8)
-                                }
-                                Spacer()
-                            }
-                            .frame(height: 64)
-                            .padding(.horizontal, 16)
-
-                            HStack {
-                                Text("Script Version")
-                                    .font(.inter(size: 17, weight: .medium))
-                                    .foregroundStyle(Color.Theme.Text.black8)
-                                Spacer()
-
-                                Text("\(CadenceManager.shared.version)")
-                                    .font(.inter(size: 17))
-                                    .foregroundStyle(Color.Theme.Text.black8)
-                            }
-                            .frame(height: 64)
-                            .padding(.horizontal, 16)
-
-                            HStack {
-                                Text("Cadence Version")
-                                    .font(.inter(size: 17, weight: .medium))
-                                    .foregroundStyle(Color.Theme.Text.black8)
-                                Spacer()
-                                Text(
-                                    "\(String(describing: CadenceManager.shared.current.version ?? ""))"
-                                )
-                                .font(.inter(size: 17))
-                                .foregroundStyle(Color.Theme.Text.black8)
-                            }
-                            .frame(height: 64)
-                            .padding(.horizontal, 16)
-                        }
-                        .background(.LL.bgForIcon)
-                    }
-                    .cornerRadius(16)
-
                     Section {
                         VStack {
                             HStack {
@@ -302,41 +250,40 @@ struct DeveloperModeView: RouteableView {
                                     Router.route(to: RouteMap.Profile.keychain)
                                 } label: {
                                     Text("All Keys on Local")
-                                        .font(.inter(size: 14, weight: .medium))
-                                        .foregroundStyle(Color.Theme.Text.black8)
                                 }
                                 Spacer()
                             }
                             .frame(height: 64)
                             .padding(.horizontal, 16)
 
+                            Divider()
                             HStack {
                                 Button {
+                                    HUD.success(title: "done")
                                     LocalUserDefaults.shared.migrationFinished = false
                                 } label: {
-                                    Text("reset migration flag")
-                                        .font(.inter(size: 14, weight: .medium))
-                                        .foregroundStyle(Color.Theme.Text.black8)
+                                    Text("Reset Migration Flag")
                                 }
                                 Spacer()
                             }
                             .frame(height: 64)
                             .padding(.horizontal, 16)
 
-                            HStack {
-                                Button {
-                                    let list = LocalUserDefaults.shared.userList
-                                    log.debug("[User] \(list)")
+//                            Divider()
+//                            HStack {
+//                                Button {
+//                                    HUD.success(title: "done")
+//                                    let list = LocalUserDefaults.shared.userList
+//                                    log.debug("[User] \(list)")
+//
+//                                } label: {
+//                                    Text("Copy all user")
+//                                }
+//                                Spacer()
+//                            }
+//                            .frame(height: 64)
+//                            .padding(.horizontal, 16)
 
-                                } label: {
-                                    Text("copy all user")
-                                        .font(.inter(size: 14, weight: .medium))
-                                        .foregroundStyle(Color.Theme.Text.black8)
-                                }
-                                Spacer()
-                            }
-                            .frame(height: 64)
-                            .padding(.horizontal, 16)
                         }
                         .background(.LL.bgForIcon)
                         .cornerRadius(16)
@@ -344,6 +291,53 @@ struct DeveloperModeView: RouteableView {
                         headView(title: "Tools")
                     }
                     .visibility(showTool ? .visible : .gone)
+
+
+                    Text("other".localized.uppercasedFirstLetter())
+                        .font(.inter())
+                        .foregroundColor(.LL.Neutrals.neutrals3)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 8)
+                    VStack(spacing: 0) {
+                        Section {
+                            HStack {
+                                Button {
+                                    UserManager.shared.tryToRestoreOldAccountOnFirstLaunch()
+                                } label: {
+                                    Text("Reload Local Profile")
+                                }
+                                Spacer()
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+
+                            Divider()
+                            HStack {
+                                Text("Script Version")
+                                Spacer()
+
+                                Text("\(CadenceManager.shared.version)")
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+
+                            Divider()
+                            HStack {
+                                Text("Cadence Version")
+
+                                Spacer()
+                                Text(
+                                    "\(String(describing: CadenceManager.shared.current.version ?? ""))"
+                                )
+                                .font(.inter(size: 17))
+                                .foregroundStyle(Color.Theme.Text.black8)
+                            }
+                            .frame(height: 64)
+                            .padding(.horizontal, 16)
+                        }
+                        .background(.LL.bgForIcon)
+                    }
+                    .cornerRadius(16)
 
                     if isDevModel {
                         Section {
@@ -353,8 +347,6 @@ struct DeveloperModeView: RouteableView {
                                         Router.route(to: RouteMap.Profile.keychain)
                                     } label: {
                                         Text("KeyChain")
-                                            .font(.inter(size: 14, weight: .medium))
-                                            .foregroundStyle(Color.Theme.Text.black8)
                                     }
                                     Spacer()
                                 }
@@ -365,8 +357,6 @@ struct DeveloperModeView: RouteableView {
                                     Text(
                                         "Reset the move asset configuration in the built-in browser"
                                     )
-                                    .font(.inter(size: 14, weight: .medium))
-                                    .foregroundStyle(Color.Theme.Text.black8)
                                     Spacer()
                                 }
                                 .frame(height: 64)
@@ -392,8 +382,6 @@ struct DeveloperModeView: RouteableView {
 
                                 HStack {
                                     Text("Remove What is Backup Deail (click)")
-                                        .font(.inter(size: 14, weight: .medium))
-                                        .foregroundStyle(Color.Theme.Text.black8)
                                     Spacer()
                                 }
                                 .frame(height: 64)
@@ -405,8 +393,6 @@ struct DeveloperModeView: RouteableView {
 
                                 HStack {
                                     Text("Remove Custom token (click)")
-                                        .font(.inter(size: 14, weight: .medium))
-                                        .foregroundStyle(Color.Theme.Text.black8)
                                     Spacer()
                                 }
                                 .frame(height: 64)
@@ -426,6 +412,8 @@ struct DeveloperModeView: RouteableView {
                 .padding(.horizontal, 18)
             }
         }
+        .font(.inter())
+        .foregroundStyle(Color.Theme.Text.black8)
         .background(
             Color.LL.Neutrals.background.ignoresSafeArea()
         )
@@ -457,10 +445,10 @@ struct DeveloperModeView: RouteableView {
 
     private func headView(title: String) -> some View {
         Text(title)
-            .font(.LL.footnote)
+            .font(.inter())
             .foregroundColor(.LL.Neutrals.neutrals3)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical, 12)
+            .padding(.vertical, 8)
     }
 }
 
