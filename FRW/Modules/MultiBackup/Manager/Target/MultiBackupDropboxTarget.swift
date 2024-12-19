@@ -8,10 +8,20 @@
 import Foundation
 import UIKit
 import SwiftyDropbox
+import Combine
 
 // MARK: - MultiBackupDropboxTarget
 
 final class MultiBackupDropboxTarget: MultiBackupTarget {
+    var uploadedItem: MultiBackupManager.StoreItem?
+
+    var registeredDeviceInfo: SyncInfo.DeviceInfo?
+
+    private var observer: NSObjectProtocol? = nil
+    private let path: String
+    private var isWaiting: Bool = false
+    private var cancellableSet = Set<AnyCancellable>()
+
     // MARK: Lifecycle
 
     init() {
@@ -21,6 +31,15 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
         }
         path = "/" + MultiBackupManager.backupFileName
         DropboxClientsManager.unlinkClients()
+        NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    if self.isWaiting {
+                        NotificationCenter.default.post(name: .dropboxCallback, object: nil)
+                    }
+                }
+            }.store(in: &cancellableSet)
     }
 
     deinit {
@@ -31,12 +50,7 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
 
     // MARK: Internal
 
-    var uploadedItem: MultiBackupManager.StoreItem?
 
-    var registeredDeviceInfo: SyncInfo.DeviceInfo?
-
-    private var observer: NSObjectProtocol? = nil
-    private let path: String
 
     var isPrepared: Bool {
         DropboxClientsManager.authorizedClient != nil
@@ -61,10 +75,7 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
             list: list,
             password: password
         )
-        let encrypedString = try MultiBackupManager.shared.encryptList(newList)
-        guard let data = encrypedString.data(using: .utf8), !data.isEmpty else {
-            throw BackupError.hexStringToDataFailed
-        }
+        let data = try encryptList(list: newList)
         _ = try await uploadFile(client: client, path: path, data: data)
     }
 
@@ -97,11 +108,7 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
         }
         let list = try await getCurrentDriveItems()
         let newList = try await MultiBackupManager.shared.removeCurrent(list, password: password)
-        let encrypedString = try MultiBackupManager.shared.encryptList(newList)
-        guard let data = encrypedString.data(using: .utf8), !data.isEmpty else {
-            throw BackupError.hexStringToDataFailed
-        }
-
+        let data = try encryptList(list: newList)
         _ = try await uploadFile(client: client, path: path, data: data)
     }
 
@@ -125,18 +132,22 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
                 scopeRequest: scopeRequest
             )
         }
+        isWaiting = true
         let notification = await waitForNotification(named: .dropboxCallback)
+        isWaiting = false
         if let authResult = notification.object as? DropboxOAuthResult {
             switch authResult {
             case .success:
                 log.info("[Multi] Dropbox Success!")
             case .cancel:
                 log.info("[Multi] Authorization flow was manually canceled by user!")
+                throw BackupError.unauthorized
             case let .error(_, description):
                 log.info("[Multi] dropbox Error: \(String(describing: description))")
+                throw BackupError.unauthorized
             }
         }
-        if let observer = observer {
+        if let observer {
             NotificationCenter.default.removeObserver(observer)
             self.observer = nil
         }
@@ -147,6 +158,14 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
             return
         }
         try await startLogin()
+    }
+
+    private func encryptList(list: [MultiBackupManager.StoreItem]) throws -> Data {
+        let encrypedString = try MultiBackupManager.shared.encryptList(list)
+        guard let data = encrypedString.data(using: .utf8), !data.isEmpty else {
+            throw BackupError.hexStringToDataFailed
+        }
+        return data
     }
 }
 
