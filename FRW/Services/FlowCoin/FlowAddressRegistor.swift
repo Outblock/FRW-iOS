@@ -28,7 +28,7 @@ enum ScriptAddress: String, CaseIterable {
     case evm = "0xEVM"
     case flowEVMBridge = "0xFlowEVMBridge"
     case CapabilityFilter = "0xCapabilityFilter"
-
+    case storageRent = "0xStorageRent"
     // MARK: Internal
 
     static func addressMap(
