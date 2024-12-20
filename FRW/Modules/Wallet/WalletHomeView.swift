@@ -71,7 +71,7 @@ struct WalletHomeView: View {
                 GuestView().visibility(um.isLoggedIn ? .gone : .visible)
                 NormalView().visibility(um.isLoggedIn ? .visible : .gone)
             }
-            .halfSheet(showSheet: $vm.backupTipsPresent, autoResizing: true, backgroundColor: Color.LL.Neutrals.background) {
+            .halfSheet(showSheet: $vm.backupTipsPresent, backgroundColor: Color.LL.Neutrals.background) {
                 BackupTipsView(closeAction: {
                     vm.backupTipsPresent = false
                 })
