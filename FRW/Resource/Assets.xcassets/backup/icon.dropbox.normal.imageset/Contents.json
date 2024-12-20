@@ -1,7 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Group 48485.svg",
+      "filename" : "Group 48485.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Dropbox Darkmode.svg",
       "idiom" : "universal"
     }
   ],
