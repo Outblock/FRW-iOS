@@ -164,7 +164,6 @@ class TokenDetailViewModel: ObservableObject {
 
     // MARK: Private
 
-    private let tokenManager: TokenManager = WalletManager.instance
     private var cancelSets = Set<AnyCancellable>()
 
     private func setupObserver() {
@@ -279,12 +278,11 @@ extension TokenDetailViewModel {
     }
 
     func onSwapToken() {
-        if self.tokenManager.isCadenceToken(token) {
+        switch self.token.type {
+        case .cadence:
             Router.route(to: RouteMap.Wallet.swapCadenceToken(self.token))
-        } else if self.tokenManager.isEvmToken(self.token) {
+        case .evm:
             Router.route(to: RouteMap.Wallet.swapEvmToken(self.token))
-        } else {
-            log.warning("Unable to detect the token type: \(token)")
         }
     }
 
@@ -460,7 +458,7 @@ extension TokenDetailViewModel {
                 .selectedChildAccount != nil {
                 showSwapButton = false
             } else {
-                showSwapButton = self.tokenManager.isCadenceToken(self.token) || self.tokenManager.isEvmToken(self.token)
+                showSwapButton = true
             }
         } else {
             showSwapButton = false

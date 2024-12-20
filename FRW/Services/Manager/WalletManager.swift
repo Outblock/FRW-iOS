@@ -17,17 +17,6 @@ import WalletCore
 import Web3Core
 import web3swift
 
-protocol TokenManager {
-    func isEvmToken(_ token: TokenModel) -> Bool
-    func isCadenceToken(_ token: TokenModel) -> Bool
-}
-
-extension TokenManager {
-    // Temporary property, will be replaced by DI
-    //    static var instance: Self { get }
-    static var instance: TokenManager { WalletManager.shared }
-}
-
 // MARK: - Define
 
 extension WalletManager {
@@ -54,7 +43,7 @@ extension WalletManager {
 
 // MARK: - WalletManager
 
-class WalletManager: ObservableObject, TokenManager {
+class WalletManager: ObservableObject {
     // MARK: Lifecycle
 
     init() {
@@ -872,7 +861,7 @@ extension WalletManager {
     private func fetchSupportedCoins() async throws {
         let tokenResponse: SingleTokenResponse = try await Network
             .requestWithRawModel(GithubEndpoint.ftTokenList)
-        let coins: [TokenModel] = tokenResponse.conversion()
+        let coins: [TokenModel] = tokenResponse.conversion(type: .cadence)
         let validCoins = coins.filter { $0.getAddress()?.isEmpty == false }
         DispatchQueue.main.sync {
             self.supportedCoins = validCoins
@@ -932,7 +921,7 @@ extension WalletManager {
         do {
             let tokenResponse: SingleTokenResponse = try await Network
                 .requestWithRawModel(GithubEndpoint.EVMTokenList)
-            let coins: [TokenModel] = tokenResponse.conversion()
+            let coins: [TokenModel] = tokenResponse.conversion(type: .evm)
             DispatchQueue.main.async {
                 self.evmSupportedCoins = coins
             }
@@ -1087,18 +1076,6 @@ extension WalletManager {
 
     func fetchAccessible() async throws {
         try await accessibleManager.fetchFT()
-    }
-    
-    func isEvmToken(_ token: TokenModel) -> Bool {
-        guard self.isSelectedEVMAccount else { return false }
-        guard let evmSupportedCoins else { return false }
-        return evmSupportedCoins.contains(where: { token.contractId == $0.contractId })
-    }
-    
-    func isCadenceToken(_ token: TokenModel) -> Bool {
-        guard self.isSelectedFlowAccount else { return false }
-        guard let supportedCoins else { return false }
-        return supportedCoins.contains(where: { token.contractId == $0.contractId })
     }
 }
 

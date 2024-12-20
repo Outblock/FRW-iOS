@@ -88,6 +88,9 @@ enum ListedToken: String, CaseIterable {
 // MARK: - TokenModel
 
 struct TokenModel: Codable, Identifiable, Mockable {
+    enum TokenType: Codable { case cadence, evm }
+
+    let type: TokenType
     let name: String
     var address: FlowNetworkModel
     let contractName: String
@@ -150,6 +153,7 @@ struct TokenModel: Codable, Identifiable, Mockable {
 
     static func mock() -> TokenModel {
         TokenModel(
+            type: .cadence,
             name: "mockname",
             address: FlowNetworkModel(
                 mainnet: nil,
@@ -238,9 +242,9 @@ struct SingleTokenResponse: Codable {
     let chainId: Int?
     let tokens: [SingleToken]
 
-    func conversion() -> [TokenModel] {
+    func conversion(type: TokenModel.TokenType) -> [TokenModel] {
         let network = LocalUserDefaults.shared.flowNetwork
-        let result = tokens.map { $0.toTokenModel(network: network) }
+        let result = tokens.map { $0.toTokenModel(type: type, network: network) }
         return result
     }
 }
@@ -260,10 +264,11 @@ struct SingleToken: Codable {
     let evmAddress: String?
     let flowIdentifier: String?
 
-    func toTokenModel(network: LocalUserDefaults.FlowNetworkType) -> TokenModel {
+    func toTokenModel(type: TokenModel.TokenType, network: LocalUserDefaults.FlowNetworkType) -> TokenModel {
         let logo = URL(string: logoURI ?? "")
 
         let model = TokenModel(
+            type: type,
             name: name,
             address: FlowNetworkModel(
                 mainnet: network == .mainnet ? address : nil,
