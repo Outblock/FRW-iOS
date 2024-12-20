@@ -9,7 +9,7 @@ import Flow
 import SwiftUI
 import UIKit
 
-var currentNetwork: LocalUserDefaults.FlowNetworkType {
+var currentNetwork: FlowNetworkType {
     LocalUserDefaults.shared.flowNetwork
 }
 
@@ -45,6 +45,7 @@ extension LocalUserDefaults {
         case EVMAddress
         case showMoveAssetOnBrowser
         case removedNewsIds
+        case shouldShowConfettiOnHome
 
         case whatIsBack
         case backupSheetNotAsk
@@ -55,59 +56,10 @@ extension LocalUserDefaults {
         case customToken
         case migrationFinished
     }
-
-    enum FlowNetworkType: String, CaseIterable, Codable {
-        case testnet
-        case mainnet
-        case previewnet
-
-        // MARK: Lifecycle
-
-        init?(chainId: Flow.ChainID) {
-            switch chainId {
-            case .testnet:
-                self = .testnet
-            case .mainnet:
-                self = .mainnet
-            case .previewnet:
-                self = .previewnet
-            default:
-                return nil
-            }
-        }
-
-        // MARK: Internal
-
-        var color: Color {
-            switch self {
-            case .mainnet:
-                return Color.LL.Primary.salmonPrimary
-            case .testnet:
-                return Color(hex: "#FF8A00")
-            case .previewnet:
-                return Color(hex: "#CCAF21")
-            }
-        }
-
-        var isMainnet: Bool {
-            self == .mainnet
-        }
-
-        func toFlowType() -> Flow.ChainID {
-            switch self {
-            case .testnet:
-                return Flow.ChainID.testnet
-            case .mainnet:
-                return Flow.ChainID.mainnet
-            case .previewnet:
-                return Flow.ChainID.previewnet
-            }
-        }
-    }
 }
 
 extension Flow.ChainID {
-    var networkType: LocalUserDefaults.FlowNetworkType? {
+    var networkType: FlowNetworkType? {
         .init(chainId: self)
     }
 }
@@ -138,6 +90,9 @@ class LocalUserDefaults: ObservableObject {
     var flowNetwork: FlowNetworkType = .mainnet
     #endif
 
+    @AppStorage(Keys.shouldShowConfettiOnHome.rawValue)
+    var shouldShowConfettiOnHome: Bool = false
+    
     @AppStorage(Keys.activatedUID.rawValue)
     var activatedUID: String?
 

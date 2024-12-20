@@ -959,7 +959,6 @@
 "account_key_index" = "Key Index";
 "account_key_done_revoked_tips" = "The key has been revoked";
 "other_key" = "Other Key";
-"enable_previewnet_failed" = "Enable previewnet failed";
 "evm_on_flow" = "EVM on Flow";
 "other" = "other";
 "evm_check_balance" = "Balance is lower than 0.02,\n please fund your account to continue.";
@@ -986,6 +985,8 @@
 "move_asset_browser_title_x" = "Move your assets between your cadence address on Flow, so %@ can view your assets";
 "tokens" = "Tokens";
 "Address Copied" = "Address Copied";
+
+"deposit_evm_warning" = "Please make sure your deposit is on FLOW EVM network, if your deposit is via another network your assets may be lost.";
 
 "Backup_Not_Found" = "Backup Not Found";
 "No_Backup_Account_Found" = "No Backup Account Found";
@@ -1021,6 +1022,19 @@
 "import_no_account_found" = "Sorry, we can not find your address on flow with this key.\nPlease check your input and try again.";
 "private_key_placeholder" = "Enter your Private key";
 "take_mins" = "It might take 1-2 mins";
+
+"create_profile::creating" = "Creating your Profile";
+
+"create_profile::waiting::carousel::1::title" = "security,\npowered by\nSecure\nEnclave.";
+"create_profile::waiting::carousel::1::description" = "Flow Wallet uses your device’s Secure Enclave to secure your Flow account.";
+"create_profile::waiting::carousel::2::title" = "your device,\nis now a\nHardware\nWallet.";
+"create_profile::waiting::carousel::2::description" = "Secure Enclave is special hardware on your device that Flow Wallet uses to turn your device into a hardware wallet.";
+"create_profile::waiting::carousel::3::title" = "you just,\nunlocked\nTrue\nOwnership.";
+"create_profile::waiting::carousel::3::description" = "Your assets are secured by your device, unlocking true ownership of your assets on Flow.";
+
+"create_profile::waiting::finished:title" = "ready to\nget started";
+"create_profile::waiting::finished:description" = "Congratulations! Your Flow account is now ready. To best secure your account, you can back it up now.";
+
 "what_is" = "What is a";
 "multi_backup_detail" = "A multi-backup stores multiple partial-weight keys across your accounts on trusted providers like Google Drive and iCloud, or a Recovery Phrase.
 

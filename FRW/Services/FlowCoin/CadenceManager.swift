@@ -30,8 +30,6 @@ class CadenceManager {
             return scripts.testnet
         case .mainnet:
             return scripts.mainnet
-        case .previewnet:
-            return scripts.testnet
         }
     }
 

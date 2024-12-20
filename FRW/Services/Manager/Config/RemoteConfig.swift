@@ -12,7 +12,6 @@ extension RemoteConfigManager {
         let mainnet: [String: String]?
         let testnet: [String: String]?
         let crescendo: [String: String]?
-        let previewnet: [String: String]?
     }
 
     struct ENVConfig: Codable {
@@ -66,7 +65,6 @@ extension RemoteConfigManager {
         let mainnet: PayerInfo
         let testnet: PayerInfo
         let crescendo: PayerInfo?
-        let previewnet: PayerInfo?
     }
 
     // MARK: - Net
@@ -174,6 +172,7 @@ extension RemoteConfigManager {
         case unknow
         case canUpgrade
         case insufficientStorage
+        case insufficientBalance
         case isIOS
         case isAndroid
         case isWeb
@@ -208,6 +207,8 @@ extension RemoteConfigManager {
             case .insufficientStorage:
                 // TODO: [AB] Not very elegant adding a dependency here, but implementing in a different way would probably require major refactoring
                 return WalletManager.shared.isStorageInsufficient
+            case .insufficientBalance:
+                return WalletManager.shared.isBalanceInsufficient
             default:
                 return false
             }
