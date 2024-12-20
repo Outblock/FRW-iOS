@@ -150,12 +150,12 @@ extension TransferListHandler {
                     }
                 } else {
                     let request = TransfersRequest(
-                        address: WalletManager.shared.getPrimaryWalletAddress() ?? "",
+                        address: WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? "",
                         limit: Limit,
                         after: start
                     )
-                    let response: TransfersResponse = try await Network
-                        .request(FRWAPI.Account.transfers(request))
+                    let target = EVMAccountManager.shared.selectedAccount == nil ? FRWAPI.Account.transfers(request) : FRWAPI.Account.evmTransfers(request)
+                    let response: TransfersResponse = try await Network.request(target)
                     DispatchQueue.main.async {
                         self.isRequesting = false
                         self.requestSuccess(response, start: start)

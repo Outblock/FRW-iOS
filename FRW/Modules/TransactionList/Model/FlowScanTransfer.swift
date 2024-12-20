@@ -34,6 +34,7 @@ struct FlowScanTransfer: Codable {
     let transferType: FlowScanTransfer.TransferType?
     let txid: String?
     let type: Int?
+    let contractAddress: String?
 
     var statusColor: UIColor {
         if status != "Sealed" {
