@@ -139,7 +139,7 @@ struct ExploreTabScreen: View {
         HStack {
             Image(systemName: "square.grid.2x2.fill")
                 .font(.LL.caption)
-            Text("dApps")
+            Text("dApps".localized)
                 .bold()
             Spacer()
 
