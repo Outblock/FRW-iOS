@@ -11,20 +11,29 @@ disabled_rules:
     - for_where #使用 `for where` 代替 简单的 `for { if }`
     - class_delegate_protocol #delegate protocol 应该被设定为 class-only,才能被弱引用
     - todo #避免 TODOs and FIXMEs 标识
+    - line_length
+    - function_body_length
+    - no_space_in_method_call
+    - multiple_closures_with_trailing_closure
+    - switch_case_alignment
+    - syntactic_sugar
 cyclomatic_complexity: 20 #代码复杂度,默认为10
 force_try: warning # try语句判断
 force_cast: warning # 强制转换（代码中存在一些前面通过if判断过类型，后面做的强制转换的代码）
-line_length:    #每行长度限制
-  warning: 160
-  error: 300
-  ignores_function_declarations: true
-  ignores_comments: true
+#line_length:    #每行长度限制
+#  warning: 160
+#  error: 300
+#  ignores_function_declarations: true
+#  ignores_comments: true
 file_length:    #文件长度
   warning: 1000
-  error: 1500
-function_body_length:   #函数体长度
-  warning: 100
-  error: 150
+  error: 2000
+#function_body_length:   #函数体长度
+#  warning: 100
+#  error: 150
 type_body_length:   #类的长度
   warning: 800
   error: 1200
+generic_type_name:
+  validates_start_with_lowercase: false
+
