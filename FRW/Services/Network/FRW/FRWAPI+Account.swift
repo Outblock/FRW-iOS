@@ -15,6 +15,7 @@ extension FRWAPI {
         case flowScanQuery(String)
         case transfers(TransfersRequest)
         case tokenTransfers(TokenTransfersRequest)
+        case evmTransfers(TransfersRequest)
     }
 }
 
@@ -26,7 +27,12 @@ extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
     }
 
     var baseURL: URL {
-        Config.get(.lilico)
+        switch self {
+        case .evmTransfers(let transfersRequest):
+            return Config.get(.lilicoWeb)
+        default:
+            return Config.get(.lilico)
+        }
     }
 
     var path: String {
@@ -37,6 +43,8 @@ extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
             return "/v1/account/transfers"
         case .tokenTransfers:
             return "/v1/account/tokentransfers"
+        case .evmTransfers(let model):
+            return "v2/evm/\(model.address)/transactions"
         }
     }
 
@@ -44,7 +52,7 @@ extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
         switch self {
         case .flowScanQuery:
             return .get
-        case .transfers, .tokenTransfers:
+        case .transfers, .tokenTransfers, .evmTransfers:
             return .get
         }
     }
@@ -64,6 +72,11 @@ extension FRWAPI.Account: TargetType, AccessTokenAuthorizable {
         case let .tokenTransfers(request):
             return .requestParameters(
                 parameters: request.dictionary ?? [:],
+                encoding: URLEncoding.queryString
+            )
+        case let .evmTransfers(request):
+            return .requestParameters(
+                parameters: [:],
                 encoding: URLEncoding.queryString
             )
         }

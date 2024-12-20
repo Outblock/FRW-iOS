@@ -130,4 +130,10 @@ struct TransfersResponse: Codable {
     let string: String?
     let total: Int?
     let transactions: [FlowScanTransfer]?
+    let nextPageParams: NextPage?
+}
+
+struct NextPage: Codable {
+    var itemsCount: Int?
+    
 }
