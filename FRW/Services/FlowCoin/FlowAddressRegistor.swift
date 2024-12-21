@@ -35,13 +35,8 @@ enum ScriptAddress: String, CaseIterable {
         on network: FlowNetworkType = LocalUserDefaults.shared
             .flowNetwork
     ) -> [String: String] {
-        let dict = ScriptAddress.allCases
-            .reduce(into: [String: String]()) { partialResult, script in
-                if let address = script.address(on: network) {
-                    partialResult[script.rawValue] = address.hex.withPrefix()
-                }
-            }
-        return dict
+        return RemoteConfigManager.shared.getContarctAddress(network) ?? [:]
+
     }
 
     func address(

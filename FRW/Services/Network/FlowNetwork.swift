@@ -1075,9 +1075,6 @@ extension FlowNetwork {
         id: UInt64,
         child: String
     ) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildNFTFromEvm?
-            .toFunc() ?? ""
-        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
 
         let nftId = BigUInt(id)
 
