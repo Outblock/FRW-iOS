@@ -158,7 +158,7 @@ class StakingManager: ObservableObject {
             }
 
             let isSetup = try await FlowNetwork.setupAccountStaking()
-            DispatchQueue.main.sync {
+            DispatchQueue.main.async {
                 self.isSetup = isSetup
                 self.saveCache()
             }
@@ -297,7 +297,7 @@ extension StakingManager {
             }
 
             debugPrint("StakingManager -> refreshDelegatorInfo success, \(response)")
-            DispatchQueue.main.sync {
+            DispatchQueue.main.async {
                 self.delegatorIds = response
             }
         } else {
