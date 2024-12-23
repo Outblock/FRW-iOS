@@ -238,7 +238,7 @@ extension FCLScripts {
             NonceReplacement: nonce,
             KeyIDReplacement: "\(keyId)",
         ]
-        return FCLScripts.authnResponseAccountProof.replace(by: dict)
+        return FCLScripts.authnResponseAccountProof.replace(from: dict)
     }
 }
 
@@ -249,7 +249,7 @@ extension FCLScripts {
             PayerAddressReplacement: RemoteConfigManager.shared.payer,
             KeyIDReplacement: String(keyIndex),
         ]
-        return FCLScripts.preAuthzResponse.replace(by: dict)
+        return FCLScripts.preAuthzResponse.replace(from: dict)
     }
 
     static func generateSignMessageResponse(
@@ -296,7 +296,7 @@ extension FCLScripts {
             AccountProofReplacement: confirmedAccountProofSign,
             KeyIDReplacement: "\(keyId)",
         ]
-        return FCLScripts.authnResponse.replace(by: dict)
+        return FCLScripts.authnResponse.replace(from: dict)
     }
 
     static func generateAuthzResponse(
@@ -309,6 +309,6 @@ extension FCLScripts {
             SignatureReplacement: signature,
             KeyIDReplacement: "\(keyId)",
         ]
-        return FCLScripts.authzResponse.replace(by: dict)
+        return FCLScripts.authzResponse.replace(from: dict)
     }
 }
