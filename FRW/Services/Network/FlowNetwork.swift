@@ -1216,9 +1216,7 @@ extension FlowNetwork {
             log.error("[Cadence] empty script on \(funcName)")
             throw CadenceError.empty
         }
-        let replacedCadence = cadence.replace(by: content).replace(
-            by: ScriptAddress.addressMap()
-        )
+        let replacedCadence = cadence.replace(from: content).replace(by: ScriptAddress.addressMap())
         log.info("[Cadence] transaction start on \(funcName)")
         return try await sendTransaction(
             funcName: funcName,
