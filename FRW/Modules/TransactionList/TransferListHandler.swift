@@ -256,7 +256,7 @@ extension TransferListHandler: UICollectionViewDelegateFlowLayout, UICollectionV
         layout _: UICollectionViewLayout,
         referenceSizeForFooterInSection _: Int
     ) -> CGSize {
-        if EVMAccountManager.shared.selectedAccount != nil {
+        if EVMAccountManager.shared.selectedAccount != nil && dataList.count > 0 {
             return CGSize(width: 0, height: 44)
         }
         return .zero
