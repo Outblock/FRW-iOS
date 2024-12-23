@@ -36,8 +36,14 @@ struct FlowScanTransfer: Codable {
     let type: Int?
     let contractAddress: String?
 
+
+    private var isSealed: Bool {
+        status?.lowercased() == "Sealed".lowercased() || status?.lowercased() == "success"
+    }
+
     var statusColor: UIColor {
-        if status != "Sealed" {
+
+        guard isSealed else {
             return UIColor.LL.Neutrals.text3
         }
 
@@ -49,7 +55,7 @@ struct FlowScanTransfer: Codable {
     }
 
     var swiftUIStatusColor: Color {
-        if status?.lowercased() != "Sealed".lowercased() {
+        guard isSealed else {
             return Color.LL.Neutrals.text3
         }
 
@@ -61,7 +67,7 @@ struct FlowScanTransfer: Codable {
     }
 
     var statusText: String {
-        if status?.lowercased() != "Sealed".lowercased() {
+        guard isSealed else {
             return "transaction_pending".localized
         }
 
@@ -80,12 +86,16 @@ struct FlowScanTransfer: Codable {
 
         var targetStr = ""
         if transferType == TransferType.send {
-            targetStr = "transfer_to_x".localized(receiver ?? "")
+            targetStr = "transfer_to_x".localized("")
         } else if sender != nil {
-            targetStr = "transfer_from_x".localized(sender ?? "")
+            targetStr = "transfer_from_x".localized("")
         }
 
         return "\(dateString) \(targetStr)"
+    }
+
+    var transferAddress: String {
+        return (transferType == .send ? receiver : sender) ?? ""
     }
 
     var amountString: String {

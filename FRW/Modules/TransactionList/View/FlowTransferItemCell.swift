@@ -49,6 +49,7 @@ class FlowTransferItemCell: UICollectionViewCell {
         statusLabel.text = model.statusText
 
         descLabel.text = model.transferDesc
+        addressLabel.text = model.transferAddress
     }
 
     // MARK: Private
@@ -96,6 +97,14 @@ class FlowTransferItemCell: UICollectionViewCell {
         return view
     }()
 
+    private lazy var addressLabel: UILabel = {
+        let view = UILabel()
+        view.font = .inter(size: 12)
+        view.textColor = UIColor.LL.Neutrals.text3
+        view.lineBreakMode = .byTruncatingMiddle
+        return view
+    }()
+
     private lazy var statusLabel: UILabel = {
         let view = UILabel()
         view.font = .inter(size: 12)
@@ -122,7 +131,11 @@ class FlowTransferItemCell: UICollectionViewCell {
             make.left.equalTo(18)
         }
 
-        let stackView1 = UIStackView(arrangedSubviews: [titleStackView, descLabel])
+        let labetStack = UIStackView(arrangedSubviews: [descLabel,addressLabel])
+        labetStack.axis = .horizontal
+        labetStack.spacing = 0
+
+        let stackView1 = UIStackView(arrangedSubviews: [titleStackView, labetStack])
         stackView1.axis = .vertical
         stackView1.spacing = 5
         contentView.addSubview(stackView1)
