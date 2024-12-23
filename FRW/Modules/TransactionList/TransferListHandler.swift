@@ -51,7 +51,11 @@ class TransferListHandler: TransactionListBaseHandler {
         view.dataSource = self
         view.delegate = self
         view.register(FlowTransferItemCell.self, forCellWithReuseIdentifier: "FlowTransferItemCell")
-
+        view.register(
+            FlowTransactionViewMoreFooter.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: "FlowTransactionViewMoreFooter"
+        )
         view.setRefreshingAction { [weak self] in
             guard let self = self else {
                 return
@@ -246,4 +250,28 @@ extension TransferListHandler: UICollectionViewDelegateFlowLayout, UICollectionV
             url.map { Router.route(to: RouteMap.Explore.browser($0)) }
         }
     }
+
+    func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        referenceSizeForFooterInSection _: Int
+    ) -> CGSize {
+        if EVMAccountManager.shared.selectedAccount != nil {
+            return CGSize(width: 0, height: 44)
+        }
+        return .zero
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: "FlowTransactionViewMoreFooter",
+            for: indexPath
+        )
+    }
+    
 }

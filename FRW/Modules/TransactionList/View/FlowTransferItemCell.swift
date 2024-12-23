@@ -31,7 +31,7 @@ class FlowTransferItemCell: UICollectionViewCell {
 
     func config(_ model: FlowScanTransfer) {
         iconImageView.kf.setImage(
-            with: URL(string: model.image ?? ""),
+            with: model.iconURL,
             placeholder: UIImage(named: "placeholder")
         )
 

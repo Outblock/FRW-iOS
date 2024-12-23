@@ -9,11 +9,20 @@ import Foundation
 
 enum AccountType {
     case flow, evm
-    
+
     init(isEvm: Bool) {
         self = isEvm ? .evm : .flow
     }
-    
+
+    var accountPath: String {
+        switch self {
+        case .flow:
+            return "account"
+        case .evm:
+            return "address"
+        }
+    }
+
     static var current: Self {
         return EVMAccountManager.shared.selectedAccount == nil ? .flow : .evm
     }
@@ -27,7 +36,8 @@ extension FlowNetworkType {
     
     func getAccountUrl(accountType: AccountType, address: String) -> URL? {
         let baseUrl = getHistoryBaseUrl(accountType: accountType)
-        return URL(string: "\(baseUrl)/account/\(address)")
+        let path = accountType.accountPath
+        return URL(string: "\(baseUrl)/\(path)/\(address)")
     }
     
     private func getHistoryBaseUrl(accountType: AccountType) -> String {
