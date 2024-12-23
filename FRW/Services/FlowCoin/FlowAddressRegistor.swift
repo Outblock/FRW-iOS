@@ -28,20 +28,15 @@ enum ScriptAddress: String, CaseIterable {
     case evm = "0xEVM"
     case flowEVMBridge = "0xFlowEVMBridge"
     case CapabilityFilter = "0xCapabilityFilter"
-
+    case storageRent = "0xStorageRent"
     // MARK: Internal
 
     static func addressMap(
         on network: FlowNetworkType = LocalUserDefaults.shared
             .flowNetwork
     ) -> [String: String] {
-        let dict = ScriptAddress.allCases
-            .reduce(into: [String: String]()) { partialResult, script in
-                if let address = script.address(on: network) {
-                    partialResult[script.rawValue] = address.hex.withPrefix()
-                }
-            }
-        return dict
+        return RemoteConfigManager.shared.getContarctAddress(network) ?? [:]
+
     }
 
     func address(

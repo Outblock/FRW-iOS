@@ -87,21 +87,27 @@ struct SyncConfirmView: RouteableView {
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 36, height: 36)
                 .cornerRadius(18)
+            VStack(alignment: .leading,spacing: 6) {
+                Text("\(user.userName ?? "")")
+                    .lineLimit(1)
+                    .lineBreakMode(.byTruncatingMiddle)
+                    .font(.inter(size: 12, weight: .bold))
+                    .foregroundColor(.Theme.Text.black8)
 
-            Text("@\(user.userName ?? "")")
-                .font(.inter(size: 12, weight: .bold))
-                .foregroundColor(Color(hex: "#333333"))
+                Text("\(user.walletAddress ?? "")")
+                    .lineLimit(1)
+                    .lineBreakMode(.byTruncatingMiddle)
+                    .font(.inter(size: 12, weight: .regular))
+                    .foregroundColor(.Theme.Text.black3)
+            }
 
-            Text("\(user.walletAddress ?? "")")
-                .font(.inter(size: 12, weight: .regular))
-                .foregroundColor(Color(hex: "#808080"))
 
             Spacer()
         }
         .padding(.horizontal, 16)
         .frame(height: 64)
         .frame(maxWidth: .infinity)
-        .background(Color.black.opacity(0.05))
+        .background(.Theme.Background.grey)
         .contentShape(Rectangle())
         .cornerRadius(24)
         .shadow(color: Color.black.opacity(0.04), x: 0, y: 4, blur: 16)

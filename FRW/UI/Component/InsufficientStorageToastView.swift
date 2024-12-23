@@ -107,20 +107,21 @@ struct InsufficientStorageToastView<ViewModel: InsufficientStorageToastViewModel
     @State private var isVisible = false
         
     var body: some View {
-        PersistentToastView(message: self.viewModel.variant?.message ?? "", imageRes: .Storage.insufficient)
-            .padding(.bottom, 20)
-            .transition(.push(from: .bottom))
-            .hidden(!self.isVisible)
-            .task {
-                withAnimation(.easeInOut(duration: 0.8).delay(0.8)) {
-                    self.isVisible = self.viewModel.showInsufficientFundsToast
-                }
-            }
-            .visibility(self.viewModel.showInsufficientFundsToast ? .visible : .gone)
-            .environment(\.openURL, OpenURLAction { _ in
-                self.viewModel.showWarningAlert()
-                return .handled
-            })
+        HStack{}
+//        PersistentToastView(message: self.viewModel.variant?.message ?? "", imageRes: .Storage.insufficient)
+//            .padding(.bottom, 20)
+//            .transition(.push(from: .bottom))
+//            .hidden(!self.isVisible)
+//            .task {
+//                withAnimation(.easeInOut(duration: 0.8).delay(0.8)) {
+//                    self.isVisible = self.viewModel.showInsufficientFundsToast
+//                }
+//            }
+//            .visibility(self.viewModel.showInsufficientFundsToast ? .visible : .gone)
+//            .environment(\.openURL, OpenURLAction { _ in
+//                self.viewModel.showWarningAlert()
+//                return .handled
+//            })
     }
 }
 
