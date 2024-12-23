@@ -48,7 +48,7 @@ struct StakeAmountView: RouteableView {
         .padding(.top, 12)
         .padding(.bottom, 20)
         .backgroundFill(.LL.deepBg)
-        .halfSheet(showSheet: $vm.showConfirmView, autoResizing: true, backgroundColor: Color.LL.deepBg, sheetView: {
+        .halfSheet(showSheet: $vm.showConfirmView, backgroundColor: Color.LL.deepBg, sheetViewBuilder: {
             StakeConfirmView()
                 .environmentObject(vm)
         })
@@ -409,6 +409,8 @@ extension StakeAmountView {
                 .padding(.horizontal, 18)
                 .padding(.bottom, 20)
             }
+            .fixedSize(horizontal: false, vertical: true)
+            .ignoresSafeArea()
             .backgroundFill(Color.LL.deepBg)
         }
 
