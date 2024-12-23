@@ -65,7 +65,7 @@ struct BackupListView: RouteableView {
         }
         .applyRouteable(self)
         .backgroundFill(Color.LL.Neutrals.background)
-        .halfSheet(showSheet: $viewModel.showRemoveTipView) {
+        .halfSheet(showSheet: $viewModel.showRemoveTipView, autoResizing: true, backgroundColor: Color.LL.Neutrals.background) {
             DangerousTipSheetView(
                 title: "account_key_revoke_title".localized,
                 detail: "account_key_revoke_content".localized,

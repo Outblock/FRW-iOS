@@ -34,35 +34,24 @@ extension WalletHomeView: AppTabBarPageProtocol {
 // MARK: - WalletHomeView
 
 struct WalletHomeView: View {
-    @State
-    var safeArea: EdgeInsets = .zero
-    @State
-    var size: CGSize = .zero
+    @State var safeArea: EdgeInsets = .zero
+    @State var size: CGSize = .zero
 
-    @StateObject
-    var um = UserManager.shared
-    @StateObject
-    var wm = WalletManager.shared
-    @StateObject
-    private var vm = WalletViewModel()
-    @StateObject
-    var newsHandler = WalletNewsHandler.shared
-    @State
-    var isRefreshing: Bool = false
-    @State
-    private var showActionSheet = false
+    @StateObject var um = UserManager.shared
+    @StateObject var wm = WalletManager.shared
+    @StateObject private var vm = WalletViewModel()
+    @StateObject var newsHandler = WalletNewsHandler.shared
+    @State var isRefreshing: Bool = false
+    @State private var showActionSheet = false
     @AppStorage("WalletCardBackrgound")
     private var walletCardBackrgound: String = "fade:0"
 
-    @State
-    var selectedNewsId: String? = nil
-    @State
-    var scrollNext: Bool = false
+    @State var selectedNewsId: String?
+    @State var scrollNext: Bool = false
 
     private let scrollName: String = "WALLETSCROLL"
 
-    @State
-    private var logViewPresented: Bool = false
+    @State private var logViewPresented: Bool = false
 
     var body: some View {
         GeometryReader { proxy in
@@ -71,15 +60,16 @@ struct WalletHomeView: View {
                 GuestView().visibility(um.isLoggedIn ? .gone : .visible)
                 NormalView().visibility(um.isLoggedIn ? .visible : .gone)
             }
-            .halfSheet(showSheet: $vm.backupTipsPresent) {
+            .halfSheet(showSheet: $vm.backupTipsPresent, autoResizing: true, backgroundColor: Color.LL.Neutrals.background) {
                 BackupTipsView(closeAction: {
                     vm.backupTipsPresent = false
                 })
             }
-            .onAppear(perform: {
+            .onAppear {
                 safeArea = proxy.safeAreaInsets
                 size = proxy.size
-            })
+                self.vm.viewWillAppear()
+            }
             .navigationBarHidden(true)
             .ignoresSafeArea(.container, edges: .top)
         }
@@ -283,9 +273,9 @@ struct WalletHomeView: View {
 
                     StackPageView(newsHandler.list, selection: $selectedNewsId) { news in
                         WalletNotificationView(item: news) { idStr in
-                            if let nextId = newsHandler.nextItem(idStr) {
+//                            if let nextId = newsHandler.nextItem(idStr) {
 //                                selectedNewsId =  nextId
-                            }
+//                            }
                             selectedNewsId = idStr
                             newsHandler.onCloseItem(idStr)
                         } onAction: { _ in

@@ -65,7 +65,7 @@ struct UserWalletResponse: Codable {
             })
     }
 
-    func getNetworkWalletModel(network: LocalUserDefaults.FlowNetworkType) -> WalletResponse? {
+    func getNetworkWalletModel(network: FlowNetworkType) -> WalletResponse? {
         wallets?.first(where: { $0.chainId == network.rawValue && $0.blockchain != nil })
     }
 }

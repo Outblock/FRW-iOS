@@ -27,27 +27,15 @@ struct VLazyScrollViewVertical<Content>: View where Content: View {
     // MARK: Body
 
     var body: some View {
-        if #available(iOS 16.0, *) {
-            ScrollView(.vertical, showsIndicators: model.misc.showIndicator, content: {
-                LazyVStack(
-                    alignment: model.layout.alignment,
-                    spacing: model.layout.rowSpacing,
-                    content: {
-                        content()
-                    }
-                )
-            }).scrollContentBackground(.hidden)
-        } else {
-            ScrollView(.vertical, showsIndicators: model.misc.showIndicator, content: {
-                LazyVStack(
-                    alignment: model.layout.alignment,
-                    spacing: model.layout.rowSpacing,
-                    content: {
-                        content()
-                    }
-                )
-            })
-        }
+        ScrollView(.vertical, showsIndicators: model.misc.showIndicator, content: {
+            LazyVStack(
+                alignment: model.layout.alignment,
+                spacing: model.layout.rowSpacing,
+                content: {
+                    content()
+                }
+            )
+        }).scrollContentBackground(.hidden)
     }
 
     // MARK: Private

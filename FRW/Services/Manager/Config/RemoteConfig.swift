@@ -12,7 +12,6 @@ extension RemoteConfigManager {
         let mainnet: [String: String]?
         let testnet: [String: String]?
         let crescendo: [String: String]?
-        let previewnet: [String: String]?
     }
 
     struct ENVConfig: Codable {
@@ -46,8 +45,7 @@ extension RemoteConfigManager {
             case browser
             case nftTransfer = "nft_transfer"
             case hideBrowser = "hide_browser"
-            case insufficientBalance = "insufficient_balance"
-            case insufficientStorage = "insufficient_storage"
+            case transactionWarningPrediction = "tx_warning_prediction"
         }
 
         let freeGas: Bool
@@ -58,8 +56,7 @@ extension RemoteConfigManager {
         let browser: Bool?
         let nftTransfer: Bool?
         let hideBrowser: Bool?
-        let insufficientBalance: Bool?
-        let insufficientStorage: Bool?
+        let transactionWarningPrediction: Bool?
     }
 
     // MARK: - Payer
@@ -68,7 +65,6 @@ extension RemoteConfigManager {
         let mainnet: PayerInfo
         let testnet: PayerInfo
         let crescendo: PayerInfo?
-        let previewnet: PayerInfo?
     }
 
     // MARK: - Net
@@ -176,6 +172,7 @@ extension RemoteConfigManager {
         case unknow
         case canUpgrade
         case insufficientStorage
+        case insufficientBalance
         case isIOS
         case isAndroid
         case isWeb
@@ -209,7 +206,9 @@ extension RemoteConfigManager {
                 return true
             case .insufficientStorage:
                 // TODO: [AB] Not very elegant adding a dependency here, but implementing in a different way would probably require major refactoring
-                return WalletManager.shared.isStorageInsufficient && RemoteConfigManager.shared.config?.features.insufficientStorage ?? false
+                return WalletManager.shared.isStorageInsufficient
+            case .insufficientBalance:
+                return WalletManager.shared.isBalanceInsufficient
             default:
                 return false
             }

@@ -16,7 +16,7 @@ import UIKit
 enum RouteMap {}
 
 typealias EmptyClosure = () -> Void
-typealias SwitchNetworkClosure = (LocalUserDefaults.FlowNetworkType) -> Void
+typealias SwitchNetworkClosure = (FlowNetworkType) -> Void
 typealias BoolClosure = (Bool) -> Void
 
 // MARK: - RouteMap.RestoreLogin
@@ -129,6 +129,7 @@ extension RouteMap {
         case backupManual
 
         case backupList
+        case rootToBackupList
         case multiBackup([MultiBackupType])
         case uploadMulti([MultiBackupType])
         case showPhrase(String)
@@ -170,6 +171,11 @@ extension RouteMap.Backup: RouterTarget {
             navi.push(content: ManualBackupView())
         case .backupList:
             navi.push(content: BackupListView())
+        case .rootToBackupList:
+            guard let rootController = navi.viewControllers.first else { return }
+            let backupController = RouteableUIHostingController(rootView: BackupListView())
+            let viewControllers = [rootController, backupController]
+            navi.setViewControllers(viewControllers, animated: false)
         case let .multiBackup(items):
             navi.push(content: BackupMultiView(items: items))
         case let .uploadMulti(items):
@@ -269,11 +275,8 @@ extension RouteMap.Wallet: RouterTarget {
             let vc = TransactionListViewController(contractId: contractId)
             navi.pushViewController(vc, animated: true)
         case let .swap(fromToken):
-            navi
-                .present(
-                    content: fromToken != nil ? SwapView(defaultFromToken: fromToken) :
-                        SwapView()
-                )
+            let view = fromToken != nil ? SwapView(defaultFromToken: fromToken) : SwapView()
+            navi.push(content: view)
         case let .selectToken(selectedToken, disableTokens, callback):
             let vm = AddTokenViewModel(
                 selectedToken: selectedToken,
@@ -611,11 +614,13 @@ extension RouteMap.Transaction: RouterTarget {
     func onPresent(navi _: UINavigationController) {
         switch self {
         case let .detail(transactionId):
-            if let url = transactionId.transactionFlowScanURL {
-//                UIApplication.shared.open(url)
-                TransactionUIHandler.shared.dismissListView()
-                Router.route(to: RouteMap.Explore.browser(url))
-            }
+            let network = LocalUserDefaults.shared.flowNetwork
+            let accountType = AccountType.current
+            let url = network.getTransactionHistoryUrl(accountType: accountType, transactionId: transactionId.hex)
+
+//            UIApplication.shared.open(url)
+            TransactionUIHandler.shared.dismissListView()
+            url.map { Router.route(to: RouteMap.Explore.browser($0)) }
         }
     }
 }
@@ -635,8 +640,8 @@ extension RouteMap {
         case linkChildAccount(ChildAccountLinkViewModel)
         case dapps
         case switchNetwork(
-            LocalUserDefaults.FlowNetworkType,
-            LocalUserDefaults.FlowNetworkType,
+            FlowNetworkType,
+            FlowNetworkType,
             SwitchNetworkClosure?
         )
         case signTypedMessage(BrowserSignTypedMessageViewModel)

@@ -7,15 +7,13 @@
 
 import Foundation
 
-extension LocalUserDefaults.FlowNetworkType {
+extension FlowNetworkType {
     var networkID: Int {
         switch self {
         case .testnet:
             return 545
         case .mainnet:
             return 747
-        case .previewnet:
-            return 646
         }
     }
 
@@ -25,8 +23,6 @@ extension LocalUserDefaults.FlowNetworkType {
             return URL(string: "https://testnet.evm.nodes.onflow.org")
         case .mainnet:
             return URL(string: "https://mainnet.evm.nodes.onflow.org")
-        case .previewnet:
-            return URL(string: "https://previewnet.evm.nodes.onflow.org")
         }
     }
 }

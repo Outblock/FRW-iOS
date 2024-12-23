@@ -10,7 +10,7 @@
 "Send::message" = "Send";
 "load_wallet_error" = "Load wallet Error";
 "Swap::message" = "Swap";
-"inocrrect_world_length" = "Inocrrect world length";
+"inocrrect_world_length" = "Incorrect world length";
 "Save::message" = "Save";
 "backup_failed" = "Backup failed";
 "Settings::message" = "Settings";
@@ -304,11 +304,11 @@
 "At__least__8__characters::message" = "At least 8 characters";
 "custom_address" = "Custom Address";
 "Your__address__is__currently__processing::message" = "Your address is currently processing another transaction";
-"developer_mode" = "Developer Mode";
+"developer_mode" = "Developer Model";
 "Transaction__created::message" = "Transaction created";
 "welcome_to_lilico" = "Welcome to Flow Wallet!";
 "Search__Address__or__Flow__domain::message" = "Search, Address(0x) or Flow domain";
-"welcome_desc" = "We will do our best to protect your assets!";
+"welcome_desc" = "Let's get started by creating an account!";
 "Search__the__ID::message" = "Search the ID: ";
 "addresses" = "Address Book";
 "Sorry__we__could__not__find__any__accounts::message" = "Sorry, we could not find any accounts. Please try again.";
@@ -400,7 +400,7 @@
 "Your__passwords__do__not__match::message" = "Your passwords do not match. Please check again.";
 "edit" = "Edit";
 "Create::message" = "Create ";
-"theme" = "Appearance";
+"theme" = "Theme";
 "Password::message" = "Password";
 "light" = "Light";
 "Create__a__password::message" = "Create a password";
@@ -430,7 +430,7 @@
 "Incorrect__decrypt__password__please__try__again::message" = "Incorrect decrypt password, please try again.";
 "restore" = "Restore";
 "The__decrypt__password__should__be__8__characters__long::message" = "The decrypt password should be at least 8 characters long.";
-"restore_with_words_desc" = "From Flow Wallet legacy backup, Seed Phrase, Key Store and Private Key.";
+"restore_with_words_desc" = "Restore your wallet with the 12 word \nrecovery phrase that you have written down.";
 "We__ve__found::message" = "We've found";
 "restore_with_icloud" = "Restore with iCloud";
 "matching__accounts::message" = "matching accounts";
@@ -482,7 +482,7 @@
 "Login::message" = "Login";
 "search_the_id" = "Search the ID:";
 "Reset_Your::message" = "Reset Your";
-"no_account_found_msg" = "Sorry, We did not find any related account, please check your enter and search it again.";
+"no_account_found_msg" = "No results. Please check your input and try again.";
 "Enter_the_12_or_24_word_recovery_phrase_given_when_you_first_created_your_wallet::message" = "Enter the 12 or 24 word recovery phrase given when you first created your wallet. ";
 "search_failed_msg" = "Search failed. Please try again.";
 "Enter_your_recovery_phrase_using_spaces_to_separate_each_word::message" = "Enter your recovery phrase, using spaces to separate each wordEnter your recovery phrase";
@@ -498,13 +498,28 @@
 "Kraken::message" = "Kraken";
 "max" = "Max";
 "Coinbase::message" = "Coinbase";
+
 "insufficient_balance" = "Insufficient Balance";
-"insufficient_storage" = "Insufficient storage.";
-"insufficient_storage_after_transfer" = "Insufficient storage after this action.";
-"insufficient_storage::error::title" = "Insufficient Storage Error";
-"insufficient_storage::error::content::first" = "Your transaction failed because it caused your account to fall below the minimum balance of FLOW for your account’s storage usage.";
-"insufficient_storage::error::content::second" = "You must have least %.3f FLOW in your account to cover your storage usage.";
+"insufficient_storage" = "Insufficient Storage.";
+
+"insufficient_storage_error" = "Storage limit reached. [Learn More](https://developers.flow.com/build/basics/fees#storage)";
+"insufficient_storage_after_transfer_error" = "Storage limit reached after this action. [Learn More](https://developers.flow.com/build/basics/fees#storage)";
+
+"insufficient_storage::error::title" = "Storage Limit Error";
+"insufficient_storage::error::content::first" = "Your transaction failed because it caused your account to fall below the minimum balance of FLOW required for your account’s storage usage.";
+"insufficient_storage::error::content::second" = "You must have at least %.3f FLOW in your account to cover your storage usage.";
 "insufficient_storage::error::content::third" = "[Learn More](https://developers.flow.com/build/basics/fees#storage)";
+
+"insufficient_storage::warning::before::title" = "Storage Limit Warning";
+"insufficient_storage::warning::before::content::first" = "Your account is below the minimum FLOW balance required for its storage usage, which may cause subsequent transactions to fail.";
+"insufficient_storage::warning::before::content::second" = "You must have at least %.3f FLOW in your account to cover your storage usage.";
+"insufficient_storage::warning::before::content::third" = "[Learn More](https://developers.flow.com/build/basics/fees#storage)";
+
+"insufficient_storage::warning::after::title" = "Storage Limit Warning";
+"insufficient_storage::warning::after::content::first" = "This action may fail because it may reduce the amount of FLOW in your account below what is required to cover it’s storage usage.";
+"insufficient_storage::warning::after::content::second" = "You must have at least %.3f FLOW in your account to cover your storage usage.";
+"insufficient_storage::warning::after::content::third" = "[Learn More](https://developers.flow.com/build/basics/fees#storage)";
+
 "Kucoin::message" = "Kucoin";
 "amount_balance" = "Amount Balance";
 "Huobi::message" = "Huobi";
@@ -576,7 +591,7 @@
 "reset_wallet_desc_2" = "RESET MY WALLET";
 "Please_try_your_recovery_phrase_again_or_create_a_new_account::message" = "Please try your recovery phrase again or create a new account ";
 "reset_wallet_desc_3" = " to confirm reset.";
-"with_current_recovery_phrase::message" = "with current recovery phraset";
+"with_current_recovery_phrase::message" = "with current recovery phrase";
 "reset_warning_text" = "Please enter the correct text";
 "This_will_remove_any_existing_wallets_and_replace_them_with_new_wallets_Make_sure_you_have_your_recovery_phrase_backed_up::message" = "This will remove any existing wallets and replace them with new wallets. Make sure you have your recovery phrase backed up.";
 "reset_warning_alert_title" = "Warning";
@@ -596,7 +611,7 @@
 "backup_to_x_failed" = "Backup to %@ failed";
 "No__Activity::message" = "No Activity";
 "backup_to_x_succeeded" = "Backup to %@ succeeded";
-"Learn__more::message" = "Learn More";
+"Learn__more::message" = "Learn more";
 "cancel" = "Cancel";
 "Validated__address::message" = "Validated address";
 "saved" = "Saved";
@@ -736,7 +751,7 @@
 "stake_guide_desc_1_3" = " per year.";
 "stake_guide_desc_2_1" = "When you stake ";
 "stake_guide_desc_2_2" = "Flow";
-"stake_guide_desc_2_3" = " you receive ";
+"stake_guide_desc_2_3" = " you receive";
 "stake_guide_desc_2_4" = "Flow";
 "stake_guide_desc_2_5" = ".\n";
 "stake_guide_desc_2_6" = "The amount of Flow will be";
@@ -746,7 +761,7 @@
 "stake_guide_desc_3_2" = "next epoch";
 "stake_guide_desc_3_3" = ".";
 "stake_guide_desc_4_1" = "Rewards are automatically credited to your\n";
-"stake_guide_desc_4_2" = "deposit ";
+"stake_guide_desc_4_2" = "deposit";
 "stake_guide_desc_4_3" = "every week";
 "stake_guide_desc_4_4" = ".";
 "stake_amount" = "Stake Amount";
@@ -797,18 +812,18 @@
 "sdk_test" = "SDKTesT";
 "skip" = "Skip";
 "start" = "Start";
-"onboarding_title_nft" = "Playground\nfor NFTs";
-"onboarding_title_token" = "Gather\nall your tokens";
+"onboarding_title_nft" = "A playground\nfor your NFTs";
+"onboarding_title_token" = "Collect\nyour favorite tokens";
 "onboarding_title_domain" = "Claim\nfree Flow Wallet domain";
-"onboarding_title_site" = "Explore\nyour favourite site";
-"backup_tips_desc" = "Backup Recovery Phrase is important in protect your prize property.";
+"onboarding_title_site" = "Explore\nyour favourite apps";
+"backup_tips_desc" = "Backup your account now to protect your assets.";
 "not_now" = "Not Now";
 "accounts" = "Profiles";
 "create_new_account" = "Create a New Profile";
 "add_existing_account" = "Import an Existing Profile";
 "import_wallet" = "Import Wallet";
 "welcome" = "Welcome";
-"welcome_sub_desc" = "Provide More About The Security";
+"welcome_sub_desc" = "A Wallet Built For Flow";
 "registerd_accounts" = "Registered Accounts";
 "link_account_start_desc_x" = "We would like to link your %@ account to your Flow Wallet account “%@”";
 "link_account_success_desc" = "Now you can find your linked account under side menu";
@@ -858,8 +873,8 @@
 "account_key_revoke_content" = "Once you revoke this key,\nthere is no way to re-activate it.";
 "hold_to_revoke" = "Hold to Revoke";
 "devices" = "Devices";
-"Scan_to_Sync_Extension_Wallet"="Sync your wallet between your devices";
-"Scan_sync_detal"="Scan the QR code shown by the Flow Wallet browser \n extension to sync your wallet between your devices";
+"Scan_to_Sync_Extension_Wallet" = "Sync your wallet between your devices";
+"Scan_sync_detal" = "Scan the QR code shown by the Flow Wallet browser \n extension to sync your wallet between your devices";
 "add_other_device" = "Add Other Device";
 "current_device" = "Current Device";
 "other_device" = "Other Devices";
@@ -875,10 +890,10 @@
 "sync_flow_reference" = "Sync Flow Wallet";
 "sync_top_hint" = "Open your Flow Wallet on Mobile App and Scan the QR Code to Sync your Wallet.";
 "sync_qr_code_mobile" = "Scan QR Code with Mobile App";
-"sync_qr_code_mobile_note" = "Note: Your recovery phrase will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
+"sync_qr_code_mobile_note" = "Note: Your secrets will NEVER go through Flow Wallet's server. It is end-to-end encrypted and we can never read it.";
 "confirm_tag" = "Confirm";
 "importing_tag" = "Importing";
-"find_matching_wallet" = "Find Matching Wallet";
+"find_matching_wallet" = "Found Matching Wallets";
 "hold_to_sync" = "Hold to Sync";
 "wallet_confirmation" = "Wallet Confirmation";
 "sync_confirm_failed" = "sync failed";
@@ -888,8 +903,8 @@
 "create_device_backup_title" = "Create Device Backup";
 "create_device_backup_note" = "Utilise Your Device as a Backup Wallet to Safeguard and Restore Your Digital Assets with Ease";
 "create_multi_backup_title" = "Create Multi-Backup";
-"create_multi_backup_note" = "Create a Cloud Backup with Trusted Providers like Google Drive, Passkey, iCloud, and Secure Your Recovery Phrase";
-"backup_note_x" = "Note: Your backup key is end-to-end encrypted and is never sent to Flow Wallet servers.";
+"create_multi_backup_note" = "Create a cloud backup with trusted providers like Google Drive and iCloud";
+"backup_note_x" = "Note: Your backup secrets is end-to-end encrypted and is never sent to Flow Wallet servers.";
 "backup.status.create" = "Create Backup";
 "backup.status.upload" = "Upload Backup";
 "backup.status.regist" = "Registration Keylist";
@@ -917,7 +932,7 @@
 "connect_to_x" = "Connect to %@";
 "connect" = "Connect";
 "restore_wallet" = "Restore Wallet";
-"find_matching_wallet_x" = "Find %@ Matching Wallet";
+"find_matching_wallet_x" = "Found %@ Matching Wallets";
 "prepared_to_restore" = "Prepared to Restore Wallet";
 "revoke" = "Revoke";
 "scan_to_extension" = "Scan to Sync Extension Wallet";
@@ -944,7 +959,6 @@
 "account_key_index" = "Key Index";
 "account_key_done_revoked_tips" = "The key has been revoked";
 "other_key" = "Other Key";
-"enable_previewnet_failed" = "Enable previewnet failed";
 "evm_on_flow" = "EVM on Flow";
 "other" = "other";
 "evm_check_balance" = "Balance is lower than 0.02,\n please fund your account to continue.";
@@ -971,6 +985,8 @@
 "move_asset_browser_title_x" = "Move your assets between your cadence address on Flow, so %@ can view your assets";
 "tokens" = "Tokens";
 "Address Copied" = "Address Copied";
+
+"deposit_evm_warning" = "Please make sure your deposit is on FLOW EVM network, if your deposit is via another network your assets may be lost.";
 
 "Backup_Not_Found" = "Backup Not Found";
 "No_Backup_Account_Found" = "No Backup Account Found";
@@ -1006,6 +1022,19 @@
 "import_no_account_found" = "Sorry, we can not find your address on flow with this key.\nPlease check your input and try again.";
 "private_key_placeholder" = "Enter your Private key";
 "take_mins" = "It might take 1-2 mins";
+
+"create_profile::creating" = "Creating your Profile";
+
+"create_profile::waiting::carousel::1::title" = "security,\npowered by\nSecure\nEnclave.";
+"create_profile::waiting::carousel::1::description" = "Flow Wallet uses your device’s Secure Enclave to secure your Flow account.";
+"create_profile::waiting::carousel::2::title" = "your device,\nis now a\nHardware\nWallet.";
+"create_profile::waiting::carousel::2::description" = "Secure Enclave is special hardware on your device that Flow Wallet uses to turn your device into a hardware wallet.";
+"create_profile::waiting::carousel::3::title" = "you just,\nunlocked\nTrue\nOwnership.";
+"create_profile::waiting::carousel::3::description" = "Your assets are secured by your device, unlocking true ownership of your assets on Flow.";
+
+"create_profile::waiting::finished:title" = "ready to\nget started";
+"create_profile::waiting::finished:description" = "Congratulations! Your Flow account is now ready. To best secure your account, you can back it up now.";
+
 "what_is" = "What is a";
 "multi_backup_detail" = "A multi-backup stores multiple partial-weight keys across your accounts on trusted providers like Google Drive and iCloud, or a Recovery Phrase.
 
@@ -1047,6 +1076,7 @@ Please create backups for your wallet to ensure you retain access to your Flow a
 "create_phrase_backup_note" = "Create a 12 word recovery phrase";
 "Recommended" = "Recommended";
 
+"move_fee" = "Move Fee";
 
 "seedphrase_hint" = "12 or 24 words split with whitespace";
 "Seed Phrase" = "Seed Phrase";
@@ -1055,7 +1085,7 @@ Please create backups for your wallet to ensure you retain access to your Flow a
 "Passphrase" = "Passphrase";
 "Optional" = "(Optional)";
 
-"move_fee_hint_cost" = "It appears when moving between VM accounts";
+"move_fee_hint_cost" = "Charged when moving between accounts on Cadence and EVM on Flow.";
 "move_fee_hint_free" = "No fee between your Flow accounts 🤟";
 "move_fee_cost" = "~ 0.001";
 "profile_key_invalid" = "We noticed the profile key is not available in your device secure enclave.";
@@ -1066,7 +1096,7 @@ Please create backups for your wallet to ensure you retain access to your Flow a
 "until_web_loaded" = "Until the website is fully loaded";
 
 "Token Contract Address" = "Token Contract Address";
-"add_custom_token_place" = "Enter your flow token contract address";
+"add_custom_token_place" = "Enter the token contract address";
 "Paste Address" = "Paste Address";
 "Token Name" = "Token Name";
 "Token Symbol" = "Token Symbol";
@@ -1089,3 +1119,5 @@ Key Store and Private Key.";
 "invalid_password" = "Key decryption failed - possibly wrong password";
 "not_find_address" = "cannot find this key under this address";
 "required_info_not" = "Required information has not been entered.";
+"account_key_weight_less" = "This key has insufficient weight";
+"dApps" = "dApps";

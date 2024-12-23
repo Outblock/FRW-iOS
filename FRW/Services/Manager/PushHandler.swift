@@ -180,9 +180,12 @@ extension PushHandler: MessagingDelegate, UNUserNotificationCenterDelegate {
         await MainActor.run {
             let userInfo = response.notification.request.content.userInfo
             log.debug("user did click a notification", context: userInfo)
-            if let transactionId = userInfo["transactionId"] as? String,
-               let url = transactionId.toFlowScanTransactionDetailURL {
-                Router.route(to: RouteMap.Explore.browser(url))
+            if let transactionId = userInfo["transactionId"] as? String {
+                let network = LocalUserDefaults.shared.flowNetwork
+                let accountType = AccountType.current
+                let url = network.getTransactionHistoryUrl(accountType: accountType, transactionId: transactionId)
+
+                url.map { Router.route(to: RouteMap.Explore.browser($0)) }
             }
         }
     }

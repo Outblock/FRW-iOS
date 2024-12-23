@@ -24,9 +24,9 @@ extension WalletManager {
     static let mnemonicStrength: Int32 = 160
     static let defaultGas: UInt64 = 30_000_000
     
-    static let minDefaultBlance: Decimal = 0.001
+    static let minFlowBalance: Decimal = 0.001
     static let fixedMoveFee: Decimal = 0.001
-    static var averageTransactionFee: Decimal { RemoteConfigManager.shared.freeGasEnabled ? 0 : 0.0005 }
+    static var averageTransactionFee: Decimal { RemoteConfigManager.shared.freeGasEnabled ? 0 : 0.001 }
     static let mininumStorageThreshold = 10000
     
     private static let defaultBundleID = "com.flowfoundation.wallet"
@@ -73,20 +73,13 @@ class WalletManager: ObservableObject {
 
     static let shared = WalletManager()
 
-    @Published
-    var supportedCoins: [TokenModel]?
-    @Published
-    var evmSupportedCoins: [TokenModel]?
-    @Published
-    var activatedCoins: [TokenModel] = []
-    @Published
-    var coinBalances: [String: Decimal] = [:]
-    @Published
-    var childAccount: ChildAccount? = nil
-    @Published
-    var evmAccount: EVMAccountManager.Account? = nil
-    @Published
-    var accountInfo: Flow.AccountInfo?
+    @Published var supportedCoins: [TokenModel]?
+    @Published var evmSupportedCoins: [TokenModel]?
+    @Published var activatedCoins: [TokenModel] = []
+    @Published var coinBalances: [String: Decimal] = [:]
+    @Published var childAccount: ChildAccount? = nil
+    @Published var evmAccount: EVMAccountManager.Account? = nil
+    @Published var accountInfo: Flow.AccountInfo?
 
     var accessibleManager: ChildAccountManager.AccessibleManager = .init()
 
@@ -101,8 +94,7 @@ class WalletManager: ObservableObject {
             .accessibility(.whenUnlocked)
 
     var walletAccount: WalletAccount = .init()
-    @Published
-    var balanceProvider = BalanceProvider()
+    @Published var balanceProvider = BalanceProvider()
 
     var walletEntity: FlowWalletKit.Wallet? = nil
     var accountKey: UserManager.Accountkey?
@@ -113,8 +105,7 @@ class WalletManager: ObservableObject {
 
     var customTokenManager: CustomTokenManager = .init()
 
-    @Published
-    var walletInfo: UserWalletResponse? {
+    @Published var walletInfo: UserWalletResponse? {
         didSet {
             // TODO: remove after update new Flow Wallet SDK
             updateFlowAccount()
@@ -343,6 +334,10 @@ extension WalletManager {
         evmAccount != nil
     }
 
+    var isSelectedFlowAccount: Bool {
+        ChildAccountManager.shared.selectedChildAccount == nil && EVMAccountManager.shared.selectedAccount == nil
+    }
+    
     var selectedAccountIcon: String {
         if let childAccount = childAccount {
             return childAccount.icon
@@ -399,7 +394,7 @@ extension WalletManager {
         return "0x"
     }
 
-    func changeNetwork(_ type: LocalUserDefaults.FlowNetworkType) {
+    func changeNetwork(_ type: FlowNetworkType) {
         if LocalUserDefaults.shared.flowNetwork == type {
             if isSelectedChildAccount {
                 ChildAccountManager.shared.select(nil)
@@ -531,7 +526,7 @@ extension WalletManager {
         walletInfo?.currentNetworkWalletModel?.getAddress
     }
 
-    func getFlowNetworkTypeAddress(network: LocalUserDefaults.FlowNetworkType) -> String? {
+    func getFlowNetworkTypeAddress(network: FlowNetworkType) -> String? {
         walletInfo?.getNetworkWalletModel(network: network)?.getAddress
     }
 
@@ -559,12 +554,6 @@ extension WalletManager {
         }
 
         return nil
-    }
-
-    var isPreviewEnabled: Bool {
-        walletInfo?.wallets?
-            .first(where: { $0.chainId == LocalUserDefaults.FlowNetworkType.previewnet.rawValue })?
-            .getAddress != nil
     }
 
     func isTokenActivated(symbol: String) -> Bool {
@@ -951,18 +940,32 @@ extension WalletManager {
     
     var minimumStorageBalance: Decimal {
         guard let accountInfo else { return Self.fixedMoveFee }
-        return accountInfo.storageFlow * Self.fixedMoveFee
+        return accountInfo.storageFlow + Self.fixedMoveFee
     }
     
     var isStorageInsufficient: Bool {
+        guard self.isSelectedFlowAccount else { return false }
         guard let accountInfo else { return false }
         guard accountInfo.storageCapacity >= accountInfo.storageUsed else { return true }
         return accountInfo.storageCapacity - accountInfo.storageUsed < Self.mininumStorageThreshold
     }
 
+    var isBalanceInsufficient: Bool {
+        guard self.isSelectedFlowAccount else { return false }
+        guard let accountInfo else { return false }
+        return accountInfo.balance < Self.minFlowBalance
+    }
+    
     func isBalanceInsufficient(for amount: Decimal) -> Bool {
+        guard self.isSelectedFlowAccount else { return false }
         guard let accountInfo else { return false }
         return accountInfo.availableBalance - amount < Self.averageTransactionFee
+    }
+    
+    func isFlowInsufficient(for amount: Decimal) -> Bool {
+        guard self.isSelectedFlowAccount else { return false }
+        guard let accountInfo else { return false }
+        return accountInfo.balance - amount < Self.minFlowBalance
     }
     
     func fetchBalance() async throws {

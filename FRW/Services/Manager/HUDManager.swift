@@ -98,7 +98,7 @@ class HUD {
         confirmTitle: String,
         confirmAction: @escaping () -> Void
     ) {
-        DispatchQueue.main.async {
+        runOnMain {
             let alertVC = UIAlertController(title: title, message: msg, preferredStyle: .alert)
 
             let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { _ in

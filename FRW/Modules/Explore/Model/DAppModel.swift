@@ -13,7 +13,6 @@ struct DAppModel: Codable, Identifiable {
         case testnetURL = "testnet_url"
         case sandboxnetURL = "sandboxnet_url"
         case crescendoURL = "crescendo_url"
-        case previewnetURL = "previewnet_url"
         case description
         case logo, category
     }
@@ -23,7 +22,6 @@ struct DAppModel: Codable, Identifiable {
     let testnetURL: URL?
     let sandboxnetURL: URL?
     let crescendoURL: URL?
-    let previewnetURL: URL?
     let description: String
     let logo: URL
     let category: String
@@ -38,8 +36,6 @@ struct DAppModel: Codable, Identifiable {
             return url
         case .testnet:
             return testnetURL
-        case .previewnet:
-            return previewnetURL
         }
     }
 

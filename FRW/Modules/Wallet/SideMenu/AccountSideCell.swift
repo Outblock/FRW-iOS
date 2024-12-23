@@ -125,7 +125,7 @@ struct AccountSideCell: View {
 
     // MARK: Private
 
-    private var network: LocalUserDefaults.FlowNetworkType {
+    private var network: FlowNetworkType {
         LocalUserDefaults.shared.flowNetwork
     }
 

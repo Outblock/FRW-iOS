@@ -58,7 +58,7 @@ struct WalletSendAmountView: RouteableView {
 //        .interactiveDismissDisabled()
         .buttonStyle(.plain)
         .backgroundFill(Color.LL.background)
-        .halfSheet(showSheet: $vm.showConfirmView, sheetView: {
+        .halfSheet(showSheet: $vm.showConfirmView, autoResizing: true, backgroundColor: Color.LL.Neutrals.background, sheetView: {
             SendConfirmView()
                 .environmentObject(vm)
         })
@@ -385,7 +385,7 @@ struct WalletSendAmountView: RouteableView {
 extension WalletSendAmountView {
     struct SendConfirmView: View {
         @EnvironmentObject
-        var vm: WalletSendAmountViewModel
+        private var vm: WalletSendAmountViewModel
 
         var fromTargetContent: Contact {
             if let account = EVMAccountManager.shared.selectedAccount {
@@ -440,7 +440,6 @@ extension WalletSendAmountView {
                 }
                 .padding(.horizontal, 28)
             }
-            .backgroundFill(Color.LL.Neutrals.background)
         }
 
         var fromToView: some View {

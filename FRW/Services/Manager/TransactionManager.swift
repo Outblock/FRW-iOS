@@ -26,19 +26,6 @@ extension Flow.Transaction.Status {
     }
 }
 
-extension Flow.ID {
-    var transactionFlowScanURL: URL? {
-        switch LocalUserDefaults.shared.flowNetwork {
-        case .testnet:
-            return URL(string: "https://testnet.flowscan.io/tx/\(hex)")
-        case .mainnet:
-            return URL(string: "https://flowscan.io/tx/\(hex)")
-        case .previewnet:
-            return URL(string: "https://previewnet.flowscan.io/tx/\(hex)")
-        }
-    }
-}
-
 extension TransactionManager.TransactionHolder {
     var statusString: String {
         switch Flow.Transaction.Status(status) {
@@ -267,9 +254,7 @@ extension TransactionManager {
                             
                             switch result.errorCode {
                             case .storageCapacityExceeded:
-                                if RemoteConfigManager.shared.config?.features.insufficientStorage ?? false {
-                                    AlertViewController.showInsufficientStorageError(minimumBalance: WalletManager.shared.minimumStorageBalance.doubleValue)
-                                }
+                                AlertViewController.showInsufficientStorageError(minimumBalance: WalletManager.shared.minimumStorageBalance.doubleValue)
                             default:
                                 break
                             }

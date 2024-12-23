@@ -50,7 +50,7 @@ struct DangerousTipSheetView: View {
             }
             .padding(.horizontal, 28)
         }
-        .backgroundFill(Color.LL.Neutrals.background)
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
 
