@@ -184,7 +184,7 @@ extension BrowserViewController {
 
         DispatchQueue.syncOnMain {
             log.debug("will post authn view ready response")
-            postMessage(message)
+            self.postMessage(message)
             log.debug("did post authn view ready response")
         }
     }
@@ -208,7 +208,7 @@ extension BrowserViewController {
         )
         DispatchQueue.syncOnMain {
             log.debug("will post authz payload sign response")
-            postMessage(message)
+            self.postMessage(message)
             log.debug("did post authz payload sign response")
         }
     }
