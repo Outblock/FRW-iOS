@@ -153,6 +153,12 @@ class BackupUploadViewModel: ObservableObject {
     }
 
     func onClickButton() {
+        handleProcess(process: process)
+    }
+
+    func handleProcess(process: BackupProcess) {
+        self.hasError = false
+        self.process = process
         switch process {
         case .idle:
             Task {
@@ -164,19 +170,17 @@ class BackupUploadViewModel: ObservableObject {
                     try await MultiBackupManager.shared.preLogin(with: currentType)
                     let result = try await MultiBackupManager.shared.registerKeyToChain(on: currentType)
                     if result {
-                        toggleProcess(process: .upload)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            self.onClickButton()
+                        runOnMain {
+                            self.handleProcess(process: .upload)
                         }
-
                     } else {
-                        DispatchQueue.main.async {
+                        runOnMain {
                             self.buttonState = .enabled
                         }
                         HUD.error(title: "create error on chain")
                     }
                 } catch {
-                    DispatchQueue.main.async {
+                    runOnMain {
                         self.buttonState = .enabled
                     }
                     trackCreatFailed(message: "idle:" + error.localizedDescription)
@@ -190,9 +194,8 @@ class BackupUploadViewModel: ObservableObject {
                     }
 
                     try await MultiBackupManager.shared.backupKey(on: currentType)
-                    toggleProcess(process: .regist)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        self.onClickButton()
+                    runOnMain {
+                        self.handleProcess(process: .regist)
                     }
                 } catch {
                     DispatchQueue.main.async {
@@ -210,13 +213,12 @@ class BackupUploadViewModel: ObservableObject {
                     DispatchQueue.main.async {
                         self.buttonState = .loading
                     }
-
                     try await MultiBackupManager.shared.syncKeyToServer(on: currentType)
                     DispatchQueue.main.async {
                         self.mnemonicBlur = false
                         self.buttonState = .enabled
+                        self.process = .finish
                     }
-                    toggleProcess(process: .finish)
                     trackCreatSuccess()
 
                 } catch {
@@ -230,20 +232,13 @@ class BackupUploadViewModel: ObservableObject {
             let nextIndex = currentIndex + 1
             if items.count <= nextIndex {
                 currentIndex = nextIndex
-                toggleProcess(process: .end)
+                self.process = .end
             } else {
                 currentIndex = nextIndex
-                toggleProcess(process: .idle)
+                self.process = .idle
             }
         case .end:
             Router.popToRoot()
-        }
-    }
-
-    func toggleProcess(process: BackupProcess) {
-        DispatchQueue.main.async {
-            self.hasError = false
-            self.process = process
         }
     }
 }
