@@ -103,8 +103,9 @@ class NFTTransferViewModel: ObservableObject {
             isValidNFT = true
             return
         }
-        let result = NFTCollectionStateManager.share.isTokenAdded(toAddress)
-        isValidNFT = result
+        //TODO: get status result from toAddress by call `checkCollectionEnable`, and check state from `nft` on result list
+//        let result = NFTCollectionStateManager.share.isTokenAdded(toAddress)
+//        isValidNFT = result
     }
 
     func sendAction() {

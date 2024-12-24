@@ -28,39 +28,24 @@ final class NFTCollectionStateManager {
         }
 
         do {
-            let result: [String: Bool] = try await FlowNetwork
-                .checkCollectionEnable(address: Flow.Address(hex: address))
-
-            for (_, collection) in list.enumerated() {
-                if let contractName = collection.contractName, let address = collection.address {
-                    let key = "A." + address.stripHexPrefix() + "." + contractName
-                    let isEnable = result[key] ?? false
-                    if let oldIndex = tokenStateList
-                        .firstIndex(where: {
-                            $0.address.lowercased() == address.lowercased() && $0.name == collection
-                                .contractName
-                        }) {
-                        tokenStateList.remove(at: oldIndex)
-                    }
-                    tokenStateList.append(NftCollectionState(
-                        name: contractName,
-                        address: address,
-                        isAdded: isEnable
-                    ))
-                }
-            }
+            let result: [String: Bool] = try await FlowNetwork.checkCollectionEnable(address: Flow.Address(hex: address))
+            collectionStateList = result
         } catch {
             debugPrint("NFTCollectionStateManager: \(error)")
         }
     }
 
-    func isTokenAdded(_ address: String) -> Bool {
-        tokenStateList.first { $0.address.lowercased() == address.lowercased() }?.isAdded ?? false
+    func isCollectionAdd(_ info: NFTCollectionInfo) -> Bool {
+        guard let contractAddress = info.address, let contractName = info.contractName else {
+            return false
+        }
+        let contractId = "A." + contractAddress.stripHexPrefix() + "." + contractName
+        return collectionStateList[contractId] ?? false
     }
 
     // MARK: Private
 
-    private var tokenStateList: [NftCollectionState] = []
+    private var collectionStateList: [String: Bool] = [:]
 }
 
 // MARK: - NftCollectionState

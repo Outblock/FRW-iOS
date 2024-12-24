@@ -210,7 +210,9 @@ final class MoveNFTsViewModel: ObservableObject {
     }
 
     func fetchNFTs(_ offset: Int = 0) {
-        buttonState = .loading
+        runOnMain {
+            self.buttonState = .loading
+        }
         guard let collection = selectedCollection else {
             fetchCollection()
             return
