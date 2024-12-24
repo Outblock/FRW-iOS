@@ -153,6 +153,12 @@ class BackupUploadViewModel: ObservableObject {
     }
 
     func onClickButton() {
+        handleProcess(process: process)
+    }
+
+    func handleProcess(process: BackupProcess) {
+        self.hasError = false
+        self.process = process
         switch process {
         case .idle:
             Task {
@@ -162,20 +168,20 @@ class BackupUploadViewModel: ObservableObject {
                         self.mnemonicBlur = true
                     }
                     try await MultiBackupManager.shared.preLogin(with: currentType)
-                    let result = try await MultiBackupManager.shared
-                        .registerKeyToChain(on: currentType)
+                    let result = try await MultiBackupManager.shared.registerKeyToChain(on: currentType)
                     if result {
-                        toggleProcess(process: .upload)
-                        onClickButton()
+                        runOnMain {
+                            self.handleProcess(process: .upload)
+                        }
                     } else {
-                        DispatchQueue.main.async {
+                        runOnMain {
                             self.buttonState = .enabled
                         }
 
                         HUD.error(title: "create error on chain")
                     }
                 } catch {
-                    DispatchQueue.main.async {
+                    runOnMain {
                         self.buttonState = .enabled
                     }
                     trackCreatFailed(message: "idle:" + error.localizedDescription)
@@ -184,16 +190,19 @@ class BackupUploadViewModel: ObservableObject {
         case .upload:
             Task {
                 do {
-                    DispatchQueue.main.async {
+                    runOnMain {
                         self.buttonState = .loading
                     }
 
                     try await MultiBackupManager.shared.backupKey(on: currentType)
-                    toggleProcess(process: .regist)
-                    onClickButton()
+                    runOnMain {
+                        self.handleProcess(process: .regist)
+                    }
                 } catch {
-                    buttonState = .enabled
-                    hasError = true
+                    runOnMain {
+                        self.buttonState = .enabled
+                        self.hasError = true
+                    }
                     log.error(error)
                     trackCreatFailed(message: "upload:" + error.localizedDescription)
                 }
@@ -201,20 +210,21 @@ class BackupUploadViewModel: ObservableObject {
         case .regist:
             Task {
                 do {
-                    DispatchQueue.main.async {
+                    runOnMain {
                         self.buttonState = .loading
                     }
-
                     try await MultiBackupManager.shared.syncKeyToServer(on: currentType)
-                    DispatchQueue.main.async {
+                    runOnMain {
                         self.mnemonicBlur = false
                         self.buttonState = .enabled
+                        self.process = .finish
                     }
-                    toggleProcess(process: .finish)
                     trackCreatSuccess()
 
                 } catch {
-                    buttonState = .enabled
+                    runOnMain {
+                        self.buttonState = .enabled
+                    }
                     HUD.dismissLoading()
                     log.error(error)
                     trackCreatFailed(message: "register:" + error.localizedDescription)
@@ -224,20 +234,13 @@ class BackupUploadViewModel: ObservableObject {
             let nextIndex = currentIndex + 1
             if items.count <= nextIndex {
                 currentIndex = nextIndex
-                toggleProcess(process: .end)
+                self.process = .end
             } else {
                 currentIndex = nextIndex
-                toggleProcess(process: .idle)
+                self.process = .idle
             }
         case .end:
             Router.popToRoot()
-        }
-    }
-
-    func toggleProcess(process: BackupProcess) {
-        DispatchQueue.main.async {
-            self.hasError = false
-            self.process = process
         }
     }
 }

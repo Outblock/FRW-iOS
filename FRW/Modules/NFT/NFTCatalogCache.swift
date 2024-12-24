@@ -65,9 +65,7 @@ class NFTCatalogCache {
         }
         .map { it in
             var status = NFTCollectionItem.ItemStatus.idle
-            if let address = it.address, NFTCollectionStateManager.share.isTokenAdded(
-                address
-            ) {
+            if NFTCollectionStateManager.share.isCollectionAdd(it) {
                 status = .own
             }
             return NFTCollectionItem(collection: it, status: status)

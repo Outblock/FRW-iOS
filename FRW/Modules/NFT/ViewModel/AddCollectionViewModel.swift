@@ -82,7 +82,7 @@ class AddCollectionViewModel: ObservableObject {
         .map { it in
             // TODO: handle status
             var status = NFTCollectionItem.ItemStatus.idle
-            if let address = it.address, NFTCollectionStateManager.share.isTokenAdded(address) {
+            if NFTCollectionStateManager.share.isCollectionAdd(it) {
                 status = .own
             }
             // TODO: fail or pending
