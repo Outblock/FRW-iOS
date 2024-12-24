@@ -251,18 +251,21 @@ extension UserManager {
                 var addressList: [String: String] = [:]
                 //Secure Enclave Key
                 let seKeylist = SecureEnclaveKey.KeychainStorage.allKeys
-                for userId in seKeylist {
-                    if let se = try? SecureEnclaveKey.wallet(id: userId),
+                for key in seKeylist {
+                    if let se = try? SecureEnclaveKey.wallet(id: key),
                        let publicKey = try? se.publicKey()?.hexValue {
                         let response: AccountResponse = try await Network
                             .requestWithRawModel(FRWAPI.Utils.flowAddress(publicKey))
                         let account = response.accounts?
                             .filter { ($0.weight ?? 0) >= 1000 && $0.address != nil }.first
                         if let model = account {
-                            addressList[userId] = model.address ?? "0x"
+                            addressList[key] = model.address ?? "0x"
+                            let userId = KeyProvider.getId(with: key)
+                            let storeUser = UserManager.StoreUser(publicKey: publicKey, address: nil, userId: userId, keyType: .secureEnclave, account: nil)
+                            LocalUserDefaults.shared.addUser(user: storeUser)
                         }
                     } else {
-                        log.error("[Launch] first login check failed:\(userId)")
+                        log.error("[Launch] first login check failed:\(key)")
                     }
                 }
                 //
@@ -283,6 +286,9 @@ extension UserManager {
                             .filter { ($0.weight ?? 0) >= 1000 && $0.address != nil }.first
                         if let model = account {
                             addressList[key] = model.address ?? "0x"
+                            let userId = KeyProvider.getId(with: key)
+                            let storeUser = UserManager.StoreUser(publicKey: publicKey, address: nil, userId: userId, keyType: .seedPhrase, account: nil)
+                            LocalUserDefaults.shared.addUser(user: storeUser)
                         } else {
                             log.error("[Launch] seed phrase not found account:\(key)")
                         }
@@ -318,6 +324,9 @@ extension UserManager {
                             .filter { ($0.weight ?? 0) >= 1000 && $0.address != nil }.first
                         if let model = account {
                             addressList[key] = model.address ?? "0x"
+                            let userId = KeyProvider.getId(with: key)
+                            let storeUser = UserManager.StoreUser(publicKey: publicKey, address: nil, userId: userId, keyType: .privateKey, account: nil)
+                            LocalUserDefaults.shared.addUser(user: storeUser)
                         } else {
                             log.error("[Launch] Private key not found account:\(key)")
                         }
@@ -328,7 +337,6 @@ extension UserManager {
                     }
                 }
 
-                // FIXME: all key type
                 var result: [String: String] = [:]
                 for (key,value) in addressList {
                     let userId = KeyProvider.getId(with: key)
