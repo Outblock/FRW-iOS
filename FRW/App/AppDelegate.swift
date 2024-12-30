@@ -109,14 +109,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             }
         }
 
-        let oauthCompletion: DropboxOAuthCompletion = {
-            NotificationCenter.default.post(name: .dropboxCallback, object: $0)
+        //callback for login by dropbox 
+        if DropboxClientsManager.authorizedClient != nil {
+            let oauthCompletion: DropboxOAuthCompletion = {
+                NotificationCenter.default.post(name: .dropboxCallback, object: $0)
+            }
+            let canHandleUrl = DropboxClientsManager.handleRedirectURL(url, includeBackgroundClient: false, completion: oauthCompletion)
+            if canHandleUrl {
+                return canHandleUrl
+            }
         }
 
-        let canHandleUrl = DropboxClientsManager.handleRedirectURL(url, includeBackgroundClient: false, completion: oauthCompletion)
-        if canHandleUrl {
-            return canHandleUrl
-        }
         return GIDSignIn.sharedInstance.handle(url)
     }
 
