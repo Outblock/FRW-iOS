@@ -177,7 +177,6 @@ class BackupUploadViewModel: ObservableObject {
                         runOnMain {
                             self.buttonState = .enabled
                         }
-
                         HUD.error(title: "create error on chain")
                     }
                 } catch {

@@ -1119,5 +1119,6 @@ Key Store and Private Key.";
 "invalid_password" = "Key decryption failed - possibly wrong password";
 "not_find_address" = "cannot find this key under this address";
 "required_info_not" = "Required information has not been entered.";
+"Dropbox" = "Dropbox";
 "account_key_weight_less" = "This key has insufficient weight";
 "dApps" = "dApps";
