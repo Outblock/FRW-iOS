@@ -780,6 +780,7 @@ extension FlowNetwork {
         )
     }
 
+    //!!!Note this no need current address and not sign with login user
     static func addKeyWithMulti(
         address: Flow.Address,
         keyIndex: Int,
@@ -789,6 +790,10 @@ extension FlowNetwork {
     ) async throws -> Flow.ID {
         try await sendTransaction(
             by: \.basic?.addKey,
+            address: address,
+            keyIndex: keyIndex,
+            sequenceNum: sequenceNum,
+            signers: signers,
             argumentList: [
                 .string(accountKey.publicKey.hex),
                 .uint8(UInt8(accountKey.signAlgo.index)),
@@ -1075,9 +1080,6 @@ extension FlowNetwork {
         id: UInt64,
         child: String
     ) async throws -> Flow.ID {
-        let originCadence = CadenceManager.shared.current.hybridCustody?.bridgeChildNFTFromEvm?
-            .toFunc() ?? ""
-        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
 
         let nftId = BigUInt(id)
 
@@ -1219,9 +1221,7 @@ extension FlowNetwork {
             log.error("[Cadence] empty script on \(funcName)")
             throw CadenceError.empty
         }
-        let replacedCadence = cadence.replace(by: content).replace(
-            by: ScriptAddress.addressMap()
-        )
+        let replacedCadence = cadence.replace(from: content).replace(by: ScriptAddress.addressMap())
         log.info("[Cadence] transaction start on \(funcName)")
         return try await sendTransaction(
             funcName: funcName,
@@ -1289,10 +1289,6 @@ extension FlowNetwork {
         }
         do {
             let fromKeyIndex = WalletManager.shared.keyIndex
-            guard let fromAddress = WalletManager.shared.getPrimaryWalletAddress() else {
-                log.error("[Cadence] transaction invalid address on \(funcName)")
-                throw LLError.invalidAddress
-            }
             let tranId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners) {
                     cadence {
                         cadenceStr
@@ -1342,6 +1338,81 @@ extension FlowNetwork {
                     txId: "",
                     authorizers: [fromAddress],
                     proposer: fromAddress,
+                    payer: RemoteConfigManager.shared.payer,
+                    success: false
+                )
+            log.error("[Cadence] transaction error:\(error.localizedDescription)")
+            throw error
+        }
+    }
+
+
+    private static func sendTransaction(
+        by keyPath: KeyPath<CadenceModel, String?>,
+        address: Flow.Address,
+        keyIndex: Int,
+        sequenceNum: Int64,
+        signers: [FlowSigner],
+        argumentList: [Flow.Cadence.FValue]
+    ) async throws -> Flow.ID {
+        let funcName = keyPath.funcName()
+        guard let cadenceStr = CadenceManager.shared.current[keyPath: keyPath]?.toFunc() else {
+            EventTrack.General
+                .rpcError(
+                    error: CadenceError.empty.message,
+                    scriptId: funcName
+                )
+            log.error("[Cadence] empty script on \(funcName)")
+            throw CadenceError.empty
+        }
+        let replacedCadence = cadenceStr.replace(by: ScriptAddress.addressMap())
+        do {
+            let tranId = try await flow.sendTransaction(signers: signers) {
+                cadence {
+                    cadenceStr
+                }
+
+                payer {
+                    RemoteConfigManager.shared.payer
+                }
+                arguments {
+                    argumentList
+                }
+                proposer {
+                    Flow.TransactionProposalKey(address: address, keyIndex: keyIndex, sequenceNumber: sequenceNum)
+                }
+
+                authorizers {
+                    address
+                }
+
+                gasLimit {
+                    9999
+                }
+            }
+            log.info("[Flow] transaction Id:\(tranId.description)")
+            EventTrack.Transaction
+                .flowSigned(
+                    cadence: hashCadence(cadence: cadenceStr.toHexEncodedString()),
+                    txId: tranId.hex,
+                    authorizers: [address.hex],
+                    proposer: address.hex,
+                    payer: RemoteConfigManager.shared.payer,
+                    success: true
+                )
+            return tranId
+        } catch {
+            EventTrack.General
+                .rpcError(
+                    error: error.localizedDescription,
+                    scriptId: funcName
+                )
+            EventTrack.Transaction
+                .flowSigned(
+                    cadence: hashCadence(cadence: cadenceStr.toHexEncodedString()),
+                    txId: "",
+                    authorizers: [address.hex],
+                    proposer: address.hex,
                     payer: RemoteConfigManager.shared.payer,
                     success: false
                 )

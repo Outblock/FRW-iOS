@@ -857,7 +857,7 @@ extension WalletManager {
             .requestWithRawModel(GithubEndpoint.ftTokenList)
         let coins: [TokenModel] = tokenResponse.conversion()
         let validCoins = coins.filter { $0.getAddress()?.isEmpty == false }
-        DispatchQueue.main.sync {
+        DispatchQueue.main.async {
             self.supportedCoins = validCoins
         }
         await fetchEVMCoins()
@@ -866,7 +866,7 @@ extension WalletManager {
 
     private func fetchActivatedCoins() async throws {
         guard let supportedCoins = supportedCoins, !supportedCoins.isEmpty else {
-            DispatchQueue.main.sync {
+            DispatchQueue.main.async {
                 self.activatedCoins.removeAll()
             }
             return
@@ -874,7 +874,7 @@ extension WalletManager {
 
         let address = selectedAccountAddress
         if address.isEmpty {
-            DispatchQueue.main.sync {
+            DispatchQueue.main.async {
                 self.activatedCoins.removeAll()
             }
             return
@@ -900,7 +900,7 @@ extension WalletManager {
             }
         }
 
-        DispatchQueue.main.sync {
+        DispatchQueue.main.async {
             self.activatedCoins = list
         }
         preloadActivatedIcons()
@@ -991,7 +991,7 @@ extension WalletManager {
             }
         }
 
-        DispatchQueue.main.sync {
+        DispatchQueue.main.async {
             self.coinBalances = newBalanceMap
         }
 
@@ -1016,7 +1016,7 @@ extension WalletManager {
 
         let list = try await EVMAccountManager.shared.fetchTokens()
 
-        DispatchQueue.main.sync {
+        DispatchQueue.main.async {
             log.info("[EVM] load balance success \(balance)")
             tokenModel.flowIdentifier = tokenModel.contractId
             self.activatedCoins = [tokenModel]
@@ -1043,9 +1043,9 @@ extension WalletManager {
         }
         await customTokenManager.fetchAllEVMBalance()
         let list = customTokenManager.list
-        DispatchQueue.main.sync {
+        DispatchQueue.main.async {
             for token in list {
-                addCustomToken(token: token)
+                self.addCustomToken(token: token)
             }
         }
     }

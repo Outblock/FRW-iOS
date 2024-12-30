@@ -189,7 +189,7 @@ class BackupUploadViewModel: ObservableObject {
         case .upload:
             Task {
                 do {
-                    DispatchQueue.main.async {
+                    runOnMain {
                         self.buttonState = .loading
                     }
 
@@ -198,11 +198,10 @@ class BackupUploadViewModel: ObservableObject {
                         self.handleProcess(process: .regist)
                     }
                 } catch {
-                    DispatchQueue.main.async {
+                    runOnMain {
                         self.buttonState = .enabled
                         self.hasError = true
                     }
-
                     log.error(error)
                     trackCreatFailed(message: "upload:" + error.localizedDescription)
                 }
@@ -210,11 +209,11 @@ class BackupUploadViewModel: ObservableObject {
         case .regist:
             Task {
                 do {
-                    DispatchQueue.main.async {
+                    runOnMain {
                         self.buttonState = .loading
                     }
                     try await MultiBackupManager.shared.syncKeyToServer(on: currentType)
-                    DispatchQueue.main.async {
+                    runOnMain {
                         self.mnemonicBlur = false
                         self.buttonState = .enabled
                         self.process = .finish
@@ -222,7 +221,9 @@ class BackupUploadViewModel: ObservableObject {
                     trackCreatSuccess()
 
                 } catch {
-                    buttonState = .enabled
+                    runOnMain {
+                        self.buttonState = .enabled
+                    }
                     HUD.dismissLoading()
                     log.error(error)
                     trackCreatFailed(message: "register:" + error.localizedDescription)

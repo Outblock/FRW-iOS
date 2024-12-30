@@ -215,7 +215,7 @@ extension SecurityManager {
         }
 
         DispatchQueue.syncOnMain {
-            appendSecurity(type: .bionic)
+            self.appendSecurity(type: .bionic)
         }
 
         return true
