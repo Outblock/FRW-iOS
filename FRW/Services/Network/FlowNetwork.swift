@@ -53,7 +53,7 @@ extension FlowNetwork {
         token: TokenModel
     ) async throws -> Flow.ID {
         try await sendTransaction(
-            by: \.ft?.transferTokens,
+            by: \.ft?.transferTokensV3,
             with: token,
             argumentList: [.ufix64(amount), .address(address)]
         )
@@ -112,8 +112,8 @@ extension FlowNetwork {
             throw NFTError.invalidTokenId
         }
 
-        var nftTransfer: KeyPath<CadenceModel, String?> = \.collection?.sendNFT
-        let nbaNFTTransfer: KeyPath<CadenceModel, String?> = \.collection?.sendNbaNFT
+        var nftTransfer: KeyPath<CadenceModel, String?> = \.collection?.sendNFTV3
+        let nbaNFTTransfer: KeyPath<CadenceModel, String?> = \.collection?.sendNbaNFTV3
 
         return try await sendTransaction(
             by: nft.isNBA ? nbaNFTTransfer : nftTransfer,
@@ -970,7 +970,7 @@ extension FlowNetwork {
         receiver: String
     ) async throws -> Flow.ID {
         let amountValue = Flow.Cadence.FValue.uint256(amount)
-        return try await sendTransaction(by: \.bridge?.bridgeTokensFromEvmToFlowV2, argumentList: [
+        return try await sendTransaction(by: \.bridge?.bridgeTokensFromEvmToFlowV3, argumentList: [
             .string(identifier),
             amountValue,
             .address(Flow.Address(hex: receiver)),
@@ -1021,7 +1021,7 @@ extension FlowNetwork {
             throw NFTError.invalidTokenId
         }
 
-        return try await sendTransaction(by: \.bridge?.bridgeNFTFromEvmToFlowV2, argumentList: [
+        return try await sendTransaction(by: \.bridge?.bridgeNFTFromEvmToFlowV3, argumentList: [
             .string(identifier),
             .uint256(nftId),
             .address(Flow.Address(hex: receiver)),
