@@ -20,7 +20,7 @@ final class NFTCollectionStateManager {
     static let share = NFTCollectionStateManager()
 
     func fetch() async {
-        
+
         guard let address = WalletManager.shared.walletInfo?.currentNetworkWalletModel?.getAddress,
               !address.isEmpty
         else {

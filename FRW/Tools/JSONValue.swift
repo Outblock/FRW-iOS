@@ -7,9 +7,7 @@
 
 import Foundation
 
-// MARK: - JSONValue
-
-enum JSONValue {
+enum JSONValue: Codable {
     case string(String)
     case number(Double)
     case object([String: JSONValue])
@@ -34,6 +32,48 @@ enum JSONValue {
             self = .array(arrayValue.map { JSONValue($0) })
         } else {
             self = .null
+        }
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+
+        if container.decodeNil() {
+            self = .null
+            return
+        }
+
+        if let stringValue = try? container.decode(String.self) {
+            self = .string(stringValue)
+        } else if let doubleValue = try? container.decode(Double.self) {
+            self = .number(doubleValue)
+        } else if let boolValue = try? container.decode(Bool.self) {
+            self = .bool(boolValue)
+        } else if let arrayValue = try? container.decode([JSONValue].self) {
+            self = .array(arrayValue)
+        } else if let objectValue = try? container.decode([String: JSONValue].self) {
+            self = .object(objectValue)
+        } else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Cannot decode JSONValue")
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+
+        switch self {
+        case .null:
+            try container.encodeNil()
+        case .bool(let value):
+            try container.encode(value)
+        case .number(let value):
+            try container.encode(value)
+        case .string(let value):
+            try container.encode(value)
+        case .array(let value):
+            try container.encode(value)
+        case .object(let value):
+            try container.encode(value)
         }
     }
 }
@@ -89,6 +129,82 @@ extension JSONValue {
             return JSONValue(jsonObject)
         } catch {
             print("Error parsing JSON: \(error)")
+            return nil
+        }
+    }
+}
+
+extension JSONValue {
+    static func decode(from data: Data) throws -> JSONValue {
+        let decoder = JSONDecoder()
+        return try decoder.decode(JSONValue.self, from: data)
+    }
+
+    static func decode(from string: String) throws -> JSONValue {
+        guard let data = string.data(using: .utf8) else {
+            throw DecodingError.dataCorrupted(DecodingError.Context(
+                codingPath: [],
+                debugDescription: "Invalid UTF-8 string"
+            ))
+        }
+        return try decode(from: data)
+    }
+}
+
+extension JSONValue {
+    var title: String {
+        switch self {
+        case let .object(dictionary):
+            return dictionary.keys.first ?? ""
+        default:
+            return ""
+        }
+    }
+
+    var content: String {
+        switch self {
+        case let .object(dictionary):
+            let subtitle = dictionary[title]
+            switch subtitle {
+            case .object:
+                return ""
+            case let .array(model):
+                if case .object(_) = model.first {
+                    return ""
+                }
+                return subtitle?.toString() ?? ""
+            default:
+                return subtitle?.toString() ?? ""
+            }
+        case let .string(str):
+            return str
+        default:
+            return ""
+        }
+    }
+
+    var contentIsArrayOrDic: Bool {
+        switch self {
+        case let .object(dictionary):
+            let subtitle = dictionary[title]
+            switch subtitle {
+            case let .array(model):
+                return true
+            case .object(_):
+                return true
+            default:
+                return false
+            }
+        default:
+            return false
+        }
+    }
+
+    var subValue: JSONValue? {
+        switch self {
+        case let .object(dictionary):
+            return dictionary.values.first
+        default:
             return nil
         }
     }

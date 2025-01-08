@@ -680,7 +680,7 @@
 "browser_request_failed" = "Failed to interact with web page";
 "browser_transaction_request_from" = "Transaction Request from";
 "browser_sign_message_request_from" = "Sign Message Request from";
-"browser_transaction_fee" = "TRANSACTION FEE";
+"browser_transaction_fee" = "Transaction Fee";
 "browser_script" = "SCRIPT";
 "browser_script_title" = "Script";
 "browser_bookmark" = "Bookmark";
@@ -1122,3 +1122,5 @@ Key Store and Private Key.";
 "Dropbox" = "Dropbox";
 "account_key_weight_less" = "This key has insufficient weight";
 "dApps" = "dApps";
+"Call Data" = "Call Data";
+"Covered by Flow Wallet" = "Covered by Flow Wallet";

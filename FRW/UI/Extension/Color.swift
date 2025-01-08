@@ -273,6 +273,8 @@ extension Color {
             static let black8 = Color("text.black.8")
             static let black6 = Color("text.black.6")
             static let white9 = Color("text.white.9")
+            static let text1 = Color("text.1")
+            static let text4 = Color("text.4")
         }
 
         static let evm = Color("evm")

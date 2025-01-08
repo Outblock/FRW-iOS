@@ -28,18 +28,36 @@ final class BrowserAuthzViewModel: ObservableObject {
     @Published var isScriptShowing: Bool = false
     
     @Published var template: FlowTransactionTemplate?
-    
+
+    @Published var infoList: [FormItem] = []
+    @Published var decodedDataList: [[FormItem]] = []
+    @Published var callData: String? = nil
+    @Published var showEvmCard: Bool = false
+
+
     private var callback: BrowserAuthzViewModel.Callback?
     private var _insufficientStorageFailure: InsufficientStorageFailure?
     
-    init(title: String, url: String, logo: String?, cadence: String, arguments: [Flow.Argument]? = nil, callback: @escaping BrowserAuthnViewModel.Callback) {
+    init(title: String, url: String, logo: String?, cadence: String, arguments: [Flow.Argument]? = nil, toAddress: String? = nil, data: String? = nil, amount: String? = nil, callback: @escaping BrowserAuthnViewModel.Callback) {
         self.title = title
         self.urlString = url
         self.logo = logo
         self.cadence = cadence
         self.arguments = arguments
         self.callback = callback
+        self.callData = data
+
         checkForInsufficientStorage()
+        fetchEVMDecodeData(to: toAddress, data: data)
+
+        if let toAddress{
+            let model = FormItem(value: .object(["Contact Address" : .string(toAddress)]))
+            infoList.append(model)
+        }
+        if let amount {
+            let model = FormItem(value: .object(["Amount" : .string((amount + " FLOW"))]))
+            infoList.append(model)
+        }
     }
     
     deinit {
@@ -106,6 +124,77 @@ final class BrowserAuthzViewModel: ObservableObject {
             self.isScriptShowing = show
         }
     }
+
+    func fetchEVMDecodeData(to address: String?, data: String?) {
+        guard EVMAccountManager.shared.selectedAccount != nil else {
+            return
+        }
+        showEvmCard = true
+        guard let address = address, let data = data else {
+            return
+        }
+        Task {
+            do {
+                let response: DecodeResponse = try await Network.requestWithRawModel(FRWAPI.EVM.decodeData(address, data))
+                var tmp:[[FormItem]] = []
+
+//                let contactModel = FormItem(key: "Contact", value: .string("ERC20MintableMock"), isCheck: result.isVerified ?? false)
+//                tmp.append(contactModel)
+
+                if let topValue = response.decodedData?.allPossibilities {
+                    switch topValue {
+                    case .object(let dictionary):
+                        let list = parseTopDic(item: dictionary)
+                        tmp.append(list)
+                    case .array(let array):
+                        let list = parseTopArray(items: array)
+                        tmp.append(contentsOf: list)
+                    default:
+                        break
+                    }
+                }
+                let result = tmp
+                await MainActor.run {
+                    withAnimation {
+                        self.decodedDataList = result
+                    }
+                }
+            }
+            catch {
+                log.error("[Decode] \(error)")
+            }
+        }
+    }
+
+    private func parseTopArray(items: [JSONValue]) -> [[FormItem]] {
+        var tmp: [[FormItem]] = []
+        for subItem in items {
+            switch subItem {
+            case .object(let dictionary):
+                let list = parseTopDic(item: dictionary)
+                tmp.append(list)
+            case .null:
+                break
+            default:
+                let model = FormItem(value: subItem)
+                tmp.append([model])
+            }
+        }
+        return tmp
+    }
+
+    private func parseTopDic(item: [String: JSONValue]) -> [FormItem] {
+        var tmp: [FormItem] = []
+        let keys = item.keys.map { $0 }.sorted()
+        for key in keys {
+            if let value = item[key] {
+                let model = FormItem(value: .object([key: value]))
+                tmp.append(model)
+            }
+        }
+        return tmp
+    }
+
 }
 
 // MARK: - InsufficientStorageToastViewModel
@@ -115,5 +204,18 @@ extension BrowserAuthzViewModel: InsufficientStorageToastViewModel {
     
     private func checkForInsufficientStorage() {
         self._insufficientStorageFailure = insufficientStorageCheckForTransfer(token: .none)
+    }
+}
+
+extension BrowserAuthzViewModel {
+    struct DecodeResponse: Codable {
+        let name: String?
+        let isVerified: Bool?
+        let abi: [String]?
+        let decodedData: DecodeData?
+    }
+
+    struct DecodeData: Codable {
+        let allPossibilities: JSONValue?
     }
 }
