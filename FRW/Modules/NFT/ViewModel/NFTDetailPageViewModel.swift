@@ -101,11 +101,10 @@ class NFTDetailPageViewModel: ObservableObject {
             let address = self.nft.response.contractAddress ?? ""
             let evmAddress = await NFTCollectionConfig.share.get(from: address)?.evmAddress
             let hasEvm = EVMAccountManager.shared.accounts.count > 0
-            if evmAddress == nil || self.nft.collection?.flowIdentifier == nil || !hasEvm {
+            if (evmAddress == nil && self.nft.collection?.flowIdentifier == nil) || !hasEvm {
                 DispatchQueue.main.async {
                     self.movable = false
                 }
-
                 return
             }
             DispatchQueue.main.async {
