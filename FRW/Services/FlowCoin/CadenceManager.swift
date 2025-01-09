@@ -385,6 +385,7 @@ extension CadenceModel {
         let transferFlowFromCoaToFlow: String?
         let checkCoaLink: String?
         let coaLink: String?
+        let getNonce: String?
     }
 
     struct Bridge: Codable {

@@ -39,6 +39,13 @@ struct EVMTransactionReceive: Codable {
         return Utilities.formatToPrecision(value, formattingDecimals: 64)
     }
 
+    var bigAmount: BigUInt {
+        let defaultValue = BigUInt(0)
+        guard let balance = value else { return defaultValue }
+        guard let value = BigUInt(from: balance) else { return defaultValue }
+        return value
+    }
+
     var gasValue: UInt64 {
         let defaultValue: UInt64 = WalletManager.defaultGas
         guard let gasStr = gas else { return defaultValue }

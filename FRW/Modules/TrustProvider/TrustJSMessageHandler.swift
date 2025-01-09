@@ -376,18 +376,29 @@ extension TrustJSMessageHandler {
                         toAddress: toAddr,
                         gas: receiveModel.gasValue
                     )
+
                     let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                     TransactionManager.shared.newTransaction(holder: holder)
+
+                    var evmId = try? await WalletConnectEVMHandler.calculateTX(receiveModel)
+                    if let tid = evmId {
+                        log.info("[EVM] calculate TX id: \(tid)")
+                        await MainActor.run {
+                            self.webVC?.webView.tw.send(network: .ethereum, result: tid.addHexPrefix(),to: id)
+                        }
+                        return
+                    }
+
                     let result = try await txid.onceSealed()
                     if result.isFailed {
                         HUD.error(title: "transaction failed")
                         self.cancel(id: id)
                         return
                     }
+
                     let model = try await FlowNetwork.fetchEVMTransactionResult(txid: txid.hex)
-                    DispatchQueue.main.async {
-                        self.webVC?.webView.tw
-                            .send(
+                    await MainActor.run {
+                        self.webVC?.webView.tw.send(
                                 network: .ethereum,
                                 result: model.hashString?.addHexPrefix() ?? "",
                                 to: id
