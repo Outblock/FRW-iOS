@@ -945,11 +945,7 @@ extension FlowNetwork {
         fromEvm: Bool,
         decimals: Int
     ) async throws -> Flow.ID {
-        let originCadence = (
-            fromEvm ? CadenceManager.shared.current.bridge?.bridgeTokensFromEvmV2?
-                .toFunc()
-                : CadenceManager.shared.current.bridge?.bridgeTokensToEvmV2?.toFunc()
-        ) ?? ""
+
         let keyPath: KeyPath<CadenceModel, String?> = fromEvm ? \.bridge?
             .bridgeTokensFromEvmV2 : \.bridge?.bridgeTokensToEvmV2
 
