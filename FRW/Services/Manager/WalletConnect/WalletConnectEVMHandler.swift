@@ -390,30 +390,37 @@ extension WalletConnectEVMHandler {
         guard let myCoaAddress = EVMAccountManager.shared.accounts.first?.showAddress else {
             return nil
         }
-        var result = try await WalletConnectEVMHandler.calculateTXByCadence(model, caoAddress: myCoaAddress)
+        var result = try await WalletConnectEVMHandler.calculateTXByCadence(model, from: myCoaAddress)
         if result == nil {
             result = try await calculateTXByRPC(txid: txId)
         }
         return result
     }
 
-    private static func calculateTXByCadence(_ model: EVMTransactionReceive, caoAddress: String) async throws -> String? {
+    private static func calculateTXByCadence(_ model: EVMTransactionReceive, from address: String) async throws -> String? {
         guard let toAddress = model.toAddress, let toAddr = EthereumAddress(toAddress.addHexPrefix()) else {
             return nil
         }
 
-        let nonce = try await FlowNetwork.getNonce(hexAddress: caoAddress)
+        let nonce = try await FlowNetwork.getNonce(hexAddress: address)
+        let chainId = LocalUserDefaults.shared.flowNetwork.networkID
+        let evmGasLimit = 30000000
+        let evmGasPrice = 0
+        let directCallTxType = 255
+        let contractCallSubType = 5
+
+
         let tx = CodableTransaction(type: .legacy,
                                     to: toAddr,
                                     nonce: BigUInt(nonce),
-                                    chainID: BigUInt(),
+                                    chainID: BigUInt(chainId),
                                     value: model.bigAmount,
                                     data: model.dataValue ?? Data(),
-                                    gasLimit: BigUInt(30000000),
-                                    gasPrice: BigUInt(0),
-                                    v: BigUInt(255),
-                                    r: BigUInt(caoAddress.stripHexPrefix(), radix: 16)!,
-                                    s: BigUInt(5)
+                                    gasLimit: BigUInt(evmGasLimit),
+                                    gasPrice: BigUInt(evmGasPrice),
+                                    v: BigUInt(directCallTxType),
+                                    r: BigUInt(address.stripHexPrefix(), radix: 16)!,
+                                    s: BigUInt(contractCallSubType)
         )
         return tx.hash?.hexValue
     }
