@@ -217,17 +217,9 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                     let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                     TransactionManager.shared.newTransaction(holder: holder)
 
-                    var evmId = try? await WalletConnectEVMHandler.calculateTX(receiveModel)
-                    if let tid = evmId {
-                        log.info("[EVM] calculate TX id: \(tid)")
-                        await MainActor.run {
-                            confirm(tid.addHexPrefix())
-                        }
-                        return
-                    }
+                    var evmId = try? await WalletConnectEVMHandler.calculateTX(receiveModel, txId: txid)
 
-                    let tixResult = try await txid.onceSealed()
-                    if tixResult.isFailed {
+                    guard let result = evmId else {
                         HUD.error(title: "transaction failed")
                         cancel()
                         EventTrack.Transaction
@@ -237,15 +229,15 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                             )
                         return
                     }
+                    log.info("[EVM] calculate TX id: \(result)")
+                    await MainActor.run {
+                        confirm(result.addHexPrefix())
+                    }
                     EventTrack.Transaction
                         .evmSigned(
                             txId: txid.hex,
                             success: true
                         )
-                    let model = try await FlowNetwork.fetchEVMTransactionResult(txid: txid.hex)
-                    DispatchQueue.main.async {
-                        confirm(model.hashString?.addHexPrefix() ?? "")
-                    }
                 }
             }
 
@@ -394,16 +386,45 @@ extension WalletConnectEVMHandler {
 // MARK: Decoded Data
 
 extension WalletConnectEVMHandler {
-    static func calculateTX(_ model: EVMTransactionReceive) async throws -> String? {
+    static func calculateTX(_ model: EVMTransactionReceive, txId: Flow.ID) async throws -> String? {
         guard let myCoaAddress = EVMAccountManager.shared.accounts.first?.showAddress else {
             return nil
         }
+        var result = try await WalletConnectEVMHandler.calculateTXByCadence(model, caoAddress: myCoaAddress)
+        if result == nil {
+            result = try await calculateTXByRPC(txid: txId)
+        }
+        return result
+    }
+
+    private static func calculateTXByCadence(_ model: EVMTransactionReceive, caoAddress: String) async throws -> String? {
         guard let toAddress = model.toAddress, let toAddr = EthereumAddress(toAddress.addHexPrefix()) else {
             return nil
         }
 
-        let nonce = try await FlowNetwork.getNonce(hexAddress: myCoaAddress)
-        let tx = CodableTransaction(type: .legacy, to: toAddr, nonce: BigUInt(nonce), chainID: BigUInt(), value: model.bigAmount, data: model.dataValue ?? Data(), gasLimit: BigUInt(30000000), gasPrice: BigUInt(0), v: BigUInt(255), r: BigUInt(myCoaAddress.stripHexPrefix(), radix: 16)!, s: BigUInt(5))
+        let nonce = try await FlowNetwork.getNonce(hexAddress: caoAddress)
+        let tx = CodableTransaction(type: .legacy,
+                                    to: toAddr,
+                                    nonce: BigUInt(nonce),
+                                    chainID: BigUInt(),
+                                    value: model.bigAmount,
+                                    data: model.dataValue ?? Data(),
+                                    gasLimit: BigUInt(30000000),
+                                    gasPrice: BigUInt(0),
+                                    v: BigUInt(255),
+                                    r: BigUInt(caoAddress.stripHexPrefix(), radix: 16)!,
+                                    s: BigUInt(5)
+        )
         return tx.hash?.hexValue
     }
+
+    private static func calculateTXByRPC(txid: Flow.ID) async throws -> String? {
+        let result = try await txid.onceSealed()
+        if result.isFailed {
+            return nil
+        }
+        let model = try await FlowNetwork.fetchEVMTransactionResult(txid: txid.hex)
+        return model.hashString?.addHexPrefix()
+    }
+
 }
