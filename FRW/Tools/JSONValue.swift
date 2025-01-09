@@ -209,3 +209,15 @@ extension JSONValue {
         }
     }
 }
+
+extension String {
+
+    func uppercasedAllFirstLetter() -> String {
+        let words = self.components(separatedBy: " ")
+        let capitalizedWords = words.map { word in
+            guard !word.isEmpty else { return word }
+            return word.prefix(1).uppercased() + word.dropFirst()
+        }
+        return capitalizedWords.joined(separator: " ")
+    }
+}

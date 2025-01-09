@@ -381,7 +381,7 @@ extension BrowserAuthzView {
 
         var titleView: some View {
             HStack(spacing: 4) {
-                Text(model.value.title.uppercasedFirstLetter())
+                Text(model.value.title.uppercasedAllFirstLetter())
                     .font(.inter(size: 14, weight: .semibold))
                     .lineLimit(1)
                     .foregroundStyle(Color.Theme.Text.black8)
@@ -391,9 +391,9 @@ extension BrowserAuthzView {
                     .lineLimit(1)
                     .foregroundStyle(Color.Theme.Text.black)
                     .visibility(model.value.contentIsArrayOrDic ? .gone : .visible)
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 14))
-                    .foregroundStyle(Color.Theme.Accent.green)
+                Image("check_circle_border")
+                    .resizable()
+                    .frame(width: 16, height: 16)
                     .visibility(model.isCheck ? .visible : .gone)
             }
             .frame(height: 20)

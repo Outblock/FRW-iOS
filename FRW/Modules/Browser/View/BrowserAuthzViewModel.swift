@@ -50,12 +50,13 @@ final class BrowserAuthzViewModel: ObservableObject {
         checkForInsufficientStorage()
         fetchEVMDecodeData(to: toAddress, data: data)
 
-        if let toAddress{
-            let model = FormItem(value: .object(["Contact Address" : .string(toAddress)]))
+        if let toAddress {
+            let name = data == nil ? "address".localized : "Contact Address".localized
+            let model = FormItem(value: .object([name : .string(toAddress)]))
             infoList.append(model)
         }
         if let amount {
-            let model = FormItem(value: .object(["Amount" : .string((amount + " FLOW"))]))
+            let model = FormItem(value: .object(["Amount::message".localized : .string((amount + " FLOW"))]))
             infoList.append(model)
         }
     }
@@ -126,7 +127,7 @@ final class BrowserAuthzViewModel: ObservableObject {
     }
 
     func fetchEVMDecodeData(to address: String?, data: String?) {
-        guard EVMAccountManager.shared.selectedAccount != nil else {
+        guard !EVMAccountManager.shared.accounts.isEmpty else {
             return
         }
         showEvmCard = true
@@ -137,17 +138,15 @@ final class BrowserAuthzViewModel: ObservableObject {
             do {
                 let response: DecodeResponse = try await Network.requestWithRawModel(FRWAPI.EVM.decodeData(address, data))
                 var tmp:[[FormItem]] = []
-
-//                let contactModel = FormItem(key: "Contact", value: .string("ERC20MintableMock"), isCheck: result.isVerified ?? false)
-//                tmp.append(contactModel)
+                let isVerified = response.isVerified ?? false
 
                 if let topValue = response.decodedData?.allPossibilities {
                     switch topValue {
                     case .object(let dictionary):
-                        let list = parseTopDic(item: dictionary)
+                        let list = parseTopDic(item: dictionary, verified: isVerified)
                         tmp.append(list)
                     case .array(let array):
-                        let list = parseTopArray(items: array)
+                        let list = parseTopArray(items: array, verified: isVerified)
                         tmp.append(contentsOf: list)
                     default:
                         break
@@ -166,12 +165,12 @@ final class BrowserAuthzViewModel: ObservableObject {
         }
     }
 
-    private func parseTopArray(items: [JSONValue]) -> [[FormItem]] {
+    private func parseTopArray(items: [JSONValue] ,verified: Bool) -> [[FormItem]] {
         var tmp: [[FormItem]] = []
         for subItem in items {
             switch subItem {
             case .object(let dictionary):
-                let list = parseTopDic(item: dictionary)
+                let list = parseTopDic(item: dictionary, verified: verified)
                 tmp.append(list)
             case .null:
                 break
@@ -183,12 +182,16 @@ final class BrowserAuthzViewModel: ObservableObject {
         return tmp
     }
 
-    private func parseTopDic(item: [String: JSONValue]) -> [FormItem] {
+    private func parseTopDic(item: [String: JSONValue], verified: Bool) -> [FormItem] {
         var tmp: [FormItem] = []
         let keys = item.keys.map { $0 }.sorted()
         for key in keys {
             if let value = item[key] {
-                let model = FormItem(value: .object([key: value]))
+                var isCheck = false
+                if key.lowercased().contains("contact") && verified {
+                    isCheck = verified
+                }
+                let model = FormItem(value: .object([key: value]), isCheck: isCheck)
                 tmp.append(model)
             }
         }
