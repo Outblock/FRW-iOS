@@ -392,11 +392,11 @@ extension WalletConnectEVMHandler {
         }
         var result = try? await WalletConnectEVMHandler.calculateTXByCadence(model, from: myCoaAddress)
         if result == nil {
-            log.warning("[EVM] calculate TX ID by cadence failed")
+            log.warning("[EVM] calculate failed by cadence ")
             result = try? await calculateTXByRPC(txid: txId)
         }
         if result == nil {
-            log.warning("[EVM] calculate TX ID by Event")
+            log.warning("[EVM] calculate failed by Event")
         }
         return result
     }
@@ -412,7 +412,6 @@ extension WalletConnectEVMHandler {
         let evmGasPrice = 0
         let directCallTxType = 255
         let contractCallSubType = 5
-
 
         let tx = CodableTransaction(type: .legacy,
                                     to: toAddr,
