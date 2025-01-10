@@ -18,27 +18,19 @@ extension BrowserAuthzViewModel {
 // MARK: - BrowserAuthzViewModel
 
 final class BrowserAuthzViewModel: ObservableObject {
-    @Published var title: String
-    @Published var urlString: String
-    @Published var logo: String?
-    @Published var cadence: String
-    @Published var cadenceFormatted: AttributedString?
-    @Published var arguments: [Flow.Argument]?
-    @Published var argumentsFormatted: AttributedString?
-    @Published var isScriptShowing: Bool = false
-    
-    @Published var template: FlowTransactionTemplate?
+    // MARK: Lifecycle
 
-    @Published var infoList: [FormItem] = []
-    @Published var decodedDataList: [[FormItem]] = []
-    @Published var callData: String? = nil
-    @Published var showEvmCard: Bool = false
-
-
-    private var callback: BrowserAuthzViewModel.Callback?
-    private var _insufficientStorageFailure: InsufficientStorageFailure?
-    
-    init(title: String, url: String, logo: String?, cadence: String, arguments: [Flow.Argument]? = nil, toAddress: String? = nil, data: String? = nil, amount: String? = nil, callback: @escaping BrowserAuthnViewModel.Callback) {
+    init(
+        title: String,
+        url: String,
+        logo: String?,
+        cadence: String,
+        arguments: [Flow.Argument]? = nil,
+        toAddress: String? = nil,
+        data: String? = nil,
+        amount: String? = nil,
+        callback: @escaping BrowserAuthnViewModel.Callback
+    ) {
         self.title = title
         self.urlString = url
         self.logo = logo
@@ -52,22 +44,52 @@ final class BrowserAuthzViewModel: ObservableObject {
 
         if let toAddress {
             let name = data == nil ? "address".localized : "Contact Address".localized
-            let model = FormItem(value: .object([name : .string(toAddress)]))
+            let model = FormItem(value: .object([name: .string(toAddress)]))
             infoList.append(model)
         }
         if let amount {
-            let model = FormItem(value: .object(["Amount::message".localized : .string((amount + " FLOW"))]))
+            let model =
+                FormItem(value: .object(["Amount::message".localized: .string(amount + " FLOW")]))
             infoList.append(model)
         }
     }
-    
+
     deinit {
         callback?(false)
         WalletConnectManager.shared.reloadPendingRequests()
     }
-    
+
     // MARK: Internal
-    
+
+    @Published
+    var title: String
+    @Published
+    var urlString: String
+    @Published
+    var logo: String?
+    @Published
+    var cadence: String
+    @Published
+    var cadenceFormatted: AttributedString?
+    @Published
+    var arguments: [Flow.Argument]?
+    @Published
+    var argumentsFormatted: AttributedString?
+    @Published
+    var isScriptShowing: Bool = false
+
+    @Published
+    var template: FlowTransactionTemplate?
+
+    @Published
+    var infoList: [FormItem] = []
+    @Published
+    var decodedDataList: [[FormItem]] = []
+    @Published
+    var callData: String? = nil
+    @Published
+    var showEvmCard: Bool = false
+
     func didChooseAction(_ result: Bool) {
         Router.dismiss { [weak self] in
             guard let self else { return }
@@ -75,7 +97,7 @@ final class BrowserAuthzViewModel: ObservableObject {
             self.callback = nil
         }
     }
-    
+
     func formatArguments() {
         guard let arguments else {
             return
@@ -85,7 +107,7 @@ final class BrowserAuthzViewModel: ObservableObject {
                 .joined(separator: "\n\n")
         )
     }
-    
+
     func formatCode() {
         guard let highlightr = Highlightr() else {
             return
@@ -97,14 +119,14 @@ final class BrowserAuthzViewModel: ObservableObject {
         }
         cadenceFormatted = AttributedString(highlightedCode)
     }
-    
+
     func checkTemplate() {
         let network = LocalUserDefaults.shared.flowNetwork.rawValue.lowercased()
         guard let dataString = cadence.data(using: .utf8)?.base64EncodedString() else {
             return
         }
         let request = FlixAuditRequest(cadenceBase64: dataString, network: network)
-        
+
         Task {
             do {
                 let response: FlowTransactionTemplate = try await Network.requestWithRawModel(
@@ -119,7 +141,7 @@ final class BrowserAuthzViewModel: ObservableObject {
             }
         }
     }
-    
+
     func changeScriptViewShowingAction(_ show: Bool) {
         withAnimation {
             self.isScriptShowing = show
@@ -136,17 +158,25 @@ final class BrowserAuthzViewModel: ObservableObject {
         }
         Task {
             do {
-                let response: DecodeResponse = try await Network.requestWithRawModel(FRWAPI.EVM.decodeData(address, data))
-                var tmp:[[FormItem]] = []
+                let response: DecodeResponse = try await Network
+                    .requestWithRawModel(FRWAPI.EVM.decodeData(
+                        address,
+                        data
+                    ))
+                var tmp: [[FormItem]] = []
                 let isVerified = response.isVerified ?? false
 
                 if let topValue = response.decodedData?.allPossibilities {
+                    let topItem = FormItem(
+                        value: .object(["Contact": .string(response.name ?? "")]),
+                        isCheck: isVerified
+                    )
                     switch topValue {
-                    case .object(let dictionary):
-                        let list = parseTopDic(item: dictionary, verified: isVerified)
+                    case let .object(dictionary):
+                        let list = parseTopDic(item: dictionary, topItem: topItem)
                         tmp.append(list)
-                    case .array(let array):
-                        let list = parseTopArray(items: array, verified: isVerified)
+                    case let .array(array):
+                        let list = parseTopArray(items: array, topItem: topItem)
                         tmp.append(contentsOf: list)
                     default:
                         break
@@ -158,55 +188,52 @@ final class BrowserAuthzViewModel: ObservableObject {
                         self.decodedDataList = result
                     }
                 }
-            }
-            catch {
+            } catch {
                 log.error("[Decode] \(error)")
             }
         }
     }
 
-    private func parseTopArray(items: [JSONValue] ,verified: Bool) -> [[FormItem]] {
+    // MARK: Private
+
+    private var callback: BrowserAuthzViewModel.Callback?
+    private var _insufficientStorageFailure: InsufficientStorageFailure?
+
+    private func parseTopArray(items: [JSONValue], topItem: FormItem) -> [[FormItem]] {
+        guard let firstItem = items.first else {
+            return []
+        }
         var tmp: [[FormItem]] = []
-        for subItem in items {
-            switch subItem {
-            case .object(let dictionary):
-                let list = parseTopDic(item: dictionary, verified: verified)
-                tmp.append(list)
-            case .null:
-                break
-            default:
-                let model = FormItem(value: subItem)
-                tmp.append([model])
-            }
+        switch firstItem {
+        case let .object(dictionary):
+            let list = parseTopDic(item: dictionary, topItem: topItem)
+            tmp.append(list)
+        default:
+            break
         }
         return tmp
     }
 
-    private func parseTopDic(item: [String: JSONValue], verified: Bool) -> [FormItem] {
-        var tmp: [FormItem] = []
+    private func parseTopDic(item: [String: JSONValue], topItem: FormItem) -> [FormItem] {
+        var tmp: [FormItem] = [topItem]
         let keys = item.keys.map { $0 }.sorted()
         for key in keys {
             if let value = item[key] {
-                var isCheck = false
-                if key.lowercased().contains("contact") && verified {
-                    isCheck = verified
-                }
-                let model = FormItem(value: .object([key: value]), isCheck: isCheck)
+                let model = FormItem(value: .object([key: value]))
                 tmp.append(model)
             }
         }
         return tmp
     }
-
 }
 
-// MARK: - InsufficientStorageToastViewModel
+// MARK: InsufficientStorageToastViewModel
 
 extension BrowserAuthzViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
-    
+
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheckForTransfer(token: .none)
+        _insufficientStorageFailure = insufficientStorageCheckForTransfer(token: .none)
     }
 }
 

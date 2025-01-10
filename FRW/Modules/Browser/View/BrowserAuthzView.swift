@@ -41,7 +41,7 @@ struct BrowserAuthzView: View {
             scriptView.visibility(vm.isScriptShowing ? .visible : .invisible)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .backgroundFill(Color.Theme.Background.bg2)
+        .backgroundFill(Color.Theme.BG.bg1)
     }
 
     var normalView: some View {
@@ -88,7 +88,6 @@ struct BrowserAuthzView: View {
             ScrollView {
                 evmCard
                     .visibility(vm.showEvmCard ? .visible : .gone)
-
             }
 
             Spacer()
@@ -105,7 +104,7 @@ struct BrowserAuthzView: View {
         }
         .padding(.all, 18)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .backgroundFill(Color.Theme.Background.bg2)
+        .backgroundFill(Color.Theme.BG.bg1)
     }
 
     var verifiedView: some View {
@@ -179,7 +178,7 @@ struct BrowserAuthzView: View {
             }
             .frame(height: 20)
 
-            HStack{
+            HStack {
                 Spacer()
                 Text("Covered by Flow Wallet".localized)
                     .font(.inter(size: 12))
@@ -188,12 +187,10 @@ struct BrowserAuthzView: View {
                     .frame(maxWidth: .infinity, alignment: .topTrailing)
             }
             .visibility(RemoteConfigManager.shared.freeGasEnabled ? .visible : .gone)
-
-
         }
         .padding(.vertical, 16)
         .padding(.horizontal, 16)
-        .background(.Theme.BG.bg1)
+        .background(.Theme.BG.bg2)
         .cornerRadius(16)
     }
 
@@ -226,7 +223,7 @@ struct BrowserAuthzView: View {
         VStack(spacing: 0) {
             InsufficientStorageToastView<BrowserAuthzViewModel>()
                 .environmentObject(self.vm)
-            
+
             WalletSendButtonView(allowEnable: .constant(true)) {
                 vm.didChooseAction(true)
             }
@@ -282,15 +279,6 @@ struct BrowserAuthzView: View {
         .transition(.move(edge: .trailing))
     }
 
-    func attributeString() -> AttributedString {
-        switch selection {
-        case .cadence:
-            vm.cadenceFormatted ?? AttributedString(vm.cadence.trim())
-        case .arguments:
-            vm.argumentsFormatted ?? AttributedString(vm.arguments?.jsonPrettyPrint()?.trim() ?? "")
-        }
-    }
-
     var evmCard: some View {
         VStack(spacing: 8) {
             infoView
@@ -300,7 +288,7 @@ struct BrowserAuthzView: View {
     }
 
     var infoView: some View {
-        card(with: self.vm.infoList)
+        card(with: vm.infoList)
     }
 
     var callDataView: some View {
@@ -315,7 +303,7 @@ struct BrowserAuthzView: View {
                     UIPasteboard.general.string = vm.callData ?? ""
                     HUD.success(title: "copied".localized)
 
-                }label: {
+                } label: {
                     Image("icon_copy")
                         .resizable()
                         .renderingMode(.template)
@@ -331,30 +319,38 @@ struct BrowserAuthzView: View {
                 .lineLimit(4)
                 .foregroundStyle(Color.Theme.Text.black8)
                 .padding(16)
-                .background(.Theme.Background.bg2)
+                .background(Color.Theme.BG.bg1)
                 .cornerRadius(16)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
-        .background(.Theme.BG.bg1)
+        .background(.Theme.BG.bg2)
         .cornerRadius(16)
     }
 
     var decodedDataView: some View {
         VStack(spacing: 8) {
-            
-            ForEach(0..<vm.decodedDataList.count,id:\.self) { index in
+            ForEach(0..<vm.decodedDataList.count, id: \.self) { index in
                 let list = vm.decodedDataList[index]
                 card(with: list)
             }
         }
     }
 
+    func attributeString() -> AttributedString {
+        switch selection {
+        case .cadence:
+            vm.cadenceFormatted ?? AttributedString(vm.cadence.trim())
+        case .arguments:
+            vm.argumentsFormatted ?? AttributedString(vm.arguments?.jsonPrettyPrint()?.trim() ?? "")
+        }
+    }
+
     func card(with list: [FormItem]) -> some View {
         VStack(spacing: 0) {
-            ForEach(0..<list.count, id:\.self) { index in
+            ForEach(0..<list.count, id: \.self) { index in
                 let model = list[index]
-                BrowserAuthzView.Card(model:model)
+                BrowserAuthzView.Card(model: model)
                 if index < list.count - 1 {
                     Divider()
                         .foregroundStyle(Color.Theme.Line.line)
@@ -363,10 +359,12 @@ struct BrowserAuthzView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
-        .background(.Theme.BG.bg1)
+        .background(.Theme.BG.bg2)
         .cornerRadius(16)
     }
 }
+
+// MARK: BrowserAuthzView.Card
 
 extension BrowserAuthzView {
     struct Card: View {
