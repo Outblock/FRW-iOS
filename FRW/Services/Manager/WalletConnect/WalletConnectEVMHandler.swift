@@ -390,9 +390,13 @@ extension WalletConnectEVMHandler {
         guard let myCoaAddress = EVMAccountManager.shared.accounts.first?.showAddress else {
             return nil
         }
-        var result = try await WalletConnectEVMHandler.calculateTXByCadence(model, from: myCoaAddress)
+        var result = try? await WalletConnectEVMHandler.calculateTXByCadence(model, from: myCoaAddress)
         if result == nil {
-            result = try await calculateTXByRPC(txid: txId)
+            log.warning("[EVM] calculate TX ID by cadence failed")
+            result = try? await calculateTXByRPC(txid: txId)
+        }
+        if result == nil {
+            log.warning("[EVM] calculate TX ID by Event")
         }
         return result
     }
