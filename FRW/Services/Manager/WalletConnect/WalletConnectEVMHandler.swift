@@ -217,21 +217,11 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                     let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                     TransactionManager.shared.newTransaction(holder: holder)
 
-                    var evmId = try? await WalletConnectEVMHandler.calculateTX(receiveModel, txId: txid)
+                    let calculateId = try await WalletConnectEVMHandler.calculateTX(receiveModel, txId: txid)
 
-                    guard let result = evmId else {
-                        HUD.error(title: "transaction failed")
-                        cancel()
-                        EventTrack.Transaction
-                            .evmSigned(
-                                txId: txid.hex,
-                                success: false
-                            )
-                        return
-                    }
-                    log.info("[EVM] calculate TX id: \(result)")
+                    log.info("[EVM] calculate TX id: \(calculateId)")
                     await MainActor.run {
-                        confirm(result.addHexPrefix())
+                        confirm(calculateId.addHexPrefix())
                     }
                     EventTrack.Transaction
                         .evmSigned(
@@ -386,27 +376,31 @@ extension WalletConnectEVMHandler {
 // MARK: Decoded Data
 
 extension WalletConnectEVMHandler {
-    static func calculateTX(_ model: EVMTransactionReceive, txId: Flow.ID) async throws -> String? {
+    static func calculateTX(_ model: EVMTransactionReceive, txId: Flow.ID) async throws -> String {
         guard let myCoaAddress = EVMAccountManager.shared.accounts.first?.showAddress else {
-            return nil
+            return ""
         }
-        var result = try? await WalletConnectEVMHandler.calculateTXByCadence(model, from: myCoaAddress)
+        var result = await WalletConnectEVMHandler.calculateTXByCadence(model, from: myCoaAddress)
         if result == nil {
             log.warning("[EVM] calculate failed by cadence ")
-            result = try? await calculateTXByRPC(txid: txId)
+            result = try await calculateTXByRPC(txid: txId)
         }
         if result == nil {
             log.warning("[EVM] calculate failed by Event")
         }
-        return result
+        return result ?? ""
     }
 
-    private static func calculateTXByCadence(_ model: EVMTransactionReceive, from address: String) async throws -> String? {
+    private static func calculateTXByCadence(_ model: EVMTransactionReceive, from address: String) async -> String? {
         guard let toAddress = model.toAddress, let toAddr = EthereumAddress(toAddress.addHexPrefix()) else {
+            log.info("[Cadence] empty address")
+            return nil
+        }
+        guard let nonce = try? await FlowNetwork.getNonce(hexAddress: address) else {
+            log.info("[Cadence] fetch nonce failed")
             return nil
         }
 
-        let nonce = try await FlowNetwork.getNonce(hexAddress: address)
         let chainId = LocalUserDefaults.shared.flowNetwork.networkID
         let evmGasLimit = 30000000
         let evmGasPrice = 0
@@ -429,12 +423,15 @@ extension WalletConnectEVMHandler {
     }
 
     private static func calculateTXByRPC(txid: Flow.ID) async throws -> String? {
-        let result = try await txid.onceSealed()
-        if result.isFailed {
+        guard let result = try? await txid.onceSealed() else {
+            log.info("[Cadence] transation failed.")
             return nil
         }
-        let model = try await FlowNetwork.fetchEVMTransactionResult(txid: txid.hex)
-        return model.hashString?.addHexPrefix()
+        if result.isFailed {
+            throw CadenceError.transactionFailed
+        }
+        let model = try? await FlowNetwork.fetchEVMTransactionResult(txid: txid.hex)
+        return model?.hashString?.addHexPrefix()
     }
 
 }
