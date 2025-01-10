@@ -1054,6 +1054,17 @@ extension FlowNetwork {
         )
         return resonpse
     }
+
+    static func getNonce(hexAddress: String) async throws -> UInt64 {
+        guard let originCadence = CadenceManager.shared.current.evm?.getNonce?.toFunc() else {
+            throw CadenceError.empty
+        }
+        let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
+        let encodedAddress = hexAddress.stripHexPrefix()
+        let response = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: cadenceStr),
+                                                                           arguments: [.string(encodedAddress)])
+        return try response.decode(UInt64.self)
+    }
 }
 
 // MARK: Bridge between Child and EVM

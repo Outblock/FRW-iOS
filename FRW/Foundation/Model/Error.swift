@@ -118,15 +118,27 @@ enum EVMError: Error {
 
 // MARK: - CadenceError
 
-enum CadenceError: Error {
+enum CadenceError: String,Error,CaseIterable, CustomStringConvertible {
+    case none
     case empty
+    case transactionFailed
 
     // MARK: Internal
 
     var message: String {
         switch self {
         case .empty:
-            "empty script"
+            return "empty script"
+        default:
+            return ""
         }
+    }
+
+    var code: Int {
+        9000 + (CadenceError.allCases.firstIndex(of: self) ?? 0)
+    }
+
+    public var description: String {
+        "\(type(of: self)) Code: \(code)-\(self.rawValue)"
     }
 }

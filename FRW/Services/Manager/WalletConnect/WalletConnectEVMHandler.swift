@@ -216,26 +216,18 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                     )
                     let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                     TransactionManager.shared.newTransaction(holder: holder)
-                    let tixResult = try await txid.onceSealed()
-                    if tixResult.isFailed {
-                        HUD.error(title: "transaction failed")
-                        cancel()
-                        EventTrack.Transaction
-                            .evmSigned(
-                                txId: txid.hex,
-                                success: false
-                            )
-                        return
+
+                    let calculateId = try await WalletConnectEVMHandler.calculateTX(receiveModel, txId: txid)
+
+                    log.info("[EVM] calculate TX id: \(calculateId)")
+                    await MainActor.run {
+                        confirm(calculateId.addHexPrefix())
                     }
                     EventTrack.Transaction
                         .evmSigned(
                             txId: txid.hex,
                             success: true
                         )
-                    let model = try await FlowNetwork.fetchEVMTransactionResult(txid: txid.hex)
-                    DispatchQueue.main.async {
-                        confirm(model.hashString?.addHexPrefix() ?? "")
-                    }
                 }
             }
 
@@ -379,4 +371,67 @@ extension WalletConnectEVMHandler {
             type?.lowercased() == "ERC20".lowercased()
         }
     }
+}
+
+// MARK: Decoded Data
+
+extension WalletConnectEVMHandler {
+    static func calculateTX(_ model: EVMTransactionReceive, txId: Flow.ID) async throws -> String {
+        guard let myCoaAddress = EVMAccountManager.shared.accounts.first?.showAddress else {
+            return ""
+        }
+        var result = await WalletConnectEVMHandler.calculateTXByCadence(model, from: myCoaAddress)
+        if result == nil {
+            log.warning("[EVM] calculate failed by cadence ")
+            result = try await calculateTXByRPC(txid: txId)
+        }
+        if result == nil {
+            log.warning("[EVM] calculate failed by Event")
+        }
+        return result ?? ""
+    }
+
+    private static func calculateTXByCadence(_ model: EVMTransactionReceive, from address: String) async -> String? {
+        guard let toAddress = model.toAddress, let toAddr = EthereumAddress(toAddress.addHexPrefix()) else {
+            log.info("[Cadence] empty address")
+            return nil
+        }
+        guard let nonce = try? await FlowNetwork.getNonce(hexAddress: address) else {
+            log.info("[Cadence] fetch nonce failed")
+            return nil
+        }
+
+        let chainId = LocalUserDefaults.shared.flowNetwork.networkID
+        let evmGasLimit = 30000000
+        let evmGasPrice = 0
+        let directCallTxType = 255
+        let contractCallSubType = 5
+
+        let tx = CodableTransaction(type: .legacy,
+                                    to: toAddr,
+                                    nonce: BigUInt(nonce),
+                                    chainID: BigUInt(chainId),
+                                    value: model.bigAmount,
+                                    data: model.dataValue ?? Data(),
+                                    gasLimit: BigUInt(evmGasLimit),
+                                    gasPrice: BigUInt(evmGasPrice),
+                                    v: BigUInt(directCallTxType),
+                                    r: BigUInt(address.stripHexPrefix(), radix: 16)!,
+                                    s: BigUInt(contractCallSubType)
+        )
+        return tx.hash?.hexValue
+    }
+
+    private static func calculateTXByRPC(txid: Flow.ID) async throws -> String? {
+        guard let result = try? await txid.onceSealed() else {
+            log.info("[Cadence] transation failed.")
+            return nil
+        }
+        if result.isFailed {
+            throw CadenceError.transactionFailed
+        }
+        let model = try? await FlowNetwork.fetchEVMTransactionResult(txid: txid.hex)
+        return model?.hashString?.addHexPrefix()
+    }
+
 }
