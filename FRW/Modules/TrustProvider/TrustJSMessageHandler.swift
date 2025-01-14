@@ -355,7 +355,10 @@ extension TrustJSMessageHandler {
             url: url?.absoluteString ?? "unknown",
             logo: url?.absoluteString.toFavIcon()?.absoluteString,
             cadence: originCadence,
-            arguments: args.toArguments()
+            arguments: args.toArguments(),
+            toAddress: toAddr,
+            data: receiveModel.data,
+            amount: receiveModel.amount
         ) { [weak self] result in
 
             guard let self = self else {

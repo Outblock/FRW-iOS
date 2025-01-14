@@ -955,6 +955,8 @@
 		4E131A9F2CA1956B002B258D /* SVGUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E131A9D2CA19567002B258D /* SVGUIView.swift */; };
 		4E131AA12CA1AB9E002B258D /* ThingsNeedKnowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E131AA02CA1AB99002B258D /* ThingsNeedKnowViewModel.swift */; };
 		4E131AA22CA1AB9E002B258D /* ThingsNeedKnowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E131AA02CA1AB99002B258D /* ThingsNeedKnowViewModel.swift */; };
+		4E1914872D2E64240018BAA7 /* FormItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1914862D2E64240018BAA7 /* FormItem.swift */; };
+		4E1914882D2E64240018BAA7 /* FormItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1914862D2E64240018BAA7 /* FormItem.swift */; };
 		4E1A8B662B71A47A00485EDE /* MultiBackupCreatePinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B652B71A47A00485EDE /* MultiBackupCreatePinView.swift */; };
 		4E1A8B672B71A47A00485EDE /* MultiBackupCreatePinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B652B71A47A00485EDE /* MultiBackupCreatePinView.swift */; };
 		4E1A8B692B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B682B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift */; };
@@ -2411,6 +2413,7 @@
 		4E0D349E2A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "e-Ukraine-Medium.ttf"; sourceTree = "<group>"; };
 		4E131A9D2CA19567002B258D /* SVGUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVGUIView.swift; sourceTree = "<group>"; };
 		4E131AA02CA1AB99002B258D /* ThingsNeedKnowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThingsNeedKnowViewModel.swift; sourceTree = "<group>"; };
+		4E1914862D2E64240018BAA7 /* FormItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormItem.swift; sourceTree = "<group>"; };
 		4E1A8B652B71A47A00485EDE /* MultiBackupCreatePinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupCreatePinView.swift; sourceTree = "<group>"; };
 		4E1A8B682B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupCreatePinViewModel.swift; sourceTree = "<group>"; };
 		4E1A8B6B2B71A7B500485EDE /* MultiBackupConfirmPinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupConfirmPinView.swift; sourceTree = "<group>"; };
@@ -5938,6 +5941,7 @@
 				15DFD34B2CE197F9004B0DB8 /* AppExternalLinks.swift */,
 				57FD54462CEE996700FFDDC5 /* FlowNetworkType.swift */,
 				57EB45702CFFC36400393FF2 /* TokenType.swift */,
+				4E1914862D2E64240018BAA7 /* FormItem.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -7105,6 +7109,7 @@
 				6A8D223E2881499D005A7081 /* RecentListCache.swift in Sources */,
 				6A45899028C20CA400B1024B /* BrowserViewController+JS.swift in Sources */,
 				15DC20D127819C56000B187A /* VNavigationLinkType.swift in Sources */,
+				4E1914872D2E64240018BAA7 /* FormItem.swift in Sources */,
 				4E9532302CD2082F00AAECD1 /* AddCustomTokenView.swift in Sources */,
 				6A37AD9C28BE15700047E5F7 /* SendAmountTransactionProcessView.swift in Sources */,
 				4E9E21B3282644B200E1BACD /* WalletViewModel.swift in Sources */,
@@ -7931,6 +7936,7 @@
 				6A45898F28C20CA400B1024B /* BrowserViewController+JS.swift in Sources */,
 				15C58B2A2868A4EE00BD4FC6 /* VNavigationLinkType.swift in Sources */,
 				6A37AD9B28BE15700047E5F7 /* SendAmountTransactionProcessView.swift in Sources */,
+				4E1914882D2E64240018BAA7 /* FormItem.swift in Sources */,
 				4E95322F2CD2082F00AAECD1 /* AddCustomTokenView.swift in Sources */,
 				15C58B2B2868A4EE00BD4FC6 /* WalletViewModel.swift in Sources */,
 				15C58B2C2868A4EE00BD4FC6 /* VLazyScrollViewHorizontal.swift in Sources */,

@@ -20,7 +20,7 @@ final class NFTCollectionStateManager {
     static let share = NFTCollectionStateManager()
 
     func fetch() async {
-        let list = NFTCollectionConfig.share.config
+
         guard let address = WalletManager.shared.walletInfo?.currentNetworkWalletModel?.getAddress,
               !address.isEmpty
         else {
@@ -29,9 +29,11 @@ final class NFTCollectionStateManager {
 
         do {
             let result: [String: Bool] = try await FlowNetwork.checkCollectionEnable(address: Flow.Address(hex: address))
-            collectionStateList = result
+            runOnMain {
+                self.collectionStateList = result
+            }
         } catch {
-            debugPrint("NFTCollectionStateManager: \(error)")
+            log.error("[NFT] \(error)")
         }
     }
 
