@@ -74,11 +74,7 @@ struct TokenDetailView: RouteableView {
         .buttonStyle(.plain)
         .backgroundFill(.LL.deepBg)
         .applyRouteable(self)
-        .halfSheet(showSheet: $vm.showSheet, autoResizing: true, backgroundColor: Color.Theme.BG.bg1) {
-            if vm.buttonAction == .move {
-                MoveTokenView(tokenModel: vm.token, isPresent: $vm.showSheet)
-            }
-        }
+        .halfSheet(showSheet: $vm.showSheet, backgroundColor: Color.Theme.BG.bg1, sheetViewBuilder: sheetViewBuilder)
         .navigationBarItems(trailing: HStack(spacing: 6) {
             Menu(systemImage: "ellipsis") {
                 Button("Delete EFT", systemImage: "trash") {
@@ -90,6 +86,13 @@ struct TokenDetailView: RouteableView {
         })
     }
 
+    @ViewBuilder
+    private func sheetViewBuilder() -> some View {
+        if vm.buttonAction == .move {
+            MoveTokenView(tokenModel: vm.token, isPresent: $vm.showSheet)
+        }
+    }
+    
     var summaryView: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {

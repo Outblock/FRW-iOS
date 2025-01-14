@@ -261,7 +261,7 @@ extension BrowserViewController {
     @objc
     private func onMoveAssets() {
         if MoveAssetsAction.shared.allowMoveAssets {
-            let vc = PresentHostingController(rootView: MoveAssetsView())
+            let vc = makeAutoResizeSheetViewController(MoveAssetsView())
             navigationController?.present(vc, completion: nil)
         } else {
             HUD.info(title: "Features Coming Soon")

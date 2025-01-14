@@ -50,15 +50,18 @@ struct NFTAddCollectionView: RouteableView {
         }
         .background(Color.LL.Neutrals.background)
         .applyRouteable(self)
-        .halfSheet(showSheet: $addViewModel.isConfirmSheetPresented, autoResizing: true, backgroundColor: Color.LL.Neutrals.background) {
-            if let item = self.selectItem {
-                NFTAddCollectionView.NFTCollectionEnableView(item: item)
-                    .environmentObject(addViewModel)
-            }
-        }
+        .halfSheet(showSheet: $addViewModel.isConfirmSheetPresented, backgroundColor: Color.LL.Neutrals.background, sheetViewBuilder: sheetViewBuilder)
         .mockPlaceholder(addViewModel.isMock)
     }
 
+    @ViewBuilder
+    private func sheetViewBuilder() -> some View {
+        if let item = self.selectItem {
+            NFTAddCollectionView.NFTCollectionEnableView(item: item)
+                .environmentObject(addViewModel)
+        }
+    }
+    
     private func title(title: String) -> some View {
         Text(title.localized.uppercased())
             .foregroundColor(.LL.Neutrals.neutrals6)

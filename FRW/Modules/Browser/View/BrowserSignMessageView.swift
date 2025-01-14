@@ -10,7 +10,9 @@ import SwiftUI
 
 // MARK: - BrowserSignMessageView
 
-struct BrowserSignMessageView: View {
+struct BrowserSignMessageView: View, PresentActionDelegate {
+    var changeHeight: (() -> Void)?
+    
     // MARK: Lifecycle
 
     init(vm: BrowserSignMessageViewModel) {
@@ -25,6 +27,8 @@ struct BrowserSignMessageView: View {
 
     var body: some View {
         normalView
+            .fixedSize(horizontal: false, vertical: true)
+            .ignoresSafeArea()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(.ultraThickMaterial)
     }
