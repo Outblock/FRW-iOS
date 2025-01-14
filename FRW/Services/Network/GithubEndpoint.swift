@@ -52,11 +52,20 @@ extension GithubEndpoint: TargetType {
                 return "/Outblock/token-list-jsons/outblock/jsons/mainnet/flow/nfts.json"
             }
         case .EVMTokenList:
-            switch LocalUserDefaults.shared.flowNetwork {
-            case .mainnet:
-                return "/Outblock/token-list-jsons/outblock/jsons/mainnet/evm/default.json"
-            default:
-                return "/Outblock/token-list-jsons/outblock/jsons/testnet/evm/default.json"
+            if isDevModel {
+                switch LocalUserDefaults.shared.flowNetwork {
+                case .mainnet:
+                    return "/Outblock/token-list-jsons/outblock/jsons/mainnet/evm/dev.json"
+                default:
+                    return "/Outblock/token-list-jsons/outblock/jsons/testnet/evm/dev.json"
+                }
+            } else {
+                switch LocalUserDefaults.shared.flowNetwork {
+                case .mainnet:
+                    return "/Outblock/token-list-jsons/outblock/jsons/mainnet/evm/default.json"
+                default:
+                    return "/Outblock/token-list-jsons/outblock/jsons/testnet/evm/default.json"
+                }
             }
         }
     }
