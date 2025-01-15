@@ -896,6 +896,32 @@ extension FlowNetwork {
         }
     }
 
+    /// coa -> eoa for js
+    static func sendTransaction(
+        amount: BigUInt,
+        data: Data?,
+        toAddress: String,
+        gas: UInt64
+    ) async throws -> Flow.ID {
+        var argData: Flow.Cadence.FValue = .array([])
+        if let toValue = data?.cadenceValue {
+            argData = toValue
+        }
+        do {
+            let txid = try await sendTransaction(by: \.evm?.callContractV2, argumentList: [
+                .string(toAddress),
+                .uint256(amount),
+                argData,
+                .uint64(gas),
+            ])
+            EventTrack.Transaction.evmSigned(txId: txid.hex, success: true)
+            return txid
+        } catch {
+            EventTrack.Transaction.evmSigned(txId: "", success: false)
+            throw error
+        }
+    }
+
     static func fetchEVMTransactionResult(txid: String) async throws -> EVMTransactionExecuted {
         log.info("[EVM] evm transaction tix: \(txid)")
         let result = try await flow.getTransactionResultById(id: .init(hex: txid))
