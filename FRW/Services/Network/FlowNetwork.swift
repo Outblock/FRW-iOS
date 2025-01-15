@@ -7,10 +7,10 @@
 
 import BigInt
 import Combine
+import CryptoKit
 import Flow
 import Foundation
 import Web3Core
-import CryptoKit
 
 // MARK: - FlowNetwork
 
@@ -712,17 +712,21 @@ extension FlowNetwork {
         ).decode(Flow.StorageInfo.self)
         return response
     }
-    
+
     static func checkAccountInfo() async throws -> Flow.AccountInfo {
-        guard let address = WalletManager.shared.getPrimaryWalletAddress().map(Flow.Address.init(hex:)) else {
+        guard let address = WalletManager.shared.getPrimaryWalletAddress()
+            .map(Flow.Address.init(hex:)) else {
             throw LLError.invalidAddress
         }
-                                                           
+
         guard let cadence = CadenceManager.shared.current.basic?.getAccountInfo?.toFunc() else {
             throw LLError.invalidCadence
         }
-        
-        return try await flow.accessAPI.executeScriptAtLatestBlock(cadence: cadence, arguments: [.address(address)]).decode(Flow.AccountInfo.self)
+
+        return try await flow.accessAPI.executeScriptAtLatestBlock(
+            cadence: cadence,
+            arguments: [.address(address)]
+        ).decode(Flow.AccountInfo.self)
     }
 }
 
@@ -780,7 +784,7 @@ extension FlowNetwork {
         )
     }
 
-    //!!!Note this no need current address and not sign with login user
+    //! !!Note this no need current address and not sign with login user
     static func addKeyWithMulti(
         address: Flow.Address,
         keyIndex: Int,
@@ -886,11 +890,10 @@ extension FlowNetwork {
             ])
             EventTrack.Transaction.evmSigned(txId: txid.hex, success: true)
             return txid
-        }catch {
+        } catch {
             EventTrack.Transaction.evmSigned(txId: "", success: false)
             throw error
         }
-
     }
 
     static func fetchEVMTransactionResult(txid: String) async throws -> EVMTransactionExecuted {
@@ -945,7 +948,6 @@ extension FlowNetwork {
         fromEvm: Bool,
         decimals: Int
     ) async throws -> Flow.ID {
-
         let keyPath: KeyPath<CadenceModel, String?> = fromEvm ? \.bridge?
             .bridgeTokensFromEvmV2 : \.bridge?.bridgeTokensToEvmV2
 
@@ -1061,8 +1063,10 @@ extension FlowNetwork {
         }
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
         let encodedAddress = hexAddress.stripHexPrefix()
-        let response = try await flow.accessAPI.executeScriptAtLatestBlock(script: Flow.Script(text: cadenceStr),
-                                                                           arguments: [.string(encodedAddress)])
+        let response = try await flow.accessAPI.executeScriptAtLatestBlock(
+            script: Flow.Script(text: cadenceStr),
+            arguments: [.string(encodedAddress)]
+        )
         return try response.decode(UInt64.self)
     }
 }
@@ -1087,7 +1091,6 @@ extension FlowNetwork {
         id: UInt64,
         child: String
     ) async throws -> Flow.ID {
-
         let nftId = BigUInt(id)
 
         return try await sendTransaction(by: \.hybridCustody?.bridgeChildNFTFromEvm, argumentList: [
@@ -1296,7 +1299,8 @@ extension FlowNetwork {
         }
         do {
             let fromKeyIndex = WalletManager.shared.keyIndex
-            let tranId = try await flow.sendTransaction(signers: WalletManager.shared.defaultSigners) {
+            let tranId = try await flow
+                .sendTransaction(signers: WalletManager.shared.defaultSigners) {
                     cadence {
                         cadenceStr
                     }
@@ -1353,7 +1357,6 @@ extension FlowNetwork {
         }
     }
 
-
     private static func sendTransaction(
         by keyPath: KeyPath<CadenceModel, String?>,
         address: Flow.Address,
@@ -1376,7 +1379,7 @@ extension FlowNetwork {
         do {
             let tranId = try await flow.sendTransaction(signers: signers) {
                 cadence {
-                    cadenceStr
+                    replacedCadence
                 }
 
                 payer {
@@ -1386,7 +1389,11 @@ extension FlowNetwork {
                     argumentList
                 }
                 proposer {
-                    Flow.TransactionProposalKey(address: address, keyIndex: keyIndex, sequenceNumber: sequenceNum)
+                    Flow.TransactionProposalKey(
+                        address: address,
+                        keyIndex: keyIndex,
+                        sequenceNumber: sequenceNum
+                    )
                 }
 
                 authorizers {

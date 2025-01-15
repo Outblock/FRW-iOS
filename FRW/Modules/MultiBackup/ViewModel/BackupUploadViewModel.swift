@@ -108,7 +108,18 @@ class BackupUploadViewModel: ObservableObject {
     // MARK: UI element
 
     var currentIcon: String {
-        currentType.iconName()
+        switch currentType {
+        case .google:
+            return "icon.google.drive"
+        case .passkey:
+            return "icon.passkey"
+        case .icloud:
+            return "Icloud"
+        case .phrase:
+            return "icon.recovery"
+        case .dropbox:
+            return "icon.dropbox.circle.64"
+        }
     }
 
     var currentTitle: String {
@@ -157,7 +168,7 @@ class BackupUploadViewModel: ObservableObject {
     }
 
     func handleProcess(process: BackupProcess) {
-        self.hasError = false
+        hasError = false
         self.process = process
         switch process {
         case .idle:
@@ -168,7 +179,8 @@ class BackupUploadViewModel: ObservableObject {
                         self.mnemonicBlur = true
                     }
                     try await MultiBackupManager.shared.preLogin(with: currentType)
-                    let result = try await MultiBackupManager.shared.registerKeyToChain(on: currentType)
+                    let result = try await MultiBackupManager.shared
+                        .registerKeyToChain(on: currentType)
                     if result {
                         runOnMain {
                             self.handleProcess(process: .upload)
@@ -246,7 +258,7 @@ class BackupUploadViewModel: ObservableObject {
 
 extension BackupUploadViewModel {
     private func trackSource() -> String {
-        return currentType.methodName()
+        currentType.methodName()
     }
 
     func trackCreatSuccess() {
