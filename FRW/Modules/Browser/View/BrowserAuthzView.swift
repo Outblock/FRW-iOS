@@ -284,6 +284,7 @@ struct BrowserAuthzView: View {
             infoView
             decodedDataView
             callDataView
+                .visibility((vm.callData != nil) ? .visible : .gone)
         }
     }
 
