@@ -193,7 +193,6 @@ extension MultiBackupManager {
         switch type {
         case .google:
             backupType = .google
-//            try await gdTarget.loginCloud()
             try await gdTarget.upload(password: password)
         case .passkey:
             backupType = .passkey
@@ -215,7 +214,8 @@ extension MultiBackupManager {
             return
         }
         do {
-            let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.syncDevice(model))
+            let response: Network.EmptyResponse = try await Network
+                .requestWithRawModel(FRWAPI.User.syncDevice(model))
         } catch {
             log.error("[sync account] error \(error.localizedDescription)")
             throw error
@@ -292,12 +292,13 @@ extension MultiBackupManager {
         case .phrase:
             return []
         case .dropbox:
+            try await login(from: type)
             var list = try await dropboxTarget.getCurrentDriveItems()
-            list = list.map({ item in
+            list = list.map { item in
                 var model = item
                 model.backupType = type
                 return model
-            })
+            }
             return list
         }
     }
@@ -331,6 +332,7 @@ extension MultiBackupManager {
         case .phrase:
             log.info("wait")
         case .dropbox:
+            try await login(from: type)
             try await dropboxTarget.removeItem(password: password)
         }
     }
@@ -578,7 +580,13 @@ extension MultiBackupManager {
                     log.error("[Multi-backup] sync failed")
                 } else {
                     try secureKey.store(id: firstItem.userId)
-                    let storeUser = UserManager.StoreUser(publicKey: key.publicKey.description, address: firstItem.address, userId: firstItem.userId, keyType: .secureEnclave, account: nil)
+                    let storeUser = UserManager.StoreUser(
+                        publicKey: key.publicKey.description,
+                        address: firstItem.address,
+                        userId: firstItem.userId,
+                        keyType: .secureEnclave,
+                        account: nil
+                    )
                     LocalUserDefaults.shared.addUser(user: storeUser)
                     try await UserManager.shared.restoreLogin(with: firstItem.userId)
                     Router.popToRoot()

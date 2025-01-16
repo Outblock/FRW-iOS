@@ -15,10 +15,10 @@ import ReownWalletKit
 import Resolver
 import SwiftUI
 import SwiftyBeaver
+import SwiftyDropbox
 import UIKit
 import WalletConnectNotify
 import WalletCore
-import SwiftyDropbox
 
 #if DEBUG
 import Atlantis
@@ -109,15 +109,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             }
         }
 
-        //callback for login by dropbox 
-        if DropboxClientsManager.authorizedClient != nil {
-            let oauthCompletion: DropboxOAuthCompletion = {
-                NotificationCenter.default.post(name: .dropboxCallback, object: $0)
-            }
-            let canHandleUrl = DropboxClientsManager.handleRedirectURL(url, includeBackgroundClient: false, completion: oauthCompletion)
-            if canHandleUrl {
-                return canHandleUrl
-            }
+        // callback for login by dropbox
+        let oauthCompletion: DropboxOAuthCompletion = {
+            NotificationCenter.default.post(name: .dropboxCallback, object: $0)
+        }
+        let canHandleUrl = DropboxClientsManager.handleRedirectURL(
+            url,
+            includeBackgroundClient: false,
+            completion: oauthCompletion
+        )
+        if canHandleUrl {
+            return canHandleUrl
         }
 
         return GIDSignIn.sharedInstance.handle(url)

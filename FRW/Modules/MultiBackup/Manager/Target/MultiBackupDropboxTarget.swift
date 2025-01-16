@@ -5,23 +5,14 @@
 //  Created by cat on 12/17/24.
 //
 
-import Foundation
-import UIKit
-import SwiftyDropbox
 import Combine
+import Foundation
+import SwiftyDropbox
+import UIKit
 
 // MARK: - MultiBackupDropboxTarget
 
 final class MultiBackupDropboxTarget: MultiBackupTarget {
-    var uploadedItem: MultiBackupManager.StoreItem?
-
-    var registeredDeviceInfo: SyncInfo.DeviceInfo?
-
-    private var observer: NSObjectProtocol? = nil
-    private let path: String
-    private var isWaiting: Bool = false
-    private var cancellableSet = Set<AnyCancellable>()
-
     // MARK: Lifecycle
 
     init() {
@@ -29,17 +20,17 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
             let appKey = ServiceConfig.shared.dropboxAppKey
             DropboxClientsManager.setupWithTeamAppKey(appKey)
         }
-        path = "/" + MultiBackupManager.backupFileName
+        self.path = "/" + MultiBackupManager.backupFileName
         DropboxClientsManager.unlinkClients()
-        NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
-            .receive(on: DispatchQueue.main)
-            .sink { _ in
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    if self.isWaiting {
-                        NotificationCenter.default.post(name: .dropboxCallback, object: nil)
-                    }
-                }
-            }.store(in: &cancellableSet)
+//        NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
+//            .receive(on: DispatchQueue.main)
+//            .sink { _ in
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+//                    if self.isWaiting {
+//                        NotificationCenter.default.post(name: .dropboxCallback, object: nil)
+//                    }
+//                }
+//            }.store(in: &cancellableSet)
     }
 
     deinit {
@@ -50,13 +41,20 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
 
     // MARK: Internal
 
+    var uploadedItem: MultiBackupManager.StoreItem?
 
+    var registeredDeviceInfo: SyncInfo.DeviceInfo?
 
     var isPrepared: Bool {
         DropboxClientsManager.authorizedClient != nil
     }
 
+    func logout() async throws {
+        DropboxClientsManager.unlinkClients()
+    }
+
     func loginCloud() async throws {
+        try await logout()
         try await startLogin()
         log.info("[Multi] dropbox is \(isPrepared)")
     }
@@ -153,6 +151,13 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
         }
     }
 
+    // MARK: Private
+
+    private var observer: NSObjectProtocol? = nil
+    private let path: String
+    private var isWaiting: Bool = false
+    private var cancellableSet = Set<AnyCancellable>()
+
     private func prepare() async throws {
         guard !isPrepared else {
             return
@@ -173,19 +178,20 @@ extension MultiBackupDropboxTarget {
     private func uploadFile(client: DropboxClient, path: String, data: Data) async throws -> Files
         .FileMetadata {
         try await withCheckedThrowingContinuation { continuation in
-            client.files.upload(path: path, mode: .overwrite, input: data).response { response, error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                    return
-                }
+            client.files.upload(path: path, mode: .overwrite, input: data)
+                .response { response, error in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                        return
+                    }
 
-                if let metadata = response {
-                    log.info("[Multi] dropbox Encrypted key uploaded successfully: \(metadata)")
-                    continuation.resume(returning: metadata)
-                } else {
-                    continuation.resume(throwing: BackupError.CloudFileData)
+                    if let metadata = response {
+                        log.info("[Multi] dropbox Encrypted key uploaded successfully: \(metadata)")
+                        continuation.resume(returning: metadata)
+                    } else {
+                        continuation.resume(throwing: BackupError.CloudFileData)
+                    }
                 }
-            }
         }
     }
 
@@ -224,4 +230,3 @@ extension MultiBackupDropboxTarget {
         }
     }
 }
-

@@ -1405,7 +1405,7 @@ extension FlowNetwork {
         do {
             let tranId = try await flow.sendTransaction(signers: signers) {
                 cadence {
-                    cadenceStr
+                    replacedCadence
                 }
 
                 payer {
