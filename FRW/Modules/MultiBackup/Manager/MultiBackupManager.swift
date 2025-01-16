@@ -193,7 +193,6 @@ extension MultiBackupManager {
         switch type {
         case .google:
             backupType = .google
-//            try await gdTarget.loginCloud()
             try await gdTarget.upload(password: password)
         case .passkey:
             backupType = .passkey
@@ -293,6 +292,7 @@ extension MultiBackupManager {
         case .phrase:
             return []
         case .dropbox:
+            try await login(from: type)
             var list = try await dropboxTarget.getCurrentDriveItems()
             list = list.map { item in
                 var model = item
