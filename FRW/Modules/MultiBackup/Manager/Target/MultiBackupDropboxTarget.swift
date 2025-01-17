@@ -55,6 +55,7 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
 
     func loginCloud() async throws {
         try await logout()
+        log.info("[Multi] dropbox logout")
         try await startLogin()
         log.info("[Multi] dropbox is \(isPrepared)")
     }
@@ -112,6 +113,7 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
 
     func startLogin() async throws {
         guard !isPrepared else {
+            log.info("[Multi] Dropbox not prepared")
             return
         }
         DispatchQueue.main.async {
@@ -131,7 +133,9 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
             )
         }
         isWaiting = true
+        log.info("[Multi] Dropbox wait for login")
         let notification = await waitForNotification(named: .dropboxCallback)
+        log.info("[Multi] Dropbox login finish")
         isWaiting = false
         if let authResult = notification.object as? DropboxOAuthResult {
             switch authResult {
@@ -144,10 +148,6 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
                 log.info("[Multi] dropbox Error: \(String(describing: description))")
                 throw BackupError.unauthorized
             }
-        }
-        if let observer {
-            NotificationCenter.default.removeObserver(observer)
-            self.observer = nil
         }
     }
 
@@ -172,6 +172,13 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
         }
         return data
     }
+
+    private func removeObserver() {
+        if let observer = observer {
+            NotificationCenter.default.removeObserver(observer)
+            self.observer = nil
+        }
+    }
 }
 
 extension MultiBackupDropboxTarget {
@@ -186,7 +193,7 @@ extension MultiBackupDropboxTarget {
                     }
 
                     if let metadata = response {
-                        log.info("[Multi] dropbox Encrypted key uploaded successfully: \(metadata)")
+                        log.info("[Multi] dropbox Encrypted key uploaded successfully")
                         continuation.resume(returning: metadata)
                     } else {
                         continuation.resume(throwing: BackupError.CloudFileData)
@@ -226,6 +233,7 @@ extension MultiBackupDropboxTarget {
                 queue: nil
             ) { notification in
                 continuation.resume(returning: notification)
+                self?.removeObserver()
             }
         }
     }

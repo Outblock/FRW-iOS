@@ -111,7 +111,6 @@ extension MultiBackupManager {
     }
 
     func registerKeyToChain(on type: MultiBackupType) async throws -> Bool {
-        mnemonic = nil
         guard let username = UserManager.shared.userInfo?.username, !username.isEmpty else {
             throw BackupError.missingUserName
         }
@@ -311,10 +310,10 @@ extension MultiBackupManager {
             log.info("not finished")
         case .icloud:
             try await iCloudTarget.loginCloud()
-            log.info("not finished")
         case .phrase:
             log.info("not finished")
         case .dropbox:
+            log.info("[Multi] dropbox ")
             try await dropboxTarget.loginCloud()
         }
     }
