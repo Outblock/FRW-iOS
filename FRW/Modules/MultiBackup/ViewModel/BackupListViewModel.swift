@@ -140,7 +140,7 @@ class BackupListViewModel: ObservableObject {
             if res {
                 try await MultiBackupManager.shared.removeItem(with: type)
                 await fetchMultiBackup()
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.showRemoveTipView = false
                 }
             }

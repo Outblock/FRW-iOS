@@ -122,14 +122,13 @@ struct BackupedItemView: View {
     }
 
     private func validMnemonic() -> String? {
+        if backupType != .phrase {
+            return nil
+        }
         if let mnemonic = mnemonic {
             return mnemonic
         }
-
         guard let mnemonic = MultiBackupManager.shared.mnemonic else {
-            return nil
-        }
-        if backupType != .phrase {
             return nil
         }
         return mnemonic
