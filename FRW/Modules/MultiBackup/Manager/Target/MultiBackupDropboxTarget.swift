@@ -16,10 +16,6 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
     // MARK: Lifecycle
 
     init() {
-        if DropboxOAuthManager.sharedOAuthManager == nil {
-            let appKey = ServiceConfig.shared.dropboxAppKey
-            DropboxClientsManager.setupWithTeamAppKey(appKey)
-        }
         self.path = "/" + MultiBackupManager.backupFileName
         DropboxClientsManager.unlinkClients()
 //        NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
