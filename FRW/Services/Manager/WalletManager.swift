@@ -23,12 +23,15 @@ extension WalletManager {
     static let flowPath = "m/44'/539'/0'/0/0"
     static let mnemonicStrength: Int32 = 160
     static let defaultGas: UInt64 = 30_000_000
-    
+
     static let minFlowBalance: Decimal = 0.001
     static let fixedMoveFee: Decimal = 0.001
-    static var averageTransactionFee: Decimal { RemoteConfigManager.shared.freeGasEnabled ? 0 : 0.001 }
+    static var averageTransactionFee: Decimal {
+        RemoteConfigManager.shared.freeGasEnabled ? 0 : 0.001
+    }
+
     static let mininumStorageThreshold = 10000
-    
+
     private static let defaultBundleID = "com.flowfoundation.wallet"
     private static let mnemonicStoreKeyPrefix = "lilico.mnemonic"
     private static let walletFetchInterval: TimeInterval = 5
@@ -73,13 +76,20 @@ class WalletManager: ObservableObject {
 
     static let shared = WalletManager()
 
-    @Published var supportedCoins: [TokenModel]?
-    @Published var evmSupportedCoins: [TokenModel]?
-    @Published var activatedCoins: [TokenModel] = []
-    @Published var coinBalances: [String: Decimal] = [:]
-    @Published var childAccount: ChildAccount? = nil
-    @Published var evmAccount: EVMAccountManager.Account? = nil
-    @Published var accountInfo: Flow.AccountInfo?
+    @Published
+    var supportedCoins: [TokenModel]?
+    @Published
+    var evmSupportedCoins: [TokenModel]?
+    @Published
+    var activatedCoins: [TokenModel] = []
+    @Published
+    var coinBalances: [String: Decimal] = [:]
+    @Published
+    var childAccount: ChildAccount? = nil
+    @Published
+    var evmAccount: EVMAccountManager.Account? = nil
+    @Published
+    var accountInfo: Flow.AccountInfo?
 
     var accessibleManager: ChildAccountManager.AccessibleManager = .init()
 
@@ -94,7 +104,8 @@ class WalletManager: ObservableObject {
             .accessibility(.whenUnlocked)
 
     var walletAccount: WalletAccount = .init()
-    @Published var balanceProvider = BalanceProvider()
+    @Published
+    var balanceProvider = BalanceProvider()
 
     var walletEntity: FlowWalletKit.Wallet? = nil
     var accountKey: UserManager.Accountkey?
@@ -105,7 +116,8 @@ class WalletManager: ObservableObject {
 
     var customTokenManager: CustomTokenManager = .init()
 
-    @Published var walletInfo: UserWalletResponse? {
+    @Published
+    var walletInfo: UserWalletResponse? {
         didSet {
             // TODO: remove after update new Flow Wallet SDK
             updateFlowAccount()
@@ -226,9 +238,9 @@ extension WalletManager {
 
     func updateKeyProvider(provider: any KeyProtocol, storeUser: UserManager.StoreUser) {
         keyProvider = provider
-        self.accountKey = storeUser.account
-        log.debug("[user] \(String(describing: self.accountKey))")
-        guard self.accountKey == nil else {
+        accountKey = storeUser.account
+        log.debug("[user] \(String(describing: accountKey))")
+        guard accountKey == nil else {
             return
         }
         Task {
@@ -236,9 +248,16 @@ extension WalletManager {
                 do {
                     let accountKey = try await findKey(address: address, with: storeUser.publicKey)
                     self.accountKey = accountKey?.toStoreKey()
-                    LocalUserDefaults.shared.updateUser(by: storeUser.userId,publicKey: storeUser.publicKey, account: self.accountKey)
-                }catch {
-                    log.error("[Wallet] not find account key by \(address) with \(storeUser.publicKey)")
+                    LocalUserDefaults.shared.updateUser(
+                        by: storeUser.userId,
+                        publicKey: storeUser.publicKey,
+                        account: self.accountKey
+                    )
+                } catch {
+                    log
+                        .error(
+                            "[Wallet] not find account key by \(address) with \(storeUser.publicKey)"
+                        )
                 }
             }
             if self.accountKey == nil {
@@ -246,13 +265,20 @@ extension WalletManager {
                     let result = try await findKey(provider: provider, with: storeUser.publicKey)
                     self.accountKey = result.1?.toStoreKey()
                     let address = result.0?.address.description
-                    LocalUserDefaults.shared.updateUser(by: storeUser.userId, publicKey: storeUser.publicKey, address: address,account: accountKey)
+                    LocalUserDefaults.shared.updateUser(
+                        by: storeUser.userId,
+                        publicKey: storeUser.publicKey,
+                        address: address,
+                        account: accountKey
+                    )
                 } catch {
-                    log.error("[Wallet] not find account key by \(provider.keyType) with \(storeUser.publicKey)")
+                    log
+                        .error(
+                            "[Wallet] not find account key by \(provider.keyType) with \(storeUser.publicKey)"
+                        )
                 }
             }
         }
-
     }
 
     func accountKey(with uid: String) async -> UserManager.Accountkey? {
@@ -265,7 +291,8 @@ extension WalletManager {
             accountKey = try? await findKey(address: address, with: user.publicKey)?.toStoreKey()
         }
         if accountKey == nil, let keyProvider = keyProvider(with: uid) {
-            accountKey = try? await findKey(provider: keyProvider, with: user.publicKey).1?.toStoreKey()
+            accountKey = try? await findKey(provider: keyProvider, with: user.publicKey).1?
+                .toStoreKey()
         }
 
         return accountKey
@@ -279,13 +306,16 @@ extension WalletManager {
         return accountKey
     }
 
-    private func findKey(provider: any KeyProtocol, with publicKey: String) async throws -> (Flow.Account?,Flow.AccountKey?) {
+    private func findKey(
+        provider: any KeyProtocol,
+        with publicKey: String
+    ) async throws -> (Flow.Account?, Flow.AccountKey?) {
         let chainId = LocalUserDefaults.shared.flowNetwork.toFlowType()
         let walletEntity = FlowWalletKit.Wallet(type: .key(provider), networks: [chainId])
         _ = try? await walletEntity.fetchAllNetworkAccounts()
         let list = walletEntity.flowAccounts?[chainId]
-        var flowAccount: Flow.Account? = nil
-        var accountKey: Flow.AccountKey? = nil
+        var flowAccount: Flow.Account?
+        var accountKey: Flow.AccountKey?
         list?.forEach { account in
             for key in account.keys {
                 if key.publicKey.description == publicKey {
@@ -296,7 +326,7 @@ extension WalletManager {
             }
         }
         log.debug("[user] \(String(describing: accountKey))")
-        return (flowAccount,accountKey)
+        return (flowAccount, accountKey)
     }
 
     func userStore(with uid: String) -> UserManager.StoreUser? {
@@ -335,9 +365,10 @@ extension WalletManager {
     }
 
     var isSelectedFlowAccount: Bool {
-        ChildAccountManager.shared.selectedChildAccount == nil && EVMAccountManager.shared.selectedAccount == nil
+        ChildAccountManager.shared.selectedChildAccount == nil && EVMAccountManager.shared
+            .selectedAccount == nil
     }
-    
+
     var selectedAccountIcon: String {
         if let childAccount = childAccount {
             return childAccount.icon
@@ -848,8 +879,8 @@ extension WalletManager {
 
         flowAccountKey = nil
         try await findFlowAccount()
-        
-        try? await self.fetchAccountInfo()
+
+        try? await fetchAccountInfo()
     }
 
     private func fetchSupportedCoins() async throws {
@@ -930,44 +961,44 @@ extension WalletManager {
             await MainActor.run {
                 self.accountInfo = accountInfo
             }
-            
+
             NotificationCenter.default.post(name: .accountDataDidUpdate, object: nil)
-        } catch let error {
+        } catch {
             log.error("[WALLET] fetch account info failed.\(error.localizedDescription)")
             throw error
         }
     }
-    
+
     var minimumStorageBalance: Decimal {
         guard let accountInfo else { return Self.fixedMoveFee }
         return accountInfo.storageFlow + Self.fixedMoveFee
     }
-    
+
     var isStorageInsufficient: Bool {
-        guard self.isSelectedFlowAccount else { return false }
+        guard isSelectedFlowAccount else { return false }
         guard let accountInfo else { return false }
         guard accountInfo.storageCapacity >= accountInfo.storageUsed else { return true }
         return accountInfo.storageCapacity - accountInfo.storageUsed < Self.mininumStorageThreshold
     }
 
     var isBalanceInsufficient: Bool {
-        guard self.isSelectedFlowAccount else { return false }
+        guard isSelectedFlowAccount else { return false }
         guard let accountInfo else { return false }
         return accountInfo.balance < Self.minFlowBalance
     }
-    
+
     func isBalanceInsufficient(for amount: Decimal) -> Bool {
-        guard self.isSelectedFlowAccount else { return false }
+        guard isSelectedFlowAccount else { return false }
         guard let accountInfo else { return false }
         return accountInfo.availableBalance - amount < Self.averageTransactionFee
     }
-    
+
     func isFlowInsufficient(for amount: Decimal) -> Bool {
-        guard self.isSelectedFlowAccount else { return false }
+        guard isSelectedFlowAccount else { return false }
         guard let accountInfo else { return false }
         return accountInfo.balance - amount < Self.minFlowBalance
     }
-    
+
     func fetchBalance() async throws {
         let address = selectedAccountAddress
         if address.isEmpty {
@@ -1053,7 +1084,13 @@ extension WalletManager {
     func addCustomToken(token: CustomToken) {
         DispatchQueue.main.async {
             let model = token.toToken()
-            self.activatedCoins.append(model)
+            let index = self.activatedCoins.index { $0.contractId == model.contractId }
+            if let index {
+                self.activatedCoins[index] = model
+            } else {
+                self.activatedCoins.append(model)
+            }
+
             let balance = token.balance ?? BigUInt(0)
             let result = Utilities.formatToPrecision(
                 balance,

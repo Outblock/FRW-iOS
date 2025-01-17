@@ -142,6 +142,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
             if result {
                 guard let addrStr = WalletManager.shared.getPrimaryWalletAddress() else {
                     HUD.error(title: "invalid_address".localized)
+                    cancel()
                     return
                 }
 
@@ -150,6 +151,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                 let joinData = Flow.DomainTag.user.normalize + hashedData
                 guard let sig = signWithMessage(data: joinData) else {
                     HUD.error(title: "sign failed")
+                    cancel()
                     return
                 }
                 let keyIndex = BigUInt(WalletManager.shared.keyIndex)
@@ -160,6 +162,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                     signatures: [sig]
                 )
                 guard let encoded = RLP.encode(proof.rlpList) else {
+                    cancel()
                     return
                 }
                 confirm(encoded.hexString.addHexPrefix())
