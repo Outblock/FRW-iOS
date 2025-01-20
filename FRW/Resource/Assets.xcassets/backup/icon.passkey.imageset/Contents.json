@@ -1,19 +1,8 @@
 {
   "images" : [
     {
-      "filename" : "Security 11 - 24px.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "filename" : "Security 11 - 24px@2x.png",
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "filename" : "Security 11 - 24px@3x.png",
-      "idiom" : "universal",
-      "scale" : "3x"
+      "filename" : "Passkey.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {

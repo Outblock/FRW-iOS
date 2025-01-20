@@ -333,7 +333,7 @@ extension TrustJSMessageHandler {
             title = "unknown"
         }
 
-        let originCadence = CadenceManager.shared.current.evm?.callContract?.toFunc() ?? ""
+        let originCadence = CadenceManager.shared.current.evm?.callContractV2?.toFunc() ?? ""
 
         guard let data = info.jsonData,
               let receiveModel = try? JSONDecoder().decode(EVMTransactionReceive.self, from: data),
@@ -345,7 +345,7 @@ extension TrustJSMessageHandler {
 
         let args: [Flow.Cadence.FValue] = [
             .string(toAddr),
-            .ufix64(Decimal(string: receiveModel.amount) ?? .nan),
+            .uint256(receiveModel.amount),
             receiveModel.dataValue?.cadenceValue ?? .array([]),
             .uint64(receiveModel.gasValue),
         ]
@@ -355,7 +355,10 @@ extension TrustJSMessageHandler {
             url: url?.absoluteString ?? "unknown",
             logo: url?.absoluteString.toFavIcon()?.absoluteString,
             cadence: originCadence,
-            arguments: args.toArguments()
+            arguments: args.toArguments(),
+            toAddress: toAddr,
+            data: receiveModel.data,
+            amount: receiveModel.amountValue
         ) { [weak self] result in
 
             guard let self = self else {
@@ -376,22 +379,21 @@ extension TrustJSMessageHandler {
                         toAddress: toAddr,
                         gas: receiveModel.gasValue
                     )
+
                     let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                     TransactionManager.shared.newTransaction(holder: holder)
-                    let result = try await txid.onceSealed()
-                    if result.isFailed {
-                        HUD.error(title: "transaction failed")
-                        self.cancel(id: id)
-                        return
-                    }
-                    let model = try await FlowNetwork.fetchEVMTransactionResult(txid: txid.hex)
-                    DispatchQueue.main.async {
-                        self.webVC?.webView.tw
-                            .send(
-                                network: .ethereum,
-                                result: model.hashString?.addHexPrefix() ?? "",
-                                to: id
-                            )
+
+                    let calculateId = try await WalletConnectEVMHandler.calculateTX(
+                        receiveModel,
+                        txId: txid
+                    )
+                    log.info("[EVM] calculate TX id: \(calculateId)")
+                    await MainActor.run {
+                        self.webVC?.webView.tw.send(
+                            network: .ethereum,
+                            result: calculateId.addHexPrefix(),
+                            to: id
+                        )
                     }
                 } catch {
                     log.error("\(error)")

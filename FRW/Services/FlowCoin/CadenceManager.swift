@@ -111,7 +111,7 @@ class CadenceManager {
     }
 
     private func loadCache() -> CadenceResponse? {
-        //TODO: replace success?
+        // TODO: replace success?
         return nil
         guard let file = filePath() else {
             return nil
@@ -218,15 +218,8 @@ extension CadenceModel {
         let getNFTCollection: String?
         let getNFTDisplays: String?
         let getNFTMetadataViews: String?
-        let sendNbaNFT: String?
-        let sendNFT: String?
-
-        let enableNFTStorageTest: String?
-        let getNFTCollectionTest: String?
-        let getNFTDisplaysTest: String?
-        let getNFTMetadataViewsTest: String?
-        let getNFTTest: String?
-        let sendNFTTest: String?
+        let sendNbaNFTV3: String?
+        let sendNFTV3: String?
     }
 
     struct Contract: Codable {
@@ -247,7 +240,7 @@ extension CadenceModel {
     struct FlowToken: Codable {
         let addToken: String?
         let enableTokenStorage: String?
-        let transferTokens: String?
+        let transferTokensV3: String?
 
         let isTokenListEnabled: String?
         let getTokenListBalance: String?
@@ -381,10 +374,12 @@ extension CadenceModel {
         let withdrawCoa: String?
         let fundCoa: String?
         let callContract: String?
+        let callContractV2: String?
         let transferFlowToEvmAddress: String?
         let transferFlowFromCoaToFlow: String?
         let checkCoaLink: String?
         let coaLink: String?
+        let getNonce: String?
     }
 
     struct Bridge: Codable {
@@ -397,10 +392,10 @@ extension CadenceModel {
         /// send Not Flow Token to Evm
         let bridgeTokensToEvmAddressV2: String?
         /// evm to other flow
-        let bridgeTokensFromEvmToFlowV2: String?
+        let bridgeTokensFromEvmToFlowV3: String?
         /// nft flow to any evm
         let bridgeNFTToEvmAddressV2: String?
-        let bridgeNFTFromEvmToFlowV2: String?
+        let bridgeNFTFromEvmToFlowV3: String?
 
         let getAssociatedEvmAddress: String?
         let getAssociatedFlowIdentifier: String?

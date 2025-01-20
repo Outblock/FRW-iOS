@@ -1,5 +1,5 @@
 {
-  "originHash" : "a9e5ce1a6592bee76ab9c7de46f9716080aec9f4b339029f7ff050d8d68c50a7",
+  "originHash" : "b84943d89d09d4a892baa8fe90892b1ed503774f3875e038bc13a88e90aeddca",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -142,7 +142,7 @@
       "location" : "https://github.com/Outblock/Flow-Wallet-Kit",
       "state" : {
         "branch" : "master",
-        "revision" : "b90bd715dbd87d591d9834134f27ef06cb4074ac"
+        "revision" : "45662c1f1de9a5b3937b1e713ef525047e737f57"
       }
     },
     {
@@ -636,6 +636,15 @@
       "state" : {
         "revision" : "8cba041db09596183331d123f337d0eb2e6e8e91",
         "version" : "2.1.1"
+      }
+    },
+    {
+      "identity" : "swiftydropbox",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dropbox/SwiftyDropbox.git",
+      "state" : {
+        "revision" : "8e3133d48241e865c7e9de0dc66ac908eb8e02ef",
+        "version" : "10.2.0"
       }
     },
     {

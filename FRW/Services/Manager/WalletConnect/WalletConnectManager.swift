@@ -306,22 +306,22 @@ extension WalletConnectManager {
                 request
             }
 
-            WalletNewsHandler.shared.refreshWalletConnectNews(pendingRequests.map { $0.toLocalNews() })
+            WalletNewsHandler.shared
+                .refreshWalletConnectNews(pendingRequests.map { $0.toLocalNews() })
             if let request = pendingRequests.last {
-
                 guard !pendingBlackList().contains(request.method) else {
                     log.info("[wc] handle request from pending block:in black list.")
                     return
                 }
-                log.info("[wc] handle request from pending.")
                 handleRequest(request)
             }
         }
     }
 
     func pendingBlackList() -> [String] {
-        return [FCLWalletConnectMethod.addDeviceInfo.rawValue,
-                FCLWalletConnectMethod.accountInfo.rawValue
+        [
+            FCLWalletConnectMethod.addDeviceInfo.rawValue,
+            FCLWalletConnectMethod.accountInfo.rawValue,
         ]
     }
 }
@@ -1010,7 +1010,8 @@ extension WalletConnectManager {
 
         Task {
             do {
-                self.currentRequest = try await WalletConnectSyncDevice.requestSyncAccount(in: session)
+                self.currentRequest = try await WalletConnectSyncDevice
+                    .requestSyncAccount(in: session)
             } catch {
                 // TODO:
                 log.error("[sync]-account: send sync account requst failed")

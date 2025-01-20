@@ -188,45 +188,7 @@ extension BrowserSignTypedMessageView {
     }
 }
 
-extension JSONValue {
-    fileprivate var title: String {
-        switch self {
-        case let .object(dictionary):
-            return dictionary.keys.first ?? ""
-        default:
-            return ""
-        }
-    }
 
-    fileprivate var content: String {
-        switch self {
-        case let .object(dictionary):
-            let subtitle = dictionary[title]
-            switch subtitle {
-            case .object:
-                return ""
-            case let .array(model):
-                if case let .object(dictionary) = model.first {
-                    return ""
-                }
-                return subtitle?.toString() ?? ""
-            default:
-                return subtitle?.toString() ?? ""
-            }
-        default:
-            return ""
-        }
-    }
-
-    fileprivate var subValue: JSONValue? {
-        switch self {
-        case let .object(dictionary):
-            return dictionary.values.first
-        default:
-            return nil
-        }
-    }
-}
 
 #Preview {
     BrowserSignTypedMessageView(viewModel: BrowserSignTypedMessageViewModel(

@@ -955,6 +955,8 @@
 		4E131A9F2CA1956B002B258D /* SVGUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E131A9D2CA19567002B258D /* SVGUIView.swift */; };
 		4E131AA12CA1AB9E002B258D /* ThingsNeedKnowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E131AA02CA1AB99002B258D /* ThingsNeedKnowViewModel.swift */; };
 		4E131AA22CA1AB9E002B258D /* ThingsNeedKnowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E131AA02CA1AB99002B258D /* ThingsNeedKnowViewModel.swift */; };
+		4E1914872D2E64240018BAA7 /* FormItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1914862D2E64240018BAA7 /* FormItem.swift */; };
+		4E1914882D2E64240018BAA7 /* FormItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1914862D2E64240018BAA7 /* FormItem.swift */; };
 		4E1A8B662B71A47A00485EDE /* MultiBackupCreatePinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B652B71A47A00485EDE /* MultiBackupCreatePinView.swift */; };
 		4E1A8B672B71A47A00485EDE /* MultiBackupCreatePinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B652B71A47A00485EDE /* MultiBackupCreatePinView.swift */; };
 		4E1A8B692B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B682B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift */; };
@@ -1278,6 +1280,10 @@
 		4EB60F90286825960025DD72 /* ContextMenuPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB60F8E286825960025DD72 /* ContextMenuPreview.swift */; };
 		4EB8223C2C040FFE0014E73D /* AccountSideCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB8223B2C040FFE0014E73D /* AccountSideCell.swift */; };
 		4EB8223D2C040FFE0014E73D /* AccountSideCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB8223B2C040FFE0014E73D /* AccountSideCell.swift */; };
+		4EB94AA42D1103C200AEF3C9 /* MultiBackupDropboxTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB94AA32D1103C200AEF3C9 /* MultiBackupDropboxTarget.swift */; };
+		4EB94AA52D1103C200AEF3C9 /* MultiBackupDropboxTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB94AA32D1103C200AEF3C9 /* MultiBackupDropboxTarget.swift */; };
+		4EB94AA72D115F5C00AEF3C9 /* SwiftyDropbox in Frameworks */ = {isa = PBXBuildFile; productRef = 4EB94AA62D115F5C00AEF3C9 /* SwiftyDropbox */; };
+		4EB94AA92D115F6C00AEF3C9 /* SwiftyDropbox in Frameworks */ = {isa = PBXBuildFile; productRef = 4EB94AA82D115F6C00AEF3C9 /* SwiftyDropbox */; };
 		4EB9A7C02AE9EF53004DA67F /* AccountKeyRevokeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB9A7BF2AE9EF53004DA67F /* AccountKeyRevokeView.swift */; };
 		4EB9A7C12AE9EF53004DA67F /* AccountKeyRevokeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB9A7BF2AE9EF53004DA67F /* AccountKeyRevokeView.swift */; };
 		4EBDF2B92BFB3A9700E56968 /* FlowModel+NFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBDF2B82BFB3A9700E56968 /* FlowModel+NFT.swift */; };
@@ -2407,6 +2413,7 @@
 		4E0D349E2A8B4E2900BC6E43 /* e-Ukraine-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "e-Ukraine-Medium.ttf"; sourceTree = "<group>"; };
 		4E131A9D2CA19567002B258D /* SVGUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVGUIView.swift; sourceTree = "<group>"; };
 		4E131AA02CA1AB99002B258D /* ThingsNeedKnowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThingsNeedKnowViewModel.swift; sourceTree = "<group>"; };
+		4E1914862D2E64240018BAA7 /* FormItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormItem.swift; sourceTree = "<group>"; };
 		4E1A8B652B71A47A00485EDE /* MultiBackupCreatePinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupCreatePinView.swift; sourceTree = "<group>"; };
 		4E1A8B682B71A5C200485EDE /* MultiBackupCreatePinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupCreatePinViewModel.swift; sourceTree = "<group>"; };
 		4E1A8B6B2B71A7B500485EDE /* MultiBackupConfirmPinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupConfirmPinView.swift; sourceTree = "<group>"; };
@@ -2562,6 +2569,7 @@
 		4EB398012B4CDB7D00704F8A /* DangerousTipSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DangerousTipSheetView.swift; sourceTree = "<group>"; };
 		4EB60F8E286825960025DD72 /* ContextMenuPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuPreview.swift; sourceTree = "<group>"; };
 		4EB8223B2C040FFE0014E73D /* AccountSideCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSideCell.swift; sourceTree = "<group>"; };
+		4EB94AA32D1103C200AEF3C9 /* MultiBackupDropboxTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupDropboxTarget.swift; sourceTree = "<group>"; };
 		4EB9A7BF2AE9EF53004DA67F /* AccountKeyRevokeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountKeyRevokeView.swift; sourceTree = "<group>"; };
 		4EBDF2B82BFB3A9700E56968 /* FlowModel+NFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FlowModel+NFT.swift"; sourceTree = "<group>"; };
 		4EBDF2BE2BFB8DF700E56968 /* EVMTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EVMTagView.swift; sourceTree = "<group>"; };
@@ -2948,6 +2956,7 @@
 				156AC7AB27802F9D00ED5E3E /* GoogleAPIClientForREST_Drive in Frameworks */,
 				154B891A276A1EEB00780E93 /* Flow in Frameworks */,
 				4E2FA6B42CF4177C00D46EA7 /* WalletConnectPairing in Frameworks */,
+				4EB94AA92D115F6C00AEF3C9 /* SwiftyDropbox in Frameworks */,
 				154B891B276A1EEB00780E93 /* FirebaseAuth in Frameworks */,
 				15F517FD28C6577000504FDC /* Atlantis in Frameworks */,
 				4E2FA6AC2CF4177C00D46EA7 /* WalletConnect in Frameworks */,
@@ -3044,6 +3053,7 @@
 				1549CF03299A10C2002B37A5 /* Gzip in Frameworks */,
 				15C58C452868A4EE00BD4FC6 /* GTMSessionFetcherCore in Frameworks */,
 				6AE46062286EE644009C2B96 /* SwiftUICharts in Frameworks */,
+				4EB94AA72D115F5C00AEF3C9 /* SwiftyDropbox in Frameworks */,
 				1588332228943F4D00142B35 /* NativeUIKit in Frameworks */,
 				4E2FA6922CF40FE700D46EA7 /* WalletConnectIdentity in Frameworks */,
 				15C58C462868A4EE00BD4FC6 /* Moya in Frameworks */,
@@ -5114,6 +5124,7 @@
 				4EB2C6B52B4947DF00EB899C /* MultiBackupiCloudTarget.swift */,
 				4E8CE63B2B4BE77700E71A87 /* MultiBackupPhraseTarget.swift */,
 				4EAD14152B61DD940076B318 /* MultiBackupPasskeyTarget.swift */,
+				4EB94AA32D1103C200AEF3C9 /* MultiBackupDropboxTarget.swift */,
 			);
 			path = Target;
 			sourceTree = "<group>";
@@ -5930,6 +5941,7 @@
 				15DFD34B2CE197F9004B0DB8 /* AppExternalLinks.swift */,
 				57FD54462CEE996700FFDDC5 /* FlowNetworkType.swift */,
 				57EB45702CFFC36400393FF2 /* TokenType.swift */,
+				4E1914862D2E64240018BAA7 /* FormItem.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -6293,6 +6305,7 @@
 				4E2FA6B52CF4177C00D46EA7 /* WalletConnectPush */,
 				4E2FA6B72CF4177C00D46EA7 /* WalletConnectVerify */,
 				4EAD6A222CF6013200F1D9CF /* FlowWalletKit */,
+				4EB94AA82D115F6C00AEF3C9 /* SwiftyDropbox */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 154B8928276A1EEB00780E93 /* FRW-dev.app */;
@@ -6383,6 +6396,7 @@
 				4E2FA69B2CF40FE700D46EA7 /* WalletConnectVerify */,
 				4E2FA6A52CF410B700D46EA7 /* ReownRouter */,
 				4EAD6A202CF6012200F1D9CF /* FlowWalletKit */,
+				4EB94AA62D115F5C00AEF3C9 /* SwiftyDropbox */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 15C58C6D2868A4EE00BD4FC6 /* FRW.app */;
@@ -6558,6 +6572,7 @@
 				4E09A1EC2CC794900099606E /* XCRemoteSwiftPackageReference "mixpanel-swift" */,
 				4E2FA68C2CF40EAB00D46EA7 /* XCRemoteSwiftPackageReference "reown-swift" */,
 				4EAD6A1F2CF6012200F1D9CF /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */,
+				4E5B04302D0FFC0F00ED4C20 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */,
 			);
 			productRefGroup = 15EC9DEF274FD1FC00F70CD9 /* Products */;
 			projectDirPath = "";
@@ -7094,6 +7109,7 @@
 				6A8D223E2881499D005A7081 /* RecentListCache.swift in Sources */,
 				6A45899028C20CA400B1024B /* BrowserViewController+JS.swift in Sources */,
 				15DC20D127819C56000B187A /* VNavigationLinkType.swift in Sources */,
+				4E1914872D2E64240018BAA7 /* FormItem.swift in Sources */,
 				4E9532302CD2082F00AAECD1 /* AddCustomTokenView.swift in Sources */,
 				6A37AD9C28BE15700047E5F7 /* SendAmountTransactionProcessView.swift in Sources */,
 				4E9E21B3282644B200E1BACD /* WalletViewModel.swift in Sources */,
@@ -7643,6 +7659,7 @@
 				15DC20D927819C56000B187A /* VPrimaryButtonModel.swift in Sources */,
 				4E4409272CC132480041AC06 /* BetterAlertController.swift in Sources */,
 				15DC208327819C56000B187A /* VLazyScrollViewModelHorizontal.swift in Sources */,
+				4EB94AA52D1103C200AEF3C9 /* MultiBackupDropboxTarget.swift in Sources */,
 				6A7F650F289A70D6007188DC /* ProfileSecureView.swift in Sources */,
 				6A2C560C290BE46800306A6C /* Currency.swift in Sources */,
 				15DC20CB27819C56000B187A /* VNavigationLinkState.swift in Sources */,
@@ -7919,6 +7936,7 @@
 				6A45898F28C20CA400B1024B /* BrowserViewController+JS.swift in Sources */,
 				15C58B2A2868A4EE00BD4FC6 /* VNavigationLinkType.swift in Sources */,
 				6A37AD9B28BE15700047E5F7 /* SendAmountTransactionProcessView.swift in Sources */,
+				4E1914882D2E64240018BAA7 /* FormItem.swift in Sources */,
 				4E95322F2CD2082F00AAECD1 /* AddCustomTokenView.swift in Sources */,
 				15C58B2B2868A4EE00BD4FC6 /* WalletViewModel.swift in Sources */,
 				15C58B2C2868A4EE00BD4FC6 /* VLazyScrollViewHorizontal.swift in Sources */,
@@ -8468,6 +8486,7 @@
 				15C58C362868A4EE00BD4FC6 /* VPrimaryButtonModel.swift in Sources */,
 				4E4409282CC132480041AC06 /* BetterAlertController.swift in Sources */,
 				15C58C372868A4EE00BD4FC6 /* VLazyScrollViewModelHorizontal.swift in Sources */,
+				4EB94AA42D1103C200AEF3C9 /* MultiBackupDropboxTarget.swift in Sources */,
 				6A7F650E289A70D6007188DC /* ProfileSecureView.swift in Sources */,
 				6A2C560B290BE46800306A6C /* Currency.swift in Sources */,
 				15C58C382868A4EE00BD4FC6 /* VNavigationLinkState.swift in Sources */,
@@ -8656,7 +8675,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.3.4;
+				MARKETING_VERSION = 2.3.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -8699,7 +8718,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.3.4;
+				MARKETING_VERSION = 2.3.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.wallet.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
@@ -9672,6 +9691,14 @@
 				revision = 873e12cb498b66c7ee7d2a58389f74db5c6fa751;
 			};
 		};
+		4E5B04302D0FFC0F00ED4C20 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dropbox/SwiftyDropbox.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.2.0;
+			};
+		};
 		4E5D4FAA2AEF9A5A00DC419B /* XCRemoteSwiftPackageReference "DeviceGuru" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/InderKumarRathore/DeviceGuru";
@@ -10327,6 +10354,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4EAD6A1F2CF6012200F1D9CF /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */;
 			productName = FlowWalletKit;
+		};
+		4EB94AA62D115F5C00AEF3C9 /* SwiftyDropbox */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E5B04302D0FFC0F00ED4C20 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */;
+			productName = SwiftyDropbox;
+		};
+		4EB94AA82D115F6C00AEF3C9 /* SwiftyDropbox */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E5B04302D0FFC0F00ED4C20 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */;
+			productName = SwiftyDropbox;
 		};
 		4EC56B2C281D3ED000246878 /* FirebaseRemoteConfig */ = {
 			isa = XCSwiftPackageProductDependency;

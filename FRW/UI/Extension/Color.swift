@@ -145,25 +145,26 @@ extension Color {
         }
 
         enum Button {
+            enum Elevated {
+                enum Secondary {
+                    static let background = Color("button.elevated.secondary.background")
+                }
+
+                static let text = Color("button.elevated.text")
+            }
+
+            enum Primary {
+                static let text = Color("button.primary.text")
+            }
+
+            enum Warning {
+                static let background = Color("button.warning.background")
+            }
+
             static let light = Color("button.light")
             static let color = Color("button.color")
             static let text = Color("button.text")
             static let send = Color("button.send")
-
-            enum Elevated {
-                static let text = Color("button.elevated.text")
-                enum Secondary {
-                    static let background = Color("button.elevated.secondary.background")
-                }
-            }
-            
-            enum Primary {
-                static let text = Color("button.primary.text")
-            }
-            
-            enum Warning {
-                static let background = Color("button.warning.background")
-            }
         }
 
         enum Other {
@@ -258,6 +259,7 @@ extension Color {
 
         enum BG {
             static let bg1 = Color("bg1")
+            static let bg2 = Color("bg2")
             static let bg3 = Color("bg3")
         }
 
@@ -273,6 +275,8 @@ extension Color {
             static let black8 = Color("text.black.8")
             static let black6 = Color("text.black.6")
             static let white9 = Color("text.white.9")
+            static let text1 = Color("text.1")
+            static let text4 = Color("text.4")
         }
 
         static let evm = Color("evm")
