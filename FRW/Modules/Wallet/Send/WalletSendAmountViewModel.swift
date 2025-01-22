@@ -142,16 +142,21 @@ extension WalletSendAmountViewModel {
         Task {
             if let address = targetContact.address {
                 if address.isEVMAddress {
-                    DispatchQueue.main.async {
+                    await MainActor.run {
                         self.isValidToken = true
                     }
                     return
                 }
-                let list = try await FlowNetwork
-                    .checkTokensEnable(address: Flow.Address(hex: address))
-                let model = list.first { $0.key.lowercased() == token.contractId.lowercased() }
+                guard let compareKey = EVMAccountManager.shared.selectedAccount == nil ? token.contractId : token.flowIdentifier else {
+                    await MainActor.run {
+                        self.isValidToken = false
+                    }
+                    return
+                }
+                let list = try await FlowNetwork.checkTokensEnable(address: Flow.Address(hex: address))
+                let model = list.first { $0.key.lowercased() == compareKey.lowercased() }
                 let isValid = model?.value
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.isValidToken = isValid ?? false
                 }
             }
