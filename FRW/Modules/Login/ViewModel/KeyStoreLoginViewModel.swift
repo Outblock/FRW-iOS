@@ -133,6 +133,14 @@ final class KeyStoreLoginViewModel: ObservableObject {
             log.error("[Import] keys of account not match the public:\(String(describing: p256PublicKey)) or \(String(describing: secp256PublicKey)) ")
             return
         }
+        guard selectedKey.weight >= 1000 else {
+            HUD.error(title: "account_key_weight_less".localized)
+            return
+        }
+        guard !selectedKey.revoked else {
+            HUD.error(title: "account_key_done_revoked_tips".localized)
+            return
+        }
         Task {
             HUD.loading()
             do {

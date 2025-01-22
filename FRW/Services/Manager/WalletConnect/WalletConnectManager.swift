@@ -278,7 +278,7 @@ extension WalletConnectManager {
         stopPendingRequestCheckTimer()
 
         let timer = Timer.scheduledTimer(
-            timeInterval: 5,
+            timeInterval: 3,
             target: self,
             selector: #selector(reloadPendingRequests),
             userInfo: nil,
@@ -308,7 +308,21 @@ extension WalletConnectManager {
 
             WalletNewsHandler.shared
                 .refreshWalletConnectNews(pendingRequests.map { $0.toLocalNews() })
+            if let request = pendingRequests.last {
+                guard !pendingBlackList().contains(request.method) else {
+                    log.info("[wc] handle request from pending block:in black list.")
+                    return
+                }
+                handleRequest(request)
+            }
         }
+    }
+
+    func pendingBlackList() -> [String] {
+        [
+            FCLWalletConnectMethod.addDeviceInfo.rawValue,
+            FCLWalletConnectMethod.accountInfo.rawValue,
+        ]
     }
 }
 
@@ -325,7 +339,7 @@ extension WalletConnectManager {
         guard network == LocalUserDefaults.shared.flowNetwork.toFlowType() else {
             rejectSession(proposal: sessionProposal)
             let current = LocalUserDefaults.shared.flowNetwork
-            guard let toNetwork = LocalUserDefaults.FlowNetworkType(chainId: network)
+            guard let toNetwork = FlowNetworkType(chainId: network)
             else { return }
             Router.route(to: RouteMap.Explore.switchNetwork(current, toNetwork, nil))
             return

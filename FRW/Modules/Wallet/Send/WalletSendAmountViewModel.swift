@@ -381,7 +381,20 @@ extension WalletSendAmountViewModel {
                             amount: amount,
                             address: targetAddress
                         )
-                    } else {
+                    }
+                    else if targetAddress == address {
+                        guard let vaultIdentifier = token.flowIdentifier else {
+                            failureBlock()
+                            return
+                        }
+                        txId = try await FlowNetwork.bridgeToken(
+                            vaultIdentifier: vaultIdentifier,
+                            amount: amount,
+                            fromEvm: true,
+                            decimals: token.decimal
+                        )
+                    }
+                    else {
                         guard let bigUIntValue = amount.description
                             .parseToBigUInt(decimals: token.decimal),
                             let flowIdentifier = self.token.flowIdentifier

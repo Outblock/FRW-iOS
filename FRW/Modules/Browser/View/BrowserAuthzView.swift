@@ -41,7 +41,7 @@ struct BrowserAuthzView: View {
             scriptView.visibility(vm.isScriptShowing ? .visible : .invisible)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .backgroundFill(Color(hex: "#282828", alpha: 1))
+        .backgroundFill(Color.Theme.BG.bg1)
     }
 
     var normalView: some View {
@@ -84,6 +84,11 @@ struct BrowserAuthzView: View {
             }
             scriptButton
                 .padding(.top, 8)
+                .visibility(vm.showEvmCard ? .gone : .visible)
+            ScrollView {
+                evmCard
+                    .visibility(vm.showEvmCard ? .visible : .gone)
+            }
 
             Spacer()
 
@@ -99,7 +104,7 @@ struct BrowserAuthzView: View {
         }
         .padding(.all, 18)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .backgroundFill(Color(hex: "#282828", alpha: 1))
+        .backgroundFill(Color.Theme.BG.bg1)
     }
 
     var verifiedView: some View {
@@ -144,29 +149,49 @@ struct BrowserAuthzView: View {
     }
 
     var feeView: some View {
-        HStack(spacing: 12) {
-            Image("icon-fee")
+        VStack(spacing: 4) {
+            HStack(spacing: 12) {
+                Image("icon-fee")
 
-            Text("browser_transaction_fee".localized)
-                .font(.inter(size: 14, weight: .regular))
-                .foregroundColor(Color(hex: "#F2F2F2"))
-                .lineLimit(1)
+                Text("browser_transaction_fee".localized)
+                    .font(.inter(size: 14, weight: .semibold))
+                    .foregroundColor(.Theme.Text.black8)
+                    .lineLimit(1)
 
-            Spacer()
+                Spacer()
 
-            Image("Flow")
-                .resizable()
-                .frame(width: 16, height: 16)
+                Text("0.001")
+                    .font(.inter(size: 14))
+                    .strikethrough()
+                    .foregroundColor(.Theme.Text.text4)
+                    .lineLimit(1)
+                    .visibility(RemoteConfigManager.shared.freeGasEnabled ? .visible : .gone)
 
-            Text(RemoteConfigManager.shared.freeGasEnabled ? "0" : "0.001")
-                .font(.inter(size: 18, weight: .medium))
-                .foregroundColor(Color(hex: "#FAFAFA"))
-                .lineLimit(1)
+                Text(RemoteConfigManager.shared.freeGasEnabled ? "0.00" : "0.001")
+                    .font(.inter(size: 14, weight: .semibold))
+                    .foregroundColor(.Theme.Text.text1)
+                    .lineLimit(1)
+
+                Image("Flow")
+                    .resizable()
+                    .frame(width: 16, height: 16)
+            }
+            .frame(height: 20)
+
+            HStack {
+                Spacer()
+                Text("Covered by Flow Wallet".localized)
+                    .font(.inter(size: 12))
+                    .multilineTextAlignment(.trailing)
+                    .foregroundColor(.Theme.Text.text4)
+                    .frame(maxWidth: .infinity, alignment: .topTrailing)
+            }
+            .visibility(RemoteConfigManager.shared.freeGasEnabled ? .visible : .gone)
         }
-        .frame(height: 46)
-        .padding(.horizontal, 18)
-        .background(Color(hex: "#313131"))
-        .cornerRadius(12)
+        .padding(.vertical, 16)
+        .padding(.horizontal, 16)
+        .background(.Theme.BG.bg2)
+        .cornerRadius(16)
     }
 
     var scriptButton: some View {
@@ -198,7 +223,7 @@ struct BrowserAuthzView: View {
         VStack(spacing: 0) {
             InsufficientStorageToastView<BrowserAuthzViewModel>()
                 .environmentObject(self.vm)
-            
+
             WalletSendButtonView(allowEnable: .constant(true)) {
                 vm.didChooseAction(true)
             }
@@ -254,12 +279,177 @@ struct BrowserAuthzView: View {
         .transition(.move(edge: .trailing))
     }
 
+    var evmCard: some View {
+        VStack(spacing: 8) {
+            infoView
+            decodedDataView
+            callDataView
+                .visibility((vm.callData != nil) ? .visible : .gone)
+        }
+    }
+
+    var infoView: some View {
+        card(with: vm.infoList)
+    }
+
+    var callDataView: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text("Call Data".localized)
+                    .font(.inter(size: 14, weight: .semibold))
+                    .foregroundStyle(Color.Theme.Text.black8)
+                Spacer()
+
+                Button {
+                    UIPasteboard.general.string = vm.callData ?? ""
+                    HUD.success(title: "copied".localized)
+
+                } label: {
+                    Image("icon_copy")
+                        .resizable()
+                        .renderingMode(.template)
+                        .foregroundStyle(Color.Theme.Accent.grey)
+                        .frame(width: 20, height: 20)
+                        .padding(.vertical, 8)
+                        .contentShape(Rectangle())
+                }
+            }
+
+            Text(vm.callData ?? "")
+                .font(.inter(size: 14))
+                .lineLimit(4)
+                .foregroundStyle(Color.Theme.Text.black8)
+                .padding(16)
+                .background(Color.Theme.BG.bg1)
+                .cornerRadius(16)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(.Theme.BG.bg2)
+        .cornerRadius(16)
+    }
+
+    var decodedDataView: some View {
+        VStack(spacing: 8) {
+            ForEach(0..<vm.decodedDataList.count, id: \.self) { index in
+                let list = vm.decodedDataList[index]
+                card(with: list)
+            }
+        }
+    }
+
     func attributeString() -> AttributedString {
         switch selection {
         case .cadence:
             vm.cadenceFormatted ?? AttributedString(vm.cadence.trim())
         case .arguments:
             vm.argumentsFormatted ?? AttributedString(vm.arguments?.jsonPrettyPrint()?.trim() ?? "")
+        }
+    }
+
+    func card(with list: [FormItem]) -> some View {
+        VStack(spacing: 0) {
+            ForEach(0..<list.count, id: \.self) { index in
+                let model = list[index]
+                BrowserAuthzView.Card(model: model)
+                if index < list.count - 1 {
+                    Divider()
+                        .foregroundStyle(Color.Theme.Line.line)
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(.Theme.BG.bg2)
+        .cornerRadius(16)
+    }
+}
+
+// MARK: BrowserAuthzView.Card
+
+extension BrowserAuthzView {
+    struct Card: View {
+        var model: FormItem
+
+        var body: some View {
+            VStack {
+                titleView
+                contentView()
+            }
+        }
+
+        var titleView: some View {
+            HStack(spacing: 4) {
+                Text(model.value.title.uppercasedAllFirstLetter())
+                    .font(.inter(size: 14, weight: .semibold))
+                    .lineLimit(1)
+                    .foregroundStyle(Color.Theme.Text.black8)
+                Spacer()
+                Text(model.value.content)
+                    .font(.inter(size: 14, weight: .semibold))
+                    .lineLimit(1)
+                    .foregroundStyle(Color.Theme.Text.black)
+                    .visibility(model.value.contentIsArrayOrDic ? .gone : .visible)
+                Image("check_circle_border")
+                    .resizable()
+                    .frame(width: 16, height: 16)
+                    .visibility(model.isCheck ? .visible : .gone)
+            }
+            .frame(height: 20)
+            .padding(.vertical, 8)
+        }
+
+        func contentView() -> some View {
+            VStack {
+                if let subValue = model.value.subValue {
+                    if case let .object(dictionary) = subValue {
+                        let keys = dictionary.keys.map { $0 }.sorted()
+                        ForEach(0..<keys.count, id: \.self) { index in
+                            let key = keys[index]
+                            let value = dictionary[key]?.toString() ?? ""
+                            HStack(spacing: 12) {
+                                Text(key.uppercasedFirstLetter())
+                                    .font(.inter(size: 14, weight: .semibold))
+                                    .lineLimit(1)
+                                    .foregroundStyle(Color.Theme.Text.black3)
+                                Spacer()
+                                Text(value)
+                                    .font(.inter(size: 14, weight: .semibold))
+                                    .truncationMode(.middle)
+                                    .lineLimit(1)
+                                    .foregroundStyle(Color.Theme.Text.black)
+                            }
+                            .frame(height: 20)
+                        }
+                    }
+                    if case let .array(array) = subValue {
+                        VStack {
+                            ForEach(0..<array.count, id: \.self) { index in
+                                let value = array[index]
+                                innerCard(item: value)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        func innerCard(item: JSONValue) -> some View {
+            VStack {
+                HStack(spacing: 12) {
+                    Text(item.title)
+                        .font(.inter(size: 14))
+                        .lineLimit(1)
+                        .foregroundStyle(Color.Theme.Text.text4)
+                    Spacer()
+                    Text(item.content)
+                        .font(.inter(size: 14))
+                        .truncationMode(.middle)
+                        .lineLimit(1)
+                        .foregroundStyle(Color.Theme.Text.black8)
+                }
+                .frame(height: 20)
+            }
         }
     }
 }

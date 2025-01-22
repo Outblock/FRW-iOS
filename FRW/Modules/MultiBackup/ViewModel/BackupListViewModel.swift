@@ -140,7 +140,7 @@ class BackupListViewModel: ObservableObject {
             if res {
                 try await MultiBackupManager.shared.removeItem(with: type)
                 await fetchMultiBackup()
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.showRemoveTipView = false
                 }
             }
@@ -335,6 +335,8 @@ extension KeyDeviceModel {
             return MultiBackupType.passkey
         case .fullWeightSeedPhrase:
             return MultiBackupType.phrase
+        case .dropbox:
+            return MultiBackupType.dropbox
         default:
             return nil
         }

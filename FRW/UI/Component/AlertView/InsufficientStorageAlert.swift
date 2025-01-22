@@ -39,31 +39,32 @@ extension AlertViewController {
     }
 
     private static func showStorageAlert(minimumBalance: Double, titleRes: String, firstContentRes: String, secondContentRes: String, thirdContentRes: String) {
-        AlertViewController.presentOnRoot(
-            title: .init(titleRes.localized),
-            customContentView: AnyView(
-                VStack(alignment: .center, spacing: 8) {
-                    Text(.init(firstContentRes.localized))
-                    Text(.init(secondContentRes.localized(minimumBalance)))
-                        .foregroundColor(Color.LL.Button.Warning.background)
-                    Text(.init(thirdContentRes.localized))
-                        .padding(.top, 8)
-                }
-                    .padding(.vertical, 8)
-            ),
-            buttons: [
-                AlertView.ButtonItem(type: .secondaryAction, title: "Deposit::message".localized, action: {
-                    Router.route(to: RouteMap.Wallet.receive)
-                }),
-                AlertView.ButtonItem(type: .primaryAction, title: "buy_flow".localized, action: {
-                    Router.route(to: RouteMap.Wallet.buyCrypto)
-                })
-            ],
-            useDefaultCancelButton: false,
-            showCloseButton: true,
-            buttonsLayout: .horizontal,
-            textAlignment: .center
-        )
-
+        runOnMain {
+            AlertViewController.presentOnRoot(
+                title: .init(titleRes.localized),
+                customContentView: AnyView(
+                    VStack(alignment: .center, spacing: 8) {
+                        Text(.init(firstContentRes.localized))
+                        Text(.init(secondContentRes.localized(minimumBalance)))
+                            .foregroundColor(Color.LL.Button.Warning.background)
+                        Text(.init(thirdContentRes.localized))
+                            .padding(.top, 8)
+                    }
+                        .padding(.vertical, 8)
+                ),
+                buttons: [
+                    AlertView.ButtonItem(type: .secondaryAction, title: "Deposit::message".localized, action: {
+                        Router.route(to: RouteMap.Wallet.receive)
+                    }),
+                    AlertView.ButtonItem(type: .primaryAction, title: "buy_flow".localized, action: {
+                        Router.route(to: RouteMap.Wallet.buyCrypto)
+                    })
+                ],
+                useDefaultCancelButton: false,
+                showCloseButton: true,
+                buttonsLayout: .horizontal,
+                textAlignment: .center
+            )
+        }
     }
 }

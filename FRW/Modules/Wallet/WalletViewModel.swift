@@ -486,6 +486,13 @@ extension WalletViewModel {
             currentPage = index
         }
     }
+    
+    func viewWillAppear() {
+        if LocalUserDefaults.shared.shouldShowConfettiOnHome {
+            LocalUserDefaults.shared.shouldShowConfettiOnHome = false
+            ConfettiManager.show()
+        }
+    }
 }
 
 // MARK: - Change

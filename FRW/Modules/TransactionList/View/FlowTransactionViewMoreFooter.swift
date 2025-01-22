@@ -44,18 +44,21 @@ class FlowTransactionViewMoreFooter: UICollectionReusableView {
     }()
 
     private lazy var arrowImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(systemName: .arrowRight))
+        let config = UIImage.SymbolConfiguration(pointSize: 12)
+        let imageView = UIImageView(image: UIImage(systemName: .arrowRight, withConfiguration: config))
         imageView.tintColor = UIColor.LL.Neutrals.text
         return imageView
     }()
 
     @objc
     private func onTap() {
-        guard let address = WalletManager.shared.getPrimaryWalletAddress(),
-              let url = address.toFlowScanAccountDetailURL else {
+        guard let address = WalletManager.shared.getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
             return
         }
+        let network = LocalUserDefaults.shared.flowNetwork
+        let accountType = AccountType.current
+        let url = network.getAccountUrl(accountType: accountType, address: address)
 
-        UIApplication.shared.open(url)
+        url.map { UIApplication.shared.open($0) }
     }
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 import Instabug
+import SwiftyDropbox
 
 // MARK: - ServiceConfig
 
@@ -27,6 +28,7 @@ class ServiceConfig {
     static func configure() {
         ServiceConfig.shared.setupInstabug()
         ServiceConfig.shared.setupMixPanel()
+        ServiceConfig.shared.setupDropbox()
     }
 
     // MARK: Private
@@ -34,7 +36,7 @@ class ServiceConfig {
     private let dict: [String: String]
 }
 
-// MARK: instabug config
+// MARK: config
 
 extension ServiceConfig {
     private func setupInstabug() {
@@ -50,5 +52,20 @@ extension ServiceConfig {
             fatalError("fatalError ===> Can't find MixPanel Token at ServiceConfig.plist")
         }
         EventTrack.start(token: token)
+    }
+    
+    private func setupDropbox() {
+        let appKey = ServiceConfig.shared.dropboxAppKey
+        DropboxClientsManager.setupWithTeamAppKey(appKey)
+    }
+}
+
+extension ServiceConfig {
+
+    var dropboxAppKey: String {
+        guard let appKey = dict["dropbox-appkey"] else {
+            fatalError("Can't find Dropbox appKey at ServiceConfig.plist")
+        }
+        return appKey
     }
 }

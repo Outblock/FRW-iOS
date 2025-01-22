@@ -119,8 +119,6 @@ struct TokenModel: Codable, Identifiable, Mockable {
             addressString = address.testnet ?? ""
         case .mainnet:
             addressString = address.mainnet ?? ""
-        case .previewnet:
-            addressString = address.previewnet ?? ""
         }
 
         addressString = addressString.stripHexPrefix()
@@ -158,8 +156,7 @@ struct TokenModel: Codable, Identifiable, Mockable {
             address: FlowNetworkModel(
                 mainnet: nil,
                 testnet: nil,
-                crescendo: nil,
-                previewnet: nil
+                crescendo: nil
             ),
             contractName: "contractname",
             storagePath: FlowTokenStoragePath(balance: "", vault: "", receiver: ""),
@@ -210,7 +207,6 @@ struct FlowNetworkModel: Codable {
     let mainnet: String?
     var testnet: String?
     let crescendo: String?
-    var previewnet: String?
 
     func addressByNetwork(_ network: Flow.ChainID) -> String? {
         switch network {
@@ -218,8 +214,6 @@ struct FlowNetworkModel: Codable {
             return mainnet
         case .testnet:
             return testnet
-        case .previewnet:
-            return previewnet
         default:
             return nil
         }
@@ -264,7 +258,7 @@ struct SingleToken: Codable {
     let evmAddress: String?
     let flowIdentifier: String?
 
-    func toTokenModel(type: TokenModel.TokenType, network: LocalUserDefaults.FlowNetworkType) -> TokenModel {
+    func toTokenModel(type: TokenModel.TokenType, network: FlowNetworkType) -> TokenModel {
         let logo = URL(string: logoURI ?? "")
 
         let model = TokenModel(
@@ -273,8 +267,7 @@ struct SingleToken: Codable {
             address: FlowNetworkModel(
                 mainnet: network == .mainnet ? address : nil,
                 testnet: network == .testnet ? address : nil,
-                crescendo: nil,
-                previewnet: network == .previewnet ? address : nil
+                crescendo: nil
             ),
             contractName: contractName ?? "",
             storagePath: path ??

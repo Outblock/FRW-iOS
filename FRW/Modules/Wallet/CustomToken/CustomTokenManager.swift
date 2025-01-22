@@ -257,7 +257,7 @@ struct CustomToken: Codable {
 
     var userId: String
     var belongAddress: String
-    var network: LocalUserDefaults.FlowNetworkType = .mainnet
+    var network: FlowNetworkType = .mainnet
     var belong: CustomToken.Belong = .flow
     // not store,
     var balance: BigUInt?

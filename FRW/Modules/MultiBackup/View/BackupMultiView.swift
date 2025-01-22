@@ -42,37 +42,11 @@ struct BackupMultiView: RouteableView {
                     ItemView(item: item) { item in
                         onClick(item: item)
                     }
-                    .frame(height: 136)
+                    .frame(maxWidth: 136)
                 }
             }
-            .padding(.horizontal, 64)
-            .padding(.top, 64)
-
-            Spacer()
-
-            VStack(alignment: .center) {
-                VStack(alignment: .center) {
-                    Text("what_is_multi".localized)
-                        .font(.inter(size: 16, weight: .bold))
-                        .foregroundStyle(Color.Theme.Accent.grey)
-                        .frame(height: 18)
-                    Text("what_is_multi_short".localized)
-                        .font(.inter(size: 14))
-                        .multilineTextAlignment(.center)
-                        .foregroundStyle(Color.Theme.Accent.grey)
-                }
-                .padding(.horizontal, 28)
-
-                Button(action: {
-                    onLearnMore()
-                }, label: {
-                    Text("Learn__more::message".localized)
-                        .font(.inter(size: 14, weight: .semibold))
-                        .foregroundStyle(Color.Theme.Accent.blue)
-
-                })
-                .frame(height: 50)
-            }
+            .padding(.horizontal, 18)
+            .padding(.top, 24)
 
             Spacer()
 
@@ -89,6 +63,18 @@ struct BackupMultiView: RouteableView {
         }
         .applyRouteable(self)
         .backgroundFill(Color.LL.Neutrals.background)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    onLearnMore()
+                } label: {
+                    Image("questionmark.circle")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                        .padding(2)
+                }
+            }
+        }
     }
 
     func columns() -> [GridItem] {

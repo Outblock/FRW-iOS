@@ -263,7 +263,7 @@ extension MoveTokenView {
         tokenModel: TokenModel(
             type: .cadence,
             name: "Flow",
-            address: FlowNetworkModel(mainnet: "", testnet: "", crescendo: "", previewnet: ""),
+            address: FlowNetworkModel(mainnet: "", testnet: "", crescendo: ""),
             contractName: "",
             storagePath: FlowTokenStoragePath(balance: "100", vault: "a", receiver: ""),
             decimal: 30,
