@@ -261,6 +261,7 @@ extension MoveTokenView {
 #Preview {
     MoveTokenView(
         tokenModel: TokenModel(
+            type: .cadence,
             name: "Flow",
             address: FlowNetworkModel(mainnet: "", testnet: "", crescendo: ""),
             contractName: "",

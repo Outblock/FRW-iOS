@@ -240,6 +240,13 @@ struct CustomToken: Codable {
     enum Belong: Codable {
         case flow
         case evm
+        
+        var tokenType: TokenModel.TokenType {
+            return switch self {
+            case .flow: .cadence
+            case .evm: .evm
+            }
+        }
     }
 
     var address: String
@@ -268,6 +275,7 @@ struct CustomToken: Codable {
 
     func toToken() -> TokenModel {
         TokenModel(
+            type: belong.tokenType,
             name: name,
             address: FlowNetworkModel(
                 mainnet: address,
