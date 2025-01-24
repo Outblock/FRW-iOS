@@ -266,38 +266,47 @@ extension MultiBackupManager {
 }
 
 extension MultiBackupManager {
+    
+    private func updateItemType(from type: MultiBackupType, list: [MultiBackupManager.StoreItem]) -> [MultiBackupManager.StoreItem] {
+        let result = list.map { item in
+            var model = item
+            model.backupType = type
+            return model
+        }
+        return result
+    }
+    
+    func getAllCloudDriveItem(from type: MultiBackupType) async throws -> [MultiBackupManager.StoreItem] {
+        var list = try await getCloudDriveItems(from: type)
+        if type == .dropbox {
+            if let readList = try? await dropboxTarget.getReadDriveItems() {
+                let updatedReadList = updateItemType(from: type, list: readList)
+                list.append(contentsOf: updatedReadList)
+            }
+        }
+        return list
+    }
+    
     func getCloudDriveItems(from type: MultiBackupType) async throws
         -> [MultiBackupManager.StoreItem] {
         switch type {
         case .google:
             try await login(from: type)
             var list = try await gdTarget.getCurrentDriveItems()
-            list = list.map { item in
-                var model = item
-                model.backupType = type
-                return model
-            }
+            list = updateItemType(from: type, list: list)
             return list
         case .passkey:
             return []
         case .icloud:
             var list = try await iCloudTarget.getCurrentDriveItems()
-            list = list.map { item in
-                var model = item
-                model.backupType = type
-                return model
-            }
+            list = updateItemType(from: type, list: list)
             return list
         case .phrase:
             return []
         case .dropbox:
             try await login(from: type)
             var list = try await dropboxTarget.getCurrentDriveItems()
-            list = list.map { item in
-                var model = item
-                model.backupType = type
-                return model
-            }
+            list = updateItemType(from: type, list: list)
             return list
         }
     }

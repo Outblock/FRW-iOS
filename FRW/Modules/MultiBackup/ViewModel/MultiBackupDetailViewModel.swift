@@ -68,7 +68,7 @@ class MultiBackupDetailViewModel: ObservableObject {
         }
 
         Task {
-            let list = try await MultiBackupManager.shared.getCloudDriveItems(from: backupType)
+            let list = try await MultiBackupManager.shared.getAllCloudDriveItem(from: backupType)
             Router.route(to: RouteMap.Backup.verityPin(.restore) { allow, pin in
                 if allow {
                     let verifyList = self.verify(list: list, with: pin)
