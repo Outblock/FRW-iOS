@@ -75,13 +75,22 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
     }
 
     func getCurrentDriveItems() async throws -> [MultiBackupManager.StoreItem] {
+        return try await getItems(from: path)
+    }
+    
+    func getReadDriveItems() async throws -> [MultiBackupManager.StoreItem] {
+        let path = "/appDataFolder/" + MultiBackupManager.backupFileName
+        return try await getItems(from: path)
+    }
+    
+    private func getItems(from filePath: String) async throws -> [MultiBackupManager.StoreItem] {
         try await prepare()
         guard let client = DropboxClientsManager.authorizedClient else {
             log.error("[Multi] dropbox unauthorized")
             throw BackupError.unauthorized
         }
 
-        guard let data = try? await readFile(client: client, path: path) else {
+        guard let data = try? await readFile(client: client, path: filePath) else {
             return []
         }
 
