@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1921,6 +1921,10 @@
 		6AFE1D092A38540300824D5C /* AccountSwitchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AFE1D072A38540300824D5C /* AccountSwitchViewModel.swift */; };
 		6AFED0292906794000221F95 /* WalletSettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AFED0282906794000221F95 /* WalletSettingViewModel.swift */; };
 		6AFED02A2906794000221F95 /* WalletSettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AFED0282906794000221F95 /* WalletSettingViewModel.swift */; };
+		762790562D47FE04001BEE7E /* Theme.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 762790502D47FE04001BEE7E /* Theme.framework */; };
+		762790572D47FE04001BEE7E /* Theme.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 762790502D47FE04001BEE7E /* Theme.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		7627905E2D47FE0C001BEE7E /* Theme.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 762790502D47FE04001BEE7E /* Theme.framework */; };
+		7627905F2D47FE0C001BEE7E /* Theme.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 762790502D47FE04001BEE7E /* Theme.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1966,6 +1970,20 @@
 			remoteGlobalIDString = 6A9DFBC229519D9700E10EAC;
 			remoteInfo = FlowReferenceWalletWidgetsExtension;
 		};
+		762790542D47FE04001BEE7E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15EC9DE6274FD1FC00F70CD9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7627904F2D47FE04001BEE7E;
+			remoteInfo = Theme;
+		};
+		762790602D47FE0C001BEE7E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15EC9DE6274FD1FC00F70CD9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7627904F2D47FE04001BEE7E;
+			remoteInfo = Theme;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1975,6 +1993,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				7627905F2D47FE0C001BEE7E /* Theme.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1985,6 +2004,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				762790572D47FE04001BEE7E /* Theme.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2925,7 +2945,12 @@
 		6AFE1D042A384E3000824D5C /* AccountSwitchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSwitchView.swift; sourceTree = "<group>"; };
 		6AFE1D072A38540300824D5C /* AccountSwitchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSwitchViewModel.swift; sourceTree = "<group>"; };
 		6AFED0282906794000221F95 /* WalletSettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletSettingViewModel.swift; sourceTree = "<group>"; };
+		762790502D47FE04001BEE7E /* Theme.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Theme.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		7627907C2D4804C6001BEE7E /* Theme */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Theme; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		15007838286830EF00A00109 /* Frameworks */ = {
@@ -3012,6 +3037,7 @@
 				154B8920276A1EEB00780E93 /* SwiftUIX in Frameworks */,
 				6AC1AE6B289BAD0600F76C7A /* SnapKit in Frameworks */,
 				158832D42894277600142B35 /* Starscream in Frameworks */,
+				7627905E2D47FE0C001BEE7E /* Theme.framework in Frameworks */,
 				4E2FA6B82CF4177C00D46EA7 /* WalletConnectVerify in Frameworks */,
 				4EEE9DC72BD243DB00685AAA /* FirebaseAnalytics in Frameworks */,
 				4E2FA6AA2CF4177C00D46EA7 /* ReownWalletKit in Frameworks */,
@@ -3082,6 +3108,7 @@
 				15C58C572868A4EE00BD4FC6 /* Introspect in Frameworks */,
 				15D6D8F428CBAEBD00CBA152 /* FancyScrollView in Frameworks */,
 				4EDE41EB2CF5944500A6EAB3 /* FlowWalletKit in Frameworks */,
+				762790562D47FE04001BEE7E /* Theme.framework in Frameworks */,
 				4E5F2F112C12B1C2008589C4 /* CrowdinSDK in Frameworks */,
 				4EAD6A212CF6012200F1D9CF /* FlowWalletKit in Frameworks */,
 				4E660F1C2C80B42F00E5239E /* CollectionViewPagingLayout in Frameworks */,
@@ -3131,6 +3158,13 @@
 				6A9DFBDA2951A1F900E10EAC /* Kingfisher in Frameworks */,
 				6A9DFBC729519D9800E10EAC /* SwiftUI.framework in Frameworks */,
 				6A9DFBC529519D9800E10EAC /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7627904D2D47FE04001BEE7E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4770,6 +4804,7 @@
 				6A0C6E1E29542DFD005F0EF6 /* FRWDevWidgets */,
 				6A0B104A2A66679100023767 /* FRWNotificationServiceExtension */,
 				6A0B105A2A6675A600023767 /* FRWDevNotificationServiceExtension */,
+				7627907C2D4804C6001BEE7E /* Theme */,
 				15EC9DEF274FD1FC00F70CD9 /* Products */,
 				15B1A67A276A2D670006B621 /* Frameworks */,
 			);
@@ -4785,6 +4820,7 @@
 				6A0C6E1B29542DFC005F0EF6 /* FRWDevWidgetsExtension.appex */,
 				6A0B10492A66679100023767 /* FRWNotificationServiceExtension.appex */,
 				6A0B10592A6675A600023767 /* FRWDevNotificationServiceExtension.appex */,
+				762790502D47FE04001BEE7E /* Theme.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6187,6 +6223,16 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		7627904B2D47FE04001BEE7E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		1500783A286830EF00A00109 /* FRWTests */ = {
 			isa = PBXNativeTarget;
@@ -6239,6 +6285,7 @@
 			dependencies = (
 				6A0C6E2729542DFE005F0EF6 /* PBXTargetDependency */,
 				6A0B105F2A6675A600023767 /* PBXTargetDependency */,
+				762790612D47FE0C001BEE7E /* PBXTargetDependency */,
 			);
 			name = "FRW-dev";
 			packageProductDependencies = (
@@ -6328,6 +6375,7 @@
 			dependencies = (
 				6A0B10662A6675E000023767 /* PBXTargetDependency */,
 				6A9DFBD129519D9A00E10EAC /* PBXTargetDependency */,
+				762790552D47FE04001BEE7E /* PBXTargetDependency */,
 			);
 			name = FRW;
 			packageProductDependencies = (
@@ -6484,6 +6532,30 @@
 			productReference = 6A9DFBC329519D9800E10EAC /* FRWWidgetsExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		7627904F2D47FE04001BEE7E /* Theme */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7627905B2D47FE04001BEE7E /* Build configuration list for PBXNativeTarget "Theme" */;
+			buildPhases = (
+				762790662D47FE5A001BEE7E /* ShellScript */,
+				7627904B2D47FE04001BEE7E /* Headers */,
+				7627904C2D47FE04001BEE7E /* Sources */,
+				7627904D2D47FE04001BEE7E /* Frameworks */,
+				7627904E2D47FE04001BEE7E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				7627907C2D4804C6001BEE7E /* Theme */,
+			);
+			name = Theme;
+			packageProductDependencies = (
+			);
+			productName = Theme;
+			productReference = 762790502D47FE04001BEE7E /* Theme.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -6509,6 +6581,10 @@
 					};
 					6A9DFBC229519D9700E10EAC = {
 						CreatedOnToolsVersion = 14.2;
+					};
+					7627904F2D47FE04001BEE7E = {
+						CreatedOnToolsVersion = 16.2;
+						LastSwiftMigration = 1620;
 					};
 				};
 			};
@@ -6585,6 +6661,7 @@
 				6A0C6E1A29542DFC005F0EF6 /* FRWDevWidgetsExtension */,
 				6A0B10482A66679100023767 /* FRWNotificationServiceExtension */,
 				6A0B10582A6675A600023767 /* FRWDevNotificationServiceExtension */,
+				7627904F2D47FE04001BEE7E /* Theme */,
 			);
 		};
 /* End PBXProject section */
@@ -6740,6 +6817,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7627904E2D47FE04001BEE7E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -6839,6 +6923,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
+		762790662D47FE5A001BEE7E /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"$SRCROOT/Theme\"\n${PROJECT_DIR}/swiftgen/bin/swiftgen\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -8544,6 +8645,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7627904C2D47FE04001BEE7E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -8576,6 +8684,16 @@
 			isa = PBXTargetDependency;
 			target = 6A9DFBC229519D9700E10EAC /* FRWWidgetsExtension */;
 			targetProxy = 6A9DFBD029519D9A00E10EAC /* PBXContainerItemProxy */;
+		};
+		762790552D47FE04001BEE7E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7627904F2D47FE04001BEE7E /* Theme */;
+			targetProxy = 762790542D47FE04001BEE7E /* PBXContainerItemProxy */;
+		};
+		762790612D47FE0C001BEE7E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7627904F2D47FE04001BEE7E /* Theme */;
+			targetProxy = 762790602D47FE0C001BEE7E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -8643,7 +8761,6 @@
 		154B8926276A1EEB00780E93 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "FRW/App/Env/Dev/FRW-dev.entitlements";
@@ -8689,7 +8806,6 @@
 		154B8927276A1EEB00780E93 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "FRW/App/Env/Dev/FRW-dev.entitlements";
@@ -8732,7 +8848,6 @@
 		15C58C6B2868A4EE00BD4FC6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = FRW/App/Env/Prod/FRW.entitlements;
@@ -8775,7 +8890,6 @@
 		15C58C6C2868A4EE00BD4FC6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = FRW/App/Env/Prod/FRW.entitlements;
@@ -9164,6 +9278,88 @@
 			};
 			name = Release;
 		};
+		762790582D47FE04001BEE7E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 444MY26W7F;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.Theme;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		762790592D47FE04001BEE7E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 444MY26W7F;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.flowfoundation.Theme;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -9235,6 +9431,15 @@
 			buildConfigurations = (
 				6A9DFBD429519D9A00E10EAC /* Debug */,
 				6A9DFBD529519D9A00E10EAC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7627905B2D47FE04001BEE7E /* Build configuration list for PBXNativeTarget "Theme" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				762790582D47FE04001BEE7E /* Debug */,
+				762790592D47FE04001BEE7E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
