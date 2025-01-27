@@ -7,24 +7,13 @@
 
 import SwiftUI
 
-// MARK: - WalletListViewModel.Item
-
-extension WalletListViewModel {
-    struct Item {
-        var user: WalletAccount.User
-        var address: String
-        var balance: String
-        var isEvm: Bool
-    }
-}
-
 // MARK: - WalletListViewModel
 
 class WalletListViewModel: ObservableObject {
     @Published
-    var mainWallets: [WalletListViewModel.Item] = []
+    var mainWallets: [AccountCell.Item] = []
     @Published
-    var multiVMWallets: [WalletListViewModel.Item] = []
+    var multiVMWallets: [AccountCell.Item] = []
 
     func reload() {
         mainWallets = []
@@ -34,7 +23,7 @@ class WalletListViewModel: ObservableObject {
             if !balance.isEmpty {
                 balance += " Flow"
             }
-            let mainWallet = WalletListViewModel.Item(
+            let mainWallet = AccountCell.Item(
                 user: user,
                 address: mainAddress,
                 balance: balance,
@@ -50,7 +39,7 @@ class WalletListViewModel: ObservableObject {
             if !balance.isEmpty {
                 balance += " Flow"
             }
-            let model = WalletListViewModel.Item(
+            let model = AccountCell.Item(
                 user: user,
                 address: account.showAddress,
                 balance: balance,
@@ -83,7 +72,7 @@ struct WalletListView: RouteableView {
                         Button {
                             Router.route(to: RouteMap.Profile.walletSetting(true, item.address))
                         } label: {
-                            WalletListView.Cell(item: item)
+                            AccountCell(item: item)
                         }
                     }
                 } header: {
@@ -100,7 +89,7 @@ struct WalletListView: RouteableView {
                         Button {
                             Router.route(to: RouteMap.Profile.walletSetting(true, item.address))
                         } label: {
-                            WalletListView.Cell(item: item)
+                            AccountCell(item: item)
                         }
                     }
                 } header: {
@@ -129,49 +118,6 @@ struct WalletListView: RouteableView {
         .onAppear(perform: {
             viewModel.reload()
         })
-    }
-}
-
-// MARK: WalletListView.Cell
-
-extension WalletListView {
-    struct Cell: View {
-        let item: WalletListViewModel.Item
-
-        var body: some View {
-            HStack(spacing: 12) {
-                item.user.emoji.icon(size: 40)
-                VStack(alignment: .leading) {
-                    HStack(spacing: 0) {
-                        Text(item.user.name)
-                            .font(.inter())
-                            .foregroundStyle(Color.Theme.Text.black)
-                        Text("(\(item.address))")
-                            .font(.inter(size: 14))
-                            .lineLimit(1)
-                            .truncationMode(.middle)
-                            .foregroundStyle(Color.Theme.Text.black3)
-                            .frame(maxWidth: 120)
-                        EVMTagView()
-                            .visibility(item.isEvm ? .visible : .gone)
-                            .padding(.leading, 8)
-                    }
-                    Text("\(item.balance)")
-                        .font(.inter(size: 14))
-                        .foregroundStyle(Color.Theme.Text.black3)
-                }
-                Spacer()
-                Image("icon_arrow_right_28")
-                    .resizable()
-                    .renderingMode(.template)
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.Theme.Background.icon)
-                    .frame(width: 23, height: 24)
-            }
-            .padding(16)
-            .background(.Theme.Background.pureWhite)
-            .cornerRadius(16)
-        }
     }
 }
 

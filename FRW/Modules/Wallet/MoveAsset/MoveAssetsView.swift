@@ -195,8 +195,9 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
 }
 
 #Preview {
-    VStack {
-        Spacer()
-        MoveAssetsView(token: TokenModel.mock())
-    }
+	VStack {
+	}.sheet(isPresented: .constant(true)) {
+		MoveAssetsView(token: TokenModel.mock())
+			.presentationDetents([.medium])
+	}
 }

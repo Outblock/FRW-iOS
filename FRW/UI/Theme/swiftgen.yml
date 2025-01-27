@@ -1,0 +1,16 @@
+xcassets:
+  inputs:
+    - Colors/ColorsV2.xcassets
+  outputs:
+    - templateName: swift5
+      params:
+        publicAccess: true
+        enumName: ColorsV2
+      output: Colors/ColorsV2+Generated.swift
+
+fonts:
+  inputs:
+    - Fonts/
+  outputs:
+    - templateName: swift5
+      output: Fonts/Fonts.swift

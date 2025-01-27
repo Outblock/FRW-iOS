@@ -1125,3 +1125,5 @@ Key Store and Private Key.";
 "Call Data" = "Call Data";
 "Covered by Flow Wallet" = "Covered by Flow Wallet";
 "Contact Address" = "Contact Address";
+
+"move_assets_to_connected_account" = "Move assets to the connected account so they’re available for use within the application.";
