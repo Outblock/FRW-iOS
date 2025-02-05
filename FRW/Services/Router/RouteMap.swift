@@ -240,6 +240,7 @@ extension RouteMap {
         case addCustomToken
         case showCustomToken(CustomToken)
         case addTokenSheet(CustomToken, BoolClosure)
+        case swapProvider(TokenModel?)
     }
 }
 
@@ -275,13 +276,17 @@ extension RouteMap.Wallet: RouterTarget {
         case let .transactionList(contractId):
             let vc = TransactionListViewController(contractId: contractId)
             navi.pushViewController(vc, animated: true)
-        case .swapEvmToken(let token):
+        case let .swapEvmToken(token):
             guard let url = URL(string: "https://swap.kittypunch.xyz/#/swap") else { return }
             Router.route(to: RouteMap.Explore.browser(url))
-        case .swapCadenceToken(let token):
-            guard let url = URL(string: "https://app.increment.fi/swap?in=A.1654653399040a61.FlowToken&out=\(token.contractId)") else { return }
+        case let .swapCadenceToken(token):
+            guard let url =
+                URL(
+                    string: "https://app.increment.fi/swap?in=A.1654653399040a61.FlowToken&out=\(token.contractId)"
+                )
+            else { return }
             Router.route(to: RouteMap.Explore.browser(url))
-            
+
         case let .selectToken(selectedToken, disableTokens, callback):
             let vm = AddTokenViewModel(
                 selectedToken: selectedToken,
@@ -357,6 +362,9 @@ extension RouteMap.Wallet: RouterTarget {
                     callback: callback
                 )
             )
+            navi.present(vc, completion: nil)
+        case let .swapProvider(token):
+            let vc = PresentHostingController(rootView: SwapProviderView(token: token))
             navi.present(vc, completion: nil)
         }
     }
@@ -621,7 +629,10 @@ extension RouteMap.Transaction: RouterTarget {
         case let .detail(transactionId):
             let network = LocalUserDefaults.shared.flowNetwork
             let accountType = AccountType.current
-            let url = network.getTransactionHistoryUrl(accountType: accountType, transactionId: transactionId.hex)
+            let url = network.getTransactionHistoryUrl(
+                accountType: accountType,
+                transactionId: transactionId.hex
+            )
 
 //            UIApplication.shared.open(url)
             TransactionUIHandler.shared.dismissListView()

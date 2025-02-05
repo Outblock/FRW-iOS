@@ -1180,6 +1180,8 @@
 		4E9621D92B9850CF006859AD /* FRWAPI+Cadence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */; };
 		4E9621DB2B985BAB006859AD /* cloudfunctions.json in Resources */ = {isa = PBXBuildFile; fileRef = 4E9621DA2B985BAB006859AD /* cloudfunctions.json */; };
 		4E9621DC2B985BAB006859AD /* cloudfunctions.json in Resources */ = {isa = PBXBuildFile; fileRef = 4E9621DA2B985BAB006859AD /* cloudfunctions.json */; };
+		4E97F3B82D5348F9003842AB /* SwapProviderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E97F3B72D5348F9003842AB /* SwapProviderView.swift */; };
+		4E97F3B92D5348F9003842AB /* SwapProviderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E97F3B72D5348F9003842AB /* SwapProviderView.swift */; };
 		4E9BFF5D2867631300601339 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E9BFF5C2867631300601339 /* UIKit.framework */; };
 		4E9D8F082BF5DC2100E11CC7 /* Web3Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D8F072BF5DC2100E11CC7 /* Web3Provider.swift */; };
 		4E9D8F092BF5DC2100E11CC7 /* Web3Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D8F072BF5DC2100E11CC7 /* Web3Provider.swift */; };
@@ -2514,6 +2516,7 @@
 		4E9621D42B984EF3006859AD /* CadenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CadenceManager.swift; sourceTree = "<group>"; };
 		4E9621D72B9850CF006859AD /* FRWAPI+Cadence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FRWAPI+Cadence.swift"; sourceTree = "<group>"; };
 		4E9621DA2B985BAB006859AD /* cloudfunctions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cloudfunctions.json; sourceTree = "<group>"; };
+		4E97F3B72D5348F9003842AB /* SwapProviderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapProviderView.swift; sourceTree = "<group>"; };
 		4E9BFF5C2867631300601339 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		4E9D8F072BF5DC2100E11CC7 /* Web3Provider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Web3Provider.swift; sourceTree = "<group>"; };
 		4E9D8F0A2BF5E3AD00E11CC7 /* NetworkProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProvider.swift; sourceTree = "<group>"; };
@@ -3171,6 +3174,7 @@
 		1507C7EA2755FCB100890C5D /* Wallet */ = {
 			isa = PBXGroup;
 			children = (
+				4E97F3B62D5348D9003842AB /* SwapProvider */,
 				4EDEA7602C8FE39300DE76B6 /* FlowWalletKit */,
 				4E95322C2CD2080900AAECD1 /* CustomToken */,
 				4ED041F52C7C25C10016848A /* Message */,
@@ -5065,6 +5069,14 @@
 				4E9532402CDA18FB00AAECD1 /* AddTokenSheetView.swift */,
 			);
 			path = CustomToken;
+			sourceTree = "<group>";
+		};
+		4E97F3B62D5348D9003842AB /* SwapProvider */ = {
+			isa = PBXGroup;
+			children = (
+				4E97F3B72D5348F9003842AB /* SwapProviderView.swift */,
+			);
+			path = SwapProvider;
 			sourceTree = "<group>";
 		};
 		4E9D8F062BF5DBF900E11CC7 /* Web3 */ = {
@@ -7051,6 +7063,7 @@
 				152EEC7628E4F68100C37A67 /* Env.swift in Sources */,
 				15D3BA6528C393CB009AEA6E /* MatrixRainView.swift in Sources */,
 				4EAF31BA2845E501002AF489 /* NFTSegmentControl.swift in Sources */,
+				4E97F3B92D5348F9003842AB /* SwapProviderView.swift in Sources */,
 				15DC21A327819C56000B187A /* VBaseTextFieldActions.swift in Sources */,
 				6A43BCFF2872D19C003E9D16 /* Date.swift in Sources */,
 				4EB2C6CC2B4A529500EB899C /* RestoreMultiConnectViewModel.swift in Sources */,
@@ -7878,6 +7891,7 @@
 				152EEC7528E4F68100C37A67 /* Env.swift in Sources */,
 				15C58B052868A4EE00BD4FC6 /* NFTSegmentControl.swift in Sources */,
 				15C58B062868A4EE00BD4FC6 /* VBaseTextFieldActions.swift in Sources */,
+				4E97F3B82D5348F9003842AB /* SwapProviderView.swift in Sources */,
 				6A43BCFE2872D19C003E9D16 /* Date.swift in Sources */,
 				15F2444828CB370D00C1090E /* ShrinkingCapsule.swift in Sources */,
 				4EB2C6CB2B4A529500EB899C /* RestoreMultiConnectViewModel.swift in Sources */,
