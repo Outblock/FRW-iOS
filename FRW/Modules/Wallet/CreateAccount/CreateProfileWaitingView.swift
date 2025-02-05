@@ -93,20 +93,6 @@ struct CreateProfileWaitingView: RouteableView {
                             .background(Color.Theme.Accent.green)
                             .cornerRadius(16)
                         }
-                        
-                        Button {
-                            viewModel.onGoHome()
-                        } label: {
-                            HStack {
-                                Text("maybe_later_text".localized)
-                                    .font(.inter(size: 14, weight: .bold))
-                                    .foregroundStyle(Color.Theme.Text.black8)
-                            }
-                            .padding(.vertical, 16)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.Theme.Background.grey)
-                            .cornerRadius(16)
-                        }
                     }
                     .padding(.horizontal, 16)
                 } else {
