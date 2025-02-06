@@ -112,30 +112,30 @@ extension ProfileView {
 
         var body: some View {
             Section {
-                HStack {
-                    VStack {
-                        Image("icon-cool-cat")
-                    }.frame(maxHeight: .infinity, alignment: .top)
-
-                    VStack(alignment: .leading) {
-                        Text(title).font(.inter(size: 16, weight: .bold))
-                        Text(desc).font(.inter(size: 16))
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                    Button {
-                        Router.route(to: RouteMap.Register.root(nil))
-                    } label: {
+                Button {
+                    Router.route(to: RouteMap.Register.root(nil))
+                } label: {
+                    HStack {
+                        VStack {
+                            Image("icon-cool-cat")
+                        }.frame(maxHeight: .infinity, alignment: .top)
+                        
+                        VStack(alignment: .leading) {
+                            Text(title).font(.inter(size: 16, weight: .bold))
+                            Text(desc).font(.inter(size: 16))
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        
                         Image("icon-orange-right-arrow")
                     }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 16)
+                    .roundedBg(
+                        cornerRadius: 12,
+                        strokeColor: .LL.Primary.salmonPrimary,
+                        strokeLineWidth: 1
+                    )
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 16)
-                .roundedBg(
-                    cornerRadius: 12,
-                    strokeColor: .LL.Primary.salmonPrimary,
-                    strokeLineWidth: 1
-                )
             }
             .listRowInsets(.zero)
             .listRowBackground(Color.clear)

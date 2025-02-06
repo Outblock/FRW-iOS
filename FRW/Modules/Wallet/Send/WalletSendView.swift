@@ -69,6 +69,17 @@ struct WalletSendView: RouteableView {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 0) {
                     Button {
+                        vm.changeTabTypeAction(type: .accounts)
+                    } label: {
+                        SwitchButton(
+                            icon: "profile-tab",
+                            title: "my_accounts".localized,
+                            isSelected: vm.tabType == .accounts
+                        )
+                        .contentShape(Rectangle())
+                    }
+
+                    Button {
                         vm.changeTabTypeAction(type: .recent)
                     } label: {
                         SwitchButton(
@@ -86,17 +97,6 @@ struct WalletSendView: RouteableView {
                             icon: "icon-addressbook",
                             title: "address_book".localized,
                             isSelected: vm.tabType == .addressBook
-                        )
-                        .contentShape(Rectangle())
-                    }
-
-                    Button {
-                        vm.changeTabTypeAction(type: .accounts)
-                    } label: {
-                        SwitchButton(
-                            icon: "profile-tab",
-                            title: "my_accounts".localized,
-                            isSelected: vm.tabType == .accounts
                         )
                         .contentShape(Rectangle())
                     }

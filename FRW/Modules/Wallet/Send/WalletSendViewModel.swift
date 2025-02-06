@@ -15,9 +15,9 @@ import Combine
 
 extension WalletSendView {
     enum TabType: Int, CaseIterable {
+        case accounts
         case recent
         case addressBook
-        case accounts
     }
 
     enum ViewStatus {
@@ -137,7 +137,7 @@ class WalletSendViewModel: ObservableObject {
     var errorType: WalletSendView.ErrorType = .none
 
     @Published
-    var tabType: WalletSendView.TabType = .recent
+    var tabType: WalletSendView.TabType = .accounts
     @Published
     var searchText: String = ""
     @Published

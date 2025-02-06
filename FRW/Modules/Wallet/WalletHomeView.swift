@@ -178,19 +178,6 @@ struct WalletHomeView: View {
 
                 HStack {
                     Button {
-                        vm.moveAssetsAction()
-                    } label: {
-                        Image("icon_wallet_home_move")
-                            .resizable()
-                            .renderingMode(.template)
-                            .aspectRatio(contentMode: .fit)
-                            .foregroundStyle(Color.Theme.Text.black8)
-                            .frame(width: 24, height: 24)
-                            .padding(8)
-                    }
-                    .visibility(vm.showMoveAsset ? .visible : .gone)
-
-                    Button {
                         Router.route(to: RouteMap.Wallet.transactionList(nil))
                     } label: {
                         Image("icon_wallet_home_time")
