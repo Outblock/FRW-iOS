@@ -11,7 +11,7 @@ import SwiftUI
 struct PersistentToastView: View {
     let message: String
     let imageRes: ImageResource
-    
+
     var body: some View {
         HStack {
             HStack(spacing: 8) {
@@ -21,7 +21,7 @@ struct PersistentToastView: View {
                 Text(.init(self.message))
                     .foregroundColor(Color(.orange1))
                     .font(.inter(size: 12, weight: .w400))
-                    .fixedSize(horizontal: false, vertical: true)
+                    .fixedSize(horizontal: true, vertical: true)
                 Spacer()
             }
             .padding(.vertical, 8)
