@@ -1126,3 +1126,7 @@ Key Store and Private Key.";
 "Covered by Flow Wallet" = "Covered by Flow Wallet";
 "Contact Address" = "Contact Address";
 "Choose Swap Provider" = "Choose Swap Provider";
+"no_backup_warning_title" = "Are you sure you don't want to make a backup?";
+"no_backup_warning_desc" = "If you lose your device or delete your wallet, your funds will be lost forever.";
+"im_sure" = "I'm sure";
+"make_backup" = "Make backup";
