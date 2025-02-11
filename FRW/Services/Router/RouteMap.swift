@@ -296,6 +296,9 @@ extension RouteMap.Wallet: RouterTarget {
             navi.present(content: AddTokenView(vm: vm))
         case .stakingList:
             navi.push(content: StakingListView())
+            if StakingManager.shared.isStaked == false {
+                Router.route(to: RouteMap.Wallet.stakingSelectProvider)
+            }
         case .stakingSelectProvider:
             navi.push(content: SelectProviderView())
         case .stakeGuide:
