@@ -79,7 +79,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "#- -- SCRIPT BEGIN - --&#10;# SKIP_SIMULATOR_BUILDS=1&#10;  SCRIPT_SRC=$(find &quot;$PROJECT_DIR&quot; -name &apos;Instabug_dsym_upload.sh&apos; | head -1)&#10;  if [ ! &quot;${SCRIPT_SRC}&quot; ]; then&#10;    echo &quot;Instabug: err: script not found. Make sure that you&apos;re including InstabugResources.bundle in your project directory&quot;&#10;    exit 1&#10;  fi&#10;  source &quot;${SCRIPT_SRC}&quot;&#10;#- -- SCRIPT END - --&#10;">
+               scriptText = "#- -- SCRIPT BEGIN - --&#10;# SKIP_SIMULATOR_BUILDS=1&#10;  SCRIPT_SRC=$(find &quot;$BUILD_DIR&quot; -name &apos;Instabug_dsym_upload.sh&apos; | head -1)&#10;  if [ ! &quot;${SCRIPT_SRC}&quot; ]; then&#10;    echo &quot;Instabug: err: script not found. Make sure that you&apos;re including InstabugResources.bundle in your project directory&quot;&#10;    exit 1&#10;  fi&#10;  source &quot;${SCRIPT_SRC}&quot;&#10;#- -- SCRIPT END - --&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
