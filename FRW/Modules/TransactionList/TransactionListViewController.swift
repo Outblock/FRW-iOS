@@ -146,4 +146,8 @@ extension TransactionListViewController: AppTabBarPageProtocol {
     static func iconName() -> String {
         "tabler-icon-clock"
     }
+    
+    static func title() -> String {
+        "Activity::message".localized
+    }
 }

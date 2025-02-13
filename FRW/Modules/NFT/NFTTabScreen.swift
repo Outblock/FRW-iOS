@@ -24,6 +24,10 @@ extension NFTTabScreen: AppTabBarPageProtocol {
     static func iconName() -> String {
         "layout-grid"
     }
+    
+    static func title() -> String {
+        "NFTs::message".localized
+    }
 }
 
 // MARK: - NFTTabScreen

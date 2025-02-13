@@ -573,31 +573,35 @@ struct SideContainerView: View {
     private var isDragging: Bool = false
 
     @ViewBuilder
-    private func makeTabView() -> some View {
+    fileprivate func makeTabView() -> some View {
         let wallet = TabBarPageModel<AppTabType>(
             tag: WalletHomeView.tabTag(),
-            iconName: WalletHomeView.iconName()
+            iconName: WalletHomeView.iconName(),
+            title: WalletHomeView.title()
         ) {
             AnyView(WalletHomeView())
         }
 
         let nft = TabBarPageModel<AppTabType>(
             tag: NFTTabScreen.tabTag(),
-            iconName: NFTTabScreen.iconName()
+            iconName: NFTTabScreen.iconName(),
+            title: NFTTabScreen.title()
         ) {
             AnyView(NFTTabScreen())
         }
 
         let explore = TabBarPageModel<AppTabType>(
             tag: ExploreTabScreen.tabTag(),
-            iconName: ExploreTabScreen.iconName()
+            iconName: ExploreTabScreen.iconName(),
+            title: ExploreTabScreen.title()
         ) {
             AnyView(ExploreTabScreen())
         }
         
         let txHistory = TabBarPageModel<AppTabType>(
             tag: TransactionListViewController.tabTag(),
-            iconName: TransactionListViewController.iconName()
+            iconName: TransactionListViewController.iconName(),
+            title: TransactionListViewController.title()
         ) {
             /// MU: This was the only way to make it pretty in SwiftUI
             let vc = TransactionListViewControllerRepresentable()
@@ -614,7 +618,8 @@ struct SideContainerView: View {
 
         let profile = TabBarPageModel<AppTabType>(
             tag: ProfileView.tabTag(),
-            iconName: ProfileView.iconName()
+            iconName: ProfileView.iconName(),
+            title: ProfileView.title()
         ) {
             AnyView(ProfileView())
         }
@@ -641,4 +646,8 @@ struct SideContainerView: View {
             }
         }
     }
+}
+
+#Preview {
+    SideContainerView().makeTabView()
 }

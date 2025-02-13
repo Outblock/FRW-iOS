@@ -15,22 +15,15 @@ struct TabBarItemView<T: Hashable>: View {
     var selected: T
     var action: () -> Void
 
-    @ViewBuilder
-    var icon: some View {
-        Image(pageModel.iconName + (selected == pageModel.tag ? "-selected" : "") )
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 30, height: 30)
-            .frame(maxWidth: .infinity)
-            .contentShape(Rectangle())
-            .tint(selected == pageModel.tag ? Color.Theme.Accent.green : Color.TabIcon.unselectedTint)
-    }
-
     var body: some View {
         Button(action: {
             withAnimation(.spring()) { selected = pageModel.tag }
             action()
         }, label: {
-            icon
+            VStack(spacing: 4) {
+                icon
+                title
+            }
         })
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contextMenu {
@@ -38,5 +31,27 @@ struct TabBarItemView<T: Hashable>: View {
                 m()
             }
         }
+        .tint(tint)
+    }
+    
+    @ViewBuilder
+    private var icon: some View {
+        Image(pageModel.iconName + (selected == pageModel.tag ? "-selected" : "") )
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 28, height: 28)
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+            .padding(.bottom, 4)
+    }
+    
+    @ViewBuilder
+    private var title: some View {
+        Text(pageModel.title)
+            .font(.inter(size: 12, weight: .semibold))
+    }
+    
+    @ViewBuilder
+    private var tint: Color {
+        selected == pageModel.tag ? Color.Theme.Accent.green : Color.TabIcon.unselectedTint
     }
 }

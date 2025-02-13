@@ -19,6 +19,10 @@ extension ProfileView: AppTabBarPageProtocol {
     static func iconName() -> String {
         "tabler-icon-settings"
     }
+    
+    static func title() -> String {
+        "Settings::message".localized
+    }
 }
 
 // MARK: - ProfileView

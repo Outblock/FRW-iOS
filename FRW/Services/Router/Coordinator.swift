@@ -26,6 +26,7 @@ enum AppTabType {
 protocol AppTabBarPageProtocol {
     static func tabTag() -> AppTabType
     static func iconName() -> String
+    static func title() -> String
 }
 
 // MARK: - Coordinator

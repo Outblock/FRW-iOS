@@ -22,6 +22,10 @@ extension ExploreTabScreen: AppTabBarPageProtocol {
     static func iconName() -> String {
         "tabler-icon-brand-safari"
     }
+    
+    static func title() -> String {
+        "explore".localized
+    }
 }
 
 // MARK: - ExploreTabScreen

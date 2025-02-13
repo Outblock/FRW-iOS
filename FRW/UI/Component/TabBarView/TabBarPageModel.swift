@@ -14,11 +14,13 @@ struct TabBarPageModel<T: Hashable> {
     init(
         tag: T,
         iconName: String,
+        title: String,
         view: @escaping () -> AnyView,
         contextMenu: (() -> AnyView)? = nil
     ) {
         self.tag = tag
         self.iconName = iconName
+        self.title = title
         self.view = view
         self.contextMenu = contextMenu
     }
@@ -27,6 +29,7 @@ struct TabBarPageModel<T: Hashable> {
 
     let tag: T
     let iconName: String
+    let title: String
     let view: () -> AnyView
     let contextMenu: (() -> AnyView)?
 }

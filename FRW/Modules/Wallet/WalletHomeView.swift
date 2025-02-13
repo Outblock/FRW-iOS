@@ -25,6 +25,10 @@ extension WalletHomeView: AppTabBarPageProtocol {
     static func iconName() -> String {
         "tabler-icon-home"
     }
+    
+    static func title() -> String {
+        "home".localized
+    }
 }
 
 // MARK: - WalletHomeView
