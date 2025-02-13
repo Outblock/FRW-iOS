@@ -121,9 +121,7 @@ struct WalletConnectHandler {
             EVMHandler.nameTag,
         ]
     }
-
-    // TODO: request not permitted
-    // TODO Verify the chains
+    
     private func current(request: WalletConnectSign.Request) -> WalletConnectChildHandlerProtocol {
         let chainId = request.chainId
         if chainId.namespace.contains(EVMHandler.nameTag) {
@@ -132,7 +130,6 @@ struct WalletConnectHandler {
         return flowHandler
     }
     
-    // TODO: request not permitted
     private func current(sessionProposal: Session.Proposal) -> WalletConnectChildHandlerProtocol {
         let namespaces = namespaceTag(sessionProposal: sessionProposal)
         if namespaces.contains(EVMHandler.nameTag) {
