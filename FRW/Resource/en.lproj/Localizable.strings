@@ -1130,3 +1130,4 @@ Key Store and Private Key.";
 "no_backup_warning_desc" = "If you lose your device or delete your wallet, your funds will be lost forever.";
 "im_sure" = "I'm sure";
 "make_backup" = "Make backup";
+"transaction_history" = "Transaction History";

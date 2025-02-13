@@ -5,7 +5,6 @@
 //  Created by cat on 2022/5/25.
 //
 
-import Lottie
 import SwiftUI
 
 // MARK: - TabBarItemView
@@ -16,15 +15,14 @@ struct TabBarItemView<T: Hashable>: View {
     var selected: T
     var action: () -> Void
 
-    var animationView: some View {
-        ResizableLottieView(
-            lottieView: pageModel.lottieView,
-            color: selected == pageModel.tag ? pageModel.color : Color.gray
-        )
-        .aspectRatio(contentMode: .fit)
-        .frame(width: 30, height: 30)
-        .frame(maxWidth: .infinity)
-        .contentShape(Rectangle())
+    @ViewBuilder
+    var icon: some View {
+        Image(pageModel.iconName + (selected == pageModel.tag ? "-selected" : "") )
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 30, height: 30)
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+            .tint(selected == pageModel.tag ? Color.Theme.Accent.green : Color.TabIcon.unselectedTint)
     }
 
     var body: some View {
@@ -32,40 +30,13 @@ struct TabBarItemView<T: Hashable>: View {
             withAnimation(.spring()) { selected = pageModel.tag }
             action()
         }, label: {
-            animationView
+            icon
         })
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onChange(of: selected, perform: { value in
-            if value == pageModel.tag {
-                pageModel.lottieView.play()
-            }
-        })
         .contextMenu {
             if let m = pageModel.contextMenu {
                 m()
             }
-        }
-    }
-}
-
-// MARK: - WalletView_Previews
-
-struct WalletView_Previews: PreviewProvider {
-    static let animation = AnimationView(name: "Copy", bundle: .main)
-
-    static var previews: some View {
-        ResizableLottieView(
-            lottieView: animation,
-            color: Color.gray
-        )
-//        LottieView(name: "Coin2", loopMode: .loop)
-        .aspectRatio(contentMode: .fit)
-        .frame(width: 300, height: 300)
-        .frame(maxWidth: .infinity)
-        .onAppear {
-            animation.play()
-        }.onTapGesture {
-            animation.play()
         }
     }
 }

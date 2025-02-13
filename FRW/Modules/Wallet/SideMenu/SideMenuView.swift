@@ -576,32 +576,45 @@ struct SideContainerView: View {
     private func makeTabView() -> some View {
         let wallet = TabBarPageModel<AppTabType>(
             tag: WalletHomeView.tabTag(),
-            iconName: WalletHomeView.iconName(),
-            color: WalletHomeView.color()
+            iconName: WalletHomeView.iconName()
         ) {
             AnyView(WalletHomeView())
         }
 
         let nft = TabBarPageModel<AppTabType>(
             tag: NFTTabScreen.tabTag(),
-            iconName: NFTTabScreen.iconName(),
-            color: NFTTabScreen.color()
+            iconName: NFTTabScreen.iconName()
         ) {
             AnyView(NFTTabScreen())
         }
 
         let explore = TabBarPageModel<AppTabType>(
             tag: ExploreTabScreen.tabTag(),
-            iconName: ExploreTabScreen.iconName(),
-            color: ExploreTabScreen.color()
+            iconName: ExploreTabScreen.iconName()
         ) {
             AnyView(ExploreTabScreen())
+        }
+        
+        let txHistory = TabBarPageModel<AppTabType>(
+            tag: TransactionListViewController.tabTag(),
+            iconName: TransactionListViewController.iconName()
+        ) {
+            /// MU: This was the only way to make it pretty in SwiftUI
+            let vc = TransactionListViewControllerRepresentable()
+            return AnyView(
+                NavigationView {
+                    vc
+                        .navigationViewStyle(StackNavigationViewStyle())
+                        .navigationBarBackButtonHidden()
+                }
+                    .navigationViewStyle(StackNavigationViewStyle())
+                    .padding(.top, 4)
+            )
         }
 
         let profile = TabBarPageModel<AppTabType>(
             tag: ProfileView.tabTag(),
-            iconName: ProfileView.iconName(),
-            color: ProfileView.color()
+            iconName: ProfileView.iconName()
         ) {
             AnyView(ProfileView())
         }
@@ -609,20 +622,20 @@ struct SideContainerView: View {
         if vm.isLinkedAccount {
             TabBarView(
                 current: .wallet,
-                pages: [wallet, nft, profile],
+                pages: [wallet, nft, txHistory, profile],
                 maxWidth: UIScreen.main.bounds.width
             )
         } else {
             if vm.hideBrowser {
                 TabBarView(
                     current: .wallet,
-                    pages: [wallet, nft, profile],
+                    pages: [wallet, nft, txHistory, profile],
                     maxWidth: UIScreen.main.bounds.width
                 )
             } else {
                 TabBarView(
                     current: .wallet,
-                    pages: [wallet, nft, explore, profile],
+                    pages: [wallet, nft, explore, txHistory, profile],
                     maxWidth: UIScreen.main.bounds.width
                 )
             }

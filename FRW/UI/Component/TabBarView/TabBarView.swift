@@ -40,7 +40,7 @@ struct TabBarView<T: Hashable>: View {
             tabView
             TabBar(
                 pages: pages,
-                indicatorColor: getCurrentPageModel()?.color ?? .black,
+                indicatorColor: getCurrentPageModel() != nil ? Color.Theme.Accent.green : .black,
                 offsetX: $offsetX,
                 selected: $current
             )
@@ -67,7 +67,7 @@ struct TabBarView<T: Hashable>: View {
             }
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-        .background(.LL.deepBg)
+        .background(Color(uiColor: UIColor.LL.Neutrals.background))
         .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
         .ignoresSafeArea()
         .animation(.none, value: current)

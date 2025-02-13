@@ -22,11 +22,7 @@ extension NFTTabScreen: AppTabBarPageProtocol {
     }
 
     static func iconName() -> String {
-        "Grid"
-    }
-
-    static func color() -> SwiftUI.Color {
-        .LL.Secondary.mangoNFT
+        "layout-grid"
     }
 }
 

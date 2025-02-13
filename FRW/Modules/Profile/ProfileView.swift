@@ -17,15 +17,7 @@ extension ProfileView: AppTabBarPageProtocol {
     }
 
     static func iconName() -> String {
-        "Avatar"
-    }
-
-    static func color() -> Color {
-        // When convert from color to UIColor, it will ignore dark mode color :/
-        // Hence, we manually set the color here
-//        return .LL.Secondary.navy3
-        //        UIScreen.main.traitCollection.userInterfaceStyle == .dark ? Color(hex: "#0B59BF") :
-        Color(hex: "#579AF2")
+        "tabler-icon-settings"
     }
 }
 
