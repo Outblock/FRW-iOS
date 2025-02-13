@@ -384,6 +384,11 @@ extension WalletConnectManager {
             return
         }
         cacheReqeust.append(sessionRequest.id.string)
+        
+        // TODO, should we validate requests here (e.g. handler.validate()?)
+        // We may be able to skip passing session all together
+        // We should maybe just do a manual test to see if WC client filters
+        let session = activeSessions.first(where: { $0.topic == sessionRequest.topic })!
 
         switch sessionRequest.method {
         case FCLWalletConnectMethod.authn.rawValue:
@@ -676,7 +681,7 @@ extension WalletConnectManager {
         case WalletConnectEVMMethod.personalSign.rawValue:
             log.info("[EVM] sign person")
 
-            handler.handlePersonalSignRequest(request: sessionRequest) { signStr in
+            handler.handlePersonalSignRequest(session: session, request: sessionRequest) { signStr in
                 Task {
                     do {
                         try await Sign.instance.respond(
@@ -695,7 +700,7 @@ extension WalletConnectManager {
             }
         case WalletConnectEVMMethod.sendTransaction.rawValue:
             log.info("[EVM] sendTransaction")
-            handler.handleSendTransactionRequest(request: sessionRequest) { signStr in
+            handler.handleSendTransactionRequest(session: session, request: sessionRequest) { signStr in
                 Task {
                     do {
                         try await Sign.instance.respond(
@@ -713,11 +718,11 @@ extension WalletConnectManager {
                 self.rejectRequest(request: sessionRequest)
             }
         case WalletConnectEVMMethod.signTypedData.rawValue:
-            handleSignTypedData(sessionRequest)
+            handleSignTypedData(session, sessionRequest)
         case WalletConnectEVMMethod.signTypedDataV3.rawValue:
-            handleSignTypedData(sessionRequest)
+            handleSignTypedData(session, sessionRequest)
         case WalletConnectEVMMethod.signTypedDataV4.rawValue:
-            handleSignTypedData(sessionRequest)
+            handleSignTypedData(session, sessionRequest)
         case WalletConnectEVMMethod.watchAsset.rawValue:
             handleWatchAsset(sessionRequest)
         default:
@@ -760,8 +765,8 @@ extension WalletConnectManager {
         }
     }
 
-    private func handleSignTypedData(_ sessionRequest: WalletConnectSign.Request) {
-        handler.handleSignTypedDataV4(request: sessionRequest) { signStr in
+    private func handleSignTypedData(_ session: WalletConnectSign.Session, _ sessionRequest: WalletConnectSign.Request) {
+        handler.handleSignTypedDataV4(session: session, request: sessionRequest) { signStr in
             Task {
                 do {
                     try await Sign.instance.respond(
@@ -781,7 +786,8 @@ extension WalletConnectManager {
     }
 
     private func handleWatchAsset(_ sessionRequest: WalletConnectSign.Request) {
-        handler.handleWatchAsset(request: sessionRequest) { result in
+        let session = activeSessions.first(where: { $0.topic == sessionRequest.topic })!
+        handler.handleWatchAsset(session: session, request: sessionRequest) { result in
             Task {
                 do {
                     try await Sign.instance

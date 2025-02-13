@@ -22,14 +22,19 @@ struct WalletConnectHandler {
         return !result.isEmpty
     }
 
-    func chainReference(sessionProposal: Session.Proposal) -> String? {
-        let handle = current(sessionProposal: sessionProposal)
-        return handle.chainReference(sessionProposal: sessionProposal)
-    }
-
     func sessionInfo(sessionProposal: Session.Proposal) -> SessionInfo {
-        let handle = current(sessionProposal: sessionProposal)
-        let info = handle.sessionInfo(sessionProposal: sessionProposal)
+        let appMetadata = sessionProposal.proposer
+        let requiredNamespaces = sessionProposal.requiredNamespaces
+        let info = SessionInfo(
+            name: appMetadata.name,
+            descriptionText: appMetadata.description,
+            dappURL: appMetadata.url,
+            iconURL: appMetadata.icons.first ?? "",
+            chains: [],
+            methods: [],
+            pendingRequests: [],
+            data: ""
+        )
         return info
     }
 
@@ -39,11 +44,37 @@ struct WalletConnectHandler {
     }
 
     func approveSessionNamespaces(
-        sessionProposal: Session
-            .Proposal
+        sessionProposal: Session.Proposal
     ) throws -> [String: SessionNamespace] {
-        let handle = current(sessionProposal: sessionProposal)
-        return try handle.approveSessionNamespaces(sessionProposal: sessionProposal)
+        var approvedNamespaces: [String: SessionNamespace] = [:]
+        
+        // Process EVM if present in either required or optional namespaces.
+        let reqEvm = sessionProposal.requiredNamespaces[EVMHandler.nameTag]
+        let optEvm = sessionProposal.optionalNamespaces?[EVMHandler.nameTag]
+        if reqEvm != nil || optEvm != nil {
+            if let evmNS = try EVMHandler.approveProposalNamespace(required: reqEvm, optional: optEvm) {
+                approvedNamespaces.merge(evmNS) { (_, new) in new }
+            }
+        }
+        
+        // Process FCL if present in either required or optional namespaces.
+        let reqFlow = sessionProposal.requiredNamespaces[flowHandler.nameTag]
+        let optFlow = sessionProposal.optionalNamespaces?[flowHandler.nameTag]
+        if reqFlow != nil || optFlow != nil {
+            if let flowNS = try flowHandler.approveProposalNamespace(required: reqFlow, optional: optFlow) {
+                approvedNamespaces.merge(flowNS) { (_, new) in new }
+            }
+        }
+        
+        // Verify that every required namespace has been approved.
+        for namespace in sessionProposal.requiredNamespaces.keys {
+            if approvedNamespaces[namespace] == nil {
+                // TODO: THROW
+                // throw SessionApprovalError.missingNamespace(namespace)
+            }
+        }
+        
+        return approvedNamespaces
     }
 
     func currentType(sessionProposal: Session.Proposal) -> WalletConnectHandlerType {
@@ -52,38 +83,42 @@ struct WalletConnectHandler {
     }
 
     func handlePersonalSignRequest(
+        session: WalletConnectSign.Session,
         request: WalletConnectSign.Request,
         confirm: @escaping (String) -> Void,
         cancel: @escaping () -> Void
     ) {
-        let handle = current(request: request)
+        let handle = current(session: session, request: request)
         handle.handlePersonalSignRequest(request: request, confirm: confirm, cancel: cancel)
     }
 
     func handleSendTransactionRequest(
+        session: WalletConnectSign.Session,
         request: WalletConnectSign.Request,
         confirm: @escaping (String) -> Void,
         cancel: @escaping () -> Void
     ) {
-        let handle = current(request: request)
+        let handle = current(session: session, request: request)
         handle.handleSendTransactionRequest(request: request, confirm: confirm, cancel: cancel)
     }
 
     func handleSignTypedDataV4(
+        session: WalletConnectSign.Session,
         request: WalletConnectSign.Request,
         confirm: @escaping (String) -> Void,
         cancel: @escaping () -> Void
     ) {
-        let handle = current(request: request)
+        let handle = current(session: session, request: request)
         handle.handleSignTypedDataV4(request: request, confirm: confirm, cancel: cancel)
     }
 
     func handleWatchAsset(
+        session: WalletConnectSign.Session,
         request: WalletConnectSign.Request,
         confirm: @escaping (String) -> Void,
         cancel: @escaping () -> Void
     ) {
-        let handle = current(request: request)
+        let handle = current(session: session, request: request)
         handle.handleWatchAsset(request: request, confirm: confirm, cancel: cancel)
     }
 
@@ -99,17 +134,20 @@ struct WalletConnectHandler {
         ]
     }
 
-    private func current(sessionProposal: Session.Proposal) -> WalletConnectChildHandlerProtocol {
-        let namespaces = namespaceTag(sessionProposal: sessionProposal)
-        if namespaces.contains(EVMHandler.nameTag) {
+    // TODO: request not permitted
+    // TODO Verify the chains
+    private func current(session: WalletConnectSign.Session, request: WalletConnectSign.Request) -> WalletConnectChildHandlerProtocol {
+        let chainId = request.chainId
+        if chainId.namespace.contains(EVMHandler.nameTag) {
             return EVMHandler
         }
         return flowHandler
     }
-
-    private func current(request: WalletConnectSign.Request) -> WalletConnectChildHandlerProtocol {
-        let chainId = request.chainId
-        if chainId.namespace.contains(EVMHandler.nameTag) {
+    
+    // TODO: request not permitted
+    private func current(sessionProposal: Session.Proposal) -> WalletConnectChildHandlerProtocol {
+        let namespaces = namespaceTag(sessionProposal: sessionProposal)
+        if namespaces.contains(EVMHandler.nameTag) {
             return EVMHandler
         }
         return flowHandler
