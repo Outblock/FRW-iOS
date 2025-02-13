@@ -38,11 +38,6 @@ struct WalletConnectHandler {
         return info
     }
 
-    func chainId(sessionProposal: Session.Proposal) -> Flow.ChainID? {
-        let handle = current(sessionProposal: sessionProposal)
-        return handle.chainId(sessionProposal: sessionProposal)
-    }
-
     func approveSessionNamespaces(
         sessionProposal: Session.Proposal
     ) throws -> [String: SessionNamespace] {
@@ -67,11 +62,6 @@ struct WalletConnectHandler {
         }
         
         return approvedNamespaces
-    }
-
-    func currentType(sessionProposal: Session.Proposal) -> WalletConnectHandlerType {
-        let handle = current(sessionProposal: sessionProposal)
-        return handle.type
     }
 
     func handlePersonalSignRequest(
@@ -125,14 +115,6 @@ struct WalletConnectHandler {
     private func current(request: WalletConnectSign.Request) -> WalletConnectChildHandlerProtocol {
         let chainId = request.chainId
         if chainId.namespace.contains(EVMHandler.nameTag) {
-            return EVMHandler
-        }
-        return flowHandler
-    }
-    
-    private func current(sessionProposal: Session.Proposal) -> WalletConnectChildHandlerProtocol {
-        let namespaces = namespaceTag(sessionProposal: sessionProposal)
-        if namespaces.contains(EVMHandler.nameTag) {
             return EVMHandler
         }
         return flowHandler

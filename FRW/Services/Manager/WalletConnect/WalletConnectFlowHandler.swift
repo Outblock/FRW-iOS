@@ -17,8 +17,6 @@ struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
     var nameTag: String {
         "flow"
     }
-    
-    func accounts() {}
 
     func chainId(sessionProposal: Session.Proposal) -> Flow.ChainID? {
         guard let chains = sessionProposal.requiredNamespaces[nameTag]?.chains,
@@ -73,7 +71,7 @@ struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
         
         return sessionNamespace
     }
-    
+
     func handlePersonalSignRequest(
         request _: Request,
         confirm _: @escaping (String) -> Void,
