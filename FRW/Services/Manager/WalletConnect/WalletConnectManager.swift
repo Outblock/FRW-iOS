@@ -385,12 +385,6 @@ extension WalletConnectManager {
         }
         cacheReqeust.append(sessionRequest.id.string)
         
-        let session = activeSessions.first(where: { $0.topic == sessionRequest.topic })!
-        if !(session.namespaces[sessionRequest.chainId.namespace]?.methods.contains(sessionRequest.method) ?? false) && !(session.namespaces[sessionRequest.chainId.namespace]?.methods.contains(sessionRequest.method) ?? false) {
-            // TODO: ADD
-            // throw WalletConnectError.noSessionMatchingTopic("")
-        }
-
         switch sessionRequest.method {
         case FCLWalletConnectMethod.authn.rawValue:
 
@@ -787,7 +781,6 @@ extension WalletConnectManager {
     }
 
     private func handleWatchAsset(_ sessionRequest: WalletConnectSign.Request) {
-        let session = activeSessions.first(where: { $0.topic == sessionRequest.topic })!
         handler.handleWatchAsset(request: sessionRequest) { result in
             Task {
                 do {
