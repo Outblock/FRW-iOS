@@ -384,7 +384,7 @@ extension WalletConnectManager {
             return
         }
         cacheReqeust.append(sessionRequest.id.string)
-        
+
         switch sessionRequest.method {
         case FCLWalletConnectMethod.authn.rawValue:
 
