@@ -53,7 +53,7 @@ struct WalletConnectHandler {
         let optEvm = sessionProposal.optionalNamespaces?[EVMHandler.nameTag]
         if reqEvm != nil || optEvm != nil {
             if let evmNS = try EVMHandler.approveProposalNamespace(required: reqEvm, optional: optEvm) {
-                approvedNamespaces.merge(evmNS) { (_, new) in new }
+                approvedNamespaces[EVMHandler.nameTag] = evmNS
             }
         }
         
@@ -62,15 +62,7 @@ struct WalletConnectHandler {
         let optFlow = sessionProposal.optionalNamespaces?[flowHandler.nameTag]
         if reqFlow != nil || optFlow != nil {
             if let flowNS = try flowHandler.approveProposalNamespace(required: reqFlow, optional: optFlow) {
-                approvedNamespaces.merge(flowNS) { (_, new) in new }
-            }
-        }
-        
-        // Verify that every required namespace has been approved.
-        for namespace in sessionProposal.requiredNamespaces.keys {
-            if approvedNamespaces[namespace] == nil {
-                // TODO: THROW
-                // throw SessionApprovalError.missingNamespace(namespace)
+                approvedNamespaces[flowHandler.nameTag] = flowNS
             }
         }
         
@@ -83,42 +75,38 @@ struct WalletConnectHandler {
     }
 
     func handlePersonalSignRequest(
-        session: WalletConnectSign.Session,
         request: WalletConnectSign.Request,
         confirm: @escaping (String) -> Void,
         cancel: @escaping () -> Void
     ) {
-        let handle = current(session: session, request: request)
+        let handle = current(request: request)
         handle.handlePersonalSignRequest(request: request, confirm: confirm, cancel: cancel)
     }
 
     func handleSendTransactionRequest(
-        session: WalletConnectSign.Session,
         request: WalletConnectSign.Request,
         confirm: @escaping (String) -> Void,
         cancel: @escaping () -> Void
     ) {
-        let handle = current(session: session, request: request)
+        let handle = current(request: request)
         handle.handleSendTransactionRequest(request: request, confirm: confirm, cancel: cancel)
     }
 
     func handleSignTypedDataV4(
-        session: WalletConnectSign.Session,
         request: WalletConnectSign.Request,
         confirm: @escaping (String) -> Void,
         cancel: @escaping () -> Void
     ) {
-        let handle = current(session: session, request: request)
+        let handle = current(request: request)
         handle.handleSignTypedDataV4(request: request, confirm: confirm, cancel: cancel)
     }
 
     func handleWatchAsset(
-        session: WalletConnectSign.Session,
         request: WalletConnectSign.Request,
         confirm: @escaping (String) -> Void,
         cancel: @escaping () -> Void
     ) {
-        let handle = current(session: session, request: request)
+        let handle = current(request: request)
         handle.handleWatchAsset(request: request, confirm: confirm, cancel: cancel)
     }
 
@@ -136,7 +124,7 @@ struct WalletConnectHandler {
 
     // TODO: request not permitted
     // TODO Verify the chains
-    private func current(session: WalletConnectSign.Session, request: WalletConnectSign.Request) -> WalletConnectChildHandlerProtocol {
+    private func current(request: WalletConnectSign.Request) -> WalletConnectChildHandlerProtocol {
         let chainId = request.chainId
         if chainId.namespace.contains(EVMHandler.nameTag) {
             return EVMHandler

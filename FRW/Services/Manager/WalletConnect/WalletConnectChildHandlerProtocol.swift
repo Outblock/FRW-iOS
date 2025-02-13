@@ -22,7 +22,7 @@ protocol WalletConnectChildHandlerProtocol {
     var nameTag: String { get }
     func chainId(sessionProposal: Session.Proposal) -> Flow.ChainID?
     func approveProposalNamespace(required: ProposalNamespace?, optional: ProposalNamespace?) throws
-        -> [String: SessionNamespace]?
+        -> SessionNamespace?
     func handlePersonalSignRequest(
         request: WalletConnectSign.Request,
         confirm: @escaping (String) -> Void,

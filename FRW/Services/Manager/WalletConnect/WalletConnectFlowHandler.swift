@@ -29,56 +29,49 @@ struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
         return Flow.ChainID(name: reference.lowercased())
     }
 
-    // TODO: validate that the chains are both testnet/both mainnet
     func approveProposalNamespace(
         required: ProposalNamespace?,
         optional: ProposalNamespace?
-    ) throws -> [String: SessionNamespace]? {
-        // Retrieve the primary wallet address; if missing, approval can’t continue.
+    ) throws -> SessionNamespace? {
         guard let account = WalletManager.shared.getPrimaryWalletAddress() else {
             return nil
         }
         
-        // This dictionary will map each namespace (e.g., "eip155") to a SessionNamespace.
-        var namespaces: [String: SessionNamespace] = [:]
+        var sessionNamespace: SessionNamespace?
         
-        // Helper function that processes one proposal namespace (required or optional)
-        func process(proposal: ProposalNamespace?) {
-            guard let proposal = proposal, let chains = proposal.chains else { return }
-            // Use the proposal’s methods and events; assume these are sets.
+        // Combine non-nil proposals
+        let proposals = [required, optional].compactMap { $0 }
+        
+        proposals.forEach { proposal in
+            guard let chains = proposal.chains else { return }
+            
             let proposalMethods = proposal.methods
             let proposalEvents = proposal.events
             
-            for chain in chains {
+            chains.forEach { chain in
                 let accountString = "\(chain.absoluteString):\(account)"
-                guard let accountObj = WalletConnectSign.Account(accountString) else { continue }
+                guard let accountObj = WalletConnectSign.Account(accountString) else { return }
                 
-                if var existingNamespace = namespaces[chain.namespace] {
-                    // Merge the namespaces on conflict
-                    existingNamespace.accounts.append(accountObj)
-                    existingNamespace.methods.formUnion(proposalMethods)
-                    existingNamespace.events.formUnion(proposalEvents)
-                    existingNamespace.chains = (existingNamespace.chains ?? []) + [chain]
-                    
-                    namespaces[chain.namespace] = existingNamespace
+                if var ns = sessionNamespace {
+                    // Append new account and chain, and intersect the methods and events.
+                    ns.accounts.append(accountObj)
+                    ns.chains!.append(chain)
+                    ns.methods = ns.methods.intersection(proposalMethods)
+                    ns.events = ns.events.intersection(proposalEvents)
+                    sessionNamespace = ns
                 } else {
-                    // Create a new session namespace for this namespace key.
-                    let newNamespace = SessionNamespace(
+                    // Create the namespace if it doesn't exist yet.
+                    sessionNamespace = SessionNamespace(
                         chains: [chain],
                         accounts: [accountObj],
                         methods: proposalMethods,
                         events: proposalEvents
                     )
-                    namespaces[chain.namespace] = newNamespace
                 }
             }
         }
         
-        // Process both required and optional proposals.
-        process(proposal: required)
-        process(proposal: optional)
-        
-        return namespaces
+        return sessionNamespace
     }
     
     func handlePersonalSignRequest(

@@ -88,7 +88,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
     func approveProposalNamespace(
         required: ProposalNamespace?,
         optional: ProposalNamespace?
-    ) throws -> [String: SessionNamespace]? {
+    ) throws -> SessionNamespace? {
         // Ensure we have an account available.
         guard let account = EVMAccountManager.shared.accounts.first?.address.addHexPrefix() else {
             return nil
@@ -136,7 +136,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
             events: approvedEvents
         )
         
-        return [ "eip155": sessionNamespace ]
+        return sessionNamespace
     }
 
     func handlePersonalSignRequest(
