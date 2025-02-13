@@ -13,8 +13,14 @@ import WalletConnectSign
 
 // https://github.com/onflow/flow-evm-gateway?tab=readme-ov-file#evm-gateway-endpoints
 
+
+
 struct WalletConnectHandler {
     // MARK: Internal
+    
+    enum HandlerError: Error {
+        case chainIdMismatch
+    }
 
     func isAllowedSession(sessionProposal: Session.Proposal) -> Bool {
         let namespaces = namespaceTag(sessionProposal: sessionProposal)
@@ -36,6 +42,25 @@ struct WalletConnectHandler {
             data: ""
         )
         return info
+    }
+
+    func chainId(sessionProposal: Session.Proposal) -> Flow.ChainID? {
+        let handlers = current(sessionProposal: sessionProposal)
+        
+        // Retrieve chain IDs if the corresponding handler exists
+        let evmChainId = handlers[EVMHandler.nameTag]?.chainId(sessionProposal: sessionProposal)
+        let flowChainId = handlers[flowHandler.nameTag]?.chainId(sessionProposal: sessionProposal)
+        
+        // If both handlers are present, verify that their chain IDs match.
+        if let evmChainId = evmChainId, let flowChainId = flowChainId {
+            if evmChainId != flowChainId {
+                return nil
+            }
+            return evmChainId
+        }
+        
+        // If only one handler exists, return its chain ID.
+        return evmChainId ?? flowChainId
     }
 
     func approveSessionNamespaces(
@@ -62,6 +87,10 @@ struct WalletConnectHandler {
         }
         
         return approvedNamespaces
+    }
+
+    func currentTypes(sessionProposal: Session.Proposal) -> [WalletConnectHandlerType] {
+        return current(sessionProposal: sessionProposal).map { $0.value.type }
     }
 
     func handlePersonalSignRequest(
@@ -118,6 +147,18 @@ struct WalletConnectHandler {
             return EVMHandler
         }
         return flowHandler
+    }
+    
+    private func current(sessionProposal: Session.Proposal) -> [String: WalletConnectChildHandlerProtocol] {
+        let namespaces = namespaceTag(sessionProposal: sessionProposal)
+        var result: [String: WalletConnectChildHandlerProtocol] = [:]
+        if namespaces.contains(EVMHandler.nameTag) {
+            result[EVMHandler.nameTag] = EVMHandler
+        }
+        if namespaces.contains(flowHandler.nameTag) {
+            result[flowHandler.nameTag] = flowHandler
+        }
+        return result
     }
 }
 

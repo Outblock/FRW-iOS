@@ -353,7 +353,7 @@ extension WalletConnectManager {
 
         let info = handler.sessionInfo(sessionProposal: sessionProposal)
         var address = WalletManager.shared.getPrimaryWalletAddress()
-        if handler.currentType(sessionProposal: sessionProposal) == .evm {
+        if handler.currentTypes(sessionProposal: sessionProposal).contains(.evm) {
             // TODO: if evm not enable
             address = EVMAccountManager.shared.accounts.first?.showAddress ?? ""
         }
