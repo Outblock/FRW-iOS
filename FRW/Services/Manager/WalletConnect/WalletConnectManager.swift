@@ -385,11 +385,7 @@ extension WalletConnectManager {
         }
         cacheReqeust.append(sessionRequest.id.string)
         
-        // TODO, should we validate requests here (e.g. handler.validate()?)
-        // We may be able to skip passing session all together
-        // We should maybe just do a manual test to see if WC client filters
         let session = activeSessions.first(where: { $0.topic == sessionRequest.topic })!
-        
         if !(session.namespaces[sessionRequest.chainId.namespace]?.methods.contains(sessionRequest.method) ?? false) && !(session.namespaces[sessionRequest.chainId.namespace]?.methods.contains(sessionRequest.method) ?? false) {
             // TODO: ADD
             // throw WalletConnectError.noSessionMatchingTopic("")
@@ -723,11 +719,11 @@ extension WalletConnectManager {
                 self.rejectRequest(request: sessionRequest)
             }
         case WalletConnectEVMMethod.signTypedData.rawValue:
-            handleSignTypedData(session, sessionRequest)
+            handleSignTypedData(sessionRequest)
         case WalletConnectEVMMethod.signTypedDataV3.rawValue:
-            handleSignTypedData(session, sessionRequest)
+            handleSignTypedData(sessionRequest)
         case WalletConnectEVMMethod.signTypedDataV4.rawValue:
-            handleSignTypedData(session, sessionRequest)
+            handleSignTypedData(sessionRequest)
         case WalletConnectEVMMethod.watchAsset.rawValue:
             handleWatchAsset(sessionRequest)
         default:
@@ -770,7 +766,7 @@ extension WalletConnectManager {
         }
     }
 
-    private func handleSignTypedData(_ session: WalletConnectSign.Session, _ sessionRequest: WalletConnectSign.Request) {
+    private func handleSignTypedData(_ sessionRequest: WalletConnectSign.Request) {
         handler.handleSignTypedDataV4(request: sessionRequest) { signStr in
             Task {
                 do {
