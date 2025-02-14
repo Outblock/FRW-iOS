@@ -233,7 +233,10 @@ extension CoinRateCache {
                 .first { $0.evmAddress?.lowercased() == token.getAddress()?.lowercased() }
         } else {
             model = addPrices
-                .first { $0.contractName.uppercased() == token.contractName.uppercased() }
+                .first {
+                    $0.contractName.uppercased() == token.contractName.uppercased() &&
+                    $0.contractAddress == token.getAddress()
+                }
         }
 
         let change = CryptoSummaryResponse.Change(absolute: 0, percentage: 0)
