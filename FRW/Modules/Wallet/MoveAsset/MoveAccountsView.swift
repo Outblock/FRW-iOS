@@ -159,8 +159,7 @@ class MoveAccountsViewModel: ObservableObject {
         let isChild = ChildAccountManager.shared.selectedChildAccount != nil
         let isEVM = EVMAccountManager.shared.selectedAccount != nil
 
-        if let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress(),
-           currentAddr != primaryAddr {
+        if let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress() {
             let user = WalletManager.shared.walletAccount.readInfo(at: primaryAddr)
             let contact = Contact(
                 address: primaryAddr,
@@ -177,37 +176,33 @@ class MoveAccountsViewModel: ObservableObject {
         }
 
         for account in EVMAccountManager.shared.accounts {
-            if currentAddr != account.showAddress {
-                let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
-                let contact = Contact(
-                    address: account.showAddress,
-                    avatar: nil,
-                    contactName: nil,
-                    contactType: .user,
-                    domain: nil,
-                    id: UUID().hashValue,
-                    username: user.name,
-                    user: user,
-                    walletType: .evm
-                )
-                list.append(contact)
-            }
+            let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
+            let contact = Contact(
+                address: account.showAddress,
+                avatar: nil,
+                contactName: nil,
+                contactType: .user,
+                domain: nil,
+                id: UUID().hashValue,
+                username: user.name,
+                user: user,
+                walletType: .evm
+            )
+            list.append(contact)
         }
-
+        
         for account in ChildAccountManager.shared.childAccounts {
-            if currentAddr != account.showAddress {
-                let contact = Contact(
-                    address: account.showAddress,
-                    avatar: account.showIcon,
-                    contactName: nil,
-                    contactType: .user,
-                    domain: nil,
-                    id: UUID().hashValue,
-                    username: account.showName,
-                    walletType: .link
-                )
-                list.append(contact)
-            }
+            let contact = Contact(
+                address: account.showAddress,
+                avatar: account.showIcon,
+                contactName: nil,
+                contactType: .user,
+                domain: nil,
+                id: UUID().hashValue,
+                username: account.showName,
+                walletType: .link
+            )
+            list.append(contact)
         }
     }
 

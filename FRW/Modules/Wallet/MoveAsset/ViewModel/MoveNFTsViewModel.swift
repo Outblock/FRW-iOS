@@ -16,8 +16,8 @@ final class MoveNFTsViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init() {
-        fetchNFTs(0)
         loadUserInfo()
+        fetchNFTs()
         checkForInsufficientStorage()
     }
 
@@ -38,7 +38,7 @@ final class MoveNFTsViewModel: ObservableObject {
     private(set) var buttonState: VPrimaryButtonState = .disabled
 
     @Published
-    private(set) var fromContact = Contact(
+    var fromContact = Contact(
         address: "",
         avatar: "",
         contactName: "",
@@ -46,9 +46,20 @@ final class MoveNFTsViewModel: ObservableObject {
         domain: nil,
         id: -1,
         username: nil
-    )
+    ) {
+        didSet {
+            if fromContact == toContact {
+                toContact = oldValue
+            }
+            collectionList = []
+            selectedCollection = nil
+            fetchNFTs()
+            updateFee()
+            checkForInsufficientStorage()
+        }
+    }
     @Published
-    private(set) var toContact = Contact(
+    var toContact = Contact(
         address: "",
         avatar: "",
         contactName: "",
@@ -56,7 +67,15 @@ final class MoveNFTsViewModel: ObservableObject {
         domain: nil,
         id: -1,
         username: nil
-    )
+    ) {
+        didSet {
+            if toContact == fromContact {
+                fromContact = oldValue
+            }
+            updateFee()
+            checkForInsufficientStorage()
+        }
+    }
 
     let limitCount = 10
 
@@ -71,17 +90,11 @@ final class MoveNFTsViewModel: ObservableObject {
         return "move_nft".localized
     }
 
-    func updateToContact(_ contact: Contact) {
-        toContact = contact
-        updateFee()
-        checkForInsufficientStorage()
-    }
-
     func moveAction() {
         guard let collection = selectedCollection else {
             return
         }
-        buttonState = .loading
+        HUD.loading()
         Task {
             do {
                 let identifier = collection.maskFlowIdentifier ?? nfts.first?.model
@@ -175,8 +188,8 @@ final class MoveNFTsViewModel: ObservableObject {
             } catch {
                 log.error(" Move NFTs =====")
                 log.error(error)
-                buttonState = .enabled
             }
+            HUD.dismissLoading()
         }
     }
 
@@ -211,7 +224,7 @@ final class MoveNFTsViewModel: ObservableObject {
 
     func fetchNFTs(_ offset: Int = 0) {
         runOnMain {
-            self.buttonState = .loading
+            HUD.loading()
         }
         guard let collection = selectedCollection else {
             fetchCollection()
@@ -219,8 +232,8 @@ final class MoveNFTsViewModel: ObservableObject {
         }
         Task {
             do {
-                let isEVM = EVMAccountManager.shared.selectedAccount != nil
-                let address = WalletManager.shared.selectedAccountAddress
+                let isEVM = fromContact.walletType == .evm
+                let address = fromContact.address ?? ""
                 let request = NFTCollectionDetailListRequest(
                     address: address,
                     collectionIdentifier: collection.maskId,
@@ -261,7 +274,7 @@ final class MoveNFTsViewModel: ObservableObject {
          }
          Task {
              do {
-                 let address = WalletManager.shared.selectedAccountAddress
+                 let address = fromContact.address ?? ""
                  let request = NFTCollectionDetailListRequest(address: address, collectionIdentifier: collection.maskId, offset: offset, limit: 30)
                  let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(request, .main))
                  DispatchQueue.main.async {
@@ -428,6 +441,7 @@ final class MoveNFTsViewModel: ObservableObject {
     }
 
     private func resetButtonState() {
+        HUD.dismissLoading()
         buttonState = selectedCount > 0 ? .enabled : .disabled
         showHint = selectedCount >= limitCount
     }
@@ -435,10 +449,10 @@ final class MoveNFTsViewModel: ObservableObject {
     private func fetchCollection() {
         Task {
             do {
-                let address = WalletManager.shared.selectedAccountAddress
+                let address = fromContact.address ?? ""
                 let offset = FRWAPI.Offset(start: 0, length: 100)
-                let from: FRWAPI.From = EVMAccountManager.shared
-                    .selectedAccount != nil ? .evm : .main
+                let from: FRWAPI.From = fromContact
+                    .walletType == .evm ? .evm : .main
                 let response: Network.Response<[NFTCollection]> = try await Network
                     .requestWithRawModel(FRWAPI.NFT.userCollection(
                         address,
@@ -518,7 +532,7 @@ extension MoveNFTsViewModel {
     }
 
     func logo() -> Image {
-        let isSelectedEVM = EVMAccountManager.shared.selectedAccount != nil
+        let isSelectedEVM = fromContact.walletType == .evm
         return isSelectedEVM ? Image("icon_qr_evm") : Image("Flow")
     }
 }

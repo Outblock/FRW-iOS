@@ -26,6 +26,7 @@ struct ContactRelationView: View {
 
     var clickFrom: ContactCallback?
     var clickTo: ContactCallback?
+    var arrowTapped: (() -> ())?
 
     var body: some View {
         ZStack {
@@ -40,7 +41,12 @@ struct ContactRelationView: View {
                 }
                 .frame(maxWidth: .infinity)
             }
-            arrow()
+            Button {
+                arrowTapped?()
+            } label: {
+                arrow()
+            }
+            .disabled(arrowTapped == nil)
         }
     }
 
@@ -89,15 +95,15 @@ struct ContactRelationView: View {
                 .frame(height: 16)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .padding(16)
+        .background(.Theme.BG.bg3)
+        .cornerRadius(16)
+        .shadow(color: .black.opacity(0.04), radius: 6, y: 2)
         .onTapGesture {
             if showArrow {
                 onClick?()
             }
         }
-        .padding(16)
-        .background(.Theme.BG.bg3)
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.04), radius: 6, y: 2)
     }
 
     @ViewBuilder

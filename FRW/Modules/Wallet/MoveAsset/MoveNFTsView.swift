@@ -96,17 +96,31 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
             ContactRelationView(
                 fromContact: viewModel.fromContact,
                 toContact: viewModel.toContact,
-                clickable: .to,
+                clickable: .all,
+                clickFrom: { contact in
+                    let model = MoveAccountsViewModel(
+                        selected: viewModel.fromContact
+                            .address ?? ""
+                    ) { contact in
+                        if let contact = contact {
+                            viewModel.fromContact = contact
+                        }
+                    }
+                    Router.route(to: RouteMap.Wallet.chooseChild(model))
+                },
                 clickTo: { contact in
                     let model = MoveAccountsViewModel(
                         selected: viewModel.toContact
                             .address ?? ""
                     ) { contact in
                         if let contact = contact {
-                            viewModel.updateToContact(contact)
+                            viewModel.toContact = contact
                         }
                     }
                     Router.route(to: RouteMap.Wallet.chooseChild(model))
+                },
+                arrowTapped: {
+                    viewModel.toContact = viewModel.fromContact
                 }
             )
 
