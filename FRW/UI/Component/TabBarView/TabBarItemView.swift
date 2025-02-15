@@ -5,7 +5,6 @@
 //  Created by cat on 2022/5/25.
 //
 
-import Lottie
 import SwiftUI
 
 // MARK: - TabBarItemView
@@ -16,56 +15,43 @@ struct TabBarItemView<T: Hashable>: View {
     var selected: T
     var action: () -> Void
 
-    var animationView: some View {
-        ResizableLottieView(
-            lottieView: pageModel.lottieView,
-            color: selected == pageModel.tag ? pageModel.color : Color.gray
-        )
-        .aspectRatio(contentMode: .fit)
-        .frame(width: 30, height: 30)
-        .frame(maxWidth: .infinity)
-        .contentShape(Rectangle())
-    }
-
     var body: some View {
         Button(action: {
             withAnimation(.spring()) { selected = pageModel.tag }
             action()
         }, label: {
-            animationView
-        })
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onChange(of: selected, perform: { value in
-            if value == pageModel.tag {
-                pageModel.lottieView.play()
+            VStack(spacing: 4) {
+                icon
+                title
             }
         })
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contextMenu {
             if let m = pageModel.contextMenu {
                 m()
             }
         }
+        .tint(tint)
     }
-}
-
-// MARK: - WalletView_Previews
-
-struct WalletView_Previews: PreviewProvider {
-    static let animation = AnimationView(name: "Copy", bundle: .main)
-
-    static var previews: some View {
-        ResizableLottieView(
-            lottieView: animation,
-            color: Color.gray
-        )
-//        LottieView(name: "Coin2", loopMode: .loop)
-        .aspectRatio(contentMode: .fit)
-        .frame(width: 300, height: 300)
-        .frame(maxWidth: .infinity)
-        .onAppear {
-            animation.play()
-        }.onTapGesture {
-            animation.play()
-        }
+    
+    @ViewBuilder
+    private var icon: some View {
+        Image(pageModel.iconName + (selected == pageModel.tag ? "-selected" : "") )
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 28, height: 28)
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+            .padding(.bottom, 4)
+    }
+    
+    @ViewBuilder
+    private var title: some View {
+        Text(pageModel.title)
+            .font(.inter(size: 12, weight: .semibold))
+    }
+    
+    @ViewBuilder
+    private var tint: Color {
+        selected == pageModel.tag ? Color.Theme.Accent.green : Color.TabIcon.unselectedTint
     }
 }

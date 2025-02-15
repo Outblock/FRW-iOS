@@ -947,7 +947,7 @@ extension WalletManager {
             let tokenResponse: SingleTokenResponse = try await Network
                 .requestWithRawModel(GithubEndpoint.EVMTokenList)
             let coins: [TokenModel] = tokenResponse.conversion(type: .evm)
-            DispatchQueue.main.async {
+            await MainActor.run {
                 self.evmSupportedCoins = coins
             }
         } catch {
