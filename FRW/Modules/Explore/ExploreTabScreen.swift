@@ -20,11 +20,11 @@ extension ExploreTabScreen: AppTabBarPageProtocol {
     }
 
     static func iconName() -> String {
-        "Category"
+        "tabler-icon-brand-safari"
     }
-
-    static func color() -> SwiftUI.Color {
-        .LL.Secondary.violetDiscover
+    
+    static func title() -> String {
+        "explore".localized
     }
 }
 
