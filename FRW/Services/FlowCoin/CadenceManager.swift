@@ -111,7 +111,7 @@ class CadenceManager {
     }
 
     private func loadCache() -> CadenceResponse? {
-        //TODO: replace success?
+        // TODO: replace success?
         return nil
         guard let file = filePath() else {
             return nil
@@ -220,7 +220,6 @@ extension CadenceModel {
         let getNFTMetadataViews: String?
         let sendNbaNFTV3: String?
         let sendNFTV3: String?
-
     }
 
     struct Contract: Codable {
@@ -375,6 +374,7 @@ extension CadenceModel {
         let withdrawCoa: String?
         let fundCoa: String?
         let callContract: String?
+        let callContractV2: String?
         let transferFlowToEvmAddress: String?
         let transferFlowFromCoaToFlow: String?
         let checkCoaLink: String?

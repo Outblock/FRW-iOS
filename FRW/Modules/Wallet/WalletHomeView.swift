@@ -23,35 +23,46 @@ extension WalletHomeView: AppTabBarPageProtocol {
     }
 
     static func iconName() -> String {
-        "CoinHover"
+        "tabler-icon-home"
     }
-
-    static func color() -> Color {
-        .Flow.accessory
+    
+    static func title() -> String {
+        "home".localized
     }
 }
 
 // MARK: - WalletHomeView
 
 struct WalletHomeView: View {
-    @State var safeArea: EdgeInsets = .zero
-    @State var size: CGSize = .zero
+    @State
+    var safeArea: EdgeInsets = .zero
+    @State
+    var size: CGSize = .zero
 
-    @StateObject var um = UserManager.shared
-    @StateObject var wm = WalletManager.shared
-    @StateObject private var vm = WalletViewModel()
-    @StateObject var newsHandler = WalletNewsHandler.shared
-    @State var isRefreshing: Bool = false
-    @State private var showActionSheet = false
+    @StateObject
+    var um = UserManager.shared
+    @StateObject
+    var wm = WalletManager.shared
+    @StateObject
+    private var vm = WalletViewModel()
+    @StateObject
+    var newsHandler = WalletNewsHandler.shared
+    @State
+    var isRefreshing: Bool = false
+    @State
+    private var showActionSheet = false
     @AppStorage("WalletCardBackrgound")
     private var walletCardBackrgound: String = "fade:0"
 
-    @State var selectedNewsId: String?
-    @State var scrollNext: Bool = false
+    @State
+    var selectedNewsId: String?
+    @State
+    var scrollNext: Bool = false
 
     private let scrollName: String = "WALLETSCROLL"
 
-    @State private var logViewPresented: Bool = false
+    @State
+    private var logViewPresented: Bool = false
 
     var body: some View {
         GeometryReader { proxy in
@@ -60,7 +71,11 @@ struct WalletHomeView: View {
                 GuestView().visibility(um.isLoggedIn ? .gone : .visible)
                 NormalView().visibility(um.isLoggedIn ? .visible : .gone)
             }
-            .halfSheet(showSheet: $vm.backupTipsPresent, autoResizing: true, backgroundColor: Color.LL.Neutrals.background) {
+            .halfSheet(
+                showSheet: $vm.backupTipsPresent,
+                autoResizing: true,
+                backgroundColor: Color.LL.Neutrals.background
+            ) {
                 BackupTipsView(closeAction: {
                     vm.backupTipsPresent = false
                 })
@@ -162,31 +177,6 @@ struct WalletHomeView: View {
                 Spacer()
 
                 HStack {
-                    Button {
-                        vm.moveAssetsAction()
-                    } label: {
-                        Image("icon_wallet_home_move")
-                            .resizable()
-                            .renderingMode(.template)
-                            .aspectRatio(contentMode: .fit)
-                            .foregroundStyle(Color.Theme.Text.black8)
-                            .frame(width: 24, height: 24)
-                            .padding(8)
-                    }
-                    .visibility(vm.showMoveAsset ? .visible : .gone)
-
-                    Button {
-                        Router.route(to: RouteMap.Wallet.transactionList(nil))
-                    } label: {
-                        Image("icon_wallet_home_time")
-                            .resizable()
-                            .renderingMode(.template)
-                            .aspectRatio(contentMode: .fit)
-                            .foregroundStyle(Color.Theme.Text.black8)
-                            .frame(width: 24, height: 24)
-                            .padding(8)
-                    }
-
                     Button {
                         vm.scanAction()
                     } label: {
@@ -697,12 +687,7 @@ extension WalletHomeView {
             case .receive:
                 Router.route(to: RouteMap.Wallet.receiveQR)
             case .swap:
-
-                if let url = URL(string: incrementUrl()) {
-                    UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                    Router.route(to: RouteMap.Explore.browser(url))
-                }
-//                Router.route(to: RouteMap.Wallet.swap(nil))
+                Router.route(to: RouteMap.Wallet.swapProvider(nil))
             case .stake:
                 if !LocalUserDefaults.shared.stakingGuideDisplayed && !StakingManager.shared
                     .isStaked {

@@ -333,7 +333,7 @@ extension TrustJSMessageHandler {
             title = "unknown"
         }
 
-        let originCadence = CadenceManager.shared.current.evm?.callContract?.toFunc() ?? ""
+        let originCadence = CadenceManager.shared.current.evm?.callContractV2?.toFunc() ?? ""
 
         guard let data = info.jsonData,
               let receiveModel = try? JSONDecoder().decode(EVMTransactionReceive.self, from: data),
@@ -345,7 +345,7 @@ extension TrustJSMessageHandler {
 
         let args: [Flow.Cadence.FValue] = [
             .string(toAddr),
-            .ufix64(Decimal(string: receiveModel.amount) ?? .nan),
+            .uint256(receiveModel.amount),
             receiveModel.dataValue?.cadenceValue ?? .array([]),
             .uint64(receiveModel.gasValue),
         ]
@@ -358,7 +358,7 @@ extension TrustJSMessageHandler {
             arguments: args.toArguments(),
             toAddress: toAddr,
             data: receiveModel.data,
-            amount: receiveModel.amount
+            amount: receiveModel.amountValue
         ) { [weak self] result in
 
             guard let self = self else {
@@ -383,10 +383,17 @@ extension TrustJSMessageHandler {
                     let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                     TransactionManager.shared.newTransaction(holder: holder)
 
-                    let calculateId = try await WalletConnectEVMHandler.calculateTX(receiveModel, txId: txid)
+                    let calculateId = try await WalletConnectEVMHandler.calculateTX(
+                        receiveModel,
+                        txId: txid
+                    )
                     log.info("[EVM] calculate TX id: \(calculateId)")
                     await MainActor.run {
-                        self.webVC?.webView.tw.send(network: .ethereum, result: calculateId.addHexPrefix(),to: id)
+                        self.webVC?.webView.tw.send(
+                            network: .ethereum,
+                            result: calculateId.addHexPrefix(),
+                            to: id
+                        )
                     }
                 } catch {
                     log.error("\(error)")

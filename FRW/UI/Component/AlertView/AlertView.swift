@@ -17,6 +17,7 @@ extension AlertView {
         case confirm
         case primaryAction
         case secondaryAction
+        case destructive
 
         // MARK: Internal
 
@@ -30,6 +31,8 @@ extension AlertView {
                 return Color.LL.Button.Primary.text
             case .secondaryAction:
                 return Color.LL.Button.Elevated.text
+            case .destructive:
+                return Color.LL.Button.Primary.text
             }
         }
 
@@ -43,6 +46,8 @@ extension AlertView {
                 return Color.Theme.Accent.green
             case .secondaryAction:
                 return Color.LL.Button.Elevated.Secondary.background
+            case .destructive:
+                return Color.LL.error
             }
         }
 
@@ -333,7 +338,7 @@ final class AlertViewController: UIHostingController<AlertViewController.AlertCo
             EmptyView()
                 .background(Color.clear)
                 .customAlertView(
-                    isPresented: self.isPresented,
+                    isPresented: isPresented,
                     title: title,
                     customContentView: customContentView,
                     buttons: buttons,
