@@ -27,7 +27,9 @@ extension TabBarView {
                         ForEach(0..<pages.count, id: \.self) { index in
                             let pm = pages[index]
                             TabBarItemView(pageModel: pm, selected: $selected) {
-                                resetOffset(index: index, maxWidth: proxy.size.width)
+                                if pm.tag != selected {
+                                    resetOffset(index: index, maxWidth: proxy.size.width)
+                                }
                             }
                         }
                     }
