@@ -23,7 +23,8 @@ class WalletResetConfirmViewModel: ObservableObject {
             title: "reset_warning_alert_title".localized,
             msg: "delete_warning_alert_desc".localized,
             cancelAction: {},
-            confirmTitle: "delete_wallet".localized
+            confirmTitle: "delete_wallet".localized,
+            confirmIsDestructive: true
         ) {
             self.doReset()
         }
