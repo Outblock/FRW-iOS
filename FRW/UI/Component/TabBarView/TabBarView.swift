@@ -40,7 +40,7 @@ struct TabBarView<T: Hashable>: View {
             tabView
             TabBar(
                 pages: pages,
-                indicatorColor: getCurrentPageModel() != nil ? Color.Theme.Accent.green : .black,
+                indicatorColor: getCurrentPageModel() != nil ? Color.Theme.Accent.green : .clear,
                 offsetX: $offsetX,
                 selected: $current
             )
