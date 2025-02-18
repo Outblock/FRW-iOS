@@ -23,11 +23,11 @@ extension WalletHomeView: AppTabBarPageProtocol {
     }
 
     static func iconName() -> String {
-        "CoinHover"
+        "tabler-icon-home"
     }
-
-    static func color() -> Color {
-        .Flow.accessory
+    
+    static func title() -> String {
+        "home".localized
     }
 }
 
@@ -177,18 +177,6 @@ struct WalletHomeView: View {
                 Spacer()
 
                 HStack {
-                    Button {
-                        Router.route(to: RouteMap.Wallet.transactionList(nil))
-                    } label: {
-                        Image("icon_wallet_home_time")
-                            .resizable()
-                            .renderingMode(.template)
-                            .aspectRatio(contentMode: .fit)
-                            .foregroundStyle(Color.Theme.Text.black8)
-                            .frame(width: 24, height: 24)
-                            .padding(8)
-                    }
-
                     Button {
                         vm.scanAction()
                     } label: {
