@@ -14,6 +14,10 @@ struct TabBarItemView<T: Hashable>: View {
     @Binding
     var selected: T
     var action: () -> Void
+    
+    ///So that we update our color when appearance changes.
+    @ObservedObject
+    private var style = ThemeManager.shared
 
     var body: some View {
         Button(action: {
