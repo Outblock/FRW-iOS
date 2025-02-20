@@ -19,6 +19,7 @@ class FCLScripts {
     private static let UserSignatureReplacement = "$USER_SIGNATURE_REPLACEMENT"
     private static let AccountProofReplacement = "$ACCOUNT_PROOF_REPLACEMENT"
     private static let NonceReplacement = "$NONCE_REPLACEMENT"
+    private static let NetworkReplacement = "$NETWORK"
 
     private static let preAuthzResponse = """
         {
@@ -162,6 +163,7 @@ class FCLScripts {
             "uid": "frw#account-proof",
             "endpoint": "chrome-extension://hpclkefagolihohboafpheddmmgdffjm/popup.html",
             "method": "EXT/RPC",
+            "network": "$NETWORK",
             "data": {
               "f_type": "account-proof",
               "f_vsn": "2.0.0",
@@ -237,6 +239,7 @@ extension FCLScripts {
             SignatureReplacement: accountProofSign,
             NonceReplacement: nonce,
             KeyIDReplacement: "\(keyId)",
+            NetworkReplacement: LocalUserDefaults.shared.flowNetwork.rawValue,
         ]
         return FCLScripts.authnResponseAccountProof.replace(from: dict)
     }
