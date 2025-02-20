@@ -744,7 +744,7 @@
 "stake_flow" = "Stake Flow";
 "stake_guide_text_1" = "When You";
 "stake_guide_text_2" = "Stake Your Flow";
-"stake_guide_btn_text" = "Let's Staking";
+"stake_guide_btn_text" = "Let's Stake";
 "stake_on_lilico_only" = "On Flow Wallet Only";
 "stake_guide_desc_1_1" = "Earn up to ";
 "stake_guide_desc_1_2" = "9%";
@@ -761,7 +761,7 @@
 "stake_guide_desc_3_2" = "next epoch";
 "stake_guide_desc_3_3" = ".";
 "stake_guide_desc_4_1" = "Rewards are automatically credited to your\n";
-"stake_guide_desc_4_2" = "deposit";
+"stake_guide_desc_4_2" = "deposit ";
 "stake_guide_desc_4_3" = "every week";
 "stake_guide_desc_4_4" = ".";
 "stake_amount" = "Stake Amount";
@@ -1125,3 +1125,10 @@ Key Store and Private Key.";
 "Call Data" = "Call Data";
 "Covered by Flow Wallet" = "Covered by Flow Wallet";
 "Contact Address" = "Contact Address";
+"Choose Swap Provider" = "Choose Swap Provider";
+"no_backup_warning_title" = "Are you sure you don't want to make a backup?";
+"no_backup_warning_desc" = "If you lose your device or delete your wallet, your funds will be lost forever.";
+"im_sure" = "I'm sure";
+"make_backup" = "Make backup";
+"transaction_history" = "Transaction History";
+"home" = "Home";

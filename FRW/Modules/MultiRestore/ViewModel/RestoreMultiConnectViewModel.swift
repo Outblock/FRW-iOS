@@ -72,7 +72,7 @@ extension RestoreMultiConnectViewModel {
         enable = false
         Task {
             do {
-                let list = try await MultiBackupManager.shared.getCloudDriveItems(from: currentType)
+                let list = try await MultiBackupManager.shared.getAllCloudDriveItem(from: currentType)
                 if list.isEmpty {
                     self.enable = true
                     Router.route(to: RouteMap.RestoreLogin.restoreErrorView(.notfound))

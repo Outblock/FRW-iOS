@@ -11,10 +11,15 @@ import SwiftUI
 
 struct BackupListView: RouteableView {
     @StateObject
-    var viewModel = BackupListViewModel()
+    private var viewModel = BackupListViewModel()
 
     @State
-    var deletePhrase = false
+    private var deletePhrase = false
+    
+    @State
+    private var showBackWarning = false
+    
+    static private var notificationToken: AnyObject?
 
     var title: String {
         "backup".localized
@@ -90,6 +95,40 @@ struct BackupListView: RouteableView {
         })
         .onAppear {
             viewModel.fetchData()
+        }
+        .customAlertView(
+            isPresented: $showBackWarning,
+            title: "no_backup_warning_title".localized,
+            desc: "no_backup_warning_desc".localized,
+            buttons: [
+                AlertView
+                    .ButtonItem(
+                        type: .destructive,
+                        title: "im_sure".localized,
+                        action: {
+                            showBackWarning = false
+                            Router.pop()
+                        }
+                    ),
+                AlertView
+                    .ButtonItem(
+                        type: .primaryAction,
+                        title: "make_backup".localized,
+                        action: {
+                            showBackWarning = false
+                        }
+                    )
+            ],
+            useDefaultCancelButton: false
+        )
+        .onAppear {
+            Self.notificationToken = NotificationCenter.default
+                .addObserver(forName: NSNotification.Name(backTappedNotification), object: nil, queue: nil) { _ in
+                    handleBackButtonAction()
+                }
+        }
+        .onDisappear {
+            NotificationCenter.default.removeObserver(Self.notificationToken as Any)
         }
     }
 
@@ -390,6 +429,26 @@ extension BackupListView {
         }
     }
 }
+
+extension BackupListView {
+    func backButtonAction() {
+        /** MU: This is a workaround for talking to our view model.  The BackupListView object that backButtonAction
+         is called on by the RouteableUIHostingController (its `rootView` property) isn't installed in the view hierarchy when it's called.
+         This notification is observed in BackupListViewModel, so that whatever BackupListView is currently in the
+         hierarchy will be updated. */
+        NotificationCenter.default.post(name: NSNotification.Name(backTappedNotification))
+    }
+    
+    private func handleBackButtonAction() {
+        if viewModel.hasSomeBackup == false {
+            showBackWarning = true
+        } else {
+            Router.pop()
+        }
+    }
+}
+
+private var backTappedNotification: String { "backTappedNotification" }
 
 #Preview {
     BackupListView()
