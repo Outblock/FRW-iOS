@@ -198,6 +198,13 @@ extension BackupListViewModel {
     var hasPhraseBackup: Bool {
         !phraseList.isEmpty
     }
+    
+    var hasSomeBackup: Bool {
+        //TODO: MU: this one isn't working properly, it reports device backups even if there is none.
+//        hasDeviceBackup ||
+        hasMultiBackup ||
+        hasPhraseBackup
+    }
 }
 
 extension BackupListViewModel {

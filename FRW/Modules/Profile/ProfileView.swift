@@ -17,15 +17,11 @@ extension ProfileView: AppTabBarPageProtocol {
     }
 
     static func iconName() -> String {
-        "Avatar"
+        "tabler-icon-settings"
     }
-
-    static func color() -> Color {
-        // When convert from color to UIColor, it will ignore dark mode color :/
-        // Hence, we manually set the color here
-//        return .LL.Secondary.navy3
-        //        UIScreen.main.traitCollection.userInterfaceStyle == .dark ? Color(hex: "#0B59BF") :
-        Color(hex: "#579AF2")
+    
+    static func title() -> String {
+        "Settings::message".localized
     }
 }
 
@@ -112,30 +108,30 @@ extension ProfileView {
 
         var body: some View {
             Section {
-                HStack {
-                    VStack {
-                        Image("icon-cool-cat")
-                    }.frame(maxHeight: .infinity, alignment: .top)
-
-                    VStack(alignment: .leading) {
-                        Text(title).font(.inter(size: 16, weight: .bold))
-                        Text(desc).font(.inter(size: 16))
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                    Button {
-                        Router.route(to: RouteMap.Register.root(nil))
-                    } label: {
+                Button {
+                    Router.route(to: RouteMap.Register.root(nil))
+                } label: {
+                    HStack {
+                        VStack {
+                            Image("icon-cool-cat")
+                        }.frame(maxHeight: .infinity, alignment: .top)
+                        
+                        VStack(alignment: .leading) {
+                            Text(title).font(.inter(size: 16, weight: .bold))
+                            Text(desc).font(.inter(size: 16))
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        
                         Image("icon-orange-right-arrow")
                     }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 16)
+                    .roundedBg(
+                        cornerRadius: 12,
+                        strokeColor: .LL.Primary.salmonPrimary,
+                        strokeLineWidth: 1
+                    )
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 16)
-                .roundedBg(
-                    cornerRadius: 12,
-                    strokeColor: .LL.Primary.salmonPrimary,
-                    strokeLineWidth: 1
-                )
             }
             .listRowInsets(.zero)
             .listRowBackground(Color.clear)

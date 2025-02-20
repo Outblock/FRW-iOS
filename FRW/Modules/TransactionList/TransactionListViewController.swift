@@ -32,6 +32,7 @@ class TransactionListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        reloadCounts()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -92,15 +93,6 @@ class TransactionListViewController: UIViewController {
         navigationItem.hidesBackButton = true
         navigationItem.title = "wallet_transactions".localized
 
-        let backItem = UIBarButtonItem(
-            image: UIImage(systemName: "arrow.backward"),
-            style: .plain,
-            target: self,
-            action: #selector(onBackButtonAction)
-        )
-        backItem.tintColor = UIColor(named: "button.color")
-        navigationItem.leftBarButtonItem = backItem
-
         view.addSubview(segmentView)
         segmentView.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
@@ -115,11 +107,6 @@ class TransactionListViewController: UIViewController {
         }
 
         segmentView.listContainer = listContainer
-    }
-
-    @objc
-    private func onBackButtonAction() {
-        Router.pop()
     }
 }
 
@@ -148,3 +135,19 @@ extension TransactionListViewController: JXSegmentedListContainerViewDataSource 
 // MARK: JXSegmentedViewDelegate
 
 extension TransactionListViewController: JXSegmentedViewDelegate {}
+
+// MARK: AppTabBarPageProtocol
+
+extension TransactionListViewController: AppTabBarPageProtocol {
+    static func tabTag() -> AppTabType {
+        .txhistory
+    }
+
+    static func iconName() -> String {
+        "tabler-icon-clock"
+    }
+    
+    static func title() -> String {
+        "Activity::message".localized
+    }
+}

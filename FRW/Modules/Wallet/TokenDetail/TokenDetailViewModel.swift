@@ -138,27 +138,45 @@ class TokenDetailViewModel: ObservableObject {
 
     // MARK: Internal
 
-    @Published var storageUsedRatio: Double = 0
-    @Published var storageUsedDesc: String = ""
-    @Published var storageFlow: Double = 0
-    @Published var totalBalance: Double = 0
-    @Published var token: TokenModel
-    @Published var market: QuoteMarket = LocalUserDefaults.shared.market
-    @Published var selectedRangeType: TokenDetailView.ChartRangeType = .d1
-    @Published var chartData: LineChartData?
-    @Published var balance: Double = 0
-    @Published var balanceAsUSD: Double = 0
-    @Published var changePercent: Double = 0
-    @Published var rate: Double = 0
-    @Published var recentTransfers: [FlowScanTransfer] = []
+    @Published
+    var storageUsedRatio: Double = 0
+    @Published
+    var storageUsedDesc: String = ""
+    @Published
+    var storageFlow: Double = 0
+    @Published
+    var totalBalance: Double = 0
+    @Published
+    var token: TokenModel
+    @Published
+    var market: QuoteMarket = LocalUserDefaults.shared.market
+    @Published
+    var selectedRangeType: TokenDetailView.ChartRangeType = .d1
+    @Published
+    var chartData: LineChartData?
+    @Published
+    var balance: Double = 0
+    @Published
+    var balanceAsUSD: Double = 0
+    @Published
+    var changePercent: Double = 0
+    @Published
+    var rate: Double = 0
+    @Published
+    var recentTransfers: [FlowScanTransfer] = []
 
-    @Published var showSwapButton: Bool = true
-    @Published var showBuyButton: Bool = true
-    @Published var showDeleteToken: Bool = false
+    @Published
+    var showSwapButton: Bool = true
+    @Published
+    var showBuyButton: Bool = true
+    @Published
+    var showDeleteToken: Bool = false
 
-    @Published var showSheet: Bool = false
+    @Published
+    var showSheet: Bool = false
     var buttonAction: TokenDetailViewModel.Action = .none
-    var showStorageView: Bool { return self.token.isFlowCoin }
+
+    var showStorageView: Bool { token.isFlowCoin }
 
     var isTokenDetailsButtonEnabled: Bool { token.website.isNotNullNorEmpty }
 
@@ -265,7 +283,10 @@ extension TokenDetailViewModel {
         if let txid = model.txid {
             let network = LocalUserDefaults.shared.flowNetwork
             let accountType = AccountType.current
-            let url = network.getTransactionHistoryUrl(accountType: accountType, transactionId: txid)
+            let url = network.getTransactionHistoryUrl(
+                accountType: accountType,
+                transactionId: txid
+            )
 
             url.map { UIApplication.shared.open($0) }
         }
@@ -282,12 +303,7 @@ extension TokenDetailViewModel {
     }
 
     func onSwapToken() {
-        switch self.token.type {
-        case .cadence:
-            Router.route(to: RouteMap.Wallet.swapCadenceToken(self.token))
-        case .evm:
-            Router.route(to: RouteMap.Wallet.swapEvmToken(self.token))
-        }
+        Router.route(to: RouteMap.Wallet.swapProvider(token))
     }
 
     func showSheetAction() {
@@ -317,7 +333,7 @@ extension TokenDetailViewModel {
                 group.addTask {
                     try? await WalletManager.shared.fetchBalance()
                 }
-                
+
                 group.addTask {
                     let accountInfo = try? await FlowNetwork.checkAccountInfo()
                     if let accountInfo {
@@ -329,7 +345,7 @@ extension TokenDetailViewModel {
                         }
                     }
                 }
-                
+
                 await group.waitForAll()
             }
         }
@@ -474,7 +490,7 @@ extension TokenDetailViewModel {
             if ChildAccountManager.shared.selectedChildAccount != nil {
                 showBuyButton = false
             } else {
-                showBuyButton = true
+                showBuyButton = token.isFlowCoin ? true : false
             }
 
         } else {

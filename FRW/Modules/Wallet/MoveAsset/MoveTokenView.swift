@@ -24,7 +24,6 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
     // MARK: Internal
 
     var changeHeight: (() -> Void)?
-    @StateObject private var viewModel: MoveTokenViewModel
 
     var title: String {
         ""
@@ -42,7 +41,7 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                     .foregroundStyle(Color.LL.Neutrals.text)
                     .padding(.top, 6)
                 Spacer()
-                
+
                 Button {
                     viewModel.closeAction()
                 } label: {
@@ -52,35 +51,37 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                 }
             }
             .padding(.top, 8)
-            
+
             Color.clear
                 .frame(height: 20)
-            
+
             VStack(spacing: 8) {
                 ContactRelationView(
                     fromContact: viewModel.fromContact,
                     toContact: viewModel.toContact
                 )
-                
+
                 MoveTokenView
                     .AccountView(
                         isFree: viewModel.fromContact.walletType == viewModel
                             .toContact.walletType
-                    ) { _ in  }
+                    ) { _ in }
             }
-            
+
             VStack(spacing: 0) {
                 InsufficientStorageToastView<MoveTokenViewModel>()
                     .environmentObject(self.viewModel)
-                    .padding(.horizontal, 22)
-                
-                VPrimaryButton(model: ButtonStyle.primary,
-                               state: viewModel.buttonState,
-                               action: {
-                    log.debug("[Move] click button")
-                    viewModel.onNext()
-                    UIApplication.shared.endEditing()
-                }, title: "move".localized)
+
+                VPrimaryButton(
+                    model: ButtonStyle.primary,
+                    state: viewModel.buttonState,
+                    action: {
+                        log.debug("[Move] click button")
+                        viewModel.onNext()
+                        UIApplication.shared.endEditing()
+                    },
+                    title: "move".localized
+                )
             }
             .padding(.top, 8)
         }
@@ -93,6 +94,11 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
     func customViewDidDismiss() {
         MoveAssetsAction.shared.endBrowser()
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var viewModel: MoveTokenViewModel
 }
 
 // MARK: - MoveUserView

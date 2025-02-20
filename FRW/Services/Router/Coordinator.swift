@@ -17,6 +17,7 @@ enum AppTabType {
     case wallet
     case nft
     case explore
+    case txhistory
     case profile
 }
 
@@ -25,7 +26,7 @@ enum AppTabType {
 protocol AppTabBarPageProtocol {
     static func tabTag() -> AppTabType
     static func iconName() -> String
-    static func color() -> Color
+    static func title() -> String
 }
 
 // MARK: - Coordinator

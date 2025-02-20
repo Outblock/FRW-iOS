@@ -31,31 +31,30 @@ extension TabBarView {
                             }
                         }
                     }
-                    .frame(height: 46)
                     .background(.LL.deepBg)
 
                     indicator(proxy.size.width).animation(.spring(), value: offsetX)
                 }
             }
-            .frame(height: 46)
+            .padding(.horizontal, 16)
         }
 
         // MARK: Private
 
-        private let indicatorWidth: CGFloat = 20
+        private let indicatorWidth: CGFloat = 65
 
         @ViewBuilder
         private func indicator(_ parentMaxWidth: CGFloat) -> some View {
             let pageCount = CGFloat(pages.count)
-            let scrollMaxOffsetX = parentMaxWidth * (pageCount - 1)
+            let scrollMaxOffsetX = (parentMaxWidth + 32) * (pageCount - 1)
             let scrollPercent = max(0, min(1, offsetX / scrollMaxOffsetX))
             let perBarItemWidth = parentMaxWidth / pageCount
             let startX = perBarItemWidth / 2.0 - indicatorWidth / 2.0
             let endX = perBarItemWidth * (pageCount - 1) + startX
             let translateX = (endX - startX) * scrollPercent + startX
 
-            RoundedRectangle(cornerRadius: 3, style: .continuous)
-                .frame(width: indicatorWidth, height: 4)
+            Rectangle()
+                .frame(width: indicatorWidth, height: 2)
                 .foregroundColor(indicatorColor)
                 .modifier(TranslateEffect(offsetX: translateX))
                 .animation(.tabSelect, value: offsetX)
