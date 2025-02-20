@@ -142,6 +142,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
             if result {
                 guard let addrStr = WalletManager.shared.getPrimaryWalletAddress() else {
                     HUD.error(title: "invalid_address".localized)
+                    cancel()
                     return
                 }
 
@@ -150,6 +151,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                 let joinData = Flow.DomainTag.user.normalize + hashedData
                 guard let sig = signWithMessage(data: joinData) else {
                     HUD.error(title: "sign failed")
+                    cancel()
                     return
                 }
                 let keyIndex = BigUInt(WalletManager.shared.keyIndex)
@@ -160,6 +162,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                     signatures: [sig]
                 )
                 guard let encoded = RLP.encode(proof.rlpList) else {
+                    cancel()
                     return
                 }
                 confirm(encoded.hexString.addHexPrefix())
@@ -180,7 +183,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         let url = request.dappURL?.absoluteString ?? ""
         let logo = request.logoURL?.absoluteString ?? ""
 
-        let originCadence = CadenceManager.shared.current.evm?.callContract?.toFunc() ?? ""
+        let originCadence = CadenceManager.shared.current.evm?.callContractV2?.toFunc() ?? ""
 
         do {
             let result = try request.params.get([EVMTransactionReceive].self)
@@ -191,7 +194,7 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
 
             let args: [Flow.Cadence.FValue] = [
                 .string(toAddr),
-                .ufix64(Decimal(string: receiveModel.amount) ?? .nan),
+                .uint256(receiveModel.amount),
                 receiveModel.dataValue?.cadenceValue ?? .array([]),
                 .uint64(receiveModel.gasValue),
             ]
@@ -217,7 +220,10 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
                     let holder = TransactionManager.TransactionHolder(id: txid, type: .transferCoin)
                     TransactionManager.shared.newTransaction(holder: holder)
 
-                    let calculateId = try await WalletConnectEVMHandler.calculateTX(receiveModel, txId: txid)
+                    let calculateId = try await WalletConnectEVMHandler.calculateTX(
+                        receiveModel,
+                        txId: txid
+                    )
 
                     log.info("[EVM] calculate TX id: \(calculateId)")
                     await MainActor.run {
@@ -391,8 +397,12 @@ extension WalletConnectEVMHandler {
         return result ?? ""
     }
 
-    private static func calculateTXByCadence(_ model: EVMTransactionReceive, from address: String) async -> String? {
-        guard let toAddress = model.toAddress, let toAddr = EthereumAddress(toAddress.addHexPrefix()) else {
+    private static func calculateTXByCadence(
+        _ model: EVMTransactionReceive,
+        from address: String
+    ) async -> String? {
+        guard let toAddress = model.toAddress,
+              let toAddr = EthereumAddress(toAddress.addHexPrefix()) else {
             log.info("[Cadence] empty address")
             return nil
         }
@@ -407,17 +417,18 @@ extension WalletConnectEVMHandler {
         let directCallTxType = 255
         let contractCallSubType = 5
 
-        let tx = CodableTransaction(type: .legacy,
-                                    to: toAddr,
-                                    nonce: BigUInt(nonce),
-                                    chainID: BigUInt(chainId),
-                                    value: model.bigAmount,
-                                    data: model.dataValue ?? Data(),
-                                    gasLimit: BigUInt(evmGasLimit),
-                                    gasPrice: BigUInt(evmGasPrice),
-                                    v: BigUInt(directCallTxType),
-                                    r: BigUInt(address.stripHexPrefix(), radix: 16)!,
-                                    s: BigUInt(contractCallSubType)
+        let tx = CodableTransaction(
+            type: .legacy,
+            to: toAddr,
+            nonce: BigUInt(nonce),
+            chainID: BigUInt(chainId),
+            value: model.bigAmount,
+            data: model.dataValue ?? Data(),
+            gasLimit: BigUInt(evmGasLimit),
+            gasPrice: BigUInt(evmGasPrice),
+            v: BigUInt(directCallTxType),
+            r: BigUInt(address.stripHexPrefix(), radix: 16)!,
+            s: BigUInt(contractCallSubType)
         )
         return tx.hash?.hexValue
     }
@@ -433,5 +444,4 @@ extension WalletConnectEVMHandler {
         let model = try? await FlowNetwork.fetchEVMTransactionResult(txid: txid.hex)
         return model?.hashString?.addHexPrefix()
     }
-
 }

@@ -39,8 +39,9 @@ struct EVMTokenResponse: Codable {
         address
     }
 
-    func toTokenModel() -> TokenModel {
+    func toTokenModel(type: TokenModel.TokenType) -> TokenModel {
         let model = TokenModel(
+            type: type,
             name: name,
             address: FlowNetworkModel(
                 mainnet: address,

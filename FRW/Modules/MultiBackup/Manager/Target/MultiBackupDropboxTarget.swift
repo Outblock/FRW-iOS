@@ -5,41 +5,28 @@
 //  Created by cat on 12/17/24.
 //
 
-import Foundation
-import UIKit
-import SwiftyDropbox
 import Combine
+import Foundation
+import SwiftyDropbox
+import UIKit
 
 // MARK: - MultiBackupDropboxTarget
 
 final class MultiBackupDropboxTarget: MultiBackupTarget {
-    var uploadedItem: MultiBackupManager.StoreItem?
-
-    var registeredDeviceInfo: SyncInfo.DeviceInfo?
-
-    private var observer: NSObjectProtocol? = nil
-    private let path: String
-    private var isWaiting: Bool = false
-    private var cancellableSet = Set<AnyCancellable>()
-
     // MARK: Lifecycle
 
     init() {
-        if DropboxOAuthManager.sharedOAuthManager == nil {
-            let appKey = ServiceConfig.shared.dropboxAppKey
-            DropboxClientsManager.setupWithTeamAppKey(appKey)
-        }
-        path = "/" + MultiBackupManager.backupFileName
+        self.path = "/" + MultiBackupManager.backupFileName
         DropboxClientsManager.unlinkClients()
-        NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
-            .receive(on: DispatchQueue.main)
-            .sink { _ in
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    if self.isWaiting {
-                        NotificationCenter.default.post(name: .dropboxCallback, object: nil)
-                    }
-                }
-            }.store(in: &cancellableSet)
+//        NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
+//            .receive(on: DispatchQueue.main)
+//            .sink { _ in
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+//                    if self.isWaiting {
+//                        NotificationCenter.default.post(name: .dropboxCallback, object: nil)
+//                    }
+//                }
+//            }.store(in: &cancellableSet)
     }
 
     deinit {
@@ -50,13 +37,21 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
 
     // MARK: Internal
 
+    var uploadedItem: MultiBackupManager.StoreItem?
 
+    var registeredDeviceInfo: SyncInfo.DeviceInfo?
 
     var isPrepared: Bool {
         DropboxClientsManager.authorizedClient != nil
     }
 
+    func logout() async throws {
+        DropboxClientsManager.unlinkClients()
+    }
+
     func loginCloud() async throws {
+        try await logout()
+        log.info("[Multi] dropbox logout")
         try await startLogin()
         log.info("[Multi] dropbox is \(isPrepared)")
     }
@@ -80,13 +75,22 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
     }
 
     func getCurrentDriveItems() async throws -> [MultiBackupManager.StoreItem] {
+        return try await getItems(from: path)
+    }
+    
+    func getReadDriveItems() async throws -> [MultiBackupManager.StoreItem] {
+        let path = "/appDataFolder/" + MultiBackupManager.backupFileName
+        return try await getItems(from: path)
+    }
+    
+    private func getItems(from filePath: String) async throws -> [MultiBackupManager.StoreItem] {
         try await prepare()
         guard let client = DropboxClientsManager.authorizedClient else {
             log.error("[Multi] dropbox unauthorized")
             throw BackupError.unauthorized
         }
 
-        guard let data = try? await readFile(client: client, path: path) else {
+        guard let data = try? await readFile(client: client, path: filePath) else {
             return []
         }
 
@@ -114,6 +118,7 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
 
     func startLogin() async throws {
         guard !isPrepared else {
+            log.info("[Multi] Dropbox not prepared")
             return
         }
         DispatchQueue.main.async {
@@ -133,7 +138,9 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
             )
         }
         isWaiting = true
+        log.info("[Multi] Dropbox wait for login")
         let notification = await waitForNotification(named: .dropboxCallback)
+        log.info("[Multi] Dropbox login finish")
         isWaiting = false
         if let authResult = notification.object as? DropboxOAuthResult {
             switch authResult {
@@ -147,11 +154,14 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
                 throw BackupError.unauthorized
             }
         }
-        if let observer {
-            NotificationCenter.default.removeObserver(observer)
-            self.observer = nil
-        }
     }
+
+    // MARK: Private
+
+    private var observer: NSObjectProtocol? = nil
+    private let path: String
+    private var isWaiting: Bool = false
+    private var cancellableSet = Set<AnyCancellable>()
 
     private func prepare() async throws {
         guard !isPrepared else {
@@ -167,25 +177,33 @@ final class MultiBackupDropboxTarget: MultiBackupTarget {
         }
         return data
     }
+
+    private func removeObserver() {
+        if let observer = observer {
+            NotificationCenter.default.removeObserver(observer)
+            self.observer = nil
+        }
+    }
 }
 
 extension MultiBackupDropboxTarget {
     private func uploadFile(client: DropboxClient, path: String, data: Data) async throws -> Files
         .FileMetadata {
         try await withCheckedThrowingContinuation { continuation in
-            client.files.upload(path: path, mode: .overwrite, input: data).response { response, error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                    return
-                }
+            client.files.upload(path: path, mode: .overwrite, input: data)
+                .response { response, error in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                        return
+                    }
 
-                if let metadata = response {
-                    log.info("[Multi] dropbox Encrypted key uploaded successfully: \(metadata)")
-                    continuation.resume(returning: metadata)
-                } else {
-                    continuation.resume(throwing: BackupError.CloudFileData)
+                    if let metadata = response {
+                        log.info("[Multi] dropbox Encrypted key uploaded successfully")
+                        continuation.resume(returning: metadata)
+                    } else {
+                        continuation.resume(throwing: BackupError.CloudFileData)
+                    }
                 }
-            }
         }
     }
 
@@ -220,8 +238,8 @@ extension MultiBackupDropboxTarget {
                 queue: nil
             ) { notification in
                 continuation.resume(returning: notification)
+                self?.removeObserver()
             }
         }
     }
 }
-

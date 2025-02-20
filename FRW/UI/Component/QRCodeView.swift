@@ -14,6 +14,9 @@ struct QRCodeView: View {
 
     var eyeColor: UIColor?
 
+    //MU: This is a workaround for the QR code being blank sometimes.  Forces a redraw on appearing.  I tried encapsulating it in a ViewModifier, but it didn't work.
+    @State private var forceRefresh = false
+
     var body: some View {
         ZStack {
             QRCodeDocumentUIView(document: doc(
@@ -25,6 +28,13 @@ struct QRCodeView: View {
                 )
             ))
             .padding(12)
+            .id(forceRefresh)
+            .onAppear {
+                Task {
+                    try await Task.sleep(for: .milliseconds(1))
+                    forceRefresh.toggle()
+                }
+            }
         }
         .background(Color.white)
         .cornerRadius(32)

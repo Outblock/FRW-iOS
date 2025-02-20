@@ -111,7 +111,6 @@ extension MultiBackupManager {
     }
 
     func registerKeyToChain(on type: MultiBackupType) async throws -> Bool {
-        mnemonic = nil
         guard let username = UserManager.shared.userInfo?.username, !username.isEmpty else {
             throw BackupError.missingUserName
         }
@@ -193,7 +192,6 @@ extension MultiBackupManager {
         switch type {
         case .google:
             backupType = .google
-//            try await gdTarget.loginCloud()
             try await gdTarget.upload(password: password)
         case .passkey:
             backupType = .passkey
@@ -215,7 +213,8 @@ extension MultiBackupManager {
             return
         }
         do {
-            let response: Network.EmptyResponse = try await Network.requestWithRawModel(FRWAPI.User.syncDevice(model))
+            let response: Network.EmptyResponse = try await Network
+                .requestWithRawModel(FRWAPI.User.syncDevice(model))
         } catch {
             log.error("[sync account] error \(error.localizedDescription)")
             throw error
@@ -267,37 +266,47 @@ extension MultiBackupManager {
 }
 
 extension MultiBackupManager {
+    
+    private func updateItemType(from type: MultiBackupType, list: [MultiBackupManager.StoreItem]) -> [MultiBackupManager.StoreItem] {
+        let result = list.map { item in
+            var model = item
+            model.backupType = type
+            return model
+        }
+        return result
+    }
+    
+    func getAllCloudDriveItem(from type: MultiBackupType) async throws -> [MultiBackupManager.StoreItem] {
+        var list = try await getCloudDriveItems(from: type)
+        if type == .dropbox {
+            if let readList = try? await dropboxTarget.getReadDriveItems() {
+                let updatedReadList = updateItemType(from: type, list: readList)
+                list.append(contentsOf: updatedReadList)
+            }
+        }
+        return list
+    }
+    
     func getCloudDriveItems(from type: MultiBackupType) async throws
         -> [MultiBackupManager.StoreItem] {
         switch type {
         case .google:
             try await login(from: type)
             var list = try await gdTarget.getCurrentDriveItems()
-            list = list.map { item in
-                var model = item
-                model.backupType = type
-                return model
-            }
+            list = updateItemType(from: type, list: list)
             return list
         case .passkey:
             return []
         case .icloud:
             var list = try await iCloudTarget.getCurrentDriveItems()
-            list = list.map { item in
-                var model = item
-                model.backupType = type
-                return model
-            }
+            list = updateItemType(from: type, list: list)
             return list
         case .phrase:
             return []
         case .dropbox:
+            try await login(from: type)
             var list = try await dropboxTarget.getCurrentDriveItems()
-            list = list.map({ item in
-                var model = item
-                model.backupType = type
-                return model
-            })
+            list = updateItemType(from: type, list: list)
             return list
         }
     }
@@ -310,10 +319,10 @@ extension MultiBackupManager {
             log.info("not finished")
         case .icloud:
             try await iCloudTarget.loginCloud()
-            log.info("not finished")
         case .phrase:
             log.info("not finished")
         case .dropbox:
+            log.info("[Multi] dropbox ")
             try await dropboxTarget.loginCloud()
         }
     }
@@ -331,6 +340,7 @@ extension MultiBackupManager {
         case .phrase:
             log.info("wait")
         case .dropbox:
+            try await login(from: type)
             try await dropboxTarget.removeItem(password: password)
         }
     }
@@ -578,7 +588,13 @@ extension MultiBackupManager {
                     log.error("[Multi-backup] sync failed")
                 } else {
                     try secureKey.store(id: firstItem.userId)
-                    let storeUser = UserManager.StoreUser(publicKey: key.publicKey.description, address: firstItem.address, userId: firstItem.userId, keyType: .secureEnclave, account: nil)
+                    let storeUser = UserManager.StoreUser(
+                        publicKey: key.publicKey.description,
+                        address: firstItem.address,
+                        userId: firstItem.userId,
+                        keyType: .secureEnclave,
+                        account: nil
+                    )
                     LocalUserDefaults.shared.addUser(user: storeUser)
                     try await UserManager.shared.restoreLogin(with: firstItem.userId)
                     Router.popToRoot()

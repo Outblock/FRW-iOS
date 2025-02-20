@@ -51,12 +51,14 @@
 			</array>
 		</dict>
 		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>db-igsit8jtlhq6dfm</string>
-			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLName</key>
 			<string></string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>db-5ps7ite0xk5z9no</string>
+			</array>
 		</dict>
 	</array>
 	<key>CrowdinDistributionHash</key>
@@ -67,6 +69,11 @@
 	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>dbapi-8-emm</string>
+		<string>dbapi-2</string>
+	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -106,11 +113,6 @@
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 	</dict>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>dbapi-8-emm</string>
-		<string>dbapi-2</string>
-	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>processing</string>
