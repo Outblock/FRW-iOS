@@ -288,7 +288,7 @@ extension Color {
     }
     
     enum TabIcon {
-        static let unselectedTint = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? Color.Theme.Foreground.white4Text : Color.Theme.Foreground.black3
+        static var unselectedTint: Color { ThemeManager.shared.getUIKitStyle() == .dark ? Color.Theme.Foreground.white4Text : Color.Theme.Foreground.black3 }
     }
 }
 
