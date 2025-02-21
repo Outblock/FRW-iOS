@@ -1,5 +1,5 @@
 {
-  "originHash" : "b84943d89d09d4a892baa8fe90892b1ed503774f3875e038bc13a88e90aeddca",
+  "originHash" : "5877de890ac8e65092b64ecacc8276e23ea117e7105d3537690beba77193af8d",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -652,7 +652,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Outblock/trust-web3-provider",
       "state" : {
-        "revision" : "828bce9b79deb0b7c02ebdce3e30f63a1f142fd3"
+        "branch" : "old",
+        "revision" : "b3c37b53ebb677e3622ce3c1c2023ec9ed8d16c8"
       }
     },
     {

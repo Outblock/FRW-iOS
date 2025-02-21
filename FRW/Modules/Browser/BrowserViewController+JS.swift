@@ -132,6 +132,8 @@ extension BrowserViewController {
 
         ucc.addUserScript(extensionInjectUserScript)
         config.userContentController = ucc
+        config.mediaTypesRequiringUserActionForPlayback = .all
+        config.allowsInlineMediaPlayback = true
 
         return config
     }
