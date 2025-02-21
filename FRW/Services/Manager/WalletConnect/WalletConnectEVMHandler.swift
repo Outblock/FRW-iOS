@@ -85,39 +85,58 @@ struct WalletConnectEVMHandler: WalletConnectChildHandlerProtocol {
         }
     }
 
-    func approveSessionNamespaces(
-        sessionProposal: Session
-            .Proposal
-    ) throws -> [String: SessionNamespace] {
+    func approveProposalNamespace(
+        required: ProposalNamespace?,
+        optional: ProposalNamespace?
+    ) throws -> SessionNamespace? {
+        // Ensure we have an account available.
         guard let account = EVMAccountManager.shared.accounts.first?.address.addHexPrefix() else {
-            return [:]
+            return nil
         }
-        // Following properties are used to support all the required and optional namespaces for the testing purposes
-        let supportedMethods = WalletConnectEVMMethod.allCases.map(\.rawValue)
-        let supportedEvents = Set(
-            sessionProposal.requiredNamespaces
-                .flatMap { $0.value.events } +
-                (sessionProposal.optionalNamespaces?.flatMap { $0.value.events } ?? [])
+        
+        // Get the supported EVM methods from your enum.
+        let supportedMethods = WalletConnectEVMMethod.allCases.map { $0.rawValue }
+        // Optionally, if you want to filter methods based on the request, you can do:
+        let requestedMethods = (required?.methods ?? Set()).union(optional?.methods ?? Set())
+        // Approve only the intersection (i.e. methods we both support and are requested).
+        let approvedMethods = requestedMethods.intersection(Set(supportedMethods))
+        
+        // For events, we use the union of requested events.
+        let approvedEvents = (required?.events ?? Set()).union(optional?.events ?? Set())
+        
+        // --- Filtering Supported Chains ---
+        // Assume that ProposalNamespace now includes a `chains` property (Set<String>)
+        // where each chain is identified in the format "eip155:<chainID>".
+        let requestedChains = Set((required?.chains ?? []) + (optional?.chains ?? []))
+        
+        // Determine all supported chains based on your supportNetwork collection.
+        let allSupportedChains = supportNetwork
+            .compactMap { $0.evmChainIDString }  // e.g. "1", "137", etc.
+            .compactMap { chainID in
+                // Create a Blockchain object using the namespace tag and chain reference.
+                Blockchain(namespace: nameTag, reference: chainID)
+            }
+        
+        // Filter the supported chains to only those that match a chain in the proposal.
+        // We assume each Blockchain instance can provide an identifier in the form "eip155:<chainID>".
+        let filteredChains = allSupportedChains.filter { blockchain in
+            return requestedChains.contains(blockchain)
+        }
+        
+        // Map each approved blockchain to an account (using the same account address for all).
+        let supportedAccounts = filteredChains.compactMap { chain in
+            WalletConnectSign.Account(blockchain: chain, address: account)
+        }
+        
+        // Build the approved session namespace with the filtered accounts, methods, and events.
+        let sessionNamespace = SessionNamespace(
+            chains: filteredChains,
+            accounts: supportedAccounts,
+            methods: approvedMethods,
+            events: approvedEvents
         )
-
-        let supportedChains = supportNetwork.compactMap(\.evmChainIDString).compactMap { Blockchain(
-            namespace: nameTag,
-            reference: $0
-        ) }
-
-        let supportedAccounts = Array(supportedChains).map { WalletConnectSign.Account(
-            blockchain: $0,
-            address: account
-        )! }
-
-        let sessionNamespaces: [String: SessionNamespace] = try AutoNamespaces.build(
-            sessionProposal: sessionProposal,
-            chains: Array(supportedChains),
-            methods: supportedMethods,
-            events: Array(supportedEvents),
-            accounts: supportedAccounts
-        )
-        return sessionNamespaces
+        
+        return sessionNamespace
     }
 
     func handlePersonalSignRequest(
