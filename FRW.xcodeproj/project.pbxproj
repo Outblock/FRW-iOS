@@ -908,6 +908,8 @@
 		15F2444D28CB370D00C1090E /* LowerCapsuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F2444028CB370D00C1090E /* LowerCapsuleView.swift */; };
 		15F517FB28C6574C00504FDC /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = 15F517FA28C6574C00504FDC /* Atlantis */; };
 		15F517FD28C6577000504FDC /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = 15F517FC28C6577000504FDC /* Atlantis */; };
+		15F6F4BB2D683FD700D62D7F /* TrustWeb3Provider in Frameworks */ = {isa = PBXBuildFile; productRef = 15F6F4BA2D683FD700D62D7F /* TrustWeb3Provider */; };
+		15F6F4BD2D683FF100D62D7F /* TrustWeb3Provider in Frameworks */ = {isa = PBXBuildFile; productRef = 15F6F4BC2D683FF100D62D7F /* TrustWeb3Provider */; };
 		4E03BE162C731E2300EF04DC /* KeyStoreLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E03BE152C731E2300EF04DC /* KeyStoreLoginView.swift */; };
 		4E03BE172C731E2300EF04DC /* KeyStoreLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E03BE152C731E2300EF04DC /* KeyStoreLoginView.swift */; };
 		4E03BE192C731F3500EF04DC /* ViewsInLoginModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E03BE182C731F3500EF04DC /* ViewsInLoginModule.swift */; };
@@ -1187,8 +1189,6 @@
 		4E9D8F1A2BF7479E00E11CC7 /* MoveNFTsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D8F182BF7479E00E11CC7 /* MoveNFTsViewModel.swift */; };
 		4E9D8F1E2BF87A0400E11CC7 /* TitleWithClosedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D8F1D2BF87A0400E11CC7 /* TitleWithClosedView.swift */; };
 		4E9D8F1F2BF87A0400E11CC7 /* TitleWithClosedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D8F1D2BF87A0400E11CC7 /* TitleWithClosedView.swift */; };
-		4E9D98DD2B9DEAE300A70879 /* TrustWeb3Provider in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9D98DC2B9DEAE300A70879 /* TrustWeb3Provider */; };
-		4E9D98DF2B9DEAEF00A70879 /* TrustWeb3Provider in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9D98DE2B9DEAEF00A70879 /* TrustWeb3Provider */; };
 		4E9D98E22B9DEC0800A70879 /* TrustProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D98E12B9DEC0800A70879 /* TrustProvider.swift */; };
 		4E9D98E32B9DEC0800A70879 /* TrustProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D98E12B9DEC0800A70879 /* TrustProvider.swift */; };
 		4E9D98E52B9DF48B00A70879 /* TrustJSMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9D98E42B9DF48B00A70879 /* TrustJSMessageHandler.swift */; };
@@ -2971,7 +2971,6 @@
 				4E131A9A2CA17389002B258D /* PocketSVG in Frameworks */,
 				6ABFE5A129A711ED00AA1688 /* Gzip in Frameworks */,
 				15832B642867641D0066046D /* GTMSessionFetcherCore in Frameworks */,
-				4E9D98DF2B9DEAEF00A70879 /* TrustWeb3Provider in Frameworks */,
 				6A7C080F286EE95E00020987 /* SwiftUICharts in Frameworks */,
 				1588332428943F7D00142B35 /* NativeUIKit in Frameworks */,
 				15D5775B277C23BF00045E79 /* Moya in Frameworks */,
@@ -2989,6 +2988,7 @@
 				155E373028D3ADC100834C30 /* Highlightr in Frameworks */,
 				4EC56B2D281D3ED000246878 /* FirebaseRemoteConfig in Frameworks */,
 				15D57759277C23BF00045E79 /* CombineMoya in Frameworks */,
+				15F6F4BD2D683FF100D62D7F /* TrustWeb3Provider in Frameworks */,
 				154B891F276A1EEB00780E93 /* FirebaseDynamicLinks in Frameworks */,
 				4E2FA6B02CF4177C00D46EA7 /* WalletConnectNetworking in Frameworks */,
 				157046752793241A00D1747B /* Kingfisher in Frameworks */,
@@ -3061,9 +3061,9 @@
 				15C58C4B2868A4EE00BD4FC6 /* GoogleAPIClientForRESTCore in Frameworks */,
 				155E372E28D3AD4700834C30 /* Highlightr in Frameworks */,
 				4E5D4FAC2AEF9A5A00DC419B /* DeviceGuru in Frameworks */,
+				15F6F4BB2D683FD700D62D7F /* TrustWeb3Provider in Frameworks */,
 				15C58C4D2868A4EE00BD4FC6 /* IrregularGradient in Frameworks */,
 				15C58C4F2868A4EE00BD4FC6 /* FirebaseCrashlytics in Frameworks */,
-				4E9D98DD2B9DEAE300A70879 /* TrustWeb3Provider in Frameworks */,
 				4E2FA6942CF40FE700D46EA7 /* WalletConnectNetworking in Frameworks */,
 				15C58C502868A4EE00BD4FC6 /* FirebaseRemoteConfig in Frameworks */,
 				15C58C512868A4EE00BD4FC6 /* CombineMoya in Frameworks */,
@@ -6287,7 +6287,6 @@
 				6A19A74D2A612FAB00B84F09 /* FirebaseMessaging */,
 				4E5D4FAD2AEF9A7400DC419B /* DeviceGuru */,
 				4E1DD8C82B16222A0055E510 /* Instabug */,
-				4E9D98DE2B9DEAEF00A70879 /* TrustWeb3Provider */,
 				4E3682C62BB6A59100B24785 /* web3swift */,
 				4EEE9DC62BD243DB00685AAA /* FirebaseAnalytics */,
 				4E5F2F0E2C11F036008589C4 /* CrowdinSDK */,
@@ -6306,6 +6305,7 @@
 				4E2FA6B72CF4177C00D46EA7 /* WalletConnectVerify */,
 				4EAD6A222CF6013200F1D9CF /* FlowWalletKit */,
 				4EB94AA82D115F6C00AEF3C9 /* SwiftyDropbox */,
+				15F6F4BC2D683FF100D62D7F /* TrustWeb3Provider */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 154B8928276A1EEB00780E93 /* FRW-dev.app */;
@@ -6377,7 +6377,6 @@
 				6A19A74F2A612FC600B84F09 /* FirebaseMessaging */,
 				4E5D4FAB2AEF9A5A00DC419B /* DeviceGuru */,
 				4E1DD8C62B1622030055E510 /* Instabug */,
-				4E9D98DC2B9DEAE300A70879 /* TrustWeb3Provider */,
 				4E947C912BBEB2E300E87A85 /* web3swift */,
 				4E5F2F102C12B1C2008589C4 /* CrowdinSDK */,
 				4E2E8CBE2C61BB2300095D5B /* LogView */,
@@ -6397,6 +6396,7 @@
 				4E2FA6A52CF410B700D46EA7 /* ReownRouter */,
 				4EAD6A202CF6012200F1D9CF /* FlowWalletKit */,
 				4EB94AA62D115F5C00AEF3C9 /* SwiftyDropbox */,
+				15F6F4BA2D683FD700D62D7F /* TrustWeb3Provider */,
 			);
 			productName = "FlowReferenceWallet-lite";
 			productReference = 15C58C6D2868A4EE00BD4FC6 /* FRW.app */;
@@ -6563,7 +6563,6 @@
 				150D3E352A58718700F7F2DC /* XCRemoteSwiftPackageReference "QRCode" */,
 				4E5D4FAA2AEF9A5A00DC419B /* XCRemoteSwiftPackageReference "DeviceGuru" */,
 				4E1DD8C52B1622030055E510 /* XCRemoteSwiftPackageReference "Instabug-SP" */,
-				4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */,
 				4E3682C52BB6A59100B24785 /* XCRemoteSwiftPackageReference "web3swift" */,
 				4E5F2F0D2C11F036008589C4 /* XCRemoteSwiftPackageReference "mobile-sdk-ios" */,
 				4E2E8CBB2C61B9A800095D5B /* XCRemoteSwiftPackageReference "LogView" */,
@@ -6573,6 +6572,7 @@
 				4E2FA68C2CF40EAB00D46EA7 /* XCRemoteSwiftPackageReference "reown-swift" */,
 				4EAD6A1F2CF6012200F1D9CF /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */,
 				4E5B04302D0FFC0F00ED4C20 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */,
+				15F6F4B92D683FD700D62D7F /* XCRemoteSwiftPackageReference "trust-web3-provider" */,
 			);
 			productRefGroup = 15EC9DEF274FD1FC00F70CD9 /* Products */;
 			projectDirPath = "";
@@ -9639,6 +9639,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		15F6F4B92D683FD700D62D7F /* XCRemoteSwiftPackageReference "trust-web3-provider" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Outblock/trust-web3-provider";
+			requirement = {
+				branch = old;
+				kind = branch;
+			};
+		};
 		4E09A1EC2CC794900099606E /* XCRemoteSwiftPackageReference "mixpanel-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/mixpanel/mixpanel-swift";
@@ -9717,14 +9725,6 @@
 			requirement = {
 				branch = master;
 				kind = branch;
-			};
-		};
-		4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Outblock/trust-web3-provider";
-			requirement = {
-				kind = revision;
-				revision = 828bce9b79deb0b7c02ebdce3e30f63a1f142fd3;
 			};
 		};
 		4EAD6A1F2CF6012200F1D9CF /* XCRemoteSwiftPackageReference "Flow-Wallet-Kit" */ = {
@@ -10137,6 +10137,16 @@
 			package = 15F517F928C6574C00504FDC /* XCRemoteSwiftPackageReference "atlantis" */;
 			productName = Atlantis;
 		};
+		15F6F4BA2D683FD700D62D7F /* TrustWeb3Provider */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 15F6F4B92D683FD700D62D7F /* XCRemoteSwiftPackageReference "trust-web3-provider" */;
+			productName = TrustWeb3Provider;
+		};
+		15F6F4BC2D683FF100D62D7F /* TrustWeb3Provider */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 15F6F4B92D683FD700D62D7F /* XCRemoteSwiftPackageReference "trust-web3-provider" */;
+			productName = TrustWeb3Provider;
+		};
 		4E09A1ED2CC794900099606E /* Mixpanel */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4E09A1EC2CC794900099606E /* XCRemoteSwiftPackageReference "mixpanel-swift" */;
@@ -10330,16 +10340,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4E3682C52BB6A59100B24785 /* XCRemoteSwiftPackageReference "web3swift" */;
 			productName = web3swift;
-		};
-		4E9D98DC2B9DEAE300A70879 /* TrustWeb3Provider */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */;
-			productName = TrustWeb3Provider;
-		};
-		4E9D98DE2B9DEAEF00A70879 /* TrustWeb3Provider */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4E9D98DB2B9DE4E800A70879 /* XCRemoteSwiftPackageReference "trust-web3-provider" */;
-			productName = TrustWeb3Provider;
 		};
 		4EAD6A202CF6012200F1D9CF /* FlowWalletKit */ = {
 			isa = XCSwiftPackageProductDependency;
