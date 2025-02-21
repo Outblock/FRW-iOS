@@ -35,11 +35,7 @@ struct WalletConnectHandler {
             name: appMetadata.name,
             descriptionText: appMetadata.description,
             dappURL: appMetadata.url,
-            iconURL: appMetadata.icons.first ?? "",
-            chains: [],
-            methods: [],
-            pendingRequests: [],
-            data: ""
+            iconURL: appMetadata.icons.first ?? ""
         )
         return info
     }
