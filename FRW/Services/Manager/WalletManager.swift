@@ -80,6 +80,13 @@ class WalletManager: ObservableObject {
     var supportedCoins: [TokenModel]?
     @Published
     var evmSupportedCoins: [TokenModel]?
+    func supportedCoins(forType type: TokenModel.TokenType? = nil) -> [TokenModel]? {
+        guard let type else {
+            return isSelectedEVMAccount ? evmSupportedCoins : supportedCoins
+        }
+        
+        return type == .evm ? evmSupportedCoins : supportedCoins
+    }
     @Published
     var activatedCoins: [TokenModel] = []
     @Published
@@ -138,6 +145,19 @@ class WalletManager: ObservableObject {
 
     var flowToken: TokenModel? {
         WalletManager.shared.supportedCoins?.first(where: { $0.isFlowCoin })
+    }
+    
+    func counterpartToken(for token: TokenModel) -> TokenModel? {
+        return switch token.type {
+        case .cadence:
+            if token.isFlowCoin {
+                EVMAccountManager.fakeEVMFlowToken
+            } else {
+                WalletManager.shared.evmSupportedCoins?.first { $0.getAddress() == token.evmAddress }
+            }
+        case .evm:
+            WalletManager.shared.supportedCoins?.first { $0.evmAddress == token.getAddress() }
+        }
     }
 
     func bindChildAccountManager() {
@@ -607,9 +627,9 @@ extension WalletManager {
         return nil
     }
 
-    func getBalance(byId contactId: String) -> Decimal {
-        coinBalances[contactId] ?? coinBalances[contactId.lowercased()] ??
-            coinBalances[contactId.uppercased()] ?? 0
+    func getBalance(byId contractId: String) -> Decimal {
+        coinBalances[contractId] ?? coinBalances[contractId.lowercased()] ??
+            coinBalances[contractId.uppercased()] ?? 0
     }
 
     func currentContact() -> Contact {
@@ -940,6 +960,7 @@ extension WalletManager {
     }
 
     private func fetchEVMCoins() async {
+        //TODO: MU - inject
         guard EVMAccountManager.shared.selectedAccount != nil else {
             return
         }
@@ -999,6 +1020,7 @@ extension WalletManager {
         return accountInfo.balance - amount < Self.minFlowBalance
     }
 
+    //TODO: check this logic. balanceProvider.refreshBalance() is called, not sure if "let balanceList = try await FlowNetwork.fetchBalance(at: Flow.Address(hex: address))" is needed later.
     func fetchBalance() async throws {
         let address = selectedAccountAddress
         if address.isEmpty {
@@ -1018,6 +1040,7 @@ extension WalletManager {
         for value in activatedCoins {
             let contractId = value.contractId
             if let balance = balanceList[contractId] {
+                //TODO: why is this made a decimal?
                 newBalanceMap[contractId] = Decimal(balance)
             }
         }
@@ -1032,7 +1055,55 @@ extension WalletManager {
                 forKey: CacheKeys.coinBalancesV2.rawValue
             )
     }
-
+    
+//    @MainActor
+//    func fetchEVMBalance() async throws {
+//        log.info("[EVM] load balance")
+//        guard let evmAccount = EVMAccountManager.shared.selectedAccount else { return }
+//        try await EVMAccountManager.shared.refreshBalance(address: evmAccount.address)
+//        
+//        guard let evmSupportedCoins else { return }
+//
+//        let tokens = try await Self.fetchEVMBalances(forCoins: evmSupportedCoins, atAddress: evmAccount.address)
+//        
+//        activatedCoins = tokens
+//        var coinBalances: [String: Decimal] = [:]
+//        tokens.compactMap { token in
+//            guard let balance = Decimal(string: Utilities.formatToPrecision(token.balance ?? 0)) else { return nil }
+//            return (token.contractId, balance)
+//        }
+//        .forEach {
+//            coinBalances[$0] = $1
+//        }
+//    }
+//    
+//    @MainActor
+//    static func fetchEVMBalances(forCoins evmSupportedCoins: [TokenModel], atAddress address: String) async throws -> [TokenModel] {
+//        let fakeFlowToken = EVMAccountManager.fakeEVMFlowToken
+//        
+//        let list = try await EVMAccountManager.shared.fetchTokens(forAddress: address)
+//        
+//        var tokens = [TokenModel]()
+//        
+//        if let fakeFlowToken {
+//            tokens.append(fakeFlowToken)
+//        }
+//        
+//        for item in list {
+//            if item.flowBalance > 0 {
+//                let result = evmSupportedCoins.first { model in
+//                    model.getAddress()?.lowercased() == item.address.lowercased()
+//                }
+//                if var result = result {
+//                    result.balance = BigUInt(from: item.balance ?? "-1")
+//                    tokens.append(result)
+//                }
+//            }
+//        }
+//        
+//        return tokens
+//    }
+    
     private func fetchEVMBalance() async throws {
         log.info("[EVM] load balance")
         guard let evmAccount = EVMAccountManager.shared.selectedAccount else { return }
@@ -1068,7 +1139,7 @@ extension WalletManager {
         }
     }
 
-    private func fetchCustomBalance() async throws {
+    func fetchCustomBalance() async throws {
         guard (EVMAccountManager.shared.selectedAccount?.showAddress) != nil else {
             return
         }

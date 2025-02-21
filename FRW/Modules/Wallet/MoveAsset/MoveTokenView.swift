@@ -58,7 +58,33 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
             VStack(spacing: 8) {
                 ContactRelationView(
                     fromContact: viewModel.fromContact,
-                    toContact: viewModel.toContact
+                    toContact: viewModel.toContact,
+                    clickable: .all,
+                    clickFrom: { contact in
+                        let model = MoveAccountsViewModel(
+                            selected: viewModel.fromContact
+                                .address ?? ""
+                        ) { contact in
+                            if let contact = contact {
+                                viewModel.fromContact = contact
+                            }
+                        }
+                        Router.route(to: RouteMap.Wallet.chooseChild(model))
+                    },
+                    clickTo: { contact in
+                        let model = MoveAccountsViewModel(
+                            selected: viewModel.toContact
+                                .address ?? ""
+                        ) { contact in
+                            if let contact = contact {
+                                viewModel.toContact = contact
+                            }
+                        }
+                        Router.route(to: RouteMap.Wallet.chooseChild(model))
+                    },
+                    arrowTapped: {
+                        viewModel.toContact = viewModel.fromContact
+                    }
                 )
 
                 MoveTokenView
@@ -86,6 +112,7 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
             .padding(.top, 8)
         }
         .padding(.horizontal, 18)
+        .padding(.vertical)
         .hideKeyboardWhenTappedAround()
         .environmentObject(viewModel)
         .applyRouteable(self)
@@ -236,7 +263,9 @@ extension MoveTokenView {
         @ViewBuilder
         var switchMenuButton: some View {
             Button(action: {
-                Router.route(to: RouteMap.Wallet.selectMoveToken(viewModel.token) { selectedToken in
+                Router.route(to: RouteMap.Wallet.selectMoveToken(viewModel.token, {
+                    viewModel.supportedTokenList
+                }) { selectedToken in
                     viewModel.changeTokenModelAction(token: selectedToken)
                 })
             }, label: {

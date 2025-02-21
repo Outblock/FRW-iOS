@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import BigInt
 
 // MARK: - EVMAccountManager
 
@@ -88,6 +89,26 @@ class EVMAccountManager: ObservableObject {
             LocalUserDefaults.shared.selectedEVMAccount = selectedAccount
             NotificationCenter.default.post(name: .watchAddressDidChanged, object: nil)
         }
+    }
+    
+    static var fakeEVMFlowToken: TokenModel? {
+        guard let tokenModel = WalletManager.shared.flowToken else { return nil }
+        let fakeTokenModel = TokenModel(
+            type: .evm,
+            name: tokenModel.name,
+            address: tokenModel.address,
+            contractName: tokenModel.contractName,
+            storagePath: tokenModel.storagePath,
+            decimal: tokenModel.decimal,
+            icon: tokenModel.icon,
+            symbol: tokenModel.symbol,
+            website: tokenModel.website,
+            evmAddress: tokenModel.evmAddress,
+            flowIdentifier: tokenModel.contractId,
+            balance: BigUInt(EVMAccountManager.shared.balance.doubleValue)
+        )
+
+        return fakeTokenModel
     }
 
     // MARK: Private
@@ -259,8 +280,8 @@ extension EVMAccountManager {
         try await FlowNetwork.fetchEVMBalance(address: address)
     }
 
-    func fetchTokens() async throws -> [EVMTokenResponse] {
-        guard let address = accounts.first?.showAddress else {
+    func fetchTokens(forAddress address: String? = nil) async throws -> [EVMTokenResponse] {
+        guard let address = address ?? accounts.first?.showAddress else {
             return []
         }
         let response: [EVMTokenResponse] = try await Network.request(FRWAPI.EVM.tokenList(address))

@@ -39,11 +39,13 @@ class AddTokenViewModel: ObservableObject {
     init(
         selectedToken: TokenModel? = nil,
         disableTokens: [TokenModel] = [],
+        getSupportedTokenList: @escaping () -> [TokenModel] = { WalletManager.shared.supportedCoins() ?? [] },
         selectCallback: ((TokenModel) -> Void)? = nil
     ) {
         self.selectedToken = selectedToken
         self.disableTokens = disableTokens
         self.selectCallback = selectCallback
+        self.getSupportedTokenList = getSupportedTokenList
 
         if selectCallback != nil {
             self.mode = .selectToken
@@ -70,6 +72,7 @@ class AddTokenViewModel: ObservableObject {
     var mode: AddTokenViewModel.Mode = .addToken
     var selectedToken: TokenModel?
     var disableTokens: [TokenModel] = []
+    let getSupportedTokenList: () -> [TokenModel]
     var selectCallback: ((TokenModel) -> Void)?
 
     @Published
@@ -80,7 +83,9 @@ class AddTokenViewModel: ObservableObject {
     private var cancelSets = Set<AnyCancellable>()
 
     private func reloadData() {
-        guard let supportedTokenList = WalletManager.shared.supportedCoins else {
+        let supportedTokenList = getSupportedTokenList()
+        
+        guard !getSupportedTokenList().isEmpty else {
             sections = []
             return
         }

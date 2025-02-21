@@ -179,6 +179,9 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
         if let current = token {
             return current
         }
+        if WalletManager.shared.isSelectedEVMAccount, let evmToken = WalletManager.shared.activatedCoins.first(where: { $0.type == .evm }) {
+            return evmToken
+        }
         let flowToken = WalletManager.shared.activatedCoins.first { $0.isFlowCoin }
         if let token = flowToken {
             return flowToken

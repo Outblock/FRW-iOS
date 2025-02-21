@@ -10,7 +10,7 @@ import Flow
 import SwiftUI
 
 // MARK: - MoveTokenViewModel
-
+@MainActor
 final class MoveTokenViewModel: ObservableObject {
     // MARK: Lifecycle
 
@@ -18,34 +18,29 @@ final class MoveTokenViewModel: ObservableObject {
         self.token = token
         _isPresent = isPresent
         loadUserInfo()
-        refreshTokenData()
         Task {
+            await refreshTokenData()
             await fetchMinFlowBalance()
+            checkForInsufficientStorage()
         }
-
-        checkForInsufficientStorage()
     }
 
     // MARK: Internal
 
     @Published
-    var inputDollarNum: Double = 0
-
-    @Published
     var showBalance: String = ""
-    var actualBalance: Decimal?
-
-    @Published
-    var inputTokenNum: Decimal = 0
+    
     @Published
     var amountBalance: Decimal = 0
-    @Published
-    var coinRate: Double = 0
-    @Published
-    var errorType: WalletSendAmountView.ErrorType = .none
 
     @Published
     var buttonState: VPrimaryButtonState = .disabled
+    
+    @Published
+    var supportedTokenList: [TokenModel] = []
+    
+    @Published
+    private var coinBalances: [String: Double] = [:]
 
     @Published
     var fromContact = Contact(
@@ -56,7 +51,22 @@ final class MoveTokenViewModel: ObservableObject {
         domain: nil,
         id: -1,
         username: nil
-    )
+    ) {
+        didSet {
+            guard fromContact != oldValue else { return }
+            HUD.loading()
+            if fromContact == toContact {
+                toContact = oldValue
+            }
+            Task {
+                await fetchCoinBalances()
+                flipTokenVMIfNeeded()
+                refreshTokenData()
+                checkForInsufficientStorage()
+                HUD.dismissLoading()
+            }
+        }
+    }
     @Published
     var toContact = Contact(
         address: "",
@@ -66,7 +76,15 @@ final class MoveTokenViewModel: ObservableObject {
         domain: nil,
         id: -1,
         username: nil
-    )
+    ) {
+        didSet {
+            guard toContact != oldValue else { return }
+            if toContact == fromContact {
+                fromContact = oldValue
+            }
+            checkForInsufficientStorage()
+        }
+    }
 
     private(set) var token: TokenModel
     @Binding
@@ -80,6 +98,13 @@ final class MoveTokenViewModel: ObservableObject {
         let totalStr = amountBalance.doubleValue.formatCurrencyString()
         return "Balance: \(totalStr)"
     }
+    
+    private func flipTokenVMIfNeeded() {
+        let needsFlipping = (fromIsEVM && token.type != .evm) || (!fromIsEVM && token.type == .evm)
+        if needsFlipping, let flippedToken = WalletManager.shared.counterpartToken(for: token) {
+            changeTokenModelAction(token: flippedToken)
+        }
+    }
 
     func changeTokenModelAction(token: TokenModel) {
         if token.contractId == self.token.contractId {
@@ -88,7 +113,10 @@ final class MoveTokenViewModel: ObservableObject {
         self.token = token
         updateBalance("")
         errorType = .none
-        refreshTokenData()
+        Task {
+            await refreshTokenData()
+            refreshSummary()
+        }
     }
 
     func inputTextDidChangeAction(text _: String) {
@@ -98,8 +126,12 @@ final class MoveTokenViewModel: ObservableObject {
             ) // showBalance.doubleValue
         }
         maxButtonClickedOnce = false
+//        Task {
+//            await refreshTokenData()
         refreshSummary()
-        updateState()
+
+            updateState()
+//        }
     }
 
     func refreshSummary() {
@@ -154,6 +186,16 @@ final class MoveTokenViewModel: ObservableObject {
     private var minBalance: Decimal? = nil
     private var maxButtonClickedOnce = false
     private var _insufficientStorageFailure: InsufficientStorageFailure?
+    
+    @Published
+    private var inputTokenNum: Decimal = 0
+    @Published
+    private var inputDollarNum: Double = 0
+    @Published
+    private var coinRate: Double = 0
+    @Published
+    private var errorType: WalletSendAmountView.ErrorType = .none
+    private var actualBalance: Decimal?
 
     private func loadUserInfo() {
         guard let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress()
@@ -256,12 +298,35 @@ final class MoveTokenViewModel: ObservableObject {
             return
         }
     }
-
+    
+    private func fetchCoinBalances() async {
+        do {
+            coinBalances = try await FlowNetwork.fetchBalance(at: Flow.Address(hex: fromContact.address ?? ""))
+            let evmTokens = try await EVMAccountManager.shared.fetchTokens().map { ($0.address, $0.flowBalance.doubleValue) }
+            coinBalances = coinBalances.merging(evmTokens, uniquingKeysWith: { a, _ in return a })
+            supportedTokenList = WalletManager.shared.supportedCoins(forType: fromIsEVM ? .evm : .cadence) ?? []
+            if fromIsEVM, let flowToken = EVMAccountManager.fakeEVMFlowToken {
+                supportedTokenList.append(flowToken)
+            }
+        } catch {
+            log.error(error)
+        }
+    }
+    
     private func refreshTokenData() {
-        amountBalance = WalletManager.shared.getBalance(byId: token.contractId)
+        if fromIsEVM, token.isFlowCoin {
+            amountBalance = EVMAccountManager.shared.balance
+        } else if fromIsEVM, let balance = coinBalances[token.getAddress() ?? ""] {
+            amountBalance = Decimal(balance)
+        } else if let balance = coinBalances[token.contractId] {
+            amountBalance = Decimal(balance)
+        } else {
+            amountBalance = 0
+        }
         coinRate = CoinRateCache.cache
             .getSummary(by: token.contractId)?
             .getLastRate() ?? 0
+        refreshSummary()
     }
 
     private func isFromFlowToCoa() -> Bool {
@@ -323,15 +388,6 @@ extension MoveTokenViewModel {
             .contains { $0.showAddress.lowercased() == fromContact.address?.lowercased() }
     }
 
-    var toIsEVM: Bool {
-        EVMAccountManager.shared.accounts
-            .contains { $0.showAddress.lowercased() == toContact.address?.lowercased() }
-    }
-
-    var balanceAsCurrentCurrencyString: String {
-        inputDollarNum.formatCurrencyString(considerCustomCurrency: true)
-    }
-
     var showFee: Bool {
         !(fromContact.walletType == .link || toContact.walletType == .link)
     }
@@ -339,6 +395,7 @@ extension MoveTokenViewModel {
 
 extension MoveTokenViewModel {
     func onNext() {
+//        checkForInsufficientStorage()
         if fromContact.walletType == .link || toContact.walletType == .link {
             Task {
                 do {
@@ -398,7 +455,7 @@ extension MoveTokenViewModel {
             }
         }
         if token.isFlowCoin {
-            if WalletManager.shared.isSelectedEVMAccount {
+            if fromContact.walletType == .evm {
                 withdrawCoa()
             } else {
                 fundCoa()
@@ -407,8 +464,6 @@ extension MoveTokenViewModel {
             bridgeToken()
         }
     }
-
-    func onChooseAccount() {}
 
     private func withdrawCoa() {
         Task {
