@@ -53,7 +53,7 @@ struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
                 if var ns = sessionNamespace {
                     // Append new account and chain, and intersect the methods and events.
                     ns.accounts.append(accountObj)
-                    ns.chains!.append(chain)
+                    ns.chains = (ns.chains ?? []) + [chain]
                     ns.methods = ns.methods.intersection(proposalMethods)
                     ns.events = ns.events.intersection(proposalEvents)
                     sessionNamespace = ns
