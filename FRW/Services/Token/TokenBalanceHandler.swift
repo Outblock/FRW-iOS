@@ -32,10 +32,9 @@ extension EthereumAddress: FWAddress {
 
 protocol TokenBalanceProvider {
     associatedtype FWAddress
-    associatedtype NFTBalance
     var network: FlowNetworkType { get }
     func getFTBalance(address: FWAddress) async throws -> [TokenModel]
-    func getNFTBalance(address: FWAddress) async throws -> NFTBalance
+    func getNFTBalance(address: FWAddress) async throws -> [NFTCollectionInfo]
 }
 
 class TokenBalanceHandler {

@@ -30,7 +30,7 @@ class EVMTokenBalanceProvider: TokenBalanceProvider {
         return models
     }
     
-    func getNFTBalance(address: EthereumAddress) async throws -> [EVMNFTCollectionResponse] {
+    func getNFTBalance(address: EthereumAddress) async throws -> [NFTCollectionInfo] {
         // TODO: Add NFT Fetch
         return []
     }

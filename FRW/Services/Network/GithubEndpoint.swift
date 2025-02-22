@@ -12,7 +12,7 @@ import Moya
 
 enum GithubEndpoint {
     case collections
-    case ftTokenList
+    case ftTokenList(FlowNetworkType)
     case EVMNFTList
     case EVMTokenList
 }
@@ -28,22 +28,8 @@ extension GithubEndpoint: TargetType {
         switch self {
         case .collections:
             return "/Outblock/Assets/main/nft/nft.json"
-        case .ftTokenList:
-            if isDevModel {
-                switch LocalUserDefaults.shared.flowNetwork {
-                case .mainnet:
-                    return "/Outblock/token-list-jsons/outblock/jsons/mainnet/flow/dev.json"
-                case .testnet:
-                    return "/Outblock/token-list-jsons/outblock/jsons/testnet/flow/dev.json"
-                }
-            } else {
-                switch LocalUserDefaults.shared.flowNetwork {
-                case .mainnet:
-                    return "/Outblock/token-list-jsons/outblock/jsons/mainnet/flow/default.json"
-                case .testnet:
-                    return "/Outblock/token-list-jsons/outblock/jsons/testnet/flow/default.json"
-                }
-            }
+        case let .ftTokenList(network):
+            return "/Outblock/token-list-jsons/outblock/jsons/\(network.rawValue)/flow/\(isDevModel ? "dev" : "default").json"
         case .EVMNFTList:
             switch LocalUserDefaults.shared.flowNetwork {
             case .testnet:
