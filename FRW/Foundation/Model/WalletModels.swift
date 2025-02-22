@@ -88,7 +88,7 @@ enum ListedToken: String, CaseIterable {
 // MARK: - TokenModel
 
 struct TokenModel: Codable, Identifiable, Mockable {
-    enum TokenType: Codable { case cadence, evm }
+    public enum TokenType: Codable { case cadence, evm }
 
     let type: TokenType
     let name: String

@@ -1,0 +1,99 @@
+//
+//  TokenManager.swift
+//  FRW
+//
+//  Created by Hao Fu on 22/2/2025.
+//
+
+import Foundation
+import Web3Core
+import Flow
+
+enum VMType {
+    case cadence
+    case evm
+}
+
+protocol FWAddress {
+    var type: VMType { get }
+}
+
+extension Flow.Address: FWAddress {
+    var type: VMType {
+        .cadence
+    }
+}
+
+extension EthereumAddress: FWAddress {
+    var type: VMType {
+        .evm
+    }
+}
+
+protocol TokenBalanceProvider {
+    associatedtype FWAddress
+    associatedtype NFTBalance
+    var network: FlowNetworkType { get }
+    func getFTBalance(address: FWAddress) async throws -> [TokenModel]
+    func getNFTBalance(address: FWAddress) async throws -> NFTBalance
+}
+
+class TokenBalanceHandler {
+    
+    static let flowTokenJsonStr =
+    """
+    {
+      "chainId": 747,
+      "address": "0x1654653399040a61",
+      "contractName": "FlowToken",
+      "path": {
+        "vault": "/storage/flowTokenVault",
+        "receiver": "/public/flowTokenReceiver",
+        "balance": "/public/flowTokenBalance"
+      },
+      "symbol": "FLOW",
+      "name": "Flow",
+      "description": "",
+      "decimals": 8,
+      "logoURI": "https://cdn.jsdelivr.net/gh/FlowFans/flow-token-list@main/token-registry/A.1654653399040a61.FlowToken/logo.svg",
+      "tags": [
+        "Verified",
+        "Featured",
+        "utility-token"
+      ],
+      "extensions": {
+        "coingeckoId": "flow",
+        "discord": "http://discord.gg/flow",
+        "documentation": "https://developers.flow.com/references/core-contracts/flow-token",
+        "github": "https://github.com/onflow/flow-core-contracts",
+        "twitter": "https://twitter.com/flow_blockchain",
+        "website": "https://flow.com/",
+        "displaySource": "0xa2de93114bae3e73",
+        "pathSource": "0xa2de93114bae3e73"
+      }
+    }
+    """
+    
+    static let data = flowTokenJsonStr.data(using: .utf8)!
+    static let flowToken = try! FRWAPI.jsonDecoder.decode(SingleToken.self, from: data)
+    static let shared = TokenBalanceHandler()
+    
+    private init() {}
+    
+    func getFTBalance(address: FWAddress, network: FlowNetworkType = LocalUserDefaults.shared.flowNetwork ) async throws  -> [TokenModel] {
+        switch address.type {
+        case .cadence:
+            guard let cadenceAddress = address as? Flow.Address else {
+                throw EVMError.addressError
+            }
+            let provider = CadenceTokenBalanceProvider(network: network)
+            return try await provider.getFTBalance(address: cadenceAddress)
+        case .evm:
+            guard let evmAddress = address as? EthereumAddress else {
+                throw EVMError.addressError
+            }
+            let provider = EVMTokenBalanceProvider(network: network)
+            return try await provider.getFTBalance(address: evmAddress)
+        }
+    }
+}
