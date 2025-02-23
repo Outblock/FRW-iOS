@@ -102,7 +102,6 @@ extension RouteMap.RestoreLogin: RouterTarget {
 extension RouteMap {
     enum Register {
         case root(String?)
-        case username(String?)
     }
 }
 
@@ -112,8 +111,6 @@ extension RouteMap.Register: RouterTarget {
     func onPresent(navi: UINavigationController) {
         switch self {
         case let .root(mnemonic):
-            navi.push(content: TermsAndPolicy(mnemonic: mnemonic))
-        case let .username(mnemonic):
             navi.push(content: UsernameView(mnemonic: mnemonic))
         }
     }

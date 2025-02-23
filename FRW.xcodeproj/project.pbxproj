@@ -193,7 +193,6 @@
 		15BA24BA28C7A93400755CBF /* WalletSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15BA24B828C7A93400755CBF /* WalletSettingView.swift */; };
 		15BA24BC28C7AF1B00755CBF /* PrivateKeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15BA24BB28C7AF1B00755CBF /* PrivateKeyView.swift */; };
 		15BA24BD28C7AF1B00755CBF /* PrivateKeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15BA24BB28C7AF1B00755CBF /* PrivateKeyView.swift */; };
-		15BCFEFC277565F0000B7863 /* TermsAndPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15BCFEFA277565F0000B7863 /* TermsAndPolicy.swift */; };
 		15BCFF1527770D76000B7863 /* EmptyWalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15BCFF1327770D76000B7863 /* EmptyWalletView.swift */; };
 		15BCFF1C277729BF000B7863 /* EmptyWalletViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15BCFF1A277729BF000B7863 /* EmptyWalletViewModel.swift */; };
 		15C11BCE28D9F6CD00FD4C06 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C11BCD28D9F6CD00FD4C06 /* AboutView.swift */; };
@@ -325,7 +324,6 @@
 		15C58B312868A4EE00BD4FC6 /* TextFieldStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DC1D4827814AD1000B187A /* TextFieldStyle.swift */; };
 		15C58B322868A4EE00BD4FC6 /* ManualBackupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D9282E27843D4900382226 /* ManualBackupView.swift */; };
 		15C58B332868A4EE00BD4FC6 /* StateColors_EPLD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DC206927819C56000B187A /* StateColors_EPLD.swift */; };
-		15C58B342868A4EE00BD4FC6 /* TermsAndPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15BCFEFA277565F0000B7863 /* TermsAndPolicy.swift */; };
 		15C58B352868A4EE00BD4FC6 /* VToastModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DC1F9127819C56000B187A /* VToastModel.swift */; };
 		15C58B362868A4EE00BD4FC6 /* VSectionList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DC1FCE27819C56000B187A /* VSectionList.swift */; };
 		15C58B372868A4EE00BD4FC6 /* FlowNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156E84A8281CDE7500415896 /* FlowNetwork.swift */; };
@@ -2119,7 +2117,6 @@
 		15BA24B428C785B300755CBF /* GradientButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientButton.swift; sourceTree = "<group>"; };
 		15BA24B828C7A93400755CBF /* WalletSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletSettingView.swift; sourceTree = "<group>"; };
 		15BA24BB28C7AF1B00755CBF /* PrivateKeyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateKeyView.swift; sourceTree = "<group>"; };
-		15BCFEFA277565F0000B7863 /* TermsAndPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndPolicy.swift; sourceTree = "<group>"; };
 		15BCFF1327770D76000B7863 /* EmptyWalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyWalletView.swift; sourceTree = "<group>"; };
 		15BCFF1A277729BF000B7863 /* EmptyWalletViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyWalletViewModel.swift; sourceTree = "<group>"; };
 		15C11BCD28D9F6CD00FD4C06 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
@@ -3751,7 +3748,6 @@
 			isa = PBXGroup;
 			children = (
 				15D57748277C0FED00045E79 /* ViewModel */,
-				15BCFEFA277565F0000B7863 /* TermsAndPolicy.swift */,
 				15D574C8277816F200045E79 /* UsernameView.swift */,
 				15DC21EE2781F388000B187A /* TYNKView.swift */,
 			);
@@ -7127,7 +7123,6 @@
 				15DC1D4A27814AD1000B187A /* TextFieldStyle.swift in Sources */,
 				15D9283027843D4900382226 /* ManualBackupView.swift in Sources */,
 				15DC21D927819C56000B187A /* StateColors_EPLD.swift in Sources */,
-				15BCFEFC277565F0000B7863 /* TermsAndPolicy.swift in Sources */,
 				15F2443528CAC47100C1090E /* SafariView.swift in Sources */,
 				15DC209927819C56000B187A /* VToastModel.swift in Sources */,
 				15DC20F327819C56000B187A /* VSectionList.swift in Sources */,
@@ -7954,7 +7949,6 @@
 				15C58B312868A4EE00BD4FC6 /* TextFieldStyle.swift in Sources */,
 				15C58B322868A4EE00BD4FC6 /* ManualBackupView.swift in Sources */,
 				15C58B332868A4EE00BD4FC6 /* StateColors_EPLD.swift in Sources */,
-				15C58B342868A4EE00BD4FC6 /* TermsAndPolicy.swift in Sources */,
 				15F2443428CAC47100C1090E /* SafariView.swift in Sources */,
 				15C58B352868A4EE00BD4FC6 /* VToastModel.swift in Sources */,
 				15C58B362868A4EE00BD4FC6 /* VSectionList.swift in Sources */,

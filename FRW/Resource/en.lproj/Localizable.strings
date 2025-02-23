@@ -1132,3 +1132,8 @@ Key Store and Private Key.";
 "make_backup" = "Make backup";
 "transaction_history" = "Transaction History";
 "home" = "Home";
+"lets_get_started" = "Let's\nget started";
+"welcome_message" = "Welcome to Flow Wallet! Create an account to get started";
+"create_a_new_account" = "Create a new account";
+"i_have_an_account" = "I already have an account";
+"disclaimer" = "By using Flow Wallet you agree to the Terms of Service and Privacy Policy";
