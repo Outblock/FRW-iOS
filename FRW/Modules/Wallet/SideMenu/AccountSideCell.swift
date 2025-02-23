@@ -84,7 +84,7 @@ struct AccountSideCell: View {
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 } label: {
                     HStack {
-                        Image("icon-address-copy")
+                        Image("icon_copy")
                             .resizable()
                             .renderingMode(.template)
                             .foregroundStyle(Color.Theme.Text.black3)

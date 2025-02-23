@@ -180,16 +180,21 @@ struct WalletHomeView: View {
                     Button {
                         vm.scanAction()
                     } label: {
-                        Image("icon-wallet-scan")
-                            .resizable()
-                            .renderingMode(.template)
-                            .foregroundStyle(Color.Theme.Text.black8)
-                            .frame(width: 24, height: 24)
-                            .padding(8)
+                        HStack {
+                            Image("icon-wallet-scan")
+                                .resizable()
+                                .renderingMode(.template)
+                                .foregroundStyle(Color.Theme.Text.black8)
+                                .frame(width: 24, height: 24)
+                                .padding(8)
+                            Text("scan".localized)
+                                .font(.inter(size: 14, weight: .light))
+                                .foregroundStyle(Color.LL.text)
+                        }
                     }
                 }
                 .padding(.horizontal, 8)
-                .background(Color.Theme.Text.white9.opacity(0.9))
+                .background(Color.Theme.BG.bg2.opacity(0.6))
                 .cornerRadius(16)
             }
             .padding(.top, safeArea.top)
@@ -362,7 +367,7 @@ struct WalletHomeView: View {
                     Text(
                         vm
                             .isHidden ? "****" :
-                            "\(CurrencyCache.cache.currencySymbol) \(vm.balance.formatCurrencyString(considerCustomCurrency: true))"
+                            "\(CurrencyCache.cache.currencySymbol)\(vm.balance.formatCurrencyString(digits: 2, considerCustomCurrency: true))"
                     )
                     .font(.Ukraine(size: 30, weight: .bold))
                     .foregroundStyle(Color.Theme.Text.black)
@@ -388,15 +393,15 @@ struct WalletHomeView: View {
                     Text(WalletManager.shared.selectedAccountAddress)
                         .lineLimit(1)
                         .truncationMode(.middle)
-                        .font(.inter(size: 14, weight: .semibold))
-                        .foregroundStyle(Color.Theme.Text.black3)
+                        .font(.inter(size: 16))
+                        .foregroundStyle(Color.LL.text)
                     Spacer()
 
                     Button {
                         vm.copyAddressAction()
                     } label: {
                         HStack {
-                            Image("icon-address-copy")
+                            Image("icon_copy")
                                 .resizable()
                                 .renderingMode(.template)
                                 .foregroundColor(Color.Theme.Text.black3)
@@ -410,7 +415,7 @@ struct WalletHomeView: View {
             }
             .padding(.top, 18)
             .padding(.horizontal, 24)
-            .background(Color.Theme.Background.bg3.opacity(0.8))
+            .background(Color.Theme.Background.white)
             .background(content: {
                 VisualEffectBlur(effect: .systemMaterial)
             })
@@ -435,9 +440,15 @@ struct WalletHomeView: View {
                 action: .send,
                 allowClick: !wm.isSelectedChildAccount
             )
+            Spacer()
             WalletHomeView.ActionView(isH: vm.showHorLayout, action: .receive, allowClick: true)
-            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .swap, allowClick: true)
-                .visibility(vm.showSwapButton ? .visible : .gone)
+            Spacer()
+            Group {
+                WalletHomeView.ActionView(isH: vm.showHorLayout, action: .swap, allowClick: true)
+                    .visibility(vm.showSwapButton ? .visible : .gone)
+                Spacer()
+            }
+            .visibility(vm.showSwapButton ? .visible : .gone)
             WalletHomeView.ActionView(
                 isH: vm.showHorLayout,
                 action: .stake,
@@ -560,7 +571,7 @@ extension WalletHomeView {
                             Spacer()
 
                             Text(
-                                "\(vm.isHidden ? "****" : coin.balance.formatCurrencyString()) \(coin.token.symbol?.uppercased() ?? "?")"
+                                "\(vm.isHidden ? "****" : coin.balance.formatCurrencyString(digits: 2)) \(coin.token.symbol?.uppercased() ?? "?")"
                             )
                             .foregroundColor(.LL.Neutrals.text)
                             .font(.inter(size: 14, weight: .medium))
@@ -641,7 +652,7 @@ extension WalletHomeView {
                             Spacer()
 
                             Text(
-                                "\(vm.isHidden ? "****" : stakingManager.stakingCount.formatCurrencyString()) FLOW"
+                                "\(vm.isHidden ? "****" : stakingManager.stakingCount.formatCurrencyString(digits: 2)) FLOW"
                             )
                             .foregroundColor(.LL.Neutrals.text)
                             .font(.inter(size: 14, weight: .medium))
@@ -653,7 +664,7 @@ extension WalletHomeView {
                 }
             }
             .padding(.horizontal, 16)
-            .background(Color.Theme.Background.bg2)
+            .background(.clear)
             .cornerRadius(16)
         }
     }
@@ -714,7 +725,7 @@ extension WalletHomeView {
         // MARK: Public
 
         public func container<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-            HStack(alignment: .center, spacing: 10) {
+            HStack(alignment: .center) {
                 if isH {
                     HStack {
                         content()
@@ -725,11 +736,10 @@ extension WalletHomeView {
                     }
                 }
             }
-            .frame(maxWidth: .infinity)
             .padding(.vertical, 10)
-            .frame(alignment: .center)
-            .background(Color.Theme.Background.grey)
-            .cornerRadius(16)
+            .frame(width: 50, height: 50, alignment: .center)
+            .background(Color.Theme.Accent.green)
+            .cornerRadius(25)
         }
 
         // MARK: Internal
@@ -744,16 +754,18 @@ extension WalletHomeView {
                 action.doEvent()
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
             } label: {
-                container {
-                    Image(action.icon)
-                        .resizable()
-                        .renderingMode(.template)
-                        .foregroundStyle(Color.Theme.Text.black8.opacity(allowClick ? 1 : 0.3))
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 24, height: 24)
-
+                VStack {
+                    container {
+                        Image(action.icon)
+                            .resizable()
+                            .renderingMode(.template)
+                            .foregroundStyle(Color.Theme.Text.black8.opacity(allowClick ? 1 : 0.3))
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 24, height: 24)
+                    }
+                    
                     Text(action.rawValue.localized.capitalized)
-                        .font(.inter(size: 12, weight: .semibold))
+                        .font(.inter(size: 12))
                         .foregroundStyle(Color.Theme.Text.black8.opacity(allowClick ? 1 : 0.3))
                 }
             }
