@@ -22,7 +22,7 @@ struct BackupListView: RouteableView {
     static private var notificationToken: AnyObject?
 
     var title: String {
-        "backup".localized
+        "select_backup".localized
     }
 
     var body: some View {
@@ -281,25 +281,21 @@ struct BackupPatternItem: View {
     var body: some View {
         VStack {
             Image(iconName)
+                .renderingMode(.template)
+                .foregroundStyle(Color.Theme.Accent.green)
                 .frame(width: 48, height: 48, alignment: .center)
-                .padding(.top, 24)
+                .padding(.top, 48)
 
             Text(title)
                 .font(.inter(size: 20, weight: .bold))
-                .foregroundStyle(color)
+                .foregroundStyle(Color.LL.text)
             Text(note)
                 .font(.inter(size: 12))
                 .multilineTextAlignment(.center)
-                .foregroundStyle(color)
+                .foregroundStyle(Color.LL.text)
                 .padding(.horizontal, 24)
-                .padding(.bottom, 8)
+                .padding(.bottom, 48)
                 .padding(.top, 8)
-
-            Image("icon.arrow")
-                .renderingMode(.template)
-                .foregroundStyle(color)
-                .frame(width: 32, height: 32)
-                .padding(.bottom, 32)
         }
         .frame(minWidth: 0, maxWidth: .infinity)
         .background(color.fixedOpacity())
@@ -357,9 +353,9 @@ struct BackupPatternItem: View {
     var color: Color {
         switch style {
         case .device:
-            return Color.Theme.Accent.blue
+            return Color.Theme.Accent.grey
         case .multi:
-            return Color.Theme.Accent.purple
+            return Color.Theme.Accent.grey
         case .phrase:
             return Color.Theme.Accent.grey
         }
