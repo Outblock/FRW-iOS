@@ -33,7 +33,7 @@ struct EmptyWalletView: View {
                 .padding(.bottom, 28)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color("bg.grey"))
+        .background(Color.Theme.Background.grey)
         .onAppear(perform: {
             if !self.isSettingNotificationFirst {
                 self.vm.tryToRestoreAccountWhenFirstLaunch()
@@ -116,7 +116,7 @@ struct EmptyWalletView: View {
     private var letsGetStarted: some View {
         Text("lets_get_started")
             .lineLimit(2)
-            .font(.Ukraine(size: 48, weight: .ultraLight))
+            .font(.Ukraine(size: 48, weight: .light))
             .padding(.bottom, 32)
             .padding(.top, -40)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
