@@ -742,7 +742,7 @@ struct WalletActionButton: View {
                         Image(event.icon)
                             .resizable()
                             .renderingMode(.template)
-                            .foregroundStyle(Color.Theme.Text.black8.opacity(allowClick ? 1 : 0.3))
+                            .foregroundStyle(.white.opacity(allowClick ? 1 : 0.3))
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 24, height: 24)
                     }
