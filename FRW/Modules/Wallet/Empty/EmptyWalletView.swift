@@ -24,6 +24,7 @@ struct EmptyWalletView: View {
             .padding(.leading, 32)
             
             Spacer()
+            //TODO: 
 //            recentListContent
 //                .padding(.horizontal, 41)
 //                .visibility(vm.placeholders.isEmpty ? .gone : .visible)

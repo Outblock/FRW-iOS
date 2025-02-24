@@ -38,6 +38,7 @@ extension TabBarView {
                     indicator(proxy.size.width).animation(.spring(), value: offsetX)
                 }
             }
+            .frame(height: 46)
             .padding(.horizontal, 16)
         }
 
