@@ -100,7 +100,8 @@ struct BackupUploadView: RouteableView {
                             }
                             .padding(.top, 16)
                         } else if viewModel.process == .regist || viewModel
-                            .process == .upload || viewModel.process == .finish {
+                            .process == .upload || viewModel.process == .finish
+                        {
                             if let mnemonic = MultiBackupManager.shared.mnemonic {
                                 BackupUploadView.PhraseWords(
                                     isBlur: viewModel.mnemonicBlur,
@@ -159,26 +160,30 @@ extension BackupUploadView {
             HStack(spacing: 0) {
                 ForEach(items.indices, id: \.self) { index in
                     let isSelected = currentIndex >= index
+                    let isProgressed = currentIndex > index
                     BackupUploadView.ProgressItem(
                         itemType: items[index],
                         isSelected: isSelected
                     )
+                    .zIndex(1)
                     Rectangle()
                         .foregroundColor(.clear)
                         .frame(height: 1)
                         .background(
-                            isSelected ? .Theme.Accent.green
+                            isProgressed ? .Theme.Accent.green
                                 : .Theme.Background.silver
                         )
                 }
 
-                Image(currentIndex >= items.count ? "icon.finish.highlight" : "icon.finish.normal")
+                Image("icon.finish.32")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(
-                        width: currentIndex >= items.count ? 40 : 32,
-                        height: currentIndex >= items.count ? 40 : 32
-                    )
+                    .frame(width: 32, height: 32)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 16)
+                            .inset(by: -0.5)
+                            .stroke(Color.Theme.Accent.green, lineWidth: currentIndex >= items.count ? 1 : 0)
+                    }
             }
             .frame(maxWidth: .infinity)
         }
@@ -190,13 +195,15 @@ extension BackupUploadView {
 
         var body: some View {
             ZStack {
-                Image(
-                    isSelected ? itemType.highlightIcon
-                        : itemType.normalIcon
-                )
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: isSelected ? 40 : 32, height: isSelected ? 40 : 32)
+                Image(itemType.normalIcon)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 32, height: 32)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 16)
+                            .inset(by: -0.5)
+                            .stroke(Color.Theme.Accent.green, lineWidth: isSelected ? 1 : 0)
+                    }
             }
         }
     }
@@ -297,7 +304,7 @@ extension BackupUploadView {
         init(isBlur: Bool, mnemonic: String) {
             self.mnemonic = mnemonic
             self.isBlur = isBlur
-            self.dataSource = mnemonic.split(separator: " ").enumerated().map { item in
+            dataSource = mnemonic.split(separator: " ").enumerated().map { item in
                 WordListView.WordItem(id: item.offset + 1, word: String(item.element))
             }
         }
@@ -378,7 +385,7 @@ extension BackupUploadView {
 }
 
 #Preview {
-    BackupUploadView.ProgressView(items: [.google, .dropbox], currentIndex: .constant(0))
+    BackupUploadView.ProgressView(items: [.google, .dropbox], currentIndex: .constant(1))
 //    BackupUploadView.CompletedView(items: [.google,.passkey, .icloud, ])
 //    BackupUploadView.PhraseWords(
 //        isBlur: true,

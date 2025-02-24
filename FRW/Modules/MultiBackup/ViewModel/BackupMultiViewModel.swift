@@ -13,8 +13,8 @@ class BackupMultiViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(backups: [MultiBackupType]) {
-        self.list = []
-        self.selectedList = backups
+        list = []
+        selectedList = backups
         for type in MultiBackupType.allCases {
             if type != .passkey {
                 list.append(MultiItem(type: type, isBackup: backups.contains(type)))
@@ -111,15 +111,15 @@ enum MultiBackupType: Int, CaseIterable, Codable {
     var normalIcon: String {
         switch self {
         case .google:
-            return "Google.Drive.normal"
+            return "icon.google.32"
         case .passkey:
-            return "icon.passkey.normal"
+            return "icon.passkey.32"
         case .icloud:
-            return "Icloud.normal"
+            return "icon.Icloud.32"
         case .phrase:
-            return "icon.recovery.normal"
+            return "icon.recovery.32"
         case .dropbox:
-            return "icon.dropbox.normal"
+            return "icon.dropbox.32"
         }
     }
 
