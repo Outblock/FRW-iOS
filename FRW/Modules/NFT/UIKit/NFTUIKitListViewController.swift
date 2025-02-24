@@ -141,6 +141,30 @@ class NFTUIKitListViewController: UIViewController {
         return view
     }()
 
+    private lazy var segmentControl: NFTUIKitSegmentControl = {
+        let view = NFTUIKitSegmentControl(names: ["seg_list".localized, "seg_grid".localized])
+        view.callback = { [weak self] index in
+            guard let self = self else {
+                return
+            }
+
+            switch index {
+            case 0:
+                self.style = .normal
+            case 1:
+                self.style = .grid
+            default:
+                break
+            }
+
+            let feedbackGenerator = UIImpactFeedbackGenerator(style: .rigid)
+            feedbackGenerator.impactOccurred()
+
+            self.reloadViews()
+        }
+        return view
+    }()
+
     private lazy var addButton: UIButton = {
         let btn = UIButton(type: .custom)
         btn.setImage(UIImage(named: "icon-nft-add"), for: .normal)
@@ -234,6 +258,12 @@ class NFTUIKitListViewController: UIViewController {
         headerContainerView.addSubview(headerContentView)
         headerContentView.snp.makeConstraints { make in
             make.left.right.bottom.equalToSuperview()
+        }
+
+        headerContentView.addSubview(segmentControl)
+        segmentControl.snp.makeConstraints { make in
+            make.left.equalTo(18)
+            make.centerY.equalToSuperview()
         }
 
         headerContentView.addSubview(addButton)

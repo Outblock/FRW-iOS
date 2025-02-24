@@ -15,11 +15,11 @@ struct BackupListView: RouteableView {
 
     @State
     private var deletePhrase = false
-    
+
     @State
     private var showBackWarning = false
-    
-    static private var notificationToken: AnyObject?
+
+    private static var notificationToken: AnyObject?
 
     var title: String {
         "backup".localized
@@ -81,18 +81,6 @@ struct BackupListView: RouteableView {
                 viewModel.onCancelTip()
             }
         }
-        .navigationBarItems(trailing: HStack(spacing: 6) {
-            if isDevModel {
-                Button {
-                    MultiBackupManager.shared.clearCloud()
-                } label: {
-                    Image(systemName: "xmark.circle")
-                        .renderingMode(.template)
-                        .foregroundColor(.LL.Primary.salmonPrimary)
-                }
-            }
-
-        })
         .onAppear {
             viewModel.fetchData()
         }
@@ -117,7 +105,7 @@ struct BackupListView: RouteableView {
                         action: {
                             showBackWarning = false
                         }
-                    )
+                    ),
             ],
             useDefaultCancelButton: false
         )
@@ -169,7 +157,7 @@ struct BackupListView: RouteableView {
                     .visibility(viewModel.showAllUITag ? .visible : .gone)
                 }
 
-                ForEach(0..<viewModel.showDevicesCount, id: \.self) { index in
+                ForEach(0 ..< viewModel.showDevicesCount, id: \.self) { index in
                     DevicesView.Cell(model: viewModel.deviceList[index])
                 }
             }
@@ -195,7 +183,7 @@ struct BackupListView: RouteableView {
             }
             .padding(.top, 24)
 
-            ForEach(0..<viewModel.backupList.count, id: \.self) { index in
+            ForEach(0 ..< viewModel.backupList.count, id: \.self) { index in
                 let item = viewModel.backupList[index]
                 BackupListView.BackupFinishItem(item: item, index: index) { _, deleteIndex in
                     deletePhrase = false
@@ -222,7 +210,7 @@ struct BackupListView: RouteableView {
             }
             .padding(.top, 24)
 
-            ForEach(0..<viewModel.phraseList.count, id: \.self) { index in
+            ForEach(0 ..< viewModel.phraseList.count, id: \.self) { index in
                 let item = viewModel.phraseList[index]
                 BackupListView.BackupFinishItem(item: item, index: index) { _, deleteIndex in
                     deletePhrase = true
