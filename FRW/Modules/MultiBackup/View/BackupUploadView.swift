@@ -385,7 +385,7 @@ extension BackupUploadView {
 }
 
 #Preview {
-    BackupUploadView.ProgressView(items: [.google, .dropbox], currentIndex: .constant(1))
+    BackupUploadView.ProgressView(items: [.google, .dropbox], currentIndex: .constant(0))
 //    BackupUploadView.CompletedView(items: [.google,.passkey, .icloud, ])
 //    BackupUploadView.PhraseWords(
 //        isBlur: true,

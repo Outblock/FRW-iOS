@@ -426,7 +426,7 @@ extension BackupListView {
          hierarchy will be updated. */
         NotificationCenter.default.post(name: NSNotification.Name(backTappedNotification))
     }
-
+    
     private func handleBackButtonAction() {
         if viewModel.hasSomeBackup == false {
             showBackWarning = true
