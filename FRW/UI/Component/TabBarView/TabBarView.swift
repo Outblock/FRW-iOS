@@ -44,7 +44,7 @@ struct TabBarView<T: Hashable>: View {
                 offsetX: $offsetX,
                 selected: $current
             )
-            .frame(height: 80)
+            .frame(height: 72)
         }
     }
 

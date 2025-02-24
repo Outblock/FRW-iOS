@@ -31,6 +31,7 @@ struct BackupUploadView: RouteableView {
                 items: viewModel.items,
                 currentIndex: $viewModel.currentIndex
             )
+            .frame(maxWidth: .infinity)
             .padding(.top, 24)
             .padding(.horizontal, 56)
             .visibility(viewModel.process == .end ? .gone : .visible)
@@ -174,8 +175,12 @@ extension BackupUploadView {
                 Image(currentIndex >= items.count ? "icon.finish.highlight" : "icon.finish.normal")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 40, height: 40)
+                    .frame(
+                        width: currentIndex >= items.count ? 40 : 32,
+                        height: currentIndex >= items.count ? 40 : 32
+                    )
             }
+            .frame(maxWidth: .infinity)
         }
     }
 
@@ -189,8 +194,9 @@ extension BackupUploadView {
                     isSelected ? itemType.highlightIcon
                         : itemType.normalIcon
                 )
+                .resizable()
                 .aspectRatio(contentMode: .fill)
-                .frame(width: 40, height: 40)
+                .frame(width: isSelected ? 40 : 32, height: isSelected ? 40 : 32)
             }
         }
     }
@@ -372,7 +378,7 @@ extension BackupUploadView {
 }
 
 #Preview {
-    BackupUploadView.ProgressView(items: [.google, .dropbox], currentIndex: .constant(1))
+    BackupUploadView.ProgressView(items: [.google, .dropbox], currentIndex: .constant(0))
 //    BackupUploadView.CompletedView(items: [.google,.passkey, .icloud, ])
 //    BackupUploadView.PhraseWords(
 //        isBlur: true,

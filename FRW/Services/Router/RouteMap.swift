@@ -295,10 +295,14 @@ extension RouteMap.Wallet: RouterTarget {
             )
             navi.present(content: AddTokenView(vm: vm))
         case .stakingList:
-            navi.push(content: StakingListView())
+
+            let stakingList = RouteableUIHostingController(rootView: StakingListView())
+            var dest: [UIViewController] = [stakingList]
             if StakingManager.shared.isStaked == false {
-                Router.route(to: RouteMap.Wallet.stakingSelectProvider)
+                let stakingProvider = RouteableUIHostingController(rootView: SelectProviderView())
+                dest.append(stakingProvider)
             }
+            navi.setViewControllers(navi.viewControllers + dest, animated: true)
         case .stakingSelectProvider:
             navi.push(content: SelectProviderView())
         case .stakeGuide:
