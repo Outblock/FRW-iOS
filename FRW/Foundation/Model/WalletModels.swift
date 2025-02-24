@@ -8,6 +8,7 @@
 import BigInt
 import Flow
 import Foundation
+import Web3Core
 
 // MARK: - QuoteMarket
 
@@ -136,9 +137,30 @@ struct TokenModel: Codable, Identifiable, Mockable {
 
         return URL(string: placeholder)!
     }
+    
+    var readableBalance: Decimal? {
+        guard let bal = balance else {
+            return nil
+        }
 
+        let result = Utilities.formatToPrecision(
+            bal,
+            units: .custom(decimal)
+        )
+        return Decimal(string: result)
+    }
+    
+    var readableBalanceStr : String? {
+        guard let bal = readableBalance else {
+            return nil
+        }
+        return bal.doubleValue.formatted(.number.precision(.fractionLength(0...3)))
+    }
+
+
+    // Identifiable
     var id: String {
-        symbol ?? ""
+        contractId
     }
 
     var isActivated: Bool {

@@ -9,27 +9,6 @@ import Foundation
 import Web3Core
 import Flow
 
-enum VMType {
-    case cadence
-    case evm
-}
-
-protocol FWAddress {
-    var type: VMType { get }
-}
-
-extension Flow.Address: FWAddress {
-    var type: VMType {
-        .cadence
-    }
-}
-
-extension EthereumAddress: FWAddress {
-    var type: VMType {
-        .evm
-    }
-}
-
 protocol TokenBalanceProvider {
     associatedtype FWAddress
     var network: FlowNetworkType { get }
@@ -40,6 +19,8 @@ protocol TokenBalanceProvider {
 
 class TokenBalanceHandler {
     
+    // Default Flow token metadata from token list
+    // https://github.com/Outblock/token-list-jsons/blob/outblock/jsons/mainnet/flow/default.json#L6-L35
     static let flowTokenJsonStr =
     """
     {

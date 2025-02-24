@@ -26,6 +26,15 @@ class EVMTokenBalanceProvider: TokenBalanceProvider {
         var flowModel = TokenBalanceHandler.flowToken.toTokenModel(type: TokenModel.TokenType.evm, network: network)
         flowModel.balance = flowBalance
         models.insert(flowModel, at: 0)
+        
+        // Sort by balance
+        let sorted = models.sorted { lhs, rhs in
+            guard let lBal = lhs.readableBalance, let rBal = rhs.readableBalance else {
+                return false
+            }
+            return lBal > rBal
+        }
+        
         return models
     }
     

@@ -7,84 +7,54 @@
 
 import SwiftUI
 import Kingfisher
+import Flow
 
 struct TokenBalanceListView: RouteableView {
     // MARK: Lifecycle
 
-    init(vm: AddTokenViewModel) {
+    init(vm: TokenBalanceListViewModel) {
         _vm = StateObject(wrappedValue: vm)
     }
 
     // MARK: Internal
 
     @StateObject
-    var vm: AddTokenViewModel
+    var vm: TokenBalanceListViewModel
 
     var title: String {
         "swap_select_token".localized
     }
 
     var body: some View {
-        ZStack {
-            listView
-        }
+        listView
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .halfSheet(showSheet: $vm.confirmSheetIsPresented, autoResizing: true, backgroundColor: Color.LL.Neutrals.background, sheetView: {
-            if let token = vm.pendingActiveToken {
-                AddTokenConfirmView(token: token)
-                    .environmentObject(vm)
-            }
-        })
         .environmentObject(vm)
         .disabled(vm.isRequesting)
         .applyRouteable(self)
     }
 
     var listView: some View {
-        IndexedList(vm.searchResults) { section in
-            Section {
-                ForEach(section.tokenList) { token in
-                    TokenItemCell(token: token, isActivated: vm.isActivatedToken(token), action: {
-                        if vm.mode == .selectToken {
-                            vm.selectTokenAction(token)
-                        } else {
-                            vm.willActiveTokenAction(token)
-                        }
-                    })
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-                    .disabled(vm.isDisabledToken(token))
-                }
-                .buttonStyle(.plain)
-                .environmentObject(vm)
-            } header: {
-                sectionHeader(section)
-                    .id(section.id)
+        List {
+            ForEach(vm.tokenList) { token in
+                TokenItemCell(token: token,
+                              action: {
+                    vm.selectTokenAction(token)
+                })
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
             }
-            .listRowInsets(EdgeInsets(top: 6, leading: 18, bottom: 6, trailing: 27))
+            .buttonStyle(.plain)
+            .environmentObject(vm)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .listStyle(.plain)
         .background(Color.LL.background)
-        .searchable(text: $vm.searchText)
+        .mockPlaceholder(vm.isRequesting)
+//        .searchable(text: $vm.searchText)
     }
 
     func backButtonAction() {
-        if vm.mode == .addToken {
-            Router.pop()
-        } else {
-            Router.dismiss()
-        }
-    }
-
-    // MARK: Private
-
-    @ViewBuilder
-    private func sectionHeader(_ section: AddTokenViewModel.Section) -> some View {
-        let sectionName = section.sectionName
-        Text(sectionName)
-            .foregroundColor(.LL.Neutrals.text2)
-            .font(.inter(size: 12, weight: .semibold))
+        Router.dismiss()
     }
 }
 
@@ -96,16 +66,13 @@ private let TokenCellHeight: CGFloat = 64
 extension TokenBalanceListView {
     struct TokenItemCell: View {
         let token: TokenModel
-        let isActivated: Bool
         let action: () -> Void
+        
         @EnvironmentObject
-        var vm: AddTokenViewModel
+        var vm: TokenBalanceListViewModel
 
         var body: some View {
             Button {
-                if isEVMAccount && vm.mode == .addToken {
-                    return
-                }
                 action()
             } label: {
                 HStack {
@@ -125,21 +92,15 @@ extension TokenBalanceListView {
                             .font(.inter(size: 14, weight: .semibold))
 
                         Text(token.symbol?.uppercased() ?? "")
-                            .foregroundColor(.LL.Neutrals.note)
+                            .foregroundColor(.LL.Neutrals.neutrals9)
                             .font(.inter(size: 12, weight: .medium))
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-
-                    if isEVMAccount && vm.mode == .addToken {
-                        HStack {}
-                    } else {
-                        if isActivated {
-                            Image(systemName: .checkmarkSelected)
-                                .foregroundColor(.LL.Success.success3)
-                        } else {
-                            Image(systemName: .add).foregroundColor(.LL.Primary.salmonPrimary)
-                                .visibility(vm.mode == .addToken ? .visible : .gone)
-                        }
+                    
+                    if let balance = token.readableBalanceStr {
+                        Text(balance)
+                            .foregroundColor(.LL.Neutrals.note)
+                            .font(.inter(size: 12, weight: .medium))
                     }
                 }
                 .padding(.horizontal, 12)
@@ -149,98 +110,11 @@ extension TokenBalanceListView {
                 }
             }
         }
-
-        var isEVMAccount: Bool {
-            EVMAccountManager.shared.selectedAccount != nil
-        }
-    }
-}
-
-// MARK: AddTokenView.AddTokenConfirmView
-
-extension TokenBalanceListView {
-    struct AddTokenConfirmView: View {
-        @EnvironmentObject
-        var vm: AddTokenViewModel
-        let token: TokenModel
-
-        @State
-        var color = Color.LL.Neutrals.note.opacity(0.1)
-
-        var buttonState: VPrimaryButtonState {
-            if vm.isRequesting {
-                return .loading
-            }
-            return .enabled
-        }
-
-        var body: some View {
-            VStack {
-                SheetHeaderView(title: "add_token".localized) {
-                    vm.confirmSheetIsPresented = false
-                }
-
-                VStack {
-                    Spacer()
-
-                    ZStack {
-                        ZStack(alignment: .top) {
-                            color
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 188)
-                                .cornerRadius(16)
-                                .animation(.easeInOut, value: color)
-
-                            Text(token.name)
-                                .foregroundColor(.LL.Button.light)
-                                .font(.inter(size: 18, weight: .bold))
-                                .padding(.horizontal, 40)
-                                .frame(height: 45)
-                                .background(Color(hex: "#1A1A1A"))
-                                .cornerRadius([.bottomLeft, .bottomRight], 16)
-                        }
-
-                        KFImage
-                            .url(token.iconURL)
-                            .placeholder {
-                                Image("placeholder")
-                                    .resizable()
-                            }
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 114, height: 114)
-                            .clipShape(Circle())
-                            .padding(.top, 45)
-                    }
-
-                    Spacer()
-
-                    VPrimaryButton(
-                        model: ButtonStyle.primary,
-                        state: buttonState,
-                        action: {
-                            vm.confirmActiveTokenAction(token)
-                        },
-                        title: buttonState == .loading ? "working_on_it"
-                            .localized : "enable".localized
-                    )
-                    .padding(.vertical)
-                }
-                .padding(.horizontal, 36)
-            }
-            .task {
-                Task { @MainActor in
-                    if let color = await ImageHelper
-                        .colors(from: token.icon?.absoluteString ?? placeholder).first {
-                        self.color = color.opacity(0.1)
-                    }
-                }
-            }
-        }
     }
 }
 
 
-//#Preview {
-//    TokenBalanceListView()
-//}
+#Preview {
+    let vm = TokenBalanceListViewModel(address: Flow.Address(hex: "0xa71fbead537a2416"))
+    TokenBalanceListView(vm: vm)
+}

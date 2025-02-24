@@ -236,7 +236,11 @@ extension MoveTokenView {
         @ViewBuilder
         var switchMenuButton: some View {
             Button(action: {
-                Router.route(to: RouteMap.Wallet.selectMoveToken(viewModel.token) { selectedToken in
+                guard let address = FWAddressDector.create(address: viewModel.fromContact.address) else {
+                    return
+                }
+                
+                Router.route(to: RouteMap.Wallet.selectMoveToken(address) { selectedToken in
                     viewModel.changeTokenModelAction(token: selectedToken)
                 })
             }, label: {

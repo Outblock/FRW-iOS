@@ -8,6 +8,7 @@
 import Foundation
 import Flow
 import Web3Core
+import BigInt
 
 class CadenceTokenBalanceProvider: TokenBalanceProvider {
     var network: FlowNetworkType
@@ -25,13 +26,21 @@ class CadenceTokenBalanceProvider: TokenBalanceProvider {
         balance.keys.forEach { key in
             if let value = balance[key], value > 0  {
                 if var model = models.first(where: { $0.contractId == key }) {
-                    model.balance = Utilities.parseToBigUInt(String(balance[key] ?? 0), decimals: model.decimal)
+                    model.balance = Utilities.parseToBigUInt(String(format: "%f", balance[key] ?? 0), decimals: model.decimal) ?? BigUInt(0)
                     activeModels.append(model)
                 }
             }
         }
         
-        return activeModels
+        // Sort by balance
+        let sorted = activeModels.sorted { lhs, rhs in
+            guard let lBal = lhs.balance, let rBal = rhs.balance else {
+                return true
+            }
+            return lBal > rBal
+        }
+        
+        return sorted
     }
     
     func getNFTCollections(address: Flow.Address) async throws -> [NFTCollectionInfo] {
