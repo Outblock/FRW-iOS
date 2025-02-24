@@ -26,6 +26,8 @@ struct ContactRelationView: View {
 
     var clickFrom: ContactCallback?
     var clickTo: ContactCallback?
+    
+    var clickSwap: (() -> Void)?
 
     var body: some View {
         ZStack {
@@ -40,7 +42,12 @@ struct ContactRelationView: View {
                 }
                 .frame(maxWidth: .infinity)
             }
-            arrow()
+            
+            Button {
+                clickSwap?()
+            } label: {
+                arrow()
+            }
         }
     }
 
@@ -50,54 +57,56 @@ struct ContactRelationView: View {
         showArrow: Bool = false,
         onClick: (() -> Void)? = nil
     ) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                if let user = contact.user {
-                    user.emoji.icon(size: 32)
-                } else {
-                    KFImage.url(URL(string: contact.avatar ?? ""))
-                        .placeholder {
-                            Image("placeholder")
-                                .resizable()
-                        }
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 32, height: 32)
-                        .cornerRadius(16)
-                }
-
-                TagView(type: contact.walletType ?? .flow)
-
-                Spacer()
-
-                Image("icon_arrow_bottom_16")
-                    .resizable()
-                    .frame(width: 16, height: 16)
-                    .visibility(showArrow ? .visible : .gone)
-            }
-
-            Text(contact.displayName)
-                .font(.inter(size: 14, weight: .semibold))
-                .foregroundStyle(Color.Theme.Text.black)
-                .frame(height: 18)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            Text(contact.address ?? "")
-                .font(.inter(size: 12))
-                .truncationMode(.middle)
-                .foregroundStyle(Color.Theme.Text.black8)
-                .frame(height: 16)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .onTapGesture {
+        Button {
             if showArrow {
                 onClick?()
             }
+        } label: {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    if let user = contact.user {
+                        user.emoji.icon(size: 32)
+                    } else {
+                        KFImage.url(URL(string: contact.avatar ?? ""))
+                            .placeholder {
+                                Image("placeholder")
+                                    .resizable()
+                            }
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 32, height: 32)
+                            .cornerRadius(16)
+                    }
+                    
+                    TagView(type: contact.walletType ?? .flow)
+                    
+                    Spacer()
+                    
+                    Image("icon_arrow_bottom_16")
+                        .resizable()
+                        .frame(width: 16, height: 16)
+                        .visibility(showArrow ? .visible : .gone)
+                }
+                
+                Text(contact.displayName)
+                    .font(.inter(size: 14, weight: .semibold))
+                    .foregroundStyle(Color.Theme.Text.black)
+                    .frame(height: 18)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Text(contact.address ?? "")
+                    .font(.inter(size: 12))
+                    .truncationMode(.middle)
+                    .foregroundStyle(Color.Theme.Text.black8)
+                    .frame(height: 16)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(16)
+            .background(.Theme.BG.bg3)
+            .cornerRadius(16)
+            .shadow(color: .black.opacity(0.04), radius: 6, y: 2)
         }
-        .padding(16)
-        .background(.Theme.BG.bg3)
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.04), radius: 6, y: 2)
+        .buttonStyle(ScaleButtonStyle())
     }
 
     @ViewBuilder

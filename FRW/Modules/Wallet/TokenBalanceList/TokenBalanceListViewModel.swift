@@ -58,6 +58,7 @@ class TokenBalanceListViewModel: ObservableObject {
             await MainActor.run {
                 isRequesting = false
             }
+            log.error(error)
         }
     }
 }

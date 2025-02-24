@@ -12,6 +12,15 @@ import Flow
 enum VMType {
     case cadence
     case evm
+    
+    func toTokenType() -> TokenModel.TokenType {
+        switch self {
+        case .cadence:
+            return .cadence
+        case .evm:
+            return .evm
+        }
+    }
 }
 
 protocol FWAddress {

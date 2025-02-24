@@ -9,14 +9,6 @@ import Foundation
 import Web3Core
 import Flow
 
-protocol TokenBalanceProvider {
-    associatedtype FWAddress
-    var network: FlowNetworkType { get }
-    func getFTBalance(address: FWAddress) async throws -> [TokenModel]
-    func getNFTCollections(address: FWAddress) async throws -> [NFTCollectionInfo]
-    func getNFTCollectionList(address: FWAddress) async throws -> [NFTCollectionInfo]
-}
-
 class TokenBalanceHandler {
     
     // Default Flow token metadata from token list
@@ -26,7 +18,7 @@ class TokenBalanceHandler {
     {
       "chainId": 747,
       "address": "0x1654653399040a61",
-      "contractName": "FlowToken",
+      "contractName": "",
       "path": {
         "vault": "/storage/flowTokenVault",
         "receiver": "/public/flowTokenReceiver",
@@ -35,7 +27,7 @@ class TokenBalanceHandler {
       "symbol": "FLOW",
       "name": "Flow",
       "description": "",
-      "decimals": 8,
+      "decimals": 18,
       "logoURI": "https://cdn.jsdelivr.net/gh/FlowFans/flow-token-list@main/token-registry/A.1654653399040a61.FlowToken/logo.svg",
       "tags": [
         "Verified",
@@ -76,5 +68,10 @@ class TokenBalanceHandler {
             let provider = EVMTokenBalanceProvider(network: network)
             return try await provider.getFTBalance(address: evmAddress)
         }
+    }
+    
+    func getFTBalanceWithId(address: FWAddress, network: FlowNetworkType = LocalUserDefaults.shared.flowNetwork, tokenId: String) async throws -> TokenModel? {
+        let models = try await getFTBalance(address: address, network: network)
+        return models.first{ $0.id == tokenId }
     }
 }

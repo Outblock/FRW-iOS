@@ -27,30 +27,30 @@ struct TokenBalanceListView: RouteableView {
 
     var body: some View {
         listView
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .environmentObject(vm)
-        .disabled(vm.isRequesting)
-        .applyRouteable(self)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .environmentObject(vm)
+            .disabled(vm.isRequesting)
+            .applyRouteable(self)
     }
 
     var listView: some View {
         List {
             ForEach(vm.tokenList) { token in
-                TokenItemCell(token: token,
-                              action: {
+                Button {
                     vm.selectTokenAction(token)
-                })
+                } label: {
+                    TokenItemCell(token: token)
+                }
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(ScaleButtonStyle())
             .environmentObject(vm)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .listStyle(.plain)
         .background(Color.LL.background)
         .mockPlaceholder(vm.isRequesting)
-//        .searchable(text: $vm.searchText)
     }
 
     func backButtonAction() {
@@ -66,48 +66,43 @@ private let TokenCellHeight: CGFloat = 64
 extension TokenBalanceListView {
     struct TokenItemCell: View {
         let token: TokenModel
-        let action: () -> Void
         
         @EnvironmentObject
         var vm: TokenBalanceListViewModel
 
         var body: some View {
-            Button {
-                action()
-            } label: {
-                HStack {
-                    KFImage.url(token.iconURL)
-                        .placeholder {
-                            Image("placeholder")
-                                .resizable()
-                        }
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: TokenIconWidth, height: TokenIconWidth)
-                        .clipShape(Circle())
-
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(token.name)
-                            .foregroundColor(.LL.Neutrals.text)
-                            .font(.inter(size: 14, weight: .semibold))
-
-                        Text(token.symbol?.uppercased() ?? "")
-                            .foregroundColor(.LL.Neutrals.neutrals9)
-                            .font(.inter(size: 12, weight: .medium))
+            HStack {
+                KFImage.url(token.iconURL)
+                    .placeholder {
+                        Image("placeholder")
+                            .resizable()
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    if let balance = token.readableBalanceStr {
-                        Text(balance)
-                            .foregroundColor(.LL.Neutrals.note)
-                            .font(.inter(size: 12, weight: .medium))
-                    }
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: TokenIconWidth, height: TokenIconWidth)
+                    .clipShape(Circle())
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(token.name)
+                        .foregroundColor(.LL.Neutrals.text)
+                        .font(.inter(size: 14, weight: .semibold))
+
+                    Text(token.symbol?.uppercased() ?? "")
+                        .foregroundColor(.LL.Neutrals.neutrals9)
+                        .font(.inter(size: 12, weight: .medium))
                 }
-                .padding(.horizontal, 12)
-                .frame(height: TokenCellHeight)
-                .background {
-                    Color.LL.Neutrals.background.cornerRadius(16)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                
+                if let balance = token.readableBalanceStr {
+                    Text(balance)
+                        .foregroundColor(.LL.Neutrals.note)
+                        .font(.inter(size: 12, weight: .medium))
                 }
+            }
+            .padding(.horizontal, 12)
+            .frame(height: TokenCellHeight)
+            .background {
+                Color.Theme.BG.bg3.cornerRadius(16)
             }
         }
     }

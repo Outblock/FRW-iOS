@@ -944,8 +944,9 @@ extension WalletManager {
             return
         }
         do {
+            let network = LocalUserDefaults.shared.flowNetwork
             let tokenResponse: SingleTokenResponse = try await Network
-                .requestWithRawModel(GithubEndpoint.EVMTokenList)
+                .requestWithRawModel(GithubEndpoint.EVMTokenList(network))
             let coins: [TokenModel] = tokenResponse.conversion(type: .evm)
             await MainActor.run {
                 self.evmSupportedCoins = coins
