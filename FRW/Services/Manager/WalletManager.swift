@@ -107,9 +107,9 @@ class WalletManager: ObservableObject {
     @Published
     var balanceProvider = BalanceProvider()
 
-    var walletEntity: FlowWalletKit.Wallet? = nil
+    var walletEntity: FlowWalletKit.Wallet?
     var accountKey: UserManager.Accountkey?
-    var keyProvider: (any KeyProtocol)? = nil
+    var keyProvider: (any KeyProtocol)?
     // rename to currentAccount
 
 //    @Published var account: FlowWalletKit.Account? = nil
@@ -886,7 +886,7 @@ extension WalletManager {
     private func fetchSupportedCoins() async throws {
         let tokenResponse: SingleTokenResponse = try await Network
             .requestWithRawModel(GithubEndpoint.ftTokenList)
-        let coins: [TokenModel] = tokenResponse.conversion()
+        let coins: [TokenModel] = tokenResponse.conversion(type: .cadence)
         let validCoins = coins.filter { $0.getAddress()?.isEmpty == false }
         DispatchQueue.main.async {
             self.supportedCoins = validCoins
@@ -946,8 +946,8 @@ extension WalletManager {
         do {
             let tokenResponse: SingleTokenResponse = try await Network
                 .requestWithRawModel(GithubEndpoint.EVMTokenList)
-            let coins: [TokenModel] = tokenResponse.conversion()
-            DispatchQueue.main.async {
+            let coins: [TokenModel] = tokenResponse.conversion(type: .evm)
+            await MainActor.run {
                 self.evmSupportedCoins = coins
             }
         } catch {

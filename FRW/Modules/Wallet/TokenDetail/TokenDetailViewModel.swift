@@ -175,7 +175,8 @@ class TokenDetailViewModel: ObservableObject {
     @Published
     var showSheet: Bool = false
     var buttonAction: TokenDetailViewModel.Action = .none
-    var showStorageView: Bool { return self.token.isFlowCoin }
+
+    var showStorageView: Bool { token.isFlowCoin }
 
     var isTokenDetailsButtonEnabled: Bool { token.website.isNotNullNorEmpty }
 
@@ -282,7 +283,10 @@ extension TokenDetailViewModel {
         if let txid = model.txid {
             let network = LocalUserDefaults.shared.flowNetwork
             let accountType = AccountType.current
-            let url = network.getTransactionHistoryUrl(accountType: accountType, transactionId: txid)
+            let url = network.getTransactionHistoryUrl(
+                accountType: accountType,
+                transactionId: txid
+            )
 
             url.map { UIApplication.shared.open($0) }
         }
@@ -296,6 +300,10 @@ extension TokenDetailViewModel {
     func onMoveToken() {
         buttonAction = .move
         showSheetAction()
+    }
+
+    func onSwapToken() {
+        Router.route(to: RouteMap.Wallet.swapProvider(token))
     }
 
     func showSheetAction() {
@@ -325,7 +333,7 @@ extension TokenDetailViewModel {
                 group.addTask {
                     try? await WalletManager.shared.fetchBalance()
                 }
-                
+
                 group.addTask {
                     let accountInfo = try? await FlowNetwork.checkAccountInfo()
                     if let accountInfo {
@@ -337,7 +345,7 @@ extension TokenDetailViewModel {
                         }
                     }
                 }
-                
+
                 await group.waitForAll()
             }
         }
@@ -482,7 +490,7 @@ extension TokenDetailViewModel {
             if ChildAccountManager.shared.selectedChildAccount != nil {
                 showBuyButton = false
             } else {
-                showBuyButton = true
+                showBuyButton = token.isFlowCoin ? true : false
             }
 
         } else {

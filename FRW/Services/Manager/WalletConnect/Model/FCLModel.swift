@@ -278,6 +278,7 @@ struct Service: Codable {
         self.fType = fType
         self.fVsn = fVsn
         self.type = type
+        self.network = LocalUserDefaults.shared.flowNetwork.rawValue
         self.method = method
         self.endpoint = endpoint
         self.uid = uid
@@ -306,6 +307,7 @@ struct Service: Codable {
         self.identity = try? container.decode(Identity.self, forKey: .identity)
         self.provider = try? container.decode(Provider.self, forKey: .provider)
         self.data = try? container.decode(AccountProof.self, forKey: .data)
+        self.network = try? container.decode(String.self, forKey: .network)
     }
 
     // MARK: Internal
@@ -322,6 +324,7 @@ struct Service: Codable {
         case provider
         case params
         case data
+        case network
     }
 
     var fType: String? = "Service"
@@ -335,6 +338,7 @@ struct Service: Codable {
     var provider: Provider?
     var params: [String: String]?
     var data: AccountProof?
+    var network: String? = LocalUserDefaults.shared.flowNetwork.rawValue
 }
 
 // MARK: - AccountProof

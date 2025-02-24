@@ -69,7 +69,7 @@ extension IntroductionView {
         var titleTop: String {
             switch self {
             case .whatMultiBackup:
-                return "What is a".localized
+                return "what_is".localized
             case .aboutRecoveryPhrase:
                 return "about_phrase_title_top".localized
             }

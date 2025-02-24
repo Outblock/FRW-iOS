@@ -20,11 +20,11 @@ extension ExploreTabScreen: AppTabBarPageProtocol {
     }
 
     static func iconName() -> String {
-        "Category"
+        "tabler-icon-brand-safari"
     }
-
-    static func color() -> SwiftUI.Color {
-        .LL.Secondary.violetDiscover
+    
+    static func title() -> String {
+        "explore".localized
     }
 }
 
@@ -140,26 +140,10 @@ struct ExploreTabScreen: View {
             Image(systemName: "square.grid.2x2.fill")
                 .font(.LL.caption)
             Text("dApps".localized)
-                .bold()
+                .font(.LL.largeTitle2)
+                .semibold()
             Spacer()
 
-            Button {
-                Router.route(to: RouteMap.Explore.dapps)
-            } label: {
-                HStack(spacing: 5) {
-                    Text("browser_bookmark_view".localized)
-                        .font(.inter(size: 16, weight: .medium))
-                        .foregroundColor(Color(hex: "#7D7AFF"))
-
-                    Image("icon-search-arrow")
-                        .renderingMode(.template)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 15, height: 11)
-                        .foregroundColor(Color(hex: "#C2C3F2"))
-                }
-                .contentShape(Rectangle())
-            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

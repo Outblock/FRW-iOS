@@ -86,8 +86,6 @@ struct NFTBlurImageView: View {
 // MARK: - NFTBlurImageView_Previews
 
 struct NFTBlurImageView_Previews: PreviewProvider {
-    static var url: URL? =
-        URL(string: "https://ovowebpics.s3.ap-northeast-1.amazonaws.com/flowMysertybox10.png")
     static var colors: [Color] = [
         .orange,
         .white,

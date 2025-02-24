@@ -79,24 +79,36 @@ final class WalletSendAmountViewModel: ObservableObject {
 
     // MARK: Internal
 
-    @Published private(set) var targetContact: Contact
-    @Published private(set) var token: TokenModel
-    @Published private(set) var amountBalance: Double = 0
-    @Published private(set) var coinRate: Double = 0
-    
-    @Published var inputText: String = ""
-    @Published private(set) var inputTokenNum: Double = 0
-    @Published private(set) var inputDollarNum: Double = 0
+    @Published
+    private(set) var targetContact: Contact
+    @Published
+    private(set) var token: TokenModel
+    @Published
+    private(set) var amountBalance: Double = 0
+    @Published
+    private(set) var coinRate: Double = 0
+
+    @Published
+    var inputText: String = ""
+    @Published
+    private(set) var inputTokenNum: Double = 0
+    @Published
+    private(set) var inputDollarNum: Double = 0
     private(set) var actualBalance: String = ""
 
-    @Published private(set) var exchangeType: WalletSendAmountView.ExchangeType = .token
-    @Published private(set) var errorType: WalletSendAmountView.ErrorType = .none
+    @Published
+    private(set) var exchangeType: WalletSendAmountView.ExchangeType = .token
+    @Published
+    private(set) var errorType: WalletSendAmountView.ErrorType = .none
 
-    @Published var showConfirmView: Bool = false
+    @Published
+    var showConfirmView: Bool = false
 
-    @Published private(set) var isValidToken: Bool = true
+    @Published
+    private(set) var isValidToken: Bool = true
 
-    @Published var isEmptyTransation = true
+    @Published
+    var isEmptyTransation = true
 
     var amountBalanceAsDollar: Double {
         coinRate * amountBalance
@@ -142,16 +154,23 @@ extension WalletSendAmountViewModel {
         Task {
             if let address = targetContact.address {
                 if address.isEVMAddress {
-                    DispatchQueue.main.async {
+                    await MainActor.run {
                         self.isValidToken = true
+                    }
+                    return
+                }
+                guard let compareKey = EVMAccountManager.shared.selectedAccount == nil ? token
+                    .contractId : token.flowIdentifier else {
+                    await MainActor.run {
+                        self.isValidToken = false
                     }
                     return
                 }
                 let list = try await FlowNetwork
                     .checkTokensEnable(address: Flow.Address(hex: address))
-                let model = list.first { $0.key.lowercased() == token.contractId.lowercased() }
+                let model = list.first { compareKey.lowercased().contains($0.key.lowercased()) }
                 let isValid = model?.value
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.isValidToken = isValid ?? false
                 }
             }
@@ -170,7 +189,7 @@ extension WalletSendAmountViewModel {
         defer {
             checkForInsufficientStorage()
         }
-        
+
         if errorType == .invalidAddress {
             return
         }
@@ -233,13 +252,16 @@ extension WalletSendAmountViewModel {
     }
 }
 
-// MARK: - InsufficientStorageToastViewModel
+// MARK: InsufficientStorageToastViewModel
 
 extension WalletSendAmountViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
-    
+
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheckForTransfer(amount: self.inputTokenNum.decimalValue, token: .ft(self.token))
+        _insufficientStorageFailure = insufficientStorageCheckForTransfer(
+            amount: inputTokenNum.decimalValue,
+            token: .ft(token)
+        )
     }
 }
 
@@ -381,8 +403,7 @@ extension WalletSendAmountViewModel {
                             amount: amount,
                             address: targetAddress
                         )
-                    }
-                    else if targetAddress == address {
+                    } else if targetAddress == address {
                         guard let vaultIdentifier = token.flowIdentifier else {
                             failureBlock()
                             return
@@ -393,8 +414,7 @@ extension WalletSendAmountViewModel {
                             fromEvm: true,
                             decimals: token.decimal
                         )
-                    }
-                    else {
+                    } else {
                         guard let bigUIntValue = amount.description
                             .parseToBigUInt(decimals: token.decimal),
                             let flowIdentifier = self.token.flowIdentifier

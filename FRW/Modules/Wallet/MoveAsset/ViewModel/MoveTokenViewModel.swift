@@ -22,7 +22,7 @@ final class MoveTokenViewModel: ObservableObject {
         Task {
             await fetchMinFlowBalance()
         }
-        
+
         checkForInsufficientStorage()
     }
 
@@ -69,7 +69,8 @@ final class MoveTokenViewModel: ObservableObject {
     )
 
     private(set) var token: TokenModel
-    @Binding var isPresent: Bool
+    @Binding
+    var isPresent: Bool
 
     var isReadyForSend: Bool {
         errorType == .none && showBalance.isNumber && !showBalance.isEmpty
@@ -300,13 +301,19 @@ final class MoveTokenViewModel: ObservableObject {
     }
 }
 
-// MARK: - InsufficientStorageToastViewModel
+// MARK: InsufficientStorageToastViewModel
 
 extension MoveTokenViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
-    
+
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheckForMove(amount: self.inputTokenNum, token: .ft(self.token), from: self.fromContact.walletType, to: self.toContact.walletType)
+        _insufficientStorageFailure = insufficientStorageCheckForMove(
+            amount: inputTokenNum,
+            token: .ft(token),
+            from: fromContact.walletType,
+            to: toContact.walletType,
+            isMove: true
+        )
     }
 }
 
