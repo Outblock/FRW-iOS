@@ -9,7 +9,6 @@ import Foundation
 import Web3Core
 
 class EVMTokenBalanceProvider: TokenBalanceProvider {
-    
     var network: FlowNetworkType
     
     init(network: FlowNetworkType = LocalUserDefaults.shared.flowNetwork) {
@@ -30,7 +29,12 @@ class EVMTokenBalanceProvider: TokenBalanceProvider {
         return models
     }
     
-    func getNFTBalance(address: EthereumAddress) async throws -> [NFTCollectionInfo] {
+    func getNFTCollections(address: EthereumAddress) async throws -> [NFTCollectionInfo] {
+        // TODO: Add NFT Fetch
+        return []
+    }
+    
+    func getNFTCollectionList(address: EthereumAddress) async throws -> [NFTCollectionInfo] {
         // TODO: Add NFT Fetch
         return []
     }

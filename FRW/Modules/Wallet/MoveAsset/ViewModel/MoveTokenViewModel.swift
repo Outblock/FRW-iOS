@@ -140,7 +140,7 @@ final class MoveTokenViewModel: ObservableObject {
         maxButtonClickedOnce = true
         Task {
             let num = await updateAmountIfNeed(inputAmount: amountBalance)
-            DispatchQueue.main.async {
+            await MainActor.run {
                 self.showBalance = num.doubleValue.formatCurrencyString()
                 self.actualBalance = num
                 self.refreshSummary()
@@ -383,7 +383,7 @@ extension MoveTokenViewModel {
                                 identifier: token.contractId
                             )
                     }
-                    DispatchQueue.main.async {
+                    await MainActor.run {
                         self.closeAction()
                         self.buttonState = .enabled
                     }
@@ -414,7 +414,7 @@ extension MoveTokenViewModel {
         Task {
             do {
                 log.info("[EVM] withdraw Coa balance")
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.buttonState = .loading
                 }
                 let amount = self.inputTokenNum // self.inputTokenNum.decimalValue
@@ -431,12 +431,12 @@ extension MoveTokenViewModel {
                         identifier: token.contractId
                     )
                 WalletManager.shared.reloadWalletInfo()
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.closeAction()
                     self.buttonState = .enabled
                 }
             } catch {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.buttonState = .enabled
                 }
                 log.error("[EVM] move transation failed \(error)")
@@ -455,7 +455,7 @@ extension MoveTokenViewModel {
                     HUD.error(title: "Insufficient_balance::message".localized)
                     return
                 }
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.buttonState = .loading
                 }
                 let amount = self.inputTokenNum // self.inputTokenNum.decimalValue
@@ -473,12 +473,12 @@ extension MoveTokenViewModel {
                         identifier: token.contractId
                     )
                 WalletManager.shared.reloadWalletInfo()
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.closeAction()
                     self.buttonState = .enabled
                 }
             } catch {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.buttonState = .enabled
                 }
                 log.error("[EVM] move transation failed \(error)")
@@ -491,7 +491,7 @@ extension MoveTokenViewModel {
             do {
                 // TODO:
 
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.buttonState = .loading
                 }
                 log.info("[EVM] bridge token \(fromIsEVM ? "FromEVM" : "ToEVM")")
@@ -511,7 +511,7 @@ extension MoveTokenViewModel {
                 TransactionManager.shared.newTransaction(holder: holder)
 
                 WalletManager.shared.reloadWalletInfo()
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.closeAction()
                     self.buttonState = .enabled
                 }
@@ -525,7 +525,7 @@ extension MoveTokenViewModel {
                     )
 
             } catch {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.buttonState = .enabled
                 }
                 log.error("[EVM] move transation bridge token failed \(error)")

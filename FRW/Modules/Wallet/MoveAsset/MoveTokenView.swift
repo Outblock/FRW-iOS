@@ -281,5 +281,4 @@ extension MoveTokenView {
         ),
         isPresent: .constant(true)
     )
-//
 }

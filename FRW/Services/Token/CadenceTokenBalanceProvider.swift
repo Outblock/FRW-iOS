@@ -34,7 +34,12 @@ class CadenceTokenBalanceProvider: TokenBalanceProvider {
         return activeModels
     }
     
-    func getNFTBalance(address: Flow.Address) async throws -> [NFTCollectionInfo] {
+    func getNFTCollections(address: Flow.Address) async throws -> [NFTCollectionInfo] {
+        // TODO: Add NFT Fetch
+        return []
+    }
+    
+    func getNFTCollectionList(address: Flow.Address) async throws -> [NFTCollectionInfo] {
         // TODO: Add NFT Fetch
         return []
     }

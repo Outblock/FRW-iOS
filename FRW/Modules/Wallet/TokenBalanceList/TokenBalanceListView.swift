@@ -1,22 +1,14 @@
 //
-//  AddTokenView.swift
-//  Flow Wallet
+//  TokenBalanceListView.swift
+//  FRW
 //
-//  Created by Selina on 27/6/2022.
+//  Created by Hao Fu on 24/2/2025.
 //
 
-import Kingfisher
 import SwiftUI
+import Kingfisher
 
-// MARK: - AddTokenView
-
-// struct AddTokenView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AddTokenView.AddTokenConfirmView(token: nil)
-//    }
-// }
-
-struct AddTokenView: RouteableView {
+struct TokenBalanceListView: RouteableView {
     // MARK: Lifecycle
 
     init(vm: AddTokenViewModel) {
@@ -29,11 +21,7 @@ struct AddTokenView: RouteableView {
     var vm: AddTokenViewModel
 
     var title: String {
-        if vm.mode == .addToken {
-            return "add_token".localized
-        } else {
-            return "swap_select_token".localized
-        }
+        "swap_select_token".localized
     }
 
     var body: some View {
@@ -105,7 +93,7 @@ private let TokenCellHeight: CGFloat = 64
 
 // MARK: AddTokenView.TokenItemCell
 
-extension AddTokenView {
+extension TokenBalanceListView {
     struct TokenItemCell: View {
         let token: TokenModel
         let isActivated: Bool
@@ -170,7 +158,7 @@ extension AddTokenView {
 
 // MARK: AddTokenView.AddTokenConfirmView
 
-extension AddTokenView {
+extension TokenBalanceListView {
     struct AddTokenConfirmView: View {
         @EnvironmentObject
         var vm: AddTokenViewModel
@@ -209,7 +197,7 @@ extension AddTokenView {
                                 .padding(.horizontal, 40)
                                 .frame(height: 45)
                                 .background(Color(hex: "#1A1A1A"))
-                                .cornerRadius([.bottomLeading, .bottomTrailing], 16)
+                                .cornerRadius([.bottomLeft, .bottomRight], 16)
                         }
 
                         KFImage
@@ -251,3 +239,8 @@ extension AddTokenView {
         }
     }
 }
+
+
+//#Preview {
+//    TokenBalanceListView()
+//}

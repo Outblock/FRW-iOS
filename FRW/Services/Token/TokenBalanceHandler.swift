@@ -34,7 +34,8 @@ protocol TokenBalanceProvider {
     associatedtype FWAddress
     var network: FlowNetworkType { get }
     func getFTBalance(address: FWAddress) async throws -> [TokenModel]
-    func getNFTBalance(address: FWAddress) async throws -> [NFTCollectionInfo]
+    func getNFTCollections(address: FWAddress) async throws -> [NFTCollectionInfo]
+    func getNFTCollectionList(address: FWAddress) async throws -> [NFTCollectionInfo]
 }
 
 class TokenBalanceHandler {
