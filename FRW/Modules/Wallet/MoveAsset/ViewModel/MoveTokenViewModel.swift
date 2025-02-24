@@ -286,9 +286,7 @@ final class MoveTokenViewModel: ObservableObject {
         }
         // move fee
         let num = max(
-            inputAmount - (
-                minBalance ?? WalletManager.minFlowBalance
-            ) - WalletManager.fixedMoveFee,
+            inputAmount - WalletManager.fixedMoveFee,
             0
         )
         return num
@@ -339,6 +337,9 @@ extension MoveTokenViewModel {
 
 extension MoveTokenViewModel {
     func onNext() {
+        #if DEBUG
+        return
+        #endif
         if fromContact.walletType == .link || toContact.walletType == .link {
             Task {
                 do {
