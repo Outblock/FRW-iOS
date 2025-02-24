@@ -24,10 +24,11 @@ struct TabBarItemView<T: Hashable>: View {
             withAnimation(.spring()) { selected = pageModel.tag }
             action()
         }, label: {
-            VStack(spacing: 4) {
+            VStack(spacing: 2) {
                 icon
                 title
             }
+            .padding(.top, 6)
         })
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contextMenu {
@@ -45,7 +46,6 @@ struct TabBarItemView<T: Hashable>: View {
             .frame(width: 28, height: 28)
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
-            .padding(.bottom, 4)
     }
     
     @ViewBuilder
@@ -58,4 +58,15 @@ struct TabBarItemView<T: Hashable>: View {
     private var tint: Color {
         selected == pageModel.tag ? Color.Theme.Accent.green : Color.TabIcon.unselectedTint
     }
+}
+
+#Preview {
+    let wallet = TabBarPageModel<AppTabType>(
+        tag: WalletHomeView.tabTag(),
+        iconName: WalletHomeView.iconName(),
+        title: WalletHomeView.title()
+    ) {
+        AnyView(WalletHomeView())
+    }
+    TabBarItemView(pageModel: wallet, selected: .constant(.wallet), action: { })
 }

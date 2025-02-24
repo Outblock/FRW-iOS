@@ -68,7 +68,6 @@ struct WalletHomeView: View {
         GeometryReader { proxy in
 
             ZStack {
-                GuestView().visibility(um.isLoggedIn ? .gone : .visible)
                 NormalView().visibility(um.isLoggedIn ? .visible : .gone)
             }
             .halfSheet(
@@ -549,11 +548,6 @@ struct WalletHomeView: View {
         Text("error")
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .backgroundFill(.LL.Neutrals.background)
-    }
-
-    @ViewBuilder
-    func GuestView() -> some View {
-        EmptyWalletView()
     }
 }
 

@@ -544,22 +544,26 @@ struct SideContainerView: View {
     }
 
     var body: some View {
-        ZStack {
-            SideMenuView()
-                .offset(x: vm.isOpen ? 0 : -(screenWidth - SideOffset))
-
-            Group {
-                makeTabView()
-
-                Color.black
-                    .opacity(0.7)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        vm.onToggle()
-                    }
-                    .opacity(vm.isOpen ? 1.0 : 0.0)
+        if !um.isLoggedIn {
+            EmptyWalletView()
+        } else {
+            ZStack {
+                SideMenuView()
+                    .offset(x: vm.isOpen ? 0 : -(screenWidth - SideOffset))
+                
+                Group {
+                    makeTabView()
+                    
+                    Color.black
+                        .opacity(0.7)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            vm.onToggle()
+                        }
+                        .opacity(vm.isOpen ? 1.0 : 0.0)
+                }
+                .offset(x: vm.isOpen ? screenWidth - SideOffset : 0)
             }
-            .offset(x: vm.isOpen ? screenWidth - SideOffset : 0)
         }
     }
 
@@ -567,6 +571,8 @@ struct SideContainerView: View {
 
     @StateObject
     private var vm = SideContainerViewModel()
+    @StateObject
+    private var um = UserManager.shared
     @State
     private var dragOffset: CGSize = .zero
     @State
