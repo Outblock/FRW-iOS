@@ -165,6 +165,7 @@ extension BackupUploadView {
                         itemType: items[index],
                         isSelected: isSelected
                     )
+                    .zIndex(1)
                     Rectangle()
                         .foregroundColor(.clear)
                         .frame(height: 1)
@@ -384,7 +385,7 @@ extension BackupUploadView {
 }
 
 #Preview {
-    BackupUploadView.ProgressView(items: [.google, .dropbox], currentIndex: .constant(2))
+    BackupUploadView.ProgressView(items: [.google, .dropbox], currentIndex: .constant(1))
 //    BackupUploadView.CompletedView(items: [.google,.passkey, .icloud, ])
 //    BackupUploadView.PhraseWords(
 //        isBlur: true,
