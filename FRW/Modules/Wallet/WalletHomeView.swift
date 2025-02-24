@@ -435,25 +435,47 @@ struct WalletHomeView: View {
 
     private func walletActionBar() -> some View {
         HStack {
-            WalletHomeView.ActionView(
-                isH: vm.showHorLayout,
-                action: .send,
+            WalletActionButton(
+                event: .send,
                 allowClick: !wm.isSelectedChildAccount
-            )
+            ) {
+                Router.route(to: RouteMap.Wallet.send())
+            }
+            
             Spacer()
-            WalletHomeView.ActionView(isH: vm.showHorLayout, action: .receive, allowClick: true)
+            
+            WalletActionButton(
+                event: .receive,
+                allowClick: true
+            ) {
+                Router.route(to: RouteMap.Wallet.receiveQR)
+            }
+            
             Spacer()
+            
             Group {
-                WalletHomeView.ActionView(isH: vm.showHorLayout, action: .swap, allowClick: true)
-                    .visibility(vm.showSwapButton ? .visible : .gone)
+                WalletActionButton(
+                    event: .swap,
+                    allowClick: true
+                ) {
+                    Router.route(to: RouteMap.Wallet.swapProvider(nil))
+                }
                 Spacer()
             }
             .visibility(vm.showSwapButton ? .visible : .gone)
-            WalletHomeView.ActionView(
-                isH: vm.showHorLayout,
-                action: .stake,
+            
+            WalletActionButton(
+                event: .stake,
                 allowClick: !wm.isSelectedChildAccount
-            )
+            ) {
+                if !LocalUserDefaults.shared.stakingGuideDisplayed && !StakingManager.shared
+                    .isStaked {
+                    Router.route(to: RouteMap.Wallet.stakeGuide)
+                    return
+                }
+                
+                Router.route(to: RouteMap.Wallet.stakingList)
+            }
             .visibility(vm.showStakeButton ? .visible : .gone)
         }
     }
@@ -670,14 +692,14 @@ extension WalletHomeView {
     }
 }
 
-// MARK: ActionView
+// MARK: WalletActionButton
 
-extension WalletHomeView {
+struct WalletActionButton: View {
     enum Action: String {
-        case send, receive, swap, stake
-
+        case send, receive, swap, stake, buy
+        
         // MARK: Internal
-
+        
         var icon: String {
             switch self {
             case .send:
@@ -688,30 +710,13 @@ extension WalletHomeView {
                 return "wallet-swap-stroke"
             case .stake:
                 return "icon_wallet_action_stake"
+            case .buy:
+                return "WalletIconBuy"
             }
         }
-
-        func doEvent() {
-            switch self {
-            case .send:
-                Router.route(to: RouteMap.Wallet.send())
-            case .receive:
-                Router.route(to: RouteMap.Wallet.receiveQR)
-            case .swap:
-                Router.route(to: RouteMap.Wallet.swapProvider(nil))
-            case .stake:
-                if !LocalUserDefaults.shared.stakingGuideDisplayed && !StakingManager.shared
-                    .isStaked {
-                    Router.route(to: RouteMap.Wallet.stakeGuide)
-                    return
-                }
-
-                Router.route(to: RouteMap.Wallet.stakingList)
-            }
-        }
-
+        
         // MARK: Private
-
+        
         private func incrementUrl() -> String {
             if LocalUserDefaults.shared.flowNetwork == .mainnet {
                 return "https://app.increment.fi/swap"
@@ -720,58 +725,41 @@ extension WalletHomeView {
             }
         }
     }
-
-    struct ActionView: View {
-        // MARK: Public
-
-        public func container<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-            HStack(alignment: .center) {
-                if isH {
-                    HStack {
-                        content()
-                    }
-                } else {
+    
+    // MARK: Internal
+    
+    let event: Action
+    let allowClick: Bool
+    let action: () -> ()
+    
+    var body: some View {
+        Button {
+            action()
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        } label: {
+            VStack {
+                HStack(alignment: .center) {
                     VStack {
-                        content()
-                    }
-                }
-            }
-            .padding(.vertical, 10)
-            .frame(width: 50, height: 50, alignment: .center)
-            .background(Color.Theme.Accent.green)
-            .cornerRadius(25)
-        }
-
-        // MARK: Internal
-
-        let isH: Bool
-        let action: WalletHomeView.Action
-
-        let allowClick: Bool
-
-        var body: some View {
-            Button {
-                action.doEvent()
-                UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            } label: {
-                VStack {
-                    container {
-                        Image(action.icon)
+                        Image(event.icon)
                             .resizable()
                             .renderingMode(.template)
                             .foregroundStyle(Color.Theme.Text.black8.opacity(allowClick ? 1 : 0.3))
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 24, height: 24)
                     }
-                    
-                    Text(action.rawValue.localized.capitalized)
-                        .font(.inter(size: 12))
-                        .foregroundStyle(Color.Theme.Text.black8.opacity(allowClick ? 1 : 0.3))
                 }
+                .padding(.vertical, 10)
+                .frame(width: 50, height: 50, alignment: .center)
+                .background(Color.Theme.Accent.green)
+                .cornerRadius(25)
+                
+                Text(event.rawValue.localized.capitalized)
+                    .font(.inter(size: 12))
+                    .foregroundStyle(Color.Theme.Text.black8.opacity(allowClick ? 1 : 0.3))
             }
-            .buttonStyle(ScaleButtonStyle())
-            .disabled(!allowClick)
         }
+        .buttonStyle(ScaleButtonStyle())
+        .disabled(!allowClick)
     }
 }
 

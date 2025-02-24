@@ -69,10 +69,10 @@ struct TokenDetailView: RouteableView {
                     .visibility(self.vm.showStorageView ? .visible : .gone)
             }
             .padding(.horizontal, 18)
-//            .padding(.top, 12)
+            .padding(.top, 12)
         }
         .buttonStyle(.plain)
-        .backgroundFill(.LL.deepBg)
+        .backgroundFill(Color.LL.Neutrals.background)
         .applyRouteable(self)
         .halfSheet(showSheet: $vm.showSheet, autoResizing: true, backgroundColor: Color.Theme.BG.bg1) {
             if vm.buttonAction == .move {
@@ -178,72 +178,43 @@ struct TokenDetailView: RouteableView {
             .font(.inter(size: 16, weight: .medium))
             .padding(.top, 3)
 
-            HStack(spacing: 2) {
-                Button {
-                    vm.sendAction()
-                } label: {
-                    ZStack {
-                        Rectangle()
-                            .fill(Color.Theme.Accent.green.opacity(0.08))
-                        Image("icon_token_send")
-                            .resizable()
-                            .frame(width: 24, height: 24)
-                    }
-                }
-                .disabled(WalletManager.shared.isSelectedChildAccount)
-
-                Button {
-                    UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                    self.vm.onSwapToken()
-                } label: {
-                    ZStack {
-                        Rectangle()
-                            .fill(Color.Theme.Accent.green.opacity(0.08))
-                        Image("icon_token_move")
-                            .resizable()
-                            .frame(width: 24, height: 24)
-                    }
-                }
-                .visibility(vm.showSwapButton ? .visible : .gone)
-
-                Button {
-                    vm.receiveAction()
-                } label: {
-                    ZStack {
-                        Rectangle()
-                            .fill(Color.Theme.Accent.green.opacity(0.08))
-                        Image("icon_token_recieve")
-                            .resizable()
-                            .frame(width: 24, height: 24)
-                    }
-                }
-
-                Button {
-                    Router.route(to: RouteMap.Wallet.buyCrypto)
-
-                } label: {
-                    ZStack {
-                        Rectangle()
-                            .fill(Color.Theme.Accent.green.opacity(0.08))
-                        Image("icon_token_convert")
-                            .resizable()
-                            .frame(width: 24, height: 24)
-                    }
-                }
-                .visibility(vm.showBuyButton ? .visible : .gone)
-            }
-            .frame(height: 40)
-            .frame(minWidth: 0, maxWidth: .infinity)
-            .cornerRadius(20)
-            .padding(.top, 24)
-            .padding(.bottom, 14)
-            .layoutPriority(100)
+            walletActionBar
+                .padding(.top, 24)
+                .padding(.bottom, 16)
+                .layoutPriority(100)
+                .frame(maxWidth: .infinity, alignment: .center)
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 18)
-        .background {
-            Color.LL.Neutrals.background.cornerRadius(16)
+        .background(.clear)
+        .borderStyle()
+    }
+        
+    @ViewBuilder
+    private var walletActionBar: some View {
+        HStack {
+            Group {
+                WalletActionButton(
+                    event: .send,
+                    allowClick: !WalletManager.shared.isSelectedChildAccount,
+                    action: vm.sendAction
+                )
+                WalletActionButton(event: .swap, allowClick: true) {
+                    UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                    self.vm.onSwapToken()
+                }
+                .visibility(vm.showSwapButton ? .visible : .gone)
+                
+                WalletActionButton(event: .receive, allowClick: true, action: vm.receiveAction)
+                
+                WalletActionButton(event: .buy, allowClick: true) {
+                    Router.route(to: RouteMap.Wallet.buyCrypto)
+                }
+                .visibility(vm.showBuyButton ? .visible : .gone)
+            }
+            .maxWidth(.infinity)
         }
+        .padding(.horizontal, 6)
     }
 
     var activitiesView: some View {
@@ -291,9 +262,7 @@ struct TokenDetailView: RouteableView {
         }
         .padding(.horizontal, 18)
         .padding(.bottom, 8)
-        .background {
-            Color.LL.Neutrals.background.cornerRadius(16)
-        }
+        .borderStyle()
     }
 
     var chartContainerView: some View {
@@ -349,9 +318,7 @@ struct TokenDetailView: RouteableView {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 18)
-        .background {
-            Color.LL.Neutrals.background.cornerRadius(16)
-        }
+        .borderStyle()
     }
 
     var chartRangeView: some View {
@@ -402,9 +369,7 @@ struct TokenDetailView: RouteableView {
             .padding(.top, 16)
             .padding(.horizontal, 16)
             .padding(.bottom, 22)
-            .background {
-                Color.LL.Neutrals.background.cornerRadius(16)
-            }
+            .borderStyle()
         }
         .padding(.bottom, 12)
     }
@@ -636,7 +601,7 @@ extension TokenDetailView {
 
                     HStack(spacing: 10) {
                         Text(
-                            "\(stakingManager.stakingCount.formatCurrencyString(digits: 3)) \(vm.token.symbol?.uppercased() ?? "?")"
+                            "\(stakingManager.stakingCount.formatCurrencyString()) \(vm.token.symbol?.uppercased() ?? "?")"
                         )
                         .font(.inter(size: 14))
                         .foregroundColor(Color.LL.Neutrals.text)
@@ -659,20 +624,20 @@ extension TokenDetailView {
                             .foregroundColor(Color.LL.Neutrals.text)
 
                         Text(
-                            "\(CurrencyCache.cache.currentCurrency.symbol)\(stakingManager.dayRewardsASUSD.formatCurrencyString(digits: 3, considerCustomCurrency: true))"
+                            "\(CurrencyCache.cache.currentCurrency.symbol)\(stakingManager.dayRewardsASUSD.formatCurrencyString(considerCustomCurrency: true))"
                         )
                         .font(.inter(size: 24, weight: .bold))
                         .foregroundColor(Color.LL.Neutrals.text)
 
                         Text(
-                            "\(stakingManager.dayRewards.formatCurrencyString(digits: 3)) \(vm.token.symbol?.uppercased() ?? "?")"
+                            "\(stakingManager.dayRewards.formatCurrencyString()) \(vm.token.symbol?.uppercased() ?? "?")"
                         )
                         .font(.inter(size: 12, weight: .semibold))
                         .foregroundColor(Color.LL.Neutrals.text3)
                     }
                     .padding(.all, 13)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                    .background(Color.LL.deepBg)
+                    .background(.clear)
                     .cornerRadius(16)
 
                     // mothly
@@ -682,28 +647,27 @@ extension TokenDetailView {
                             .foregroundColor(Color.LL.Neutrals.text)
 
                         Text(
-                            "\(CurrencyCache.cache.currentCurrency.symbol)\(stakingManager.monthRewardsASUSD.formatCurrencyString(digits: 3, considerCustomCurrency: true))"
+                            "\(CurrencyCache.cache.currentCurrency.symbol)\(stakingManager.monthRewardsASUSD.formatCurrencyString(considerCustomCurrency: true))"
                         )
                         .font(.inter(size: 24, weight: .bold))
                         .foregroundColor(Color.LL.Neutrals.text)
 
                         Text(
-                            "\(stakingManager.monthRewards.formatCurrencyString(digits: 3)) \(vm.token.symbol?.uppercased() ?? "?")"
+                            "\(stakingManager.monthRewards.formatCurrencyString()) \(vm.token.symbol?.uppercased() ?? "?")"
                         )
                         .font(.inter(size: 12, weight: .semibold))
                         .foregroundColor(Color.LL.Neutrals.text3)
                     }
                     .padding(.all, 13)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                    .background(Color.LL.deepBg)
+                    .background(.clear)
                     .cornerRadius(16)
+                    .shadow(color: Color(red: 0.2, green: 0.2, blue: 0.2).opacity(0.08), radius: 2.5, x: 0, y: 2)
                 }
             }
             .padding(.horizontal, 18)
             .padding(.bottom, 14)
-            .background {
-                Color.LL.Neutrals.background.cornerRadius(16)
-            }
+            .borderStyle()
         }
     }
 
@@ -765,9 +729,7 @@ extension TokenDetailView {
             }
             .padding(.horizontal, 18)
             .frame(height: 72, alignment: .topLeading)
-            .background {
-                Color.LL.Neutrals.background.cornerRadius(16)
-            }
+            .borderStyle()
         }
     }
 }
@@ -785,4 +747,30 @@ extension TokenDetailView {
     func showAccessibleWarning() -> Bool {
         !isAccessible
     }
+}
+
+// MARK: -
+
+fileprivate struct BorderStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .background {
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(style: StrokeStyle(lineWidth: 1, lineCap: .round, lineJoin: .miter))
+                //#121212
+                    .foregroundColor(Color("border"))
+            }
+    }
+}
+
+fileprivate extension View {
+    func borderStyle() -> some View {
+        modifier(BorderStyle())
+    }
+}
+
+// MARK: -
+
+#Preview {
+    TokenDetailView(token: .mock(), accessible: true)
 }
