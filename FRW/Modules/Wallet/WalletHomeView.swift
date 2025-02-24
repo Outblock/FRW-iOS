@@ -186,16 +186,15 @@ struct WalletHomeView: View {
                                 .renderingMode(.template)
                                 .foregroundStyle(Color.Theme.Text.black8)
                                 .frame(width: 24, height: 24)
-                                .padding(8)
                             Text("scan".localized)
                                 .font(.inter(size: 14, weight: .light))
                                 .foregroundStyle(Color.LL.text)
                         }
                     }
                 }
-                .padding(.horizontal, 8)
+                .padding(8)
                 .background(Color.Theme.BG.bg2.opacity(0.6))
-                .cornerRadius(16)
+                .cornerRadius(12)
             }
             .padding(.top, safeArea.top)
             .padding([.horizontal, .bottom], 15)
