@@ -76,7 +76,7 @@ class NFTUIKitListGridDataModel {
 //        }
 
         let request = NFTGridDetailListRequest(address: address, offset: offset, limit: limit)
-        let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount != nil ? .evm : .main
+        let from: VMType = EVMAccountManager.shared.selectedAccount != nil ? .evm : .cadence
         let response: Network.Response<NFTListResponse> = try await Network
             .requestWithRawModel(FRWAPI.NFT.gridDetailList(
                 request,
@@ -234,19 +234,10 @@ class NFTUIKitListNormalDataModel {
             .getWatchAddressOrChildAccountAddressOrPrimaryAddress() else {
             return []
         }
-
-        let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount != nil ? .evm : .main
-        let response: Network.Response<[NFTCollection]> = try await Network
-            .requestWithRawModel(FRWAPI.NFT.userCollection(
-                address,
-                FRWAPI.Offset(start: 0, length: 100),
-                from
-            ))
-        if let list = response.data {
-            return list
-        } else {
-            return []
-        }
+        let type: VMType = EVMAccountManager.shared.selectedAccount != nil ? .evm : .cadence
+        return try await Network.request(
+            FRWAPI.NFT.userCollection(address, type)
+        )
     }
 
     private func removeAllCache() {

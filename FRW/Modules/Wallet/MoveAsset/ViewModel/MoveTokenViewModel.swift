@@ -121,9 +121,12 @@ final class MoveTokenViewModel: ObservableObject {
                     self.loadingBalance = false
                     self.changeTokenModelAction(token: token)
                 }
+            } else {
+                // TODO: Handle token is nil in from account
+                // Fallback to flow token
             }
         } catch {
-            // Handle errpr
+            // TODO: Handle error
             log.error(error)
         }
     }

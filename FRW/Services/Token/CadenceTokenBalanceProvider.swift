@@ -11,6 +11,7 @@ import Web3Core
 import BigInt
 
 class CadenceTokenBalanceProvider: TokenBalanceProvider {
+    static let defaultNFTLength = 100
     var network: FlowNetworkType
     
     init(network: FlowNetworkType = LocalUserDefaults.shared.flowNetwork) {
@@ -45,13 +46,22 @@ class CadenceTokenBalanceProvider: TokenBalanceProvider {
         return sorted
     }
     
+    func fetchNFTCollectionWithPagination(address: Flow.Address, offset: FRWAPI.Offset? = nil) async throws -> NFTCollection {
+        let defaultOffset = FRWAPI.Offset(start: 0, length: CadenceTokenBalanceProvider.defaultNFTLength)
+        return try await Network
+            .requestWithRawModel(FRWAPI.NFT.userCollection(
+                address.hexAddr,
+                .cadence
+            ))
+    }
+    
     func getNFTCollections(address: Flow.Address) async throws -> [NFTCollectionInfo] {
         // TODO: Add NFT Fetch
         return []
     }
     
     func getNFTCollectionList(address: Flow.Address) async throws -> [NFTCollectionInfo] {
-        // TODO: Add NFT Fetch
+        
         return []
     }
 }

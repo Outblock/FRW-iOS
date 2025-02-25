@@ -26,16 +26,17 @@ extension FRWAPI {
 }
 
 extension FRWAPI {
-    enum From {
-        case main
-        case evm
-    }
-
     enum NFT {
         case collections
-        case userCollection(String, FRWAPI.Offset, FRWAPI.From)
-        case collectionDetailList(NFTCollectionDetailListRequest, FRWAPI.From)
-        case gridDetailList(NFTGridDetailListRequest, FRWAPI.From)
+
+        // For cadence, we will found all collections
+        // https://github.com/Outblock/FRW-web-next/blob/main/pages/api/v2/nft/id/index.ts
+        // For EVM, we will request maximum 2500 collections
+        // https://github.com/Outblock/FRW-web-next/blob/main/pages/api/v3/evm/nft/id/index.ts#L16
+        case userCollection(String, VMType)
+        
+        case collectionDetailList(NFTCollectionDetailListRequest, VMType)
+        case gridDetailList(NFTGridDetailListRequest, VMType)
         case favList(String)
         case addFav(NFTAddFavRequest)
         case updateFav(NFTUpdateFavRequest)
@@ -69,7 +70,7 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
                 return "v3/evm/nft/list"
             }
             return "v2/nft/list"
-        case let .userCollection(_, _, from):
+        case let .userCollection(_, from):
             if from == .evm {
                 return "v3/evm/nft/id"
             }
@@ -119,9 +120,9 @@ extension FRWAPI.NFT: TargetType, AccessTokenAuthorizable {
             return .requestJSONEncodable(request)
         case let .updateFav(request):
             return .requestJSONEncodable(request)
-        case let .userCollection(address, offset, _):
+        case let .userCollection(address, _):
             return .requestParameters(
-                parameters: ["address": address, "offset": offset.start, "limit": offset.length],
+                parameters: ["address": address],
                 encoding: URLEncoding()
             )
         }
