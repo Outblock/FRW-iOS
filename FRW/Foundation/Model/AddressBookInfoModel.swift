@@ -118,6 +118,6 @@ struct Contact: Codable, Identifiable {
 
 extension Contact: Equatable {
     static func == (lhs: Contact, rhs: Contact) -> Bool {
-        lhs.address == rhs.address
+        lhs.address?.lowercased() == rhs.address?.lowercased()
     }
 }
