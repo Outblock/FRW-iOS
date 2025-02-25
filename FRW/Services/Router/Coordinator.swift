@@ -55,6 +55,10 @@ final class Coordinator {
             name: UIApplication.didBecomeActiveNotification,
             object: nil
         )
+        
+        UserManager.shared.$activatedUID.sink { [weak self] val in
+            self?.showRootView()
+        }.store(in: &cancelSets)
     }
 
     // MARK: Internal
@@ -63,10 +67,10 @@ final class Coordinator {
     lazy var rootNavi: UINavigationController? = nil
 
     func showRootView() {
-        if LocalUserDefaults.shared.onBoardingShown {
+        if UserManager.shared.isLoggedIn {
             showNormalView()
         } else {
-            showOnBoardingView()
+            showEmptyWalletView()
         }
     }
 
@@ -85,12 +89,10 @@ extension Coordinator {
         window.overrideUserInterfaceStyle = ThemeManager.shared.getUIKitStyle()
     }
 
-    private func showOnBoardingView() {
-        LocalUserDefaults.shared.onBoardingShown = true
-
-        let view = OnBoardingView()
-        let hostingView = UIHostingController(rootView: view)
-        window.rootViewController = hostingView
+    private func showEmptyWalletView() {
+        let emptyView = EmptyWalletView()
+        let hostingView = UIHostingController(rootView: emptyView)
+        window.rootViewController = UINavigationController(rootViewController: hostingView)
     }
 
     private func showNormalView() {

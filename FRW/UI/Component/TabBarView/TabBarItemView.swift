@@ -28,7 +28,7 @@ struct TabBarItemView<T: Hashable>: View {
                 icon
                 title
             }
-            .padding(.top, 6)
+            .padding(.top, 8)
         })
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contextMenu {
