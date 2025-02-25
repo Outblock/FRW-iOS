@@ -33,17 +33,20 @@ struct ContactRelationView: View {
         ZStack {
             HStack(spacing: 20) {
                 userCard(contact: fromContact, showArrow: clickable == .from || clickable == .all) {
+                    UIImpactFeedbackGenerator.impactOccurred(.selectionChanged)
                     clickFrom?(fromContact)
                 }
                 .frame(maxWidth: .infinity)
 
                 userCard(contact: toContact, showArrow: clickable == .to || clickable == .all) {
+                    UIImpactFeedbackGenerator.impactOccurred(.selectionChanged)
                     clickTo?(toContact)
                 }
                 .frame(maxWidth: .infinity)
             }
             
             Button {
+                UIImpactFeedbackGenerator.impactOccurred(.selectionChanged)
                 clickSwap?()
             } label: {
                 arrow()
@@ -111,10 +114,12 @@ struct ContactRelationView: View {
 
     @ViewBuilder
     func arrow() -> some View {
-        Image("icon_assets_move_arrow")
+        Image("icon-account-swap")
             .resizable()
-            .frame(width: 32, height: 32)
-            .cornerRadius(16)
+            .frame(width: 25, height: 25)
+            .padding(6)
+            .background(Color.Theme.BG.bg1)
+            .cornerRadius(20)
     }
 }
 

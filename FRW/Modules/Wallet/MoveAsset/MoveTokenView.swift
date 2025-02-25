@@ -76,6 +76,9 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                         
                     }
             }
+            
+            Color.clear
+                .frame(height: 8)
 
             VStack(spacing: 0) {
                 InsufficientStorageToastView<MoveTokenViewModel>()
@@ -86,6 +89,7 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                     state: viewModel.buttonState,
                     action: {
                         log.debug("[Move] click button")
+                        UIImpactFeedbackGenerator.impactOccurred(.medium)
                         viewModel.onNext()
                         UIApplication.shared.endEditing()
                     },
