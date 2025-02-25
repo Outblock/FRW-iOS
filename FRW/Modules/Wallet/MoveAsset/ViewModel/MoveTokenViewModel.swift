@@ -116,15 +116,23 @@ final class MoveTokenViewModel: ObservableObject {
             await MainActor.run {
                 self.loadingBalance = true
             }
-            if let token = try await TokenBalanceHandler.shared.getFTBalanceWithId(address: address, tokenId: token.getId(by: address.type.toTokenType())) {
-                await MainActor.run {
-                    self.loadingBalance = false
-                    self.changeTokenModelAction(token: token)
-                }
+            let tokens = try await TokenBalanceHandler.shared.getFTBalance(address: address)
+            let tokenId = token.getId(by: address.type.toTokenType())
+            var selectedToken: TokenModel = token
+            if let target = tokens.first(where: { $0.id == tokenId }) {
+                selectedToken = target
             } else {
-                // TODO: Handle token is nil in from account
                 // Fallback to flow token
+                if let flowToken = tokens.first(where: { $0.isFlowCoin }) {
+                    selectedToken = flowToken
+                }
             }
+            
+            await MainActor.run {
+                self.loadingBalance = false
+                self.changeTokenModelAction(token: selectedToken)
+            }
+            
         } catch {
             // TODO: Handle error
             log.error(error)

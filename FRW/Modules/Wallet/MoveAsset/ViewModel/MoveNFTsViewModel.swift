@@ -230,9 +230,9 @@ final class MoveNFTsViewModel: ObservableObject {
                 let response: NFTListResponse = try await Network
                     .request(FRWAPI.NFT.collectionDetailList(
                         request,
-                        isEVM ? .evm : .main
+                        isEVM ? .evm : .cadence
                     ))
-                DispatchQueue.main.async {
+                await MainActor.run {
                     if let list = response.nfts {
                         self.nfts = list.map { MoveNFTsViewModel.NFT(isSelected: false, model: $0) }
                     } else {
@@ -242,7 +242,7 @@ final class MoveNFTsViewModel: ObservableObject {
                     self.resetButtonState()
                 }
             } catch {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.nfts = []
                     self.isMock = false
                     self.resetButtonState()
@@ -436,17 +436,15 @@ final class MoveNFTsViewModel: ObservableObject {
         Task {
             do {
                 let address = WalletManager.shared.selectedAccountAddress
-                let offset = FRWAPI.Offset(start: 0, length: 100)
-                let from: FRWAPI.From = EVMAccountManager.shared
-                    .selectedAccount != nil ? .evm : .main
-                let response: Network.Response<[NFTCollection]> = try await Network
-                    .requestWithRawModel(FRWAPI.NFT.userCollection(
+                let from: VMType = EVMAccountManager.shared
+                    .selectedAccount != nil ? .evm : .cadence
+                let response: [NFTCollection] = try await Network
+                    .request(FRWAPI.NFT.userCollection(
                         address,
-                        offset,
                         from
                     ))
                 DispatchQueue.main.async {
-                    self.collectionList = response.data?.sorted(by: { $0.count > $1.count }) ?? []
+                    self.collectionList = response.sorted(by: { $0.count > $1.count })
                     if self.selectedCollection == nil {
                         self.selectedCollection = self.collectionList.first
                     }
