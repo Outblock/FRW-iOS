@@ -60,7 +60,19 @@ final class MoveTokenViewModel: ObservableObject {
         domain: nil,
         id: -1,
         username: nil
-    )
+    ) {
+        didSet {
+            // Handle same account selection on from and to account
+            // If so, we swap them
+            if fromContact == toContact {
+                toContact = oldValue
+            }
+            
+            Task {
+                await updateTokenModel()
+            }
+        }
+    }
     
     
     @Published
@@ -72,7 +84,15 @@ final class MoveTokenViewModel: ObservableObject {
         domain: nil,
         id: -1,
         username: nil
-    )
+    ) {
+        didSet {
+            // Handle same account selection on from and to account
+            // If so, we swap them
+            if toContact == fromContact {
+                fromContact = oldValue
+            }
+        }
+    }
 
     private(set) var token: TokenModel
     
@@ -109,9 +129,6 @@ final class MoveTokenViewModel: ObservableObject {
     }
 
     func changeTokenModelAction(token: TokenModel) {
-//        if token.contractId == self.token.contractId {
-//            return
-//        }
         self.token = token
         updateBalance("")
         errorType = .none
@@ -182,9 +199,6 @@ final class MoveTokenViewModel: ObservableObject {
         ) { newContact in
             if let contact = newContact {
                 self.fromContact = contact
-                Task {
-                    await self.updateTokenModel()
-                }
             }
         }
         Router.route(to: RouteMap.Wallet.chooseChild(model))
@@ -202,12 +216,8 @@ final class MoveTokenViewModel: ObservableObject {
     }
     
     func handleSwap() {
-//        let from = self.fromContact
-//        self.fromContact = self.toContact
-//        self.toContact = from
         Task { @MainActor in
             (self.fromContact, self.toContact) = (self.toContact, self.fromContact)
-            await self.updateTokenModel()
         }
     }
 

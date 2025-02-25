@@ -115,3 +115,9 @@ struct Contact: Codable, Identifiable {
         "\(address ?? "")-\(domain?.domainType?.rawValue ?? 0)-\(name)-\(contactType?.rawValue ?? 0)"
     }
 }
+
+extension Contact: Equatable {
+    static func == (lhs: Contact, rhs: Contact) -> Bool {
+        lhs.address == rhs.address
+    }
+}
