@@ -18,13 +18,13 @@ struct EmptyWalletView: View {
         VStack(alignment: .center, spacing: 0) {
             Group {
                 topContent
-                
+
                 middleContent
             }
             .padding(.leading, 32)
-            
+
             Spacer()
-                        
+
             bottomContent
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
@@ -32,13 +32,10 @@ struct EmptyWalletView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.Theme.Background.grey)
         .onAppear {
-            if !isSettingNotificationFirst {
-                vm.tryToRestoreAccountWhenFirstLaunch()
-            }
-            isSettingNotificationFirst = false
+            vm.tryToRestoreAccountWhenFirstLaunch()
         }
     }
-    
+
     @ViewBuilder
     private var middleContent: some View {
         if vm.placeholders.isEmpty {
@@ -47,7 +44,7 @@ struct EmptyWalletView: View {
             recentListContent
         }
     }
-    
+
     @ViewBuilder
     private var noAccountsMiddleContent: some View {
         VStack(alignment: .leading) {
@@ -59,19 +56,19 @@ struct EmptyWalletView: View {
                 .padding(.vertical, 4)
                 .background(Color.Theme.Accent.green)
                 .cornerRadius(50)
-            
+
             Spacer()
 
             Text("welcome_message".localized)
-              .font(.inter(size: 18, weight: .light))
-              .foregroundColor(Color.LL.text)
-              .frame(alignment: .leading)
+                .font(.inter(size: 18, weight: .light))
+                .foregroundColor(Color.LL.text)
+                .frame(alignment: .leading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.trailing, 32)
         .padding(.bottom, 42)
     }
-        
+
     @ViewBuilder
     private var horizontalGradient: some View {
         ZStack {
@@ -83,7 +80,7 @@ struct EmptyWalletView: View {
                 startPoint: UnitPoint(x: 0, y: 0.5),
                 endPoint: UnitPoint(x: 1, y: 0.5)
             )
-            
+
             HStack {
                 Image("lilico-app-icon")
                     .resizable()
@@ -96,7 +93,7 @@ struct EmptyWalletView: View {
         }
         .frame(height: 91)
     }
-    
+
     @ViewBuilder
     private var verticalGradient: some View {
         LinearGradient(
@@ -109,7 +106,7 @@ struct EmptyWalletView: View {
         )
         .frame(width: 79, height: 166)
     }
-    
+
     @ViewBuilder
     private var gradients: some View {
         ZStack(alignment: .topTrailing) {
@@ -117,10 +114,10 @@ struct EmptyWalletView: View {
             horizontalGradient
         }
     }
-    
+
     @ViewBuilder
     private var letsGetStarted: some View {
-        Text("lets_get_started")
+        Text("lets_get_started".localized)
             .lineLimit(2)
             .font(.Ukraine(size: 48, weight: .light))
             .padding(.bottom, 32)
@@ -128,7 +125,7 @@ struct EmptyWalletView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .fixedSize(horizontal: false, vertical: true)
     }
-    
+
     @ViewBuilder
     private var topContent: some View {
         VStack(spacing: 0) {
@@ -153,7 +150,7 @@ struct EmptyWalletView: View {
                     .cornerRadius(16)
                     .shadow(color: Color.black.opacity(0.12), x: 0, y: 4, blur: 24)
             }
-            
+
             Button {
                 vm.loginAccountAction()
             } label: {
@@ -171,7 +168,7 @@ struct EmptyWalletView: View {
                     )
             }
             .padding(.bottom, 16)
-            
+
             let str = "disclaimer".localized
             Text((try? AttributedString(markdown: str)) ?? AttributedString(str))
                 .font(.inter(size: 14))
@@ -200,12 +197,12 @@ struct EmptyWalletView: View {
                     }
                 }
             }
-            
+
             Spacer()
-            
+
             ZStack(alignment: .center) {
                 Divider().foregroundStyle(Color.Theme.Line.stroke)
-                
+
                 Text("or".localized)
                     .frame(width: 32, height: 32)
                     .background(Color.Theme.Background.grey)
