@@ -71,7 +71,23 @@ class TokenBalanceHandler {
     
     private init() {}
     
+    private func generateProvider(address: FWAddress, network: FlowNetworkType) throws -> any TokenBalanceProvider {
+        switch address.type {
+        case .cadence:
+            guard let cadenceAddress = address as? Flow.Address else {
+                throw EVMError.addressError
+            }
+            return CadenceTokenBalanceProvider(network: network)
+        case .evm:
+            guard let evmAddress = address as? EthereumAddress else {
+                throw EVMError.addressError
+            }
+            return EVMTokenBalanceProvider(network: network)
+        }
+    }
+    
     func getFTBalance(address: FWAddress, network: FlowNetworkType = LocalUserDefaults.shared.flowNetwork ) async throws  -> [TokenModel] {
+        // TODO: - fix dupicate code for provider and address type lookup
         switch address.type {
         case .cadence:
             guard let cadenceAddress = address as? Flow.Address else {
@@ -86,10 +102,52 @@ class TokenBalanceHandler {
             let provider = EVMTokenBalanceProvider(network: network)
             return try await provider.getFTBalance(address: evmAddress)
         }
+        
+//        let provider = try generateProvider(address: address, network: network)
+//        provider.getFTBalance(address: address)
     }
     
     func getFTBalanceWithId(address: FWAddress, network: FlowNetworkType = LocalUserDefaults.shared.flowNetwork, tokenId: String) async throws -> TokenModel? {
         let models = try await getFTBalance(address: address, network: network)
         return models.first{ $0.id == tokenId }
+    }
+    
+    func getNFTCollections(address: FWAddress, network: FlowNetworkType = LocalUserDefaults.shared.flowNetwork) async throws  -> [NFTCollection] {
+        // TODO: - fix dupicate code for provider and address type lookup
+        switch address.type {
+        case .cadence:
+            guard let cadenceAddress = address as? Flow.Address else {
+                throw EVMError.addressError
+            }
+            let provider = CadenceTokenBalanceProvider(network: network)
+            return try await provider.getNFTCollections(address: cadenceAddress)
+        case .evm:
+            guard let evmAddress = address as? EthereumAddress else {
+                throw EVMError.addressError
+            }
+            let provider = EVMTokenBalanceProvider(network: network)
+            return try await provider.getNFTCollections(address: evmAddress)
+        }
+    }
+    
+    func getNFTCollectionDetail(address: FWAddress,
+                                network: FlowNetworkType = LocalUserDefaults.shared.flowNetwork,
+                                collectionIdentifier: String,
+                                offset: Int) async throws -> NFTListResponse {
+        // TODO: - fix dupicate code for provider and address type lookup
+        switch address.type {
+        case .cadence:
+            guard let cadenceAddress = address as? Flow.Address else {
+                throw EVMError.addressError
+            }
+            let provider = CadenceTokenBalanceProvider(network: network)
+            return try await provider.getNFTCollectionDetail(address: cadenceAddress, collectionIdentifier: collectionIdentifier, offset: offset)
+        case .evm:
+            guard let evmAddress = address as? EthereumAddress else {
+                throw EVMError.addressError
+            }
+            let provider = EVMTokenBalanceProvider(network: network)
+            return try await provider.getNFTCollectionDetail(address: evmAddress, collectionIdentifier: collectionIdentifier, offset: offset)
+        }
     }
 }

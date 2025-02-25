@@ -12,8 +12,8 @@ protocol TokenBalanceProvider {
     var network: FlowNetworkType { get }
     func getFTBalance(address: FWAddress) async throws -> [TokenModel]
     func getFTBalanceWithId(address: FWAddress, tokenId: String) async throws -> TokenModel?
-    func getNFTCollections(address: FWAddress) async throws -> [NFTCollectionInfo]
-    func getNFTCollectionList(address: FWAddress) async throws -> [NFTCollectionInfo]
+    func getNFTCollections(address: FWAddress) async throws -> [NFTCollection]
+    func getNFTCollectionDetail(address: FWAddress, collectionIdentifier: String, offset: Int) async throws -> NFTListResponse
 }
 
 extension TokenBalanceProvider {
@@ -21,4 +21,9 @@ extension TokenBalanceProvider {
         let models = try await getFTBalance(address: address)
         return models.first{ $0.id == tokenId }
     }
+    
+    func getNFTCollectionDetail(address: FWAddress, collectionIdentifier: String, offset: Int = 0) async throws -> NFTListResponse {
+        return try await getNFTCollectionDetail(address: address, collectionIdentifier: collectionIdentifier, offset: offset)
+    }
+    
 }

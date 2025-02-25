@@ -9,6 +9,7 @@ import Foundation
 import Web3Core
 
 class EVMTokenBalanceProvider: TokenBalanceProvider {
+    static let nftLimit = 30
     var network: FlowNetworkType
     
     init(network: FlowNetworkType = LocalUserDefaults.shared.flowNetwork) {
@@ -60,13 +61,30 @@ class EVMTokenBalanceProvider: TokenBalanceProvider {
         return sorted
     }
     
-    func getNFTCollections(address: EthereumAddress) async throws -> [NFTCollectionInfo] {
-        // TODO: Add NFT Fetch
-        return []
+    func getNFTCollections(address: EthereumAddress) async throws -> [NFTCollection] {
+        let list: [NFTCollection]  = try await Network.request(
+            FRWAPI.NFT.userCollection(
+                address.address,
+                address.type
+            )
+        )
+        let sorted = list.sorted(by: { $0.count > $1.count })
+        return sorted
     }
     
-    func getNFTCollectionList(address: EthereumAddress) async throws -> [NFTCollectionInfo] {
-        // TODO: Add NFT Fetch
-        return []
+    func getNFTCollectionDetail(address: EthereumAddress, collectionIdentifier: String, offset: Int) async throws -> NFTListResponse {
+        let request = NFTCollectionDetailListRequest(
+            address: address.address,
+            collectionIdentifier: collectionIdentifier,
+            offset: offset,
+            limit: EVMTokenBalanceProvider.nftLimit
+        )
+        let response: NFTListResponse = try await Network.request(
+            FRWAPI.NFT.collectionDetailList(
+                request,
+                address.type
+            )
+        )
+        return response
     }
 }
