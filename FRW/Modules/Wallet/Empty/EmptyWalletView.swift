@@ -24,27 +24,32 @@ struct EmptyWalletView: View {
             .padding(.leading, 32)
             
             Spacer()
-            //TODO: 
-//            recentListContent
-//                .padding(.horizontal, 41)
-//                .visibility(vm.placeholders.isEmpty ? .gone : .visible)
-            
+                        
             bottomContent
                 .padding(.horizontal, 16)
-                .padding(.bottom, 28)
+                .padding(.bottom, 16)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.Theme.Background.grey)
-        .onAppear(perform: {
-            if !self.isSettingNotificationFirst {
-                self.vm.tryToRestoreAccountWhenFirstLaunch()
+        .onAppear {
+            if !isSettingNotificationFirst {
+                vm.tryToRestoreAccountWhenFirstLaunch()
             }
-            self.isSettingNotificationFirst = false
-        })
+            isSettingNotificationFirst = false
+        }
     }
     
     @ViewBuilder
     private var middleContent: some View {
+        if vm.placeholders.isEmpty {
+            noAccountsMiddleContent
+        } else {
+            recentListContent
+        }
+    }
+    
+    @ViewBuilder
+    private var noAccountsMiddleContent: some View {
         VStack(alignment: .leading) {
             Text("#onFlow.")
                 .font(.Ukraine(size: 48, weight: .thin))
@@ -66,7 +71,7 @@ struct EmptyWalletView: View {
         .padding(.trailing, 32)
         .padding(.bottom, 42)
     }
-    
+        
     @ViewBuilder
     private var horizontalGradient: some View {
         ZStack {
@@ -178,10 +183,11 @@ struct EmptyWalletView: View {
     }
 
     var recentListContent: some View {
-        VStack(spacing: 16) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("registerd_accounts".localized)
                 .font(.inter(size: 16, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundColor(Color.LL.text)
+                .padding(.top, 4)
 
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(spacing: 8) {
@@ -194,8 +200,20 @@ struct EmptyWalletView: View {
                     }
                 }
             }
-            .frame(maxHeight: 196)
+            
+            Spacer()
+            
+            ZStack(alignment: .center) {
+                Divider().foregroundStyle(Color.Theme.Line.stroke)
+                
+                Text("or".localized)
+                    .frame(width: 32, height: 32)
+                    .background(Color.Theme.Background.grey)
+            }
+            .padding(.vertical, 8)
+            .maxWidth(.infinity)
         }
+        .maxWidth(.infinity)
     }
 
     func createRecentLoginCell(_ placeholder: EmptyWalletViewModel.Placeholder) -> some View {
@@ -225,10 +243,6 @@ struct EmptyWalletView: View {
         .padding(.horizontal, 12)
         .frame(height: 60)
         .frame(maxWidth: .infinity)
-        .background(Color.Theme.Line.line)
-        .contentShape(Rectangle())
-        .cornerRadius(24)
-        .shadow(color: Color.black.opacity(0.04), x: 0, y: 4, blur: 16)
     }
 
     // MARK: Private
@@ -249,7 +263,3 @@ struct EmptyWalletView: View {
 #Preview {
     EmptyWalletView()
 }
-
-//#Preview {
-//    EmptyWalletView()
-//}

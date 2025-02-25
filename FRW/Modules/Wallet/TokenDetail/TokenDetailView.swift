@@ -189,32 +189,28 @@ struct TokenDetailView: RouteableView {
         .background(.clear)
         .borderStyle()
     }
-        
+            
     @ViewBuilder
     private var walletActionBar: some View {
-        HStack {
-            Group {
-                WalletActionButton(
-                    event: .send,
-                    allowClick: !WalletManager.shared.isSelectedChildAccount,
-                    action: vm.sendAction
-                )
-                WalletActionButton(event: .swap, allowClick: true) {
-                    UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                    self.vm.onSwapToken()
-                }
-                .visibility(vm.showSwapButton ? .visible : .gone)
-                
-                WalletActionButton(event: .receive, allowClick: true, action: vm.receiveAction)
-                
-                WalletActionButton(event: .buy, allowClick: true) {
-                    Router.route(to: RouteMap.Wallet.buyCrypto)
-                }
-                .visibility(vm.showBuyButton ? .visible : .gone)
+        WalletActionBar {
+            WalletActionButton(
+                event: .send,
+                allowClick: !WalletManager.shared.isSelectedChildAccount,
+                action: vm.sendAction
+            )
+            WalletActionButton(event: .swap, allowClick: true) {
+                UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                self.vm.onSwapToken()
             }
-            .maxWidth(.infinity)
+            .visibility(vm.showSwapButton ? .visible : .gone)
+            
+            WalletActionButton(event: .receive, allowClick: true, action: vm.receiveAction)
+            
+            WalletActionButton(event: .buy, allowClick: true) {
+                Router.route(to: RouteMap.Wallet.buyCrypto)
+            }
+            .visibility(vm.showBuyButton ? .visible : .gone)
         }
-        .padding(.horizontal, 6)
     }
 
     var activitiesView: some View {

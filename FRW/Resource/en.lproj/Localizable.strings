@@ -1144,3 +1144,4 @@ Key Store and Private Key.";
 "account_ready" = "Your\nFlow account\nis ready, \nlet’s back it up!";
 "backing_up_your_account" = "Backing up your account ensures your access is secure and always in your control";
 "select_backup" = "Select Backup";
+"or" = "Or";

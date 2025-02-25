@@ -433,6 +433,7 @@ struct WalletHomeView: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 20)
                 .background(.Theme.Background.white)
+                .frame(maxWidth: .infinity)
         }
         .overlay(alignment: .top) {
             IndicatorBar()
@@ -441,15 +442,13 @@ struct WalletHomeView: View {
     }
 
     private func walletActionBar() -> some View {
-        HStack {
+        WalletActionBar() {
             WalletActionButton(
                 event: .send,
                 allowClick: !wm.isSelectedChildAccount
             ) {
                 Router.route(to: RouteMap.Wallet.send())
             }
-            
-            Spacer()
             
             WalletActionButton(
                 event: .receive,
@@ -458,16 +457,11 @@ struct WalletHomeView: View {
                 Router.route(to: RouteMap.Wallet.receiveQR)
             }
             
-            Spacer()
-            
-            Group {
-                WalletActionButton(
-                    event: .swap,
-                    allowClick: true
-                ) {
-                    Router.route(to: RouteMap.Wallet.swapProvider(nil))
-                }
-                Spacer()
+            WalletActionButton(
+                event: .swap,
+                allowClick: true
+            ) {
+                Router.route(to: RouteMap.Wallet.swapProvider(nil))
             }
             .visibility(vm.showSwapButton ? .visible : .gone)
             
