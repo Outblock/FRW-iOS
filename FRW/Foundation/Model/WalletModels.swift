@@ -8,6 +8,7 @@
 import BigInt
 import Flow
 import Foundation
+import Web3Core
 
 // MARK: - QuoteMarket
 
@@ -88,7 +89,7 @@ enum ListedToken: String, CaseIterable {
 // MARK: - TokenModel
 
 struct TokenModel: Codable, Identifiable, Mockable {
-    enum TokenType: Codable { case cadence, evm }
+    public enum TokenType: Codable { case cadence, evm }
 
     let type: TokenType
     let name: String
@@ -96,12 +97,20 @@ struct TokenModel: Codable, Identifiable, Mockable {
     let contractName: String
     let storagePath: FlowTokenStoragePath
     let decimal: Int
-    let icon: URL?
+    var icon: URL?
     let symbol: String?
     let website: URL?
     let evmAddress: String?
     var flowIdentifier: String?
     var balance: BigUInt?
+    
+    var vaultIdentifier: String? {
+        if type == .evm {
+            return flowIdentifier
+        }
+        
+        return "\(contractId).Vault"
+    }
 
     var listedToken: ListedToken? {
         ListedToken(rawValue: symbol ?? "")
@@ -112,16 +121,8 @@ struct TokenModel: Codable, Identifiable, Mockable {
     }
 
     var contractId: String {
-        var addressString = ""
-
-        switch LocalUserDefaults.shared.flowNetwork {
-        case .testnet:
-            addressString = address.testnet ?? ""
-        case .mainnet:
-            addressString = address.mainnet ?? ""
-        }
-
-        addressString = addressString.stripHexPrefix()
+        let network = LocalUserDefaults.shared.flowNetwork.toFlowType()
+        let addressString = address.addressByNetwork(network)?.stripHexPrefix() ?? ""
         return "A.\(addressString).\(contractName)"
     }
 
@@ -136,9 +137,30 @@ struct TokenModel: Codable, Identifiable, Mockable {
 
         return URL(string: placeholder)!
     }
+    
+    var readableBalance: Decimal? {
+        guard let bal = balance else {
+            return nil
+        }
 
+        let result = Utilities.formatToPrecision(
+            bal,
+            units: .custom(decimal)
+        )
+        return Decimal(string: result)
+    }
+    
+    var readableBalanceStr : String? {
+        guard let bal = readableBalance else {
+            return nil
+        }
+        return bal.doubleValue.formatted(.number.precision(.fractionLength(0...3)))
+    }
+
+
+    // Identifiable
     var id: String {
-        symbol ?? ""
+        getId(by: type)
     }
 
     var isActivated: Bool {
@@ -158,7 +180,7 @@ struct TokenModel: Codable, Identifiable, Mockable {
                 testnet: nil,
                 crescendo: nil
             ),
-            contractName: "contractname",
+            contractName: UUID().uuidString,
             storagePath: FlowTokenStoragePath(balance: "", vault: "", receiver: ""),
             decimal: 999,
             icon: nil,
@@ -181,6 +203,15 @@ struct TokenModel: Codable, Identifiable, Mockable {
             return market.usdcPricePair
         default:
             return market.flowPricePair // TODO: #six Need to confirm
+        }
+    }
+    
+    func getId(by type: TokenType) -> String {
+        switch type {
+        case .evm:
+            return evmAddress ?? ""
+        case .cadence:
+            return flowIdentifier?.removeSuffix(".Vault") ?? contractId
         }
     }
 }
@@ -257,7 +288,11 @@ struct SingleToken: Codable {
     let extensions: TokenExtension?
     let evmAddress: String?
     let flowIdentifier: String?
-
+    
+    var cadenceId: String {
+        "A.\(address.stripHexPrefix()).\(contractName ?? "")"
+    }
+    
     func toTokenModel(type: TokenModel.TokenType, network: FlowNetworkType) -> TokenModel {
         let logo = URL(string: logoURI ?? "")
 
@@ -277,7 +312,7 @@ struct SingleToken: Codable {
             symbol: symbol,
             website: extensions?.website,
             evmAddress: evmAddress,
-            flowIdentifier: flowIdentifier
+            flowIdentifier: type == .cadence ? cadenceId : flowIdentifier
         )
         return model
     }

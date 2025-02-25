@@ -111,6 +111,8 @@ enum StakingError: Error {
 // MARK: - EVMError
 
 enum EVMError: Error {
+    case addressError
+    case rpcError
     case createAccount
     case findAddress
     case transactionResult
