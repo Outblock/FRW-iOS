@@ -93,6 +93,17 @@ class TransactionListViewController: UIViewController {
         navigationItem.hidesBackButton = true
         navigationItem.title = "wallet_transactions".localized
 
+        if (navigationController?.viewControllers.firstIndex(of: self) ?? 0) > 0 {
+            let backItem = UIBarButtonItem(
+                image: UIImage(systemName: "arrow.backward"),
+                style: .plain,
+                target: self,
+                action: #selector(onBackButtonAction)
+            )
+            backItem.tintColor = UIColor(named: "button.color")
+            navigationItem.leftBarButtonItem = backItem
+        }
+
         view.addSubview(segmentView)
         segmentView.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
@@ -107,6 +118,10 @@ class TransactionListViewController: UIViewController {
         }
 
         segmentView.listContainer = listContainer
+    }
+    
+    @objc private func onBackButtonAction() {
+        Router.pop()
     }
 }
 

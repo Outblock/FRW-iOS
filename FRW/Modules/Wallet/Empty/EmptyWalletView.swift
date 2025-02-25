@@ -16,103 +16,178 @@ struct EmptyWalletView: View {
 
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
+            Group {
+                topContent
+                
+                middleContent
+            }
+            .padding(.leading, 32)
+            
             Spacer()
-            topContent
-                .padding(.horizontal, 30)
-
-            Spacer()
-            recentListContent
-                .padding(.horizontal, 41)
-                .visibility(vm.placeholders.isEmpty ? .gone : .visible)
-
+                        
             bottomContent
-                .padding(.horizontal, 41)
-                .padding(.bottom, 80)
-                .padding(.top, 16)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.LL.background)
-        .onAppear(perform: {
-            if !self.isSettingNotificationFirst {
-                self.vm.tryToRestoreAccountWhenFirstLaunch()
+        .background(Color.Theme.Background.grey)
+        .onAppear {
+            if !isSettingNotificationFirst {
+                vm.tryToRestoreAccountWhenFirstLaunch()
             }
-            self.isSettingNotificationFirst = false
-        })
+            isSettingNotificationFirst = false
+        }
     }
+    
+    @ViewBuilder
+    private var middleContent: some View {
+        if vm.placeholders.isEmpty {
+            noAccountsMiddleContent
+        } else {
+            recentListContent
+        }
+    }
+    
+    @ViewBuilder
+    private var noAccountsMiddleContent: some View {
+        VStack(alignment: .leading) {
+            Text("#onFlow.")
+                .font(.Ukraine(size: 48, weight: .thin))
+                .fontWeight(.thin)
+                .foregroundColor(Color("text.white.9"))
+                .padding(.horizontal, 24)
+                .padding(.vertical, 4)
+                .background(Color.Theme.Accent.green)
+                .cornerRadius(50)
+            
+            Spacer()
 
-    var topContent: some View {
-        VStack(spacing: 0) {
-            Image("lilico-app-icon")
-                .resizable()
-                .padding(15)
-                .frame(width: 160, height: 160)
-            VStack(spacing: 12) {
+            Text("welcome_message".localized)
+              .font(.inter(size: 18, weight: .light))
+              .foregroundColor(Color.LL.text)
+              .frame(alignment: .leading)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.trailing, 32)
+        .padding(.bottom, 42)
+    }
+        
+    @ViewBuilder
+    private var horizontalGradient: some View {
+        ZStack {
+            LinearGradient(
+                stops: [
+                    Gradient.Stop(color: .black.opacity(0), location: 0.00),
+                    Gradient.Stop(color: Color.Theme.Accent.green.opacity(0.5), location: 1.00),
+                ],
+                startPoint: UnitPoint(x: 0, y: 0.5),
+                endPoint: UnitPoint(x: 1, y: 0.5)
+            )
+            
+            HStack {
+                Image("lilico-app-icon")
+                    .resizable()
+                    .frame(width: 32, height: 32)
                 Text("app_name_full".localized)
-                    .font(.Ukraine(size: 24, weight: .bold))
+                    .font(.inter(size: 18, weight: .semibold))
                     .foregroundColor(Color.LL.text)
-
-                Text("welcome_sub_desc".localized)
-                    .font(.Ukraine(size: 16, weight: .light))
-                    .foregroundColor(.LL.note)
+                Spacer()
             }
         }
+        .frame(height: 91)
+    }
+    
+    @ViewBuilder
+    private var verticalGradient: some View {
+        LinearGradient(
+            stops: [
+                Gradient.Stop(color: .black.opacity(0), location: 0.00),
+                Gradient.Stop(color: Color.Theme.Accent.green, location: 1.00),
+            ],
+            startPoint: UnitPoint(x: 0.5, y: 0),
+            endPoint: UnitPoint(x: 0.5, y: 1)
+        )
+        .frame(width: 79, height: 166)
+    }
+    
+    @ViewBuilder
+    private var gradients: some View {
+        ZStack(alignment: .topTrailing) {
+            verticalGradient
+            horizontalGradient
+        }
+    }
+    
+    @ViewBuilder
+    private var letsGetStarted: some View {
+        Text("lets_get_started")
+            .lineLimit(2)
+            .font(.Ukraine(size: 48, weight: .light))
+            .padding(.bottom, 32)
+            .padding(.top, -40)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+    
+    @ViewBuilder
+    private var topContent: some View {
+        VStack(spacing: 0) {
+            gradients
+            letsGetStarted
+        }
+        .frame(height: 270)
     }
 
     var bottomContent: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 8) {
             Button {
                 vm.createNewAccountAction()
             } label: {
-                ZStack {
-                    HStack(spacing: 8) {
-                        Image("wallet-create-icon")
-                            .frame(width: 24, height: 24)
-
-                        Text("create_wallet".localized)
-                            .font(.inter(size: 17, weight: .bold))
-                            .foregroundColor(.white)
-                    }
-                }
-                .frame(height: 58)
-                .frame(maxWidth: .infinity)
-                .background(Color.LL.Primary.salmonPrimary)
-                .contentShape(Rectangle())
-                .cornerRadius(29)
-                .shadow(color: Color.black.opacity(0.12), x: 0, y: 4, blur: 24)
+                Text("create_a_new_account".localized)
+                    .font(.inter(size: 16, weight: .bold))
+                    .foregroundColor(.black.opacity(0.9))
+                    .frame(height: 54)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.LL.Primary.salmonPrimary)
+                    .contentShape(Rectangle())
+                    .cornerRadius(16)
+                    .shadow(color: Color.black.opacity(0.12), x: 0, y: 4, blur: 24)
             }
-
+            
             Button {
                 vm.loginAccountAction()
             } label: {
-                ZStack {
-                    HStack(spacing: 8) {
-                        Image("wallet-login-icon")
-                            .frame(width: 24, height: 24)
-
-                        Text("import_wallet".localized)
-                            .font(.inter(size: 17, weight: .bold))
-                            .foregroundColor(Color(hex: "#333333"))
-                    }
-                }
-                .frame(height: 58)
-                .frame(maxWidth: .infinity)
-                .background(.white)
-                .contentShape(Rectangle())
-                .cornerRadius(29)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 28)
-                        .stroke(Color.black, lineWidth: 1.5)
-                )
-//                .shadow(color: Color.black.opacity(0.08), x: 0, y: 4, blur: 24)
+                Text("i_have_an_account".localized)
+                    .font(.inter(size: 16, weight: .bold))
+                    .foregroundColor(.LL.text)
+                    .frame(height: 58)
+                    .frame(maxWidth: .infinity)
+                    .background(.clear)
+                    .contentShape(Rectangle())
+                    .cornerRadius(29)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.LL.text, lineWidth: 1.5)
+                    )
             }
+            .padding(.bottom, 16)
+            
+            let str = "disclaimer".localized
+            Text((try? AttributedString(markdown: str)) ?? AttributedString(str))
+                .font(.inter(size: 14))
+                .foregroundStyle(Color.LL.text)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+                .multilineTextAlignment(.center)
         }
     }
 
     var recentListContent: some View {
-        VStack(spacing: 16) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("registerd_accounts".localized)
                 .font(.inter(size: 16, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundColor(Color.LL.text)
+                .padding(.top, 4)
 
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(spacing: 8) {
@@ -125,8 +200,20 @@ struct EmptyWalletView: View {
                     }
                 }
             }
-            .frame(maxHeight: 196)
+            
+            Spacer()
+            
+            ZStack(alignment: .center) {
+                Divider().foregroundStyle(Color.Theme.Line.stroke)
+                
+                Text("or".localized)
+                    .frame(width: 32, height: 32)
+                    .background(Color.Theme.Background.grey)
+            }
+            .padding(.vertical, 8)
+            .maxWidth(.infinity)
         }
+        .maxWidth(.infinity)
     }
 
     func createRecentLoginCell(_ placeholder: EmptyWalletViewModel.Placeholder) -> some View {
@@ -156,10 +243,6 @@ struct EmptyWalletView: View {
         .padding(.horizontal, 12)
         .frame(height: 60)
         .frame(maxWidth: .infinity)
-        .background(Color.Theme.Line.line)
-        .contentShape(Rectangle())
-        .cornerRadius(24)
-        .shadow(color: Color.black.opacity(0.04), x: 0, y: 4, blur: 16)
     }
 
     // MARK: Private
@@ -169,6 +252,12 @@ struct EmptyWalletView: View {
 
     @State
     private var isSettingNotificationFirst = true
+}
+
+#Preview("Dark") {
+    ThemeManager.shared.style = .dark
+    return EmptyWalletView()
+        .preferredColorScheme(.dark)
 }
 
 #Preview {
