@@ -61,8 +61,11 @@ class TokenBalanceHandler {
     
     static func getFlowTokenModel(network: FlowNetworkType) -> SingleToken? {
         let address = flowTokenAddress(network: network)
-        let data = flowTokenJsonStr
-            .replacingOccurrences(of: "<FlowTokenAddress>", with: address).data(using: .utf8)!
+        guard let data = flowTokenJsonStr
+            .replacingOccurrences(of: "<FlowTokenAddress>", with: address)
+            .data(using: .utf8) else {
+            return nil
+        }
         return try? FRWAPI.jsonDecoder.decode(SingleToken.self, from: data)
     }
     
