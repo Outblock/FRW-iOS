@@ -17,7 +17,7 @@ class TokenBalanceHandler {
     """
     {
       "chainId": 747,
-      "address": "0x1654653399040a61",
+      "address": <FlowTokenAddress>,
       "contractName": "",
       "path": {
         "vault": "/storage/flowTokenVault",
@@ -28,6 +28,7 @@ class TokenBalanceHandler {
       "name": "Flow",
       "description": "",
       "decimals": 18,
+      "flowIdentifier": "A.<FlowTokenAddress>.FlowToken",
       "logoURI": "https://cdn.jsdelivr.net/gh/FlowFans/flow-token-list@main/token-registry/A.1654653399040a61.FlowToken/logo.svg",
       "tags": [
         "Verified",
@@ -47,9 +48,23 @@ class TokenBalanceHandler {
     }
     """
     
-    static let data = flowTokenJsonStr.data(using: .utf8)!
-    static let flowToken = try! FRWAPI.jsonDecoder.decode(SingleToken.self, from: data)
     static let shared = TokenBalanceHandler()
+    
+    static func flowTokenAddress(network: FlowNetworkType) -> String {
+        switch network {
+        case .mainnet:
+            return "0x1654653399040a61"
+        case .testnet:
+            return "0x7e60df042a9c0868"
+        }
+    }
+    
+    static func getFlowTokenModel(network: FlowNetworkType) -> SingleToken? {
+        let address = flowTokenAddress(network: network)
+        let data = flowTokenJsonStr
+            .replacingOccurrences(of: "<FlowTokenAddress>", with: address).data(using: .utf8)!
+        return try? FRWAPI.jsonDecoder.decode(SingleToken.self, from: data)
+    }
     
     private init() {}
     

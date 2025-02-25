@@ -29,9 +29,12 @@ class EVMTokenBalanceProvider: TokenBalanceProvider {
         let response: [EVMTokenResponse] = try await Network.request(FRWAPI.EVM.tokenList(address.address))
         var models = response.map{ $0.toTokenModel(type: .evm) }
         let tokenMetadataResponse: SingleTokenResponse = try await Network.requestWithRawModel(GithubEndpoint.EVMTokenList(network))
-        var flowModel = TokenBalanceHandler.flowToken.toTokenModel(type: TokenModel.TokenType.evm, network: network)
-        flowModel.balance = flowBalance
-        models.insert(flowModel, at: 0)
+        
+        if let flowToken = TokenBalanceHandler.getFlowTokenModel(network: network) {
+            var flowModel = flowToken.toTokenModel(type: TokenModel.TokenType.evm, network: network)
+            flowModel.balance = flowBalance
+            models.insert(flowModel, at: 0)
+        }
         
         let updateModels: [TokenModel] = models.compactMap { model in
             var newModel = model
