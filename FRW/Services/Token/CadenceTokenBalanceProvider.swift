@@ -56,9 +56,9 @@ class CadenceTokenBalanceProvider: TokenBalanceProvider {
         return sorted
     }
     
-    func getNFTCollectionDetail(address: EthereumAddress, collectionIdentifier: String, offset: Int) async throws -> NFTListResponse {
+    func getNFTCollectionDetail(address: Flow.Address, collectionIdentifier: String, offset: Int) async throws -> NFTListResponse {
         let request = NFTCollectionDetailListRequest(
-            address: address.address,
+            address: address.hexAddr,
             collectionIdentifier: collectionIdentifier,
             offset: offset,
             limit: EVMTokenBalanceProvider.nftLimit

@@ -30,7 +30,7 @@ protocol FWAddress {
 
 struct FWAddressDector {
     static func create(address: String?) -> FWAddress? {
-        guard let address else {
+        guard let address, !address.isEmpty else {
             return nil
         }
         
@@ -40,7 +40,7 @@ struct FWAddressDector {
             return ethAddr
         }
         
-        return Flow.Address(hex: hexAddr)
+        return Flow.Address(hex: hexAddr.stripHexPrefix())
     }
 }
 

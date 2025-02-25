@@ -16,7 +16,6 @@ final class MoveNFTsViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init() {
-        fetchNFTs(0)
         loadUserInfo()
         checkForInsufficientStorage()
     }
@@ -55,7 +54,7 @@ final class MoveNFTsViewModel: ObservableObject {
             }
             
             Task {
-                fetchNFTs()
+                await fetchCollection()
             }
         }
     }
@@ -231,40 +230,43 @@ final class MoveNFTsViewModel: ObservableObject {
         resetButtonState()
     }
 
-    func fetchNFTs(_ offset: Int = 0) {
-        runOnMain {
+    func fetchNFTs(_ offset: Int = 0) async {
+        await MainActor.run {
             self.buttonState = .loading
         }
+        
         guard let collection = selectedCollection else {
-            fetchCollection()
             return
         }
-        Task {
-            do {
-                guard let from = FWAddressDector.create(address: fromContact.address) else {
-                    return
-                }
-                
-                let response = try await TokenBalanceHandler.shared.getNFTCollectionDetail(address: from,
-                                                                                           collectionIdentifier: collection.maskId,
-                                                                                           offset: offset)
-                await MainActor.run {
-                    if let list = response.nfts {
-                        self.nfts = list.map { MoveNFTsViewModel.NFT(isSelected: false, model: $0) }
-                    } else {
-                        self.nfts = []
-                    }
-                    self.isMock = false
-                    self.resetButtonState()
-                }
-            } catch {
-                await MainActor.run {
-                    self.nfts = []
-                    self.isMock = false
-                    self.resetButtonState()
-                }
-                log.error("[MoveAsset] fetch NFTs failed:\(error)")
+        
+        do {
+            guard let from = FWAddressDector.create(address: fromContact.address) else {
+                return
             }
+            
+            await MainActor.run {
+                self.isMock = true
+            }
+            
+            let response = try await TokenBalanceHandler.shared.getNFTCollectionDetail(address: from,
+                                                                                       collectionIdentifier: collection.maskId,
+                                                                                       offset: offset)
+            await MainActor.run {
+                if let list = response.nfts {
+                    self.nfts = list.map { MoveNFTsViewModel.NFT(isSelected: false, model: $0) }
+                } else {
+                    self.nfts = []
+                }
+                self.isMock = false
+                self.resetButtonState()
+            }
+        } catch {
+            await MainActor.run {
+                self.nfts = []
+                self.isMock = false
+                self.resetButtonState()
+            }
+            log.error("[MoveAsset] fetch NFTs failed:\(error)")
         }
     }
 
@@ -372,7 +374,9 @@ final class MoveNFTsViewModel: ObservableObject {
         selectedCollection = item
 
         nfts = []
-        fetchNFTs()
+        Task {
+            await fetchNFTs()
+        }
     }
 
     private func resetButtonState() {
@@ -380,34 +384,36 @@ final class MoveNFTsViewModel: ObservableObject {
         showHint = selectedCount >= limitCount
     }
 
-    private func fetchCollection() {
-        Task {
-            do {
-                
-                guard let from = FWAddressDector.create(address: fromContact.address) else {
-                    return
-                }
-                
-                let list = try await TokenBalanceHandler.shared.getNFTCollections(address: from)
-                
-                DispatchQueue.main.async {
-                    self.collectionList = list
-                    if self.selectedCollection == nil {
-                        self.selectedCollection = self.collectionList.first
-                    }
-                    if self.selectedCollection != nil {
-                        self.fetchNFTs()
-                    } else {
-                        DispatchQueue.main.async {
-                            self.nfts = []
-                            self.isMock = false
-                            self.resetButtonState()
-                        }
-                    }
-                }
-            } catch {
-                log.error("[MoveAsset] fetch Collection failed:\(error)")
+    private func fetchCollection() async {
+        do {
+            guard let from = FWAddressDector.create(address: fromContact.address) else {
+                return
             }
+            
+            await MainActor.run {
+                self.isMock = true
+            }
+            
+            let list = try await TokenBalanceHandler.shared.getNFTCollections(address: from)
+            
+            if list.isEmpty {
+                await MainActor.run {
+                    self.nfts = []
+                    self.isMock = false
+                    self.resetButtonState()
+                }
+                return
+            }
+            
+            await MainActor.run {
+                self.collectionList = list
+                self.selectedCollection = self.collectionList.first
+            }
+            
+            await fetchNFTs()
+            
+        } catch {
+            log.error("[MoveAsset] fetch Collection failed:\(error)")
         }
     }
     

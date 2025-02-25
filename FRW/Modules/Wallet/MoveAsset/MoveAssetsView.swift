@@ -44,7 +44,7 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
                     .font(.inter(size: 14))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(Color.Theme.Text.black8)
-                    .frame(height: 72)
+                    .padding(.vertical, 25)
 
                 HStack {
                     Button {
@@ -68,7 +68,6 @@ struct MoveAssetsView: RouteableView, PresentActionDelegate {
                     }
                     .buttonStyle(ScaleButtonStyle())
                 }
-                .padding(.top, 32)
 
                 if showCheck {
                     VPrimaryButton(

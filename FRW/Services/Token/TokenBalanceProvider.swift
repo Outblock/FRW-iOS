@@ -21,9 +21,4 @@ extension TokenBalanceProvider {
         let models = try await getFTBalance(address: address)
         return models.first{ $0.id == tokenId }
     }
-    
-    func getNFTCollectionDetail(address: FWAddress, collectionIdentifier: String, offset: Int = 0) async throws -> NFTListResponse {
-        return try await getNFTCollectionDetail(address: address, collectionIdentifier: collectionIdentifier, offset: offset)
-    }
-    
 }

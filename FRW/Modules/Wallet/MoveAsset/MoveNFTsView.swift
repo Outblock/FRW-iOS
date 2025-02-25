@@ -44,6 +44,7 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
                 .padding(.vertical, 24)
 
             NFTListView()
+                .mockPlaceholder(viewModel.isMock)
 
             VStack(spacing: 0) {
                 InsufficientStorageToastView<MoveNFTsViewModel>()
@@ -63,7 +64,6 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
         }
         .padding(.horizontal, 18)
         .applyRouteable(self)
-        .mockPlaceholder(viewModel.isMock)
         .background(Color.Theme.Background.grey)
     }
 
