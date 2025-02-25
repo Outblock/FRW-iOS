@@ -14,8 +14,8 @@ struct TabBarItemView<T: Hashable>: View {
     @Binding
     var selected: T
     var action: () -> Void
-    
-    ///So that we update our color when appearance changes.
+
+    /// So that we update our color when appearance changes.
     @ObservedObject
     private var style = ThemeManager.shared
 
@@ -37,23 +37,23 @@ struct TabBarItemView<T: Hashable>: View {
         }
         .tint(tint)
     }
-    
+
     @ViewBuilder
     private var icon: some View {
-        Image(pageModel.iconName + (selected == pageModel.tag ? "-selected" : "") )
+        Image(pageModel.iconName + (selected == pageModel.tag ? "-selected" : ""))
             .aspectRatio(contentMode: .fit)
             .frame(width: 28, height: 28)
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
             .padding(.bottom, 4)
     }
-    
+
     @ViewBuilder
     private var title: some View {
         Text(pageModel.title)
             .font(.inter(size: 12, weight: .semibold))
     }
-    
+
     @ViewBuilder
     private var tint: Color {
         selected == pageModel.tag ? Color.Theme.Accent.green : Color.TabIcon.unselectedTint

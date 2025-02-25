@@ -34,22 +34,22 @@ struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
         guard let account = WalletManager.shared.getPrimaryWalletAddress() else {
             return nil
         }
-        
+
         var sessionNamespace: SessionNamespace?
-        
+
         // Combine non-nil proposals
         let proposals = [required, optional].compactMap { $0 }
-        
-        proposals.forEach { proposal in
-            guard let chains = proposal.chains else { return }
-            
+
+        for proposal in proposals {
+            guard let chains = proposal.chains else { continue }
+
             let proposalMethods = proposal.methods
             let proposalEvents = proposal.events
-            
-            chains.forEach { chain in
+
+            for chain in chains {
                 let accountString = "\(chain.absoluteString):\(account)"
-                guard let accountObj = WalletConnectSign.Account(accountString) else { return }
-                
+                guard let accountObj = WalletConnectSign.Account(accountString) else { continue }
+
                 if var ns = sessionNamespace {
                     // Append new account and chain, and intersect the methods and events.
                     ns.accounts.append(accountObj)
@@ -68,7 +68,7 @@ struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
                 }
             }
         }
-        
+
         return sessionNamespace
     }
 

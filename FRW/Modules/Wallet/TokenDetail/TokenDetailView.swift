@@ -14,19 +14,6 @@ import SwiftUIX
 // MARK: - TokenDetailView
 
 struct TokenDetailView: RouteableView {
-    @Environment(\.colorScheme) var colorScheme
-    @StateObject private var vm: TokenDetailViewModel
-    @StateObject private var stakingManager = StakingManager.shared
-
-    private var isAccessible: Bool = true
-
-    private let lightGradientColors: [Color] = [.white.opacity(0), Color(hex: "#E6E6E6").opacity(0), Color(hex: "#E6E6E6").opacity(1)]
-    private let darkGradientColors: [Color] = [.white.opacity(0), .white.opacity(0), Color(hex: "#282828").opacity(1)]
-
-    var title: String {
-        return ""
-    }
-
     // MARK: Lifecycle
 
     init(token: TokenModel, accessible: Bool) {
@@ -35,6 +22,13 @@ struct TokenDetailView: RouteableView {
     }
 
     // MARK: Internal
+
+    @Environment(\.colorScheme)
+    var colorScheme
+
+    var title: String {
+        ""
+    }
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -74,7 +68,11 @@ struct TokenDetailView: RouteableView {
         .buttonStyle(.plain)
         .backgroundFill(.LL.deepBg)
         .applyRouteable(self)
-        .halfSheet(showSheet: $vm.showSheet, autoResizing: true, backgroundColor: Color.Theme.BG.bg1) {
+        .halfSheet(
+            showSheet: $vm.showSheet,
+            autoResizing: true,
+            backgroundColor: Color.Theme.BG.bg1
+        ) {
             if vm.buttonAction == .move {
                 MoveTokenView(tokenModel: vm.token, isPresent: $vm.showSheet)
             }
@@ -160,23 +158,20 @@ struct TokenDetailView: RouteableView {
                 Text(vm.balanceString)
                     .foregroundColor(.LL.Neutrals.neutrals1)
                     .font(.inter(size: 32, weight: .semibold))
-
-                Text(vm.token.symbol?.uppercased() ?? "?")
-                    .foregroundColor(
-                        colorScheme == .dark ? .LL.Neutrals.neutrals9 : .LL.Neutrals
-                            .neutrals8
-                    )
-                    .font(.inter(size: 14, weight: .medium))
-                    .padding(.bottom, 5)
+                Spacer()
             }
             .padding(.top, 15)
 
+            Text("Available_FLOW".localized)
+                .font(.inter(size: 14, weight: .semibold))
+                .foregroundStyle(Color.Theme.Text.black3)
+                .padding(.top, 4)
             Text(
                 "\(CurrencyCache.cache.currencySymbol)\(vm.balanceAsCurrentCurrencyString) \(CurrencyCache.cache.currentCurrency.rawValue)"
             )
             .foregroundColor(.LL.Neutrals.text)
             .font(.inter(size: 16, weight: .medium))
-            .padding(.top, 3)
+            .padding(.top, 4)
 
             HStack(spacing: 2) {
                 Button {
@@ -367,7 +362,7 @@ struct TokenDetailView: RouteableView {
         }
         .padding(.vertical, 7)
     }
-    
+
     var storageView: some View {
         HStack(spacing: 0) {
             StorageUsageView(
@@ -379,22 +374,22 @@ struct TokenDetailView: RouteableView {
                 HStack {
                     Text("storage_usage".localized)
                         .font(.inter(size: 16, weight: .semibold))
-                    
+
                     Spacer()
-                    
+
                     Text(String(format: "%.3f FLOW", vm.storageFlow))
                 }
             )
             .footerView(
                 VStack(spacing: 8) {
                     separator()
-                    
+
                     HStack {
                         Text("total_balance".localized)
                             .font(.inter(size: 16, weight: .semibold))
-                        
+
                         Spacer()
-                        
+
                         Text(String(format: "%.3f FLOW", vm.totalBalance))
                     }
                 }
@@ -408,7 +403,27 @@ struct TokenDetailView: RouteableView {
         }
         .padding(.bottom, 12)
     }
-    
+
+    // MARK: Private
+
+    @StateObject
+    private var vm: TokenDetailViewModel
+    @StateObject
+    private var stakingManager = StakingManager.shared
+
+    private var isAccessible: Bool = true
+
+    private let lightGradientColors: [Color] = [
+        .white.opacity(0),
+        Color(hex: "#E6E6E6").opacity(0),
+        Color(hex: "#E6E6E6").opacity(1),
+    ]
+    private let darkGradientColors: [Color] = [
+        .white.opacity(0),
+        .white.opacity(0),
+        Color(hex: "#282828").opacity(1),
+    ]
+
     private func separator() -> some View {
         if colorScheme == .dark {
             Color(hex: "#262626")
