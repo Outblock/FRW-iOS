@@ -1,19 +1,18 @@
 {
   "images" : [
     {
-      "filename" : "image 20.png",
-      "idiom" : "universal",
-      "scale" : "1x"
+      "filename" : "Group 48324.pdf",
+      "idiom" : "universal"
     },
     {
-      "filename" : "image 20@2x.png",
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "filename" : "image 20@3x.png",
-      "idiom" : "universal",
-      "scale" : "3x"
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Group 48324 (1).pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {
