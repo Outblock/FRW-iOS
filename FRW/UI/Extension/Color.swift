@@ -278,7 +278,7 @@ extension Color {
             static let text1 = Color("text.1")
             static let text4 = Color("text.4")
         }
-        
+
         enum Foreground {
             static let black3 = Color("foreground/black3")
             static let white4Text = Color("foreground/white4-text")
@@ -286,9 +286,9 @@ extension Color {
 
         static let evm = Color("evm")
     }
-    
+
     enum TabIcon {
-        static let unselectedTint = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? Color.Theme.Foreground.white4Text : Color.Theme.Foreground.black3
+        static var unselectedTint: Color { ThemeManager.shared.getUIKitStyle() == .dark ? Color.Theme.Foreground.white4Text : Color.Theme.Foreground.black3 }
     }
 }
 

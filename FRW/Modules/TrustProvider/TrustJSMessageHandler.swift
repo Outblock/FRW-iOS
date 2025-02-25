@@ -154,8 +154,6 @@ extension TrustJSMessageHandler: WKScriptMessageHandler {
                     return
                 }
                 handleSwitchEthereumChain(id: id, chainId: chainId)
-            case .solana, .aptos, .cosmos:
-                log.error("Unsupport chains")
             }
         case .switchChain:
             log.info("[Trust] switchChain")

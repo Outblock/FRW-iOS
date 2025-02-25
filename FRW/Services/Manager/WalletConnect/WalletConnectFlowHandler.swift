@@ -27,32 +27,49 @@ struct WalletConnectFlowHandler: WalletConnectChildHandlerProtocol {
         return Flow.ChainID(name: reference.lowercased())
     }
 
-    func approveSessionNamespaces(
-        sessionProposal: Session
-            .Proposal
-    ) throws -> [String: SessionNamespace] {
+    func approveProposalNamespace(
+        required: ProposalNamespace?,
+        optional: ProposalNamespace?
+    ) throws -> SessionNamespace? {
         guard let account = WalletManager.shared.getPrimaryWalletAddress() else {
-            return [:]
+            return nil
         }
 
-        var sessionNamespaces = [String: SessionNamespace]()
-        for requiredNamespace in sessionProposal.requiredNamespaces {
-            let caip2Namespace = requiredNamespace.key
-            let proposalNamespace = requiredNamespace.value
-            if let chains = proposalNamespace.chains {
-                let accounts = Array(
-                    chains
-                        .compactMap { WalletConnectSign.Account($0.absoluteString + ":\(account)") }
-                )
-                let sessionNamespace = SessionNamespace(
-                    accounts: accounts,
-                    methods: proposalNamespace.methods,
-                    events: proposalNamespace.events
-                )
-                sessionNamespaces[caip2Namespace] = sessionNamespace
+        var sessionNamespace: SessionNamespace?
+
+        // Combine non-nil proposals
+        let proposals = [required, optional].compactMap { $0 }
+
+        for proposal in proposals {
+            guard let chains = proposal.chains else { continue }
+
+            let proposalMethods = proposal.methods
+            let proposalEvents = proposal.events
+
+            for chain in chains {
+                let accountString = "\(chain.absoluteString):\(account)"
+                guard let accountObj = WalletConnectSign.Account(accountString) else { continue }
+
+                if var ns = sessionNamespace {
+                    // Append new account and chain, and intersect the methods and events.
+                    ns.accounts.append(accountObj)
+                    ns.chains = (ns.chains ?? []) + [chain]
+                    ns.methods = ns.methods.intersection(proposalMethods)
+                    ns.events = ns.events.intersection(proposalEvents)
+                    sessionNamespace = ns
+                } else {
+                    // Create the namespace if it doesn't exist yet.
+                    sessionNamespace = SessionNamespace(
+                        chains: [chain],
+                        accounts: [accountObj],
+                        methods: proposalMethods,
+                        events: proposalEvents
+                    )
+                }
             }
         }
-        return sessionNamespaces
+
+        return sessionNamespace
     }
 
     func handlePersonalSignRequest(

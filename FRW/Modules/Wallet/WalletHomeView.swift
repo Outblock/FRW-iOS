@@ -25,7 +25,7 @@ extension WalletHomeView: AppTabBarPageProtocol {
     static func iconName() -> String {
         "tabler-icon-home"
     }
-    
+
     static func title() -> String {
         "home".localized
     }
@@ -64,6 +64,9 @@ struct WalletHomeView: View {
     @State
     private var logViewPresented: Bool = false
 
+//    @State private var forcedColorScheme: ColorScheme? = nil
+//    @Environment(\.colorScheme) var colorScheme
+
     var body: some View {
         GeometryReader { proxy in
 
@@ -85,6 +88,12 @@ struct WalletHomeView: View {
                 size = proxy.size
                 self.vm.viewWillAppear()
             }
+//            .preferredColorScheme(forcedColorScheme)
+//            .onChange(of: colorScheme, perform: { newValue in
+//                if ThemeManager.shared.style == nil {
+//                    ThemeManager.shared.setStyle(style: newValue)
+//                }
+//            })
             .navigationBarHidden(true)
             .ignoresSafeArea(.container, edges: .top)
         }
@@ -613,7 +622,8 @@ extension WalletHomeView {
                 .frame(minHeight: CoinCellHeight)
 
                 if EVMAccountManager.shared.selectedAccount == nil && ChildAccountManager.shared
-                    .selectedChildAccount == nil {
+                    .selectedChildAccount == nil
+                {
                     HStack(spacing: 0) {
                         Divider()
                             .frame(width: 1, height: 10)
@@ -690,7 +700,8 @@ extension WalletHomeView {
                 Router.route(to: RouteMap.Wallet.swapProvider(nil))
             case .stake:
                 if !LocalUserDefaults.shared.stakingGuideDisplayed && !StakingManager.shared
-                    .isStaked {
+                    .isStaked
+                {
                     Router.route(to: RouteMap.Wallet.stakeGuide)
                     return
                 }

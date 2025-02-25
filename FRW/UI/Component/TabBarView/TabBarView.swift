@@ -40,17 +40,17 @@ struct TabBarView<T: Hashable>: View {
             tabView
             TabBar(
                 pages: pages,
-                indicatorColor: getCurrentPageModel() != nil ? Color.Theme.Accent.green : .black,
+                indicatorColor: getCurrentPageModel() != nil ? Color.Theme.Accent.green : .clear,
                 offsetX: $offsetX,
                 selected: $current
             )
-            .frame(height: 80)
+            .frame(height: 72)
         }
     }
 
     var tabView: some View {
         TabView(selection: $current) {
-            ForEach(0..<pages.count, id: \.self) { index in
+            ForEach(0 ..< pages.count, id: \.self) { index in
                 let pageModel = pages[index]
                 pageModel.view()
                     .tag(pageModel.tag)
