@@ -19,10 +19,14 @@ class CadenceTokenBalanceProvider: TokenBalanceProvider {
         // TODO: Add token list cache
     }
     
-    func getFTBalance(address: Flow.Address) async throws -> [TokenModel] {
+    func getFTBalance(address: FWAddress) async throws -> [TokenModel] {
+        guard let addr = address as? Flow.Address else {
+            throw EVMError.addressError
+        }
+        
         let coinInfo: SingleTokenResponse = try await Network.requestWithRawModel(GithubEndpoint.ftTokenList(network))
         let models = coinInfo.tokens.map{ $0.toTokenModel(type: .cadence, network: network) }
-        let balance = try await FlowNetwork.fetchBalance(at: address)
+        let balance = try await FlowNetwork.fetchBalance(at: addr)
         
         var activeModels: [TokenModel] = []
         balance.keys.forEach { key in
@@ -45,7 +49,7 @@ class CadenceTokenBalanceProvider: TokenBalanceProvider {
         return sorted
     }
     
-    func getNFTCollections(address: Flow.Address) async throws -> [NFTCollection] {
+    func getNFTCollections(address: FWAddress) async throws -> [NFTCollection] {
         let list: [NFTCollection] = try await Network.request(
             FRWAPI.NFT.userCollection(
                 address.hexAddr,
@@ -56,7 +60,7 @@ class CadenceTokenBalanceProvider: TokenBalanceProvider {
         return sorted
     }
     
-    func getNFTCollectionDetail(address: Flow.Address, collectionIdentifier: String, offset: Int) async throws -> NFTListResponse {
+    func getNFTCollectionDetail(address: FWAddress, collectionIdentifier: String, offset: Int) async throws -> NFTListResponse {
         let request = NFTCollectionDetailListRequest(
             address: address.hexAddr,
             collectionIdentifier: collectionIdentifier,

@@ -217,10 +217,7 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
                             viewModel.toggleSelection(of: model)
                         }
                     }
-                    
-                    Color.clear.frame(width: .infinity, height: 12)
                 }
-
                 Spacer()
             }
             .overlay(alignment: .bottom) {

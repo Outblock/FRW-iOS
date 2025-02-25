@@ -14,20 +14,20 @@ class EVMTokenBalanceProvider: TokenBalanceProvider {
     
     init(network: FlowNetworkType = LocalUserDefaults.shared.flowNetwork) {
         self.network = network
-        
         // TODO: Add token list cache
     }
     
-    func getFTBalance(address: EthereumAddress) async throws -> [TokenModel] {
-        guard let web3 = try await FlowProvider.Web3.default(networkType: network) else {
+    func getFTBalance(address: FWAddress) async throws -> [TokenModel] {
+        guard let addr = address as? EthereumAddress,
+              let web3 = try await FlowProvider.Web3.default(networkType: network) else {
             throw EVMError.rpcError
         }
         
-        let flowBalance = try await web3.eth.getBalance(for: address)
+        let flowBalance = try await web3.eth.getBalance(for: addr)
         
         // The SimpleHash API doesn't return token metadata like logo and flowIdentifier
         // Hence, we need fetch the metadata from token list first
-        let response: [EVMTokenResponse] = try await Network.request(FRWAPI.EVM.tokenList(address.address))
+        let response: [EVMTokenResponse] = try await Network.request(FRWAPI.EVM.tokenList(address.hexAddr))
         var models = response.map{ $0.toTokenModel(type: .evm) }
         let tokenMetadataResponse: SingleTokenResponse = try await Network.requestWithRawModel(GithubEndpoint.EVMTokenList(network))
         
@@ -61,10 +61,10 @@ class EVMTokenBalanceProvider: TokenBalanceProvider {
         return sorted
     }
     
-    func getNFTCollections(address: EthereumAddress) async throws -> [NFTCollection] {
+    func getNFTCollections(address: FWAddress) async throws -> [NFTCollection] {
         let list: [NFTCollection]  = try await Network.request(
             FRWAPI.NFT.userCollection(
-                address.address,
+                address.hexAddr,
                 address.type
             )
         )
@@ -72,9 +72,9 @@ class EVMTokenBalanceProvider: TokenBalanceProvider {
         return sorted
     }
     
-    func getNFTCollectionDetail(address: EthereumAddress, collectionIdentifier: String, offset: Int) async throws -> NFTListResponse {
+    func getNFTCollectionDetail(address: FWAddress, collectionIdentifier: String, offset: Int) async throws -> NFTListResponse {
         let request = NFTCollectionDetailListRequest(
-            address: address.address,
+            address: address.hexAddr,
             collectionIdentifier: collectionIdentifier,
             offset: offset,
             limit: EVMTokenBalanceProvider.nftLimit

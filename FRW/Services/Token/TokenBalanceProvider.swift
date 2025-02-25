@@ -8,7 +8,6 @@
 import Foundation
 
 protocol TokenBalanceProvider {
-    associatedtype FWAddress
     var network: FlowNetworkType { get }
     func getFTBalance(address: FWAddress) async throws -> [TokenModel]
     func getFTBalanceWithId(address: FWAddress, tokenId: String) async throws -> TokenModel?
