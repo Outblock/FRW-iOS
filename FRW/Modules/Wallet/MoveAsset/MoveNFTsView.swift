@@ -34,14 +34,14 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
             TitleWithClosedView(title: "select_nfts".localized) {
                 viewModel.closeAction()
             }
-            .padding(.top, 24)
+            .padding(.top, 18)
 
             accountView()
 
             Divider()
                 .frame(height: 1)
                 .foregroundStyle(Color.Theme.Line.line)
-                .padding(.vertical, 24)
+                .padding(.vertical, 12)
 
             NFTListView()
                 .mockPlaceholder(viewModel.isMock)
@@ -52,7 +52,7 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
                     .background(Color.clear)
                 
                 VPrimaryButton(
-                    model: ButtonStyle.green,
+                    model: ButtonStyle.primary,
                     state: viewModel.buttonState,
                     action: {
                         viewModel.moveAction()
@@ -193,7 +193,7 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
                     }
                 }
             }
-            .padding(.bottom, 8)
+            .padding(.bottom, 12)
 
             if viewModel.nfts.isEmpty {
                 HStack {
@@ -217,6 +217,8 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
                             viewModel.toggleSelection(of: model)
                         }
                     }
+                    
+                    Color.clear.frame(width: .infinity, height: 12)
                 }
 
                 Spacer()
