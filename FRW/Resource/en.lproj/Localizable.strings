@@ -1136,7 +1136,7 @@ Key Store and Private Key.";
 "welcome_message" = "Welcome to Flow Wallet! Create an account to get started";
 "create_a_new_account" = "Create a new account";
 "i_have_an_account" = "I already have an account";
-"disclaimer" = "By using Flow Wallet you agree to the Terms of Service and Privacy Policy";
+"disclaimer" = "By using Flow Wallet you agree to the [Terms of Service](https://lilico.app/about/terms) and [Privacy Policy](https://lilico.app/about/privacy-policy)";
 "creating_account" = "Creating your\nAccount...";
 "secure_by_design" = "Secure by Design";
 "hardware_grade_security" = "Using Device Keys with Hardware-Grade Security, Flow Wallet is an ultra-secure hardware wallet you can trust";

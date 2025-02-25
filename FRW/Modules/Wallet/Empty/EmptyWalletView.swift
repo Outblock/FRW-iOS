@@ -167,15 +167,13 @@ struct EmptyWalletView: View {
             }
             .padding(.bottom, 16)
             
-            Button {
-                
-            } label: {
-                Text("disclaimer".localized)
-                    .font(.inter(size: 14))
-                    .foregroundStyle(Color.LL.text)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+            let str = "disclaimer".localized
+            Text((try? AttributedString(markdown: str)) ?? AttributedString(str))
+                .font(.inter(size: 14))
+                .foregroundStyle(Color.LL.text)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+                .multilineTextAlignment(.center)
         }
     }
 
