@@ -978,8 +978,6 @@
 		4E1A8B762B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A8B742B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift */; };
 		4E1B2FE32BA038C000F30379 /* DevicesInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1B2FE22BA038C000F30379 /* DevicesInfoViewModel.swift */; };
 		4E1B2FE42BA038C000F30379 /* DevicesInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1B2FE22BA038C000F30379 /* DevicesInfoViewModel.swift */; };
-		4E1B2FE62BA061F700F30379 /* QRCodeEyeShareFillCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1B2FE52BA061F700F30379 /* QRCodeEyeShareFillCircle.swift */; };
-		4E1B2FE72BA061F700F30379 /* QRCodeEyeShareFillCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1B2FE52BA061F700F30379 /* QRCodeEyeShareFillCircle.swift */; };
 		4E1DD8C72B1622030055E510 /* Instabug in Frameworks */ = {isa = PBXBuildFile; productRef = 4E1DD8C62B1622030055E510 /* Instabug */; };
 		4E1DD8C92B16222A0055E510 /* Instabug in Frameworks */ = {isa = PBXBuildFile; productRef = 4E1DD8C82B16222A0055E510 /* Instabug */; };
 		4E1DD8CB2B1629560055E510 /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1DD8CA2B1629560055E510 /* QRCodeView.swift */; };
@@ -2433,7 +2431,6 @@
 		4E1A8B712B71AADE00485EDE /* MultiBackupVerifyPinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupVerifyPinView.swift; sourceTree = "<group>"; };
 		4E1A8B742B71AAFD00485EDE /* MultiBackupVerifyPinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBackupVerifyPinViewModel.swift; sourceTree = "<group>"; };
 		4E1B2FE22BA038C000F30379 /* DevicesInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesInfoViewModel.swift; sourceTree = "<group>"; };
-		4E1B2FE52BA061F700F30379 /* QRCodeEyeShareFillCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeEyeShareFillCircle.swift; sourceTree = "<group>"; };
 		4E1DD8CA2B1629560055E510 /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
 		4E1DD8D02B162F9B0055E510 /* SyncConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncConfirmView.swift; sourceTree = "<group>"; };
 		4E1DE2C42C6AF412001022B7 /* ThreadSafeDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreadSafeDictionary.swift; sourceTree = "<group>"; };
@@ -4694,7 +4691,6 @@
 				4E8394432A7153EB00DFC422 /* CalloutView.swift */,
 				4EA0D0A22A7A357E004C6A19 /* LLSegmenControl.swift */,
 				4E1DD8CA2B1629560055E510 /* QRCodeView.swift */,
-				4E1B2FE52BA061F700F30379 /* QRCodeEyeShareFillCircle.swift */,
 				4EFBE5CF2BC7D4AA0012968A /* ConfettiManager.swift */,
 				4E9D8F1D2BF87A0400E11CC7 /* TitleWithClosedView.swift */,
 				4EAFBD802C1051D00031EA20 /* CircularProgressView.swift */,
@@ -7366,7 +7362,6 @@
 				15DC213327819C56000B187A /* VSegmentedPickerModel.swift in Sources */,
 				4EBE49272AA1B732000FFFFE /* AppUpdateManager.swift in Sources */,
 				4E26775A2C9BA4F7008729EB /* ShowRecoveryPhraseBackup.swift in Sources */,
-				4E1B2FE72BA061F700F30379 /* QRCodeEyeShareFillCircle.swift in Sources */,
 				6A9CFE4D2A69331100AEA847 /* JailbreakAlertView.swift in Sources */,
 				4E56465B2C0606A300890E61 /* PopupView.swift in Sources */,
 				15DC21E327819C56000B187A /* StateColors_EFD.swift in Sources */,
@@ -8201,7 +8196,6 @@
 				4EBE49262AA1B732000FFFFE /* AppUpdateManager.swift in Sources */,
 				6A9CFE4C2A69331100AEA847 /* JailbreakAlertView.swift in Sources */,
 				4E2677592C9BA4F7008729EB /* ShowRecoveryPhraseBackup.swift in Sources */,
-				4E1B2FE62BA061F700F30379 /* QRCodeEyeShareFillCircle.swift in Sources */,
 				15C58B952868A4EE00BD4FC6 /* VAccordionModel.swift in Sources */,
 				4E56465A2C0606A300890E61 /* PopupView.swift in Sources */,
 				15C58B962868A4EE00BD4FC6 /* SnapAlignmentEnvironmentKey.swift in Sources */,
@@ -8723,7 +8717,6 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -8767,7 +8760,6 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -9314,10 +9306,10 @@
 		};
 		150D3E352A58718700F7F2DC /* XCRemoteSwiftPackageReference "QRCode" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/WalletConnect/QRCode";
+			repositoryURL = "https://github.com/dagronf/QRCode";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 14.3.1;
+				kind = revision;
+				revision = 94fa5c053837eb2b367316590ceaa480b0689902;
 			};
 		};
 		152BB09228AE8FD100B2A2AA /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
@@ -9684,8 +9676,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/outblock/flow-swift";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.3.9;
+				kind = revision;
+				revision = 50b60826c4ce18adaa151946d11d468ac1fc98dd;
 			};
 		};
 		15F517F928C6574C00504FDC /* XCRemoteSwiftPackageReference "atlantis" */ = {

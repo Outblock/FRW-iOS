@@ -38,8 +38,18 @@ class ThemeManager: ObservableObject {
         if let style = style {
             return style.toUIKitEnum
         }
+        // if auto, style is setted by system
+        let systemStyle = UIScreen.main.traitCollection.userInterfaceStyle
+        return systemStyle == .light ? .light : .dark
+    }
 
-        return .dark
+    func updateStyle(style: UIUserInterfaceStyle) {
+        guard self.style == nil else {
+            log.debug("[Theme] not changed")
+            return
+        }
+        log.debug("[Theme] auto")
+        setStyle(style: nil)
     }
 
     // MARK: Private

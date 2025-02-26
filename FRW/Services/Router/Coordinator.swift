@@ -128,6 +128,8 @@ extension Coordinator {
 
     @objc
     private func didBecomeActive() {
+        let systemStyle = UIScreen.main.traitCollection.userInterfaceStyle
+        ThemeManager.shared.updateStyle(style: systemStyle)
         UIView.animate(withDuration: 0.25) {
             self.privateView.alpha = 0
         } completion: { _ in
