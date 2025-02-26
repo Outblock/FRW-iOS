@@ -145,7 +145,7 @@ struct EmptyWalletView: View {
             } label: {
                 Text("create_a_new_account".localized)
                     .font(.inter(size: 16, weight: .bold))
-                    .foregroundColor(.black.opacity(0.9))
+                    .foregroundColor(.LL.background)
                     .frame(height: 54)
                     .frame(maxWidth: .infinity)
                     .background(Color.LL.Primary.salmonPrimary)
@@ -172,8 +172,7 @@ struct EmptyWalletView: View {
             }
             .padding(.bottom, 16)
             
-            let str = "disclaimer".localized
-            Text((try? AttributedString(markdown: str)) ?? AttributedString(str))
+            Text(disclaimer)
                 .font(.inter(size: 14))
                 .foregroundStyle(Color.LL.text)
                 .lineLimit(2)
@@ -181,7 +180,7 @@ struct EmptyWalletView: View {
                 .multilineTextAlignment(.center)
         }
     }
-
+    
     var recentListContent: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("registerd_accounts".localized)
@@ -252,6 +251,30 @@ struct EmptyWalletView: View {
 
     @State
     private var isSettingNotificationFirst = true
+    
+    private var disclaimer: AttributedString {
+        let localizedMarkdown = NSLocalizedString(
+            "disclaimer",
+            comment: "By using Flow Wallet you agree to the [Terms of Service](https://lilico.app/about/terms) and [Privacy Policy](https://lilico.app/about/privacy-policy)."
+        )
+        
+        // Convert the markdown string to an AttributedString
+        var attributedString: AttributedString
+        do {
+            attributedString = try AttributedString(markdown: localizedMarkdown)
+        } catch {
+            attributedString = AttributedString(localizedMarkdown)
+        }
+        
+        for run in attributedString.runs {
+            if run.link != nil {
+                attributedString[run.range].foregroundColor = .LL.text
+                attributedString[run.range].underlineStyle = .single
+            }
+        }
+        
+        return attributedString
+    }
 }
 
 #Preview("Dark") {
