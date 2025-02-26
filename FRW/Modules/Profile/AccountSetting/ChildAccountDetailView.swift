@@ -71,7 +71,7 @@ class ChildAccountDetailViewModel: ObservableObject {
         if index == 0 {
             if var list = collections {
                 if !showEmptyCollection {
-                    list = list.filter { $0.count > 0  }
+                    list = list.filter { !$0.isEmpty }
                 }
                 accessibleItems = list
             } else {
@@ -166,7 +166,7 @@ class ChildAccountDetailViewModel: ObservableObject {
             guard let parent = WalletManager.shared.getPrimaryWalletAddress(),
                   let child = self.childAccount.addr
             else {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.collections = []
                     self.accessibleItems = []
                 }
@@ -178,30 +178,17 @@ class ChildAccountDetailViewModel: ObservableObject {
                     parent: parent,
                     child: child
                 )
-                let offset = FRWAPI.Offset(start: 0, length: 100)
-                let response: Network.Response<[NFTCollection]> = try await Network
-                    .requestWithRawModel(FRWAPI.NFT.userCollection(
+                let response: [NFTCollection] = try await Network
+                    .request(FRWAPI.NFT.userCollection(
                         child,
-                        offset,
-                        .main
+                        .cadence
                     ))
-                let collectionList = response.data
+                let collectionList = response
 
                 let resultList: [NFTCollection] = result.compactMap { item in
                     if let contractName = item.split(separator: ".")[safe: 2] {
                         if let model = NFTCatalogCache.cache.find(by: String(contractName)) {
                             return NFTCollection(collection: model.collection, count: 0)
-
-//                            return FlowModel.NFTCollection(
-//                                id: model.collection.id,
-//                                path: model.collection.path?.storagePath,
-//                                display: FlowModel.NFTCollection.CollectionDislay(
-//                                    name: model.collection.name,
-//                                    mediaType: FlowModel.Media(file: FlowModel.Media.File(url: "")),
-//                                    squareImage: model.collection.logoURL.absoluteString
-//                                ),
-//                                idList: []
-//                            )
                         }
                     }
                     return nil
@@ -209,7 +196,7 @@ class ChildAccountDetailViewModel: ObservableObject {
 
                 let tmpList = resultList.map { model in
                     var model = model
-                    let collectionItem = collectionList?.first(where: { item in
+                    let collectionItem = collectionList.first(where: { item in
                         item.maskContractName == model.maskContractName && item.maskAddress == model
                             .maskAddress
                     })
@@ -285,7 +272,11 @@ struct ChildAccountDetailView: RouteableView {
         .padding(.bottom, 20)
         .backgroundFill(Color.LL.Neutrals.background)
         .applyRouteable(self)
-        .halfSheet(showSheet: $vm.isPresent, autoResizing: true, backgroundColor: Color.LL.Neutrals.background) {
+        .halfSheet(
+            showSheet: $vm.isPresent,
+            autoResizing: true,
+            backgroundColor: Color.LL.Neutrals.background
+        ) {
             UnlinkConfirmView()
                 .environmentObject(vm)
         }
@@ -415,14 +406,14 @@ struct ChildAccountDetailView: RouteableView {
             LLSegmenControl(titles: ["collections".localized, "coins_cap".localized]) { idx in
                 vm.switchTab(index: idx)
             }
-            if vm.accessibleItems.count == 0, !vm.isLoading {
+            if vm.accessibleItems.isEmpty, !vm.isLoading {
                 emptyAccessibleView
             }
             ForEach(vm.accessibleItems.indices, id: \.self) { idx in
                 AccessibleItemView(item: vm.accessibleItems[idx]) { item in
                     if let collectionInfo = item as? NFTCollection, let addr = vm.childAccount.addr,
                        let pathId = collectionInfo.collection.path?.storagePathId(),
-                       collectionInfo.count > 0 {
+                       !collectionInfo.isEmpty {
                         Router.route(to: RouteMap.NFT.collectionDetail(
                             addr,
                             pathId,
@@ -702,8 +693,8 @@ extension ChildAccountAccessible {
     var count: Int {
         0
     }
-    
-    var isEmpty: Bool { self.count == 0 }
+
+    var isEmpty: Bool { self.isEmpty }
 }
 
 // MARK: - NFTCollection + ChildAccountAccessible

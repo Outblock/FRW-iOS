@@ -885,10 +885,10 @@ extension WalletManager {
 
     private func fetchSupportedCoins() async throws {
         let tokenResponse: SingleTokenResponse = try await Network
-            .requestWithRawModel(GithubEndpoint.ftTokenList)
+            .requestWithRawModel(GithubEndpoint.ftTokenList(LocalUserDefaults.shared.flowNetwork))
         let coins: [TokenModel] = tokenResponse.conversion(type: .cadence)
         let validCoins = coins.filter { $0.getAddress()?.isEmpty == false }
-        DispatchQueue.main.async {
+        await MainActor.run {
             self.supportedCoins = validCoins
         }
         await fetchEVMCoins()
@@ -897,7 +897,7 @@ extension WalletManager {
 
     private func fetchActivatedCoins() async throws {
         guard let supportedCoins = supportedCoins, !supportedCoins.isEmpty else {
-            DispatchQueue.main.async {
+            await MainActor.run {
                 self.activatedCoins.removeAll()
             }
             return
@@ -905,7 +905,7 @@ extension WalletManager {
 
         let address = selectedAccountAddress
         if address.isEmpty {
-            DispatchQueue.main.async {
+            await MainActor.run {
                 self.activatedCoins.removeAll()
             }
             return
@@ -931,7 +931,7 @@ extension WalletManager {
             }
         }
 
-        DispatchQueue.main.async {
+        await MainActor.run {
             self.activatedCoins = list
         }
         preloadActivatedIcons()
@@ -944,8 +944,9 @@ extension WalletManager {
             return
         }
         do {
+            let network = LocalUserDefaults.shared.flowNetwork
             let tokenResponse: SingleTokenResponse = try await Network
-                .requestWithRawModel(GithubEndpoint.EVMTokenList)
+                .requestWithRawModel(GithubEndpoint.EVMTokenList(network))
             let coins: [TokenModel] = tokenResponse.conversion(type: .evm)
             await MainActor.run {
                 self.evmSupportedCoins = coins
@@ -1022,7 +1023,7 @@ extension WalletManager {
             }
         }
 
-        DispatchQueue.main.async {
+        await MainActor.run {
             self.coinBalances = newBalanceMap
         }
 
@@ -1074,7 +1075,7 @@ extension WalletManager {
         }
         await customTokenManager.fetchAllEVMBalance()
         let list = customTokenManager.list
-        DispatchQueue.main.async {
+        await MainActor.run {
             for token in list {
                 self.addCustomToken(token: token)
             }
@@ -1082,22 +1083,24 @@ extension WalletManager {
     }
 
     func addCustomToken(token: CustomToken) {
-        DispatchQueue.main.async {
-            let model = token.toToken()
-            let index = self.activatedCoins.index { $0.contractId == model.contractId }
-            if let index {
-                self.activatedCoins[index] = model
-            } else {
-                self.activatedCoins.append(model)
-            }
+        Task {
+            await MainActor.run {
+                let model = token.toToken()
+                let index = self.activatedCoins.index { $0.contractId == model.contractId }
+                if let index {
+                    self.activatedCoins[index] = model
+                } else {
+                    self.activatedCoins.append(model)
+                }
 
-            let balance = token.balance ?? BigUInt(0)
-            let result = Utilities.formatToPrecision(
-                balance,
-                units: .custom(token.decimals),
-                formattingDecimals: token.decimals
-            )
-            self.coinBalances[model.contractId] = Decimal(string: result)
+                let balance = token.balance ?? BigUInt(0)
+                let result = Utilities.formatToPrecision(
+                    balance,
+                    units: .custom(token.decimals),
+                    formattingDecimals: token.decimals
+                )
+                self.coinBalances[model.contractId] = Decimal(string: result)
+            }
         }
     }
 

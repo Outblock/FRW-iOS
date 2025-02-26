@@ -195,12 +195,13 @@ struct WalletHomeView: View {
                                 .foregroundStyle(Color.Theme.Text.black8)
                                 .frame(width: 24, height: 24)
                             Text("scan".localized)
-                                .font(.inter(size: 14, weight: .light))
-                                .foregroundStyle(Color.LL.text)
+                                .font(.inter(size: 14, weight: .regular))
+                                .foregroundStyle(Color.Theme.Text.black8)
                         }
                     }
                 }
-                .padding(8)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
                 .background(Color.Theme.BG.bg2.opacity(0.6))
                 .cornerRadius(12)
             }
@@ -442,21 +443,21 @@ struct WalletHomeView: View {
     }
 
     private func walletActionBar() -> some View {
-        WalletActionBar() {
+        WalletActionBar {
             WalletActionButton(
                 event: .send,
                 allowClick: !wm.isSelectedChildAccount
             ) {
                 Router.route(to: RouteMap.Wallet.send())
             }
-            
+
             WalletActionButton(
                 event: .receive,
                 allowClick: true
             ) {
                 Router.route(to: RouteMap.Wallet.receiveQR)
             }
-            
+
             WalletActionButton(
                 event: .swap,
                 allowClick: true
@@ -464,7 +465,7 @@ struct WalletHomeView: View {
                 Router.route(to: RouteMap.Wallet.swapProvider(nil))
             }
             .visibility(vm.showSwapButton ? .visible : .gone)
-            
+
             WalletActionButton(
                 event: .stake,
                 allowClick: !wm.isSelectedChildAccount
@@ -474,7 +475,7 @@ struct WalletHomeView: View {
                     Router.route(to: RouteMap.Wallet.stakeGuide)
                     return
                 }
-                
+
                 Router.route(to: RouteMap.Wallet.stakingList)
             }
             .visibility(vm.showStakeButton ? .visible : .gone)
@@ -688,14 +689,14 @@ extension WalletHomeView {
     }
 }
 
-// MARK: WalletActionButton
+// MARK: - WalletActionButton
 
 struct WalletActionButton: View {
     enum Action: String {
         case send, receive, swap, stake, buy
-        
+
         // MARK: Internal
-        
+
         var icon: String {
             switch self {
             case .send:
@@ -710,9 +711,9 @@ struct WalletActionButton: View {
                 return "WalletIconBuy"
             }
         }
-        
+
         // MARK: Private
-        
+
         private func incrementUrl() -> String {
             if LocalUserDefaults.shared.flowNetwork == .mainnet {
                 return "https://app.increment.fi/swap"
@@ -721,13 +722,11 @@ struct WalletActionButton: View {
             }
         }
     }
-    
-    // MARK: Internal
-    
+
     let event: Action
     let allowClick: Bool
-    let action: () -> ()
-    
+    let action: () -> Void
+
     var body: some View {
         Button {
             action()
@@ -748,7 +747,7 @@ struct WalletActionButton: View {
                 .frame(width: 50, height: 50, alignment: .center)
                 .background(Color.Theme.Accent.green)
                 .cornerRadius(25)
-                
+
                 Text(event.rawValue.localized.capitalized)
                     .font(.inter(size: 12))
                     .foregroundStyle(Color.Theme.Text.black8.opacity(allowClick ? 1 : 0.3))

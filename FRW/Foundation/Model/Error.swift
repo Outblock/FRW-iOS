@@ -111,6 +111,8 @@ enum StakingError: Error {
 // MARK: - EVMError
 
 enum EVMError: Error {
+    case addressError
+    case rpcError
     case createAccount
     case findAddress
     case transactionResult
@@ -118,10 +120,16 @@ enum EVMError: Error {
 
 // MARK: - CadenceError
 
-enum CadenceError: String,Error,CaseIterable, CustomStringConvertible {
+enum CadenceError: String, Error, CaseIterable, CustomStringConvertible {
     case none
     case empty
     case transactionFailed
+
+    // MARK: Public
+
+    public var description: String {
+        "\(type(of: self)) Code: \(code)-\(rawValue)"
+    }
 
     // MARK: Internal
 
@@ -136,9 +144,5 @@ enum CadenceError: String,Error,CaseIterable, CustomStringConvertible {
 
     var code: Int {
         9000 + (CadenceError.allCases.firstIndex(of: self) ?? 0)
-    }
-
-    public var description: String {
-        "\(type(of: self)) Code: \(code)-\(self.rawValue)"
     }
 }

@@ -58,7 +58,7 @@ struct EVMTokenResponse: Codable {
             icon: .init(string: logoURI),
             symbol: symbol,
             website: nil,
-            evmAddress: nil,
+            evmAddress: address,
             flowIdentifier: flowIdentifier,
             balance: BigUInt(balance ?? "-1")
         )

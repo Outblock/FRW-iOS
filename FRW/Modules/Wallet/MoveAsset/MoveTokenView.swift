@@ -58,15 +58,26 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
             VStack(spacing: 8) {
                 ContactRelationView(
                     fromContact: viewModel.fromContact,
-                    toContact: viewModel.toContact
-                )
+                    toContact: viewModel.toContact,
+                    clickable: .all
+                ) { contract in
+                    viewModel.handleFromContact(contract)
+                } clickTo: { contract in
+                    viewModel.handleToContact(contract)
+                } clickSwap: {
+                    viewModel.handleSwap()
+                }
 
                 MoveTokenView
                     .AccountView(
                         isFree: viewModel.fromContact.walletType == viewModel
                             .toContact.walletType
-                    ) { _ in }
+                    ) { _ in
+                    }
             }
+
+            Color.clear
+                .frame(height: 8)
 
             VStack(spacing: 0) {
                 InsufficientStorageToastView<MoveTokenViewModel>()
@@ -77,6 +88,7 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                     state: viewModel.buttonState,
                     action: {
                         log.debug("[Move] click button")
+                        UIImpactFeedbackGenerator.impactOccurred(.medium)
                         viewModel.onNext()
                         UIApplication.shared.endEditing()
                     },
@@ -203,9 +215,14 @@ extension MoveTokenView {
                 }
 
                 HStack {
+                    Text("balance".localized + ": ")
+                        .font(.inter(size: 16))
+                        .foregroundStyle(Color.Theme.Text.black3)
+
                     Text(viewModel.currentBalance)
                         .font(.inter(size: 16))
                         .foregroundStyle(Color.Theme.Text.black3)
+                        .mockPlaceholder(viewModel.loadingBalance)
 
                     Spacer()
 
@@ -236,7 +253,12 @@ extension MoveTokenView {
         @ViewBuilder
         var switchMenuButton: some View {
             Button(action: {
-                Router.route(to: RouteMap.Wallet.selectMoveToken(viewModel.token) { selectedToken in
+                guard let address = FWAddressDector.create(address: viewModel.fromContact.address)
+                else {
+                    return
+                }
+
+                Router.route(to: RouteMap.Wallet.selectMoveToken(address) { selectedToken in
                     viewModel.changeTokenModelAction(token: selectedToken)
                 })
             }, label: {
@@ -253,11 +275,11 @@ extension MoveTokenView {
                     Text(viewModel.token.symbol?.uppercased() ?? "?")
                         .font(.inter(size: 14, weight: .medium))
                         .foregroundStyle(Color.LL.Neutrals.text2)
-                    Image("icon-arrow-bottom")
+                    Image("icon_arrow_bottom_16")
                         .foregroundColor(.LL.Neutrals.neutrals3)
                 }
                 .padding(8)
-                .background(Color.Theme.Line.line)
+                .background(Color.Theme.Background.fill1)
                 .cornerRadius(16)
             })
         }
@@ -281,5 +303,4 @@ extension MoveTokenView {
         ),
         isPresent: .constant(true)
     )
-//
 }

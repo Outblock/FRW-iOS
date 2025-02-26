@@ -51,16 +51,18 @@ struct MoveAccountsView: RouteableView, PresentActionDelegate {
                 }
                 .padding(.top, 18)
 
-                Color.clear
-                    .frame(height: 20)
                 VStack {
                     ForEach(viewModel.list.indices, id: \.self) { index in
                         let model = viewModel.list[index]
                         let isSelected = viewModel.selectedAddr == model.address
-                        MoveAccountsView.AccountCell(contact: model, isSelected: isSelected)
-                            .onTapGesture {
-                                viewModel.onSelect(contact: model)
-                            }
+                        
+                        Button {
+                            viewModel.onSelect(contact: model)
+                        } label : {
+                            MoveAccountsView.AccountCell(contact: model,
+                                                         isSelected: isSelected)
+                        }.buttonStyle(ScaleButtonStyle())
+                            
                     }
                 }
             }
@@ -139,7 +141,7 @@ extension MoveAccountsView {
                     .visibility(isSelected ? .visible : .gone)
             }
             .padding(16)
-            .background(Color.Theme.Background.white)
+            .background(Color.Theme.Background.bg3)
             .cornerRadius(16)
         }
     }
@@ -153,14 +155,8 @@ class MoveAccountsViewModel: ObservableObject {
     init(selected address: String, callback: @escaping (Contact?) -> Void) {
         self.selectedAddr = address
         self.callback = callback
-        let currentAddr = WalletManager.shared
-            .getWatchAddressOrChildAccountAddressOrPrimaryAddress()
 
-        let isChild = ChildAccountManager.shared.selectedChildAccount != nil
-        let isEVM = EVMAccountManager.shared.selectedAccount != nil
-
-        if let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress(),
-           currentAddr != primaryAddr {
+        if let primaryAddr = WalletManager.shared.getPrimaryWalletAddressOrCustomWatchAddress() {
             let user = WalletManager.shared.walletAccount.readInfo(at: primaryAddr)
             let contact = Contact(
                 address: primaryAddr,
@@ -177,37 +173,33 @@ class MoveAccountsViewModel: ObservableObject {
         }
 
         for account in EVMAccountManager.shared.accounts {
-            if currentAddr != account.showAddress {
-                let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
-                let contact = Contact(
-                    address: account.showAddress,
-                    avatar: nil,
-                    contactName: nil,
-                    contactType: .user,
-                    domain: nil,
-                    id: UUID().hashValue,
-                    username: user.name,
-                    user: user,
-                    walletType: .evm
-                )
-                list.append(contact)
-            }
+            let user = WalletManager.shared.walletAccount.readInfo(at: account.showAddress)
+            let contact = Contact(
+                address: account.showAddress,
+                avatar: nil,
+                contactName: nil,
+                contactType: .user,
+                domain: nil,
+                id: UUID().hashValue,
+                username: user.name,
+                user: user,
+                walletType: .evm
+            )
+            list.append(contact)
         }
 
         for account in ChildAccountManager.shared.childAccounts {
-            if currentAddr != account.showAddress {
-                let contact = Contact(
-                    address: account.showAddress,
-                    avatar: account.showIcon,
-                    contactName: nil,
-                    contactType: .user,
-                    domain: nil,
-                    id: UUID().hashValue,
-                    username: account.showName,
-                    walletType: .link
-                )
-                list.append(contact)
-            }
+            let contact = Contact(
+                address: account.showAddress,
+                avatar: account.showIcon,
+                contactName: nil,
+                contactType: .user,
+                domain: nil,
+                id: UUID().hashValue,
+                username: account.showName,
+                walletType: .link
+            )
+            list.append(contact)
         }
     }
 

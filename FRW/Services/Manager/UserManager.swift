@@ -154,7 +154,6 @@ class UserManager: ObservableObject {
 
     private func clearWhenUserChanged() {
         BrowserViewController.deleteCookie()
-        Router.coordinator.showRootView()
     }
 }
 
@@ -250,7 +249,7 @@ extension UserManager {
         Task {
             do {
                 var addressList: [String: String] = [:]
-                //Secure Enclave Key
+                // Secure Enclave Key
                 let seKeylist = SecureEnclaveKey.KeychainStorage.allKeys
                 for key in seKeylist {
                     if let se = try? SecureEnclaveKey.wallet(id: key),
@@ -262,7 +261,13 @@ extension UserManager {
                         if let model = account {
                             addressList[key] = model.address ?? "0x"
                             let userId = KeyProvider.getId(with: key)
-                            let storeUser = UserManager.StoreUser(publicKey: publicKey, address: nil, userId: userId, keyType: .secureEnclave, account: nil)
+                            let storeUser = UserManager.StoreUser(
+                                publicKey: publicKey,
+                                address: nil,
+                                userId: userId,
+                                keyType: .secureEnclave,
+                                account: nil
+                            )
                             LocalUserDefaults.shared.addUser(user: storeUser)
                         }
                     } else {
@@ -277,7 +282,8 @@ extension UserManager {
                             log.error("[Launch] seed phrase restore failed.\(key): not found")
                             continue
                         }
-                        guard let publicKey = try? provider.publicKey(signAlgo: .ECDSA_SECP256k1)?.hexString else {
+                        guard let publicKey = try? provider.publicKey(signAlgo: .ECDSA_SECP256k1)?
+                            .hexString else {
                             log.error("[Launch] seed phrase restore failed.\(key): public key")
                             continue
                         }
@@ -288,7 +294,13 @@ extension UserManager {
                         if let model = account {
                             addressList[key] = model.address ?? "0x"
                             let userId = KeyProvider.getId(with: key)
-                            let storeUser = UserManager.StoreUser(publicKey: publicKey, address: nil, userId: userId, keyType: .seedPhrase, account: nil)
+                            let storeUser = UserManager.StoreUser(
+                                publicKey: publicKey,
+                                address: nil,
+                                userId: userId,
+                                keyType: .seedPhrase,
+                                account: nil
+                            )
                             LocalUserDefaults.shared.addUser(user: storeUser)
                         } else {
                             log.error("[Launch] seed phrase not found account:\(key)")
@@ -306,8 +318,10 @@ extension UserManager {
                             log.error("[Launch] Private key restore failed.\(key): not found")
                             continue
                         }
-                        let secpPublicKey = try? provider.publicKey(signAlgo: .ECDSA_SECP256k1)?.hexString
-                        let p256PublicKey = try? provider.publicKey(signAlgo: .ECDSA_P256)?.hexString
+                        let secpPublicKey = try? provider.publicKey(signAlgo: .ECDSA_SECP256k1)?
+                            .hexString
+                        let p256PublicKey = try? provider.publicKey(signAlgo: .ECDSA_P256)?
+                            .hexString
                         let suffix = KeyProvider.getSuffix(with: key)
                         var storePublicKey: String?
                         if let publicKey = secpPublicKey, publicKey.hasPrefix(suffix) {
@@ -326,7 +340,13 @@ extension UserManager {
                         if let model = account {
                             addressList[key] = model.address ?? "0x"
                             let userId = KeyProvider.getId(with: key)
-                            let storeUser = UserManager.StoreUser(publicKey: publicKey, address: nil, userId: userId, keyType: .privateKey, account: nil)
+                            let storeUser = UserManager.StoreUser(
+                                publicKey: publicKey,
+                                address: nil,
+                                userId: userId,
+                                keyType: .privateKey,
+                                account: nil
+                            )
                             LocalUserDefaults.shared.addUser(user: storeUser)
                         } else {
                             log.error("[Launch] Private key not found account:\(key)")
@@ -339,7 +359,7 @@ extension UserManager {
                 }
 
                 var result: [String: String] = [:]
-                for (key,value) in addressList {
+                for (key, value) in addressList {
                     let userId = KeyProvider.getId(with: key)
                     result[userId] = value
                 }
@@ -384,7 +404,10 @@ extension UserManager {
             throw WalletError.mnemonicMissing
         }
 
-        let provider = FlowWalletKit.SeedPhraseKey(hdWallet: hdWallet, storage: FlowWalletKit.SeedPhraseKey.seedPhraseStorage) 
+        let provider = FlowWalletKit.SeedPhraseKey(
+            hdWallet: hdWallet,
+            storage: FlowWalletKit.SeedPhraseKey.seedPhraseStorage
+        )
         let secpPublicKey = try provider.publicKey(signAlgo: .ECDSA_SECP256k1)
         guard var publicKey = secpPublicKey?.hexString else {
             throw WalletError.emptyPublicKey
@@ -415,7 +438,8 @@ extension UserManager {
             throw LLError.accountNotFound
         }
 
-        guard let customToken = response.data?.customToken, !customToken.isEmpty, let uid = response.data?.id else {
+        guard let customToken = response.data?.customToken, !customToken.isEmpty,
+              let uid = response.data?.id else {
             throw LLError.restoreLoginFailed
         }
         let storeUser = StoreUser(
@@ -479,7 +503,7 @@ extension UserManager {
         guard let customToken = response.data?.customToken, !customToken.isEmpty else {
             throw LLError.restoreLoginFailed
         }
-        
+
         let storeUser = StoreUser(
             publicKey: publicKey,
             address: nil,
@@ -501,7 +525,7 @@ extension UserManager {
                 self.userInfo = nil
             }
         }
-        
+
         guard let token = try? await getIDToken(), !token.isEmpty else {
             loginAnonymousIfNeeded()
             throw LLError.restoreLoginFailed
@@ -616,7 +640,10 @@ extension UserManager {
         else {
             throw LLError.restoreLoginFailed
         }
-        try privateKey.store(id: privateKey.createKey(uid: uid), password: KeyProvider.password(with: uid))
+        try privateKey.store(
+            id: privateKey.createKey(uid: uid),
+            password: KeyProvider.password(with: uid)
+        )
         log.debug("[user] \(flowKey)")
         let store = StoreUser(
             publicKey: publicKey,
@@ -629,7 +656,6 @@ extension UserManager {
         WalletManager.shared.updateKeyProvider(provider: privateKey, storeUser: store)
         log.debug("[user] \(store)")
         try await finishLogin(mnemonic: "", customToken: customToken)
-
     }
 }
 
@@ -880,7 +906,6 @@ extension UserManager {
 // MARK: UserManager.StoreUser
 
 extension UserManager {
-
     struct Accountkey: Codable {
         public var index: Int
         public let signAlgo: Flow.SignatureAlgorithm
@@ -897,17 +922,19 @@ extension UserManager {
         var updateAt: TimeInterval = ceil(Date().timeIntervalSince1970)
 
         func copy(address: String? = nil, account: UserManager.Accountkey? = nil) -> StoreUser {
-            return StoreUser(publicKey: publicKey,
-                             address: address ?? self.address,
-                             userId: userId,
-                             keyType: keyType,
-                             account: account ?? self.account)
+            StoreUser(
+                publicKey: publicKey,
+                address: address ?? self.address,
+                userId: userId,
+                keyType: keyType,
+                account: account ?? self.account
+            )
         }
     }
 }
+
 extension Flow.AccountKey {
     func toStoreKey() -> UserManager.Accountkey {
         UserManager.Accountkey(index: index, signAlgo: signAlgo, hashAlgo: hashAlgo, weight: weight)
     }
 }
-

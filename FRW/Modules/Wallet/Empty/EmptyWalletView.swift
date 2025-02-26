@@ -27,7 +27,7 @@ struct EmptyWalletView: View {
 
             bottomContent
                 .padding(.horizontal, 16)
-                .padding(.bottom, 16)
+                .padding(.bottom, 8)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.Theme.Background.grey)
@@ -35,6 +35,122 @@ struct EmptyWalletView: View {
             vm.tryToRestoreAccountWhenFirstLaunch()
         }
     }
+
+    var bottomContent: some View {
+        VStack(spacing: 8) {
+            Button {
+                vm.createNewAccountAction()
+            } label: {
+                Text("create_a_new_account".localized)
+                    .font(.inter(size: 16, weight: .bold))
+                    .foregroundColor(.LL.background)
+                    .frame(height: 54)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.LL.Primary.salmonPrimary)
+                    .contentShape(Rectangle())
+                    .cornerRadius(16)
+                    .shadow(color: Color.black.opacity(0.12), x: 0, y: 4, blur: 24)
+            }
+
+            Button {
+                vm.loginAccountAction()
+            } label: {
+                Text("i_have_an_account".localized)
+                    .font(.inter(size: 16, weight: .bold))
+                    .foregroundColor(.LL.text)
+                    .frame(height: 58)
+                    .frame(maxWidth: .infinity)
+                    .background(.clear)
+                    .contentShape(Rectangle())
+                    .cornerRadius(29)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.LL.text, lineWidth: 1.5)
+                    )
+            }
+            .padding(.bottom, 16)
+
+            Text(disclaimer)
+                .font(.inter(size: 14))
+                .foregroundStyle(Color.LL.text)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+                .multilineTextAlignment(.center)
+        }
+    }
+
+    var recentListContent: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("registerd_accounts".localized)
+                .font(.inter(size: 16, weight: .bold))
+                .foregroundColor(Color.Theme.Text.black8)
+                .padding(.top, 4)
+
+            ScrollView(.vertical, showsIndicators: false) {
+                LazyVStack(spacing: 8) {
+                    ForEach(vm.placeholders, id: \.uid) { placeholder in
+                        Button {
+                            vm.switchAccountAction(placeholder.uid)
+                        } label: {
+                            createRecentLoginCell(placeholder)
+                        }
+                    }
+                }
+            }
+
+            Spacer()
+
+            ZStack(alignment: .center) {
+                Divider().foregroundStyle(Color.Theme.Line.stroke)
+
+                Text("or".localized)
+                    .frame(width: 32, height: 32)
+                    .background(Color.Theme.Background.grey)
+                    .foregroundStyle(Color.Theme.Text.text4)
+            }
+            .padding(.vertical, 8)
+            .padding(.trailing, 37)
+            .maxWidth(.infinity)
+        }
+        .maxWidth(.infinity)
+    }
+
+    func createRecentLoginCell(_ placeholder: EmptyWalletViewModel.Placeholder) -> some View {
+        HStack(spacing: 16) {
+            KFImage.url(URL(string: placeholder.avatar.convertedAvatarString()))
+                .placeholder {
+                    Image("placeholder")
+                        .resizable()
+                }
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 36, height: 36)
+                .cornerRadius(18)
+
+            VStack(alignment: .leading, spacing: 5) {
+                Text("@\(placeholder.username)")
+                    .font(.inter(size: 12, weight: .bold))
+                    .foregroundStyle(Color.Theme.Text.black8)
+
+                Text("\(placeholder.address)")
+                    .font(.inter(size: 12, weight: .regular))
+                    .foregroundStyle(Color.Theme.Text.black3)
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal, 12)
+        .frame(height: 60)
+        .frame(maxWidth: .infinity)
+    }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = EmptyWalletViewModel()
+
+    @State
+    private var isSettingNotificationFirst = true
 
     @ViewBuilder
     private var middleContent: some View {
@@ -135,120 +251,29 @@ struct EmptyWalletView: View {
         .frame(height: 270)
     }
 
-    var bottomContent: some View {
-        VStack(spacing: 8) {
-            Button {
-                vm.createNewAccountAction()
-            } label: {
-                Text("create_a_new_account".localized)
-                    .font(.inter(size: 16, weight: .bold))
-                    .foregroundColor(.black.opacity(0.9))
-                    .frame(height: 54)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.LL.Primary.salmonPrimary)
-                    .contentShape(Rectangle())
-                    .cornerRadius(16)
-                    .shadow(color: Color.black.opacity(0.12), x: 0, y: 4, blur: 24)
-            }
+    private var disclaimer: AttributedString {
+        let localizedMarkdown = NSLocalizedString(
+            "disclaimer",
+            comment: "By using Flow Wallet you agree to the [Terms of Service](https://lilico.app/about/terms) and [Privacy Policy](https://lilico.app/about/privacy-policy)."
+        )
 
-            Button {
-                vm.loginAccountAction()
-            } label: {
-                Text("i_have_an_account".localized)
-                    .font(.inter(size: 16, weight: .bold))
-                    .foregroundColor(.LL.text)
-                    .frame(height: 58)
-                    .frame(maxWidth: .infinity)
-                    .background(.clear)
-                    .contentShape(Rectangle())
-                    .cornerRadius(29)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.LL.text, lineWidth: 1.5)
-                    )
-            }
-            .padding(.bottom, 16)
-
-            let str = "disclaimer".localized
-            Text((try? AttributedString(markdown: str)) ?? AttributedString(str))
-                .font(.inter(size: 14))
-                .foregroundStyle(Color.LL.text)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-                .multilineTextAlignment(.center)
+        // Convert the markdown string to an AttributedString
+        var attributedString: AttributedString
+        do {
+            attributedString = try AttributedString(markdown: localizedMarkdown)
+        } catch {
+            attributedString = AttributedString(localizedMarkdown)
         }
-    }
 
-    var recentListContent: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("registerd_accounts".localized)
-                .font(.inter(size: 16, weight: .bold))
-                .foregroundColor(Color.LL.text)
-                .padding(.top, 4)
-
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(spacing: 8) {
-                    ForEach(vm.placeholders, id: \.uid) { placeholder in
-                        Button {
-                            vm.switchAccountAction(placeholder.uid)
-                        } label: {
-                            createRecentLoginCell(placeholder)
-                        }
-                    }
-                }
+        for run in attributedString.runs {
+            if run.link != nil {
+                attributedString[run.range].foregroundColor = .LL.text
+                attributedString[run.range].underlineStyle = .single
             }
-
-            Spacer()
-
-            ZStack(alignment: .center) {
-                Divider().foregroundStyle(Color.Theme.Line.stroke)
-
-                Text("or".localized)
-                    .frame(width: 32, height: 32)
-                    .background(Color.Theme.Background.grey)
-            }
-            .padding(.vertical, 8)
-            .maxWidth(.infinity)
         }
-        .maxWidth(.infinity)
+
+        return attributedString
     }
-
-    func createRecentLoginCell(_ placeholder: EmptyWalletViewModel.Placeholder) -> some View {
-        HStack(spacing: 16) {
-            KFImage.url(URL(string: placeholder.avatar.convertedAvatarString()))
-                .placeholder {
-                    Image("placeholder")
-                        .resizable()
-                }
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 36, height: 36)
-                .cornerRadius(18)
-
-            VStack(alignment: .leading, spacing: 5) {
-                Text("@\(placeholder.username)")
-                    .font(.inter(size: 12, weight: .bold))
-                    .foregroundStyle(Color.Theme.Text.black8)
-
-                Text("\(placeholder.address)")
-                    .font(.inter(size: 12, weight: .regular))
-                    .foregroundStyle(Color.Theme.Text.black3)
-            }
-
-            Spacer()
-        }
-        .padding(.horizontal, 12)
-        .frame(height: 60)
-        .frame(maxWidth: .infinity)
-    }
-
-    // MARK: Private
-
-    @StateObject
-    private var vm = EmptyWalletViewModel()
-
-    @State
-    private var isSettingNotificationFirst = true
 }
 
 #Preview("Dark") {
