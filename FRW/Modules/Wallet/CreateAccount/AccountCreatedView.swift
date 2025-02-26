@@ -48,6 +48,7 @@ struct AccountCreatedView: RouteableView {
             createBackupBtn
                 .padding(.horizontal, 16)
         }
+        .padding(.top, 16)
         .backgroundFill(Color.Theme.Background.grey)
     }
     
@@ -60,6 +61,7 @@ struct AccountCreatedView: RouteableView {
                 Spacer()
                 Image("create_profile_bg")
                     .frame(width: 343, alignment: .bottomTrailing)
+                    .offset(CGPoint(x: 60, y: 0))
             }
             Text("backing_up_your_account".localized)
                 .font(.inter(size: 18, weight: .light))
@@ -84,6 +86,7 @@ struct AccountCreatedView: RouteableView {
             .frame(maxWidth: .infinity)
             .background(Color.Theme.Accent.green)
             .cornerRadius(16)
+            .padding(.bottom, 16)
         }
     }
     

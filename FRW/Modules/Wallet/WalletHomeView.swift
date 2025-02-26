@@ -195,12 +195,13 @@ struct WalletHomeView: View {
                                 .foregroundStyle(Color.Theme.Text.black8)
                                 .frame(width: 24, height: 24)
                             Text("scan".localized)
-                                .font(.inter(size: 14, weight: .light))
-                                .foregroundStyle(Color.LL.text)
+                                .font(.inter(size: 14, weight: .regular))
+                                .foregroundStyle(Color.Theme.Text.black8)
                         }
                     }
                 }
-                .padding(8)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
                 .background(Color.Theme.BG.bg2.opacity(0.6))
                 .cornerRadius(12)
             }
