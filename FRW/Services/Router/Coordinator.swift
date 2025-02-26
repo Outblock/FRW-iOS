@@ -55,10 +55,6 @@ final class Coordinator {
             name: UIApplication.didBecomeActiveNotification,
             object: nil
         )
-        
-        UserManager.shared.$activatedUID.sink { [weak self] val in
-            self?.showRootView()
-        }.store(in: &cancelSets)
     }
 
     // MARK: Internal
@@ -67,11 +63,12 @@ final class Coordinator {
     lazy var rootNavi: UINavigationController? = nil
 
     func showRootView() {
-        if UserManager.shared.isLoggedIn {
-            showNormalView()
-        } else {
-            showEmptyWalletView()
-        }
+        let rootView = SideContainerView()
+        let hostingView = UIHostingController(rootView: rootView)
+        let navi = RouterNavigationController(rootViewController: hostingView)
+        navi.setNavigationBarHidden(true, animated: true)
+        rootNavi = navi
+        window.rootViewController = rootNavi
     }
 
     // MARK: Private
@@ -87,30 +84,6 @@ final class Coordinator {
 extension Coordinator {
     private func refreshColorScheme() {
         window.overrideUserInterfaceStyle = ThemeManager.shared.getUIKitStyle()
-    }
-
-    private func showEmptyWalletView() {
-        let emptyView = EmptyWalletView()
-        let hostingView = UIHostingController(rootView: emptyView)
-        window.rootViewController = UINavigationController(rootViewController: hostingView)
-    }
-
-    private func showNormalView() {
-        let rootView = SideContainerView()
-        let hostingView = UIHostingController(rootView: rootView)
-        let navi = RouterNavigationController(rootViewController: hostingView)
-        navi.setNavigationBarHidden(true, animated: true)
-        rootNavi = navi
-        window.rootViewController = rootNavi
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            TransactionUIHandler.shared.refreshPanelHolder()
-            PushHandler.shared.showPushAlertIfNeeded()
-        }
-
-//        #if DEBUG
-//        LocalUserDefaults.shared.onBoardingShown = false
-//        #endif
     }
 }
 

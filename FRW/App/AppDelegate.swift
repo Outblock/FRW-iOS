@@ -210,7 +210,7 @@ extension AppDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.backgroundColor = UIColor.LL.Neutrals.background
 
-        coordinator.showRootView()
+        coordinator.showNormalView()
         coordinator.rootNavi?.view.alpha = 0
 
         window?.makeKeyAndVisible()

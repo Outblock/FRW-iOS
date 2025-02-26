@@ -564,6 +564,13 @@ struct SideContainerView: View {
                 }
                 .offset(x: vm.isOpen ? screenWidth - SideOffset : 0)
             }
+            .onAppearOnce {
+                Task {
+                    try await Task.sleep(for: .seconds(1))
+                    TransactionUIHandler.shared.refreshPanelHolder()
+                    PushHandler.shared.showPushAlertIfNeeded()
+                }
+            }
         }
     }
 

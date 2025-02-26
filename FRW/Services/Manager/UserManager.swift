@@ -154,7 +154,6 @@ class UserManager: ObservableObject {
 
     private func clearWhenUserChanged() {
         BrowserViewController.deleteCookie()
-        Router.coordinator.showRootView()
     }
 }
 
