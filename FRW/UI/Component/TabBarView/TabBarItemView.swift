@@ -41,7 +41,7 @@ struct TabBarItemView<T: Hashable>: View {
     
     @ViewBuilder
     private var icon: some View {
-        Image(pageModel.iconName + (selected == pageModel.tag ? "-selected" : "") )
+        Image(pageModel.iconName + (isSelected ? "-selected" : "") )
             .aspectRatio(contentMode: .fit)
             .frame(width: 28, height: 28)
             .frame(maxWidth: .infinity)
@@ -56,7 +56,11 @@ struct TabBarItemView<T: Hashable>: View {
     
     @ViewBuilder
     private var tint: Color {
-        selected == pageModel.tag ? Color.Theme.Accent.green : Color.TabIcon.unselectedTint
+        isSelected ? Color.Theme.Accent.green : Color.TabIcon.unselectedTint
+    }
+    
+    private var isSelected: Bool {
+        selected == pageModel.tag
     }
 }
 
@@ -68,5 +72,5 @@ struct TabBarItemView<T: Hashable>: View {
     ) {
         AnyView(WalletHomeView())
     }
-    TabBarItemView(pageModel: wallet, selected: .constant(.wallet), action: { })
+    TabBarItemView(pageModel: wallet, selected: .constant(.nft), action: { })
 }
