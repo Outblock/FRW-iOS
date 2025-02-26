@@ -747,19 +747,18 @@ extension TokenDetailView {
 
 // MARK: -
 
-fileprivate struct BorderStyle: ViewModifier {
+struct BorderStyle: ViewModifier {    
     func body(content: Content) -> some View {
         content
-            .background {
+            .overlay {
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(style: StrokeStyle(lineWidth: 1, lineCap: .round, lineJoin: .miter))
-                //#121212
-                    .foregroundColor(Color("border"))
+                    .foregroundColor(Color.Theme.Line.stroke)
             }
     }
 }
 
-fileprivate extension View {
+extension View {
     func borderStyle() -> some View {
         modifier(BorderStyle())
     }
