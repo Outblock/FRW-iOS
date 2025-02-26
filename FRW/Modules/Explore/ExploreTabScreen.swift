@@ -221,7 +221,7 @@ struct ExploreTabScreen: View {
                             .padding(.trailing, 12)
                     }
                 }
-                .padding(10)
+                .padding([.horizontal, .top], 10)
                 .background(.clear)
                 .cornerRadius(16)
                 .borderStyle()
