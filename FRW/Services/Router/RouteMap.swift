@@ -235,7 +235,7 @@ extension RouteMap {
         case moveNFTs
         case moveAssets
         case moveToken(TokenModel)
-        case selectMoveToken(TokenModel?, (TokenModel) -> Void)
+        case selectMoveToken(FWAddress, (TokenModel) -> Void)
         case chooseChild(MoveAccountsViewModel)
         case addCustomToken
         case showCustomToken(CustomToken)
@@ -348,13 +348,9 @@ extension RouteMap.Wallet: RouterTarget {
                 isPresent: .constant(true)
             ))
             navi.present(vc, animated: true, completion: nil)
-        case let .selectMoveToken(token, callback):
-            let vm = AddTokenViewModel(
-                selectedToken: token,
-                disableTokens: [],
-                selectCallback: callback
-            )
-            Router.topPresentedController().present(content: AddTokenView(vm: vm))
+        case let .selectMoveToken(address, callback):
+            let vm = TokenBalanceListViewModel(address: address, selectCallback: callback)
+            Router.topPresentedController().present(content: TokenBalanceListView(vm: vm))
         case let .chooseChild(model):
             let vc = PresentHostingController(rootView: MoveAccountsView(viewModel: model))
             Router.topPresentedController().present(vc, animated: true, completion: nil)

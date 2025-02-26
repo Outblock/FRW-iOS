@@ -209,7 +209,7 @@ extension AddTokenView {
                                 .padding(.horizontal, 40)
                                 .frame(height: 45)
                                 .background(Color(hex: "#1A1A1A"))
-                                .cornerRadius([.bottomLeft, .bottomRight], 16)
+                                .cornerRadius([.bottomLeading, .bottomTrailing], 16)
                         }
 
                         KFImage

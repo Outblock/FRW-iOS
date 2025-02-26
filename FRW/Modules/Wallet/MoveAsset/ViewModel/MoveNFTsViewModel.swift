@@ -16,7 +16,6 @@ final class MoveNFTsViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init() {
-        fetchNFTs(0)
         loadUserInfo()
         checkForInsufficientStorage()
     }
@@ -46,7 +45,21 @@ final class MoveNFTsViewModel: ObservableObject {
         domain: nil,
         id: -1,
         username: nil
-    )
+    ) {
+        didSet {
+            // Handle same account selection on from and to account
+            // If so, we swap them
+            if fromContact == toContact {
+                toContact = oldValue
+            }
+            
+            Task {
+                await fetchCollection()
+            }
+        }
+    }
+    
+    
     @Published
     private(set) var toContact = Contact(
         address: "",
@@ -56,7 +69,15 @@ final class MoveNFTsViewModel: ObservableObject {
         domain: nil,
         id: -1,
         username: nil
-    )
+    ) {
+        didSet {
+            // Handle same account selection on from and to account
+            // If so, we swap them
+            if toContact == fromContact {
+                fromContact = oldValue
+            }
+        }
+    }
 
     let limitCount = 10
 
@@ -209,116 +230,45 @@ final class MoveNFTsViewModel: ObservableObject {
         resetButtonState()
     }
 
-    func fetchNFTs(_ offset: Int = 0) {
-        runOnMain {
+    func fetchNFTs(_ offset: Int = 0) async {
+        await MainActor.run {
             self.buttonState = .loading
         }
+        
         guard let collection = selectedCollection else {
-            fetchCollection()
             return
         }
-        Task {
-            do {
-                let isEVM = EVMAccountManager.shared.selectedAccount != nil
-                let address = WalletManager.shared.selectedAccountAddress
-                let request = NFTCollectionDetailListRequest(
-                    address: address,
-                    collectionIdentifier: collection.maskId,
-                    offset: offset,
-                    limit: 30
-                )
-                let response: NFTListResponse = try await Network
-                    .request(FRWAPI.NFT.collectionDetailList(
-                        request,
-                        isEVM ? .evm : .main
-                    ))
-                DispatchQueue.main.async {
-                    if let list = response.nfts {
-                        self.nfts = list.map { MoveNFTsViewModel.NFT(isSelected: false, model: $0) }
-                    } else {
-                        self.nfts = []
-                    }
-                    self.isMock = false
-                    self.resetButtonState()
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    self.nfts = []
-                    self.isMock = false
-                    self.resetButtonState()
-                }
-                log.error("[MoveAsset] fetch NFTs failed:\(error)")
+        
+        do {
+            guard let from = FWAddressDector.create(address: fromContact.address) else {
+                return
             }
+            
+            await MainActor.run {
+                self.isMock = true
+            }
+            
+            let response = try await TokenBalanceHandler.shared.getNFTCollectionDetail(address: from,
+                                                                                       collectionIdentifier: collection.maskId,
+                                                                                       offset: offset)
+            await MainActor.run {
+                if let list = response.nfts {
+                    self.nfts = list.map { MoveNFTsViewModel.NFT(isSelected: false, model: $0) }
+                } else {
+                    self.nfts = []
+                }
+                self.isMock = false
+                self.resetButtonState()
+            }
+        } catch {
+            await MainActor.run {
+                self.nfts = []
+                self.isMock = false
+                self.resetButtonState()
+            }
+            log.error("[MoveAsset] fetch NFTs failed:\(error)")
         }
     }
-
-    /*
-     private func fetchFlowNFTs(_ offset: Int = 0) {
-         buttonState = .loading
-         guard let collection = selectedCollection else {
-             fetchCollection()
-             return
-         }
-         Task {
-             do {
-                 let address = WalletManager.shared.selectedAccountAddress
-                 let request = NFTCollectionDetailListRequest(address: address, collectionIdentifier: collection.maskId, offset: offset, limit: 30)
-                 let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(request, .main))
-                 DispatchQueue.main.async {
-                     if let list = response.nfts {
-                         self.nfts = list.map { MoveNFTsViewModel.NFT(isSelected: false, model: $0) }
-                     }
-                     else {
-                         self.nfts = []
-                     }
-                     self.isMock = false
-                     self.resetButtonState()
-                 }
-             }
-             catch {
-                 DispatchQueue.main.async {
-                     self.nfts = []
-                     self.isMock = false
-                     self.resetButtonState()
-                 }
-                 log.error("[MoveAsset] fetch NFTs failed:\(error)")
-             }
-         }
-     }
-
-     private func fetchEVMNFTs() {
-         buttonState = .loading
-         Task {
-             do {
-                 guard let address = EVMAccountManager.shared.selectedAccount?.showAddress else {
-                     DispatchQueue.main.async {
-                         self.resetButtonState()
-                     }
-                     return
-                 }
-                 let response: [EVMCollection] =  try await Network.request(FRWAPI.EVM.nfts(address))
-                 DispatchQueue.main.async {
-                     self.nfts = []
-                     let sortedList = response.sorted(by: { $0.nfts.count > $1.nfts.count })
-                     self.collectionList = sortedList
-                     let collection = sortedList.first
-                     self.selectedCollection = collection
-                     self.nfts = collection?.nfts.map{ MoveNFTsViewModel.NFT(isSelected: false, model: $0) } ?? []
-
-                     self.isMock = false
-                     self.resetButtonState()
-                 }
-             }catch {
-                 DispatchQueue.main.async {
-                     self.nfts = []
-                     self.isMock = false
-                     self.resetButtonState()
-                 }
-                 log.error("[MoveAsset] fetch EVM collection & NFTs failed:\(error)")
-             }
-         }
-     }
-     */
 
     // MARK: Private
 
@@ -424,7 +374,9 @@ final class MoveNFTsViewModel: ObservableObject {
         selectedCollection = item
 
         nfts = []
-        fetchNFTs()
+        Task {
+            await fetchNFTs()
+        }
     }
 
     private func resetButtonState() {
@@ -432,37 +384,64 @@ final class MoveNFTsViewModel: ObservableObject {
         showHint = selectedCount >= limitCount
     }
 
-    private func fetchCollection() {
-        Task {
-            do {
-                let address = WalletManager.shared.selectedAccountAddress
-                let offset = FRWAPI.Offset(start: 0, length: 100)
-                let from: FRWAPI.From = EVMAccountManager.shared
-                    .selectedAccount != nil ? .evm : .main
-                let response: Network.Response<[NFTCollection]> = try await Network
-                    .requestWithRawModel(FRWAPI.NFT.userCollection(
-                        address,
-                        offset,
-                        from
-                    ))
-                DispatchQueue.main.async {
-                    self.collectionList = response.data?.sorted(by: { $0.count > $1.count }) ?? []
-                    if self.selectedCollection == nil {
-                        self.selectedCollection = self.collectionList.first
-                    }
-                    if self.selectedCollection != nil {
-                        self.fetchNFTs()
-                    } else {
-                        DispatchQueue.main.async {
-                            self.nfts = []
-                            self.isMock = false
-                            self.resetButtonState()
-                        }
-                    }
-                }
-            } catch {
-                log.error("[MoveAsset] fetch Collection failed:\(error)")
+    private func fetchCollection() async {
+        do {
+            guard let from = FWAddressDector.create(address: fromContact.address) else {
+                return
             }
+            
+            await MainActor.run {
+                self.isMock = true
+            }
+            
+            let list = try await TokenBalanceHandler.shared.getNFTCollections(address: from)
+            
+            if list.isEmpty {
+                await MainActor.run {
+                    self.nfts = []
+                    self.isMock = false
+                    self.resetButtonState()
+                }
+                return
+            }
+            
+            await MainActor.run {
+                self.collectionList = list
+                self.selectedCollection = self.collectionList.first
+            }
+            
+            await fetchNFTs()
+            
+        } catch {
+            log.error("[MoveAsset] fetch Collection failed:\(error)")
+        }
+    }
+    
+    func handleFromContact(_ contact: Contact) {
+        let model = MoveAccountsViewModel(
+            selected: fromContact.address ?? ""
+        ) { newContact in
+            if let contact = newContact {
+                self.fromContact = contact
+            }
+        }
+        Router.route(to: RouteMap.Wallet.chooseChild(model))
+    }
+    
+    func handleToContact(_ contact: Contact) {
+        let model = MoveAccountsViewModel(
+            selected: toContact.address ?? ""
+        ) { newContact in
+            if let contact = newContact {
+                self.toContact = contact
+            }
+        }
+        Router.route(to: RouteMap.Wallet.chooseChild(model))
+    }
+    
+    func handleSwap() {
+        Task { @MainActor in
+            (self.fromContact, self.toContact) = (self.toContact, self.fromContact)
         }
     }
 }

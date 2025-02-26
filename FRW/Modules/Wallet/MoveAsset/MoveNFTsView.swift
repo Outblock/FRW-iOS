@@ -34,16 +34,17 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
             TitleWithClosedView(title: "select_nfts".localized) {
                 viewModel.closeAction()
             }
-            .padding(.top, 24)
+            .padding(.top, 18)
 
             accountView()
 
             Divider()
                 .frame(height: 1)
                 .foregroundStyle(Color.Theme.Line.line)
-                .padding(.vertical, 24)
+                .padding(.vertical, 12)
 
             NFTListView()
+                .mockPlaceholder(viewModel.isMock)
 
             VStack(spacing: 0) {
                 InsufficientStorageToastView<MoveNFTsViewModel>()
@@ -51,7 +52,7 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
                     .background(Color.clear)
                 
                 VPrimaryButton(
-                    model: ButtonStyle.green,
+                    model: ButtonStyle.primary,
                     state: viewModel.buttonState,
                     action: {
                         viewModel.moveAction()
@@ -63,7 +64,6 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
         }
         .padding(.horizontal, 18)
         .applyRouteable(self)
-        .mockPlaceholder(viewModel.isMock)
         .background(Color.Theme.Background.grey)
     }
 
@@ -96,19 +96,14 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
             ContactRelationView(
                 fromContact: viewModel.fromContact,
                 toContact: viewModel.toContact,
-                clickable: .to,
-                clickTo: { contact in
-                    let model = MoveAccountsViewModel(
-                        selected: viewModel.toContact
-                            .address ?? ""
-                    ) { contact in
-                        if let contact = contact {
-                            viewModel.updateToContact(contact)
-                        }
-                    }
-                    Router.route(to: RouteMap.Wallet.chooseChild(model))
+                clickable: .all
+            ) { contract in
+                    viewModel.handleFromContact(contract)
+                } clickTo: { contract in
+                    viewModel.handleToContact(contract)
+                } clickSwap: {
+                    viewModel.handleSwap()
                 }
-            )
 
             MoveFeeView(isFree: viewModel.fromContact.walletType == viewModel.toContact.walletType)
                 .visibility(viewModel.showFee ? .visible : .gone)
@@ -198,7 +193,7 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
                     }
                 }
             }
-            .padding(.bottom, 8)
+            .padding(.bottom, 12)
 
             if viewModel.nfts.isEmpty {
                 HStack {
@@ -223,7 +218,6 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
                         }
                     }
                 }
-
                 Spacer()
             }
             .overlay(alignment: .bottom) {
