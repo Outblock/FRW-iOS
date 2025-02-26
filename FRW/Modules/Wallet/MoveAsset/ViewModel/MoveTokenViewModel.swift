@@ -19,6 +19,7 @@ final class MoveTokenViewModel: ObservableObject {
         _isPresent = isPresent
         loadUserInfo()
         refreshTokenData()
+        self.preTokenType = FWAddressDector.create(address: fromContact.address)?.type.toTokenType()
         Task {
             await fetchMinFlowBalance()
             await updateTokenModel()
@@ -44,12 +45,19 @@ final class MoveTokenViewModel: ObservableObject {
     var coinRate: Double = 0
     @Published
     var errorType: WalletSendAmountView.ErrorType = .none
-    
+
     @Published
     var loadingBalance: Bool = false
 
     @Published
     var buttonState: VPrimaryButtonState = .disabled
+
+    private(set) var token: TokenModel
+
+    @Binding
+    var isPresent: Bool
+
+    private(set) var preTokenType: TokenModel.TokenType?
 
     @Published
     var fromContact = Contact(
@@ -64,17 +72,18 @@ final class MoveTokenViewModel: ObservableObject {
         didSet {
             // Handle same account selection on from and to account
             // If so, we swap them
+            preTokenType = FWAddressDector.create(address: oldValue.address)?.type.toTokenType()
+
             if fromContact == toContact {
                 toContact = oldValue
             }
-            
+
             Task {
                 await updateTokenModel()
             }
         }
     }
-    
-    
+
     @Published
     var toContact = Contact(
         address: "",
@@ -94,11 +103,6 @@ final class MoveTokenViewModel: ObservableObject {
         }
     }
 
-    private(set) var token: TokenModel
-    
-    @Binding
-    var isPresent: Bool
-
     var isReadyForSend: Bool {
         errorType == .none && showBalance.isNumber && !showBalance.isEmpty
     }
@@ -107,7 +111,7 @@ final class MoveTokenViewModel: ObservableObject {
         let totalStr = amountBalance.doubleValue.formatCurrencyString()
         return "\(totalStr)"
     }
-    
+
     func updateTokenModel() async {
         guard let address = FWAddressDector.create(address: fromContact.address) else {
             return
@@ -117,7 +121,7 @@ final class MoveTokenViewModel: ObservableObject {
                 self.loadingBalance = true
             }
             let tokens = try await TokenBalanceHandler.shared.getFTBalance(address: address)
-            let tokenId = token.getId(by: address.type.toTokenType())
+            let tokenId = token.getId(by: preTokenType ?? address.type.toTokenType())
             var selectedToken: TokenModel = token
             if let target = tokens.first(where: { $0.id == tokenId }) {
                 selectedToken = target
@@ -127,12 +131,12 @@ final class MoveTokenViewModel: ObservableObject {
                     selectedToken = flowToken
                 }
             }
-            
+
             await MainActor.run {
                 self.loadingBalance = false
                 self.changeTokenModelAction(token: selectedToken)
             }
-            
+
         } catch {
             // TODO: Handle error
             log.error(error)
@@ -203,7 +207,7 @@ final class MoveTokenViewModel: ObservableObject {
             }
         }
     }
-    
+
     func handleFromContact(_ contact: Contact) {
         let model = MoveAccountsViewModel(
             selected: fromContact.address ?? ""
@@ -214,7 +218,7 @@ final class MoveTokenViewModel: ObservableObject {
         }
         Router.route(to: RouteMap.Wallet.chooseChild(model))
     }
-    
+
     func handleToContact(_ contact: Contact) {
         let model = MoveAccountsViewModel(
             selected: toContact.address ?? ""
@@ -225,7 +229,7 @@ final class MoveTokenViewModel: ObservableObject {
         }
         Router.route(to: RouteMap.Wallet.chooseChild(model))
     }
-    
+
     func handleSwap() {
         Task { @MainActor in
             (self.fromContact, self.toContact) = (self.toContact, self.fromContact)
@@ -576,13 +580,13 @@ extension MoveTokenViewModel {
                     self.buttonState = .loading
                 }
                 log.info("[EVM] bridge token \(fromIsEVM ? "FromEVM" : "ToEVM")")
-                
+
                 guard let vaultIdentifier = token.vaultIdentifier else {
                     HUD.error(title: "failed".localized)
                     self.buttonState = .enabled
                     return
                 }
-                
+
                 let amount = self.inputTokenNum // self.inputTokenNum.decimalValue
                 let txid = try await FlowNetwork.bridgeToken(
                     vaultIdentifier: vaultIdentifier,
