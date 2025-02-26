@@ -27,7 +27,7 @@ struct EmptyWalletView: View {
                         
             bottomContent
                 .padding(.horizontal, 16)
-                .padding(.bottom, 16)
+                .padding(.bottom, 8)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.Theme.Background.grey)
@@ -185,7 +185,7 @@ struct EmptyWalletView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("registerd_accounts".localized)
                 .font(.inter(size: 16, weight: .bold))
-                .foregroundColor(Color.LL.text)
+                .foregroundColor(Color.Theme.Text.black8)
                 .padding(.top, 4)
 
             ScrollView(.vertical, showsIndicators: false) {
@@ -208,8 +208,10 @@ struct EmptyWalletView: View {
                 Text("or".localized)
                     .frame(width: 32, height: 32)
                     .background(Color.Theme.Background.grey)
+                    .foregroundStyle(Color.Theme.Text.text4)
             }
             .padding(.vertical, 8)
+            .padding(.trailing, 37)
             .maxWidth(.infinity)
         }
         .maxWidth(.infinity)
