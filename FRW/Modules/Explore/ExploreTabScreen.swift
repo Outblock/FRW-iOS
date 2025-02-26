@@ -58,7 +58,7 @@ struct ExploreTabScreen: View {
                         .frame(width: 24, height: 24)
 
                     Text("search_name_url".localized)
-                        .font(.inter(size: 16, weight: .semibold))
+                        .font(.inter(size: 14))
                         .foregroundColor(.Theme.Text.text4)
 
                     Spacer()
@@ -66,7 +66,7 @@ struct ExploreTabScreen: View {
                     Button {
                         ScanHandler.scan()
                     } label: {
-                        Image("btn-scan")
+                        Image("icon-wallet-scan")
                             .renderingMode(.template)
                             .foregroundColor(.Theme.Text.text4)
                     }
@@ -220,7 +220,8 @@ struct ExploreTabScreen: View {
                             .padding(.trailing, 12)
                     }
                 }
-                .padding([.horizontal, .top], 10)
+                .padding(.horizontal, 10)
+                .padding(.top, 12)
                 .background(.clear)
                 .cornerRadius(16)
                 .borderStyle()
