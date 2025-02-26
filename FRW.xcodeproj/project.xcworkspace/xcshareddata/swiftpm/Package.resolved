@@ -1,5 +1,5 @@
 {
-  "originHash" : "5877de890ac8e65092b64ecacc8276e23ea117e7105d3537690beba77193af8d",
+  "originHash" : "64573ada064a08e124d76df0f80e81ec000ff7dea71120ffe5735c39266b8c91",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -132,8 +132,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/outblock/flow-swift",
       "state" : {
-        "revision" : "50b60826c4ce18adaa151946d11d468ac1fc98dd",
-        "version" : "0.3.9"
+        "revision" : "50b60826c4ce18adaa151946d11d468ac1fc98dd"
       }
     },
     {
@@ -417,10 +416,9 @@
     {
       "identity" : "qrcode",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/WalletConnect/QRCode",
+      "location" : "https://github.com/dagronf/QRCode",
       "state" : {
-        "revision" : "263f280d2c8144adfb0b6676109846cfc8dd552b",
-        "version" : "14.3.1"
+        "revision" : "94fa5c053837eb2b367316590ceaa480b0689902"
       }
     },
     {
@@ -562,8 +560,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/dagronf/swift-qrcode-generator",
       "state" : {
-        "revision" : "5ca09b6a2ad190f94aa3d6ddef45b187f8c0343b",
-        "version" : "1.0.3"
+        "revision" : "2b1980b825f08a81ccc762b0c4d17fcde9d5e953",
+        "version" : "2.0.2"
       }
     },
     {
@@ -589,8 +587,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/dagronf/SwiftImageReadWrite",
       "state" : {
-        "revision" : "5596407d1cf61b953b8e658fa8636a471df3c509",
-        "version" : "1.1.6"
+        "revision" : "42ace2412279f18bc264bc306e96b51c36e12a33",
+        "version" : "1.9.2"
       }
     },
     {
