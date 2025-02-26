@@ -253,7 +253,7 @@ struct WalletReceiveView: RouteableView {
 
 extension WalletReceiveView {
     func doc(text: String, eyeColor: UIColor) -> QRCode.Document {
-        let d = QRCode.Document(generator: QRCodeGenerator_External())
+        let d = QRCode.Document()
         d.utf8String = text
         if let logo = UIImage(named: "lilico-app-icon")?.cgImage {
             let path = CGPath(

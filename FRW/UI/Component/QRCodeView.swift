@@ -14,43 +14,21 @@ struct QRCodeView: View {
 
     var eyeColor: UIColor?
 
-    //MU: This is a workaround for the QR code being blank sometimes.  Forces a redraw on appearing.  I tried encapsulating it in a ViewModifier, but it didn't work.
-    @State private var forceRefresh = false
-
     var body: some View {
         ZStack {
             QRCodeDocumentUIView(document: doc(
                 text: content,
-                eyeColor: eyeColor ?? (
-                    currentNetwork.isMainnet ?
-                        UIColor.LL.Primary
-                        .salmonPrimary : UIColor(hex: "#333333")
-                )
+                eyeColor: eyeColor ?? UIColor.black
             ))
             .padding(12)
-            .id(forceRefresh)
-            .onAppear {
-                Task {
-                    try await Task.sleep(for: .milliseconds(1))
-                    forceRefresh.toggle()
-                }
-            }
         }
         .background(Color.white)
         .cornerRadius(32)
-        .overlay(
-            RoundedRectangle(cornerRadius: 32)
-                .stroke(
-                    currentNetwork.isMainnet ? Color.LL.Neutrals.background : currentNetwork.color,
-                    lineWidth: 1
-                )
-                .colorScheme(.light)
-        )
         .aspectRatio(1, contentMode: .fit)
     }
 
     func doc(text: String, eyeColor: UIColor) -> QRCode.Document {
-        let d = QRCode.Document(generator: QRCodeGenerator_External())
+        let d = QRCode.Document()
         d.utf8String = text
         if let logo = logo?.cgImage {
             let path = CGPath(
@@ -60,15 +38,14 @@ struct QRCodeView: View {
             d.logoTemplate = QRCode.LogoTemplate(image: logo, path: path, inset: 6)
         }
 
-        d.design.backgroundColor(UIColor(hex: "#FFFFFF").cgColor)
+        d.design.backgroundColor(UIColor.white.cgColor)
         d.design.shape.eye = QRCode.EyeShape.Circle()
         d.design.shape.onPixels = QRCode.PixelShape.Circle()
 
-        let color = Color.Theme.Text.black8.toUIColor()
-        d.design.style.eye = QRCode.FillStyle.Solid(color!.cgColor)
-//        d.design.style.eyeBackground = color!.cgColor
+        let color = UIColor.black
+        d.design.style.eye = QRCode.FillStyle.Solid(color.cgColor)
         d.design.style.pupil = QRCode.FillStyle.Solid(eyeColor.cgColor)
-        d.design.style.onPixels = QRCode.FillStyle.Solid(color!.cgColor)
+        d.design.style.onPixels = QRCode.FillStyle.Solid(color.cgColor)
         return d
     }
 }
