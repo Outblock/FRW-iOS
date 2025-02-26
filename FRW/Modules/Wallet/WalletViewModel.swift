@@ -421,14 +421,14 @@ extension WalletViewModel {
                 try await WalletManager.shared.fetchWalletDatas()
                 self.reloadTransactionCount()
 
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.isMock = false
                     self.isReloading = false
                 }
             } catch {
                 log.error("reload wallet data failed", context: error)
                 HUD.error(title: "fetch_wallet_error".localized)
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.walletState = .error
                     self.isReloading = false
                     self.isMock = false

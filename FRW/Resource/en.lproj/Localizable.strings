@@ -522,6 +522,7 @@
 
 "Kucoin::message" = "Kucoin";
 "amount_balance" = "Amount Balance";
+"balance" = "Balance";
 "Huobi::message" = "Huobi";
 "amount_confirmation" = "Amount Confirmation";
 "Recent_Price::message" = "Recent Price";

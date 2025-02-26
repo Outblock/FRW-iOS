@@ -11,10 +11,10 @@ import WalletCore
 
 extension TrustWeb3Provider {
     static func flowConfig() -> TrustWeb3Provider? {
-        guard let address = EVMAccountManager.shared.accounts.first?.showAddress,
-              let url = LocalUserDefaults.shared.flowNetwork.evmUrl?.absoluteString else {
+        guard let address = EVMAccountManager.shared.accounts.first?.showAddress else {
             return nil
         }
+        let url = LocalUserDefaults.shared.flowNetwork.evmURL.absoluteString
         let chainId = LocalUserDefaults.shared.flowNetwork.networkID
         let config = TrustWeb3Provider.Config.EthereumConfig(
             address: address,

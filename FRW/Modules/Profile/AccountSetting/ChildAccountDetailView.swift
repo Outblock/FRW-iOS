@@ -166,7 +166,7 @@ class ChildAccountDetailViewModel: ObservableObject {
             guard let parent = WalletManager.shared.getPrimaryWalletAddress(),
                   let child = self.childAccount.addr
             else {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.collections = []
                     self.accessibleItems = []
                 }
@@ -178,30 +178,17 @@ class ChildAccountDetailViewModel: ObservableObject {
                     parent: parent,
                     child: child
                 )
-                let offset = FRWAPI.Offset(start: 0, length: 100)
-                let response: Network.Response<[NFTCollection]> = try await Network
-                    .requestWithRawModel(FRWAPI.NFT.userCollection(
+                let response: [NFTCollection] = try await Network
+                    .request(FRWAPI.NFT.userCollection(
                         child,
-                        offset,
-                        .main
+                        .cadence
                     ))
-                let collectionList = response.data
+                let collectionList = response
 
                 let resultList: [NFTCollection] = result.compactMap { item in
                     if let contractName = item.split(separator: ".")[safe: 2] {
                         if let model = NFTCatalogCache.cache.find(by: String(contractName)) {
                             return NFTCollection(collection: model.collection, count: 0)
-
-//                            return FlowModel.NFTCollection(
-//                                id: model.collection.id,
-//                                path: model.collection.path?.storagePath,
-//                                display: FlowModel.NFTCollection.CollectionDislay(
-//                                    name: model.collection.name,
-//                                    mediaType: FlowModel.Media(file: FlowModel.Media.File(url: "")),
-//                                    squareImage: model.collection.logoURL.absoluteString
-//                                ),
-//                                idList: []
-//                            )
                         }
                     }
                     return nil
@@ -209,7 +196,7 @@ class ChildAccountDetailViewModel: ObservableObject {
 
                 let tmpList = resultList.map { model in
                     var model = model
-                    let collectionItem = collectionList?.first(where: { item in
+                    let collectionItem = collectionList.first(where: { item in
                         item.maskContractName == model.maskContractName && item.maskAddress == model
                             .maskAddress
                     })

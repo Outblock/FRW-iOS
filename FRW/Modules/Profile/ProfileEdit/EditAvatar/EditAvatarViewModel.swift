@@ -246,7 +246,7 @@ extension EditAvatarView.EditAvatarViewModel {
     private func requestGridAction(offset: Int) async throws {
         let limit = 24
         let nfts = try await requestGrid(offset: offset, limit: limit)
-        DispatchQueue.main.async {
+        await MainActor.run {
             self.appendGridNFTsNoDuplicated(nfts)
             self.isEnd = nfts.count < limit
             self.saveToCache()
@@ -257,7 +257,7 @@ extension EditAvatarView.EditAvatarViewModel {
         let address = WalletManager.shared
             .getWatchAddressOrChildAccountAddressOrPrimaryAddress() ?? ""
         let request = NFTGridDetailListRequest(address: address, offset: offset, limit: limit)
-        let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount != nil ? .evm : .main
+        let from: VMType = EVMAccountManager.shared.selectedAccount != nil ? .evm : .cadence
         let response: Network.Response<NFTListResponse> = try await Network
             .requestWithRawModel(FRWAPI.NFT.gridDetailList(
                 request,
