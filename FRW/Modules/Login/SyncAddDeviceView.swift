@@ -82,10 +82,10 @@ struct SyncAddDeviceView: View {
                 viewModel.addDevice()
             }
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, 18)
         .padding(.vertical, 20)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .backgroundFill(Color(hex: "#282828", alpha: 1))
+        .backgroundFill(.Theme.Background.white)
     }
 
     var location: String {
@@ -94,7 +94,8 @@ struct SyncAddDeviceView: View {
             res += viewModel.model.deviceInfo.city!
         }
         if viewModel.model.deviceInfo.country != nil && !viewModel.model.deviceInfo.country!
-            .isEmpty {
+            .isEmpty
+        {
             res += ",\(viewModel.model.deviceInfo.country!)"
         }
         return res
