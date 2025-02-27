@@ -314,7 +314,7 @@ struct SingleToken: Codable {
             icon: logo,
             symbol: symbol,
             website: extensions?.website,
-            evmAddress: evmAddress,
+            evmAddress: type == .cadence ? evmAddress : address,
             flowIdentifier: type == .cadence ? cadenceId : flowIdentifier
         )
         return model
