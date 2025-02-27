@@ -39,7 +39,7 @@ class EVMTokenBalanceProvider: TokenBalanceProvider {
             .requestWithRawModel(GithubEndpoint.EVMTokenList(network))
 
         if let flowToken = TokenBalanceHandler.getFlowTokenModel(network: network) {
-            var flowModel = flowToken.toTokenModel(type: TokenModel.TokenType.evm, network: network)
+            var flowModel = flowToken.toTokenModel(type: .evm, network: network)
             flowModel.balance = flowBalance
             models.insert(flowModel, at: 0)
         }
