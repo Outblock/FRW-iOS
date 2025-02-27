@@ -115,7 +115,7 @@ class UsernameViewModel: ViewModel {
                 Router.route(to: RouteMap.RestoreLogin.createProfile(viewModel))
 
             } catch {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.state.isRegisting = false
                     HUD.error(title: "create_user_failed".localized)
                 }

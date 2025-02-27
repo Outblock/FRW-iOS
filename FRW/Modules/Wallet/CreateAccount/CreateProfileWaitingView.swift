@@ -31,6 +31,10 @@ struct CreateProfileWaitingView: RouteableView {
     var isNavigationBarHidden: Bool {
         true
     }
+    
+    var enableSwipeBackGesture: Bool {
+        false
+    }
 
     var body: some View {
         VStack(alignment: .center) {
