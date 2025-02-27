@@ -673,6 +673,15 @@ extension RouteMap.Explore: RouterTarget {
     func onPresent(navi: UINavigationController) {
         switch self {
         case let .browser(url):
+            
+            // For some dapp like Disney and NBA Topshot
+            // We should navigate user to App Store to download
+            let externalHost = ["apps.apple.com"]
+            if let host = url.host, externalHost.contains(host) {
+                UIApplication.shared.open(url)
+                return
+            }
+            
             if let isIn = RemoteConfigManager.shared.config?.features.browser, isIn {
                 let vc = BrowserViewController()
                 vc.loadURL(url)
