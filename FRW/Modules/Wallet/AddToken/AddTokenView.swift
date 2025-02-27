@@ -41,12 +41,17 @@ struct AddTokenView: RouteableView {
             listView
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .halfSheet(showSheet: $vm.confirmSheetIsPresented, autoResizing: true, backgroundColor: Color.LL.Neutrals.background, sheetView: {
-            if let token = vm.pendingActiveToken {
-                AddTokenConfirmView(token: token)
-                    .environmentObject(vm)
+        .halfSheet(
+            showSheet: $vm.confirmSheetIsPresented,
+            autoResizing: true,
+            backgroundColor: Color.LL.Neutrals.background,
+            sheetView: {
+                if let token = vm.pendingActiveToken {
+                    AddTokenConfirmView(token: token)
+                        .environmentObject(vm)
+                }
             }
-        })
+        )
         .environmentObject(vm)
         .disabled(vm.isRequesting)
         .applyRouteable(self)

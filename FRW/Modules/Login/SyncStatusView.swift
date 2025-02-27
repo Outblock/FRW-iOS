@@ -150,7 +150,7 @@ struct FlowLottieView: UIViewRepresentable {
     func addLottieView(to: UIView) {
         // MARK: Memory Properties
 
-        lottieView.backgroundBehavior = .forceFinish
+        lottieView.backgroundBehavior = .pauseAndRestore
         lottieView.shouldRasterizeWhenIdle = true
 
         lottieView.backgroundColor = .clear

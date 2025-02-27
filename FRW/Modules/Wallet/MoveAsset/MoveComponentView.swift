@@ -26,7 +26,7 @@ struct ContactRelationView: View {
 
     var clickFrom: ContactCallback?
     var clickTo: ContactCallback?
-    
+
     var clickSwap: (() -> Void)?
 
     var body: some View {
@@ -44,7 +44,7 @@ struct ContactRelationView: View {
                 }
                 .frame(maxWidth: .infinity)
             }
-            
+
             Button {
                 UIImpactFeedbackGenerator.impactOccurred(.selectionChanged)
                 clickSwap?()
@@ -80,23 +80,23 @@ struct ContactRelationView: View {
                             .frame(width: 32, height: 32)
                             .cornerRadius(16)
                     }
-                    
+
                     TagView(type: contact.walletType ?? .flow)
-                    
+
                     Spacer()
-                    
+
                     Image("icon_arrow_bottom_16")
                         .resizable()
                         .frame(width: 16, height: 16)
                         .visibility(showArrow ? .visible : .gone)
                 }
-                
+
                 Text(contact.displayName)
                     .font(.inter(size: 14, weight: .semibold))
                     .foregroundStyle(Color.Theme.Text.black)
                     .frame(height: 18)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 Text(contact.address ?? "")
                     .font(.inter(size: 12))
                     .truncationMode(.middle)

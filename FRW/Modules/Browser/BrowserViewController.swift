@@ -68,6 +68,7 @@ class BrowserViewController: UIViewController {
         setup()
         setupObserver()
         hero.isEnabled = true
+        overrideUserInterfaceStyle = .dark
     }
 
     override func viewWillAppear(_ animated: Bool) {

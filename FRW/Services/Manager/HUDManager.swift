@@ -103,6 +103,7 @@ class HUD {
         cancelTitle: String = "cancel".localized,
         cancelAction: @escaping () -> Void,
         confirmTitle: String,
+        confirmIsDestructive: Bool = false,
         confirmAction: @escaping () -> Void
     ) {
         runOnMain {
@@ -112,7 +113,7 @@ class HUD {
                 cancelAction()
             }
 
-            let okAction = UIAlertAction(title: confirmTitle, style: .default) { _ in
+            let okAction = UIAlertAction(title: confirmTitle, style: confirmIsDestructive ? .destructive : .default) { _ in
                 confirmAction()
             }
 

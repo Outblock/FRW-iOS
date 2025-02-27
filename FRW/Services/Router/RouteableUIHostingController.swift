@@ -18,6 +18,9 @@ protocol RouterContentDelegate {
 
     /// UINavigationController use this to smooth push animation
     var isNavigationBarHidden: Bool { get }
+    
+    /// Control interactivePopGestureRecognizer to disable swipe back gesture
+    var enableSwipeBackGesture: Bool { get }
 
     var navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode { get }
 
@@ -34,6 +37,10 @@ protocol RouterContentDelegate {
 extension RouterContentDelegate {
     var isNavigationBarHidden: Bool {
         false
+    }
+    
+    var enableSwipeBackGesture: Bool {
+        true
     }
 
     var navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
@@ -104,7 +111,7 @@ class RouteableUIHostingController<Content: RouteableView>: UIHostingController<
         if let style = rootView.forceColorScheme, style != .unspecified {
             navigationController?.navigationBar.overrideUserInterfaceStyle = style
         }
-
+        UINavigationControllerState.shared.allowsSwipeBack = rootView.enableSwipeBackGesture
         navigationController?.setNavigationBarHidden(rootView.isNavigationBarHidden, animated: true)
     }
 
@@ -114,6 +121,9 @@ class RouteableUIHostingController<Content: RouteableView>: UIHostingController<
         if let style = rootView.forceColorScheme, style != .unspecified {
             navigationController?.navigationBar.overrideUserInterfaceStyle = .unspecified
         }
+
+        // For some legacy UIkit VC, we need reset the flag to default state
+        UINavigationControllerState.shared.allowsSwipeBack = UINavigationControllerState.defaultState
     }
 
     @objc

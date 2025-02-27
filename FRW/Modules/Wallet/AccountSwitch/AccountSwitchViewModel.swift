@@ -31,6 +31,7 @@ class AccountSwitchViewModel: ObservableObject {
             .sink { [weak self] list in
                 guard let self = self else { return }
                 var index = 1
+                let userStoreList = LocalUserDefaults.shared.userList
                 self.placeholders = list.map { uid in
                     let userInfo = MultiAccountStorage.shared.getUserInfo(uid)
                     var address = MultiAccountStorage.shared.getWalletInfo(uid)?
@@ -38,7 +39,11 @@ class AccountSwitchViewModel: ObservableObject {
                     if address == "0x" {
                         address = LocalUserDefaults.shared.userAddressOfDeletedApp[uid] ?? "0x"
                     }
-                    var username = userInfo?.nickname
+                    if address == "0x" {
+                        let userStore = userStoreList.last { $0.userId == uid }
+                        address = userStore?.address ?? "0x"
+                    }
+                    var username = userInfo?.nickname ?? userInfo?.username
                     if username == nil {
                         username = "Profile \(index)"
                         index += 1

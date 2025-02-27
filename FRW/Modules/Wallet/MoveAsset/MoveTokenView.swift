@@ -61,22 +61,21 @@ struct MoveTokenView: RouteableView, PresentActionDelegate {
                     toContact: viewModel.toContact,
                     clickable: .all
                 ) { contract in
-                        viewModel.handleFromContact(contract)
-                    } clickTo: { contract in
-                        viewModel.handleToContact(contract)
-                    } clickSwap: {
-                        viewModel.handleSwap()
-                    }
+                    viewModel.handleFromContact(contract)
+                } clickTo: { contract in
+                    viewModel.handleToContact(contract)
+                } clickSwap: {
+                    viewModel.handleSwap()
+                }
 
                 MoveTokenView
                     .AccountView(
                         isFree: viewModel.fromContact.walletType == viewModel
                             .toContact.walletType
                     ) { _ in
-                        
                     }
             }
-            
+
             Color.clear
                 .frame(height: 8)
 
@@ -219,7 +218,7 @@ extension MoveTokenView {
                     Text("balance".localized + ": ")
                         .font(.inter(size: 16))
                         .foregroundStyle(Color.Theme.Text.black3)
-                    
+
                     Text(viewModel.currentBalance)
                         .font(.inter(size: 16))
                         .foregroundStyle(Color.Theme.Text.black3)
@@ -254,10 +253,11 @@ extension MoveTokenView {
         @ViewBuilder
         var switchMenuButton: some View {
             Button(action: {
-                guard let address = FWAddressDector.create(address: viewModel.fromContact.address) else {
+                guard let address = FWAddressDector.create(address: viewModel.fromContact.address)
+                else {
                     return
                 }
-                
+
                 Router.route(to: RouteMap.Wallet.selectMoveToken(address) { selectedToken in
                     viewModel.changeTokenModelAction(token: selectedToken)
                 })

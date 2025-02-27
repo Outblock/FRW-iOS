@@ -89,7 +89,11 @@ enum ListedToken: String, CaseIterable {
 // MARK: - TokenModel
 
 struct TokenModel: Codable, Identifiable, Mockable {
+    // MARK: Public
+
     public enum TokenType: Codable { case cadence, evm }
+
+    // MARK: Internal
 
     let type: TokenType
     let name: String
@@ -103,12 +107,12 @@ struct TokenModel: Codable, Identifiable, Mockable {
     let evmAddress: String?
     var flowIdentifier: String?
     var balance: BigUInt?
-    
+
     var vaultIdentifier: String? {
         if type == .evm {
             return flowIdentifier
         }
-        
+
         return "\(contractId).Vault"
     }
 
@@ -137,7 +141,7 @@ struct TokenModel: Codable, Identifiable, Mockable {
 
         return URL(string: placeholder)!
     }
-    
+
     var readableBalance: Decimal? {
         guard let bal = balance else {
             return nil
@@ -149,14 +153,13 @@ struct TokenModel: Codable, Identifiable, Mockable {
         )
         return Decimal(string: result)
     }
-    
-    var readableBalanceStr : String? {
+
+    var readableBalanceStr: String? {
         guard let bal = readableBalance else {
             return nil
         }
         return bal.doubleValue.formatted(.number.precision(.fractionLength(0...3)))
     }
-
 
     // Identifiable
     var id: String {
@@ -205,7 +208,7 @@ struct TokenModel: Codable, Identifiable, Mockable {
             return market.flowPricePair // TODO: #six Need to confirm
         }
     }
-    
+
     func getId(by type: TokenType) -> String {
         switch type {
         case .evm:
@@ -288,11 +291,11 @@ struct SingleToken: Codable {
     let extensions: TokenExtension?
     let evmAddress: String?
     let flowIdentifier: String?
-    
+
     var cadenceId: String {
         "A.\(address.stripHexPrefix()).\(contractName ?? "")"
     }
-    
+
     func toTokenModel(type: TokenModel.TokenType, network: FlowNetworkType) -> TokenModel {
         let logo = URL(string: logoURI ?? "")
 
