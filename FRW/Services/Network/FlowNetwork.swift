@@ -823,11 +823,16 @@ extension FlowNetwork {
         }
         let originCadence = CadenceManager.shared.current.evm?.getCoaAddr?.toFunc() ?? ""
         let cadenceStr = originCadence.replace(by: ScriptAddress.addressMap())
-        let resonpse = try await flow.accessAPI.executeScriptAtLatestBlock(
+        let response = try await flow.accessAPI.executeScriptAtLatestBlock(
             script: Flow.Script(text: cadenceStr),
             arguments: [.address(Flow.Address(hex: fromAddress))]
         ).decode(String.self)
-        return resonpse
+        
+        guard let checkSumAddress = EthereumAddress.toChecksumAddress(response) else {
+            return response
+        }
+        
+        return checkSumAddress
     }
 
     static func fetchEVMBalance(address _: String) async throws -> Decimal {
