@@ -93,7 +93,7 @@ extension MultiBackupGoogleDriveTarget {
               let hexString = String(data: data, encoding: .utf8)?.trim()
         else {
             log.error("[Google] getfile failed.")
-            throw BackupError.CloudFileData
+            throw BackupError.cloudFileData
         }
 
         // Compatible extension problem

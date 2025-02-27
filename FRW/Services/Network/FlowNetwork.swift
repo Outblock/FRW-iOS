@@ -242,8 +242,7 @@ enum LilicoError: Error {
 
 extension FlowNetwork {
     static func stakingIsEnabled() async throws -> Bool {
-        let address = Flow.Address(hex: WalletManager.shared.getPrimaryWalletAddress() ?? "")
-        return try await fetch(by: \.staking?.checkStakingEnabled, arguments: [])
+        return try await fetch(by: \.staking?.checkStakingEnabled)
     }
 
     static func accountStakingIsSetup() async throws -> Bool {
@@ -1152,8 +1151,7 @@ extension FlowNetwork {
         ids: [UInt64],
         child: String
     ) async throws -> Flow.ID {
-        let idMaped = ids.map { Flow.Cadence.FValue.uint64($0) }
-
+        let idMaped = ids.compactMap { Flow.Cadence.FValue.uint256(BigUInt($0)) }
         return try await sendTransaction(
             by: \.hybridCustody?.batchBridgeChildNFTFromEvm,
             argumentList: [
@@ -1200,13 +1198,13 @@ extension FlowNetwork {
 extension FlowNetwork {
     private static func fetch<T: Decodable>(
         by keyPath: KeyPath<CadenceModel, String?>,
-        arguments: [Flow.Cadence.FValue]
+        arguments: [Flow.Cadence.FValue] = []
     ) async throws -> T {
         let funcName = keyPath.funcName()
         guard let cadence = CadenceManager.shared.current[keyPath: keyPath]?.toFunc() else {
             EventTrack.General
                 .rpcError(
-                    error: CadenceError.empty.message,
+                    error: CadenceError.empty.errorLog,
                     scriptId: funcName
                 )
             log.error("[Cadence] empty script on \(funcName)")
@@ -1230,7 +1228,7 @@ extension FlowNetwork {
         guard let cadence = CadenceManager.shared.current[keyPath: keyPath]?.toFunc() else {
             EventTrack.General
                 .rpcError(
-                    error: CadenceError.empty.message,
+                    error: CadenceError.empty.errorLog,
                     scriptId: funcName
                 )
             log.error("[Cadence] empty script on \(funcName)")
@@ -1256,7 +1254,7 @@ extension FlowNetwork {
         guard let cadence = CadenceManager.shared.current[keyPath: keyPath]?.toFunc() else {
             EventTrack.General
                 .rpcError(
-                    error: CadenceError.empty.message,
+                    error: CadenceError.empty.errorLog,
                     scriptId: funcName
                 )
             log.error("[Cadence] empty script on \(funcName)")
@@ -1280,7 +1278,7 @@ extension FlowNetwork {
         guard let cadence = CadenceManager.shared.current[keyPath: keyPath]?.toFunc() else {
             EventTrack.General
                 .rpcError(
-                    error: CadenceError.empty.message,
+                    error: CadenceError.empty.errorLog,
                     scriptId: funcName
                 )
             log.error("[Cadence] empty script on \(funcName)")
@@ -1304,7 +1302,7 @@ extension FlowNetwork {
         guard let cadence = CadenceManager.shared.current[keyPath: keyPath]?.toFunc() else {
             EventTrack.General
                 .rpcError(
-                    error: CadenceError.empty.message,
+                    error: CadenceError.empty.errorLog,
                     scriptId: funcName
                 )
             log.error("[Cadence] empty script on \(funcName)")
@@ -1400,7 +1398,7 @@ extension FlowNetwork {
         guard let cadenceStr = CadenceManager.shared.current[keyPath: keyPath]?.toFunc() else {
             EventTrack.General
                 .rpcError(
-                    error: CadenceError.empty.message,
+                    error: CadenceError.empty.errorLog,
                     scriptId: funcName
                 )
             log.error("[Cadence] empty script on \(funcName)")

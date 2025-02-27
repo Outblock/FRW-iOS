@@ -201,7 +201,7 @@ extension MultiBackupDropboxTarget {
                         log.info("[Multi] dropbox Encrypted key uploaded successfully")
                         continuation.resume(returning: metadata)
                     } else {
-                        continuation.resume(throwing: BackupError.CloudFileData)
+                        continuation.resume(throwing: BackupError.cloudFileData)
                     }
                 }
         }
