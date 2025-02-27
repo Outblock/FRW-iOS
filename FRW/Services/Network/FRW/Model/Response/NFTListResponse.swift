@@ -204,7 +204,6 @@ struct NFTTrait: Codable, Hashable {
     // MARK: Lifecycle
 
     init(from decoder: Decoder) throws {
-        
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.name = try container.decode(String?.self, forKey: .name)
         self.displayType = try container.decode(String?.self, forKey: .displayType)

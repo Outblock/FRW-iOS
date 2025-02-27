@@ -19,7 +19,7 @@ extension ProfileView: AppTabBarPageProtocol {
     static func iconName() -> String {
         "tabler-icon-settings"
     }
-    
+
     static func title() -> String {
         "Settings::message".localized
     }
@@ -115,13 +115,13 @@ extension ProfileView {
                         VStack {
                             Image("icon-cool-cat")
                         }.frame(maxHeight: .infinity, alignment: .top)
-                        
+
                         VStack(alignment: .leading) {
                             Text(title).font(.inter(size: 16, weight: .bold))
                             Text(desc).font(.inter(size: 16))
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        
+
                         Image("icon-orange-right-arrow")
                     }
                     .padding(.horizontal, 12)
@@ -564,7 +564,7 @@ extension ProfileView {
                                 Image("icon-notification")
                                     .renderingMode(.template)
                                     .foregroundStyle(Color.Theme.Accent.green)
-                                
+
                                 Text("notifications".localized).font(.inter())
                                     .frame(maxWidth: .infinity, alignment: .leading)
 

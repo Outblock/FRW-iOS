@@ -71,7 +71,7 @@ class ChildAccountDetailViewModel: ObservableObject {
         if index == 0 {
             if var list = collections {
                 if !showEmptyCollection {
-                    list = list.filter { $0.count > 0  }
+                    list = list.filter { !$0.isEmpty }
                 }
                 accessibleItems = list
             } else {
@@ -272,7 +272,11 @@ struct ChildAccountDetailView: RouteableView {
         .padding(.bottom, 20)
         .backgroundFill(Color.LL.Neutrals.background)
         .applyRouteable(self)
-        .halfSheet(showSheet: $vm.isPresent, autoResizing: true, backgroundColor: Color.LL.Neutrals.background) {
+        .halfSheet(
+            showSheet: $vm.isPresent,
+            autoResizing: true,
+            backgroundColor: Color.LL.Neutrals.background
+        ) {
             UnlinkConfirmView()
                 .environmentObject(vm)
         }
@@ -402,14 +406,14 @@ struct ChildAccountDetailView: RouteableView {
             LLSegmenControl(titles: ["collections".localized, "coins_cap".localized]) { idx in
                 vm.switchTab(index: idx)
             }
-            if vm.accessibleItems.count == 0, !vm.isLoading {
+            if vm.accessibleItems.isEmpty, !vm.isLoading {
                 emptyAccessibleView
             }
             ForEach(vm.accessibleItems.indices, id: \.self) { idx in
                 AccessibleItemView(item: vm.accessibleItems[idx]) { item in
                     if let collectionInfo = item as? NFTCollection, let addr = vm.childAccount.addr,
                        let pathId = collectionInfo.collection.path?.storagePathId(),
-                       collectionInfo.count > 0 {
+                       !collectionInfo.isEmpty {
                         Router.route(to: RouteMap.NFT.collectionDetail(
                             addr,
                             pathId,
@@ -689,8 +693,8 @@ extension ChildAccountAccessible {
     var count: Int {
         0
     }
-    
-    var isEmpty: Bool { self.count == 0 }
+
+    var isEmpty: Bool { self.isEmpty }
 }
 
 // MARK: - NFTCollection + ChildAccountAccessible

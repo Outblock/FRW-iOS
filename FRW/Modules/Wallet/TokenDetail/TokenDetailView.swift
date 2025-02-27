@@ -14,19 +14,6 @@ import SwiftUIX
 // MARK: - TokenDetailView
 
 struct TokenDetailView: RouteableView {
-    @Environment(\.colorScheme) var colorScheme
-    @StateObject private var vm: TokenDetailViewModel
-    @StateObject private var stakingManager = StakingManager.shared
-
-    private var isAccessible: Bool = true
-
-    private let lightGradientColors: [Color] = [.white.opacity(0), Color(hex: "#E6E6E6").opacity(0), Color(hex: "#E6E6E6").opacity(1)]
-    private let darkGradientColors: [Color] = [.white.opacity(0), .white.opacity(0), Color(hex: "#282828").opacity(1)]
-
-    var title: String {
-        return ""
-    }
-
     // MARK: Lifecycle
 
     init(token: TokenModel, accessible: Bool) {
@@ -35,6 +22,13 @@ struct TokenDetailView: RouteableView {
     }
 
     // MARK: Internal
+
+    @Environment(\.colorScheme)
+    var colorScheme
+
+    var title: String {
+        ""
+    }
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -74,7 +68,11 @@ struct TokenDetailView: RouteableView {
         .buttonStyle(.plain)
         .backgroundFill(Color.LL.Neutrals.background)
         .applyRouteable(self)
-        .halfSheet(showSheet: $vm.showSheet, autoResizing: true, backgroundColor: Color.Theme.BG.bg1) {
+        .halfSheet(
+            showSheet: $vm.showSheet,
+            autoResizing: true,
+            backgroundColor: Color.Theme.BG.bg1
+        ) {
             if vm.buttonAction == .move {
                 MoveTokenView(tokenModel: vm.token, isPresent: $vm.showSheet)
             }
@@ -188,29 +186,6 @@ struct TokenDetailView: RouteableView {
         .padding(.horizontal, 18)
         .background(.clear)
         .borderStyle()
-    }
-            
-    @ViewBuilder
-    private var walletActionBar: some View {
-        WalletActionBar {
-            WalletActionButton(
-                event: .send,
-                allowClick: !WalletManager.shared.isSelectedChildAccount,
-                action: vm.sendAction
-            )
-            WalletActionButton(event: .swap, allowClick: true) {
-                UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                self.vm.onSwapToken()
-            }
-            .visibility(vm.showSwapButton ? .visible : .gone)
-            
-            WalletActionButton(event: .receive, allowClick: true, action: vm.receiveAction)
-            
-            WalletActionButton(event: .buy, allowClick: true) {
-                Router.route(to: RouteMap.Wallet.buyCrypto)
-            }
-            .visibility(vm.showBuyButton ? .visible : .gone)
-        }
     }
 
     var activitiesView: some View {
@@ -330,7 +305,7 @@ struct TokenDetailView: RouteableView {
         }
         .padding(.vertical, 7)
     }
-    
+
     var storageView: some View {
         HStack(spacing: 0) {
             StorageUsageView(
@@ -342,22 +317,22 @@ struct TokenDetailView: RouteableView {
                 HStack {
                     Text("storage_usage".localized)
                         .font(.inter(size: 16, weight: .semibold))
-                    
+
                     Spacer()
-                    
+
                     Text(String(format: "%.3f FLOW", vm.storageFlow))
                 }
             )
             .footerView(
                 VStack(spacing: 8) {
                     separator()
-                    
+
                     HStack {
                         Text("total_balance".localized)
                             .font(.inter(size: 16, weight: .semibold))
-                        
+
                         Spacer()
-                        
+
                         Text(String(format: "%.3f FLOW", vm.totalBalance))
                     }
                 }
@@ -369,7 +344,50 @@ struct TokenDetailView: RouteableView {
         }
         .padding(.bottom, 12)
     }
-    
+
+    // MARK: Private
+
+    @StateObject
+    private var vm: TokenDetailViewModel
+    @StateObject
+    private var stakingManager = StakingManager.shared
+
+    private var isAccessible: Bool = true
+
+    private let lightGradientColors: [Color] = [
+        .white.opacity(0),
+        Color(hex: "#E6E6E6").opacity(0),
+        Color(hex: "#E6E6E6").opacity(1),
+    ]
+    private let darkGradientColors: [Color] = [
+        .white.opacity(0),
+        .white.opacity(0),
+        Color(hex: "#282828").opacity(1),
+    ]
+
+    @ViewBuilder
+    private var walletActionBar: some View {
+        WalletActionBar {
+            WalletActionButton(
+                event: .send,
+                allowClick: !WalletManager.shared.isSelectedChildAccount,
+                action: vm.sendAction
+            )
+            WalletActionButton(event: .swap, allowClick: true) {
+                UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                self.vm.onSwapToken()
+            }
+            .visibility(vm.showSwapButton ? .visible : .gone)
+
+            WalletActionButton(event: .receive, allowClick: true, action: vm.receiveAction)
+
+            WalletActionButton(event: .buy, allowClick: true) {
+                Router.route(to: RouteMap.Wallet.buyCrypto)
+            }
+            .visibility(vm.showBuyButton ? .visible : .gone)
+        }
+    }
+
     private func separator() -> some View {
         if colorScheme == .dark {
             Color(hex: "#262626")
@@ -658,7 +676,12 @@ extension TokenDetailView {
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                     .background(.clear)
                     .cornerRadius(16)
-                    .shadow(color: Color(red: 0.2, green: 0.2, blue: 0.2).opacity(0.08), radius: 2.5, x: 0, y: 2)
+                    .shadow(
+                        color: Color(red: 0.2, green: 0.2, blue: 0.2).opacity(0.08),
+                        radius: 2.5,
+                        x: 0,
+                        y: 2
+                    )
                 }
             }
             .padding(.horizontal, 18)
@@ -745,9 +768,9 @@ extension TokenDetailView {
     }
 }
 
-// MARK: -
+// MARK: - BorderStyle
 
-struct BorderStyle: ViewModifier {    
+struct BorderStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
             .overlay {

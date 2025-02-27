@@ -18,13 +18,13 @@ struct EmptyWalletView: View {
         VStack(alignment: .center, spacing: 0) {
             Group {
                 topContent
-                
+
                 middleContent
             }
             .padding(.leading, 32)
-            
+
             Spacer()
-                        
+
             bottomContent
                 .padding(.horizontal, 16)
                 .padding(.bottom, 8)
@@ -32,110 +32,8 @@ struct EmptyWalletView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.Theme.Background.grey)
         .onAppear {
-            if !isSettingNotificationFirst {
-                vm.tryToRestoreAccountWhenFirstLaunch()
-            }
-            isSettingNotificationFirst = false
+            vm.tryToRestoreAccountWhenFirstLaunch()
         }
-    }
-    
-    @ViewBuilder
-    private var middleContent: some View {
-        if vm.placeholders.isEmpty {
-            noAccountsMiddleContent
-        } else {
-            recentListContent
-        }
-    }
-    
-    @ViewBuilder
-    private var noAccountsMiddleContent: some View {
-        VStack(alignment: .leading) {
-            Text("#onFlow.")
-                .font(.Ukraine(size: 48, weight: .thin))
-                .fontWeight(.thin)
-                .foregroundColor(Color("text.white.9"))
-                .padding(.horizontal, 24)
-                .padding(.vertical, 4)
-                .background(Color.Theme.Accent.green)
-                .cornerRadius(50)
-            
-            Spacer()
-
-            Text("welcome_message".localized)
-              .font(.inter(size: 18, weight: .light))
-              .foregroundColor(Color.LL.text)
-              .frame(alignment: .leading)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.trailing, 32)
-        .padding(.bottom, 42)
-    }
-        
-    @ViewBuilder
-    private var horizontalGradient: some View {
-        ZStack {
-            LinearGradient(
-                stops: [
-                    Gradient.Stop(color: .black.opacity(0), location: 0.00),
-                    Gradient.Stop(color: Color.Theme.Accent.green.opacity(0.5), location: 1.00),
-                ],
-                startPoint: UnitPoint(x: 0, y: 0.5),
-                endPoint: UnitPoint(x: 1, y: 0.5)
-            )
-            
-            HStack {
-                Image("lilico-app-icon")
-                    .resizable()
-                    .frame(width: 32, height: 32)
-                Text("app_name_full".localized)
-                    .font(.inter(size: 18, weight: .semibold))
-                    .foregroundColor(Color.LL.text)
-                Spacer()
-            }
-        }
-        .frame(height: 91)
-    }
-    
-    @ViewBuilder
-    private var verticalGradient: some View {
-        LinearGradient(
-            stops: [
-                Gradient.Stop(color: .black.opacity(0), location: 0.00),
-                Gradient.Stop(color: Color.Theme.Accent.green, location: 1.00),
-            ],
-            startPoint: UnitPoint(x: 0.5, y: 0),
-            endPoint: UnitPoint(x: 0.5, y: 1)
-        )
-        .frame(width: 79, height: 166)
-    }
-    
-    @ViewBuilder
-    private var gradients: some View {
-        ZStack(alignment: .topTrailing) {
-            verticalGradient
-            horizontalGradient
-        }
-    }
-    
-    @ViewBuilder
-    private var letsGetStarted: some View {
-        Text("lets_get_started")
-            .lineLimit(2)
-            .font(.Ukraine(size: 48, weight: .light))
-            .padding(.bottom, 32)
-            .padding(.top, -40)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .fixedSize(horizontal: false, vertical: true)
-    }
-    
-    @ViewBuilder
-    private var topContent: some View {
-        VStack(spacing: 0) {
-            gradients
-            letsGetStarted
-        }
-        .frame(height: 270)
     }
 
     var bottomContent: some View {
@@ -153,7 +51,7 @@ struct EmptyWalletView: View {
                     .cornerRadius(16)
                     .shadow(color: Color.black.opacity(0.12), x: 0, y: 4, blur: 24)
             }
-            
+
             Button {
                 vm.loginAccountAction()
             } label: {
@@ -171,7 +69,7 @@ struct EmptyWalletView: View {
                     )
             }
             .padding(.bottom, 16)
-            
+
             Text(disclaimer)
                 .font(.inter(size: 14))
                 .foregroundStyle(Color.LL.text)
@@ -180,7 +78,7 @@ struct EmptyWalletView: View {
                 .multilineTextAlignment(.center)
         }
     }
-    
+
     var recentListContent: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("registerd_accounts".localized)
@@ -199,12 +97,12 @@ struct EmptyWalletView: View {
                     }
                 }
             }
-            
+
             Spacer()
-            
+
             ZStack(alignment: .center) {
                 Divider().foregroundStyle(Color.Theme.Line.stroke)
-                
+
                 Text("or".localized)
                     .frame(width: 32, height: 32)
                     .background(Color.Theme.Background.grey)
@@ -230,7 +128,7 @@ struct EmptyWalletView: View {
                 .cornerRadius(18)
 
             VStack(alignment: .leading, spacing: 5) {
-                Text("@\(placeholder.username)")
+                Text("\(placeholder.username)")
                     .font(.inter(size: 12, weight: .bold))
                     .foregroundStyle(Color.Theme.Text.black8)
 
@@ -253,13 +151,112 @@ struct EmptyWalletView: View {
 
     @State
     private var isSettingNotificationFirst = true
-    
+
+    @ViewBuilder
+    private var middleContent: some View {
+        if vm.placeholders.isEmpty {
+            noAccountsMiddleContent
+        } else {
+            recentListContent
+        }
+    }
+
+    @ViewBuilder
+    private var noAccountsMiddleContent: some View {
+        VStack(alignment: .leading) {
+            Text("#onFlow.")
+                .font(.Ukraine(size: 48, weight: .thin))
+                .fontWeight(.thin)
+                .foregroundColor(Color("text.white.9"))
+                .padding(.horizontal, 24)
+                .padding(.vertical, 4)
+                .background(Color.Theme.Accent.green)
+                .cornerRadius(50)
+
+            Spacer()
+
+            Text("welcome_message".localized)
+                .font(.inter(size: 18, weight: .light))
+                .foregroundColor(Color.LL.text)
+                .frame(alignment: .leading)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.trailing, 32)
+        .padding(.bottom, 42)
+    }
+
+    @ViewBuilder
+    private var horizontalGradient: some View {
+        ZStack {
+            LinearGradient(
+                stops: [
+                    Gradient.Stop(color: .black.opacity(0), location: 0.00),
+                    Gradient.Stop(color: Color.Theme.Accent.green.opacity(0.5), location: 1.00),
+                ],
+                startPoint: UnitPoint(x: 0, y: 0.5),
+                endPoint: UnitPoint(x: 1, y: 0.5)
+            )
+
+            HStack {
+                Image("lilico-app-icon")
+                    .resizable()
+                    .frame(width: 32, height: 32)
+                Text("app_name_full".localized)
+                    .font(.inter(size: 18, weight: .semibold))
+                    .foregroundColor(Color.LL.text)
+                Spacer()
+            }
+        }
+        .frame(height: 91)
+    }
+
+    @ViewBuilder
+    private var verticalGradient: some View {
+        LinearGradient(
+            stops: [
+                Gradient.Stop(color: .black.opacity(0), location: 0.00),
+                Gradient.Stop(color: Color.Theme.Accent.green, location: 1.00),
+            ],
+            startPoint: UnitPoint(x: 0.5, y: 0),
+            endPoint: UnitPoint(x: 0.5, y: 1)
+        )
+        .frame(width: 79, height: 166)
+    }
+
+    @ViewBuilder
+    private var gradients: some View {
+        ZStack(alignment: .topTrailing) {
+            verticalGradient
+            horizontalGradient
+        }
+    }
+
+    @ViewBuilder
+    private var letsGetStarted: some View {
+        Text("lets_get_started".localized)
+            .lineLimit(2)
+            .font(.Ukraine(size: 48, weight: .light))
+            .padding(.bottom, 32)
+            .padding(.top, -40)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    @ViewBuilder
+    private var topContent: some View {
+        VStack(spacing: 0) {
+            gradients
+            letsGetStarted
+        }
+        .frame(height: 270)
+    }
+
     private var disclaimer: AttributedString {
         let localizedMarkdown = NSLocalizedString(
             "disclaimer",
             comment: "By using Flow Wallet you agree to the [Terms of Service](https://lilico.app/about/terms) and [Privacy Policy](https://lilico.app/about/privacy-policy)."
         )
-        
+
         // Convert the markdown string to an AttributedString
         var attributedString: AttributedString
         do {
@@ -267,14 +264,14 @@ struct EmptyWalletView: View {
         } catch {
             attributedString = AttributedString(localizedMarkdown)
         }
-        
+
         for run in attributedString.runs {
             if run.link != nil {
                 attributedString[run.range].foregroundColor = .LL.text
                 attributedString[run.range].underlineStyle = .single
             }
         }
-        
+
         return attributedString
     }
 }

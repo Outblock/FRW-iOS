@@ -22,19 +22,26 @@ final class MoveNFTsViewModel: ObservableObject {
 
     // MARK: Internal
 
-    @Published private(set) var selectedCollection: CollectionMask?
+    @Published
+    private(set) var selectedCollection: CollectionMask?
     // NFTModel
-    @Published private(set) var nfts: [MoveNFTsViewModel.NFT] = [
+    @Published
+    private(set) var nfts: [MoveNFTsViewModel.NFT] = [
         MoveNFTsViewModel.NFT.mock(),
         MoveNFTsViewModel.NFT.mock(),
-        MoveNFTsViewModel.NFT.mock()
+        MoveNFTsViewModel.NFT.mock(),
     ]
-    @Published private(set) var isMock = true
-    @Published private(set) var showHint = false
-    @Published private(set) var showFee = false
+    @Published
+    private(set) var isMock = true
+    @Published
+    private(set) var showHint = false
+    @Published
+    private(set) var showFee = false
 
     @Published
     private(set) var buttonState: VPrimaryButtonState = .disabled
+
+    let limitCount = 10
 
     @Published
     private(set) var fromContact = Contact(
@@ -52,14 +59,13 @@ final class MoveNFTsViewModel: ObservableObject {
             if fromContact == toContact {
                 toContact = oldValue
             }
-            
+
             Task {
                 await fetchCollection()
             }
         }
     }
-    
-    
+
     @Published
     private(set) var toContact = Contact(
         address: "",
@@ -78,8 +84,6 @@ final class MoveNFTsViewModel: ObservableObject {
             }
         }
     }
-
-    let limitCount = 10
 
     var selectedCount: Int {
         nfts.filter { $0.isSelected }.count
@@ -234,23 +238,25 @@ final class MoveNFTsViewModel: ObservableObject {
         await MainActor.run {
             self.buttonState = .loading
         }
-        
+
         guard let collection = selectedCollection else {
             return
         }
-        
+
         do {
             guard let from = FWAddressDector.create(address: fromContact.address) else {
                 return
             }
-            
+
             await MainActor.run {
                 self.isMock = true
             }
-            
-            let response = try await TokenBalanceHandler.shared.getNFTCollectionDetail(address: from,
-                                                                                       collectionIdentifier: collection.maskId,
-                                                                                       offset: offset)
+
+            let response = try await TokenBalanceHandler.shared.getNFTCollectionDetail(
+                address: from,
+                collectionIdentifier: collection.maskId,
+                offset: offset
+            )
             await MainActor.run {
                 if let list = response.nfts {
                     self.nfts = list.map { MoveNFTsViewModel.NFT(isSelected: false, model: $0) }
@@ -267,6 +273,34 @@ final class MoveNFTsViewModel: ObservableObject {
                 self.resetButtonState()
             }
             log.error("[MoveAsset] fetch NFTs failed:\(error)")
+        }
+    }
+
+    func handleFromContact(_ contact: Contact) {
+        let model = MoveAccountsViewModel(
+            selected: fromContact.address ?? ""
+        ) { newContact in
+            if let contact = newContact {
+                self.fromContact = contact
+            }
+        }
+        Router.route(to: RouteMap.Wallet.chooseChild(model))
+    }
+
+    func handleToContact(_ contact: Contact) {
+        let model = MoveAccountsViewModel(
+            selected: toContact.address ?? ""
+        ) { newContact in
+            if let contact = newContact {
+                self.toContact = contact
+            }
+        }
+        Router.route(to: RouteMap.Wallet.chooseChild(model))
+    }
+
+    func handleSwap() {
+        Task { @MainActor in
+            (self.fromContact, self.toContact) = (self.toContact, self.fromContact)
         }
     }
 
@@ -389,13 +423,13 @@ final class MoveNFTsViewModel: ObservableObject {
             guard let from = FWAddressDector.create(address: fromContact.address) else {
                 return
             }
-            
+
             await MainActor.run {
                 self.isMock = true
             }
-            
+
             let list = try await TokenBalanceHandler.shared.getNFTCollections(address: from)
-            
+
             if list.isEmpty {
                 await MainActor.run {
                     self.nfts = []
@@ -404,55 +438,31 @@ final class MoveNFTsViewModel: ObservableObject {
                 }
                 return
             }
-            
+
             await MainActor.run {
                 self.collectionList = list
                 self.selectedCollection = self.collectionList.first
             }
-            
+
             await fetchNFTs()
-            
+
         } catch {
             log.error("[MoveAsset] fetch Collection failed:\(error)")
         }
     }
-    
-    func handleFromContact(_ contact: Contact) {
-        let model = MoveAccountsViewModel(
-            selected: fromContact.address ?? ""
-        ) { newContact in
-            if let contact = newContact {
-                self.fromContact = contact
-            }
-        }
-        Router.route(to: RouteMap.Wallet.chooseChild(model))
-    }
-    
-    func handleToContact(_ contact: Contact) {
-        let model = MoveAccountsViewModel(
-            selected: toContact.address ?? ""
-        ) { newContact in
-            if let contact = newContact {
-                self.toContact = contact
-            }
-        }
-        Router.route(to: RouteMap.Wallet.chooseChild(model))
-    }
-    
-    func handleSwap() {
-        Task { @MainActor in
-            (self.fromContact, self.toContact) = (self.toContact, self.fromContact)
-        }
-    }
 }
 
-// MARK: - InsufficientStorageToastViewModel
+// MARK: InsufficientStorageToastViewModel
 
 extension MoveNFTsViewModel: InsufficientStorageToastViewModel {
     var variant: InsufficientStorageFailure? { _insufficientStorageFailure }
-    
+
     private func checkForInsufficientStorage() {
-        self._insufficientStorageFailure = insufficientStorageCheckForMove(token: .nft(nil), from: self.fromContact.walletType, to: self.toContact.walletType)
+        _insufficientStorageFailure = insufficientStorageCheckForMove(
+            token: .nft(nil),
+            from: fromContact.walletType,
+            to: toContact.walletType
+        )
     }
 }
 

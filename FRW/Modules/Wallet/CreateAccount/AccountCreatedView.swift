@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct AccountCreatedView: RouteableView {
+    // MARK: Lifecycle
+
     init(_ viewModel: CreateProfileWaitingViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
@@ -28,14 +30,14 @@ struct AccountCreatedView: RouteableView {
     var isNavigationBarHidden: Bool {
         true
     }
-    
+
     var body: some View {
         VStack {
             flowLabel
                 .padding(.leading, 32)
-            
+
             Spacer()
-            
+
             Text("account_ready".localized)
                 .font(.Ukraine(size: 40, weight: .light))
                 .multilineTextAlignment(.leading)
@@ -43,21 +45,20 @@ struct AccountCreatedView: RouteableView {
                 .padding(.horizontal, 32)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            
             subtitleAndGradient
                 .padding(.leading, 32)
-            
+
             Spacer()
-            
+
             createBackupBtn
                 .padding(.horizontal, 16)
         }
         .padding(.top, 16)
         .backgroundFill(Color.Theme.Background.grey)
     }
-    
+
     // MARK: Private
-    
+
     @ViewBuilder
     private var subtitleAndGradient: some View {
         ZStack(alignment: .bottomTrailing) {
@@ -75,7 +76,7 @@ struct AccountCreatedView: RouteableView {
         }
         .frame(maxWidth: .infinity)
     }
-    
+
     @ViewBuilder
     private var createBackupBtn: some View {
         Button {
@@ -93,7 +94,7 @@ struct AccountCreatedView: RouteableView {
             .padding(.bottom, 16)
         }
     }
-    
+
     @ViewBuilder
     private var flowLabel: some View {
         HStack {
