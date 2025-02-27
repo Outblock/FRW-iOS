@@ -136,7 +136,8 @@ final class WalletViewModel: ObservableObject {
                 }
 
                 if abs(self.lastRefreshTS - Date().timeIntervalSince1970) > self
-                    .autoRefreshInterval {
+                    .autoRefreshInterval
+                {
                     self.reloadWalletData()
                 }
             }.store(in: &cancelSets)
@@ -284,7 +285,7 @@ final class WalletViewModel: ObservableObject {
         coinItems = list
 
         refreshTotalBalance()
-        
+
         // Disable this backup tip for now, cause it show sometime incorrect
         // And our new backup flow is showing after account creation
         // showBackupTipsIfNeeded()
@@ -461,7 +462,7 @@ extension WalletViewModel {
 
     func stakingAction() {
         if !LocalUserDefaults.shared.stakingGuideDisplayed, !StakingManager.shared.isStaked {
-            Router.route(to: RouteMap.Wallet.stakeGuide)
+            Router.route(to: RouteMap.Wallet.stakingSelectProvider)
             return
         }
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -539,7 +540,8 @@ extension WalletViewModel {
 
         // buy
         if RemoteConfigManager.shared.config?.features.onRamp ?? false == true,
-           flow.chainID == .mainnet {
+           flow.chainID == .mainnet
+        {
             if isNotPrimary {
                 showBuyButton = false
             } else {

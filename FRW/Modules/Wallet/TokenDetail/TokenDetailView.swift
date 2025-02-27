@@ -18,7 +18,7 @@ struct TokenDetailView: RouteableView {
 
     init(token: TokenModel, accessible: Bool) {
         _vm = StateObject(wrappedValue: TokenDetailViewModel(token: token))
-        self.isAccessible = accessible
+        isAccessible = accessible
     }
 
     // MARK: Internal
@@ -220,7 +220,7 @@ struct TokenDetailView: RouteableView {
 
             // transfer list
             VStack(spacing: 8) {
-                ForEach(0..<vm.recentTransfers.count, id: \.self) { index in
+                ForEach(0 ..< vm.recentTransfers.count, id: \.self) { index in
                     let transfer = vm.recentTransfers[index]
                     Button {
                         vm.transferDetailAction(transfer)
@@ -693,7 +693,7 @@ extension TokenDetailView {
     var stakeAdView: some View {
         Button {
             if !LocalUserDefaults.shared.stakingGuideDisplayed {
-                Router.route(to: RouteMap.Wallet.stakeGuide)
+                Router.route(to: RouteMap.Wallet.stakingSelectProvider)
                 return
             }
 
