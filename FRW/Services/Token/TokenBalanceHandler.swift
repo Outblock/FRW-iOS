@@ -22,7 +22,7 @@ class TokenBalanceHandler {
         """
         {
           "chainId": 747,
-          "address": <FlowTokenAddress>,
+          "address": "0x<FlowTokenAddress>",
           "contractName": "",
           "path": {
             "vault": "/storage/flowTokenVault",
@@ -65,7 +65,7 @@ class TokenBalanceHandler {
     }
 
     static func getFlowTokenModel(network: FlowNetworkType) -> SingleToken? {
-        let address = flowTokenAddress(network: network)
+        let address = flowTokenAddress(network: network).stripHexPrefix()
         guard let data = flowTokenJsonStr
             .replacingOccurrences(of: "<FlowTokenAddress>", with: address)
             .data(using: .utf8) else {
@@ -108,7 +108,6 @@ class TokenBalanceHandler {
         let provider = try generateProvider(address: address, network: network)
         return try await provider.getNFTCollectionDetail(
             address: address,
-
             collectionIdentifier: collectionIdentifier,
             offset: offset
         )
