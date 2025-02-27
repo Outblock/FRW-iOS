@@ -13,11 +13,9 @@ import WalletConnectSign
 
 // https://github.com/onflow/flow-evm-gateway?tab=readme-ov-file#evm-gateway-endpoints
 
-
-
 struct WalletConnectHandler {
     // MARK: Internal
-    
+
     enum HandlerError: Error {
         case chainIdMismatch
     }
@@ -42,11 +40,11 @@ struct WalletConnectHandler {
 
     func chainId(sessionProposal: Session.Proposal) -> Flow.ChainID? {
         let handlers = current(sessionProposal: sessionProposal)
-        
+
         // Retrieve chain IDs if the corresponding handler exists
         let evmChainId = handlers[EVMHandler.nameTag]?.chainId(sessionProposal: sessionProposal)
         let flowChainId = handlers[flowHandler.nameTag]?.chainId(sessionProposal: sessionProposal)
-        
+
         // If both handlers are present, verify that their chain IDs match.
         if let evmChainId = evmChainId, let flowChainId = flowChainId {
             if evmChainId != flowChainId {
@@ -54,7 +52,7 @@ struct WalletConnectHandler {
             }
             return evmChainId
         }
-        
+
         // If only one handler exists, return its chain ID.
         return evmChainId ?? flowChainId
     }
@@ -63,7 +61,7 @@ struct WalletConnectHandler {
         sessionProposal: Session.Proposal
     ) throws -> [String: SessionNamespace] {
         var approvedNamespaces: [String: SessionNamespace] = [:]
-        
+
         // Process EVM if present in either required or optional namespaces.
         let reqEvm = sessionProposal.requiredNamespaces[EVMHandler.nameTag]
         let optEvm = sessionProposal.optionalNamespaces?[EVMHandler.nameTag]
@@ -72,7 +70,7 @@ struct WalletConnectHandler {
                 approvedNamespaces[EVMHandler.nameTag] = evmNS
             }
         }
-        
+
         // Process FCL if present in either required or optional namespaces.
         let reqFlow = sessionProposal.requiredNamespaces[flowHandler.nameTag]
         let optFlow = sessionProposal.optionalNamespaces?[flowHandler.nameTag]
@@ -81,7 +79,7 @@ struct WalletConnectHandler {
                 approvedNamespaces[flowHandler.nameTag] = flowNS
             }
         }
-        
+
         return approvedNamespaces
     }
 
@@ -136,7 +134,7 @@ struct WalletConnectHandler {
             EVMHandler.nameTag,
         ]
     }
-    
+
     private func current(request: WalletConnectSign.Request) -> WalletConnectChildHandlerProtocol {
         let chainId = request.chainId
         if chainId.namespace.contains(EVMHandler.nameTag) {
@@ -144,7 +142,7 @@ struct WalletConnectHandler {
         }
         return flowHandler
     }
-    
+
     private func current(sessionProposal: Session.Proposal) -> [String: WalletConnectChildHandlerProtocol] {
         let namespaces = namespaceTag(sessionProposal: sessionProposal)
         var result: [String: WalletConnectChildHandlerProtocol] = [:]

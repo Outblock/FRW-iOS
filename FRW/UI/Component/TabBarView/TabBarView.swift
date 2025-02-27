@@ -50,7 +50,7 @@ struct TabBarView<T: Hashable>: View {
 
     var tabView: some View {
         TabView(selection: $current) {
-            ForEach(0..<pages.count, id: \.self) { index in
+            ForEach(0 ..< pages.count, id: \.self) { index in
                 let pageModel = pages[index]
                 pageModel.view()
                     .tag(pageModel.tag)

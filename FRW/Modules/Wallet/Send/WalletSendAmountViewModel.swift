@@ -51,7 +51,7 @@ final class WalletSendAmountViewModel: ObservableObject {
     // MARK: Lifecycle
 
     init(target: Contact, token: TokenModel) {
-        self.targetContact = target
+        targetContact = target
         self.token = token
 
         WalletManager.shared.$coinBalances.sink { [weak self] _ in
@@ -160,7 +160,8 @@ extension WalletSendAmountViewModel {
                     return
                 }
                 guard let compareKey = EVMAccountManager.shared.selectedAccount == nil ? token
-                    .contractId : token.flowIdentifier else {
+                    .contractId : token.flowIdentifier
+                else {
                     await MainActor.run {
                         self.isValidToken = false
                     }
@@ -274,28 +275,11 @@ extension WalletSendAmountViewModel {
     func maxAction() {
         exchangeType = .token
         if token.isFlowCoin, WalletManager.shared
-            .isCoa(targetContact.address), WalletManager.shared.isMain() {
-            Task {
-                do {
-                    let topAmount = try await FlowNetwork.minFlowBalance()
-                    let num = max(
-                        amountBalance - topAmount - WalletManager.fixedMoveFee.doubleValue,
-                        0
-                    )
-                    DispatchQueue.main.async {
-                        self.inputText = num.formatCurrencyString()
-                    }
-
-                    actualBalance = num.formatCurrencyString(digits: token.decimal)
-                } catch {
-                    let num = max(amountBalance - minBalance.doubleValue, 0)
-                    DispatchQueue.main.async {
-                        self.inputText = num.formatCurrencyString()
-                    }
-                    actualBalance = num.formatCurrencyString(digits: token.decimal)
-                    log.error("[Flow] min flow balance error")
-                }
-            }
+            .isCoa(targetContact.address), WalletManager.shared.isMain()
+        {
+            let num = max(amountBalance, 0)
+            inputText = num.formatCurrencyString()
+            actualBalance = num.formatCurrencyString(digits: token.decimal)
         } else {
             let num = max(amountBalance, 0)
             inputText = num.formatCurrencyString()
@@ -384,7 +368,8 @@ extension WalletSendAmountViewModel {
                     .coa : AccountType.flow
                 var toAccountType = targetAddress.isEVMAddress ? AccountType.coa : AccountType.flow
                 if toAccountType == .coa,
-                   targetAddress != EVMAccountManager.shared.accounts.first?.address {
+                   targetAddress != EVMAccountManager.shared.accounts.first?.address
+                {
                     toAccountType = .eoa
                 }
 
@@ -466,7 +451,8 @@ extension WalletSendAmountViewModel {
                             throw LLError.invalidAddress
                         }
                         guard let bigAmount = amount.description
-                            .parseToBigUInt(decimals: token.decimal) else {
+                            .parseToBigUInt(decimals: token.decimal)
+                        else {
                             throw WalletError.insufficientBalance
                         }
                         let erc20Contract = try await FlowProvider.Web3.defaultContract()

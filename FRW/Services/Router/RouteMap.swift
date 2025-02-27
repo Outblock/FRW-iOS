@@ -286,7 +286,6 @@ extension RouteMap.Wallet: RouterTarget {
                 )
             else { return }
             Router.route(to: RouteMap.Explore.browser(url))
-
         case let .selectToken(selectedToken, disableTokens, callback):
             let vm = AddTokenViewModel(
                 selectedToken: selectedToken,
@@ -316,7 +315,8 @@ extension RouteMap.Wallet: RouterTarget {
             Router.topPresentedController().present(vc, animated: true, completion: nil)
         case .backToTokenDetail:
             if let existVC = navi.viewControllers
-                .first(where: { $0 as? RouteableUIHostingController<TokenDetailView> != nil }) {
+                .first(where: { $0 as? RouteableUIHostingController<TokenDetailView> != nil })
+            {
                 navi.popToViewController(existVC, animated: true)
                 return
             }
@@ -437,7 +437,8 @@ extension RouteMap.Profile: RouterTarget {
 //            return
             #endif
             if let existVC = navi.viewControllers
-                .first(where: { $0.navigationItem.title == "backup".localized }) {
+                .first(where: { $0.navigationItem.title == "backup".localized })
+            {
                 navi.popToViewController(existVC, animated: true)
                 return
             }
@@ -459,7 +460,8 @@ extension RouteMap.Profile: RouterTarget {
             )
         case let .security(animated):
             if let existVC = Router.coordinator.rootNavi?.viewControllers
-                .first(where: { $0.navigationItem.title == "security".localized }) {
+                .first(where: { $0.navigationItem.title == "security".localized })
+            {
                 navi.popToViewController(existVC, animated: animated)
                 return
             }
@@ -484,7 +486,8 @@ extension RouteMap.Profile: RouterTarget {
             navi.push(content: ChildAccountDetailEditView(vm: vm))
         case .backToAccountSetting:
             if let existVC = navi.viewControllers
-                .first(where: { $0 as? RouteableUIHostingController<AccountSettingView> != nil }) {
+                .first(where: { $0 as? RouteableUIHostingController<AccountSettingView> != nil })
+            {
                 navi.popToViewController(existVC, animated: true)
                 return
             }

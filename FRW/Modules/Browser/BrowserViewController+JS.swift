@@ -173,7 +173,8 @@ extension BrowserViewController {
         if let nonce = response.body.nonce,
            !nonce.isEmpty,
            let proofSign = response.encodeAccountProof(address: address),
-           let sign = WalletManager.shared.signSync(signableData: proofSign) {
+           let sign = WalletManager.shared.signSync(signableData: proofSign)
+        {
             accountProofSign = sign.hexValue
         }
         let keyIndex = WalletManager.shared.keyIndex
