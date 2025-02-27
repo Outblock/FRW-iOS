@@ -14,12 +14,19 @@ class ThemeManager: ObservableObject {
     // MARK: Lifecycle
 
     init() {
+        if userDefaultTheme {
+            setStyle(style: .dark)
+            self.userDefaultTheme = false
+        }
         reloadStyle()
     }
 
     // MARK: Internal
 
     static let shared = ThemeManager()
+
+    @AppStorage(LocalUserDefaults.Keys.userDefaultTheme.rawValue)
+    var userDefaultTheme: Bool = true
 
     @Published
     var style: ColorScheme?

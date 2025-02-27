@@ -13,6 +13,8 @@ var currentNetwork: FlowNetworkType {
     LocalUserDefaults.shared.flowNetwork
 }
 
+// MARK: - LocalUserDefaults.Keys
+
 extension LocalUserDefaults {
     enum Keys: String {
         case activatedUID
@@ -55,6 +57,8 @@ extension LocalUserDefaults {
 
         case customToken
         case migrationFinished
+
+        case userDefaultTheme
     }
 }
 
@@ -92,7 +96,7 @@ class LocalUserDefaults: ObservableObject {
 
     @AppStorage(Keys.shouldShowConfettiOnHome.rawValue)
     var shouldShowConfettiOnHome: Bool = false
-    
+
     @AppStorage(Keys.activatedUID.rawValue)
     var activatedUID: String?
 
@@ -137,6 +141,9 @@ class LocalUserDefaults: ObservableObject {
 
     @AppStorage(Keys.backupSheetNotAsk.rawValue)
     var backupSheetNotAsk: Bool = false
+
+    @AppStorage(Keys.migrationFinished.rawValue)
+    var migrationFinished: Bool = false
 
     var legacyUserInfo: UserInfo? {
         set {
@@ -394,35 +401,37 @@ class LocalUserDefaults: ObservableObject {
         } else {
             list.append(user)
         }
-        self.userList = list
+        userList = list
     }
 
-    func updateUser(by userId: String, publicKey: String ,address: String? = nil, account: UserManager.Accountkey? = nil) {
+    func updateUser(
+        by userId: String,
+        publicKey: String,
+        address: String? = nil,
+        account: UserManager.Accountkey? = nil
+    ) {
         var users = userList
-        let index = users.lastIndex(where: { $0.userId == userId && $0.publicKey == publicKey  })
+        let index = users.lastIndex(where: { $0.userId == userId && $0.publicKey == publicKey })
         guard let index = index else {
             return
         }
         let user = users[index]
         let newUser = user.copy(address: address, account: account)
         users[index] = newUser
-        self.userList = users
+        userList = users
     }
 
     func updateSEUser(by userId: String, address: String) {
         var users = userList
-        let index = users.lastIndex(where: { $0.userId == userId && $0.keyType == .secureEnclave  })
+        let index = users.lastIndex(where: { $0.userId == userId && $0.keyType == .secureEnclave })
         guard let index = index else {
             return
         }
         let user = users[index]
         let newUser = user.copy(address: address, account: nil)
         users[index] = newUser
-        self.userList = users
+        userList = users
     }
-
-    @AppStorage(Keys.migrationFinished.rawValue)
-    var migrationFinished: Bool = false
 }
 
 extension LocalUserDefaults {
