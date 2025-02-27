@@ -38,7 +38,7 @@ extension TabBarView {
                     indicator(proxy.size.width).animation(.spring(), value: offsetX)
                 }
             }
-            .frame(height: 46)
+            .frame(height: 80)
             .padding(.horizontal, 16)
         }
 
@@ -86,4 +86,78 @@ private struct TranslateEffect: GeometryEffect {
 
 extension Animation {
     fileprivate static let tabSelect = Animation.spring(response: 0.3, dampingFraction: 0.7)
+}
+
+// MARK: - Preview
+
+struct PreviewWrapper: View {
+    @State private var selectedTab: AppTabType = .wallet
+    
+    var body: some View {
+        let wallet = TabBarPageModel<AppTabType>(
+            tag: WalletHomeView.tabTag(),
+            iconName: WalletHomeView.iconName(),
+            title: WalletHomeView.title()
+        ) {
+            AnyView(WalletHomeView())
+        }
+        
+        let nft = TabBarPageModel<AppTabType>(
+            tag: NFTTabScreen.tabTag(),
+            iconName: NFTTabScreen.iconName(),
+            title: NFTTabScreen.title()
+        ) {
+            AnyView(NFTTabScreen())
+        }
+        
+        let explore = TabBarPageModel<AppTabType>(
+            tag: ExploreTabScreen.tabTag(),
+            iconName: ExploreTabScreen.iconName(),
+            title: ExploreTabScreen.title()
+        ) {
+            AnyView(ExploreTabScreen())
+        }
+        
+        let txHistory = TabBarPageModel<AppTabType>(
+            tag: TransactionListViewController.tabTag(),
+            iconName: TransactionListViewController.iconName(),
+            title: TransactionListViewController.title()
+        ) {
+            /// MU: This was the only way to make it pretty in SwiftUI
+            let vc = TransactionListViewControllerRepresentable()
+            return AnyView(
+                NavigationView {
+                    vc
+                        .navigationViewStyle(StackNavigationViewStyle())
+                        .navigationBarBackButtonHidden()
+                }
+                    .navigationViewStyle(StackNavigationViewStyle())
+                    .padding(.top, 4)
+            )
+        }
+        
+        let profile = TabBarPageModel<AppTabType>(
+            tag: ProfileView.tabTag(),
+            iconName: ProfileView.iconName(),
+            title: ProfileView.title()
+        ) {
+            AnyView(ProfileView())
+        }
+        
+        let pages = [wallet, nft, txHistory, profile]
+        
+        VStack {
+            Spacer()
+            TabBarView<AppTabType>(
+                current: selectedTab,
+                pages: pages,
+                maxWidth: UIScreen.screenWidth
+            )
+        }
+    }
+}
+
+#Preview {
+    PreviewWrapper()
+        .preferredColorScheme(.dark)
 }

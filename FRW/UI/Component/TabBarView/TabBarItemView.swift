@@ -24,7 +24,7 @@ struct TabBarItemView<T: Hashable>: View {
             withAnimation(.spring()) { selected = pageModel.tag }
             action()
         }, label: {
-            VStack(spacing: 2) {
+            VStack(spacing: 8) {
                 icon
                 title
             }
@@ -42,6 +42,7 @@ struct TabBarItemView<T: Hashable>: View {
     @ViewBuilder
     private var icon: some View {
         Image(pageModel.iconName + (isSelected ? "-selected" : "") )
+            .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(width: 28, height: 28)
             .frame(maxWidth: .infinity)
@@ -51,7 +52,7 @@ struct TabBarItemView<T: Hashable>: View {
     @ViewBuilder
     private var title: some View {
         Text(pageModel.title)
-            .font(.inter(size: 12, weight: .semibold))
+            .font(.inter(size: 12, weight: isSelected ? .semibold : .regular))
     }
     
     @ViewBuilder
