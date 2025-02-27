@@ -80,7 +80,7 @@ struct EmptyWalletView: View {
     }
 
     var recentListContent: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 0) {
             Text("registerd_accounts".localized)
                 .font(.inter(size: 16, weight: .bold))
                 .foregroundColor(Color.Theme.Text.black8)
@@ -97,8 +97,8 @@ struct EmptyWalletView: View {
                     }
                 }
             }
-
-            Spacer()
+            .padding(.top, 8)
+            .mockPlaceholder(vm.isLoading)
 
             ZStack(alignment: .center) {
                 Divider().foregroundStyle(Color.Theme.Line.stroke)
@@ -108,7 +108,7 @@ struct EmptyWalletView: View {
                     .background(Color.Theme.Background.grey)
                     .foregroundStyle(Color.Theme.Text.text4)
             }
-            .padding(.vertical, 8)
+            .padding(.bottom, 8)
             .padding(.trailing, 37)
             .maxWidth(.infinity)
         }

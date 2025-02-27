@@ -66,6 +66,9 @@ class EmptyWalletViewModel: ObservableObject {
     @Published
     var placeholders: [EmptyWalletViewModel.Placeholder] = []
 
+    @Published
+    var isLoading: Bool = false
+
     func switchAccountAction(_ uid: String) {
         Task {
             do {
@@ -97,25 +100,22 @@ class EmptyWalletViewModel: ObservableObject {
             // has been triggered or no old account to restore
             return
         }
+        guard let isReachable = net?.isReachable else { return }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            guard let isReachable = self.net?.isReachable else { return }
-
-            if isReachable {
-                self.net?.stopListening()
-                UserManager.shared.tryToRestoreOldAccountOnFirstLaunch()
-                return
-            } else {
-                self.net?.startListening(onQueue: .main, onUpdatePerforming: { status in
-                    log.info("[NET] network changed")
-                    switch status {
-                    case .reachable:
-                        self.tryToRestoreAccountWhenFirstLaunch()
-                    default:
-                        log.info("[NET] not reachable")
-                    }
-                })
-            }
+        if isReachable {
+            net?.stopListening()
+            restoreAccounts()
+            return
+        } else {
+            net?.startListening(onQueue: .main, onUpdatePerforming: { status in
+                log.info("[NET] network changed")
+                switch status {
+                case .reachable:
+                    self.restoreAccounts()
+                default:
+                    log.info("[NET] not reachable")
+                }
+            })
         }
     }
 
@@ -123,4 +123,16 @@ class EmptyWalletViewModel: ObservableObject {
 
     private var cancelSets = Set<AnyCancellable>()
     private var net: NetworkReachabilityManager? = NetworkReachabilityManager()
+
+    private func restoreAccounts() {
+        Task {
+            await MainActor.run {
+                isLoading = true
+            }
+            await UserManager.shared.tryToRestoreOldAccountOnFirstLaunch()
+            await MainActor.run {
+                isLoading = false
+            }
+        }
+    }
 }
