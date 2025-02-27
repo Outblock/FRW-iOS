@@ -128,7 +128,7 @@ struct EmptyWalletView: View {
                 .cornerRadius(18)
 
             VStack(alignment: .leading, spacing: 5) {
-                Text("@\(placeholder.username)")
+                Text("\(placeholder.username)")
                     .font(.inter(size: 12, weight: .bold))
                     .foregroundStyle(Color.Theme.Text.black8)
 

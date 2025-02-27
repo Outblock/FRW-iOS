@@ -43,7 +43,7 @@ class AccountSwitchViewModel: ObservableObject {
                         let userStore = userStoreList.last { $0.userId == uid }
                         address = userStore?.address ?? "0x"
                     }
-                    var username = userInfo?.nickname
+                    var username = userInfo?.nickname ?? userInfo?.username
                     if username == nil {
                         username = "Profile \(index)"
                         index += 1

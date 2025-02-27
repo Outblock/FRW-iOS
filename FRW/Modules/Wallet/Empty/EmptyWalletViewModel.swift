@@ -46,7 +46,7 @@ class EmptyWalletViewModel: ObservableObject {
                         address = userStore?.address ?? "0x"
                     }
 
-                    var username = userInfo?.username
+                    var username = userInfo?.nickname ?? userInfo?.username
                     if username == nil {
                         username = "Account \(index)"
                         index += 1
