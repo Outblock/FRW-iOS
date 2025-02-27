@@ -109,8 +109,29 @@ final class MoveNFTsViewModel: ObservableObject {
         buttonState = .loading
         Task {
             do {
-                let identifier = collection.maskFlowIdentifier ?? nfts.first?.model
-                    .maskFlowIdentifier ?? nil
+                guard let identifier = collection.maskFlowIdentifier ?? nfts.first?.model
+                    .maskFlowIdentifier else {
+                    HUD.error(MoveError.invalidateIdentifier)
+                    return
+                }
+                
+                guard let toAddress = toContact.address else {
+                    HUD.error(MoveError.invalidateToAddress)
+                    return
+                }
+                
+                guard let fromAddress = fromContact.address else {
+                    HUD.error(MoveError.invalidateFromAddress)
+                    return
+                }
+                
+                guard let nftCollection = collection as? NFTCollection else {
+                    HUD.error(MoveError.invalidateNftCollectionInfo)
+                    return
+                }
+                
+                let nftCollectionInfo = nftCollection.collection
+                
                 let ids: [UInt64] = nfts.compactMap { nft in
                     if !nft.isSelected {
                         return nil
@@ -121,9 +142,7 @@ final class MoveNFTsViewModel: ObservableObject {
                     }
                     return resultId
                 }
-                guard let identifier = identifier else {
-                    return
-                }
+
                 var tid: Flow.ID?
                 switch (fromContact.walletType, toContact.walletType) {
                 case (.flow, .evm):
@@ -139,56 +158,41 @@ final class MoveNFTsViewModel: ObservableObject {
                         fromEvm: true
                     )
                 case (.flow, .link):
-                    if let coll = collection as? NFTCollection {
-                        let identifier = coll.collection.path?.privatePath ?? ""
-                        tid = try await FlowNetwork.batchMoveNFTToChild(
-                            childAddr: toContact.address ?? "",
-                            identifier: identifier,
-                            ids: ids,
-                            collection: coll.collection
-                        )
-                    }
+                    tid = try await FlowNetwork.batchMoveNFTToChild(
+                        childAddr: toAddress,
+                        identifier: identifier,
+                        ids: ids,
+                        collection: nftCollectionInfo
+                    )
                 case (.link, .flow):
-                    if let coll = collection as? NFTCollection {
-                        let identifier = coll.collection.path?.privatePath ?? ""
-                        tid = try await FlowNetwork.batchMoveNFTToParent(
-                            childAddr: fromContact.address ?? "",
-                            identifier: identifier,
-                            ids: ids,
-                            collection: coll.collection
-                        )
-                    }
+                    tid = try await FlowNetwork.batchMoveNFTToParent(
+                        childAddr: fromAddress,
+                        identifier: identifier,
+                        ids: ids,
+                        collection: nftCollectionInfo
+                    )
                 case (.link, .link):
-                    if let coll = collection as? NFTCollection {
-                        let identifier = coll.collection.path?.privatePath ?? ""
-                        tid = try await FlowNetwork.batchSendChildNFTToChild(
-                            fromAddress: fromContact.address ?? "",
-                            toAddress: toContact.address ?? "",
-                            identifier: identifier,
-                            ids: ids,
-                            collection: coll.collection
-                        )
-                    }
+                    tid = try await FlowNetwork.batchSendChildNFTToChild(
+                        fromAddress: fromAddress,
+                        toAddress: toAddress,
+                        identifier: identifier,
+                        ids: ids,
+                        collection: nftCollectionInfo
+                    )
                 case (.link, .evm):
-                    if let coll = collection as? NFTCollection {
-                        let identifier = coll.collection.path?.privatePath ?? ""
-                        tid = try await FlowNetwork
-                            .batchBridgeChildNFTToCoa(
-                                nft: identifier,
-                                ids: ids,
-                                child: fromContact.address ?? ""
-                            )
-                    }
+                    tid = try await FlowNetwork
+                        .batchBridgeChildNFTToCoa(
+                            nft: identifier,
+                            ids: ids,
+                            child: fromAddress
+                        )
                 case (.evm, .link):
-                    if let coll = collection as? NFTCollection {
-                        let identifier = coll.collection.path?.privatePath ?? ""
-                        tid = try await FlowNetwork
-                            .batchBridgeChildNFTFromCoa(
-                                nft: identifier,
-                                ids: ids,
-                                child: toContact.address ?? ""
-                            )
-                    }
+                    tid = try await FlowNetwork
+                        .batchBridgeChildNFTFromCoa(
+                            nft: identifier,
+                            ids: ids,
+                            child: toAddress
+                        )
                 default:
                     HUD.info(title: "Feature_Coming_Soon::message".localized)
                 }

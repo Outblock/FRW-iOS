@@ -52,6 +52,13 @@ class HUD {
     ) {
         HUD.present(title: title, message: message, preset: preset, haptic: haptic)
     }
+    
+    static func error(
+        _ error: any BaseError
+    ) {
+        log.error(error.errorLog)
+        HUD.error(title: "\(error.errorCode)", message: error.localizedDescription)
+    }
 
     static func debugSuccess(
         title: String,

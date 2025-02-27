@@ -284,7 +284,10 @@ final class WalletViewModel: ObservableObject {
         coinItems = list
 
         refreshTotalBalance()
-        showBackupTipsIfNeeded()
+        
+        // Disable this backup tip for now, cause it show sometime incorrect
+        // And our new backup flow is showing after account creation
+        // showBackupTipsIfNeeded()
     }
 
     private func refreshTotalBalance() {
