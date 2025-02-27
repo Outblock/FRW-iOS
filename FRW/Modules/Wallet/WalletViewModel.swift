@@ -511,12 +511,13 @@ extension WalletViewModel {
             showAddTokenButton = false
         }
 
+        let isChild = ChildAccountManager.shared.selectedChildAccount != nil
         let isNotPrimary = ChildAccountManager.shared
             .selectedChildAccount != nil || EVMAccountManager.shared.selectedAccount != nil
         // Swap
         if (RemoteConfigManager.shared.config?.features.swap ?? false) == true {
             // don't show when current is Linked account
-            if isNotPrimary {
+            if isChild {
                 showSwapButton = false
             } else {
                 showSwapButton = true
