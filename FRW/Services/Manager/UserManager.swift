@@ -666,34 +666,30 @@ extension UserManager {
 
 extension UserManager {
     func switchAccount(withUID uid: String) async throws {
-        do {
-            await MainActor.run {
-                isProfileSwitching = true
-            }
-            
-            if !currentNetwork.isMainnet {
-                WalletManager.shared.changeNetwork(.mainnet)
-            }
-            
-            if uid == activatedUID {
-                log.warning("switching the same account")
-                return
-            }
-            
-            if WalletManager.shared.keyProvider(with: uid) != nil {
-                try await restoreLogin(with: uid)
-                return
-            }
-            try await restoreLogin(userId: uid)
-            
-            await MainActor.run {
-                isProfileSwitching = false
-            }
-        } catch {
-            await MainActor.run {
-                isProfileSwitching = false
-            }
+        defer {
+            isProfileSwitching = false
         }
+        
+        await MainActor.run {
+            isProfileSwitching = true
+        }
+        
+        if !currentNetwork.isMainnet {
+            WalletManager.shared.changeNetwork(.mainnet)
+        }
+        
+        if uid == activatedUID {
+            log.warning("switching the same account")
+            return
+        }
+        
+        if WalletManager.shared.keyProvider(with: uid) != nil {
+            try await restoreLogin(with: uid)
+            return
+        }
+        
+        try await restoreLogin(userId: uid)
+            
         // FIXME: data migrate from device to other device,the private key is destructive
 //        let allModel = try WallectSecureEnclave.Store.fetchAllModel(by: uid)
 //        let model = try WallectSecureEnclave.Store.fetchModel(by: uid)
