@@ -114,7 +114,7 @@ struct ContactRelationView: View {
 
     @ViewBuilder
     func arrow() -> some View {
-        Image("icon-account-swap")
+        Image("icon-move-arrow")
             .resizable()
             .frame(width: 25, height: 25)
             .padding(6)
