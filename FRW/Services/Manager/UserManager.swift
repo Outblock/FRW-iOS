@@ -87,6 +87,10 @@ class UserManager: ObservableObject {
     var isLoggedIn: Bool {
         activatedUID != nil
     }
+    
+    /// https://github.com/Outblock/FRW-iOS/issues/879
+    @Published
+    var forceHideLoginScreen: Bool = false
 
     func verifyUserType(by _: String) {
         Task {
@@ -662,7 +666,12 @@ extension UserManager {
 // MARK: - Switch Account
 
 extension UserManager {
+    @MainActor
     func switchAccount(withUID uid: String) async throws {
+        forceHideLoginScreen = true
+        defer {
+            forceHideLoginScreen = false
+        }
         if !currentNetwork.isMainnet {
             WalletManager.shared.changeNetwork(.mainnet)
         }
