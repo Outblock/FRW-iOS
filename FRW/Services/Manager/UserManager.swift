@@ -87,6 +87,9 @@ class UserManager: ObservableObject {
     var isLoggedIn: Bool {
         activatedUID != nil
     }
+    
+    @Published
+    var isProfileSwitching: Bool = false
 
     func verifyUserType(by _: String) {
         Task {
@@ -520,7 +523,7 @@ extension UserManager {
         EventTrack.Dev.restoreLogin(userId: userId)
         if Auth.auth().currentUser?.isAnonymous != true {
             try await Auth.auth().signInAnonymously()
-            DispatchQueue.main.async {
+            await MainActor.run {
                 self.activatedUID = nil
                 self.userInfo = nil
             }
@@ -663,20 +666,34 @@ extension UserManager {
 
 extension UserManager {
     func switchAccount(withUID uid: String) async throws {
-        if !currentNetwork.isMainnet {
-            WalletManager.shared.changeNetwork(.mainnet)
+        do {
+            await MainActor.run {
+                isProfileSwitching = true
+            }
+            
+            if !currentNetwork.isMainnet {
+                WalletManager.shared.changeNetwork(.mainnet)
+            }
+            
+            if uid == activatedUID {
+                log.warning("switching the same account")
+                return
+            }
+            
+            if WalletManager.shared.keyProvider(with: uid) != nil {
+                try await restoreLogin(with: uid)
+                return
+            }
+            try await restoreLogin(userId: uid)
+            
+            await MainActor.run {
+                isProfileSwitching = false
+            }
+        } catch {
+            await MainActor.run {
+                isProfileSwitching = false
+            }
         }
-
-        if uid == activatedUID {
-            log.warning("switching the same account")
-            return
-        }
-
-        if WalletManager.shared.keyProvider(with: uid) != nil {
-            try await restoreLogin(with: uid)
-            return
-        }
-        try await restoreLogin(userId: uid)
         // FIXME: data migrate from device to other device,the private key is destructive
 //        let allModel = try WallectSecureEnclave.Store.fetchAllModel(by: uid)
 //        let model = try WallectSecureEnclave.Store.fetchModel(by: uid)
