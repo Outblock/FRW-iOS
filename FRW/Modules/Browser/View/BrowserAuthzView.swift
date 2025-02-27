@@ -275,7 +275,7 @@ struct BrowserAuthzView: View {
         .padding(.horizontal, 18)
         .padding(.bottom, 18)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .backgroundFill(Color(hex: "#282828", alpha: 1))
+        .backgroundFill(.Theme.Background.white)
         .transition(.move(edge: .trailing))
     }
 
@@ -331,7 +331,7 @@ struct BrowserAuthzView: View {
 
     var decodedDataView: some View {
         VStack(spacing: 8) {
-            ForEach(0..<vm.decodedDataList.count, id: \.self) { index in
+            ForEach(0 ..< vm.decodedDataList.count, id: \.self) { index in
                 let list = vm.decodedDataList[index]
                 card(with: list)
             }
@@ -349,7 +349,7 @@ struct BrowserAuthzView: View {
 
     func card(with list: [FormItem]) -> some View {
         VStack(spacing: 0) {
-            ForEach(0..<list.count, id: \.self) { index in
+            ForEach(0 ..< list.count, id: \.self) { index in
                 let model = list[index]
                 BrowserAuthzView.Card(model: model)
                 if index < list.count - 1 {
@@ -404,7 +404,7 @@ extension BrowserAuthzView {
                 if let subValue = model.value.subValue {
                     if case let .object(dictionary) = subValue {
                         let keys = dictionary.keys.map { $0 }.sorted()
-                        ForEach(0..<keys.count, id: \.self) { index in
+                        ForEach(0 ..< keys.count, id: \.self) { index in
                             let key = keys[index]
                             let value = dictionary[key]?.toString() ?? ""
                             HStack(spacing: 12) {
@@ -424,7 +424,7 @@ extension BrowserAuthzView {
                     }
                     if case let .array(array) = subValue {
                         VStack {
-                            ForEach(0..<array.count, id: \.self) { index in
+                            ForEach(0 ..< array.count, id: \.self) { index in
                                 let value = array[index]
                                 innerCard(item: value)
                             }
