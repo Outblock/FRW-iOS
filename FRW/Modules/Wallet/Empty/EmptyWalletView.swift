@@ -254,7 +254,7 @@ struct EmptyWalletView: View {
     private var disclaimer: AttributedString {
         let localizedMarkdown = NSLocalizedString(
             "disclaimer",
-            comment: "By using Flow Wallet you agree to the [Terms of Service](https://lilico.app/about/terms) and [Privacy Policy](https://lilico.app/about/privacy-policy)."
+            comment: "By using Flow Wallet you agree to the [Terms of Service](https://wallet.flow.com/terms-of-service) and [Privacy Policy](https://wallet.flow.com/privacy-policy)."
         )
 
         // Convert the markdown string to an AttributedString
