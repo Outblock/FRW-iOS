@@ -5,9 +5,11 @@
 //  Created by Hao Fu on 24/2/2025.
 //
 
-import SwiftUI
-import Kingfisher
 import Flow
+import Kingfisher
+import SwiftUI
+
+// MARK: - TokenBalanceListView
 
 struct TokenBalanceListView: RouteableView {
     // MARK: Lifecycle
@@ -61,12 +63,12 @@ struct TokenBalanceListView: RouteableView {
 private let TokenIconWidth: CGFloat = 40
 private let TokenCellHeight: CGFloat = 64
 
-// MARK: AddTokenView.TokenItemCell
+// MARK: TokenBalanceListView.TokenItemCell
 
 extension TokenBalanceListView {
     struct TokenItemCell: View {
         let token: TokenModel
-        
+
         @EnvironmentObject
         var vm: TokenBalanceListViewModel
 
@@ -92,7 +94,7 @@ extension TokenBalanceListView {
                         .font(.inter(size: 12, weight: .medium))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 if let balance = token.readableBalanceStr {
                     Text(balance)
                         .foregroundColor(.LL.Neutrals.note)
@@ -107,7 +109,6 @@ extension TokenBalanceListView {
         }
     }
 }
-
 
 #Preview {
     let vm = TokenBalanceListViewModel(address: Flow.Address(hex: "0xa71fbead537a2416"))

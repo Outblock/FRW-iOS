@@ -134,8 +134,6 @@ class StakeAmountViewModel: ObservableObject {
 
 extension StakeAmountViewModel {
     func inputTextDidChangeAction(text: String) {
-        let filtered = text.filter { "0123456789.".contains($0) }
-
         inputText = text
         inputTextNum = inputText.doubleValue
         refreshState()
@@ -152,11 +150,11 @@ extension StakeAmountViewModel {
             if await StakingManager.shared.stakingSetup() == false {
                 debugPrint("StakeAmountViewModel: setup account staking failed.")
                 DispatchQueue.main.async {
-                    HUD.error(title: StakingError.stakingSetupFailed.desc)
+                    HUD.error(StakingError.stakingSetupFailed)
                 }
             } else {
                 debugPrint("StakeAmountViewModel: setup account staking success.")
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.confirmStakeAction()
                 }
             }
@@ -287,13 +285,13 @@ extension StakeAmountViewModel {
                 successBlock(txId)
             } catch StakingError.stakingNeedSetup {
                 // run staking setup logic
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.isRequesting = false
                     self.stakingSetup()
                 }
             } catch let error as StakingError {
                 debugPrint("StakeAmountViewModel: catch StakingError \(error)")
-                failureBlock(error.desc)
+                failureBlock(error.errorMessage)
             } catch {
                 debugPrint("StakeAmountViewModel: catch extra error \(error)")
                 failureBlock("request_failed".localized)

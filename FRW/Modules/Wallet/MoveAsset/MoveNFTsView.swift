@@ -50,7 +50,7 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
                 InsufficientStorageToastView<MoveNFTsViewModel>()
                     .environmentObject(self.viewModel)
                     .background(Color.clear)
-                
+
                 VPrimaryButton(
                     model: ButtonStyle.primary,
                     state: viewModel.buttonState,
@@ -98,12 +98,12 @@ struct MoveNFTsView: RouteableView, PresentActionDelegate {
                 toContact: viewModel.toContact,
                 clickable: .all
             ) { contract in
-                    viewModel.handleFromContact(contract)
-                } clickTo: { contract in
-                    viewModel.handleToContact(contract)
-                } clickSwap: {
-                    viewModel.handleSwap()
-                }
+                viewModel.handleFromContact(contract)
+            } clickTo: { contract in
+                viewModel.handleToContact(contract)
+            } clickSwap: {
+                viewModel.handleSwap()
+            }
 
             MoveFeeView(isFree: viewModel.fromContact.walletType == viewModel.toContact.walletType)
                 .visibility(viewModel.showFee ? .visible : .gone)

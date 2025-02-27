@@ -48,6 +48,8 @@ struct Contact: Codable, Identifiable {
         case evm
         case link
 
+        // MARK: Internal
+
         var trackName: String {
             switch self {
             case .flow:
@@ -115,6 +117,8 @@ struct Contact: Codable, Identifiable {
         "\(address ?? "")-\(domain?.domainType?.rawValue ?? 0)-\(name)-\(contactType?.rawValue ?? 0)"
     }
 }
+
+// MARK: Equatable
 
 extension Contact: Equatable {
     static func == (lhs: Contact, rhs: Contact) -> Bool {

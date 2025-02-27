@@ -9,7 +9,7 @@ import Combine
 import Flow
 import SwiftUI
 
-// MARK: - AddTokenViewModel
+// MARK: - TokenBalanceListViewModel
 
 class TokenBalanceListViewModel: ObservableObject {
     // MARK: Lifecycle
@@ -20,15 +20,14 @@ class TokenBalanceListViewModel: ObservableObject {
     ) {
         self.selectCallback = selectCallback
         self.address = address
-        
+
         Task {
             await fetchData()
         }
     }
 
     // MARK: Internal
-    
-    private var address: FWAddress
+
     var tokenList: [TokenModel] = .mock(5)
     var selectedToken: TokenModel?
     var selectCallback: ((TokenModel) -> Void)?
@@ -38,6 +37,7 @@ class TokenBalanceListViewModel: ObservableObject {
 
     // MARK: Private
 
+    private var address: FWAddress
     private var cancelSets = Set<AnyCancellable>()
 
     private func fetchData() async {
@@ -45,10 +45,10 @@ class TokenBalanceListViewModel: ObservableObject {
             await MainActor.run {
                 isRequesting = true
             }
-            
+
             let tokens = try await TokenBalanceHandler.shared.getFTBalance(address: address)
-            self.tokenList = tokens
-            
+            tokenList = tokens
+
             await MainActor.run {
                 isRequesting = false
             }

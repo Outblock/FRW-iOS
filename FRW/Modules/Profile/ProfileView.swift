@@ -19,7 +19,7 @@ extension ProfileView: AppTabBarPageProtocol {
     static func iconName() -> String {
         "tabler-icon-settings"
     }
-    
+
     static func title() -> String {
         "Settings::message".localized
     }
@@ -68,11 +68,11 @@ struct ProfileView: RouteableView {
                 .padding(.horizontal, 18)
                 .padding(.bottom, 18)
             }
-            .background(.LL.Neutrals.background)
+            .background(.clear)
             .buttonStyle(.plain)
         }
         .padding(.top, 16)
-        .backgroundFill(.LL.Neutrals.background)
+        .backgroundFill(.Theme.Background.white)
         .environmentObject(vm)
         .environmentObject(lud)
         .environmentObject(userManager)
@@ -115,13 +115,13 @@ extension ProfileView {
                         VStack {
                             Image("icon-cool-cat")
                         }.frame(maxHeight: .infinity, alignment: .top)
-                        
+
                         VStack(alignment: .leading) {
                             Text(title).font(.inter(size: 16, weight: .bold))
                             Text(desc).font(.inter(size: 16))
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        
+
                         Image("icon-orange-right-arrow")
                     }
                     .padding(.horizontal, 12)
@@ -192,7 +192,7 @@ extension ProfileView {
                     ProfileView.InfoActionView()
                 }
             }
-            .background(.LL.Neutrals.background)
+            .background(.clear)
         }
 
         // MARK: Private
@@ -256,21 +256,15 @@ extension ProfileView {
                     Router.route(to: RouteMap.Profile.addressBook)
                 }
 
-                ProfileView.InfoActionButton(iconName: "icon-wallet", title: "wallets".localized) {
+                ProfileView.InfoActionButton(
+                    iconName: "icon-wallet",
+                    title: "wallets".localized
+                ) {
                     Router.route(to: RouteMap.Profile.walletList)
                 }
-
-//                ProfileView.InfoActionButton(iconName: "icon-inbox", title: "inbox".localized) {
-                ////                    HUD.present(title: "Feature coming soon")
-                ////                    Router.route(to: RouteMap.Explore.claimDomain)
-//                    Router.route(to: RouteMap.Profile.inbox)
-//                }
             }
             .padding(.vertical, 20)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.LL.bgForIcon)
-            )
+            .borderStyle()
         }
     }
 
@@ -283,6 +277,9 @@ extension ProfileView {
             Button(action: action) {
                 VStack {
                     Image(iconName)
+                        .renderingMode(.template)
+                        .foregroundStyle(Color.Theme.Accent.green)
+
                     Text(title).foregroundColor(.LL.Neutrals.note).font(.inter(
                         size: 12,
                         weight: .medium
@@ -321,7 +318,7 @@ extension ProfileView {
                                 desc: Row.linkedAccount.desc
                             )
                         }
-                        Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
+                        Divider().background(Color.LL.Neutrals.background)
 
                         Button {
                             if !isDevModel && LocalUserDefaults.shared.flowNetwork != .mainnet {
@@ -348,7 +345,7 @@ extension ProfileView {
                             Text("wrong_network_des".localized)
                         }
 
-                        Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
+                        Divider().background(Color.LL.Neutrals.background)
                     }
 
                     Button {
@@ -363,10 +360,7 @@ extension ProfileView {
                     }
                 }
             }
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.LL.bgForIcon)
-            )
+            .borderStyle()
         }
 
         // MARK: Private
@@ -407,7 +401,7 @@ extension ProfileView {
                         }
                         .buttonStyle(ScaleButtonStyle())
 
-                        Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
+                        Divider().background(Color.LL.Neutrals.background)
                     }
 
                     Button {
@@ -424,10 +418,7 @@ extension ProfileView {
                     }
                 }
             }
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.LL.bgForIcon)
-            )
+            .borderStyle()
         }
 
         // MARK: Private
@@ -571,6 +562,9 @@ extension ProfileView {
                         if row == Row.notification {
                             HStack {
                                 Image("icon-notification")
+                                    .renderingMode(.template)
+                                    .foregroundStyle(Color.Theme.Accent.green)
+
                                 Text("notifications".localized).font(.inter())
                                     .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -606,18 +600,12 @@ extension ProfileView {
                         }
 
                         if row != .theme {
-                            Divider().background(Color.LL.Neutrals.background).padding(
-                                .horizontal,
-                                8
-                            )
+                            Divider().background(Color.LL.Neutrals.background)
                         }
                     }
                 }
             }
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.LL.bgForIcon)
-            )
+            .borderStyle()
         }
 
         // MARK: Private
@@ -706,10 +694,7 @@ extension ProfileView {
                     }
                 }
             }
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.LL.bgForIcon)
-            )
+            .borderStyle()
         }
     }
 }
@@ -767,7 +752,7 @@ extension ProfileView {
                         )
                     }
 
-                    Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
+                    Divider().background(Color.LL.Neutrals.background)
 
                     Button {
                         UIApplication.shared
@@ -788,7 +773,7 @@ extension ProfileView {
                         )
                     }
 
-                    Divider().background(Color.LL.Neutrals.background).padding(.horizontal, 8)
+                    Divider().background(Color.LL.Neutrals.background)
 
                     Button {
                         Router.route(to: RouteMap.Profile.about)
@@ -803,10 +788,7 @@ extension ProfileView {
                     }
                 }
             }
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.LL.bgForIcon)
-            )
+            .borderStyle()
         }
     }
 }
@@ -912,10 +894,7 @@ extension ProfileView {
                     }
                 }
             }
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.LL.bgForIcon)
-            )
+            .borderStyle()
         }
     }
 }
@@ -985,6 +964,8 @@ extension ProfileView {
         var body: some View {
             HStack {
                 Image(iconName)
+                    .renderingMode(.template)
+                    .foregroundStyle(Color.Theme.Accent.green)
                 Text(title).font(.inter()).frame(maxWidth: .infinity, alignment: .leading)
 
                 Text(desc ?? "").font(.inter()).foregroundColor(.LL.Neutrals.note)
@@ -1020,7 +1001,7 @@ extension ProfileView {
             .frame(height: 64)
             .padding(.horizontal, 16)
             .contentShape(Rectangle())
-//            .backgroundFill(Color.LL.bgForIcon)
+            .backgroundFill(Color.Theme.Background.white)
         }
     }
 
@@ -1029,11 +1010,11 @@ extension ProfileView {
             HStack(spacing: 5) {
                 Image("light-tips-icon")
                     .renderingMode(.template)
-                    .foregroundStyle(Color.Flow.blue)
+                    .foregroundStyle(Color.Theme.Accent.green)
 
                 Text("switch_profile_tips".localized)
                     .font(.inter(size: 12))
-                    .foregroundColor(.Flow.blue)
+                    .foregroundColor(Color.Theme.Accent.green)
                     .multilineTextAlignment(.leading)
 
                 Spacer()
@@ -1043,7 +1024,7 @@ extension ProfileView {
                 } label: {
                     Image("icon-close-tips")
                         .renderingMode(.template)
-                        .foregroundColor(Color.Flow.blue)
+                        .foregroundColor(Color.Theme.Accent.green)
                         .frame(width: 30, height: 30)
                         .contentShape(Rectangle())
                 }
@@ -1053,12 +1034,16 @@ extension ProfileView {
             .padding(.trailing, 8)
             .background {
                 RoundedRectangle(cornerRadius: 8)
-                    .foregroundColor(Color.Flow.blue.opacity(0.16))
+                    .foregroundColor(Color.Theme.Accent.green.opacity(0.16))
             }
 
             Image("icon-tips-bottom-arrow")
                 .renderingMode(.template)
-                .foregroundColor(.Flow.blue.opacity(0.16))
+                .foregroundColor(Color.Theme.Accent.green.opacity(0.16))
         }
     }
+}
+
+#Preview {
+    ProfileView()
 }

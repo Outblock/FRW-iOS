@@ -1092,7 +1092,7 @@ extension WalletManager {
                 } else {
                     self.activatedCoins.append(model)
                 }
-                
+
                 let balance = token.balance ?? BigUInt(0)
                 let result = Utilities.formatToPrecision(
                     balance,

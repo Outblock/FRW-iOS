@@ -25,6 +25,8 @@ extension FRWAPI {
     }
 }
 
+// MARK: - FRWAPI.NFT
+
 extension FRWAPI {
     enum NFT {
         case collections
@@ -34,7 +36,7 @@ extension FRWAPI {
         // For EVM, we will request maximum 2500 collections
         // https://github.com/Outblock/FRW-web-next/blob/main/pages/api/v3/evm/nft/id/index.ts#L16
         case userCollection(String, VMType)
-        
+
         case collectionDetailList(NFTCollectionDetailListRequest, VMType)
         case gridDetailList(NFTGridDetailListRequest, VMType)
         case favList(String)

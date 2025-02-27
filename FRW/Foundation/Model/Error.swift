@@ -7,9 +7,38 @@
 
 import Foundation
 
+// MARK: - BaseError Protocol
+
+protocol BaseError: Error, CaseIterable, RawRepresentable, Equatable where RawValue == String {
+    var baseCode: Int { get }
+    var errorCode: Int { get }
+    var errorMessage: String { get }
+}
+
+extension BaseError {
+    var errorCode: Int {
+        // Get index from CaseIterable
+        guard let index = Self.allCases.firstIndex(of: self) as? Int else {
+            return 999 // Default error code for unkn as! Intown cases
+        }
+        return baseCode + index + 1 // Adding 1 to avoid 0-based index
+    }
+    
+    var errorLog: String {
+        "\(String(describing: Self.self)) - Code: \(errorCode), RawValue:\(rawValue)"
+    }
+    
+    var errorMessage: String {
+        // Convert camelCase to space-separated words
+        return rawValue.replacingOccurrences(of: "([A-Z])", with: " $1", options: .regularExpression)
+            .trimmingCharacters(in: .whitespaces)
+            .capitalized
+    }
+}
+
 // MARK: - LLError
 
-enum LLError: Error {
+enum LLError: String, BaseError {
     case aesKeyEncryptionFailed
     case aesEncryptionFailed
     case missingUserInfoWhilBackup
@@ -27,11 +56,13 @@ enum LLError: Error {
     case signFailed
     case decodeFailed
     case unknown
+    
+    var baseCode: Int { 1000 }
 }
 
 // MARK: - WalletError
 
-enum WalletError: Error {
+enum WalletError: String, BaseError {
     case fetchFailed
     case fetchBalanceFailed
     case existingMnemonicMismatch
@@ -40,11 +71,13 @@ enum WalletError: Error {
     case emptyPublicKey
     case insufficientBalance
     case securityVerifyFailed
+    
+    var baseCode: Int { 2000 }
 }
 
 // MARK: - BackupError
 
-enum BackupError: Error {
+enum BackupError: String, BaseError {
     case missingUserName
     case missingMnemonic
     case missingUid
@@ -52,21 +85,25 @@ enum BackupError: Error {
     case decryptMnemonicFailed
     case topVCNotFound
     case fileIsNotExistOnCloud
-    case CloudFileData
+    case cloudFileData
     case unauthorized
+    
+    var baseCode: Int { 3000 }
 }
 
 // MARK: - GoogleBackupError
 
-enum GoogleBackupError: Error {
+enum GoogleBackupError: String, BaseError {
     case missingLoginUser
     case noDriveScope
     case createFileError
+    
+    var baseCode: Int { 4000 }
 }
 
 // MARK: - iCloudBackupError
 
-enum iCloudBackupError: Error {
+enum iCloudBackupError: String, BaseError {
     case initError
     case invalidLoadData
     case checkFileUploadedStatusError
@@ -75,72 +112,61 @@ enum iCloudBackupError: Error {
     case noDataToSave
     case saveToDataFailed
     case fileIsNotExist
+    
+    var baseCode: Int { 5000 }
 }
 
 // MARK: - NFTError
 
-enum NFTError: Error {
+enum NFTError: String, BaseError {
     case noCollectionInfo
     case invalidTokenId
     case sendInvalidAddress
+    
+    var baseCode: Int { 6000 }
 }
 
 // MARK: - StakingError
 
-enum StakingError: Error {
+enum StakingError: String, BaseError {
     case stakingDisabled
     case stakingNeedSetup
     case stakingSetupFailed
     case stakingCreateDelegatorIdFailed
     case unknown
-
-    // MARK: Internal
-
-    var desc: String {
-        switch self {
-        case .stakingDisabled:
-            return "staking_not_enabled".localized
-        case .stakingSetupFailed:
-            return "staking_setup_failed".localized
-        default:
-            return "request_failed".localized
-        }
-    }
+    
+    var baseCode: Int { 7000 }
 }
 
 // MARK: - EVMError
 
-enum EVMError: Error {
+enum EVMError: String, BaseError {
     case addressError
     case rpcError
     case createAccount
     case findAddress
     case transactionResult
+    
+    var baseCode: Int { 8000 }
 }
 
 // MARK: - CadenceError
 
-enum CadenceError: String,Error,CaseIterable, CustomStringConvertible {
+enum CadenceError: String, BaseError {
     case none
     case empty
     case transactionFailed
+    
+    var baseCode: Int { 9000 }
+}
 
-    // MARK: Internal
+// MARK: - MoveError
 
-    var message: String {
-        switch self {
-        case .empty:
-            return "empty script"
-        default:
-            return ""
-        }
-    }
-
-    var code: Int {
-        9000 + (CadenceError.allCases.firstIndex(of: self) ?? 0)
-    }
-
-    public var description: String {
-        "\(type(of: self)) Code: \(code)-\(self.rawValue)"
-    }
+enum MoveError: String, BaseError {
+    case invalidateIdentifier
+    case invalidateFromAddress
+    case invalidateToAddress
+    case invalidateNftCollectionInfo
+    
+    var baseCode: Int { 10000 }
 }
