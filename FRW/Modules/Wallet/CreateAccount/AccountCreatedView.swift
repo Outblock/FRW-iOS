@@ -20,6 +20,10 @@ struct AccountCreatedView: RouteableView {
     var title: String {
         ""
     }
+    
+    var enableSwipeBackGesture: Bool {
+        false
+    }
 
     var isNavigationBarHidden: Bool {
         true
