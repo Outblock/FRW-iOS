@@ -283,7 +283,6 @@ struct DeveloperModeView: RouteableView {
 //                            }
 //                            .frame(height: 64)
 //                            .padding(.horizontal, 16)
-
                         }
                         .background(.LL.bgForIcon)
                         .cornerRadius(16)
@@ -291,7 +290,6 @@ struct DeveloperModeView: RouteableView {
                         headView(title: "Tools")
                     }
                     .visibility(showTool ? .visible : .gone)
-
 
                     Text("other".localized.uppercasedFirstLetter())
                         .font(.inter())
@@ -302,7 +300,13 @@ struct DeveloperModeView: RouteableView {
                         Section {
                             HStack {
                                 Button {
-                                    UserManager.shared.tryToRestoreOldAccountOnFirstLaunch()
+                                    Task {
+                                        HUD.loading()
+                                        await UserManager.shared
+                                            .tryToRestoreOldAccountOnFirstLaunch()
+                                        HUD.dismissLoading()
+                                    }
+
                                 } label: {
                                     Text("Reload Local Profile")
                                 }
