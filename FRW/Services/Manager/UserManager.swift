@@ -283,11 +283,13 @@ extension UserManager {
                         log.error("[Launch] seed phrase restore failed.\(key): not found")
                         continue
                     }
+                  
                     guard let publicKey = try? provider.publicKey(signAlgo: .ECDSA_SECP256k1)?
                         .hexString else {
                         log.error("[Launch] seed phrase restore failed.\(key): public key")
                         continue
                     }
+                  
                     let response: AccountResponse = try await Network
                         .requestWithRawModel(FRWAPI.Utils.flowAddress(publicKey))
                     let account = response.accounts?
