@@ -54,21 +54,21 @@ struct ExploreTabScreen: View {
                 HStack(alignment: .center, spacing: 12) {
                     Image("icon-search")
                         .renderingMode(.template)
-                        .foregroundColor(.LL.Secondary.violet4)
+                        .foregroundColor(.Theme.Text.text4)
                         .frame(width: 24, height: 24)
 
                     Text("search_name_url".localized)
-                        .font(.inter(size: 16, weight: .semibold))
-                        .foregroundColor(.LL.Secondary.violet4)
+                        .font(.inter(size: 14))
+                        .foregroundColor(.Theme.Text.text4)
 
                     Spacer()
 
                     Button {
                         ScanHandler.scan()
                     } label: {
-                        Image("btn-scan")
+                        Image("icon-wallet-scan")
                             .renderingMode(.template)
-                            .foregroundColor(.LL.Secondary.violet4)
+                            .foregroundColor(.Theme.Text.text4)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -81,12 +81,6 @@ struct ExploreTabScreen: View {
     var body: some View {
         VStack(spacing: 12) {
             header
-                .shadow(
-                    color: Color.LL.Secondary.violet4.opacity(0.2),
-                    radius: 12,
-                    x: 0,
-                    y: 8
-                )
 
             if vm.state.list.isEmpty && vm.webBookmarkList.isEmpty {
                 Spacer()
@@ -95,12 +89,7 @@ struct ExploreTabScreen: View {
                 Spacer()
             } else {
                 ScrollView(.vertical) {
-                    LazyVStack(spacing: 18) {
-                        //                        Image("meow_banner")
-                        //                            .resizable()
-                        //                            .frame(maxWidth: .infinity)
-                        //                            .aspectRatio(CGSize(width: 339, height: 92), contentMode: .fit)
-
+                    LazyVStack(spacing: 8) {
                         VStack(spacing: 18) {
                             bookmarkHeader
                             bookmarkGrid
@@ -137,11 +126,8 @@ struct ExploreTabScreen: View {
 
     var dAppHeader: some View {
         HStack {
-            Image(systemName: "square.grid.2x2.fill")
-                .font(.LL.caption)
-            Text("dApps".localized)
-                .font(.LL.largeTitle2)
-                .semibold()
+            Text("explore".localized)
+                .font(.inter(size: 20, weight: .semibold))
             Spacer()
 
         }
@@ -155,17 +141,19 @@ struct ExploreTabScreen: View {
                     Button {
                         vm.changeCategory(category)
                     } label: {
+                        let tintColor = vm.state
+                            .selectedCategory == category ? Color.Theme.Accent.green :
+                            Color.Theme.Text.text4
+                        
                         Text(category.uppercased())
                             .font(.inter(size: 14, weight: .semibold))
-                            .foregroundColor(Color.LL.Neutrals.text)
+                            .foregroundColor(tintColor)
                             .padding(.horizontal, 18)
                             .padding(.vertical, 8)
                             .roundedBg(
                                 cornerRadius: 18,
-                                fillColor: Color.LL.Other.bg2,
-                                strokeColor: vm.state
-                                    .selectedCategory == category ? Color(hex: "#7678ED") :
-                                    Color(hex: "#F5F5F5"),
+                                fillColor: .clear,
+                                strokeColor: tintColor,
                                 strokeLineWidth: 2
                             )
                             .contentShape(Rectangle())
@@ -181,18 +169,8 @@ struct ExploreTabScreen: View {
     var dappList: some View {
         ForEach(vm.state.filterdList, id: \.name) { dApp in
             Button {
-//                #warning("test")
-//                #if DEBUG
-//                let url = URL(string: "https://outblock.github.io/harness/")!
-//                Router.route(to: RouteMap.Explore.browser(url))
-//                return
-//                #endif
-
                 let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
                 feedbackGenerator.impactOccurred()
-
-                //       let url = URL(string: "https://fcl-harness-eight.vercel.app/")!
-                //                            Router.route(to: RouteMap.Explore.browser(url))
 
                 if LocalUserDefaults.shared.flowNetwork == .testnet,
                    let url = dApp.testnetURL {
@@ -234,28 +212,22 @@ struct ExploreTabScreen: View {
                                 .cornerRadius(20)
                         }
 
-                        //                                    Text(dApp.host ?? "")
-                        //                                        .frame(maxWidth: .infinity, alignment: .leading)
-                        //                                        .foregroundColor(.LL.Neutrals.note)
-                        //                                        .font(.LL.footnote)
-
-                        //                                    Spacer(minLength: 5)
-
                         Text(dApp.description + "\n")
                             .font(.LL.footnote)
-                            .lineLimit(2)
                             .multilineTextAlignment(.leading)
                             .foregroundColor(.LL.Neutrals.neutrals7)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.trailing, 12)
                     }
                 }
-                .padding(10)
-                .padding(.vertical, 5)
-                .background(Color.LL.bgForIcon)
+                .padding(.horizontal, 10)
+                .padding(.top, 12)
+                .background(.clear)
                 .cornerRadius(16)
+                .borderStyle()
             }
             .buttonStyle(ScaleButtonStyle())
+            
         }
     }
 }

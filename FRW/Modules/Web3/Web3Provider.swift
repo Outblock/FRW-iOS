@@ -11,13 +11,12 @@ import web3swift
 
 enum FlowProvider {
     struct Web3 {
-        static func `default`() async throws -> web3swift.Web3? {
-            let networkType = LocalUserDefaults.shared.flowNetwork
-            guard let url = networkType.evmUrl else {
-                return nil
-            }
+        static func `default`(
+            networkType: FlowNetworkType = LocalUserDefaults.shared
+                .flowNetwork
+        ) async throws -> web3swift.Web3? {
             let provider = try await Web3HttpProvider(
-                url: url,
+                url: networkType.evmURL,
                 network: .Custom(networkID: BigUInt(networkType.networkID))
             )
             return web3swift.Web3(provider: provider)

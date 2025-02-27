@@ -33,6 +33,7 @@ class EmptyWalletViewModel: ObservableObject {
             .sink { [weak self] list in
                 guard let self = self else { return }
                 var index = 1
+                let userStoreList = LocalUserDefaults.shared.userList
                 self.placeholders = list.map { uid in
                     let userInfo = MultiAccountStorage.shared.getUserInfo(uid)
                     var address = MultiAccountStorage.shared.getWalletInfo(uid)?
@@ -40,7 +41,12 @@ class EmptyWalletViewModel: ObservableObject {
                     if address == "0x" {
                         address = LocalUserDefaults.shared.userAddressOfDeletedApp[uid] ?? "0x"
                     }
-                    var username = userInfo?.username
+                    if address == "0x" {
+                        let userStore = userStoreList.last { $0.userId == uid }
+                        address = userStore?.address ?? "0x"
+                    }
+
+                    var username = userInfo?.nickname ?? userInfo?.username
                     if username == nil {
                         username = "Account \(index)"
                         index += 1
@@ -59,6 +65,9 @@ class EmptyWalletViewModel: ObservableObject {
 
     @Published
     var placeholders: [EmptyWalletViewModel.Placeholder] = []
+
+    @Published
+    var isLoading: Bool = false
 
     func switchAccountAction(_ uid: String) {
         Task {
@@ -91,25 +100,22 @@ class EmptyWalletViewModel: ObservableObject {
             // has been triggered or no old account to restore
             return
         }
+        guard let isReachable = net?.isReachable else { return }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            guard let isReachable = self.net?.isReachable else { return }
-
-            if isReachable {
-                self.net?.stopListening()
-                UserManager.shared.tryToRestoreOldAccountOnFirstLaunch()
-                return
-            } else {
-                self.net?.startListening(onQueue: .main, onUpdatePerforming: { status in
-                    log.info("[NET] network changed")
-                    switch status {
-                    case .reachable:
-                        self.tryToRestoreAccountWhenFirstLaunch()
-                    default:
-                        log.info("[NET] not reachable")
-                    }
-                })
-            }
+        if isReachable {
+            net?.stopListening()
+            restoreAccounts()
+            return
+        } else {
+            net?.startListening(onQueue: .main, onUpdatePerforming: { status in
+                log.info("[NET] network changed")
+                switch status {
+                case .reachable:
+                    self.restoreAccounts()
+                default:
+                    log.info("[NET] not reachable")
+                }
+            })
         }
     }
 
@@ -117,4 +123,16 @@ class EmptyWalletViewModel: ObservableObject {
 
     private var cancelSets = Set<AnyCancellable>()
     private var net: NetworkReachabilityManager? = NetworkReachabilityManager()
+
+    private func restoreAccounts() {
+        Task {
+            await MainActor.run {
+                isLoading = true
+            }
+            await UserManager.shared.tryToRestoreOldAccountOnFirstLaunch()
+            await MainActor.run {
+                isLoading = false
+            }
+        }
+    }
 }

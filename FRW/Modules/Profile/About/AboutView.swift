@@ -14,6 +14,7 @@ struct AboutView: RouteableView {
         let imageName: String
         let text: String
         var showDivider: Bool = true
+        var isEmoji: Bool = false
         let action: () -> Void
 
         var body: some View {
@@ -22,9 +23,15 @@ struct AboutView: RouteableView {
                     action()
                 } label: {
                     HStack {
-                        Image(imageName)
-                            .resizable()
-                            .frame(width: 35, height: 35)
+                        if isEmoji {
+                            Text(imageName)
+                                .font(.system(size: 22))
+                                .frame(width: 35, height: 35)
+                        } else {
+                            Image(imageName)
+                                .resizable()
+                                .frame(width: 35, height: 35)
+                        }
 
                         Text(text)
                             .font(.LL.body)
@@ -92,17 +99,27 @@ struct AboutView: RouteableView {
                     SocialButton(
                         imageName: "twitter",
                         text: "X",
-                        showDivider: false
+                        showDivider: true
                     ) {
                         UIApplication.shared
                             .open(URL(string: "https://twitter.com/flow_blockchain")!)
                     }
-//
-//                    SocialButton(imageName: "email",
-//                                 text: "Email",
-//                                 showDivider: false) {
-//                        UIApplication.shared.open(URL(string: "mailto:hi@lilico.app")!)
-//                    }
+
+                    SocialButton(imageName: "🔏",
+                                 text: "privacy_policy".localized,
+                                 showDivider: true,
+                                 isEmoji: true
+                    ) {
+                        UIApplication.shared.open(URL(string: "https://wallet.flow.com/privacy-policy")!)
+                    }
+                    
+                    SocialButton(imageName: "📃",
+                                 text: "terms_of_service".localized,
+                                 showDivider: false,
+                                 isEmoji: true
+                    ) {
+                        UIApplication.shared.open(URL(string: "https://wallet.flow.com/terms-of-service")!)
+                    }
                 }
                 .cornerRadius(16)
             } header: {

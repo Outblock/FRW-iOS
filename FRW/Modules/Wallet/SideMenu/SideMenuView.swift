@@ -506,7 +506,8 @@ class SideContainerViewModel: ObservableObject {
         }
     }
 
-    @objc func onRemoteConfigDidChange() {
+    @objc
+    func onRemoteConfigDidChange() {
         DispatchQueue.main.async {
             self.hideBrowser = RemoteConfigManager.shared.config?.features.hideBrowser ?? true
         }
@@ -544,33 +545,37 @@ struct SideContainerView: View {
     }
 
     var body: some View {
-        ZStack {
-            SideMenuView()
-                .offset(x: vm.isOpen ? 0 : -(screenWidth - SideOffset))
+        if !um.isLoggedIn && !um.isProfileSwitching {
+            EmptyWalletView()
+        } else {
+            ZStack {
+                SideMenuView()
+                    .offset(x: vm.isOpen ? 0 : -(screenWidth - SideOffset))
 
-            Group {
-                makeTabView()
+                Group {
+                    makeTabView()
 
-                Color.black
-                    .opacity(0.7)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        vm.onToggle()
-                    }
-                    .opacity(vm.isOpen ? 1.0 : 0.0)
+                    Color.black
+                        .opacity(0.7)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            vm.onToggle()
+                        }
+                        .opacity(vm.isOpen ? 1.0 : 0.0)
+                }
+                .offset(x: vm.isOpen ? screenWidth - SideOffset : 0)
             }
-            .offset(x: vm.isOpen ? screenWidth - SideOffset : 0)
+            .onAppearOnce {
+                Task {
+                    try await Task.sleep(for: .seconds(1))
+                    TransactionUIHandler.shared.refreshPanelHolder()
+                    PushHandler.shared.showPushAlertIfNeeded()
+                }
+            }
         }
     }
 
-    // MARK: Private
-
-    @StateObject
-    private var vm = SideContainerViewModel()
-    @State
-    private var dragOffset: CGSize = .zero
-    @State
-    private var isDragging: Bool = false
+    // MARK: Fileprivate
 
     @ViewBuilder
     fileprivate func makeTabView() -> some View {
@@ -597,7 +602,7 @@ struct SideContainerView: View {
         ) {
             AnyView(ExploreTabScreen())
         }
-        
+
         let txHistory = TabBarPageModel<AppTabType>(
             tag: TransactionListViewController.tabTag(),
             iconName: TransactionListViewController.iconName(),
@@ -611,8 +616,8 @@ struct SideContainerView: View {
                         .navigationViewStyle(StackNavigationViewStyle())
                         .navigationBarBackButtonHidden()
                 }
-                    .navigationViewStyle(StackNavigationViewStyle())
-                    .padding(.top, 4)
+                .navigationViewStyle(StackNavigationViewStyle())
+                .padding(.top, 4)
             )
         }
 
@@ -646,6 +651,17 @@ struct SideContainerView: View {
             }
         }
     }
+
+    // MARK: Private
+
+    @StateObject
+    private var vm = SideContainerViewModel()
+    @StateObject
+    private var um = UserManager.shared
+    @State
+    private var dragOffset: CGSize = .zero
+    @State
+    private var isDragging: Bool = false
 }
 
 #Preview {

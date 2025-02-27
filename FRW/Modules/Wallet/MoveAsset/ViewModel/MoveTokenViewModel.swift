@@ -21,6 +21,7 @@ final class MoveTokenViewModel: ObservableObject {
         refreshTokenData()
         Task {
             await fetchMinFlowBalance()
+            await updateTokenModel()
         }
 
         checkForInsufficientStorage()
@@ -45,7 +46,15 @@ final class MoveTokenViewModel: ObservableObject {
     var errorType: WalletSendAmountView.ErrorType = .none
 
     @Published
+    var loadingBalance: Bool = false
+
+    @Published
     var buttonState: VPrimaryButtonState = .disabled
+
+    private(set) var token: TokenModel
+
+    @Binding
+    var isPresent: Bool
 
     @Published
     var fromContact = Contact(
@@ -56,7 +65,20 @@ final class MoveTokenViewModel: ObservableObject {
         domain: nil,
         id: -1,
         username: nil
-    )
+    ) {
+        didSet {
+            // Handle same account selection on from and to account
+            // If so, we swap them
+            if fromContact == toContact {
+                toContact = oldValue
+            }
+
+            Task {
+                await updateTokenModel()
+            }
+        }
+    }
+
     @Published
     var toContact = Contact(
         address: "",
@@ -66,11 +88,15 @@ final class MoveTokenViewModel: ObservableObject {
         domain: nil,
         id: -1,
         username: nil
-    )
-
-    private(set) var token: TokenModel
-    @Binding
-    var isPresent: Bool
+    ) {
+        didSet {
+            // Handle same account selection on from and to account
+            // If so, we swap them
+            if toContact == fromContact {
+                fromContact = oldValue
+            }
+        }
+    }
 
     var isReadyForSend: Bool {
         errorType == .none && showBalance.isNumber && !showBalance.isEmpty
@@ -78,13 +104,41 @@ final class MoveTokenViewModel: ObservableObject {
 
     var currentBalance: String {
         let totalStr = amountBalance.doubleValue.formatCurrencyString()
-        return "Balance: \(totalStr)"
+        return "\(totalStr)"
+    }
+
+    func updateTokenModel() async {
+        guard let address = FWAddressDector.create(address: fromContact.address) else {
+            return
+        }
+        do {
+            await MainActor.run {
+                self.loadingBalance = true
+            }
+            let tokens = try await TokenBalanceHandler.shared.getFTBalance(address: address)
+            let tokenId = token.getId(by: address.type.toTokenType())
+            var selectedToken: TokenModel = token
+            if let target = tokens.first(where: { $0.id == tokenId }) {
+                selectedToken = target
+            } else {
+                // Fallback to flow token
+                if let flowToken = tokens.first(where: { $0.isFlowCoin }) {
+                    selectedToken = flowToken
+                }
+            }
+
+            await MainActor.run {
+                self.loadingBalance = false
+                self.changeTokenModelAction(token: selectedToken)
+            }
+
+        } catch {
+            // TODO: Handle error
+            log.error(error)
+        }
     }
 
     func changeTokenModelAction(token: TokenModel) {
-        if token.contractId == self.token.contractId {
-            return
-        }
         self.token = token
         updateBalance("")
         errorType = .none
@@ -140,12 +194,40 @@ final class MoveTokenViewModel: ObservableObject {
         maxButtonClickedOnce = true
         Task {
             let num = await updateAmountIfNeed(inputAmount: amountBalance)
-            DispatchQueue.main.async {
+            await MainActor.run {
                 self.showBalance = num.doubleValue.formatCurrencyString()
                 self.actualBalance = num
                 self.refreshSummary()
                 self.updateState()
             }
+        }
+    }
+
+    func handleFromContact(_ contact: Contact) {
+        let model = MoveAccountsViewModel(
+            selected: fromContact.address ?? ""
+        ) { newContact in
+            if let contact = newContact {
+                self.fromContact = contact
+            }
+        }
+        Router.route(to: RouteMap.Wallet.chooseChild(model))
+    }
+
+    func handleToContact(_ contact: Contact) {
+        let model = MoveAccountsViewModel(
+            selected: toContact.address ?? ""
+        ) { newContact in
+            if let contact = newContact {
+                self.toContact = contact
+            }
+        }
+        Router.route(to: RouteMap.Wallet.chooseChild(model))
+    }
+
+    func handleSwap() {
+        Task { @MainActor in
+            (self.fromContact, self.toContact) = (self.toContact, self.fromContact)
         }
     }
 
@@ -258,7 +340,7 @@ final class MoveTokenViewModel: ObservableObject {
     }
 
     private func refreshTokenData() {
-        amountBalance = WalletManager.shared.getBalance(byId: token.contractId)
+        amountBalance = token.readableBalance ?? 0
         coinRate = CoinRateCache.cache
             .getSummary(by: token.contractId)?
             .getLastRate() ?? 0
@@ -319,13 +401,11 @@ extension MoveTokenViewModel: InsufficientStorageToastViewModel {
 
 extension MoveTokenViewModel {
     var fromIsEVM: Bool {
-        EVMAccountManager.shared.accounts
-            .contains { $0.showAddress.lowercased() == fromContact.address?.lowercased() }
+        fromContact.walletType == .evm
     }
 
     var toIsEVM: Bool {
-        EVMAccountManager.shared.accounts
-            .contains { $0.showAddress.lowercased() == toContact.address?.lowercased() }
+        toContact.walletType == .evm
     }
 
     var balanceAsCurrentCurrencyString: String {
@@ -339,72 +419,86 @@ extension MoveTokenViewModel {
 
 extension MoveTokenViewModel {
     func onNext() {
-        if fromContact.walletType == .link || toContact.walletType == .link {
-            Task {
-                do {
-                    var tid: Flow.ID?
-                    let amount = self.inputTokenNum //
-                    let vaultIdentifier = (
-                        fromIsEVM ? (token.flowIdentifier ?? "") : token
-                            .contractId + ".Vault"
-                    )
-                    switch (fromContact.walletType, toContact.walletType) {
-                    case (.link, .evm):
-                        tid = try await FlowNetwork
-                            .bridgeChildTokenToCoa(
-                                vaultIdentifier: vaultIdentifier,
-                                child: fromContact.address ?? "",
-                                amount: amount
-                            )
-                    case (.evm, .link):
-                        tid = try await FlowNetwork
-                            .bridgeChildTokenFromCoa(
-                                vaultIdentifier: vaultIdentifier,
-                                child: toContact.address ?? "",
-                                amount: amount,
-                                decimals: token.decimal
-                            )
-                    default:
-                        break
-                    }
-
-                    if let txid = tid {
-                        let holder = TransactionManager.TransactionHolder(
-                            id: txid,
-                            type: .moveAsset
-                        )
-                        TransactionManager.shared.newTransaction(holder: holder)
-                        EventTrack.Transaction
-                            .ftTransfer(
-                                from: fromContact.address ?? "",
-                                to: toContact.address ?? "",
-                                type: token.symbol ?? "",
-                                amount: amount.doubleValue,
-                                identifier: token.contractId
-                            )
-                    }
-                    DispatchQueue.main.async {
-                        self.closeAction()
-                        self.buttonState = .enabled
-                    }
-                } catch {
-                    log
-                        .error(
-                            " Move Token: \(fromContact.walletType?.rawValue ?? "") to  \(toContact.walletType?.rawValue ?? "") failed. \(error)"
-                        )
-                    log.error(error)
-                    buttonState = .enabled
-                }
+        Task {
+            do {
+                try await moveToken()
+            } catch {
+                let from = fromContact.walletType?.rawValue ?? ""
+                let to = toContact.walletType?.rawValue ?? ""
+                log.error(" Move Token: \(from) to  \(to) failed. \(error)")
+                buttonState = .enabled
             }
         }
-        if token.isFlowCoin {
-            if WalletManager.shared.isSelectedEVMAccount {
+    }
+
+    private func moveToken() async throws {
+        let fromType = fromContact.walletType
+        let toType = toContact.walletType
+        var tid: Flow.ID?
+        let amount = inputTokenNum //
+        let vaultIdentifier = (
+            fromIsEVM ? (token.flowIdentifier ?? "") : token
+                .contractId + ".Vault"
+        )
+
+        switch (fromType, toType) {
+        case (.flow, .flow), (.flow, .link), (.link, .flow), (.link, .link):
+            tid = try await FlowNetwork.transferToken(
+                to: Flow.Address(hex: toContact.address ?? "0x"),
+                amount: amount,
+                token: token
+            )
+        case (.flow, .evm):
+            if token.isFlowCoin {
+                fundCoa()
+            } else {
+                bridgeToken()
+            }
+        case (.link, .evm):
+            tid = try await FlowNetwork
+                .bridgeChildTokenToCoa(
+                    vaultIdentifier: vaultIdentifier,
+                    child: fromContact.address ?? "",
+                    amount: amount
+                )
+        case (.evm, .flow):
+            if token.isFlowCoin {
                 withdrawCoa()
             } else {
-                fundCoa()
+                bridgeToken()
             }
-        } else {
-            bridgeToken()
+        case (.evm, .link):
+            tid = try await FlowNetwork
+                .bridgeChildTokenFromCoa(
+                    vaultIdentifier: vaultIdentifier,
+                    child: toContact.address ?? "",
+                    amount: amount,
+                    decimals: token.decimal
+                )
+        case (.evm, .evm):
+            break
+        case (_, _):
+            break
+        }
+
+        if let txid = tid {
+            let holder = TransactionManager.TransactionHolder(
+                id: txid,
+                type: .moveAsset
+            )
+            TransactionManager.shared.newTransaction(holder: holder)
+            EventTrack.Transaction
+                .ftTransfer(
+                    from: fromContact.address ?? "",
+                    to: toContact.address ?? "",
+                    type: token.symbol ?? "",
+                    amount: amount.doubleValue,
+                    identifier: token.contractId
+                )
+        }
+        await MainActor.run {
+            self.closeAction()
+            self.buttonState = .enabled
         }
     }
 
@@ -414,7 +508,7 @@ extension MoveTokenViewModel {
         Task {
             do {
                 log.info("[EVM] withdraw Coa balance")
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.buttonState = .loading
                 }
                 let amount = self.inputTokenNum // self.inputTokenNum.decimalValue
@@ -431,12 +525,12 @@ extension MoveTokenViewModel {
                         identifier: token.contractId
                     )
                 WalletManager.shared.reloadWalletInfo()
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.closeAction()
                     self.buttonState = .enabled
                 }
             } catch {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.buttonState = .enabled
                 }
                 log.error("[EVM] move transation failed \(error)")
@@ -455,7 +549,7 @@ extension MoveTokenViewModel {
                     HUD.error(title: "Insufficient_balance::message".localized)
                     return
                 }
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.buttonState = .loading
                 }
                 let amount = self.inputTokenNum // self.inputTokenNum.decimalValue
@@ -473,12 +567,12 @@ extension MoveTokenViewModel {
                         identifier: token.contractId
                     )
                 WalletManager.shared.reloadWalletInfo()
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.closeAction()
                     self.buttonState = .enabled
                 }
             } catch {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.buttonState = .enabled
                 }
                 log.error("[EVM] move transation failed \(error)")
@@ -489,18 +583,18 @@ extension MoveTokenViewModel {
     private func bridgeToken() {
         Task {
             do {
-                // TODO:
-
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.buttonState = .loading
                 }
                 log.info("[EVM] bridge token \(fromIsEVM ? "FromEVM" : "ToEVM")")
-                let amount = self.inputTokenNum // self.inputTokenNum.decimalValue
 
-                let vaultIdentifier = (
-                    fromIsEVM ? (token.flowIdentifier ?? "") : token
-                        .contractId + ".Vault"
-                )
+                guard let vaultIdentifier = token.vaultIdentifier else {
+                    HUD.error(title: "failed".localized)
+                    self.buttonState = .enabled
+                    return
+                }
+
+                let amount = self.inputTokenNum // self.inputTokenNum.decimalValue
                 let txid = try await FlowNetwork.bridgeToken(
                     vaultIdentifier: vaultIdentifier,
                     amount: amount,
@@ -511,7 +605,7 @@ extension MoveTokenViewModel {
                 TransactionManager.shared.newTransaction(holder: holder)
 
                 WalletManager.shared.reloadWalletInfo()
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.closeAction()
                     self.buttonState = .enabled
                 }
@@ -525,7 +619,7 @@ extension MoveTokenViewModel {
                     )
 
             } catch {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.buttonState = .enabled
                 }
                 log.error("[EVM] move transation bridge token failed \(error)")

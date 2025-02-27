@@ -37,8 +37,6 @@ class PushHandler: NSObject, ObservableObject {
             .sink { _ in
                 self.refreshPushStatus()
             }.store(in: &cancelSets)
-
-//        requestPermission()
     }
 
     // MARK: Internal
@@ -64,7 +62,7 @@ class PushHandler: NSObject, ObservableObject {
     func showPushAlertIfNeeded() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
-                if settings.authorizationStatus == .notDetermined {
+                if settings.authorizationStatus == .notDetermined, !self.hasSeenPushAlert {
                     self.showPushAlert()
                 }
             }
@@ -76,12 +74,13 @@ class PushHandler: NSObject, ObservableObject {
     private var fcmToken: String?
     private var uploadedHistory: [String: String] = [:]
     private var cancelSets = Set<AnyCancellable>()
-
     private var uploadingAddress: String?
+    private var hasSeenPushAlert = false
 }
 
 extension PushHandler {
     private func showPushAlert() {
+        hasSeenPushAlert = true
         Router.route(to: RouteMap.Wallet.pushAlert)
     }
 

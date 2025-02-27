@@ -136,7 +136,8 @@ final class WalletViewModel: ObservableObject {
                 }
 
                 if abs(self.lastRefreshTS - Date().timeIntervalSince1970) > self
-                    .autoRefreshInterval {
+                    .autoRefreshInterval
+                {
                     self.reloadWalletData()
                 }
             }.store(in: &cancelSets)
@@ -284,7 +285,10 @@ final class WalletViewModel: ObservableObject {
         coinItems = list
 
         refreshTotalBalance()
-        showBackupTipsIfNeeded()
+
+        // Disable this backup tip for now, cause it show sometime incorrect
+        // And our new backup flow is showing after account creation
+        // showBackupTipsIfNeeded()
     }
 
     private func refreshTotalBalance() {
@@ -421,14 +425,14 @@ extension WalletViewModel {
                 try await WalletManager.shared.fetchWalletDatas()
                 self.reloadTransactionCount()
 
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.isMock = false
                     self.isReloading = false
                 }
             } catch {
                 log.error("reload wallet data failed", context: error)
                 HUD.error(title: "fetch_wallet_error".localized)
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.walletState = .error
                     self.isReloading = false
                     self.isMock = false
@@ -458,7 +462,7 @@ extension WalletViewModel {
 
     func stakingAction() {
         if !LocalUserDefaults.shared.stakingGuideDisplayed, !StakingManager.shared.isStaked {
-            Router.route(to: RouteMap.Wallet.stakeGuide)
+            Router.route(to: RouteMap.Wallet.stakingSelectProvider)
             return
         }
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -486,7 +490,7 @@ extension WalletViewModel {
             currentPage = index
         }
     }
-    
+
     func viewWillAppear() {
         if LocalUserDefaults.shared.shouldShowConfettiOnHome {
             LocalUserDefaults.shared.shouldShowConfettiOnHome = false
@@ -507,12 +511,13 @@ extension WalletViewModel {
             showAddTokenButton = false
         }
 
+        let isChild = ChildAccountManager.shared.selectedChildAccount != nil
         let isNotPrimary = ChildAccountManager.shared
             .selectedChildAccount != nil || EVMAccountManager.shared.selectedAccount != nil
         // Swap
         if (RemoteConfigManager.shared.config?.features.swap ?? false) == true {
             // don't show when current is Linked account
-            if isNotPrimary {
+            if isChild {
                 showSwapButton = false
             } else {
                 showSwapButton = true
@@ -536,7 +541,8 @@ extension WalletViewModel {
 
         // buy
         if RemoteConfigManager.shared.config?.features.onRamp ?? false == true,
-           flow.chainID == .mainnet {
+           flow.chainID == .mainnet
+        {
             if isNotPrimary {
                 showBuyButton = false
             } else {

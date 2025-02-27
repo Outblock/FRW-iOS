@@ -12,9 +12,9 @@ import Moya
 
 enum GithubEndpoint {
     case collections
-    case ftTokenList
-    case EVMNFTList
-    case EVMTokenList
+    case ftTokenList(FlowNetworkType)
+    case EVMNFTList(FlowNetworkType)
+    case EVMTokenList(FlowNetworkType)
 }
 
 // MARK: TargetType
@@ -28,45 +28,12 @@ extension GithubEndpoint: TargetType {
         switch self {
         case .collections:
             return "/Outblock/Assets/main/nft/nft.json"
-        case .ftTokenList:
-            if isDevModel {
-                switch LocalUserDefaults.shared.flowNetwork {
-                case .mainnet:
-                    return "/Outblock/token-list-jsons/outblock/jsons/mainnet/flow/dev.json"
-                case .testnet:
-                    return "/Outblock/token-list-jsons/outblock/jsons/testnet/flow/dev.json"
-                }
-            } else {
-                switch LocalUserDefaults.shared.flowNetwork {
-                case .mainnet:
-                    return "/Outblock/token-list-jsons/outblock/jsons/mainnet/flow/default.json"
-                case .testnet:
-                    return "/Outblock/token-list-jsons/outblock/jsons/testnet/flow/default.json"
-                }
-            }
-        case .EVMNFTList:
-            switch LocalUserDefaults.shared.flowNetwork {
-            case .testnet:
-                return "/Outblock/token-list-jsons/outblock/jsons/testnet/flow/nfts.json"
-            case .mainnet:
-                return "/Outblock/token-list-jsons/outblock/jsons/mainnet/flow/nfts.json"
-            }
-        case .EVMTokenList:
-            if isDevModel {
-                switch LocalUserDefaults.shared.flowNetwork {
-                case .mainnet:
-                    return "/Outblock/token-list-jsons/outblock/jsons/mainnet/evm/dev.json"
-                default:
-                    return "/Outblock/token-list-jsons/outblock/jsons/testnet/evm/dev.json"
-                }
-            } else {
-                switch LocalUserDefaults.shared.flowNetwork {
-                case .mainnet:
-                    return "/Outblock/token-list-jsons/outblock/jsons/mainnet/evm/default.json"
-                default:
-                    return "/Outblock/token-list-jsons/outblock/jsons/testnet/evm/default.json"
-                }
-            }
+        case let .ftTokenList(network):
+            return "/Outblock/token-list-jsons/outblock/jsons/\(network.rawValue)/flow/\(isDevModel ? "dev" : "default").json"
+        case let .EVMNFTList(network):
+            return "/Outblock/token-list-jsons/outblock/jsons/\(network.rawValue)/flow/nfts.json"
+        case let .EVMTokenList(network):
+            return "/Outblock/token-list-jsons/outblock/jsons/\(network.rawValue)/evm/\(isDevModel ? "dev" : "default").json"
         }
     }
 
@@ -75,10 +42,7 @@ extension GithubEndpoint: TargetType {
     }
 
     var task: Task {
-        switch self {
-        case .collections, .ftTokenList, .EVMNFTList, .EVMTokenList:
-            return .requestPlain
-        }
+        .requestPlain
     }
 
     var headers: [String: String]? {

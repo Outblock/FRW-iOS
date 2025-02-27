@@ -63,11 +63,12 @@ final class Coordinator {
     lazy var rootNavi: UINavigationController? = nil
 
     func showRootView() {
-        if LocalUserDefaults.shared.onBoardingShown {
-            showNormalView()
-        } else {
-            showOnBoardingView()
-        }
+        let rootView = SideContainerView()
+        let hostingView = UIHostingController(rootView: rootView)
+        let navi = RouterNavigationController(rootViewController: hostingView)
+        navi.setNavigationBarHidden(true, animated: true)
+        rootNavi = navi
+        window.rootViewController = rootNavi
     }
 
     // MARK: Private
@@ -83,32 +84,6 @@ final class Coordinator {
 extension Coordinator {
     private func refreshColorScheme() {
         window.overrideUserInterfaceStyle = ThemeManager.shared.getUIKitStyle()
-    }
-
-    private func showOnBoardingView() {
-        LocalUserDefaults.shared.onBoardingShown = true
-
-        let view = OnBoardingView()
-        let hostingView = UIHostingController(rootView: view)
-        window.rootViewController = hostingView
-    }
-
-    private func showNormalView() {
-        let rootView = SideContainerView()
-        let hostingView = UIHostingController(rootView: rootView)
-        let navi = RouterNavigationController(rootViewController: hostingView)
-        navi.setNavigationBarHidden(true, animated: true)
-        rootNavi = navi
-        window.rootViewController = rootNavi
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            TransactionUIHandler.shared.refreshPanelHolder()
-            PushHandler.shared.showPushAlertIfNeeded()
-        }
-
-//        #if DEBUG
-//        LocalUserDefaults.shared.onBoardingShown = false
-//        #endif
     }
 }
 
@@ -128,6 +103,8 @@ extension Coordinator {
 
     @objc
     private func didBecomeActive() {
+        let systemStyle = UIScreen.main.traitCollection.userInterfaceStyle
+        ThemeManager.shared.updateStyle(style: systemStyle)
         UIView.animate(withDuration: 0.25) {
             self.privateView.alpha = 0
         } completion: { _ in

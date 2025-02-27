@@ -73,7 +73,7 @@ class MultiBackupiCloudTarget: MultiBackupTarget {
               let hexString = String(data: data, encoding: .utf8)?.trim()
         else {
             log.error("[iCloud] Unable to decode backup file.")
-            throw BackupError.CloudFileData
+            throw BackupError.cloudFileData
         }
 
         return try MultiBackupManager.shared.decryptHexString(hexString)

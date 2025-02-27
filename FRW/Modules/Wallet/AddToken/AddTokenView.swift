@@ -41,12 +41,17 @@ struct AddTokenView: RouteableView {
             listView
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .halfSheet(showSheet: $vm.confirmSheetIsPresented, autoResizing: true, backgroundColor: Color.LL.Neutrals.background, sheetView: {
-            if let token = vm.pendingActiveToken {
-                AddTokenConfirmView(token: token)
-                    .environmentObject(vm)
+        .halfSheet(
+            showSheet: $vm.confirmSheetIsPresented,
+            autoResizing: true,
+            backgroundColor: Color.LL.Neutrals.background,
+            sheetView: {
+                if let token = vm.pendingActiveToken {
+                    AddTokenConfirmView(token: token)
+                        .environmentObject(vm)
+                }
             }
-        })
+        )
         .environmentObject(vm)
         .disabled(vm.isRequesting)
         .applyRouteable(self)
@@ -209,7 +214,7 @@ extension AddTokenView {
                                 .padding(.horizontal, 40)
                                 .frame(height: 45)
                                 .background(Color(hex: "#1A1A1A"))
-                                .cornerRadius([.bottomLeft, .bottomRight], 16)
+                                .cornerRadius([.bottomLeading, .bottomTrailing], 16)
                         }
 
                         KFImage

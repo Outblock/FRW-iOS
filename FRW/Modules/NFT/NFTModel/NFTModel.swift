@@ -410,7 +410,7 @@ class CollectionItem: Identifiable, ObservableObject {
             offset: offset,
             limit: limit
         )
-        let from: FRWAPI.From = EVMAccountManager.shared.selectedAccount == nil ? .main : .evm
+        let from: VMType = EVMAccountManager.shared.selectedAccount == nil ? .cadence : .evm
         let response: NFTListResponse = try await Network.request(FRWAPI.NFT.collectionDetailList(
             request,
             from

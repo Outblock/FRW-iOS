@@ -38,6 +38,7 @@ extension RouteMap {
         case inputMnemonic((String) -> Void)
 
         case createProfile(CreateProfileWaitingViewModel)
+        case createProfileSuccess(CreateProfileWaitingViewModel)
         case restoreErrorView(RestoreErrorView.RestoreError)
 
         case keystore
@@ -80,6 +81,8 @@ extension RouteMap.RestoreLogin: RouterTarget {
             navi.push(content: RestoreMultiInputMnemonicView(callback: callback))
         case let .createProfile(vm):
             navi.push(content: CreateProfileWaitingView(vm))
+        case let .createProfileSuccess(vm):
+            navi.push(content: AccountCreatedView(vm))
         case let .restoreErrorView(error):
             navi.push(content: RestoreErrorView(error: error))
         case .keystore:
@@ -102,7 +105,6 @@ extension RouteMap.RestoreLogin: RouterTarget {
 extension RouteMap {
     enum Register {
         case root(String?)
-        case username(String?)
     }
 }
 
@@ -112,8 +114,6 @@ extension RouteMap.Register: RouterTarget {
     func onPresent(navi: UINavigationController) {
         switch self {
         case let .root(mnemonic):
-            navi.push(content: TermsAndPolicy(mnemonic: mnemonic))
-        case let .username(mnemonic):
             navi.push(content: UsernameView(mnemonic: mnemonic))
         }
     }
@@ -235,7 +235,7 @@ extension RouteMap {
         case moveNFTs
         case moveAssets
         case moveToken(TokenModel)
-        case selectMoveToken(TokenModel?, (TokenModel) -> Void)
+        case selectMoveToken(FWAddress, (TokenModel) -> Void)
         case chooseChild(MoveAccountsViewModel)
         case addCustomToken
         case showCustomToken(CustomToken)
@@ -348,13 +348,9 @@ extension RouteMap.Wallet: RouterTarget {
                 isPresent: .constant(true)
             ))
             navi.present(vc, animated: true, completion: nil)
-        case let .selectMoveToken(token, callback):
-            let vm = AddTokenViewModel(
-                selectedToken: token,
-                disableTokens: [],
-                selectCallback: callback
-            )
-            Router.topPresentedController().present(content: AddTokenView(vm: vm))
+        case let .selectMoveToken(address, callback):
+            let vm = TokenBalanceListViewModel(address: address, selectCallback: callback)
+            Router.topPresentedController().present(content: TokenBalanceListView(vm: vm))
         case let .chooseChild(model):
             let vc = PresentHostingController(rootView: MoveAccountsView(viewModel: model))
             Router.topPresentedController().present(vc, animated: true, completion: nil)
@@ -677,6 +673,15 @@ extension RouteMap.Explore: RouterTarget {
     func onPresent(navi: UINavigationController) {
         switch self {
         case let .browser(url):
+            
+            // For some dapp like Disney and NBA Topshot
+            // We should navigate user to App Store to download
+            let externalHost = ["apps.apple.com"]
+            if let host = url.host, externalHost.contains(host) {
+                UIApplication.shared.open(url)
+                return
+            }
+            
             if let isIn = RemoteConfigManager.shared.config?.features.browser, isIn {
                 let vc = BrowserViewController()
                 vc.loadURL(url)

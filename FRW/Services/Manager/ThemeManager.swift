@@ -14,12 +14,19 @@ class ThemeManager: ObservableObject {
     // MARK: Lifecycle
 
     init() {
+        if userDefaultTheme {
+            setStyle(style: .dark)
+            self.userDefaultTheme = false
+        }
         reloadStyle()
     }
 
     // MARK: Internal
 
     static let shared = ThemeManager()
+
+    @AppStorage(LocalUserDefaults.Keys.userDefaultTheme.rawValue)
+    var userDefaultTheme: Bool = true
 
     @Published
     var style: ColorScheme?
@@ -38,8 +45,18 @@ class ThemeManager: ObservableObject {
         if let style = style {
             return style.toUIKitEnum
         }
+        // if auto, style is setted by system
+        let systemStyle = UIScreen.main.traitCollection.userInterfaceStyle
+        return systemStyle == .light ? .light : .dark
+    }
 
-        return .dark
+    func updateStyle(style: UIUserInterfaceStyle) {
+        guard self.style == nil else {
+            log.debug("[Theme] not changed")
+            return
+        }
+        log.debug("[Theme] auto")
+        setStyle(style: nil)
     }
 
     // MARK: Private

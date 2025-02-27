@@ -98,8 +98,8 @@ class NFTCollectionListViewViewModel: ObservableObject {
 
             do {
                 let address = address ?? WalletManager.shared.selectedAccountAddress
-                let from: FRWAPI.From = EVMAccountManager.shared
-                    .selectedAccount != nil ? .evm : .main
+                let from: VMType = EVMAccountManager.shared
+                    .selectedAccount != nil ? .evm : .cadence
                 let request = NFTCollectionDetailListRequest(
                     address: address,
                     collectionIdentifier: path,
