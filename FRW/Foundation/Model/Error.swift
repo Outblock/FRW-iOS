@@ -167,6 +167,7 @@ enum MoveError: String, BaseError {
     case invalidateFromAddress
     case invalidateToAddress
     case invalidateNftCollectionInfo
+    case failedToSubmitTransaction
     
     var baseCode: Int { 10000 }
 }
