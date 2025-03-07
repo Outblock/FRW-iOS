@@ -20,6 +20,10 @@ struct SecureEnclavePrivateKeyView: RouteableView {
         WalletManager.shared.getCurrentPublicKey() ?? ""
     }
 
+    var isSecuredKey: Bool {
+        WalletManager.shared.keyProvider?.keyType == .secureEnclave
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -97,6 +101,7 @@ struct SecureEnclavePrivateKeyView: RouteableView {
                     }
                     .padding(.bottom, 12)
                 }
+                .visibility(isSecuredKey ? .visible : .gone)
 
                 HStack {
                     HStack(spacing: 16) {
