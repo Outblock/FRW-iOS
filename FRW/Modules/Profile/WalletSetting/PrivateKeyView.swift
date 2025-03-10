@@ -11,7 +11,7 @@ import SwiftUI
 
 struct PrivateKeyView: RouteableView {
     @State
-    var isBlur: Bool = false
+    var isBlur: Bool = true
 
     var title: String {
         "Private Key".localized.capitalized
@@ -24,40 +24,6 @@ struct PrivateKeyView: RouteableView {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Section {
-                    ZStack(alignment: .center) {
-                        Text(privateKey)
-                            .font(.inter(size: 12))
-                            .foregroundColor(.Theme.Text.black8)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 20)
-                            .blur(radius: isBlur ? 5 : 0)
-
-                        if isBlur {
-                            Label("Click to reveal".localized, systemImage: "eyes")
-                                .foregroundColor(.LL.Neutrals.neutrals3)
-                        }
-                    }
-                    .background(Color.Theme.Fill.fill1)
-                    .cornerRadius(16)
-                    .onTapGesture {}
-                    .animation(.easeInOut, value: isBlur)
-
-                } header: {
-                    HStack {
-                        Text("Private Key".localized)
-                            .foregroundColor(.Theme.Text.text4)
-                            .font(.inter(size: 14, weight: .semibold))
-                        Spacer()
-
-                        CopyButton {
-                            UIPasteboard.general.string = WalletManager.shared
-                                .getCurrentPrivateKey() ?? ""
-                            HUD.success(title: "copied".localized)
-                        }
-                    }
-                }
-
                 Section {
                     Text(WalletManager.shared.getCurrentPublicKey() ?? "")
                         .font(.inter(size: 12))
@@ -76,6 +42,43 @@ struct PrivateKeyView: RouteableView {
                         CopyButton {
                             UIPasteboard.general.string = WalletManager.shared
                                 .getCurrentPublicKey() ?? ""
+                            HUD.success(title: "copied".localized)
+                        }
+                    }
+                }
+
+                Section {
+                    ZStack(alignment: .center) {
+                        Text(privateKey)
+                            .font(.inter(size: 12))
+                            .foregroundColor(.Theme.Text.black8)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 20)
+                            .blur(radius: isBlur ? 5 : 0)
+
+                        if isBlur {
+                            Label("Click to reveal".localized, systemImage: "eyes")
+                                .foregroundColor(.LL.Neutrals.neutrals3)
+                        }
+                    }
+                    .onTapGesture {
+                        isBlur.toggle()
+                    }
+                    .background(Color.Theme.Fill.fill1)
+                    .cornerRadius(16)
+                    .onTapGesture {}
+                    .animation(.easeInOut, value: isBlur)
+
+                } header: {
+                    HStack {
+                        Text("Private Key".localized)
+                            .foregroundColor(.Theme.Text.text4)
+                            .font(.inter(size: 14, weight: .semibold))
+                        Spacer()
+
+                        CopyButton {
+                            UIPasteboard.general.string = WalletManager.shared
+                                .getCurrentPrivateKey() ?? ""
                             HUD.success(title: "copied".localized)
                         }
                     }
